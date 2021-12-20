@@ -1,0 +1,78 @@
+
+@font-face {
+    font-family: 'VRC Terminal';
+    src: url('./fonts/VRC_Standard.ttf')
+}
+
+@font-face {
+    font-family: 'ERAM-font-1';
+    src: url('./vERAM_Fonts/eram-text-1.bmp');
+}
+
+@font-face {
+    font-family: 'ERAM-font-2';
+    src: url('./vERAM_Fonts/eram-text-2.bmp');
+}
+
+@font-face {
+    font-family: 'ERAM-font-3';
+    src: url('./vERAM_Fonts/eram-text-3.bmp');
+}
+
+@font-face {
+    font-family: 'ERAM-font-4';
+    src: url('./vERAM_Fonts/eram-text-4.bmp');
+}
+
+@font-face {
+    font-family: 'ERAM-font-5';
+    src: url('./vERAM_Fonts/eram-text-5.bmp');
+}
+
+:root {
+    --edst-background-black: #000000;
+    --edst-font-grey: #ADADAD;
+
+    --edst-window-title-bar-focused-background-light-cyan: #008585;
+    --edst-window-title-bar-focused-background-dark-cyan: #005757;
+    --edst-window-title-bar-not-focused-background-light-grey: #888888;
+    --edst-window-title-bar-not-focused-background-dark-grey: #575757;
+    --edst-window-header-dark-grey: #575757;
+}
+
+.edst {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    background-color: black;
+    font-family: Consolas, monospace;
+}
+
+.edst-body {
+    overflow: hidden;
+    position: absolute;
+    top: 36px;
+    left: 0;
+    height: calc(100vh - 36px);
+    width: 100vw;
+    flex-grow: 1;
+    display: flex;
+}
+
+.edst-body.hide-cursor {
+    cursor: none;
+}
+
+.edst-body .edst-dragging-outline {
+    background-color: transparent;
+    border: 1px solid #FFFFFF;
+}
+
+.cursor {
+    z-index: 999;
+    width: 25px;
+    height: 25px;
+    content: url('images/aero_arrow.cur');
+}
