@@ -2,6 +2,7 @@ import React from 'react';
 import '../../css/header-styles.css';
 import '../../css/windows/acl-styles.css';
 import AclHeader from "./acl-components/AclHeader";
+import AclTable from "./acl-components/AclTable";
 
 export default class Acl extends React.Component {
   constructor(props) {
@@ -24,7 +25,7 @@ export default class Acl extends React.Component {
     >
       <div className="edst-window-header">
         <AclHeader focused={focused} mode={mode} closeWindow={this.props.closeWindow}/>
-
+        <AclTable/>
       </div>
     </div>);
   }
