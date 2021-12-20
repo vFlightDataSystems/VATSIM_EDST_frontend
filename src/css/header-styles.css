@@ -166,10 +166,9 @@ button.edst-window-header-button:disabled {
     align-items: center;
     display: flex;
     padding: 0 15px;
-    line-height: 35px;
     height: 30px;
     border-top: 1px solid var(--edst-window-header-border-light-grey);
-    border-bottom: 1px solid var(--edst-window-header-border-light-grey);
+    /* border-bottom: 1px solid var(--edst-window-header-border-light-grey); */
 }
 
 .edst-window-header-bottom-row .input-container {
