@@ -1,0 +1,23 @@
+
+:root {
+    --dep-border-grey: #888888;
+    --dep-outline-grey: #ADADAD;
+    --dep-button-border-grey: #ADADAD;
+    --dep-button-disabled-font-grey: #707070;
+    --dep-button-disabled-border-grey: #707070;
+    --dep-font-yellow: #A3A300;
+    --dep-button-border-yellow: #A3A300;
+    --dep-button-hover-border: #FFFFFF;
+    --dep-outage-background-red: #590000;
+    --dep-window-open-light-grey: #595958;
+    --dep-window-closed-black: #000000;
+}
+
+.dep {
+    margin: 2px;
+    flex-grow: 1;
+    border: 3px solid var(--acl-border-grey);
+    outline: 1px solid var(--acl-outline-grey);
+    font-family: Consolas, monospace;
+    color: var(--edst-font-grey);
+}
