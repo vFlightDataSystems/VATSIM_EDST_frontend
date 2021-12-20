@@ -4,30 +4,30 @@
     src: url('./fonts/VRC_Standard.ttf')
 }
 
-@font-face {
-    font-family: 'ERAM-font-1';
-    src: url('./vERAM_Fonts/eram-text-1.bmp');
-}
+/*@font-face {*/
+/*    font-family: 'ERAM-font-1';*/
+/*    src: url('./vERAM_Fonts/eram-text-1.bmp');*/
+/*}*/
 
-@font-face {
-    font-family: 'ERAM-font-2';
-    src: url('./vERAM_Fonts/eram-text-2.bmp');
-}
+/*@font-face {*/
+/*    font-family: 'ERAM-font-2';*/
+/*    src: url('./vERAM_Fonts/eram-text-2.bmp');*/
+/*}*/
 
-@font-face {
-    font-family: 'ERAM-font-3';
-    src: url('./vERAM_Fonts/eram-text-3.bmp');
-}
+/*@font-face {*/
+/*    font-family: 'ERAM-font-3';*/
+/*    src: url('./vERAM_Fonts/eram-text-3.bmp');*/
+/*}*/
 
-@font-face {
-    font-family: 'ERAM-font-4';
-    src: url('./vERAM_Fonts/eram-text-4.bmp');
-}
+/*@font-face {*/
+/*    font-family: 'ERAM-font-4';*/
+/*    src: url('./vERAM_Fonts/eram-text-4.bmp');*/
+/*}*/
 
-@font-face {
-    font-family: 'ERAM-font-5';
-    src: url('./vERAM_Fonts/eram-text-5.bmp');
-}
+/*@font-face {*/
+/*    font-family: 'ERAM-font-5';*/
+/*    src: url('./vERAM_Fonts/eram-text-5.bmp');*/
+/*}*/
 
 :root {
     --edst-background-black: #000000;
