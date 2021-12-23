@@ -1,6 +1,6 @@
 import React from 'react';
-import '../../css/header-styles.css';
-import '../../css/windows/acl-styles.css';
+import '../../css/header-styles.scss';
+import '../../css/windows/acl-styles.scss';
 import AclHeader from "./acl-components/AclHeader";
 import AclTable from "./acl-components/AclTable";
 
@@ -9,23 +9,42 @@ export default class Acl extends React.Component {
     super(props);
     this.state = {
       focused: false,
-      mode: 'Manual'
+      manual: true,
     };
   }
 
+  togglePosting = () => {
+    const manual = this.state.manual;
+    this.setState({manual: !manual})
+  }
+
+  componentWillUnmount() {
+    this.props.unmount();
+  }
+
   render() {
-    const {focused, mode} = this.state;
+    const {focused, manual} = this.state;
 
     return (<div
-      className="acl"
-
+      className={`acl ${this.props.dragging ? 'dragging' : ''}`}
       // style={{zIndex: this.props.z_index}}
       onMouseEnter={() => this.setState({focused: true})}
       onMouseLeave={() => this.setState({focused: false})}
     >
       <div className="edst-window-header">
-        <AclHeader focused={focused} mode={mode} closeWindow={this.props.closeWindow}/>
-        <AclTable/>
+        <AclHeader
+          openMenu={this.props.openMenu}
+          asel={this.props.asel}
+          focused={focused} manual={manual}
+          closeWindow={this.props.closeWindow}
+          togglePosting={this.togglePosting}
+        />
+        <AclTable
+          edstData={this.props.edstData}
+          asel={this.props.asel}
+          setEntryField={this.props.setEntryField}
+          aircraftSelect={this.props.aircraftSelect}
+        />
       </div>
     </div>);
   }

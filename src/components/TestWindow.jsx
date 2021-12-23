@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/header-styles.css';
+import '../css/header-styles.scss';
 
 export default class TestWindow extends React.Component {
   constructor(props) {
@@ -27,7 +27,7 @@ export default class TestWindow extends React.Component {
             TEST
           </div>
           <button className={`edst-window-header-block ${focused ? 'focused' : ''}`}
-                  onClick={this.props.closeWindow}
+                  onMouseDown={this.props.closeWindow}
           >
             <div className="edst-window-header-block edst-window-header-block-3-3"/>
           </button>

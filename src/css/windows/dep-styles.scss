@@ -1,0 +1,23 @@
+@import "../styles";
+
+$dep-border-grey: #888888;
+$dep-border-light-grey: #ADADAD;
+
+
+.dep {
+    display: block;
+    white-space:nowrap;
+    overflow: hidden;
+    height: 40%;
+    margin: 2px;
+    flex-grow: 1;
+    border: 3px solid $dep-border-grey;
+    outline: 1px solid $dep-border-light-grey;
+    color: $edst-font-grey;
+}
+
+.dep-body {
+    overflow: hidden;
+    /*scrollbar-width: none;  !* Firefox *!*/
+    color: $edst-font-grey;
+}

@@ -1,19 +1,23 @@
 import React from 'react';
 
+import './css/styles.scss';
+import './css/header-styles.scss';
 import EdstHeader from "./components/EdstHeader";
-import './css/styles.css';
-import './css/header-styles.css';
 import Acl from "./components/edst-windows/Acl";
 import Dep from "./components/edst-windows/Dep";
 import Status from "./components/edst-windows/Status";
 import RouteMenu from "./components/edst-windows/RouteMenu";
+import {getEdstData} from "./api";
+import Outage from "./components/edst-windows/Outage";
+import AltMenu from "./components/edst-windows/AltMenu";
+import PlanMenu from "./components/edst-windows/PlanMenu";
 
 const defaultPos = {
-  'edst-status': {x: 100, y: 100},
-  'route-menu': {x: 100, y: 100}
+  'edst-status': {x: 400, y: 100},
+  'edst-outage': {x: 400, y: 100}
 }
 
-const draggingHideCursor = ['edst-status']
+const draggingHideCursor = ['edst-status', 'edst-outage']
 
 
 export default class App extends React.Component {
@@ -24,7 +28,8 @@ export default class App extends React.Component {
       disabled_windows: ['gpd', 'plans', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'],
       focused_window: '',
       sector_id: '',
-      acl: [{callsign: 'SWA123'}],
+      menu: null,
+      acl: [],
       dep: [],
       sig: [],
       not: [],
@@ -32,14 +37,79 @@ export default class App extends React.Component {
       dragging: null,
       dragging_cursor_hide: null,
       draggingRef: null,
-      pos: defaultPos
+      dragPreviewStyle: null,
+      pos: defaultPos,
+      edstData: {}, // keys are cid, values are data from db
+      asel: null, // {cid, field, ref}
+      plan_queue: null
     }
-
     this.globalRef = React.createRef();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({sector_id: '37'});
+    await this.refresh();
+    const update_interval_id = setInterval(this.refresh, 15000);
+    this.setState({
+      fp_update_interval_id: update_interval_id
+    });
+  }
+
+  componentWillUnmount() {
+    const {update_interval_id} = this.state;
+    if (update_interval_id) {
+      clearInterval(update_interval_id);
+    }
+  }
+
+  refresh = async () => {
+    let {edstData} = this.state;
+    await getEdstData()
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          for (let x of data) {
+            if (this.entryFilter(x)) {
+              edstData[x.cid] = Object.keys(edstData).includes(x.cid) ? Object.assign(edstData?.[x.cid], x) : x;
+            }
+          }
+          this.setState({edstData: edstData});
+        }
+      });
+  }
+
+  plan = (p) => {
+
+  }
+
+  entryFilter = (entry) => {
+    return entry.dep === 'KBOS';
+  }
+
+  setEntryField = (cid, key, val) => {
+    let {edstData} = this.state;
+    let entry = edstData[cid];
+    entry[key] = val;
+    this.setState({edstData: edstData});
+  }
+
+  aircraftSelect = (event, window, cid, field) => {
+    const {asel} = this.state;
+    if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
+      this.setState({asel: null, menu: null});
+    } else {
+      this.setState({
+        asel: {cid: cid, field: field, window: window},
+        menu: null
+      });
+      switch (field) {
+        case 'alt':
+          this.openMenu(event.target, 'alt-menu', true)
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   toggleWindow = (name) => {
@@ -73,6 +143,34 @@ export default class App extends React.Component {
     }
   }
 
+  openMenu = (ref, name, alignRight) => {
+    let {pos} = this.state;
+    switch (name) {
+      case 'plan-menu':
+        pos[name] = {
+          x: ref.target.offsetLeft,
+          y: ref.target.offsetTop + ref.target.offsetHeight
+        };
+        this.setState({pos: pos, menu: name});
+        break;
+      default:
+        pos[name] = {
+          x: ref.offsetLeft + (alignRight ? ref.clientWidth : 0),
+          y: ref.offsetTop,
+          w: ref.clientWidth,
+          h: ref.clientHeight
+        };
+        this.setState({pos: pos, menu: name});
+        break;
+    }
+  }
+
+  closeMenu = (name) => {
+    let {pos} = this.state;
+    pos[name] = null;
+    this.setState({menu: null});
+  }
+
   startDrag = (event, ref) => {
     const {pos} = this.state;
     const rel = {x: event.pageX, y: event.pageY};
@@ -94,6 +192,7 @@ export default class App extends React.Component {
       dragPreviewStyle: style,
       dragging_cursor_hide: draggingHideCursor.includes(ref.current.id)
     });
+    this.globalRef.current.addEventListener('mousemove', this.dragging);
   }
 
   setPos = (key, x, y) => {
@@ -102,14 +201,14 @@ export default class App extends React.Component {
     this.setState({pos: pos});
   }
 
-  onMouseMove = (event) => {
+  dragging = (event) => {
     const {dragging} = this.state;
     if (dragging) {
       const {rel, draggingRef} = this.state;
       let pos = this.state.pos;
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
-      const ppos = pos[draggingRef.current.id]
+      const ppos = pos[draggingRef.current.id];
       const style = {
         left: ppos.x + relX,
         top: ppos.y + relY,
@@ -130,15 +229,29 @@ export default class App extends React.Component {
       const relY = event.pageY - rel.y;
       const ppos = pos[draggingRef.current.id]
       pos[draggingRef.current.id] = {x: ppos.x + relX, y: ppos.y + relY};
-      this.setState({pos: pos, rel: null, draggingRef: null, dragging: false, dragging_cursor_hide: false});
+      this.setState({
+        pos: pos,
+        rel: null,
+        draggingRef: null,
+        dragging: false,
+        dragging_cursor_hide: false,
+        dragPreviewStyle: null
+      });
     }
+  }
+
+  unmount = () => {
+    this.setState({menu: null, asel: null});
   }
 
   render() {
     const {
+      edstData,
+      asel,
       disabled_windows,
       open_windows,
       sector_id,
+      menu,
       acl,
       dep,
       sig,
@@ -157,42 +270,87 @@ export default class App extends React.Component {
                     openWindow={this.openWindow}
                     toggleWindow={this.toggleWindow}
                     sector_id={sector_id}
-                    acl_num={acl.length}
-                    dep_num={dep.length}
+                    acl_num={Object.keys(edstData).length}
+                    dep_num={Object.keys(edstData).length}
                     sig_num={sig.length}
                     not_num={not.length}
                     gi_num={gi.length}
         />
         <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
              ref={this.globalRef}
-             onMouseMove={this.onMouseMove}
              onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
         >
-          {dragging && <div className="edst-dragging-outline" style={dragPreviewStyle}
-                            onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
+          <div className="edst-dragging-outline" style={dragPreviewStyle || {display: 'none'}}
+               onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
           >
             {dragging_cursor_hide && <div className="cursor"/>}
-          </div>}
+          </div>
           {open_windows.includes('acl') && <Acl
-            z_index={open_windows.indexOf('acl')}
+            unmount={this.unmount}
+            openMenu={this.openMenu}
+            dragging={dragging}
+            asel={asel?.window === 'acl' ? asel : null}
+            edstData={edstData}
+            setEntryField={this.setEntryField}
+            aircraftSelect={this.aircraftSelect}
+            // z_index={open_windows.indexOf('acl')}
             closeWindow={() => this.closeWindow('acl')}
           />}
           {open_windows.includes('dep') && <Dep
-            z_index={open_windows.indexOf('dep')}
+            unmount={this.unmount}
+            openMenu={this.openMenu}
+            dragging={dragging}
+            asel={asel?.window === 'dep' ? asel : null}
+            edstData={edstData}
+            setEntryField={this.setEntryField}
+            aircraftSelect={this.aircraftSelect}
+            // z_index={open_windows.indexOf('dep')}
             closeWindow={() => this.closeWindow('dep')}
           />}
           {open_windows.includes('status') && <Status
+            dragging={dragging}
             startDrag={this.startDrag}
             pos={pos['edst-status']}
-            z_index={open_windows.indexOf('status')}
+            // z_index={open_windows.indexOf('status')}
             closeWindow={() => this.closeWindow('status')}
           />}
-          {open_windows.includes('route-menu') && <RouteMenu
+          {open_windows.includes('outage') && <Outage
+            dragging={dragging}
+            startDrag={this.startDrag}
+            pos={pos['edst-outage']}
+            // z_index={open_windows.indexOf('status')}
+            closeWindow={() => this.closeWindow('outage')}
+          />}
+          {menu === 'plan-menu' && <PlanMenu
+            openMenu={this.openMenu}
+            dragging={dragging}
+            data={edstData[asel?.cid]}
+            setEntryField={this.setEntryField}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            pos={pos['plan-menu']}
+            // z_index={open_windows.indexOf('route-menu')}
+            closeWindow={() => this.closeMenu('plan-menu')}
+          />}
+          {menu === 'route-menu' && <RouteMenu
+            openMenu={this.openMenu}
+            dragging={dragging}
+            data={edstData[asel?.cid]}
+            setEntryField={this.setEntryField}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
             pos={pos['route-menu']}
-            z_index={open_windows.indexOf('route-menu')}
-            closeWindow={() => this.closeWindow('route-menu')}
+            // z_index={open_windows.indexOf('route-menu')}
+            closeWindow={() => this.closeMenu('route-menu')}
+          />}
+          {menu === 'alt-menu' && <AltMenu
+            pos={pos['alt-menu']}
+            asel={asel}
+            plan={this.plan}
+            data={edstData[asel?.cid]}
+            setEntryField={this.setEntryField}
+            // z_index={open_windows.indexOf('route-menu')}
+            closeWindow={() => this.closeMenu('alt-menu')}
           />}
         </div>
       </div>
