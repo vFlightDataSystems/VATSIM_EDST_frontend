@@ -1,41 +1,45 @@
 import React from 'react';
-import '../../../css/header-button-styles.css';
-import '../../../css/header-styles.css';
+import '../../../css/header-button-styles.scss';
+import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 
 export default class DepHeader extends React.Component {
 
   render() {
-    const {focused, mode} = this.props;
-    return (<div className="edst-window-header">
+    const {focused, manual, asel} = this.props;
+    return (<div className="edst-window-header no-select">
       <WindowTitleBar
         focused={focused}
         closeWindow={this.props.closeWindow}
-        text={`Aircraft List Sector/Boundary Time ${mode}`}
+        text={['Departure List', 'Destination', `${manual ? 'Manual' : 'Automatic'}`]}
       />
       <div className="edst-window-header-button-bar">
-        <div className="edst-window-header-button-bar edst-plan-options-button" disabled={true}>
-          <button className="edst-window-header-button" disabled={true}>
+        <div className="outer-button edst-plan-options-button">
+          <div className="edst-window-button" disabled={asel === null}
+                  onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}
+          >
             Plan Options...
-          </button>
+          </div>
         </div>
-        <div className="edst-window-header-button-bar edst-sort-button">
-          <button className="edst-window-header-button">
+        <div className="outer-button edst-sort-button">
+          <div className="edst-window-button">
             Sort...
-          </button>
+          </div>
         </div>
-        <div className="edst-window-header-button-bar edst-posting-mode-button">
-          <button className="edst-window-header-button">
+        <div className="outer-button edst-posting-mode-button">
+          <div className="edst-window-button"
+                  onMouseDown={this.props.togglePosting}
+          >
             Posting Mode
-          </button>
+          </div>
         </div>
-        <div className="edst-window-header-button-bar edst-template-button">
-          <button className="edst-window-header-button">
+        <div className="outer-button edst-template-button">
+          <div className="edst-window-button">
             Template...
-          </button>
+          </div>
         </div>
       </div>
-      <div className="edst-window-header-bottom-row">
+      <div className="edst-window-header-bottom-row no-select">
         Add/Find
         <div className="input-container">
           <input/>

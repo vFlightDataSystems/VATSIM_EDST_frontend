@@ -1,0 +1,131 @@
+@import "../styles";
+
+$alt-menu-medium-grey: #575757;
+$alt-menu-dark-grey: #414141;
+$alt-menu-background-grey: #888888;
+$alt-menu-light-grey: #ADADAD;
+$alt-menu-hover-white: #F0F0F0;
+$alt-menu-font-white: #D6D6D6;
+$alt-menu-row-height: 20px;
+$alt-menu-selected-light-pink: #AD6C6C;
+
+.alt-menu {
+  background-color: $alt-menu-background-grey;
+  position: absolute;
+  width: 100px;
+  color: $alt-menu-font-white;
+
+  .alt-menu-header {
+    display: flex;
+    height: $alt-menu-row-height;
+
+    .alt-menu-header-left {
+      display: flex;
+      flex-grow: 1;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid $alt-menu-light-grey;
+    }
+
+    .alt-menu-header-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 20px;
+      border: 1px solid $alt-menu-light-grey;
+
+      &:hover {
+        border: 1px solid $alt-menu-hover-white;
+      }
+    }
+
+  }
+
+  .alt-menu-row {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid $alt-menu-light-grey;
+
+    &[disabled] {
+      pointer-events: none;
+      color: $alt-menu-light-grey;
+    }
+
+    &.hover:hover {
+      border: 1px solid $alt-menu-hover-white;
+    }
+
+    &.selected {
+      border: 1px solid #FFFFFF;
+      background-color: $alt-menu-selected-light-pink;
+    }
+  }
+
+  .alt-menu-select-container {
+    padding: 2px;
+    display: flex;
+    flex-flow: column;
+    background-color: #000000;
+    height: 100px;
+    border: 1px solid $alt-menu-light-grey;
+
+    .alt-menu-container-row {
+      width: 55px;
+      display: flex;
+      margin: 1px 6px;
+      height: 20px;
+      color: $alt-menu-light-grey;
+      /*border: none;*/
+      border: 1px solid #000000;
+
+      &.t-hover {
+        border: 1px solid $alt-menu-hover-white;
+      }
+
+      .alt-menu-container-col {
+        display: flex;
+        padding-left: 4px;
+        padding-right: 2px;
+        justify-content: left;
+        align-items: center;
+        color: $alt-menu-light-grey;
+        //border: 1px solid #000000;
+        &:hover {
+          outline: 1px solid $alt-menu-hover-white;
+        }
+
+        &.t-hover {
+          border: 1px solid $alt-menu-hover-white;
+        }
+
+        &.selected {
+          background-color: $alt-menu-selected-light-pink;
+        }
+      }
+
+      .alt-menu-container-col-t {
+        display: flex;
+        /*margin-left: 6px;*/
+        padding-left: 12px;
+        padding-right: 6px;
+        justify-content: left;
+        align-items: center;
+        /*height: 10px;*/
+        color: $alt-menu-medium-grey;
+
+        &.enabled {
+          color: $alt-menu-light-grey;
+
+          //&:hover {
+          //  padding-left: 13px;
+          //  padding-right: 5px;
+          //  border: 1px solid $alt-menu-hover-white;
+          //  border-left: none;
+          //}
+        }
+      }
+    }
+  }
+}

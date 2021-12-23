@@ -3,18 +3,17 @@ import '../../css/header-button-styles.scss';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 
-export default class Status extends React.Component {
+export default class Outage extends React.Component {
   constructor(props) {
     super(props);
-    this.statusRef = React.createRef();
+    this.outageRef = React.createRef();
   }
-
   render() {
     const {pos} = this.props;
 
-    return (<div className="floating-window status-window"
-                 ref={this.statusRef}
-                 id="edst-status"
+    return (<div className="floating-window outage-window"
+                 ref={this.outageRef}
+                 id="edst-outage"
                  style={{left: pos.x + "px", top: pos.y + "px"}}
       >
         <div className="floating-window-header no-select">
@@ -22,16 +21,16 @@ export default class Status extends React.Component {
             M
           </div>
           <div className="floating-window-header-middle"
-               onMouseDown={(event) => this.props.startDrag(event, this.statusRef)}
+               onMouseDown={(event) => this.props.startDrag(event, this.outageRef)}
           >
-            STATUS
+            OUTAGE
           </div>
           <div className="floating-window-header-right" onMouseDown={this.props.closeWindow}>
             <div className="floating-window-header-block-8-2"/>
           </div>
         </div>
         <div className="floating-window-body">
-          STATUS TEST
+          OUTAGE TEST
         </div>
       </div>
     );

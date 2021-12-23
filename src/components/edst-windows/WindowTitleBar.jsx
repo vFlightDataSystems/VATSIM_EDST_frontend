@@ -1,12 +1,12 @@
 import React from 'react';
-import '../../css/header-button-styles.css';
-import '../../css/header-styles.css';
+import '../../css/header-button-styles.scss';
+import '../../css/header-styles.scss';
 
 export default class WindowTitleBar extends React.Component {
 
   render() {
     const {focused, text} = this.props;
-    return (<div className="edst-window-title-bar">
+    return (<div className="edst-window-title-bar no-select">
       <div className="edst-window-title-bar-left">
         <button className={`edst-window-header-block ${focused ? 'focused' : ''}`}>
           <div className="edst-window-header-block edst-window-header-block-8-3"/>
@@ -14,7 +14,7 @@ export default class WindowTitleBar extends React.Component {
       </div>
       <div className={`edst-window-title-bar-middle ${focused ? 'focused' : ''}`}>
         <div className={`edst-window-header-block edst-window-header-block-flex ${focused ? 'focused' : ''}`}>
-          {text}
+          {text.map(s => <div className="edst-window-header-text" key={s}>{s}</div> )}
         </div>
       </div>
       <div className={`edst-window-title-bar-right ${focused ? 'focused' : ''}`}>

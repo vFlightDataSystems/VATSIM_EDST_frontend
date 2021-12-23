@@ -1,0 +1,274 @@
+@import "../styles";
+@import "../header-styles";
+
+$body-border-grey: #888888;
+$body-light-grey: #ADADAD;
+$body-dark-grey: #414141;
+$body-medium-grey: #575757;
+$body-button-disabled-font-grey: #707070;
+$body-button-disabled-border-grey: #707070;
+$body-font-yellow: #ADAD00;
+$body-font-red: #AD0000;
+$body-font-orange: #AD5700;
+$body-font-green: #00AD00;
+$body-font-blue: #21A8A8;
+$body-alt-outline-red: #AD3636;
+$body-window-open-light-grey: #595958;
+$body-window-closed-black: #000000;
+$body-row-sep-color: #AA8800;
+$body-ac-sep-very-dark-grey: #252525;
+
+.body-row {
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  flex-grow: 1;
+  padding: 0 30px;
+
+  &.separator {
+    height: 3px;
+    border-top: 2px solid $body-row-sep-color;
+    border-bottom: 2px solid $body-row-sep-color;
+  }
+
+  &.header {
+    margin: 2px 0;
+    height: 28px;
+    border-top: 1px solid $edst-window-header-border-light-grey;
+    border-bottom: 1px solid $edst-window-header-border-light-grey;
+
+    .body-col {
+      align-items: center;
+      height: 22px;
+
+      > div {
+        align-items: center;
+        display: flex;
+        height: 22px;
+      }
+    }
+  }
+}
+
+.body-col {
+  margin: 0 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+
+  .selected {
+    background-color: $body-light-grey;
+    color: #000000;
+  }
+
+  &.hover:hover {
+    outline: 1px solid #FFFFFF;
+  }
+
+  &.body-col-thin {
+    margin: 0 2px;
+    width: 10px;
+  }
+
+  &.body-col-1 {
+    border: 1px solid transparent;
+    margin: 0 2px;
+    width: 16px;
+
+    &.radio {
+      border: 1px solid #000000;
+      width: 10px;
+
+      &.dep-radio {
+        border-top: 1px solid $body-medium-grey;
+        border-left: 1px solid $body-medium-grey;
+        border-bottom: 1px solid $body-dark-grey;
+        border-right: 1px solid $body-dark-grey;
+      }
+
+      &:hover {
+        outline: 1px solid #FFFFFF;
+
+        &.green {
+          outline: 1px solid $body-font-green;
+          color: $body-font-green;
+        }
+      }
+    }
+
+    &.border {
+      outline: 1px solid $body-light-grey;
+    }
+  }
+
+  &.radio-header {
+    border: 1px solid transparent;
+    margin: 0 2px;
+    width: 10px;
+  }
+
+  &.green {
+    color: $body-font-green;
+  }
+
+  &.red {
+    color: $body-font-red;
+  }
+
+  &.yellow {
+    color: $body-font-yellow;
+  }
+
+  &.orange {
+    color: $body-font-orange;
+  }
+
+  &.fid {
+    justify-content: left;
+    width: 130px;
+    padding: 0 2px;
+  }
+
+  &.pa {
+    width: 44px;
+
+    &.header {
+      width: 44px;
+      justify-content: left;
+    }
+
+  }
+
+  > div {
+    display: block;
+    margin: 0;
+    min-width: 20px;
+    padding-left: 1px;
+
+    &:hover {
+      outline: 1px solid #FFFFFF;
+    }
+  }
+
+  &.rem {
+    margin-right: 10px;
+    width: 8px;
+    border-top: 1px solid $body-medium-grey;
+    border-left: 1px solid $body-medium-grey;
+    border-bottom: 1px solid $body-dark-grey;
+    border-right: 1px solid $body-dark-grey;
+
+    &.header {
+      border: 1px solid transparent;
+
+      :hover {
+        border: 1px solid transparent;
+      }
+    }
+
+    &:hover {
+      border: 1px solid #FFFFFF;
+    }
+  }
+
+  &.type {
+    justify-content: left;
+    width: 100px;
+    margin-right: 0;
+    padding-left: 4px;
+  }
+
+  &.hidden {
+    width: 30px;
+
+    &.content {
+      visibility: hidden;
+    }
+  }
+
+  &.alt {
+    display: flex;
+    justify-content: left;
+    width: 75px;
+    /*padding-left: 2px;*/
+    margin-right: 2px;
+
+    > div {
+
+      &.interim {
+        width: 75px;
+      }
+
+      &.md {
+        outline: 1px solid $body-alt-outline-red;
+      }
+
+      &.header > div {
+        padding-left: 4px;
+        width: 60px;
+      }
+
+      &:active {
+        background-color: $body-light-grey;
+        color: #000000;
+      }
+
+    }
+  }
+
+  &.hidden {
+    width: 20px;
+  }
+
+  &.selected {
+    background-color: $body-light-grey;
+    color: #000000;
+  }
+
+  &.code {
+    width: 40px;
+    margin-left: 0;
+    margin-right: 10px;
+  }
+
+  &.hs {
+    width: 44px;
+    margin: 0;
+
+    &.hdg {
+      justify-content: right;
+      padding-right: 1px;
+    }
+
+    &.spd {
+      justify-content: left;
+      padding-left: 1px;
+    }
+
+    &.hidden {
+      width: 20px;
+    }
+  }
+
+  &.hs-slash {
+    width: 10px;
+    margin: 0;
+  }
+
+  &.hidden {
+    width: 20px;
+  }
+
+  &.route {
+    max-width: 1100px;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    justify-content: left;
+    margin-left: 40px;
+    padding: 0 4px;
+  }
+}

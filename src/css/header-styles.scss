@@ -1,0 +1,88 @@
+@import "styles";
+
+$edst-window-header-button-border-light-grey: #ADADAD;
+$edst-window-header-border-light-grey: #ADADAD;
+$edst-window-header-button-border-medium-grey: #888888;
+$edst-window-header-button-border-dark-grey: #575757;
+
+$edst-window-header-button-disabled-font-grey: #707070;
+$edst-window-header-button-disabled-border-grey: #707070;
+$edst-window-header-button-hover-border: #FFFFFF;
+$edst-window-header-outage-background-red: #590000;
+$edst-windowl-header-window-open-light-grey: #595958;
+
+.edst-window-header {
+
+}
+
+.edst-window-header .outer-button {
+
+  display: inline-flex;
+  height: 26px;
+  margin-left: 6px;
+  margin-right: 6px;
+  margin-bottom: 3px;
+  border: 1px solid #000000;
+
+  &:hover {
+    border: 1px solid $edst-window-header-button-hover-border;
+
+    &[disabled] {
+      pointer-events: none;
+      border: 1px solid #000000;
+    }
+  }
+}
+
+.edst-window-button {
+  display: flex;
+  font-size: 16px;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+  color: $edst-font-grey;
+  border-bottom: 2px solid $edst-window-header-button-border-dark-grey;
+  border-right: 2px solid $edst-window-header-button-border-dark-grey;
+  border-top: 2px solid $edst-window-header-button-border-medium-grey;
+  border-left: 2px solid $edst-window-header-button-border-medium-grey;
+
+  &[disabled] {
+    pointer-events: none;
+    color: $edst-window-header-button-disabled-font-grey;
+  }
+}
+
+.edst-window-header-bottom-row {
+  align-items: center;
+  display: flex;
+  padding: 0 15px;
+  height: 30px;
+  border-top: 1px solid $edst-window-header-border-light-grey;
+  /* border-bottom: 1px solid $edst-window-header-border-light-grey; */
+
+  .input-container {
+    display: inline-flex;
+    border: 1px solid #000000;
+    margin: 2px 10px;
+    width: 75px;
+
+    &:hover {
+      border: 1px solid $edst-window-header-button-hover-border;
+    }
+
+    > input {
+      cursor: default;
+      font-size: 16px;
+      outline: none;
+      display: flex;
+      overflow: hidden;
+      color: $edst-font-grey;
+      border-top: 2px solid $edst-window-header-button-border-dark-grey;
+      border-left: 2px solid $edst-window-header-button-border-dark-grey;
+      border-bottom: 2px solid $edst-window-header-button-border-medium-grey;
+      border-right: 2px solid $edst-window-header-button-border-medium-grey;
+      background-color: #000000;
+    }
+  }
+}
