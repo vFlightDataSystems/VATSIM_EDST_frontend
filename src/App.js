@@ -10,7 +10,8 @@ import RouteMenu from "./components/edst-windows/RouteMenu";
 import {getEdstData} from "./api";
 import Outage from "./components/edst-windows/Outage";
 import AltMenu from "./components/edst-windows/AltMenu";
-import PlanMenu from "./components/edst-windows/PlanMenu";
+import AclPlanMenu from "./components/edst-windows/acl-components/AclPlanMenu";
+import DepPlanMenu from "./components/edst-windows/dep-components/DepPlanMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -94,17 +95,21 @@ export default class App extends React.Component {
   }
 
   aircraftSelect = (event, window, cid, field) => {
-    const {asel} = this.state;
+    let {asel} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({asel: null, menu: null});
     } else {
+      asel = {cid: cid, field: field, window: window};
       this.setState({
-        asel: {cid: cid, field: field, window: window},
+        asel: asel,
         menu: null
       });
       switch (field) {
         case 'alt':
-          this.openMenu(event.target, 'alt-menu', true)
+          this.openMenu(event.target, 'alt-menu', false);
+          break;
+        case 'route':
+          this.openMenu(event.target, 'route-menu', false, asel);
           break;
         default:
           break;
@@ -143,25 +148,38 @@ export default class App extends React.Component {
     }
   }
 
-  openMenu = (ref, name, alignRight) => {
+  openMenu = (ref, name, plan, asel = null) => {
     let {pos} = this.state;
     switch (name) {
-      case 'plan-menu':
+      case 'alt-menu':
         pos[name] = {
-          x: ref.target.offsetLeft,
-          y: ref.target.offsetTop + ref.target.offsetHeight
-        };
-        this.setState({pos: pos, menu: name});
-        break;
-      default:
-        pos[name] = {
-          x: ref.offsetLeft + (alignRight ? ref.clientWidth : 0),
-          y: ref.offsetTop,
+          x: ref.offsetLeft + (plan ? 0 : ref.clientWidth),
+          y: ref.offsetTop - (plan ? 0 : 20),
           w: ref.clientWidth,
           h: ref.clientHeight
         };
         this.setState({pos: pos, menu: name});
         break;
+      case 'route-menu':
+        pos[name] = (asel?.window !== 'dep') ?  {
+          x: ref.offsetLeft - (plan ? 0 : 550),
+          y: ref.offsetTop - (plan ? 0 : 26),
+          w: ref.clientWidth,
+          h: ref.clientHeight
+        } : {
+          x: ref.offsetLeft,
+          y: ref.offsetTop + ref.clientHeight,
+          w: ref.clientWidth,
+          h: ref.clientHeight
+        };
+        this.setState({pos: pos, menu: name});
+        break;
+      default:
+        pos[name] = {
+          x: ref.target.offsetLeft,
+          y: ref.target.offsetTop + ref.target.offsetHeight
+        };
+        this.setState({pos: pos, menu: name});
     }
   }
 
@@ -178,8 +196,8 @@ export default class App extends React.Component {
     const relY = event.pageY - rel.y;
     const ppos = pos[ref.current.id]
     const style = {
-      left: ppos.x + relX,
-      top: ppos.y + relY,
+      left: ppos?.x + relX,
+      top: ppos?.y + relY,
       position: "absolute",
       zIndex: 999,
       height: ref.current.clientHeight,
@@ -321,20 +339,33 @@ export default class App extends React.Component {
             // z_index={open_windows.indexOf('status')}
             closeWindow={() => this.closeWindow('outage')}
           />}
-          {menu === 'plan-menu' && <PlanMenu
+          {menu === 'acl-plan-menu' && <AclPlanMenu
             openMenu={this.openMenu}
             dragging={dragging}
             data={edstData[asel?.cid]}
             setEntryField={this.setEntryField}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
-            pos={pos['plan-menu']}
+            pos={pos['acl-plan-menu']}
             // z_index={open_windows.indexOf('route-menu')}
-            closeWindow={() => this.closeMenu('plan-menu')}
+            closeWindow={() => this.closeMenu('acl-plan-menu')}
+          />}
+          {menu === 'dep-plan-menu' && <DepPlanMenu
+            openMenu={this.openMenu}
+            dragging={dragging}
+            data={edstData[asel?.cid]}
+            setEntryField={this.setEntryField}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            pos={pos['dep-plan-menu']}
+            // z_index={open_windows.indexOf('route-menu')}
+            closeWindow={() => this.closeMenu('dep-plan-menu')}
           />}
           {menu === 'route-menu' && <RouteMenu
             openMenu={this.openMenu}
+            plan={this.plan}
             dragging={dragging}
+            asel={asel}
             data={edstData[asel?.cid]}
             setEntryField={this.setEntryField}
             startDrag={this.startDrag}

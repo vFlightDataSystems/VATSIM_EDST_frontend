@@ -2,7 +2,7 @@ import React from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 
-const COMPLETED_SYMBOL = 'C';
+const COMPLETED_SYMBOL = '✓';
 
 export default class DepTable extends React.Component {
   constructor(props) {
@@ -60,8 +60,8 @@ export default class DepTable extends React.Component {
 
     return (<div className="dep-body no-select">
       <div className="body-row header" key="dep-table-header">
-        <div className="body-col radio-header">
-          C
+        <div className="body-col radio-header checkmark">
+          {COMPLETED_SYMBOL}
         </div>
         <div className="body-col body-col-1"/>
         <div className="body-col fid">
@@ -90,7 +90,7 @@ export default class DepTable extends React.Component {
       </div>
       {Object.entries(edstData).map(([cid, e]) => e.dep_status !== undefined &&
         <div className="body-row" key={`dep-body-${cid}`}>
-        <div className={`body-col body-col-1 radio dep-radio`}
+        <div className={`body-col body-col-1 radio dep-radio checkmark`}
              onMouseDown={() => this.updateStatus(cid)}
         >
           {e.dep_status}

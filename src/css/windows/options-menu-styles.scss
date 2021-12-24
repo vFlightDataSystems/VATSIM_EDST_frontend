@@ -17,7 +17,6 @@ $options-menu-hover-white: #F0F0F0;
 
   &.route {
     width: 550px;
-    height: 200px;
   }
 }
 
@@ -38,63 +37,221 @@ $options-menu-hover-white: #F0F0F0;
   }
 }
 
+@mixin options-button {
+
+  *[disabled] {
+    pointer-events: none;
+    color: $options-menu-medium-grey;
+  }
+
+  button {
+    display: inline-flex;
+    height: 20px;
+    justify-content: center;
+    align-items: center;
+    //margin: 0 6px;
+    font-size: 16px;
+    flex-grow: 1;
+    background-color: #000000;
+    color: $edst-font-grey;
+    border-bottom: 2px solid $options-menu-medium-grey;
+    border-right: 2px solid $options-menu-medium-grey;
+    border-top: 2px solid $options-menu-background-medium-grey;
+    border-left: 2px solid $options-menu-background-medium-grey;
+    //width: auto;
+
+    &:hover {
+      outline: 1px solid $options-menu-hover-white;
+    }
+
+    &.selected {
+      background-color: $options-menu-light-grey;
+      color: #000000;
+    }
+
+    &.tiny {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
 .options-body {
   background-color: #000000;
-  padding: 4px 10px;
+  padding: 2px 0;
   border-top: 1px solid $options-menu-medium-grey;
   border-left: 1px solid $options-menu-medium-grey;
   border-bottom: 1px solid $options-menu-dark-grey;
   border-right: 1px solid $options-menu-dark-grey;
 
-  .options-row {
-    display: flex;
-    flex-grow: 1;
-    justify-content: left;
+  * .prefroute-button {
+    padding: 0;
+    display: inline-flex;
+    //height: 20px;
+    width: 75px;
+    margin-left: 6px;
+    margin-right: 6px;
+    justify-content: center;
     align-items: center;
-    padding: 2px;
-    height: 20px;
     border: 1px solid #000000;
 
     &:hover {
       border: 1px solid $options-menu-hover-white;
+
+      &[disabled] {
+        pointer-events: none;
+        border: 1px solid #000000;
+      }
+    }
+  }
+
+  .options-row {
+
+    @include options-button;
+
+    display: flex;
+    flex-grow: 1;
+    justify-content: left;
+    align-items: center;
+    padding: 0 4px;
+    border: none;
+    min-height: 20px;
+
+    &.bottom {
+      //padding: 0;
+      margin: 0;
     }
 
     &.fid {
       pointer-events: none;
       justify-content: center;
-      height: 35px;
+      height: 30px;
     }
 
-    &[disabled] {
+    &.underline {
       pointer-events: none;
-      color: $options-menu-medium-grey;
+      justify-content: center;
+      height: 30px;
+      margin-bottom: 4px;
+
+      &:before{
+        content: "";
+        position: absolute;
+        width: 18%;
+        height: 30px;
+        //bottom: 0;
+        left: 41%;
+        border-bottom: 1px solid $options-menu-light-grey;
+      }
+    }
+
+    &.bottom {
+      margin-top: 10px;
+      //margin-right: 4px;
+      margin-bottom: 4px;
+      flex-grow: 1;
+
+      *.left > button {
+        margin-right: 12px;
+      }
+    }
+
+    &.route-row {
+      padding: 4px 0;
+    }
+
+    &.top-border {
+      border-top: 1px solid $options-menu-light-grey;
+    }
+
+    &.bottom-border {
+      border-bottom: 1px solid $options-menu-light-grey;
     }
   }
 
-  .options-bottom-row {
-    margin-top: 20px;
-    margin-bottom: 5px;
+  *[disabled] {
+    pointer-events: none;
+    color: $options-menu-medium-grey;
+  }
+
+  *.hover:hover {
+    border: 1px solid $options-menu-hover-white;
+  }
+
+  *.options-col {
+
+    //@include options-button;
+
+    margin: 0 4px;
     flex-grow: 1;
+    flex-flow: row;
     justify-content: center;
     align-items: center;
     vertical-align: center;
+    border: 1px solid transparent;
+    padding: 2px 2px;
 
-    > button {
+    &.display {
+      border: 2px solid $options-menu-medium-grey;
+      overflow: hidden;
+    }
+
+    &.button {
+      //width: 120px;
+      padding: 0 4px;
       display: flex;
+      flex-grow: 0;
+      min-height: 24px;
+
+      > button {
+        margin-right: 5px;
+      }
+    }
+
+    &.left {
+    }
+
+    &.prefroute-col {
+      padding-left: 30px;
+    }
+
+    &.right {
+      > button {
+        display: flex;
+        margin-left: auto;
+      }
+    }
+
+    .route-input {
       justify-content: center;
       align-items: center;
       vertical-align: center;
-      margin-left: auto;
-      margin-right: 0;
-      width: 55px;
-      color: $edst-font-grey;
-      border-bottom: 2px solid $options-menu-medium-grey;
-      border-right: 2px solid $options-menu-medium-grey;
+      padding: 0;
+      display: flex;
+      overflow: hidden;
       border-top: 2px solid $options-menu-background-medium-grey;
       border-left: 2px solid $options-menu-background-medium-grey;
+      border-bottom: 2px solid $options-menu-medium-grey;
+      border-right: 2px solid $options-menu-medium-grey;
 
-      &:hover {
-        outline: 1px solid $options-menu-hover-white;
+      .ppos {
+        border: none;
+        margin: 0 20px 0 3px;
+        font-size: 18px;
+      }
+
+      > input {
+        cursor: default;
+        font-size: 16px;
+        outline: none;
+        flex-grow: 1;
+        color: $edst-font-grey;
+        background-color: #000000;
+        border: 1px solid transparent;
+
+        &:hover {
+          border: 1px solid $options-menu-hover-white;
+        }
       }
     }
   }

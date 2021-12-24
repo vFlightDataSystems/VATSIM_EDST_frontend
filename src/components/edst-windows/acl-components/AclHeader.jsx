@@ -14,9 +14,9 @@ export default class AclHeader extends React.Component {
         closeWindow={this.props.closeWindow}
         text={['Aircraft List', 'Sector/ACID', `${manual ? 'Manual' : 'Automatic'}`]}
       />
-      <div className="edst-window-header-button-bar no-select">
+      <div className="no-select">
         <div className="outer-button edst-plan-options-button" disabled={asel === null}
-             onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}>
+             onMouseDown={(e) => this.props.openMenu(e, 'acl-plan-menu')}>
           <div className="edst-window-button"
                disabled={asel === null}>
             Plan Options...
