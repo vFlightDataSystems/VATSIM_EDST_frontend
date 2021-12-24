@@ -16,7 +16,7 @@ $options-menu-hover-white: #F0F0F0;
   }
 
   &.route {
-    width: 550px;
+    width: 570px;
   }
 }
 
@@ -191,7 +191,9 @@ $options-menu-hover-white: #F0F0F0;
     border: 1px solid transparent;
     padding: 2px 2px;
 
-    &.display {
+    &.display-route {
+      text-overflow: ellipsis;
+      white-space: nowrap;
       border: 2px solid $options-menu-medium-grey;
       overflow: hidden;
     }

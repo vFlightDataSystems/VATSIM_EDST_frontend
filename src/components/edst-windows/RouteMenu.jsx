@@ -10,6 +10,9 @@ export default class RouteMenu extends React.Component {
       dep: this.props.asel?.window === 'dep',
       trial: this.props.asel?.window !== 'dep',
       route: this.props.data?.route,
+      prefroute_eligible_only: true,
+      append_star: false,
+      append_oplus: false,
       focused: false,
     };
     this.routeMenuRef = React.createRef();
@@ -27,7 +30,15 @@ export default class RouteMenu extends React.Component {
   }
 
   render() {
-    const {focused, trial, route, dep} = this.state;
+    const {
+      focused, 
+      trial, 
+      route, 
+      dep, 
+      prefroute_eligible_only, 
+      append_star, 
+      append_oplus
+    } = this.state;
     const {pos, data} = this.props;
 
     return (<div
@@ -90,15 +101,15 @@ export default class RouteMenu extends React.Component {
           </div>
           <div className="options-row route-row bottom-border">
             <div className="options-col hover button"
-                 onMouseDown={() => {}}
+                 onMouseDown={() => this.setState({append_star: !append_star, append_oplus: false})}
             >
-              <button className="tiny" disabled={true}/>
+             <button className={`tiny ${append_star ? 'selected' : ''}`} disabled={true}/>    
               Append *
             </div>
             <div className="options-col hover button"
-                 onMouseDown={() => {}}
+                  onMouseDown={() => this.setState({append_oplus: !append_oplus, append_star: false})} 
             >
-              <button className="tiny selected" disabled={true}/>
+              <button className={`tiny ${append_oplus ? 'selected' : ''}`} disabled={true}/>
               Append<span>&nbsp;⊕</span>
             </div>
           </div>
@@ -106,8 +117,8 @@ export default class RouteMenu extends React.Component {
             Direct-To-Fix
           </div>
           <div className="options-row">
-            <div className="options-col display">
-              ./{route}${data.dest}
+            <div className="options-col display-route">
+              ./{route}{data.dest}
             </div>
           </div>
           <div className="options-row route-row bottom-border">
@@ -123,12 +134,16 @@ export default class RouteMenu extends React.Component {
               // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
             >
               <div className="prefroute-button">
-                <button className="">
+                <button className={prefroute_eligible_only ? 'selected' : ''}
+                        onMouseDown={() => this.setState({prefroute_eligible_only: true})}
+                >
                   ELIGIBLE
                 </button>
               </div>
               <div className="prefroute-button">
-                <button className="selected">
+                <button className={!prefroute_eligible_only ? 'selected' : ''}
+                        onMouseDown={() => this.setState({prefroute_eligible_only: false})}
+                >
                   ALL
                 </button>
               </div>
