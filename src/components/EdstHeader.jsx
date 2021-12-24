@@ -13,7 +13,7 @@ export default class EdstHeader extends React.Component {
         <div className="edst-header-row">
           <div className="edst-header-row-left">
             <button className="tiny" disabled={true}>
-              ↓
+              🡳
             </button>
             <button className={`small ${open_windows.includes('more') ? 'enabled' : ''}`}
                     disabled={disabled_windows.includes('more')}

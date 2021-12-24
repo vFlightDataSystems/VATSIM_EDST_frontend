@@ -16,7 +16,7 @@ export default class DepHeader extends React.Component {
       <div className="edst-window-header-button-bar">
         <div className="outer-button edst-plan-options-button">
           <div className="edst-window-button" disabled={asel === null}
-                  onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}
+                  onMouseDown={(e) => this.props.openMenu(e, 'dep-plan-menu')}
           >
             Plan Options...
           </div>

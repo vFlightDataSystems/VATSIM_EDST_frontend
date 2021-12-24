@@ -86,6 +86,10 @@ $body-ac-sep-very-dark-grey: #252525;
         border-left: 1px solid $body-medium-grey;
         border-bottom: 1px solid $body-dark-grey;
         border-right: 1px solid $body-dark-grey;
+        &.checkmark {
+          color: #FFFFFF;
+          font-size: 10px;
+        }
       }
 
       &:hover {
@@ -104,9 +108,14 @@ $body-ac-sep-very-dark-grey: #252525;
   }
 
   &.radio-header {
+    font-size: 14px;
     border: 1px solid transparent;
     margin: 0 2px;
     width: 10px;
+    &.checkmark {
+      color: #FFFFFF;
+      font-size: 10px;
+    }
   }
 
   &.green {

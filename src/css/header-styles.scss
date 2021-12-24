@@ -11,10 +11,6 @@ $edst-window-header-button-hover-border: #FFFFFF;
 $edst-window-header-outage-background-red: #590000;
 $edst-windowl-header-window-open-light-grey: #595958;
 
-.edst-window-header {
-
-}
-
 .edst-window-header .outer-button {
 
   display: inline-flex;
@@ -31,6 +27,42 @@ $edst-windowl-header-window-open-light-grey: #595958;
       pointer-events: none;
       border: 1px solid #000000;
     }
+  }
+
+  &.edst-plan-options-button {
+    width: 170px;
+  }
+
+  &.edst-hold-button {
+    width: 80px;
+  }
+
+  &.edst-show-button {
+    width: 52px;
+  }
+
+  &.edst-show-all-button {
+    width: 90px;
+  }
+
+  &.edst-sort-button {
+    width: 80px;
+  }
+
+  &.edst-tools-button {
+    width: 90px;
+  }
+
+  &.edst-posting-mode-button {
+    width: 120px;
+  }
+
+  &.edst-template-button {
+    width: 110px;
+  }
+
+  &.edst-clean-up-button {
+    width: 90px;
   }
 }
 

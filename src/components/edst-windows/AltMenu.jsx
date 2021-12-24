@@ -15,7 +15,10 @@ export default class AltMenu extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.asel !== prevProps.asel) {
-      this.setState({dep: this.props.asel?.window === 'dep'});
+      const {trial} = this.state;
+      this.setState({dep: this.props.asel?.window === 'dep',
+        trial: this.props.asel.window !== 'dep' && trial
+      });
     }
   }
 
@@ -27,7 +30,7 @@ export default class AltMenu extends React.Component {
         className="alt-menu no-select"
         ref={this.routeMenuRef}
         id="alt-menu"
-        style={{left: pos.x + "px", top: pos.y + "px"}}
+        style={{left: pos.x, top: pos.y}}
       >
         <div className={`alt-menu-header no-select`}
         >
