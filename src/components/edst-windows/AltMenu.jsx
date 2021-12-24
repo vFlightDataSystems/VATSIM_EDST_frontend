@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import '../../css/header-button-styles.scss';
 import '../../css/header-styles.scss';
 import '../../css/windows/alt-menu-styles.scss';
@@ -9,6 +10,9 @@ export default class AltMenu extends React.Component {
     this.state = {
       dep: this.props.asel?.window === 'dep',
       trial: this.props.asel.window !== 'dep',
+      alt_center: this.props.data?.altitude,
+      alt_selected: this.props.data?.altitude,
+      interim_selected: false,
       t_hover: false
     };
   }
@@ -17,13 +21,15 @@ export default class AltMenu extends React.Component {
     if (this.props.asel !== prevProps.asel) {
       const {trial} = this.state;
       this.setState({dep: this.props.asel?.window === 'dep',
-        trial: this.props.asel.window !== 'dep' && trial
+        trial: this.props.asel.window !== 'dep' && trial,
+        alt_center: this.props.data?.altitude,
+        alt_selected: this.props.data?.altitude
       });
     }
   }
 
   render() {
-    const {trial, t_hover, dep} = this.state;
+    const {trial, t_hover, dep, alt_center, alt_selected, interim_selected} = this.state;
     const {data, asel, pos} = this.props;
 
     return (<div
@@ -58,28 +64,26 @@ export default class AltMenu extends React.Component {
           {!dep ? 'PROCEDURE' : 'NO ALT'}
         </div>
         <div className="alt-menu-select-container">
-          <div className={`alt-menu-container-row ${!trial && (t_hover === 200) ? 't-hover' : ''}`}>
-            <div className={`alt-menu-container-col`}>
-              200
+        {_.range(-20, 30, 10).map(i => {
+          const alt = Number(data.altitude) + i;
+          return <div 
+            className={`alt-menu-container-row ${!trial && (t_hover === alt) ? 't-hover' : ''} ${(alt_selected === alt && interim_selected) ? 'selected' : ''}`}
+            key={`alt-${i}`}
+          >
+            <div className={`alt-menu-container-col ${alt_selected === alt ? 'selected' : ''}`}
+                 onMouseDown={() => this.setState({alt_selected: alt, interim_selected: false})}
+            >
+              {String(alt).padStart(3, '0')}
             </div>
-            {!dep && <div className={`alt-menu-container-col-t ${!trial ? 'enabled' : ''}`}
-                          onMouseEnter={() => !trial && this.setState({t_hover: 200})}
+            {!dep && <div className={`alt-menu-container-col-t`}
+                          disabled={trial}
+                          onMouseEnter={() => !trial && this.setState({t_hover: alt})}
                           onMouseLeave={() => !trial && this.setState({t_hover: null})}
+                          onMouseDown={() => this.setState({alt_selected: alt, interim_selected: true})}
             >
               T
             </div>}
-          </div>
-          <div className={`alt-menu-container-row ${!trial && (t_hover === 190) ? 't-hover' : ''}`}>
-            <div className={`alt-menu-container-col`}>
-              190
-            </div>
-            <div className={`alt-menu-container-col-t ${!trial ? 'enabled' : ''}`}
-                 onMouseEnter={() => !trial && this.setState({t_hover: 190})}
-                 onMouseLeave={() => !trial && this.setState({t_hover: null})}
-            >
-              T
-            </div>
-          </div>
+          </div>;})}
         </div>
       </div>
     );

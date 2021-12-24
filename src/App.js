@@ -162,7 +162,7 @@ export default class App extends React.Component {
         break;
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ?  {
-          x: ref.offsetLeft - (plan ? 0 : 550),
+          x: ref.offsetLeft - (plan ? 0 : 570),
           y: ref.offsetTop - (plan ? 0 : 26),
           w: ref.clientWidth,
           h: ref.clientHeight
