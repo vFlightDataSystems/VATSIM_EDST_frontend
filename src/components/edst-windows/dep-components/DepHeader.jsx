@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../../css/header-button-styles.scss';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 
@@ -16,19 +15,20 @@ export default class DepHeader extends React.Component {
       <div className="edst-window-header-button-bar">
         <div className="outer-button edst-plan-options-button">
           <div className="edst-window-button" disabled={asel === null}
-                  onMouseDown={(e) => this.props.openMenu(e, 'dep-plan-menu')}
+               onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}
           >
             Plan Options...
           </div>
         </div>
         <div className="outer-button edst-sort-button">
-          <div className="edst-window-button">
+          <div className="edst-window-button"
+               onMouseDown={(e) => this.props.openMenu(e, 'sort-menu')}>
             Sort...
           </div>
         </div>
         <div className="outer-button edst-posting-mode-button">
           <div className="edst-window-button"
-                  onMouseDown={this.props.togglePosting}
+               onMouseDown={this.props.togglePosting}
           >
             Posting Mode
           </div>

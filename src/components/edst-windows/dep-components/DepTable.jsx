@@ -168,7 +168,7 @@ export default class DepTable extends React.Component {
         <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
         >
-          {e.dep}{e.route}{e.dest}
+          {e.dep}{e.route}
         </div>
       </div>)}
     </div>);

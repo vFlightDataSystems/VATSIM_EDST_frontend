@@ -61,12 +61,12 @@ export default class AclTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.acl_status === undefined) {
-      this.props.setEntryField(cid, 'acl_status', '')
+      this.props.setEntryField(cid, 'acl_status', '');
     } else {
       if (entry?.acl_status === '') {
-        this.props.setEntryField(cid, 'acl_status', ON_FREQ_SYMBOL)
+        this.props.setEntryField(cid, 'acl_status', ON_FREQ_SYMBOL);
       } else {
-        this.props.setEntryField(cid, 'acl_status', '')
+        this.props.setEntryField(cid, 'acl_status', '');
       }
     }
   }
@@ -180,7 +180,7 @@ export default class AclTable extends React.Component {
           <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
           >
-            {e.dep}{e.route}{e.dest}
+            {e.dep}{e.route}
           </div>
         </div>)}
       <div className="body-row separator"/>
