@@ -10,8 +10,8 @@ import RouteMenu from "./components/edst-windows/RouteMenu";
 import {getEdstData} from "./api";
 import Outage from "./components/edst-windows/Outage";
 import AltMenu from "./components/edst-windows/AltMenu";
-import AclPlanMenu from "./components/edst-windows/acl-components/AclPlanMenu";
-import DepPlanMenu from "./components/edst-windows/dep-components/DepPlanMenu";
+import PlanMenu from "./components/edst-windows/PlanMenu";
+import SortMenu from "./components/edst-windows/SortMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -20,13 +20,16 @@ const defaultPos = {
 
 const draggingHideCursor = ['edst-status', 'edst-outage']
 
+const DISABLED_WINDOWS = ['gpd', 'plans', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
+
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open_windows: [],
-      disabled_windows: ['gpd', 'plans', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'],
+      sorting: {acl: 'ACID', dep: 'ACID'},
+      disabled_windows: DISABLED_WINDOWS,
       focused_window: '',
       sector_id: '',
       menu: null,
@@ -50,7 +53,7 @@ export default class App extends React.Component {
   async componentDidMount() {
     this.setState({sector_id: '37'});
     await this.refresh();
-    const update_interval_id = setInterval(this.refresh, 15000);
+    const update_interval_id = setInterval(this.refresh, 60000);
     this.setState({
       fp_update_interval_id: update_interval_id
     });
@@ -100,6 +103,9 @@ export default class App extends React.Component {
       this.setState({asel: null, menu: null});
     } else {
       asel = {cid: cid, field: field, window: window};
+      // if (edstData[cid]?.acl_status === undefined) {
+      //   this.setEntryField(cid, `${window}_status`, '');
+      // }
       this.setState({
         asel: asel,
         menu: null
@@ -161,7 +167,7 @@ export default class App extends React.Component {
         this.setState({pos: pos, menu: name});
         break;
       case 'route-menu':
-        pos[name] = (asel?.window !== 'dep') ?  {
+        pos[name] = (asel?.window !== 'dep') ? {
           x: ref.offsetLeft - (plan ? 0 : 570),
           y: ref.offsetTop - (plan ? 0 : 26),
           w: ref.clientWidth,
@@ -267,6 +273,7 @@ export default class App extends React.Component {
       edstData,
       asel,
       disabled_windows,
+      sorting,
       open_windows,
       sector_id,
       menu,
@@ -304,6 +311,7 @@ export default class App extends React.Component {
             {dragging_cursor_hide && <div className="cursor"/>}
           </div>
           {open_windows.includes('acl') && <Acl
+            sorting={sorting.acl}
             unmount={this.unmount}
             openMenu={this.openMenu}
             dragging={dragging}
@@ -315,6 +323,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeWindow('acl')}
           />}
           {open_windows.includes('dep') && <Dep
+            sorting={sorting.dep}
             unmount={this.unmount}
             openMenu={this.openMenu}
             dragging={dragging}
@@ -339,27 +348,27 @@ export default class App extends React.Component {
             // z_index={open_windows.indexOf('status')}
             closeWindow={() => this.closeWindow('outage')}
           />}
-          {menu === 'acl-plan-menu' && <AclPlanMenu
+          {menu === 'plan-menu' && <PlanMenu
             openMenu={this.openMenu}
             dragging={dragging}
+            asel={asel}
             data={edstData[asel?.cid]}
             setEntryField={this.setEntryField}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
-            pos={pos['acl-plan-menu']}
+            pos={pos['plan-menu']}
             // z_index={open_windows.indexOf('route-menu')}
-            closeWindow={() => this.closeMenu('acl-plan-menu')}
+            closeWindow={() => this.closeMenu('plan-menu')}
           />}
-          {menu === 'dep-plan-menu' && <DepPlanMenu
+          {menu === 'sort-menu' && <SortMenu
             openMenu={this.openMenu}
             dragging={dragging}
-            data={edstData[asel?.cid]}
             setEntryField={this.setEntryField}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
-            pos={pos['dep-plan-menu']}
+            pos={pos['sort-menu']}
             // z_index={open_windows.indexOf('route-menu')}
-            closeWindow={() => this.closeMenu('dep-plan-menu')}
+            closeWindow={() => this.closeMenu('sort-menu')}
           />}
           {menu === 'route-menu' && <RouteMenu
             openMenu={this.openMenu}

@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../../css/header-button-styles.scss';
 import '../../../css/windows/titlebar-styles.scss';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
@@ -16,7 +15,7 @@ export default class AclHeader extends React.Component {
       />
       <div className="no-select">
         <div className="outer-button edst-plan-options-button" disabled={asel === null}
-             onMouseDown={(e) => this.props.openMenu(e, 'acl-plan-menu')}>
+             onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}>
           <div className="edst-window-button"
                disabled={asel === null}>
             Plan Options...
@@ -38,7 +37,8 @@ export default class AclHeader extends React.Component {
           </div>
         </div>
         <div className="outer-button edst-sort-button">
-          <div className="edst-window-button">
+          <div className="edst-window-button"
+               onMouseDown={(e) => this.props.openMenu(e, 'sort-menu')}>
             Sort...
           </div>
         </div>

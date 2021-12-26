@@ -8,6 +8,7 @@ $alt-menu-hover-white: #F0F0F0;
 $alt-menu-font-white: #D6D6D6;
 $alt-menu-row-height: 20px;
 $alt-menu-selected-light-pink: #AD6C6C;
+$alt-selected-font-white: #D6D6D6;
 
 .alt-menu {
   background-color: $alt-menu-background-grey;
@@ -73,11 +74,12 @@ $alt-menu-selected-light-pink: #AD6C6C;
 
     *.selected {
       background-color: $alt-menu-selected-light-pink;
+      color: $alt-selected-font-white;
     }
 
 
     .alt-menu-container-row {
-      width: 60px;
+      width: 52px;
       display: flex;
       margin: 1px 6px;
       height: 20px;
@@ -104,13 +106,18 @@ $alt-menu-selected-light-pink: #AD6C6C;
         &.t-hover {
           border: 1px solid $alt-menu-hover-white;
         }
+
+        &.selected {
+          background-color: $alt-menu-selected-light-pink;
+          color: $alt-selected-font-white;
+        }
       }
 
       .alt-menu-container-col-t {
         display: flex;
         /*margin-left: 6px;*/
-        padding-left: 12px;
-        padding-right: 6px;
+        padding-left: 8px;
+        padding-right: 2px;
         justify-content: left;
         align-items: center;
         /*height: 10px;*/
@@ -119,13 +126,6 @@ $alt-menu-selected-light-pink: #AD6C6C;
         &[disabled] {
           pointer-events: none;
           color: $alt-menu-medium-grey;
-
-          //&:hover {
-          //  padding-left: 13px;
-          //  padding-right: 5px;
-          //  border: 1px solid $alt-menu-hover-white;
-          //  border-left: none;
-          //}
         }
       }
     }

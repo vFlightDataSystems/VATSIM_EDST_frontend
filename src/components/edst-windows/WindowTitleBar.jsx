@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../css/header-button-styles.scss';
 import '../../css/header-styles.scss';
 
 export default class WindowTitleBar extends React.Component {

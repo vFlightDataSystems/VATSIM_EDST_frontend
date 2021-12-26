@@ -12,11 +12,15 @@ $options-menu-hover-white: #F0F0F0;
   border: none;
 
   &.plan {
-    width: 250px;
+    width: 220px;
   }
 
   &.route {
     width: 570px;
+  }
+
+  &.sort {
+    width: 170px;
   }
 }
 
@@ -84,6 +88,10 @@ $options-menu-hover-white: #F0F0F0;
   border-bottom: 1px solid $options-menu-dark-grey;
   border-right: 1px solid $options-menu-dark-grey;
 
+  &.sort {
+    padding: 4px 0;
+  }
+
   * .prefroute-button {
     padding: 0;
     display: inline-flex;
@@ -125,7 +133,13 @@ $options-menu-hover-white: #F0F0F0;
     &.fid {
       pointer-events: none;
       justify-content: center;
-      height: 30px;
+      height: 40px;
+    }
+
+    &.sector {
+      padding-bottom: 4px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid $options-menu-light-grey;
     }
 
     &.underline {
@@ -153,6 +167,14 @@ $options-menu-hover-white: #F0F0F0;
 
       *.left > button {
         margin-right: 12px;
+      }
+
+      * > button {
+        min-width: 47px;
+      }
+
+      &.sort {
+        margin-top: 25px;
       }
     }
 
@@ -196,6 +218,31 @@ $options-menu-hover-white: #F0F0F0;
       white-space: nowrap;
       border: 2px solid $options-menu-medium-grey;
       overflow: hidden;
+    }
+
+    &.sort {
+      justify-content: left;
+      display: inline-flex;
+      height: 22px;
+      padding: 0 6px;
+
+      &:hover {
+        border: 1px solid $options-menu-light-grey;
+      }
+
+      .box {
+        border-bottom: 2px solid $options-menu-medium-grey;
+        border-right: 2px solid $options-menu-medium-grey;
+        border-top: 2px solid $options-menu-background-medium-grey;
+        border-left: 2px solid $options-menu-background-medium-grey;
+        width: 6px;
+        height: 6px;
+        margin-right: 6px;
+
+        &.diamond {
+          transform: rotate(45deg);
+        }
+      }
     }
 
     &.button {

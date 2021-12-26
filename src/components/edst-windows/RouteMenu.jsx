@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../css/header-button-styles.scss';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 

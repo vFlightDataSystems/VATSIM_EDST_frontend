@@ -1,9 +1,8 @@
 import React from 'react';
-import '../../../css/header-button-styles.scss';
-import '../../../css/header-styles.scss';
-import '../../../css/windows/options-menu-styles.scss';
+import '../../css/header-styles.scss';
+import '../../css/windows/options-menu-styles.scss';
 
-export default class AclPlanMenu extends React.Component {
+export default class PlanMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,14 +13,15 @@ export default class AclPlanMenu extends React.Component {
 
   render() {
     const {focused} = this.state;
-    const {pos, data} = this.props;
+    const {pos, data, asel} = this.props;
+    const dep = asel?.window === 'dep';
 
     return (<div
         onMouseEnter={() => this.setState({focused: true})}
         onMouseLeave={() => this.setState({focused: false})}
         className="options-menu plan no-select"
         ref={this.planMenuRef}
-        id="acl-plan-menu"
+        id="plan-menu"
         style={{left: pos.x, top: pos.y}}
       >
         <div className={`options-menu-header ${focused ? 'focused' : ''}`}
@@ -41,11 +41,11 @@ export default class AclPlanMenu extends React.Component {
               Altitude...
             </div>
           </div>
-          <div className="options-row">
+          {!dep && <div className="options-row">
             <div className="options-col hover" disabled={true}>
               Speed...
             </div>
-          </div>
+          </div>}
           <div className="options-row">
             <div className="options-col hover"
                  onMouseDown={() => this.props.openMenu(this.planMenuRef.current, 'route-menu', true)}
@@ -58,21 +58,21 @@ export default class AclPlanMenu extends React.Component {
               Previous Route
             </div>
           </div>
-          <div className="options-row">
+          {!dep && <div className="options-row">
             <div className="options-col hover" disabled={true}>
               Stop Probe...
             </div>
-          </div>
+          </div>}
           <div className="options-row">
             <div className="options-col hover" disabled={true}>
-              Trial Restrictions...
+              Trial {dep ? 'Departure' : 'Restrictions'}...
             </div>
           </div>
-          <div className="options-row">
+          {!dep && <div className="options-row">
             <div className="options-col hover">
               Plans
             </div>
-          </div>
+          </div>}
           <div className="options-row">
             <div className="options-col hover">
               Keep
