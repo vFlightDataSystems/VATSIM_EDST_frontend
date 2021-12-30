@@ -6,7 +6,7 @@ import Time from "./Time";
 export default class EdstHeader extends React.Component {
 
   render() {
-    const {open_windows, disabled_windows, sector_id, acl_num, dep_num, sig_num, not_num, gi_num} = this.props;
+    const {open_windows, plan_disabled, disabled_windows, sector_id, acl_num, dep_num, sig_num, not_num, gi_num} = this.props;
 
     return (
       <div className="edst-header">
@@ -40,7 +40,7 @@ export default class EdstHeader extends React.Component {
               GPD
             </button>
             <button className={open_windows.includes('plans') ? 'enabled' : ''}
-                    disabled={disabled_windows.includes('plans')}
+                    disabled={plan_disabled}
                     onMouseDown={() => this.props.openWindow('plans')}
             >
               PLANS

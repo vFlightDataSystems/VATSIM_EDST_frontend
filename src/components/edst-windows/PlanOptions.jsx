@@ -2,7 +2,7 @@ import React from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 
-export default class PlanMenu extends React.Component {
+export default class PlanOptions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

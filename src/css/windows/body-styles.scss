@@ -24,7 +24,7 @@ $body-ac-sep-very-dark-grey: #252525;
   align-items: center;
   height: 20px;
   flex-grow: 1;
-  padding: 0 30px;
+  padding: 0 10px;
 
   &.separator {
     height: 3px;
@@ -65,6 +65,18 @@ $body-ac-sep-very-dark-grey: #252525;
 
   &.hover:hover {
     outline: 1px solid #FFFFFF;
+  }
+
+  &.plans-display-col-1 {
+    width: 150px;
+    justify-content: left;
+    padding-left: 4px;
+  }
+
+  &.plans-display-col-1 {
+    width: 150px;
+    justify-content: left;
+    padding-left: 4px;
   }
 
   &.body-col-thin {

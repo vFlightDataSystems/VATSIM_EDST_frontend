@@ -5,40 +5,50 @@ import '../../css/windows/options-menu-styles.scss';
 export default class RouteMenu extends React.Component {
   constructor(props) {
     super(props);
+    const dep = this.props.asel?.window === 'dep';
     this.state = {
-      dep: this.props.asel?.window === 'dep',
-      trial: this.props.asel?.window !== 'dep',
-      route: this.props.data?.route,
-      prefroute_eligible_only: true,
+      dep: dep,
+      trial: !dep,
+      route: this.props.data?.[dep ? 'route' : 'remaining_route'],
+      prefroute_eligible_only: false,
       append_star: false,
       append_oplus: false,
       focused: false,
+      prefrouteDeltaY: 0
     };
     this.routeMenuRef = React.createRef();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.asel !== prevProps.asel) {
+    if (this.props.data !== prevProps.data) {
       const {trial} = this.state;
+      const dep = this.props.asel?.window === 'dep';
       this.setState({
-        dep: this.props.asel?.window === 'dep',
-        route: this.props.data?.route,
-        trial: this.props.asel.window !== 'dep' && trial
+        dep: dep,
+        route: this.props.data?.[dep ? 'route' : 'remaining_route'],
+        trial: !dep && trial,
+        append_star: false,
+        append_oplus: false,
+        focused: false,
+        prefrouteDeltaY: 0
       });
     }
   }
 
   render() {
     const {
-      focused, 
-      trial, 
-      route, 
-      dep, 
-      prefroute_eligible_only, 
-      append_star, 
-      append_oplus
+      focused,
+      trial,
+      route,
+      dep,
+      prefroute_eligible_only,
+      append_star,
+      append_oplus,
+      prefrouteDeltaY
     } = this.state;
     const {pos, data} = this.props;
+    const remaining_route = data?.remaining_route !== undefined ? data?.remaining_route : data?.route;
+    const route_data = (dep || data?.remaining_route_data === undefined) ? data?.route_data : data?.remaining_route_data;
 
     return (<div
         onMouseEnter={() => this.setState({focused: true})}
@@ -85,10 +95,10 @@ export default class RouteMenu extends React.Component {
           >
             <div className="options-col">
               <div className="route-input">
-                <div className="ppos" disabled={true}>
-                  BOS100030..
-                </div>
-                <input value={data.dest} onChange={(e) => this.setState({route: e.target.value})}/>
+                {/*<div className="ppos" disabled={true}>*/}
+                {/*  XXX000000..*/}
+                {/*</div>*/}
+                <input value={route} onChange={(e) => this.setState({route: e.target.value})}/>
               </div>
             </div>
           </div>
@@ -102,11 +112,11 @@ export default class RouteMenu extends React.Component {
             <div className="options-col hover button"
                  onMouseDown={() => this.setState({append_star: !append_star, append_oplus: false})}
             >
-             <button className={`tiny ${append_star ? 'selected' : ''}`} disabled={true}/>    
+              <button className={`tiny ${append_star ? 'selected' : ''}`} disabled={true}/>
               Append *
             </div>
             <div className="options-col hover button"
-                  onMouseDown={() => this.setState({append_oplus: !append_oplus, append_star: false})} 
+                 onMouseDown={() => this.setState({append_oplus: !append_oplus, append_star: false})}
             >
               <button className={`tiny ${append_oplus ? 'selected' : ''}`} disabled={true}/>
               Append<span>&nbsp;⊕</span>
@@ -117,12 +127,19 @@ export default class RouteMenu extends React.Component {
           </div>
           <div className="options-row">
             <div className="options-col display-route">
-              ./{route}{data.dest}
+              ./{!dep ? remaining_route : data?.route}.{data.dest}
             </div>
           </div>
-          <div className="options-row route-row bottom-border">
-
-          </div>
+          {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
+                                                                                  key={`route-menu-row-${i}`}>
+            {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
+              const fix = route_data[i + j * 10]?.fix;
+              return (fix && <div className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}>
+                {fix}
+              </div>);
+            })}
+          </div>)}
+          <div className="options-row route-row bottom-border"/>
           <div className="options-row route-row underline">
             Apply ATC Preferred Route
           </div>
@@ -148,9 +165,23 @@ export default class RouteMenu extends React.Component {
               </div>
             </div>
           </div>
+          <div className="prefroute-container"
+               onWheel={(e) => this.setState({prefrouteDeltaY: Math.max(Math.min(((prefrouteDeltaY + e.deltaY) / 100 | 0), data?.routes?.length), 0)})}>
+            {dep && data?.routes.slice(prefrouteDeltaY, prefrouteDeltaY + 5).map(route =>
+              <div className="options-row prefroute-row">
+                <div className="options-col prefroute-col hover"
+                     onMouseDown={() => {
+                      this.props.trialPlan({cid: data.cid, callsign: data.callsign, plan_data: {route: route.route, route_data: route.route_data}, msg: `AM ${data.cid} RTE ${route.route}`});
+                      this.props.closeWindow();
+                     }}
+                >
+                  {route.route}.{data?.dest}
+                </div>
+              </div>)}
+          </div>
           <div className="options-row bottom">
             <div className="options-col left">
-              <button onMouseDown={() => this.props.plan({route: route})}>
+              <button>
                 Flight Data
               </button>
               <button disabled={true}>

@@ -61,19 +61,31 @@ export default class AclTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.acl_status === undefined) {
-      this.props.setEntryField(cid, 'acl_status', '');
+      this.props.amendEntry(cid, 'acl_status', '');
     } else {
       if (entry?.acl_status === '') {
-        this.props.setEntryField(cid, 'acl_status', ON_FREQ_SYMBOL);
+        this.props.amendEntry(cid, 'acl_status', ON_FREQ_SYMBOL);
       } else {
-        this.props.setEntryField(cid, 'acl_status', '');
+        this.props.amendEntry(cid, 'acl_status', '');
       }
+    }
+  }
+
+  sort_func = ([_, u], [__, v]) => {
+    const {sorting} = this.props;
+    switch (sorting.name) {
+      case 'ACID':
+        return u?.callsign?.localeCompare(v?.callsign);
+      case 'Destination':
+        return u?.dest?.localeCompare(v?.dest);
+      default:
+        return u?.callsign?.localeCompare(v?.callsign);
     }
   }
 
   render() {
     const {hidden, alt_mouse_down} = this.state;
-    const {edstData} = this.props;
+    const {edstData, manual, cid_list} = this.props;
 
     return (<div className="acl-body no-select">
       <div className="body-row header" key="acl-table-header">
@@ -129,12 +141,12 @@ export default class AclTable extends React.Component {
           Route
         </div>
       </div>
-      {Object.entries(edstData).map(([cid, e]) => e.acl_status !== undefined &&
+      {Object.entries(edstData)?.sort(this.sort_func).map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
         <div className="body-row" key={`acl-body-${cid}`}>
           <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
                onMouseDown={() => this.updateStatus(cid)}
           >
-            {e.acl_status}
+            {e.acl_status === undefined ? 'N' : e.acl_status}
           </div>
           <div className="body-col body-col-1 border"/>
           <div className="body-col body-col-1 border"/>
@@ -180,11 +192,11 @@ export default class AclTable extends React.Component {
           <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
           >
-            {e.dep}{e.route}
+            {e.dep}./{e.remaining_route ? e.remaining_route : e.route}.{e.dest}
           </div>
         </div>)}
-      <div className="body-row separator"/>
-      {Object.entries(edstData).map(([cid, e]) => e.acl_status === undefined &&
+      {manual && <div className="body-row separator"/>}
+      {manual && Object.entries(edstData).map(([cid, e]) => (cid_list.includes(cid) && e.acl_status === undefined) &&
         <div className="body-row" key={`acl-body-${cid}`}>
           <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
                onMouseDown={() => this.updateStatus(cid)}>
@@ -210,30 +222,30 @@ export default class AclTable extends React.Component {
             <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
           ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}>
-            {e.altitude}{e.interim && `T${e.interim}`}
+              {e.altitude}{e.interim && `T${e.interim}`}
+            </div>
           </div>
-        </div>
-        <div
-        className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
+          <div
+            className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
           ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-        onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
-        >
-      {e.beacon}
-        </div>
-        <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}`}>
+            onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
+          >
+            {e.beacon}
+          </div>
+          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}`}>
 
-        </div>
-        <div className="body-col hs-slash">
-        /
-        </div>
-        <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}`}>
+          </div>
+          <div className="body-col hs-slash">
+            /
+          </div>
+          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}`}>
 
-        </div>
-        <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-        onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
-        >
-      {e.dep}{e.route}{e.dest}
-        </div>
+          </div>
+          <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
+               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
+          >
+            {e.dep}./{e.remaining_route !== undefined ? e.remaining_route : e.route}.{e.dest}
+          </div>
         </div>)}
     </div>);
   }

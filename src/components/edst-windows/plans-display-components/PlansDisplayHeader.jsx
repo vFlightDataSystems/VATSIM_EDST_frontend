@@ -3,15 +3,16 @@ import '../../../css/windows/titlebar-styles.scss';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 
-export default class AclHeader extends React.Component {
+export default class PlansDisplayHeader extends React.Component {
 
   render() {
-    const {focused, manual, asel, sorting} = this.props;
+    const {focused, asel, plan_data} = this.props;
+
     return (<div>
       <WindowTitleBar
         focused={focused}
         closeWindow={this.props.closeWindow}
-        text={['Aircraft List', `${sorting.sector ? 'Sector/' : ''}${sorting.name}`, `${manual ? 'Manual' : 'Automatic'}`]}
+        text={['Plans Display']}
       />
       <div className="no-select">
         <div className="outer-button" disabled={asel === null}
@@ -21,11 +22,6 @@ export default class AclHeader extends React.Component {
             Plan Options...
           </div>
         </div>
-        <div className="outer-button" disabled={asel === null}>
-          <div className="edst-window-button" disabled={asel === null}>
-            Hold...
-          </div>
-        </div>
         <div className="outer-button" disabled={true}>
           <div className="edst-window-button" disabled={true}>
             Show
@@ -33,26 +29,24 @@ export default class AclHeader extends React.Component {
         </div>
         <div className="outer-button" disabled={true}>
           <div className="edst-window-button" disabled={true}>
-            Show ALL
+            Show All
           </div>
         </div>
-        <div className="outer-button">
-          <div className="edst-window-button"
-               id="acl-sort-button"
-               onMouseDown={(e) => this.props.openMenu(e, 'sort-menu')}>
-            Sort...
-          </div>
-        </div>
-        <div className="outer-button">
-          <div className="edst-window-button">
-            Tools...
-          </div>
-        </div>
-        <div className="outer-button">
-          <div className="edst-window-button"
-               onMouseDown={this.props.togglePosting}
+        <div className="outer-button" disabled={asel === null}>
+          <div className="edst-window-button" disabled={asel === null}
+          onMouseDown={() => this.props.amendEntry(asel?.cid, plan_data.plan_data)}
           >
-            Posting Mode
+            Amend
+          </div>
+        </div>
+        <div className="outer-button" disabled={true}>
+          <div className="edst-window-button" disabled={true}>
+            Interim
+          </div>
+        </div>
+        <div className="outer-button" disabled={true}>
+          <div className="edst-window-button" disabled={true}>
+            Tools...
           </div>
         </div>
         <div className="outer-button">
@@ -60,16 +54,17 @@ export default class AclHeader extends React.Component {
             Template...
           </div>
         </div>
-        <div className="outer-button">
-          <div className="edst-window-button">
-            Clean Up
+        <div className="outer-button" disabled={true}>
+          <div className="edst-window-button" disabled={true}>
+            ICAO
           </div>
         </div>
-      </div>
-      <div className="edst-window-header-bottom-row no-select">
-        Add/Find
-        <div className="input-container">
-          <input/>
+        <div className="outer-button">
+          <div className="edst-window-button"
+               onMouseDown={this.props.cleanup}
+          >
+            Clean Up
+          </div>
         </div>
       </div>
     </div>);

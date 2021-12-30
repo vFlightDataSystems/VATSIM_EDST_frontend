@@ -31,8 +31,9 @@ export default class Acl extends React.Component {
       onMouseEnter={() => this.setState({focused: true})}
       onMouseLeave={() => this.setState({focused: false})}
     >
-      <div className="edst-window-header">
+      <div>
         <AclHeader
+          sorting={this.props.sorting}
           openMenu={this.props.openMenu}
           asel={this.props.asel}
           focused={focused} manual={manual}
@@ -40,9 +41,12 @@ export default class Acl extends React.Component {
           togglePosting={this.togglePosting}
         />
         <AclTable
+          manual={manual}
+          sorting={this.props.sorting}
+          cid_list={this.props.cid_list}
           edstData={this.props.edstData}
           asel={this.props.asel}
-          setEntryField={this.props.setEntryField}
+          amendEntry={this.props.amendEntry}
           aircraftSelect={this.props.aircraftSelect}
         />
       </div>

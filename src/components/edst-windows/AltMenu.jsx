@@ -9,25 +9,24 @@ export default class AltMenu extends React.Component {
     this.state = {
       dep: this.props.asel?.window === 'dep',
       selected: this.props.asel.window !== 'dep' ? 'trial' : 'amend',
-      alt_center: this.props.data?.altitude,
-      alt_selected: this.props.data?.altitude,
       interim_selected: false,
-      t_hover: false
+      t_hover: false,
+      deltaY: 0
     };
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.asel !== prevProps.asel) {
-      this.setState({dep: this.props.asel?.window === 'dep',
+      this.setState({
+        dep: this.props.asel?.window === 'dep',
         selected: this.props.asel.window !== 'dep' ? 'trial' : 'amend',
-        alt_center: this.props.data?.altitude,
-        alt_selected: this.props.data?.altitude
+        alt_center: this.props.data?.altitude
       });
     }
   }
 
   render() {
-    const {selected, t_hover, dep, alt_center} = this.state;
+    const {selected, t_hover, dep, deltaY} = this.state;
     const {data, asel, pos} = this.props;
 
     return (<div
@@ -66,27 +65,57 @@ export default class AltMenu extends React.Component {
         <div className={`alt-menu-row`} disabled={true}>
           {!dep ? 'PROCEDURE' : 'NO ALT'}
         </div>
-        <div className="alt-menu-select-container">
-        {_.range(-30, 40, 10).map(i => {
-          const alt = Number(data.altitude) + i;
-          return <div 
-            className={`alt-menu-container-row ${((selected === 'amend') && (t_hover === alt)) ? 't-hover' : ''}`}
-            key={`alt-${i}`}
-          >
-            <div className={`alt-menu-container-col ${i === 0 ? 'selected' : ''}`}
-                 // onMouseDown={() => this.setState({alt_selected: alt, interim_selected: false})}
+        <div className="alt-menu-select-container"
+             onWheel={(e) => this.setState({deltaY: deltaY + e.deltaY})}
+        >
+          {_.range(30, -40, -10).map(i => {
+            const alt = Number(data?.altitude) - (deltaY / 100 | 0) * 10 + i;
+            return <div
+              className={`alt-menu-container-row ${((selected === 'amend') && (t_hover === alt)) ? 't-hover' : ''}`}
+              key={`alt-${i}`}
             >
-              {String(alt).padStart(3, '0')}
-            </div>
-            {!dep && <div className={`alt-menu-container-col-t`}
-                          disabled={!(selected === 'amend')}
-                          onMouseEnter={() => (selected === 'amend') && this.setState({t_hover: alt})}
-                          onMouseLeave={() => (selected === 'amend') && this.setState({t_hover: null})}
-                          // onMouseDown={() => this.setState({alt_selected: alt, interim_selected: true})}
-            >
-              T
-            </div>}
-          </div>;})}
+              <div className={`alt-menu-container-col ${alt === Number(data?.altitude) ? 'selected' : ''}`}
+                   onMouseDown={() => {
+                     if (selected === 'amend') {
+                       this.props.amendEntry(data?.cid, {altitude: alt})
+                     } else {
+                       const trial_plan = {
+                         cid: data?.cid, callsign: data?.callsign, plan_data: {
+                           altitude: alt,
+                           interim: null
+                         },
+                         msg: `AM ${data?.cid} ALT ${alt}`
+                       };
+                       this.props.trialPlan(trial_plan);
+                     }
+                     this.props.closeWindow();
+                   }}
+              >
+                {String(alt).padStart(3, '0')}
+              </div>
+              {!dep && <div className={`alt-menu-container-col-t`}
+                            disabled={!(selected === 'amend')}
+                            onMouseEnter={() => (selected === 'amend') && this.setState({t_hover: alt})}
+                            onMouseLeave={() => (selected === 'amend') && this.setState({t_hover: null})}
+                            onMouseDown={() => {
+                              if (selected === 'amend') {
+                                this.props.amendEntry(data?.cid, {interim: alt})
+                              } else {
+                                const trial_plan = {
+                                  cid: data?.cid, callsign: data?.callsign, plan_data: {
+                                    interim: alt
+                                  },
+                                  msg: `QQ /TT ${alt} ${data?.cid}`
+                                };
+                                this.props.trialPlan(trial_plan);
+                              }
+                              this.props.closeWindow();
+                            }}
+              >
+                T
+              </div>}
+            </div>;
+          })}
         </div>
       </div>
     );
