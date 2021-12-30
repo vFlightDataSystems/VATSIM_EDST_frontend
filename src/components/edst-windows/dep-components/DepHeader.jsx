@@ -5,35 +5,36 @@ import WindowTitleBar from "../WindowTitleBar";
 export default class DepHeader extends React.Component {
 
   render() {
-    const {focused, manual, asel} = this.props;
-    return (<div className="edst-window-header no-select">
+    const {focused, manual, asel, sorting} = this.props;
+    return (<div className="no-select">
       <WindowTitleBar
         focused={focused}
         closeWindow={this.props.closeWindow}
-        text={['Departure List', 'Destination', `${manual ? 'Manual' : 'Automatic'}`]}
+        text={['Departure List', `${sorting.name}`, `${manual ? 'Manual' : 'Automatic'}`]}
       />
-      <div className="edst-window-header-button-bar">
-        <div className="outer-button edst-plan-options-button">
+      <div>
+        <div className="outer-button">
           <div className="edst-window-button" disabled={asel === null}
                onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}
           >
             Plan Options...
           </div>
         </div>
-        <div className="outer-button edst-sort-button">
+        <div className="outer-button">
           <div className="edst-window-button"
+               id="dep-sort-button"
                onMouseDown={(e) => this.props.openMenu(e, 'sort-menu')}>
             Sort...
           </div>
         </div>
-        <div className="outer-button edst-posting-mode-button">
+        <div className="outer-button">
           <div className="edst-window-button"
                onMouseDown={this.props.togglePosting}
           >
             Posting Mode
           </div>
         </div>
-        <div className="outer-button edst-template-button">
+        <div className="outer-button">
           <div className="edst-window-button">
             Template...
           </div>

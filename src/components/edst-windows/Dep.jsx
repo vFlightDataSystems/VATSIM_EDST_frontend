@@ -30,6 +30,7 @@ export default class Dep extends React.Component {
       onMouseLeave={() => this.setState({focused: false})}
     >
       <DepHeader
+        sorting={this.props.sorting}
         openMenu={this.props.openMenu}
         asel={this.props.asel}
         focused={focused} manual={manual}
@@ -37,9 +38,12 @@ export default class Dep extends React.Component {
         togglePosting={this.togglePosting}
       />
       <DepTable
+        manual={manual}
+        sorting={this.props.sorting}
+        cid_list={this.props.cid_list}
         edstData={this.props.edstData}
         asel={this.props.asel}
-        setEntryField={this.props.setEntryField}
+        amendEntry={this.props.amendEntry}
         aircraftSelect={this.props.aircraftSelect}
       />
     </div>);

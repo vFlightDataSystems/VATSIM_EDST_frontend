@@ -7,11 +7,12 @@ import Acl from "./components/edst-windows/Acl";
 import Dep from "./components/edst-windows/Dep";
 import Status from "./components/edst-windows/Status";
 import RouteMenu from "./components/edst-windows/RouteMenu";
-import {getEdstData} from "./api";
+import {getArtccEdstData, updateEdstEntry} from "./api";
 import Outage from "./components/edst-windows/Outage";
 import AltMenu from "./components/edst-windows/AltMenu";
-import PlanMenu from "./components/edst-windows/PlanMenu";
+import PlanOptions from "./components/edst-windows/PlanOptions";
 import SortMenu from "./components/edst-windows/SortMenu";
+import PlansDisplay from "./components/edst-windows/PlansDisplay";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -20,7 +21,7 @@ const defaultPos = {
 
 const draggingHideCursor = ['edst-status', 'edst-outage']
 
-const DISABLED_WINDOWS = ['gpd', 'plans', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
+const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
 
 
 export default class App extends React.Component {
@@ -28,7 +29,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       open_windows: [],
-      sorting: {acl: 'ACID', dep: 'ACID'},
+      sorting: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
       disabled_windows: DISABLED_WINDOWS,
       focused_window: '',
       sector_id: '',
@@ -45,8 +46,8 @@ export default class App extends React.Component {
       pos: defaultPos,
       edstData: {}, // keys are cid, values are data from db
       asel: null, // {cid, field, ref}
-      plan_queue: null
-    }
+      plan_queue: []
+    };
     this.globalRef = React.createRef();
   }
 
@@ -67,34 +68,67 @@ export default class App extends React.Component {
   }
 
   refresh = async () => {
-    let {edstData} = this.state;
-    await getEdstData()
+    let {edstData, acl, dep} = this.state;
+    await getArtccEdstData('zbw')
       .then(response => response.json())
       .then(data => {
         if (data) {
           for (let x of data) {
             if (this.entryFilter(x)) {
-              edstData[x.cid] = Object.keys(edstData).includes(x.cid) ? Object.assign(edstData?.[x.cid], x) : x;
+              const entry = Object.keys(edstData).includes(x.cid) ? Object.assign(edstData?.[x.cid], x) : x;
+              edstData[x.cid] = entry;
+              if (Number(entry.flightplan.ground_speed) < 40 && entry.departing) {
+                if (!dep.includes(x.cid)) {
+                  dep.push(x.cid);
+                }
+              }
+              else {
+                if (!acl.includes(x.cid)) {
+                  acl.push(x.cid);
+                }
+              }
             }
           }
-          this.setState({edstData: edstData});
+          this.setState({edstData: edstData, acl: acl, dep: dep});
         }
       });
   }
 
-  plan = (p) => {
+  trialPlan = (p) => {
+    let {plan_queue, open_windows} = this.state;
+    open_windows.push('plans')
+    plan_queue.push(p);
+    this.setState({plan_queue: plan_queue});
+  }
 
+  removeTrialPlan = (index) => {
+    let {plan_queue} = this.state;
+    plan_queue.splice(index);
+    this.setState({plan_queue: plan_queue});
   }
 
   entryFilter = (entry) => {
-    return entry.dep === 'KBOS';
+    return true;
   }
 
-  setEntryField = (cid, key, val) => {
+  amendEntry = async (cid, post_data) => {
     let {edstData} = this.state;
     let entry = edstData[cid];
-    entry[key] = val;
-    this.setState({edstData: edstData});
+    if (Object.keys(post_data).includes('altitude')) {
+      post_data.interim = null;
+    }
+    // for (let [key, val] of Object.entries(post_data)) {
+    //   edstData[key] = val;
+    // }
+    post_data.callsign = entry.callsign;
+    await updateEdstEntry(post_data)
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          edstData[cid] = data;
+          this.setState({edstData: edstData, asel: null});
+        }
+      });
   }
 
   aircraftSelect = (event, window, cid, field) => {
@@ -104,7 +138,7 @@ export default class App extends React.Component {
     } else {
       asel = {cid: cid, field: field, window: window};
       // if (edstData[cid]?.acl_status === undefined) {
-      //   this.setEntryField(cid, `${window}_status`, '');
+      //   this.amendEntry(cid, `${window}_status`, '');
       // }
       this.setState({
         asel: asel,
@@ -164,7 +198,6 @@ export default class App extends React.Component {
           w: ref.clientWidth,
           h: ref.clientHeight
         };
-        this.setState({pos: pos, menu: name});
         break;
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ? {
@@ -178,15 +211,14 @@ export default class App extends React.Component {
           w: ref.clientWidth,
           h: ref.clientHeight
         };
-        this.setState({pos: pos, menu: name});
         break;
       default:
         pos[name] = {
           x: ref.target.offsetLeft,
           y: ref.target.offsetTop + ref.target.offsetHeight
         };
-        this.setState({pos: pos, menu: name});
     }
+    this.setState({pos: pos, menu: {name: name, ref_id: ref?.target?.id}});
   }
 
   closeMenu = (name) => {
@@ -264,6 +296,10 @@ export default class App extends React.Component {
     }
   }
 
+  setSorting = (sorting) => {
+    this.setState({sorting: sorting});
+  }
+
   unmount = () => {
     this.setState({menu: null, asel: null});
   }
@@ -275,6 +311,7 @@ export default class App extends React.Component {
       disabled_windows,
       sorting,
       open_windows,
+      plan_queue,
       sector_id,
       menu,
       acl,
@@ -294,9 +331,10 @@ export default class App extends React.Component {
                     disabled_windows={disabled_windows}
                     openWindow={this.openWindow}
                     toggleWindow={this.toggleWindow}
+                    plan_disabled={plan_queue.length === 0}
                     sector_id={sector_id}
-                    acl_num={Object.keys(edstData).length}
-                    dep_num={Object.keys(edstData).length}
+                    acl_num={acl.length}
+                    dep_num={dep.length}
                     sig_num={sig.length}
                     not_num={not.length}
                     gi_num={gi.length}
@@ -316,8 +354,9 @@ export default class App extends React.Component {
             openMenu={this.openMenu}
             dragging={dragging}
             asel={asel?.window === 'acl' ? asel : null}
+            cid_list={acl}
             edstData={edstData}
-            setEntryField={this.setEntryField}
+            amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
             // z_index={open_windows.indexOf('acl')}
             closeWindow={() => this.closeWindow('acl')}
@@ -328,11 +367,27 @@ export default class App extends React.Component {
             openMenu={this.openMenu}
             dragging={dragging}
             asel={asel?.window === 'dep' ? asel : null}
+            cid_list={dep}
             edstData={edstData}
-            setEntryField={this.setEntryField}
+            amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
             // z_index={open_windows.indexOf('dep')}
             closeWindow={() => this.closeWindow('dep')}
+          />}
+          {open_windows.includes('plans') && <PlansDisplay
+            unmount={this.unmount}
+            openMenu={this.openMenu}
+            dragging={dragging}
+            asel={asel?.window === 'plans' ? asel : null}
+            cleanup={() => {
+              this.setState({plan_queue: []});
+              this.closeWindow('plans');
+            }}
+            plan_queue={plan_queue}
+            amendEntry={this.amendEntry}
+            aircraftSelect={this.aircraftSelect}
+            // z_index={open_windows.indexOf('dep')}
+            closeWindow={() => this.closeWindow('plans')}
           />}
           {open_windows.includes('status') && <Status
             dragging={dragging}
@@ -348,47 +403,48 @@ export default class App extends React.Component {
             // z_index={open_windows.indexOf('status')}
             closeWindow={() => this.closeWindow('outage')}
           />}
-          {menu === 'plan-menu' && <PlanMenu
+          {menu?.name === 'plan-menu' && <PlanOptions
             openMenu={this.openMenu}
             dragging={dragging}
             asel={asel}
             data={edstData[asel?.cid]}
-            setEntryField={this.setEntryField}
+            amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
             pos={pos['plan-menu']}
             // z_index={open_windows.indexOf('route-menu')}
             closeWindow={() => this.closeMenu('plan-menu')}
           />}
-          {menu === 'sort-menu' && <SortMenu
-            openMenu={this.openMenu}
+          {menu?.name === 'sort-menu' && <SortMenu
+            ref_id={menu?.ref_id}
+            sorting={sorting}
             dragging={dragging}
-            setEntryField={this.setEntryField}
+            setSorting={this.setSorting}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
             pos={pos['sort-menu']}
             // z_index={open_windows.indexOf('route-menu')}
             closeWindow={() => this.closeMenu('sort-menu')}
           />}
-          {menu === 'route-menu' && <RouteMenu
+          {menu?.name === 'route-menu' && <RouteMenu
             openMenu={this.openMenu}
-            plan={this.plan}
+            trialPlan={this.trialPlan}
             dragging={dragging}
             asel={asel}
             data={edstData[asel?.cid]}
-            setEntryField={this.setEntryField}
+            amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
             pos={pos['route-menu']}
             // z_index={open_windows.indexOf('route-menu')}
             closeWindow={() => this.closeMenu('route-menu')}
           />}
-          {menu === 'alt-menu' && <AltMenu
+          {menu?.name === 'alt-menu' && <AltMenu
             pos={pos['alt-menu']}
             asel={asel}
-            plan={this.plan}
+            trialPlan={this.trialPlan}
             data={edstData[asel?.cid]}
-            setEntryField={this.setEntryField}
+            amendEntry={this.amendEntry}
             // z_index={open_windows.indexOf('route-menu')}
             closeWindow={() => this.closeMenu('alt-menu')}
           />}

@@ -44,19 +44,33 @@ export default class DepTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.dep_status === undefined) {
-      this.props.setEntryField(cid, 'dep_status', '')
+      this.props.amendEntry(cid, 'dep_status', '')
     } else {
       if (entry?.dep_status === '') {
-        this.props.setEntryField(cid, 'dep_status', COMPLETED_SYMBOL)
+        this.props.amendEntry(cid, 'dep_status', COMPLETED_SYMBOL)
       } else {
-        this.props.setEntryField(cid, 'dep_status', '')
+        this.props.amendEntry(cid, 'dep_status', '')
       }
+    }
+  }
+
+  sort_func = ([_, u], [__, v]) => {
+    const {sorting} = this.props;
+    switch (sorting.name) {
+      case 'ACID':
+        return u?.callsign?.localeCompare(v?.callsign);
+      case 'Destination':
+        return u?.dest?.localeCompare(v?.dest);
+      case 'Origin':
+        return u?.dep?.localeCompare(v?.dep);
+      default:
+        return u?.callsign?.localeCompare(v?.callsign);
     }
   }
 
   render() {
     const {hidden} = this.state;
-    const {edstData} = this.props;
+    const {edstData, manual, cid_list} = this.props;
 
     return (<div className="dep-body no-select">
       <div className="body-row header" key="dep-table-header">
@@ -88,12 +102,12 @@ export default class DepTable extends React.Component {
           Route
         </div>
       </div>
-      {Object.entries(edstData).map(([cid, e]) => e.dep_status !== undefined &&
+      {Object.entries(edstData)?.sort(this.sort_func)?.map(([cid, e]) => (cid_list.includes(cid) && ((e.dep_status !== undefined) || !manual)) &&
         <div className="body-row" key={`dep-body-${cid}`}>
-        <div className={`body-col body-col-1 radio dep-radio checkmark`}
+        <div className={`body-col body-col-1 radio dep-radio ${e.dep_status !== undefined ? 'checkmark' : ''}`}
              onMouseDown={() => this.updateStatus(cid)}
         >
-          {e.dep_status}
+          {e.dep_status === undefined ? 'N' : e.dep_status}
         </div>
         <div className="body-col body-col-1"/>
         <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
@@ -126,11 +140,11 @@ export default class DepTable extends React.Component {
         <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
         >
-          {e.dep}{e.route}{e.dest}
+          {e.dep}{e.route}.{e.dest}
         </div>
       </div>)}
-      <div className="body-row separator"/>
-      {Object.entries(edstData).map(([cid, e]) => e.dep_status === undefined &&
+      {manual && <div className="body-row separator"/>}
+      {manual && Object.entries(edstData)?.map(([cid, e]) => (cid_list.includes(cid) && e.dep_status === undefined) &&
         <div className="body-row" key={`dep-body-${cid}`}>
         <div className={`body-col body-col-1 radio dep-radio`}
              onMouseDown={() => this.updateStatus(cid)}
@@ -168,7 +182,7 @@ export default class DepTable extends React.Component {
         <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
         >
-          {e.dep}{e.route}
+          {e.dep}{e.route}.{e.dest}
         </div>
       </div>)}
     </div>);
