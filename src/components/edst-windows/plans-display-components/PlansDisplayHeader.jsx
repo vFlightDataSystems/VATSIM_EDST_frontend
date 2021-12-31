@@ -7,6 +7,7 @@ export default class PlansDisplayHeader extends React.Component {
 
   render() {
     const {focused, asel, plan_data} = this.props;
+    const interim_disabled = asel ? !Object.keys(plan_data?.plan_data)?.includes('altitude') : true;
 
     return (<div>
       <WindowTitleBar
@@ -16,7 +17,7 @@ export default class PlansDisplayHeader extends React.Component {
       />
       <div className="no-select">
         <div className="outer-button" disabled={asel === null}
-             onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}>
+             onMouseDown={(e) => this.props.openMenu(e.target, 'plan-menu')}>
           <div className="edst-window-button"
                disabled={asel === null}>
             Plan Options...
@@ -39,8 +40,13 @@ export default class PlansDisplayHeader extends React.Component {
             Amend
           </div>
         </div>
-        <div className="outer-button" disabled={true}>
-          <div className="edst-window-button" disabled={true}>
+        <div className="outer-button" disabled={interim_disabled}>
+          <div className="edst-window-button" disabled={interim_disabled}
+          onMouseDown={() => {
+            const interim_plan_data = {interim: plan_data.plan_data.altitude};
+            this.props.amendEntry(asel?.cid, interim_plan_data);
+          }}
+          >
             Interim
           </div>
         </div>

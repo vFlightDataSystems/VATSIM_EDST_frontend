@@ -43,6 +43,7 @@ export default class Dep extends React.Component {
         cid_list={this.props.cid_list}
         edstData={this.props.edstData}
         asel={this.props.asel}
+        updateEntry={this.props.updateEntry}
         amendEntry={this.props.amendEntry}
         aircraftSelect={this.props.aircraftSelect}
       />

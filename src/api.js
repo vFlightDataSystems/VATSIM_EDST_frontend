@@ -11,16 +11,16 @@ export async function getArtccEdstData(artcc) {
 }
 
 export async function getEdstEntry(callsign) {
-  return await fetch(`${baseurl}/edst/entry/callsign`);
+  return await fetch(`${baseurl}/edst/entry/${callsign}`);
 }
 
-export async function updateEdstEntry(data) {
+export async function updateEdstEntry(plan_data) {
   return await fetch(`${baseurl}/edst/entry/update`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(plan_data)
   });
 }
 

@@ -5,6 +5,8 @@ $acl-border-light-grey: #ADADAD;
 
 .acl {
     white-space:nowrap;
+    display: flex;
+    flex-flow: column;
     overflow: hidden;
     margin: 2px;
     flex-grow: 1;
@@ -14,9 +16,11 @@ $acl-border-light-grey: #ADADAD;
 }
 
 .acl-body {
+    white-space:nowrap;
     overflow: hidden;
-    display: block;
     flex-flow: column;
+    display: flex;
+    //flex-flow: column;
     /*scrollbar-width: none;  !* Firefox *!*/
     color: $edst-font-grey;
 }

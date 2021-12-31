@@ -27,7 +27,7 @@ export default class AltMenu extends React.Component {
 
   render() {
     const {selected, t_hover, dep, deltaY} = this.state;
-    const {data, asel, pos} = this.props;
+    const {data, pos} = this.props;
 
     return (<div
         className="alt-menu no-select"

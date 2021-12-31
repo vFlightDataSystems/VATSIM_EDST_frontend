@@ -31,25 +31,24 @@ export default class Acl extends React.Component {
       onMouseEnter={() => this.setState({focused: true})}
       onMouseLeave={() => this.setState({focused: false})}
     >
-      <div>
-        <AclHeader
-          sorting={this.props.sorting}
-          openMenu={this.props.openMenu}
-          asel={this.props.asel}
-          focused={focused} manual={manual}
-          closeWindow={this.props.closeWindow}
-          togglePosting={this.togglePosting}
-        />
-        <AclTable
-          manual={manual}
-          sorting={this.props.sorting}
-          cid_list={this.props.cid_list}
-          edstData={this.props.edstData}
-          asel={this.props.asel}
-          amendEntry={this.props.amendEntry}
-          aircraftSelect={this.props.aircraftSelect}
-        />
-      </div>
+      <AclHeader
+        sorting={this.props.sorting}
+        openMenu={this.props.openMenu}
+        asel={this.props.asel}
+        focused={focused} manual={manual}
+        closeWindow={this.props.closeWindow}
+        togglePosting={this.togglePosting}
+      />
+      <AclTable
+        manual={manual}
+        sorting={this.props.sorting}
+        cid_list={this.props.cid_list}
+        edstData={this.props.edstData}
+        asel={this.props.asel}
+        updateEntry={this.props.updateEntry}
+        amendEntry={this.props.amendEntry}
+        aircraftSelect={this.props.aircraftSelect}
+      />
     </div>);
   }
 }

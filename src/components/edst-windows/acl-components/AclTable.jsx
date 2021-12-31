@@ -61,12 +61,12 @@ export default class AclTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.acl_status === undefined) {
-      this.props.amendEntry(cid, 'acl_status', '');
+      this.props.updateEntry(cid, 'acl_status', '');
     } else {
       if (entry?.acl_status === '') {
-        this.props.amendEntry(cid, 'acl_status', ON_FREQ_SYMBOL);
+        this.props.updateEntry(cid, 'acl_status', ON_FREQ_SYMBOL);
       } else {
-        this.props.amendEntry(cid, 'acl_status', '');
+        this.props.updateEntry(cid, 'acl_status', '');
       }
     }
   }
@@ -141,112 +141,123 @@ export default class AclTable extends React.Component {
           Route
         </div>
       </div>
-      {Object.entries(edstData)?.sort(this.sort_func).map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
-        <div className="body-row" key={`acl-body-${cid}`}>
-          <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
-               onMouseDown={() => this.updateStatus(cid)}
-          >
-            {e.acl_status === undefined ? 'N' : e.acl_status}
-          </div>
-          <div className="body-col body-col-1 border"/>
-          <div className="body-col body-col-1 border"/>
-          <div className="body-col body-col-1 border"/>
-          <div className="body-col body-col-1"/>
-          <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'fid')}>
-            {e.cid} {e.callsign}
-          </div>
-          <div className="body-col pa"/>
-          <div className="body-col rem"/>
-          <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'type')}
-          >
-            {`${e.type}/${e.equipment}`}
-          </div>
-          <div className={`body-col alt`}>
-            <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
-          ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
-                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}
+      <div className="scroll-container">
+        {Object.entries(edstData)?.sort(this.sort_func).map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
+          <div className="body-row" key={`acl-body-${cid}`}>
+            <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
+                 onMouseDown={() => this.updateStatus(cid)}
             >
-              {e.altitude}{e.interim && `T${e.interim}`}
+              {e.acl_status === undefined ? 'N' : e.acl_status}
             </div>
-
-          </div>
-          <div
-            className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-            onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
-          >
-            {e.beacon}
-          </div>
-          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}`}>
-
-          </div>
-          <div className="body-col hs-slash">
-            /
-          </div>
-          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}`}>
-
-          </div>
-          <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
-          >
-            {e.dep}./{e.remaining_route ? e.remaining_route : e.route}.{e.dest}
-          </div>
-        </div>)}
-      {manual && <div className="body-row separator"/>}
-      {manual && Object.entries(edstData).map(([cid, e]) => (cid_list.includes(cid) && e.acl_status === undefined) &&
-        <div className="body-row" key={`acl-body-${cid}`}>
-          <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
-               onMouseDown={() => this.updateStatus(cid)}>
-            N
-          </div>
-          <div className="body-col body-col-1 border"/>
-          <div className="body-col body-col-1 border"/>
-          <div className="body-col body-col-1 border"/>
-          <div className="body-col body-col-1"/>
-          <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'fid')}>
-            {e.cid} {e.callsign}
-          </div>
-          <div className="body-col pa"/>
-          <div className="body-col rem"/>
-          <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
+            <div className="body-col body-col-1 border"/>
+            <div className="body-col body-col-1 border"/>
+            <div className="body-col body-col-1 border"/>
+            <div className="body-col body-col-1"/>
+            <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'fid')}>
+              {e.cid} {e.callsign}
+            </div>
+            <div className="body-col pa"/>
+            <div className="body-col rem"/>
+            <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
         ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'type')}
-          >
-            {`${e.type}/${e.equipment}`}
-          </div>
-          <div className={`body-col alt`}>
-            <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
-          ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
-                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}>
-              {e.altitude}{e.interim && `T${e.interim}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'type')}
+            >
+              {`${e.type}/${e.equipment}`}
             </div>
-          </div>
-          <div
-            className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
+            <div className={`body-col alt`}>
+              <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
+          ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
+                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}
+              >
+                {e.altitude}{e.interim && `T${e.interim}`}
+              </div>
+            </div>
+            <div
+              className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
           ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-            onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
-          >
-            {e.beacon}
-          </div>
-          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}`}>
+              onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
+            >
+              {e.beacon}
+            </div>
+            <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'hdg')}
+            >
 
-          </div>
-          <div className="body-col hs-slash">
-            /
-          </div>
-          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}`}>
+            </div>
+            <div className="body-col hs-slash">
+              /
+            </div>
+            <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'spd')}
+            >
 
-          </div>
-          <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
-          >
-            {e.dep}./{e.remaining_route !== undefined ? e.remaining_route : e.route}.{e.dest}
-          </div>
-        </div>)}
+            </div>
+            <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
+            >
+              {e.dep}./{e.remaining_route ? e.remaining_route : e.route}.{e.dest}
+            </div>
+          </div>)}
+        {manual && <div className="body-row separator"/>}
+        {manual && Object.entries(edstData).map(([cid, e]) => (cid_list.includes(cid) && e.acl_status === undefined) &&
+          <div className="body-row" key={`acl-body-${cid}`}>
+            <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
+                 onMouseDown={() => this.updateStatus(cid)}>
+              N
+            </div>
+            <div className="body-col body-col-1 border"/>
+            <div className="body-col body-col-1 border"/>
+            <div className="body-col body-col-1 border"/>
+            <div className="body-col body-col-1"/>
+            <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'fid')}>
+              {e.cid} {e.callsign}
+            </div>
+            <div className="body-col pa"/>
+            <div className="body-col rem"/>
+            <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
+        ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'type')}
+            >
+              {`${e.type}/${e.equipment}`}
+            </div>
+            <div className={`body-col alt`}>
+              <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
+          ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
+                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}>
+                {e.altitude}{e.interim && `T${e.interim}`}
+              </div>
+            </div>
+            <div
+              className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
+          ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
+              onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
+            >
+              {e.beacon}
+            </div>
+            <div className={`body-col hs hdg hover ${hidden.includes('scratch_hdg') ? 'content hidden' : ''}
+              ${this.isSelected(cid, 'hdg') ? 'selected' : ''} ${e?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'hdg')}
+            >
+              {e?.scratch_hdg?.val}
+            </div>
+            <div className="body-col hs-slash">
+              /
+            </div>
+            <div className={`body-col hs spd hover ${hidden.includes('scratch_spd') ? 'content hidden' : ''}
+${this.isSelected(cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'spd')}
+            >
+              {e?.scratch_spd?.val}
+            </div>
+            <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
+                 onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
+            >
+              {e.dep}./{e.remaining_route !== undefined ? e.remaining_route : e.route}.{e.dest}
+            </div>
+          </div>)}
+      </div>
     </div>);
   }
 }

@@ -15,7 +15,7 @@ export default class DepHeader extends React.Component {
       <div>
         <div className="outer-button">
           <div className="edst-window-button" disabled={asel === null}
-               onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}
+               onMouseDown={(e) => this.props.openMenu(e.target, 'plan-menu')}
           >
             Plan Options...
           </div>
@@ -23,7 +23,7 @@ export default class DepHeader extends React.Component {
         <div className="outer-button">
           <div className="edst-window-button"
                id="dep-sort-button"
-               onMouseDown={(e) => this.props.openMenu(e, 'sort-menu')}>
+               onMouseDown={(e) => this.props.openMenu(e.target, 'sort-menu')}>
             Sort...
           </div>
         </div>
