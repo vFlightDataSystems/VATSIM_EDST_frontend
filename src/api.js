@@ -27,3 +27,7 @@ export async function updateEdstEntry(plan_data) {
 export async function getRemainingRoute(callsign) {
   return await fetch(`${baseurl}/edst/route/remaining_route/${callsign}`);
 }
+
+export async function getBoundaryData(artcc) {
+  return await fetch(`${baseurl}/edst/boundary_data/${artcc}`);
+}

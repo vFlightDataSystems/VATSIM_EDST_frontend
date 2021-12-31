@@ -78,12 +78,11 @@ $body-ac-sep-very-dark-grey: #252525;
     width: 150px;
     justify-content: left;
     padding-left: 4px;
-  }
 
-  &.plans-display-col-1 {
-    width: 150px;
-    justify-content: left;
-    padding-left: 4px;
+    &.green {
+      background-color: $body-font-green;
+      color: #000000;
+    }
   }
 
   &.body-col-thin {
@@ -273,11 +272,11 @@ $body-ac-sep-very-dark-grey: #252525;
     &.spd {
       justify-content: left;
       padding-left: 1px;
+    }
 
-      &.yellow {
-        &.selected {
-          background-color: $body-font-yellow;
-        }
+    &.yellow {
+      &.selected {
+        background-color: $body-font-yellow;
       }
     }
 

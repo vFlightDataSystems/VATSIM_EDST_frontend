@@ -79,7 +79,13 @@ export default class PlanOptions extends React.Component {
             </div>
           </div>
           <div className="options-row">
-            <div className="options-col hover">
+            <div className="options-col hover"
+              onMouseDown={() => {
+                this.props.deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
+                this.props.clearAsel();
+                this.props.closeWindow();
+              }}
+            >
               Delete
             </div>
           </div>
