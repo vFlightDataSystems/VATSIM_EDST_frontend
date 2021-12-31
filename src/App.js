@@ -7,12 +7,14 @@ import Acl from "./components/edst-windows/Acl";
 import Dep from "./components/edst-windows/Dep";
 import Status from "./components/edst-windows/Status";
 import RouteMenu from "./components/edst-windows/RouteMenu";
-import {getArtccEdstData, updateEdstEntry} from "./api";
+import {getEdstData, updateEdstEntry} from "./api";
 import Outage from "./components/edst-windows/Outage";
 import AltMenu from "./components/edst-windows/AltMenu";
 import PlanOptions from "./components/edst-windows/PlanOptions";
 import SortMenu from "./components/edst-windows/SortMenu";
 import PlansDisplay from "./components/edst-windows/PlansDisplay";
+import SpeedMenu from "./components/edst-windows/SpeedMenu";
+import HeadingMenu from "./components/edst-windows/HeadingMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -69,13 +71,14 @@ export default class App extends React.Component {
 
   refresh = async () => {
     let {edstData, acl, dep} = this.state;
-    await getArtccEdstData('zbw')
+    await getEdstData()
       .then(response => response.json())
       .then(data => {
         if (data) {
           for (let x of data) {
             if (this.entryFilter(x)) {
-              const entry = Object.keys(edstData).includes(x.cid) ? Object.assign(edstData?.[x.cid], x) : x;
+              let entry = Object.keys(edstData).includes(x.cid) ? Object.assign(edstData?.[x.cid], x) : x;
+              entry.pending_removal = entry.update_time === edstData?.[x.cid]?.update_time;
               edstData[x.cid] = entry;
               if (Number(entry.flightplan.ground_speed) < 40 && entry.departing) {
                 if (!dep.includes(x.cid)) {
@@ -85,6 +88,11 @@ export default class App extends React.Component {
               else {
                 if (!acl.includes(x.cid)) {
                   acl.push(x.cid);
+                  // remove cid from departure list if will populate the aircraft list
+                  const index = dep.indexOf(x.cid);
+                  if (index > -1) {
+                    dep.splice(index, 1);
+                  }
                 }
               }
             }
@@ -111,21 +119,28 @@ export default class App extends React.Component {
     return true;
   }
 
-  amendEntry = async (cid, post_data) => {
+  updateEntry = (cid, data) => {
     let {edstData} = this.state;
     let entry = edstData[cid];
-    if (Object.keys(post_data).includes('altitude')) {
-      post_data.interim = null;
+    edstData[cid] = Object.assign(entry, data);
+    this.setState({edstData: edstData});
+  }
+
+  amendEntry = async (cid, plan_data) => {
+    let {edstData} = this.state;
+    let entry = edstData[cid];
+    if (Object.keys(plan_data).includes('altitude')) {
+      plan_data.interim = null;
     }
     // for (let [key, val] of Object.entries(post_data)) {
     //   edstData[key] = val;
     // }
-    post_data.callsign = entry.callsign;
-    await updateEdstEntry(post_data)
+    plan_data.callsign = entry.callsign;
+    await updateEdstEntry(plan_data)
       .then(response => response.json())
       .then(data => {
         if (data) {
-          edstData[cid] = data;
+          edstData[cid] = Object.assign(entry, data);
           this.setState({edstData: edstData, asel: null});
         }
       });
@@ -150,6 +165,12 @@ export default class App extends React.Component {
           break;
         case 'route':
           this.openMenu(event.target, 'route-menu', false, asel);
+          break;
+        case 'spd':
+          this.openMenu(event.target, 'speed-menu', false, asel);
+          break;
+        case 'hdg':
+          this.openMenu(event.target, 'heading-menu', false, asel);
           break;
         default:
           break;
@@ -189,33 +210,50 @@ export default class App extends React.Component {
   }
 
   openMenu = (ref, name, plan, asel = null) => {
+    const {x, y, height, width} = ref.getBoundingClientRect();
     let {pos} = this.state;
     switch (name) {
       case 'alt-menu':
         pos[name] = {
-          x: ref.offsetLeft + (plan ? 0 : ref.clientWidth),
-          y: ref.offsetTop - (plan ? 0 : 20),
-          w: ref.clientWidth,
-          h: ref.clientHeight
+          x: x + (plan ? 0 : width),
+          y: plan ? ref.offsetTop : y - 2*height,
+          w: width,
+          h: height
         };
         break;
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ? {
-          x: ref.offsetLeft - (plan ? 0 : 570),
-          y: ref.offsetTop - (plan ? 0 : 26),
-          w: ref.clientWidth,
-          h: ref.clientHeight
+          x: x - (plan ? 0 : 570),
+          y: plan ? ref.offsetTop : y - 2*height,
+          w: width,
+          h: height
         } : {
-          x: ref.offsetLeft,
-          y: ref.offsetTop + ref.clientHeight,
-          w: ref.clientWidth,
-          h: ref.clientHeight
+          x: x,
+          y: y - height,
+          w: width,
+          h: height
+        };
+        break;
+      case 'speed-menu':
+        pos[name] = {
+          x: x + width,
+          y: 200,
+          w: width,
+          h: height
+        };
+        break;
+      case 'heading-menu':
+        pos[name] = {
+          x: x + width,
+          y: 200,
+          w: width,
+          h: height
         };
         break;
       default:
         pos[name] = {
-          x: ref.target.offsetLeft,
-          y: ref.target.offsetTop + ref.target.offsetHeight
+          x: ref.offsetLeft,
+          y: ref.offsetTop + ref.offsetHeight
         };
     }
     this.setState({pos: pos, menu: {name: name, ref_id: ref?.target?.id}});
@@ -356,6 +394,7 @@ export default class App extends React.Component {
             asel={asel?.window === 'acl' ? asel : null}
             cid_list={acl}
             edstData={edstData}
+            updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
             // z_index={open_windows.indexOf('acl')}
@@ -369,6 +408,7 @@ export default class App extends React.Component {
             asel={asel?.window === 'dep' ? asel : null}
             cid_list={dep}
             edstData={edstData}
+            updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
             // z_index={open_windows.indexOf('dep')}
@@ -436,7 +476,6 @@ export default class App extends React.Component {
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
             pos={pos['route-menu']}
-            // z_index={open_windows.indexOf('route-menu')}
             closeWindow={() => this.closeMenu('route-menu')}
           />}
           {menu?.name === 'alt-menu' && <AltMenu
@@ -445,8 +484,27 @@ export default class App extends React.Component {
             trialPlan={this.trialPlan}
             data={edstData[asel?.cid]}
             amendEntry={this.amendEntry}
-            // z_index={open_windows.indexOf('route-menu')}
             closeWindow={() => this.closeMenu('alt-menu')}
+          />}
+          {menu?.name === 'speed-menu' && <SpeedMenu
+            pos={pos['speed-menu']}
+            asel={asel}
+            data={edstData[asel?.cid]}
+            updateEntry={this.updateEntry}
+            amendEntry={this.amendEntry}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            closeWindow={() => this.closeMenu('speed-menu')}
+          />}
+          {menu?.name === 'heading-menu' && <HeadingMenu
+            pos={pos['heading-menu']}
+            asel={asel}
+            data={edstData[asel?.cid]}
+            updateEntry={this.updateEntry}
+            amendEntry={this.amendEntry}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            closeWindow={() => this.closeMenu('heading-menu')}
           />}
         </div>
       </div>

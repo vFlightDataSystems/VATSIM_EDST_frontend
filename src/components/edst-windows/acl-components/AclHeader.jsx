@@ -15,7 +15,7 @@ export default class AclHeader extends React.Component {
       />
       <div className="no-select">
         <div className="outer-button" disabled={asel === null}
-             onMouseDown={(e) => this.props.openMenu(e, 'plan-menu')}>
+             onMouseDown={(e) => this.props.openMenu(e.target, 'plan-menu')}>
           <div className="edst-window-button"
                disabled={asel === null}>
             Plan Options...
@@ -39,7 +39,7 @@ export default class AclHeader extends React.Component {
         <div className="outer-button">
           <div className="edst-window-button"
                id="acl-sort-button"
-               onMouseDown={(e) => this.props.openMenu(e, 'sort-menu')}>
+               onMouseDown={(e) => this.props.openMenu(e.target, 'sort-menu')}>
             Sort...
           </div>
         </div>

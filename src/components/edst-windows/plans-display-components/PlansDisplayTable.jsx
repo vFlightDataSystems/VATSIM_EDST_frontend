@@ -4,12 +4,6 @@ import '../../../css/windows/plans-display-styles.scss';
 
 
 export default class PlansDisplayTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-
-    };
-  }
 
   render() {
     const {plan_queue, selected_msg, asel} = this.props

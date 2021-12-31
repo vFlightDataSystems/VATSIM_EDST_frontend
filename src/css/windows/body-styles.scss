@@ -18,6 +18,13 @@ $body-window-closed-black: #000000;
 $body-row-sep-color: #AA8800;
 $body-ac-sep-very-dark-grey: #252525;
 
+.scroll-container {
+  height: auto;
+  display: block;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
 .body-row {
   margin: 4px 0;
   display: flex;
@@ -266,6 +273,12 @@ $body-ac-sep-very-dark-grey: #252525;
     &.spd {
       justify-content: left;
       padding-left: 1px;
+
+      &.yellow {
+        &.selected {
+          background-color: $body-font-yellow;
+        }
+      }
     }
 
     &.hidden {

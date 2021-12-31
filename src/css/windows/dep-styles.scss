@@ -5,9 +5,10 @@ $dep-border-light-grey: #ADADAD;
 
 
 .dep {
-    display: block;
     white-space:nowrap;
     overflow: hidden;
+    flex-flow: column;
+    display: flex;
     height: 40%;
     margin: 2px;
     flex-grow: 1;
@@ -17,7 +18,10 @@ $dep-border-light-grey: #ADADAD;
 }
 
 .dep-body {
+    white-space:nowrap;
     overflow: hidden;
+    flex-flow: column;
+    display: flex;
     /*scrollbar-width: none;  !* Firefox *!*/
     color: $edst-font-grey;
 }

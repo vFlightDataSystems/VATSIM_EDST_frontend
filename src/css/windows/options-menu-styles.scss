@@ -20,6 +20,14 @@ $route-menu-alert-cyan: #00ADAD;
     width: 570px;
   }
 
+  &.speed {
+    width: 180px;
+  }
+
+  &.heading {
+    width: 180px;
+  }
+
   &.sort {
     width: 170px;
   }
@@ -31,7 +39,7 @@ $route-menu-alert-cyan: #00ADAD;
   align-items: center;
   background-color: $options-menu-background-medium-grey;
   color: #000000;
-  height: 20px;
+  height: 17px;
   border-top: 1px solid $options-menu-light-grey;
   border-left: 1px solid $options-menu-light-grey;
   border-bottom: 1px solid $options-menu-medium-grey;
@@ -196,6 +204,11 @@ $route-menu-alert-cyan: #00ADAD;
       padding: 4px 0;
     }
 
+    &.speed-row {
+      padding: 4px 0;
+      //margin-bottom: 2px;
+    }
+
     &.top-border {
       border-top: 1px solid $options-menu-light-grey;
     }
@@ -339,6 +352,35 @@ $route-menu-alert-cyan: #00ADAD;
         &:hover {
           border: 1px solid $options-menu-hover-white;
         }
+      }
+    }
+
+    .speed-input {
+      justify-content: left;
+      align-items: center;
+      vertical-align: center;
+      padding: 0;
+      margin-left: 20px;
+      height: 16px;
+      width: 40px;
+      display: inline-flex;
+      overflow: hidden;
+      border-top: 2px solid $options-menu-medium-grey;
+      border-left: 2px solid $options-menu-medium-grey;
+      border-bottom: 2px solid $options-menu-background-medium-grey;
+      border-right: 2px solid $options-menu-background-medium-grey;
+
+      &:hover {
+        outline: 1px solid $options-menu-hover-white;
+      }
+
+      > input {
+        cursor: default;
+        font-size: 16px;
+        outline: none;
+        color: $edst-font-grey;
+        background-color: #000000;
+        border: none;
       }
     }
   }
