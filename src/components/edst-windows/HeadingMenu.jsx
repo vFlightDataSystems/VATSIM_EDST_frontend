@@ -97,7 +97,7 @@ export default class HeadingMenu extends React.Component {
                onWheel={(e) => this.setState({deltaY: deltaY + e.deltaY})}
           >
             {_.range(50, -70, -10).map(i => {
-              const hdg = (heading - (deltaY / 100 | 0) * 10 + i) % 360;
+              const hdg = ((heading - (deltaY / 100 | 0) * 10 + i) % 360 + 360) % 360;
               const rel_hdg = 35 + i / 2;
               return <div className="spd-hdg-menu-container-row" key={`heading-menu-${i}`}>
                 <div className="spd-hdg-menu-container-col"

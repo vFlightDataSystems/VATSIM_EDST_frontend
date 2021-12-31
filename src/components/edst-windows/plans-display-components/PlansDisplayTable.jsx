@@ -11,7 +11,7 @@ export default class PlansDisplayTable extends React.Component {
     return (<div className="plans-display-body no-select">
       {Object.entries(plan_queue)?.map(([i, p]) =>
         <div className="body-row" key={`plans-display-body-${p.cid}`}>
-          <div className={`body-col plans-display-col-1 hover ${(selected_msg === i && asel?.cid === p.cid) ? 'selected' : ''}`}
+          <div className={`body-col plans-display-col-1 green hover ${(selected_msg === i && asel?.cid === p.cid) ? 'selected' : ''}`}
                onMouseDown={(event) => {
                  this.props.aircraftSelect(event, 'plans', p.cid, 'type');
                  this.props.messageSelect(i);
