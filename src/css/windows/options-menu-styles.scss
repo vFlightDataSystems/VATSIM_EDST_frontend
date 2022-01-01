@@ -20,6 +20,11 @@ $route-menu-alert-cyan: #00ADAD;
     width: 570px;
   }
 
+  &.prev-route {
+    width: 380px;
+    overflow: hidden;
+  }
+
   &.speed {
     width: 180px;
   }
@@ -202,6 +207,10 @@ $route-menu-alert-cyan: #00ADAD;
 
     &.route-row {
       padding: 4px 0;
+    }
+
+    &.prev-route-row {
+      padding: 0 8px;
     }
 
     &.speed-row {

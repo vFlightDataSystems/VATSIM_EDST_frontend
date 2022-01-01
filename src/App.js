@@ -18,6 +18,7 @@ import PlansDisplay from "./components/edst-windows/PlansDisplay";
 import SpeedMenu from "./components/edst-windows/SpeedMenu";
 import HeadingMenu from "./components/edst-windows/HeadingMenu";
 import {getRemainingRouteData, getRouteDataDistance, getSignedDistancePointToPolygon, routeWillEnterAirspace} from "./lib";
+import PreviousRouteMenu from "./components/edst-windows/PreviousRouteMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -182,9 +183,10 @@ export default class App extends React.Component {
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
     }
-    // for (let [key, val] of Object.entries(post_data)) {
-    //   edstData[key] = val;
-    // }
+    if (Object.keys(plan_data).includes('route')) {
+      plan_data.previous_route = entry?._route;
+      plan_data.previous_route_data = entry?._route_data;
+    }
     plan_data.callsign = entry.callsign;
     await updateEdstEntry(plan_data)
       .then(response => response.json())
@@ -280,6 +282,14 @@ export default class App extends React.Component {
         } : {
           x: x,
           y: y - height,
+          w: width,
+          h: height
+        };
+        break;
+      case 'prev-route-menu':
+        pos[name] = {
+          x: x,
+          y: plan ? ref.offsetTop : y - 2 * height,
           w: width,
           h: height
         };
@@ -529,6 +539,15 @@ export default class App extends React.Component {
             stopDrag={this.stopDrag}
             pos={pos['route-menu']}
             closeWindow={() => this.closeMenu('route-menu')}
+          />}
+          {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
+            dragging={dragging}
+            data={edstData[asel?.cid]}
+            amendEntry={this.amendEntry}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            pos={pos['prev-route-menu']}
+            closeWindow={() => this.closeMenu('prev-route-menu')}
           />}
           {menu?.name === 'alt-menu' && <AltMenu
             pos={pos['alt-menu']}
