@@ -239,7 +239,9 @@ export default class RouteMenu extends React.Component {
               <button>
                 Flight Data
               </button>
-              <button disabled={true}>
+              <button disabled={data?.previous_route === undefined}
+                      onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'prev-route-menu', true)}
+              >
                 Previous Route
               </button>
               <button disabled={true}>

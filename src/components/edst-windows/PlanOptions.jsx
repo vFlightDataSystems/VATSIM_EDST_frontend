@@ -54,7 +54,9 @@ export default class PlanOptions extends React.Component {
             </div>
           </div>
           <div className="options-row">
-            <div className="options-col hover" disabled={true}>
+            <div className="options-col hover" disabled={data?.previous_route === undefined}
+                 onMouseDown={() => this.props.openMenu(this.planMenuRef.current, 'prev-route-menu', true)}
+            >
               Previous Route
             </div>
           </div>

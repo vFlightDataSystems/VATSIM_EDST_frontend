@@ -38,17 +38,17 @@ export function getRemainingRouteData(route, route_data) {
   if (route_data.length > 1) {
     const fixes = route_data?.map(e => e.fix);
     const sorted_route_data = route_data.slice()?.sort((u, v) => u.dist > v.dist);
-    route_data = route_data.slice(route_data.indexOf(sorted_route_data[0]));
-    const closest_fix = sorted_route_data[0].fix;
-    const second_closest_fix = sorted_route_data[1].fix;
-    const next_fix = fixes.indexOf(closest_fix) < fixes.indexOf(second_closest_fix) ? closest_fix : second_closest_fix;
-    for (let fix of fixes.slice(0, fixes.indexOf(next_fix)+1).reverse()) {
+    const closest_fix = sorted_route_data[0];
+    const second_closest_fix = sorted_route_data[1];
+    const next_fix = route_data.indexOf(closest_fix) < route_data.indexOf(second_closest_fix) ? closest_fix : second_closest_fix;
+    for (let fix of fixes.slice(0, fixes.indexOf(next_fix.fix)+1).reverse()) {
       if (route.includes(fix)) {
         route = route.slice(route.indexOf(fix) + fix.length);
-        route = `.${next_fix}` + route;
+        route = `.${next_fix.fix}` + route;
         break;
       }
     }
+    route_data = route_data.slice(route_data.indexOf(next_fix));
   }
   return {_route: route, _route_data: route_data};
 }
