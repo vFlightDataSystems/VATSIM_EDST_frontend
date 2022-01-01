@@ -17,7 +17,7 @@ import SortMenu from "./components/edst-windows/SortMenu";
 import PlansDisplay from "./components/edst-windows/PlansDisplay";
 import SpeedMenu from "./components/edst-windows/SpeedMenu";
 import HeadingMenu from "./components/edst-windows/HeadingMenu";
-import {getSignedDistancePointToPolygon, routeWillEnterAirspace} from "./lib";
+import {getRemainingRouteData, getRouteDataDistance, getSignedDistancePointToPolygon, routeWillEnterAirspace} from "./lib";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -79,7 +79,7 @@ export default class App extends React.Component {
 
   depFilter = (entry) => {
     const {sector_artcc} = this.state;
-    return Number(entry.flightplan.ground_speed) < 40 && entry.departing && entry.dep_artcc === sector_artcc;
+    return Number(entry.flightplan.ground_speed) < 40 && entry?.dep_info?.artcc?.toLowerCase() === sector_artcc;
   }
 
   entryFilter = (entry) => {
@@ -90,6 +90,17 @@ export default class App extends React.Component {
     return (sdist < 100) && will_enter_airspace;
   }
 
+  refreshEntry = (x, entry) => {
+    const pos = [x?.flightplan?.lon, x?.flightplan?.lat];
+    if (entry?.route_data !== x.route_data) {
+      entry._route_data = getRouteDataDistance(x.route_data, pos);
+    }
+    Object.assign(entry, getRemainingRouteData(x.route, entry._route_data));
+    entry.pending_removal = x?.update_time === entry?.update_time;
+    Object.assign(entry, x);
+    return entry;
+  }
+
   refresh = async () => {
     let {edstData, acl_data, dep_data} = this.state;
     await getEdstData()
@@ -98,8 +109,7 @@ export default class App extends React.Component {
         if (data) {
           for (let x of data) {
             if (this.entryFilter(x)) {
-              let entry = Object.keys(edstData).includes(x.cid) ? Object.assign(edstData?.[x.cid], x) : x;
-              entry.pending_removal = entry.update_time === edstData?.[x.cid]?.update_time;
+              const entry = this.refreshEntry(x, edstData?.[x.cid] || {})
               edstData[x.cid] = entry;
               if (this.depFilter(entry) && !dep_data.deleted.includes(x.cid)) {
                 if (!dep_data.cid_list.includes(x.cid)) {
@@ -180,7 +190,7 @@ export default class App extends React.Component {
       .then(response => response.json())
       .then(data => {
         if (data) {
-          edstData[cid] = Object.assign(entry, data);
+          edstData[cid] = this.refreshEntry(data, entry);
           this.setState({edstData: edstData, asel: null});
         }
       });

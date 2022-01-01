@@ -9,7 +9,7 @@ export default class RouteMenu extends React.Component {
     this.state = {
       dep: dep,
       trial: !dep,
-      route: this.props.data?.[dep ? 'route' : 'remaining_route'] || '',
+      route: this.props.data._route,
       prefroute_eligible_only: false,
       append_star: false,
       append_oplus: false,
@@ -25,7 +25,7 @@ export default class RouteMenu extends React.Component {
       const dep = this.props.asel?.window === 'dep';
       this.setState({
         dep: dep,
-        route: this.props.data?.[dep ? 'route' : 'remaining_route'] || '',
+        route: this.props.data._route,
         trial: !dep && trial,
         append_star: false,
         append_oplus: false,
@@ -38,8 +38,8 @@ export default class RouteMenu extends React.Component {
   clearedToFix = (fix) => {
     const {trial} = this.state;
     const {data} = this.props;
-    let {route: new_route, route_data} = data;
-    let route_fixes = route_data.map(e => e.fix);
+    let {_route: new_route, _route_data} = data;
+    let route_fixes = _route_data.map(e => e.fix);
     const index = route_fixes.indexOf(fix);
     for (let f of route_fixes.slice(0, index + 1).reverse()) {
       if (new_route.includes(f)) {
@@ -48,7 +48,7 @@ export default class RouteMenu extends React.Component {
       }
     }
     new_route = `..${fix}` + new_route;
-    const plan_data = {route: new_route, route_data: route_data.slice(index)};
+    const plan_data = {route: new_route, route_data: _route_data.slice(index)};
     if (trial) {
       this.props.trialPlan({
         cid: data.cid,
@@ -91,8 +91,7 @@ export default class RouteMenu extends React.Component {
       prefrouteDeltaY
     } = this.state;
     const {pos, data} = this.props;
-    const remaining_route = data?.remaining_route !== undefined ? data?.remaining_route : data?.route;
-    const route_data = (dep || data?.remaining_route_data === undefined) ? data?.route_data : data?.remaining_route_data;
+    const route_data = data?._route_data;
 
     return (<div
         onMouseEnter={() => this.setState({focused: true})}
@@ -171,7 +170,7 @@ export default class RouteMenu extends React.Component {
           </div>
           <div className="options-row">
             <div className="options-col display-route">
-              ./{!dep ? remaining_route : data?.route}.{data?.dest}
+              ./{data?._route}.{data?.dest}
             </div>
           </div>
           {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
