@@ -196,7 +196,7 @@ export default class AclTable extends React.Component {
             <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
             >
-              {e.dep}./{e.remaining_route ? e.remaining_route : e.route}.{e.dest}
+              {e.dep}./{e._route}.{e.dest}
             </div>
           </div>)}
         {manual && <div className="body-row separator"/>}
@@ -254,7 +254,7 @@ ${this.isSelected(cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 
             <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
             >
-              {e.dep}./{e.remaining_route !== undefined ? e.remaining_route : e.route}.{e.dest}
+              {e.dep}./{e._route}.{e.dest}
             </div>
           </div>)}
       </div>
