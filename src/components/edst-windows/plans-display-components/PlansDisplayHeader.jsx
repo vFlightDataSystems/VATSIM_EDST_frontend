@@ -7,7 +7,7 @@ export default class PlansDisplayHeader extends React.Component {
 
   render() {
     const {focused, asel, plan_data} = this.props;
-    const interim_disabled = asel ? !Object.keys(plan_data?.plan_data)?.includes('altitude') : true;
+    const interim_disabled = asel ? !Object.keys(plan_data?.plan_data || {})?.includes('altitude') : true;
 
     return (<div>
       <WindowTitleBar
@@ -67,7 +67,10 @@ export default class PlansDisplayHeader extends React.Component {
         </div>
         <div className="outer-button">
           <div className="edst-window-button"
-               onMouseDown={this.props.cleanup}
+               onMouseDown={() => {
+                 this.props.cleanup();
+                 this.props.closeWindow();
+               }}
           >
             Clean Up
           </div>

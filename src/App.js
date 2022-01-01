@@ -160,7 +160,7 @@ export default class App extends React.Component {
   trialPlan = (p) => {
     let {plan_queue, open_windows} = this.state;
     open_windows.push('plans')
-    plan_queue.push(p);
+    plan_queue.unshift(p);
     this.setState({plan_queue: plan_queue});
   }
 
@@ -474,14 +474,13 @@ export default class App extends React.Component {
             // z_index={open_windows.indexOf('dep')}
             closeWindow={() => this.closeWindow('dep')}
           />}
-          {open_windows.includes('plans') && <PlansDisplay
+          {open_windows.includes('plans') && plan_queue.length > 0 && <PlansDisplay
             unmount={this.unmount}
             openMenu={this.openMenu}
             dragging={dragging}
             asel={asel?.window === 'plans' ? asel : null}
             cleanup={() => {
               this.setState({plan_queue: []});
-              this.closeWindow('plans');
             }}
             plan_queue={plan_queue}
             amendEntry={this.amendEntry}

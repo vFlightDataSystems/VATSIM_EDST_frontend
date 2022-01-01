@@ -213,7 +213,7 @@ export default class RouteMenu extends React.Component {
             </div>
             <div className="prefroute-container"
                  onWheel={(e) => this.setState({prefrouteDeltaY: Math.max(Math.min(((prefrouteDeltaY + e.deltaY) / 100 | 0), data?.routes?.length), 0)})}>
-              {data?.routes.slice(prefrouteDeltaY, prefrouteDeltaY + 5).map(r => {
+              {Object.entries(data?.routes.slice(prefrouteDeltaY, prefrouteDeltaY + 5) || {}).map(([i, r]) => {
                 if (!dep) {
                   let route_str = r.route?.slice() || '';
                   r.route = null;
@@ -224,7 +224,7 @@ export default class RouteMenu extends React.Component {
                     }
                   }
                 }
-                return r.route && (<div className="options-row prefroute-row">
+                return r.route && (<div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
                   <div className="options-col prefroute-col hover"
                        onMouseDown={() => this.clearedReroute(r)}
                   >
