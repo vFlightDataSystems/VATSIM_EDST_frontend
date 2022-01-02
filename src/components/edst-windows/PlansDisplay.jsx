@@ -13,22 +13,6 @@ export default class PlansDisplay extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.props.aircraftSelect(null, 'plans', this.props.plan_queue?.[0]?.cid, 'type');
-    this.setState({selected_msg: 0});
-  }
-
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.props !== nextProps;
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.plan_queue !== prevProps.plan_queue) {
-      this.props.aircraftSelect(null, 'plans', this.props.plan_queue?.[0]?.cid, 'type');
-      this.setState({selected_msg: 0});
-    }
-  }
-
   componentWillUnmount() {
     this.props.unmount();
   }

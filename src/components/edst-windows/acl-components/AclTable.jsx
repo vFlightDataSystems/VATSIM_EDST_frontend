@@ -146,12 +146,13 @@ export default class AclTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
+        <div className="body-row separator"/>
         {sorted_edst_data.map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
           <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`acl-body-${cid}`}>
             <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
                  onMouseDown={() => this.updateStatus(cid)}
             >
-              {e.acl_status === undefined ? 'N' : e.acl_status}
+              {e.acl_status === undefined && manual ? 'N' : e.acl_status}
             </div>
             <div className="body-col body-col-1 border"/>
             <div className="body-col body-col-1 border"/>
@@ -184,23 +185,25 @@ export default class AclTable extends React.Component {
             >
               {e.beacon}
             </div>
-            <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}`}
+            <div className={`body-col hs hdg hover ${hidden.includes('scratch_hdg') ? 'content hidden' : ''}
+              ${this.isSelected(cid, 'hdg') ? 'selected' : ''} ${e?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'hdg')}
             >
-
+              {e?.scratch_hdg?.val}
             </div>
             <div className="body-col hs-slash">
               /
             </div>
-            <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}`}
+            <div className={`body-col hs spd hover ${hidden.includes('scratch_spd') ? 'content hidden' : ''}
+${this.isSelected(cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'spd')}
             >
-
+              {e?.scratch_spd?.val}
             </div>
             <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
             >
-              {e.dep}./{e._route}.{e.dest}
+              {e.dep}./{e._route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
             </div>
           </div>)}
         {manual && <div className="body-row separator"/>}
@@ -258,7 +261,7 @@ ${this.isSelected(cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 
             <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
             >
-              {e.dep}./{e._route}.{e.dest}
+              {e.dep}./{e._route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
             </div>
           </div>)}
       </div>

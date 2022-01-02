@@ -37,6 +37,7 @@ export default class AclHeader extends React.Component {
           </div>
         </div>
         <div className="outer-button"
+             disabled={asel === null}
              onMouseDown={(e) => this.props.openMenu(e.target, 'hold-menu')}
         >
           <div className="edst-window-button" disabled={asel === null}>
