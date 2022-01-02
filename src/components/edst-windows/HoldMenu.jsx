@@ -273,7 +273,7 @@ export default class HoldMenu extends React.Component {
           </div>
           <div className="options-row hold-row-2 bottom-border">
             <div className="options-col hold-col-5">
-              <button>
+              <button onMouseDown={() => this.setState({efc: ''})}>
                 Delete EFC
               </button>
             </div>
