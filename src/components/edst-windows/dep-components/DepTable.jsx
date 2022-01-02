@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
+import DepRow from "./DepRow";
 
 const COMPLETED_SYMBOL = '✓';
 
@@ -103,43 +104,8 @@ export default class DepTable extends React.Component {
             <div className="body-col body-col-2">
               0000
             </div>
-            <div className={`inner-row ${e.dep_highlighted ? 'highlighted' : ''}`}>
-              <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'fid')}>
-                {e.cid} {e.callsign}
-              </div>
-              <div className="body-col pa"/>
-              <div className="body-col rem" onContextMenu={(event) => {
-                event.preventDefault();
-                this.props.updateEntry(e.cid, {dep_highlighted: !e.dep_highlighted});
-              }}/>
-              <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'type')}
-              >
-                {`${e.type}/${e.equipment}`}
-              </div>
-              <div className={`body-col alt`}>
-                <div className={`${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
-                     onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'alt')}
-                >
-                  {e.altitude}
-                </div>
-
-              </div>
-              <div
-                className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-                onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'code')}
-              >
-                {e.beacon}
-              </div>
-              <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
-              >
-                {e.dep}{e.route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
-              </div>
-            </div>
+            <DepRow cid={cid} entry={e} isSelected={this.isSelected} aircraftSelect={this.props.aircraftSelect}
+                    updateEntry={this.props.updateEntry} hidden={hidden}/>
           </div>)}
         {manual && <div className="body-row separator"/>}
         {manual && Object.entries(edstData)?.map(([cid, e]) => (cid_list.includes(cid) && e.dep_status === undefined) &&
@@ -152,43 +118,8 @@ export default class DepTable extends React.Component {
             <div className="body-col body-col-2">
               0000
             </div>
-            <div className={`inner-row ${e.dep_highlighted ? 'highlighted' : ''}`}>
-              <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'fid')}>
-                {e.cid} {e.callsign}
-              </div>
-              <div className="body-col pa"/>
-              <div className="body-col rem" onContextMenu={(event) => {
-                event.preventDefault();
-                this.props.updateEntry(e.cid, {dep_highlighted: !e.dep_highlighted});
-              }}/>
-              <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'type')}
-              >
-                {`${e.type}/${e.equipment}`}
-              </div>
-              <div className={`body-col alt`}>
-                <div className={`${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
-                     onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'alt')}
-                >
-                  {e.altitude}
-                </div>
-
-              </div>
-              <div
-                className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-                onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'code')}
-              >
-                {e.beacon}
-              </div>
-              <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
-              >
-                {e.dep}{e.route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
-              </div>
-            </div>
+            <DepRow cid={cid} entry={e} isSelected={this.isSelected} aircraftSelect={this.props.aircraftSelect}
+                    updateEntry={this.props.updateEntry} hidden={hidden}/>
           </div>)}
       </div>
 
