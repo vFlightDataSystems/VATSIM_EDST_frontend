@@ -4,8 +4,22 @@ import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 
 export default class AclHeader extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      search_str: ''
+    }
+  }
+
+  handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      this.props.addEntry(this.state.search_str);
+      this.setState({search_str: ''});
+    }
+  }
 
   render() {
+    const {search_str} = this.state;
     const {focused, manual, asel, sorting} = this.props;
     return (<div>
       <WindowTitleBar
@@ -15,13 +29,16 @@ export default class AclHeader extends React.Component {
       />
       <div className="no-select">
         <div className="outer-button" disabled={asel === null}
-             onMouseDown={(e) => this.props.openMenu(e.target, 'plan-menu')}>
+             onMouseDown={(e) => this.props.openMenu(e.target, 'plan-menu')}
+        >
           <div className="edst-window-button"
                disabled={asel === null}>
             Plan Options...
           </div>
         </div>
-        <div className="outer-button" disabled={asel === null}>
+        <div className="outer-button"
+             onMouseDown={(e) => this.props.openMenu(e.target, 'hold-menu')}
+        >
           <div className="edst-window-button" disabled={asel === null}>
             Hold...
           </div>
@@ -43,8 +60,8 @@ export default class AclHeader extends React.Component {
             Sort...
           </div>
         </div>
-        <div className="outer-button">
-          <div className="edst-window-button">
+        <div className="outer-button" disabled={true}>
+          <div className="edst-window-button" disabled={true}>
             Tools...
           </div>
         </div>
@@ -55,8 +72,8 @@ export default class AclHeader extends React.Component {
             Posting Mode
           </div>
         </div>
-        <div className="outer-button">
-          <div className="edst-window-button">
+        <div className="outer-button" disabled={true}>
+          <div className="edst-window-button" disabled={true}>
             Template...
           </div>
         </div>
@@ -71,7 +88,11 @@ export default class AclHeader extends React.Component {
       <div className="edst-window-header-bottom-row no-select">
         Add/Find
         <div className="input-container">
-          <input/>
+          <input
+            value={search_str}
+            onChange={(e) => this.setState({search_str: e.target.value.toUpperCase()})}
+            onKeyDown={this.handleKeyDown}
+          />
         </div>
       </div>
     </div>);

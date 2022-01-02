@@ -77,7 +77,7 @@ export default class SpeedMenu extends React.Component {
           >
             <div className="options-col">
               Speed:
-              <div className="speed-input">
+              <div className="input speed-input">
                 <input value={speed} onChange={(e) => this.setState({speed: e.target.value})}/>
               </div>
             </div>

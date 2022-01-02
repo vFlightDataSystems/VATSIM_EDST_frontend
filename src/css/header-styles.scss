@@ -22,11 +22,11 @@ $edst-windowl-header-window-open-light-grey: #595958;
 
   &:hover {
     border: 1px solid $edst-window-header-button-hover-border;
+  }
 
-    &[disabled] {
-      pointer-events: none;
-      border: 1px solid #000000;
-    }
+  &[disabled] {
+    pointer-events: none;
+    border: 1px solid #000000;
   }
 }
 
