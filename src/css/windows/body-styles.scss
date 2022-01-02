@@ -25,6 +25,11 @@ $body-ac-sep-very-dark-grey: #252525;
   scrollbar-width: none;
 }
 
+.sep-border {
+  border: none;
+  border-bottom: 1px solid $body-ac-sep-very-dark-grey;
+}
+
 .body-row {
   margin: 4px 0;
   display: flex;
@@ -32,6 +37,10 @@ $body-ac-sep-very-dark-grey: #252525;
   height: 20px;
   flex-grow: 1;
   padding: 0 10px;
+
+  &.pending-removal {
+    color: $body-window-open-light-grey
+  }
 
   &.separator {
     height: 3px;

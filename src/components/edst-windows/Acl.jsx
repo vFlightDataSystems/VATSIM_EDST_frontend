@@ -15,7 +15,7 @@ export default class Acl extends React.Component {
 
   togglePosting = () => {
     const manual = this.state.manual;
-    this.setState({manual: !manual})
+    this.setState({manual: !manual});
   }
 
   componentWillUnmount() {
@@ -38,6 +38,7 @@ export default class Acl extends React.Component {
         focused={focused} manual={manual}
         closeWindow={this.props.closeWindow}
         togglePosting={this.togglePosting}
+        cleanup={this.props.cleanup}
       />
       <AclTable
         manual={manual}

@@ -57,7 +57,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const sector_artcc = 'zbw';
+    const sector_artcc = prompt('Choose an ARTCC').toLowerCase();
     this.setState({sector_id: '37', sector_artcc: sector_artcc});
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
@@ -97,7 +97,9 @@ export default class App extends React.Component {
       entry._route_data = getRouteDataDistance(x.route_data, pos);
     }
     Object.assign(entry, getRemainingRouteData(x.route, entry._route_data));
-    entry.pending_removal = x?.update_time === entry?.update_time;
+    if (!entry?.pending_removal && x?.update_time === entry?.update_time) {
+      entry.pending_removal = performance.now();
+    }
     Object.assign(entry, x);
     return entry;
   }
@@ -175,6 +177,30 @@ export default class App extends React.Component {
     let entry = edstData[cid];
     edstData[cid] = Object.assign(entry, data);
     this.setState({edstData: edstData});
+  }
+
+  addEntry = (window, str) => {
+    let {edstData, acl_data, dep_data} = this.state;
+    let entry = Object.values(edstData || {})?.find(e => String(e?.cid) === str || String(e.callsign) === str || String(e.beacon) === str);
+    if (entry) {
+      if (window === 'acl') {
+        const del_index = acl_data.deleted?.indexOf(entry?.cid);
+        if (del_index > -1) {
+          acl_data.deleted.splice(del_index);
+        }
+        acl_data.cid_list.push(entry?.cid);
+        this.setState({acl_data: acl_data});
+      }
+      if (window === 'dep') {
+        const del_index = dep_data.deleted?.indexOf(entry?.cid);
+        if (del_index > -1) {
+          dep_data.deleted.splice(del_index);
+        }
+        dep_data.cid_list.push(entry?.cid);
+        this.setState({dep_data: dep_data});
+      }
+
+    }
   }
 
   amendEntry = async (cid, plan_data) => {
@@ -316,7 +342,7 @@ export default class App extends React.Component {
           y: ref.offsetTop + ref.offsetHeight
         };
     }
-    this.setState({pos: pos, menu: {name: name, ref_id: ref?.target?.id}});
+    this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}});
   }
 
   closeMenu = (name) => {
@@ -402,6 +428,15 @@ export default class App extends React.Component {
     this.setState({menu: null, asel: null});
   }
 
+  aclCleanup = () => {
+    let {edstData, acl_data} = this.state;
+    for (const cid of acl_data?.cid_list) {
+      if (edstData[cid]?.pending_removal) {
+        this.deleteEntry('acl', cid);
+      }
+    }
+  }
+
   render() {
     const {
       edstData,
@@ -447,6 +482,7 @@ export default class App extends React.Component {
             {dragging_cursor_hide && <div className="cursor"/>}
           </div>
           {open_windows.includes('acl') && <Acl
+            cleanup={this.aclCleanup}
             sorting={sorting.acl}
             unmount={this.unmount}
             openMenu={this.openMenu}
