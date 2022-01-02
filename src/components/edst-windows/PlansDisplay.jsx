@@ -20,7 +20,6 @@ export default class PlansDisplay extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     return this.props !== nextProps;
-
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {

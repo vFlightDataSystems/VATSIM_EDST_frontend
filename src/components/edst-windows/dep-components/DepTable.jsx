@@ -104,7 +104,7 @@ export default class DepTable extends React.Component {
       </div>
       <div className="scroll-container">
         {Object.entries(edstData)?.sort(this.sort_func)?.map(([cid, e]) => (cid_list.includes(cid) && ((e.dep_status !== undefined) || !manual)) &&
-          <div className="body-row" key={`dep-body-${cid}`}>
+          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`dep-body-${cid}`}>
             <div className={`body-col body-col-1 radio dep-radio ${e.dep_status !== undefined ? 'checkmark' : ''}`}
                  onMouseDown={() => this.updateStatus(cid)}
             >
@@ -146,7 +146,7 @@ export default class DepTable extends React.Component {
           </div>)}
         {manual && <div className="body-row separator"/>}
         {manual && Object.entries(edstData)?.map(([cid, e]) => (cid_list.includes(cid) && e.dep_status === undefined) &&
-          <div className="body-row" key={`dep-body-${cid}`}>
+          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`dep-body-${cid}`}>
             <div className={`body-col body-col-1 radio dep-radio`}
                  onMouseDown={() => this.updateStatus(cid)}
             >

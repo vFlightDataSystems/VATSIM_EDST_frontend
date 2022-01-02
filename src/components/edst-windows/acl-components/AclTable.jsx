@@ -61,12 +61,12 @@ export default class AclTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.acl_status === undefined) {
-      this.props.updateEntry(cid, 'acl_status', '');
+      this.props.updateEntry(cid, {acl_status: ''});
     } else {
       if (entry?.acl_status === '') {
-        this.props.updateEntry(cid, 'acl_status', ON_FREQ_SYMBOL);
+        this.props.updateEntry(cid, {acl_status: ON_FREQ_SYMBOL});
       } else {
-        this.props.updateEntry(cid, 'acl_status', '');
+        this.props.updateEntry(cid, {acl_status: ''});
       }
     }
   }
@@ -78,6 +78,8 @@ export default class AclTable extends React.Component {
         return u?.callsign?.localeCompare(v?.callsign);
       case 'Destination':
         return u?.dest?.localeCompare(v?.dest);
+      case 'Origin':
+        return u?.dep?.localeCompare(v?.dep);
       default:
         return u?.callsign?.localeCompare(v?.callsign);
     }
@@ -86,6 +88,8 @@ export default class AclTable extends React.Component {
   render() {
     const {hidden, alt_mouse_down} = this.state;
     const {edstData, manual, cid_list} = this.props;
+
+    const sorted_edst_data = Object.entries(edstData)?.sort(this.sort_func);
 
     return (<div className="acl-body no-select">
       <div className="body-row header" key="acl-table-header">
@@ -142,8 +146,8 @@ export default class AclTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
-        {Object.entries(edstData)?.sort(this.sort_func).map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
-          <div className="body-row" key={`acl-body-${cid}`}>
+        {sorted_edst_data.map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
+          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`acl-body-${cid}`}>
             <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
                  onMouseDown={() => this.updateStatus(cid)}
             >
@@ -201,7 +205,7 @@ export default class AclTable extends React.Component {
           </div>)}
         {manual && <div className="body-row separator"/>}
         {manual && Object.entries(edstData).map(([cid, e]) => (cid_list.includes(cid) && e.acl_status === undefined) &&
-          <div className="body-row" key={`acl-body-${cid}`}>
+          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`acl-body-${cid}`}>
             <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
                  onMouseDown={() => this.updateStatus(cid)}>
               N

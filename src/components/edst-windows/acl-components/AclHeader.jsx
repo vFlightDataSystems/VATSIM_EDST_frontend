@@ -61,7 +61,9 @@ export default class AclHeader extends React.Component {
           </div>
         </div>
         <div className="outer-button">
-          <div className="edst-window-button">
+          <div className="edst-window-button"
+               onMouseDown={this.props.cleanup}
+          >
             Clean Up
           </div>
         </div>
