@@ -192,6 +192,7 @@ export default class App extends React.Component {
         }
         acl_data.cid_list.push(entry?.cid);
         this.setState({acl_data: acl_data});
+        this.updateEntry(entry.cid, {acl_highlighted: true});
       }
       if (window === 'dep') {
         const del_index = dep_data.deleted?.indexOf(entry?.cid);
@@ -200,6 +201,7 @@ export default class App extends React.Component {
         }
         dep_data.cid_list.push(entry?.cid);
         this.setState({dep_data: dep_data});
+        this.updateEntry(entry.cid, {dep_highlighted: true});
       }
 
     }
@@ -463,7 +465,7 @@ export default class App extends React.Component {
     } = this.state;
 
     return (
-      <div className="edst">
+      <div className="edst" onContextMenu={(event) => event.preventDefault()}>
         <EdstHeader open_windows={open_windows}
                     disabled_windows={disabled_windows}
                     openWindow={this.openWindow}
