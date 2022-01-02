@@ -52,7 +52,7 @@ export default class HeadingMenu extends React.Component {
           <div className="options-row speed-row"
             // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'spd-hdg-menu', false)}
           >
-            <div className="options-col left"
+            <div className="options-col"
               // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'spd-hdg-menu', false)}
             >
               <button className={`${amend ? 'selected' : ''}`}
@@ -75,7 +75,7 @@ export default class HeadingMenu extends React.Component {
           >
             <div className="options-col">
               Heading:
-              <div className="speed-input">
+              <div className="input speed-input">
                 <input value={heading} onChange={(e) => this.setState({speed: e.target.value})}/>
               </div>
             </div>

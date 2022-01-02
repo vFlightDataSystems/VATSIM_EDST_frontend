@@ -30,6 +30,7 @@ export default class Dep extends React.Component {
       onMouseLeave={() => this.setState({focused: false})}
     >
       <DepHeader
+        addEntry={this.props.addEntry}
         sorting={this.props.sorting}
         openMenu={this.props.openMenu}
         asel={this.props.asel}

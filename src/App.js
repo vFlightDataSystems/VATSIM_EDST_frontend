@@ -19,6 +19,7 @@ import SpeedMenu from "./components/edst-windows/SpeedMenu";
 import HeadingMenu from "./components/edst-windows/HeadingMenu";
 import {getRemainingRouteData, getRouteDataDistance, getSignedDistancePointToPolygon, routeWillEnterAirspace} from "./lib";
 import PreviousRouteMenu from "./components/edst-windows/PreviousRouteMenu";
+import HoldMenu from "./components/edst-windows/HoldMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -57,7 +58,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const sector_artcc = prompt('Choose an ARTCC').toLowerCase();
+    const sector_artcc = 'zbw' // prompt('Choose an ARTCC').toLowerCase();
     this.setState({sector_id: '37', sector_artcc: sector_artcc});
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
@@ -111,9 +112,9 @@ export default class App extends React.Component {
       .then(data => {
         if (data) {
           for (let x of data) {
+            const entry = this.refreshEntry(x, edstData?.[x.cid] || {})
+            edstData[x.cid] = entry;
             if (this.entryFilter(x)) {
-              const entry = this.refreshEntry(x, edstData?.[x.cid] || {})
-              edstData[x.cid] = entry;
               if (this.depFilter(entry) && !dep_data.deleted.includes(x.cid)) {
                 if (!dep_data.cid_list.includes(x.cid)) {
                   dep_data.cid_list.push(x.cid);
@@ -182,6 +183,7 @@ export default class App extends React.Component {
   addEntry = (window, str) => {
     let {edstData, acl_data, dep_data} = this.state;
     let entry = Object.values(edstData || {})?.find(e => String(e?.cid) === str || String(e.callsign) === str || String(e.beacon) === str);
+    console.log(edstData)
     if (entry) {
       if (window === 'acl') {
         const del_index = acl_data.deleted?.indexOf(entry?.cid);
@@ -482,6 +484,7 @@ export default class App extends React.Component {
             {dragging_cursor_hide && <div className="cursor"/>}
           </div>
           {open_windows.includes('acl') && <Acl
+            addEntry={(s) => this.addEntry('acl', s)}
             cleanup={this.aclCleanup}
             sorting={sorting.acl}
             unmount={this.unmount}
@@ -497,6 +500,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeWindow('acl')}
           />}
           {open_windows.includes('dep') && <Dep
+            addEntry={(s) => this.addEntry('dep', s)}
             sorting={sorting.dep}
             unmount={this.unmount}
             openMenu={this.openMenu}
@@ -574,6 +578,16 @@ export default class App extends React.Component {
             stopDrag={this.stopDrag}
             pos={pos['route-menu']}
             closeWindow={() => this.closeMenu('route-menu')}
+          />}
+          {menu?.name === 'hold-menu' && <HoldMenu
+            dragging={dragging}
+            asel={asel}
+            data={edstData[asel?.cid]}
+            amendEntry={this.amendEntry}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            pos={pos['hold-menu']}
+            closeWindow={() => this.closeMenu('hold-menu')}
           />}
           {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
             dragging={dragging}

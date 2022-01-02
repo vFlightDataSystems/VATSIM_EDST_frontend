@@ -3,9 +3,24 @@ import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 
 export default class DepHeader extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      search_str: ''
+    }
+  }
+
+  handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      this.props.addEntry(this.state.search_str);
+      this.setState({search_str: ''});
+    }
+  }
 
   render() {
+    const {search_str} = this.state;
     const {focused, manual, asel, sorting} = this.props;
+
     return (<div className="no-select">
       <WindowTitleBar
         focused={focused}
@@ -34,8 +49,8 @@ export default class DepHeader extends React.Component {
             Posting Mode
           </div>
         </div>
-        <div className="outer-button">
-          <div className="edst-window-button">
+        <div className="outer-button" disabled={true}>
+          <div className="edst-window-button" disabled={true}>
             Template...
           </div>
         </div>
@@ -43,7 +58,11 @@ export default class DepHeader extends React.Component {
       <div className="edst-window-header-bottom-row no-select">
         Add/Find
         <div className="input-container">
-          <input/>
+          <input
+            value={search_str}
+            onChange={(e) => this.setState({search_str: e.target.value.toUpperCase()})}
+            onKeyDown={this.handleKeyDown}
+          />
         </div>
       </div>
     </div>);

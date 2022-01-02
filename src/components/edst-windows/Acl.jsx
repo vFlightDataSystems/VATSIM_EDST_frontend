@@ -32,6 +32,7 @@ export default class Acl extends React.Component {
       onMouseLeave={() => this.setState({focused: false})}
     >
       <AclHeader
+        addEntry={this.props.addEntry}
         sorting={this.props.sorting}
         openMenu={this.props.openMenu}
         asel={this.props.asel}

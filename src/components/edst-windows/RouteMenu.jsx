@@ -137,7 +137,7 @@ export default class RouteMenu extends React.Component {
             // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
           >
             <div className="options-col">
-              <div className="route-input">
+              <div className="input">
                 {/*<div className="ppos" disabled={true}>*/}
                 {/*  XXX000000..*/}
                 {/*</div>*/}
