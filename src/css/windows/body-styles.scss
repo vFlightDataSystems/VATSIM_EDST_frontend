@@ -17,6 +17,7 @@ $body-window-open-light-grey: #595958;
 $body-window-closed-black: #000000;
 $body-row-sep-color: #AA8800;
 $body-ac-sep-very-dark-grey: #252525;
+$body-ac-highlight: #545454;
 
 .scroll-container {
   height: auto;
@@ -38,13 +39,17 @@ $body-ac-sep-very-dark-grey: #252525;
   flex-grow: 1;
   padding: 0 10px;
 
+  &.highlighted {
+    background-color: $body-ac-highlight;
+  }
+
   &.pending-removal {
     color: $body-window-open-light-grey
   }
 
   &.separator {
-    height: 3px;
-    border-top: 2px solid $body-row-sep-color;
+    height: 0;
+    //border-top: 2px solid $body-row-sep-color;
     border-bottom: 2px solid $body-row-sep-color;
   }
 
@@ -89,8 +94,12 @@ $body-ac-sep-very-dark-grey: #252525;
     padding-left: 4px;
 
     &.green {
-      background-color: $body-font-green;
-      color: #000000;
+      color: $body-font-green;
+
+      &.selected {
+        background-color: $body-font-green;
+        color: #000000;
+      }
     }
   }
 

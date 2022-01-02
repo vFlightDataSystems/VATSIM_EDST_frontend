@@ -55,8 +55,9 @@ export default class HoldMenu extends React.Component {
 
   clearedHold = () => {
     const {data} = this.props;
-    const plan_data = {};
-    // this.props.amendEntry(data.cid, plan_data);
+    const {hold_fix, leg_length, hold_direction, turns, efc} = this.state;
+    const hold_data = {hold_fix: hold_fix, leg_length: leg_length, hold_direction: hold_direction, turns: turns, efc: efc};
+    this.props.amendEntry(data.cid, {hold_data: hold_data});
     this.props.closeWindow();
   }
 

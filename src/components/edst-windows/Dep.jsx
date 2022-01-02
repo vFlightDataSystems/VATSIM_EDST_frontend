@@ -14,7 +14,7 @@ export default class Dep extends React.Component {
 
   togglePosting = () => {
     const manual = this.state.manual;
-    this.setState({manual: !manual})
+    this.setState({manual: !manual});
   }
 
   componentWillUnmount() {

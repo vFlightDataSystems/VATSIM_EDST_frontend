@@ -8,22 +8,9 @@ export default class DepTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // edstData: this.props.edstData,
       hidden: []
     };
   }
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   if (prevProps !== this.props) {
-  //     let {edstData} = this.state;
-  //     for (let [cid, e] of Object.entries(this.props.edstData)) {
-  //       if (e) {
-  //         edstData[cid] = Object.assign(e, edstData[cid]);
-  //       }
-  //     }
-  //     this.setState({edstData: edstData});
-  //   }
-  // }
 
   toggleHideColumn = (name) => {
     let {hidden} = this.state;
@@ -44,12 +31,12 @@ export default class DepTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.dep_status === undefined) {
-      this.props.updateEntry(cid, 'dep_status', '')
+      this.props.updateEntry(cid, {dep_status: ''});
     } else {
       if (entry?.dep_status === '') {
-        this.props.updateEntry(cid, 'dep_status', COMPLETED_SYMBOL)
+        this.props.updateEntry(cid, {dep_status: COMPLETED_SYMBOL});
       } else {
-        this.props.updateEntry(cid, 'dep_status', '')
+        this.props.updateEntry(cid, {dep_status: ''});
       }
     }
   }
@@ -103,12 +90,13 @@ export default class DepTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
+        <div className="body-row separator"/>
         {Object.entries(edstData)?.sort(this.sort_func)?.map(([cid, e]) => (cid_list.includes(cid) && ((e.dep_status !== undefined) || !manual)) &&
           <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`dep-body-${cid}`}>
             <div className={`body-col body-col-1 radio dep-radio ${e.dep_status !== undefined ? 'checkmark' : ''}`}
                  onMouseDown={() => this.updateStatus(cid)}
             >
-              {e.dep_status === undefined ? 'N' : e.dep_status}
+              {e.dep_status === undefined && manual ? 'N' : e.dep_status}
             </div>
             <div className="body-col body-col-1"/>
             <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
@@ -141,7 +129,7 @@ export default class DepTable extends React.Component {
             <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
             >
-              {e.dep}{e.route}.{e.dest}
+              {e.dep}{e.route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
             </div>
           </div>)}
         {manual && <div className="body-row separator"/>}
@@ -183,7 +171,7 @@ export default class DepTable extends React.Component {
             <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
                  onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', cid, 'route')}
             >
-              {e.dep}{e.route}.{e.dest}
+              {e.dep}{e.route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
             </div>
           </div>)}
       </div>

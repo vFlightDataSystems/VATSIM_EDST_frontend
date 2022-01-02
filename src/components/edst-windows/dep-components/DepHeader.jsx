@@ -28,7 +28,7 @@ export default class DepHeader extends React.Component {
         text={['Departure List', `${sorting.name}`, `${manual ? 'Manual' : 'Automatic'}`]}
       />
       <div>
-        <div className="outer-button">
+        <div className="outer-button" disabled={asel === null}>
           <div className="edst-window-button" disabled={asel === null}
                onMouseDown={(e) => this.props.openMenu(e.target, 'plan-menu')}
           >

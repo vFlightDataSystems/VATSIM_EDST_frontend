@@ -35,7 +35,7 @@ export default class PlansDisplayHeader extends React.Component {
         </div>
         <div className="outer-button" disabled={asel === null}>
           <div className="edst-window-button" disabled={asel === null}
-          onMouseDown={() => this.props.amendEntry(asel?.cid, plan_data.plan_data)}
+          onMouseDown={() => this.props.amendEntry(asel?.cid, plan_data?.plan_data)}
           >
             Amend
           </div>

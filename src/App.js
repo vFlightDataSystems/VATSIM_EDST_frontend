@@ -58,7 +58,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const sector_artcc = 'zbw' // prompt('Choose an ARTCC').toLowerCase();
+    const sector_artcc = 'zbw'; // prompt('Choose an ARTCC').toLowerCase();
     this.setState({sector_id: '37', sector_artcc: sector_artcc});
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
@@ -149,7 +149,7 @@ export default class App extends React.Component {
         break;
       case 'dep':
         dep_data.deleted.push(cid);
-        index = acl_data.cid_list.indexOf(cid)
+        index = dep_data.cid_list.indexOf(cid)
         if (index > -1) {
           dep_data.cid_list.splice(index, 1);
         }
@@ -220,7 +220,9 @@ export default class App extends React.Component {
       .then(response => response.json())
       .then(data => {
         if (data) {
-          edstData[cid] = this.refreshEntry(data, entry);
+          entry = this.refreshEntry(data, entry);
+          entry.pending_removal = null;
+          edstData[cid] = entry;
           this.setState({edstData: edstData, asel: null});
         }
       });
