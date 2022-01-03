@@ -20,12 +20,12 @@ export default class AclHeader extends React.Component {
 
   render() {
     const {search_str} = this.state;
-    const {focused, manual, asel, sorting} = this.props;
+    const {focused, posting_manual, asel, sorting} = this.props;
     return (<div>
       <WindowTitleBar
         focused={focused}
         closeWindow={this.props.closeWindow}
-        text={['Aircraft List', `${sorting.sector ? 'Sector/' : ''}${sorting.name}`, `${manual ? 'Manual' : 'Automatic'}`]}
+        text={['Aircraft List', `${sorting.sector ? 'Sector/' : ''}${sorting.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
       />
       <div className="no-select">
         <div className="outer-button" disabled={asel === null}

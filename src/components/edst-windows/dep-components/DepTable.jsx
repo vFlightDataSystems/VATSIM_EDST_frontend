@@ -32,17 +32,17 @@ export default class DepTable extends React.Component {
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
     if (entry?.dep_status === undefined) {
-      this.props.updateEntry(cid, {dep_status: ''});
+      this.props.updateEntry(cid, {dep_status: 0});
     } else {
-      if (entry?.dep_status === '') {
-        this.props.updateEntry(cid, {dep_status: COMPLETED_SYMBOL});
+      if (entry?.dep_status === 0) {
+        this.props.updateEntry(cid, {dep_status: 1});
       } else {
-        this.props.updateEntry(cid, {dep_status: ''});
+        this.props.updateEntry(cid, {dep_status: 0});
       }
     }
   }
 
-  sort_func = ([_, u], [__, v]) => {
+  sort_func = (u, v) => {
     const {sorting} = this.props;
     switch (sorting.name) {
       case 'ACID':
@@ -58,7 +58,7 @@ export default class DepTable extends React.Component {
 
   render() {
     const {hidden} = this.state;
-    const {edstData, manual, cid_list} = this.props;
+    const {edstData, posting_manual, cid_list} = this.props;
 
     return (<div className="dep-body no-select">
       <div className="body-row header" key="dep-table-header">
@@ -72,7 +72,8 @@ export default class DepTable extends React.Component {
           Flight ID
         </div>
         <div className="body-col pa header"/>
-        <div className="body-col rem header"/>
+        <div className="body-col spa rem-hidden"/>
+        <div className="body-col spa rem rem-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => this.toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
@@ -93,36 +94,36 @@ export default class DepTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
+        {Object.values(edstData)?.sort(this.sort_func)?.map((e) => e.spa &&
+          <DepRow
+            entry={e}
+            isSelected={this.isSelected}
+            aircraftSelect={this.props.aircraftSelect}
+            updateEntry={this.props.updateEntry}
+            updateStatus={this.updateStatus}
+            hidden={hidden}
+          />)}
         <div className="body-row separator"/>
-        {Object.entries(edstData)?.sort(this.sort_func)?.map(([cid, e]) => (cid_list.includes(cid) && ((e.dep_status !== undefined) || !manual)) &&
-          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`dep-body-${cid}`}>
-            <div className={`body-col body-col-1 radio dep-radio ${e.dep_status !== undefined ? 'checkmark' : ''}`}
-                 onMouseDown={() => this.updateStatus(cid)}
-            >
-              {e.dep_status === undefined && manual ? 'N' : e.dep_status}
-            </div>
-            <div className="body-col body-col-2">
-              0000
-            </div>
-            <DepRow cid={cid} entry={e} isSelected={this.isSelected} aircraftSelect={this.props.aircraftSelect}
-                    updateEntry={this.props.updateEntry} hidden={hidden}/>
-          </div>)}
-        {manual && <div className="body-row separator"/>}
-        {manual && Object.entries(edstData)?.map(([cid, e]) => (cid_list.includes(cid) && e.dep_status === undefined) &&
-          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`dep-body-${cid}`}>
-            <div className={`body-col body-col-1 radio dep-radio`}
-                 onMouseDown={() => this.updateStatus(cid)}
-            >
-              N
-            </div>
-            <div className="body-col body-col-2">
-              0000
-            </div>
-            <DepRow cid={cid} entry={e} isSelected={this.isSelected} aircraftSelect={this.props.aircraftSelect}
-                    updateEntry={this.props.updateEntry} hidden={hidden}/>
-          </div>)}
+        {Object.values(edstData)?.sort(this.sort_func)?.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.dep_status !== undefined) || !posting_manual)) &&
+          <DepRow
+            entry={e}
+            isSelected={this.isSelected}
+            aircraftSelect={this.props.aircraftSelect}
+            updateEntry={this.props.updateEntry}
+            updateStatus={this.updateStatus}
+            hidden={hidden}
+          />)}
+        {posting_manual && <div className="body-row separator"/>}
+        {posting_manual && Object.values(edstData)?.map((e) => (!e.spa && cid_list.includes(e.cid) && e.dep_status === undefined) &&
+          <DepRow
+            entry={e}
+            isSelected={this.isSelected}
+            aircraftSelect={this.props.aircraftSelect}
+            updateEntry={this.props.updateEntry}
+            updateStatus={this.updateStatus}
+            hidden={hidden}
+          />)}
       </div>
-
     </div>);
   }
 }
