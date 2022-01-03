@@ -194,10 +194,9 @@ $body-font-brown: #695547;
   }
 
   &.pa {
-    width: 44px;
+    width: 30px;
 
     &.header {
-      width: 44px;
       justify-content: left;
     }
 
@@ -214,20 +213,22 @@ $body-font-brown: #695547;
     }
   }
 
-  &.rem {
-    margin-right: 10px;
+  &.spa {
+    //margin-right: 10px;
     width: 8px;
-    border-top: 1px solid $body-medium-grey;
-    border-left: 1px solid $body-medium-grey;
-    border-bottom: 1px solid $body-dark-grey;
-    border-right: 1px solid $body-dark-grey;
+    border: 1px solid transparent;
+    //font-family: Verdana, sans-serif;
 
-    &.header {
+    &.rem {
+      border-top: 1px solid $body-medium-grey;
+      border-left: 1px solid $body-medium-grey;
+      border-bottom: 1px solid $body-dark-grey;
+      border-right: 1px solid $body-dark-grey;
+    }
+
+    &.rem-hidden {
       border: 1px solid transparent;
-
-      :hover {
-        border: 1px solid transparent;
-      }
+      pointer-events: none;
     }
 
     &:hover {
@@ -239,6 +240,7 @@ $body-font-brown: #695547;
     justify-content: left;
     width: 100px;
     margin-right: 0;
+    margin-left: 10px;
     padding-left: 4px;
   }
 
@@ -253,9 +255,15 @@ $body-font-brown: #695547;
   &.alt {
     display: flex;
     justify-content: left;
-    width: 75px;
+    width: 70px;
     /*padding-left: 2px;*/
-    margin-right: 2px;
+    margin-right: 8px;
+
+    &.header {
+      width: 55px;
+      margin-right: 23px;
+      padding-left: 4px;
+    }
 
     > div {
 
@@ -265,11 +273,6 @@ $body-font-brown: #695547;
 
       &.md {
         outline: 1px solid $body-alt-outline-red;
-      }
-
-      &.header > div {
-        padding-left: 4px;
-        width: 60px;
       }
 
       &:active {

@@ -465,7 +465,9 @@ export default class App extends React.Component {
     } = this.state;
 
     return (
-      <div className="edst" onContextMenu={(event) => event.preventDefault()}>
+      <div className="edst"
+           // onContextMenu={(event) => event.preventDefault()}
+      >
         <EdstHeader open_windows={open_windows}
                     disabled_windows={disabled_windows}
                     openWindow={this.openWindow}

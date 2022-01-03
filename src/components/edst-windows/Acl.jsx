@@ -9,13 +9,13 @@ export default class Acl extends React.Component {
     super(props);
     this.state = {
       focused: false,
-      manual: true,
+      posting_manual: true,
     };
   }
 
   togglePosting = () => {
-    const manual = this.state.manual;
-    this.setState({manual: !manual});
+    const posting_manual = this.state.posting_manual;
+    this.setState({posting_manual: !posting_manual});
   }
 
   componentWillUnmount() {
@@ -23,7 +23,7 @@ export default class Acl extends React.Component {
   }
 
   render() {
-    const {focused, manual} = this.state;
+    const {focused, posting_manual} = this.state;
 
     return (<div
       className={`acl ${this.props.dragging ? 'dragging' : ''}`}
@@ -36,13 +36,13 @@ export default class Acl extends React.Component {
         sorting={this.props.sorting}
         openMenu={this.props.openMenu}
         asel={this.props.asel}
-        focused={focused} manual={manual}
+        focused={focused} posting_manual={posting_manual}
         closeWindow={this.props.closeWindow}
         togglePosting={this.togglePosting}
         cleanup={this.props.cleanup}
       />
       <AclTable
-        manual={manual}
+        posting_manual={posting_manual}
         sorting={this.props.sorting}
         cid_list={this.props.cid_list}
         edstData={this.props.edstData}

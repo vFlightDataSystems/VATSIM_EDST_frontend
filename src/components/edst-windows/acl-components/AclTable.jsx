@@ -1,9 +1,7 @@
 import React from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
-
-const ON_FREQ_SYMBOL = 'N';
-
+import AclRow from "./AclRow";
 
 export default class AclTable extends React.Component {
   constructor(props) {
@@ -15,17 +13,18 @@ export default class AclTable extends React.Component {
     };
   }
 
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   if (prevProps !== this.props) {
-  //     let {edstData} = this.state;
-  //     for (let [cid, e] of Object.entries(this.props.edstData)) {
-  //       if (e) {
-  //         edstData[cid] = Object.assign(e, edstData[cid]);
-  //       }
-  //     }
-  //     this.setState({edstData: edstData});
-  //   }
-  // }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.edstData !== this.props.edstData) {
+      let {edstData} = this.state;
+      let any_holding = false;
+      for (let cid of this.props.cid_list) {
+        if (edstData[cid]?.hold_data) {
+          any_holding = true;
+        }
+      }
+      this.setState({any_holding: any_holding});
+    }
+  }
 
   toggleHideColumn = (name) => {
     let {hidden} = this.state;
@@ -60,18 +59,18 @@ export default class AclTable extends React.Component {
 
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
-    if (entry?.acl_status === undefined) {
-      this.props.updateEntry(cid, {acl_status: ''});
+    if (entry?.acl_status === undefined && this.props.posting_manual) {
+      this.props.updateEntry(cid, {acl_status: 0});
     } else {
-      if (entry?.acl_status === '') {
-        this.props.updateEntry(cid, {acl_status: ON_FREQ_SYMBOL});
+      if (!entry?.acl_status) {
+        this.props.updateEntry(cid, {acl_status: 1});
       } else {
-        this.props.updateEntry(cid, {acl_status: ''});
+        this.props.updateEntry(cid, {acl_status: 0});
       }
     }
   }
 
-  sort_func = ([_, u], [__, v]) => {
+  sort_func = (u, v) => {
     const {sorting} = this.props;
     switch (sorting.name) {
       case 'ACID':
@@ -87,9 +86,9 @@ export default class AclTable extends React.Component {
 
   render() {
     const {hidden, alt_mouse_down} = this.state;
-    const {edstData, manual, cid_list} = this.props;
+    const {edstData, posting_manual, cid_list} = this.props;
 
-    const sorted_edst_data = Object.entries(edstData)?.sort(this.sort_func);
+    const sorted_edst_data = Object.values(edstData)?.sort(this.sort_func);
 
     return (<div className="acl-body no-select">
       <div className="body-row header" key="acl-table-header">
@@ -114,17 +113,19 @@ export default class AclTable extends React.Component {
             PA
           </div>
         </div>
-        <div className="body-col rem header"/>
+        <div className="body-col spa rem-hidden"/>
+        <div className="body-col spa rem rem-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => this.toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
           </div>
         </div>
-        <div className="body-col alt header"
+        <div className="body-col alt header hover"
              onMouseDown={() => this.setState({alt_mouse_down: true})}
              onMouseUp={() => this.setState({alt_mouse_down: false})}
         >
-          <div>Alt.</div>
+          Alt.
+          {/*<div>Alt.</div>*/}
         </div>
         <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
              onMouseDown={() => this.toggleHideColumn('code')}>
@@ -144,145 +145,46 @@ export default class AclTable extends React.Component {
         <div className={`body-col body-col-1`}>
           {/*H*/}
         </div>
+        <div className={`body-col body-col-1`}>
+          {/*H*/}
+        </div>
         <div className="body-col route">
           Route
         </div>
       </div>
       <div className="scroll-container">
+        {sorted_edst_data.map((e) => (cid_list.includes(e.cid) && e.spa) &&
+          <AclRow
+            entry={e}
+            isSelected={this.isSelected}
+            updateStatus={this.updateStatus}
+            updateEntry={this.props.updateEntry}
+            aircraftSelect={this.props.aircraftSelect}
+            hidden={hidden}
+            alt_mouse_down={alt_mouse_down}
+          />)}
         <div className="body-row separator"/>
-        {sorted_edst_data.map(([cid, e]) => (cid_list.includes(cid) && ((e.acl_status !== undefined) || !manual)) &&
-          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`acl-body-${cid}`}>
-            <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
-                 onMouseDown={() => this.updateStatus(cid)}
-            >
-              {e.acl_status === undefined && manual ? 'N' : e.acl_status}
-            </div>
-            <div className="body-col body-col-1 border"/>
-            <div className="body-col body-col-1 border"/>
-            <div className="body-col body-col-1 border"/>
-            <div className="body-col body-col-1"/>
-            <div className={`inner-row ${e.acl_highlighted ? 'highlighted' : ''}`}>
-              <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'fid')}>
-                {e.cid} {e.callsign}
-              </div>
-              <div className="body-col pa"/>
-              <div className="body-col rem" onContextMenu={(event) => {
-                event.preventDefault();
-                this.props.updateEntry(e.cid, {acl_highlighted: !e.acl_highlighted});
-              }}/>
-              <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'type')}
-              >
-                {`${e.type}/${e.equipment}`}
-              </div>
-              <div className={`body-col alt`}>
-                <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
-          ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
-                     onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}
-                >
-                  {e.altitude}{e.interim && `T${e.interim}`}
-                </div>
-              </div>
-              <div
-                className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
-          ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
-              >
-                {e.beacon}
-              </div>
-              <div className={`body-col hs hdg hover ${hidden.includes('scratch_hdg') ? 'content hidden' : ''}
-              ${this.isSelected(cid, 'hdg') ? 'selected' : ''} ${e?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'hdg')}
-              >
-                {e?.scratch_hdg?.val}
-              </div>
-              <div className="body-col hs-slash">
-                /
-              </div>
-              <div className={`body-col hs spd hover ${hidden.includes('scratch_spd') ? 'content hidden' : ''}
-${this.isSelected(cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'spd')}
-              >
-                {e?.scratch_spd?.val}
-              </div>
-              <div className={`body-col body-col-1 hold-col`}>
-                {e.hold_data ? 'H' : ''}
-              </div>
-              <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
-              >
-                {e.dep}./{e._route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
-              </div>
-            </div>
-          </div>)}
-        {manual && <div className="body-row separator"/>}
-        {manual && Object.entries(edstData).map(([cid, e]) => (cid_list.includes(cid) && e.acl_status === undefined) &&
-          <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`acl-body-${cid}`}>
-            <div className={`body-col body-col-1 radio ${e.acl_status === 'N' ? 'green' : ''}`}
-                 onMouseDown={() => this.updateStatus(cid)}>
-              N
-            </div>
-            <div className="body-col body-col-1 border"/>
-            <div className="body-col body-col-1 border"/>
-            <div className="body-col body-col-1 border"/>
-            <div className="body-col body-col-1"/>
-            <div className={`inner-row ${e.acl_highlighted ? 'highlighted' : ''}`}>
-              <div className={`body-col fid hover ${this.isSelected(cid, 'fid') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'fid')}>
-                {e.cid} {e.callsign}
-              </div>
-              <div className="body-col pa"/>
-              <div className="body-col rem" onContextMenu={(event) => {
-                event.preventDefault();
-                this.props.updateEntry(e.cid, {acl_highlighted: !e.acl_highlighted});
-              }}/>
-              <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${this.isSelected(cid, 'type') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'type')}
-              >
-                {`${e.type}/${e.equipment}`}
-              </div>
-              <div className={`body-col alt`}>
-                <div className={`${alt_mouse_down ? 'md' : ''} ${e.interim ? 'interim' : ''}
-          ${this.isSelected(cid, 'alt') ? 'selected' : ''}`}
-                     onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'alt')}>
-                  {e.altitude}{e.interim && `T${e.interim}`}
-                </div>
-              </div>
-              <div
-                className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${this.isSelected(cid, 'code') ? 'selected' : ''}`}
-                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'code')}
-              >
-                {e.beacon}
-              </div>
-              <div className={`body-col hs hdg hover ${hidden.includes('scratch_hdg') ? 'content hidden' : ''}
-              ${this.isSelected(cid, 'hdg') ? 'selected' : ''} ${e?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'hdg')}
-              >
-                {e?.scratch_hdg?.val}
-              </div>
-              <div className="body-col hs-slash">
-                /
-              </div>
-              <div className={`body-col hs spd hover ${hidden.includes('scratch_spd') ? 'content hidden' : ''}
-${this.isSelected(cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'spd')}
-              >
-                {e?.scratch_spd?.val}
-              </div>
-              <div className={`body-col body-col-1 hold-col`}>
-                {e.hold_data ? 'H' : ''}
-              </div>
-              <div className={`body-col route hover ${this.isSelected(cid, 'route') ? 'selected' : ''}`}
-                   onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', cid, 'route')}
-              >
-                {e.dep}./{e._route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
-              </div>
-            </div>
-          </div>)}
+        {sorted_edst_data.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.acl_status !== undefined) || !posting_manual)) &&
+          <AclRow
+            entry={e}
+            isSelected={this.isSelected}
+            updateStatus={this.updateStatus}
+            updateEntry={this.props.updateEntry}
+            aircraftSelect={this.props.aircraftSelect}
+            hidden={hidden}
+            alt_mouse_down={alt_mouse_down}
+          />)}
+        {posting_manual && <div className="body-row separator"/>}
+        {posting_manual && Object.values(edstData).map((e) => (!e.spa && cid_list.includes(e.cid) && e.acl_status === undefined) &&
+          <AclRow
+            entry={e}
+            isSelected={this.isSelected}
+            updateStatus={this.updateStatus}
+            updateEntry={this.props.updateEntry}
+            aircraftSelect={this.props.aircraftSelect}
+            hidden={hidden}
+            alt_mouse_down={alt_mouse_down}
+          />)}
       </div>
     </div>);
   }
