@@ -26,7 +26,7 @@ $route-menu-alert-cyan: #00ADAD;
   }
 
   &.hold {
-    width: 360px;
+    width: 420px;
   }
 
   &.cancel-hold {
@@ -357,14 +357,14 @@ $route-menu-alert-cyan: #00ADAD;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 55px;
+      margin: 0 80px;
     }
 
     &.hold-col-5 {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 110px;
+      margin: 0 140px;
     }
 
     &.hold-col-6 {
@@ -491,7 +491,7 @@ $route-menu-alert-cyan: #00ADAD;
         margin-left: 20px;
         margin-right: 0;
         height: 17px;
-        width: 45px;
+        width: 55px;
 
         &:hover {
           outline: 1px solid $options-menu-hover-white;
@@ -502,14 +502,15 @@ $route-menu-alert-cyan: #00ADAD;
         cursor: default;
         font-size: 16px;
         outline: none;
-        flex-grow: 1;
+        margin: 0 5px;
+        width: 100%;
         color: $edst-font-grey;
         background-color: #000000;
         border: 1px solid transparent;
 
-        &:hover {
-          border: 1px solid $options-menu-hover-white;
-        }
+        //&:hover {
+        //  border: 1px solid $options-menu-hover-white;
+        //}
       }
     }
   }

@@ -42,7 +42,7 @@ export default class DepTable extends React.Component {
     }
   }
 
-  sort_func = (u, v) => {
+  sortFunc = (u, v) => {
     const {sorting} = this.props;
     switch (sorting.name) {
       case 'ACID':
@@ -56,9 +56,15 @@ export default class DepTable extends React.Component {
     }
   }
 
+  sortSpa = (u, v) => {
+    return u?.spa?.localeCompare(v?.spa);
+  }
+
   render() {
     const {hidden} = this.state;
     const {edstData, posting_manual, cid_list} = this.props;
+
+    const data = Object.values(edstData)?.filter(e => cid_list.includes(e.cid));
 
     return (<div className="dep-body no-select">
       <div className="body-row header" key="dep-table-header">
@@ -68,13 +74,13 @@ export default class DepTable extends React.Component {
         <div className="body-col body-col-2">
           P Time
         </div>
-        <div className="body-col fid">
+        <div className="body-col fid dep-fid">
           Flight ID
         </div>
         <div className="body-col pa header"/>
         <div className="body-col special special-hidden"/>
         <div className="body-col special rem special-hidden"/>
-        <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
+        <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => this.toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
           </div>
@@ -94,32 +100,38 @@ export default class DepTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
-        {Object.values(edstData)?.sort(this.sort_func)?.map((e) => e.spa &&
+        {data.filter(e => (typeof(e.spa) === 'number'))?.sort(this.sortSpa)?.map((e) =>
           <DepRow
             entry={e}
             isSelected={this.isSelected}
             aircraftSelect={this.props.aircraftSelect}
             updateEntry={this.props.updateEntry}
+            amendEntry={this.props.amendEntry}
+            deleteEntry={this.props.deleteEntry}
             updateStatus={this.updateStatus}
             hidden={hidden}
           />)}
         <div className="body-row separator"/>
-        {Object.values(edstData)?.sort(this.sort_func)?.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.dep_status > -1) || !posting_manual)) &&
+        {data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !posting_manual)))?.sort(this.sortFunc)?.map((e) =>
           <DepRow
             entry={e}
             isSelected={this.isSelected}
             aircraftSelect={this.props.aircraftSelect}
             updateEntry={this.props.updateEntry}
+            amendEntry={this.props.amendEntry}
+            deleteEntry={this.props.deleteEntry}
             updateStatus={this.updateStatus}
             hidden={hidden}
           />)}
         {posting_manual && <div className="body-row separator"/>}
-        {posting_manual && Object.values(edstData)?.map((e) => (!e.spa && cid_list.includes(e.cid) && e.dep_status === -1) &&
+        {posting_manual && data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1))?.map((e) =>
           <DepRow
             entry={e}
             isSelected={this.isSelected}
             aircraftSelect={this.props.aircraftSelect}
             updateEntry={this.props.updateEntry}
+            amendEntry={this.props.amendEntry}
+            deleteEntry={this.props.deleteEntry}
             updateStatus={this.updateStatus}
             hidden={hidden}
           />)}

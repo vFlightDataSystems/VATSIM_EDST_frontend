@@ -47,6 +47,7 @@ export default class Dep extends React.Component {
         updateEntry={this.props.updateEntry}
         amendEntry={this.props.amendEntry}
         aircraftSelect={this.props.aircraftSelect}
+        deleteEntry={this.props.deleteEntry}
       />
     </div>);
   }

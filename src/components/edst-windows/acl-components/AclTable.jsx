@@ -82,7 +82,7 @@ export default class AclTable extends React.Component {
     }
   }
 
-  sort_func = (u, v) => {
+  sortFunc = (u, v) => {
     const {sorting} = this.props;
     switch (sorting.name) {
       case 'ACID':
@@ -96,11 +96,15 @@ export default class AclTable extends React.Component {
     }
   }
 
+  sortSpa = (u, v) => {
+    return u?.spa?.localeCompare?.(v?.spa);
+  }
+
   render() {
     const {hidden, alt_mouse_down, any_holding} = this.state;
     const {edstData, posting_manual, cid_list} = this.props;
 
-    const sorted_edst_data = Object.values(edstData)?.sort(this.sort_func);
+    const data = Object.values(edstData)?.filter(e => cid_list.includes(e.cid));
 
     return (<div className="acl-body no-select">
       <div className="body-row header" key="acl-table-header">
@@ -165,39 +169,42 @@ export default class AclTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
-        {sorted_edst_data.map((e) => (cid_list.includes(e.cid) && e.spa) &&
+        {data.filter(e => (typeof (e.spa) === 'number'))?.sort(this.sortSpa)?.map((e) =>
           <AclRow
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}
             updateStatus={this.updateStatus}
             updateEntry={this.props.updateEntry}
+            amendEntry={this.props.amendEntry}
             aircraftSelect={this.props.aircraftSelect}
             deleteEntry={this.props.deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
           />)}
         <div className="body-row separator"/>
-        {sorted_edst_data.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.acl_status > -1) || !posting_manual)) &&
+        {data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !posting_manual)))?.sort(this.sortFunc).map((e) =>
           <AclRow
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}
             updateStatus={this.updateStatus}
             updateEntry={this.props.updateEntry}
+            amendEntry={this.props.amendEntry}
             aircraftSelect={this.props.aircraftSelect}
             deleteEntry={this.props.deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
           />)}
         {posting_manual && <div className="body-row separator"/>}
-        {posting_manual && Object.values(edstData).map((e) => (!e.spa && cid_list.includes(e.cid) && e.acl_status === -1) &&
+        {posting_manual && data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)).map((e) =>
           <AclRow
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}
             updateStatus={this.updateStatus}
             updateEntry={this.props.updateEntry}
+            amendEntry={this.props.amendEntry}
             aircraftSelect={this.props.aircraftSelect}
             deleteEntry={this.props.deleteEntry}
             hidden={hidden}
