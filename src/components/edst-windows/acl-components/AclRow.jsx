@@ -40,9 +40,10 @@ export default class AclRow extends React.Component {
   render() {
     const {entry: e, hidden, alt_mouse_down} = this.props;
     const hold_data = e?.hold_data;
+    const now = performance.now()
 
     return (
-      <div className={`body-row ${e.pending_removal ? 'pending-removal' : ''}`} key={`acl-body-${e.cid}`}>
+      <div className={`body-row ${(e.pending_removal - now > 60000) ? 'pending-removal' : ''}`} key={`acl-body-${e.cid}`}>
         <div className={`body-col body-col-1 radio ${e.acl_status === 1 ? 'green' : ''}`}
              onMouseDown={() => this.props.updateStatus(e.cid)}>
           {e.acl_status === -1 && 'N'}{e.acl_status === 1 && ON_FREQ_SYMBOL}
@@ -56,7 +57,7 @@ export default class AclRow extends React.Component {
                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', e.cid, 'fid')}
                onContextMenu={(event) => {
                  event.preventDefault();
-                 if (e.pending_removal) {
+                 if (e.pending_removal - now > 60000) {
                    this.props.deleteEntry('acl', e.cid);
                  }
                }}

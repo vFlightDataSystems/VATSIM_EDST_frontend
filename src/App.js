@@ -102,6 +102,9 @@ export default class App extends React.Component {
     if (!entry?.pending_removal && x?.update_time === entry?.update_time) {
       entry.pending_removal = performance.now();
     }
+    else {
+      entry.pending_removal = null;
+    }
     Object.assign(entry, x);
     return entry;
   }
@@ -443,8 +446,9 @@ export default class App extends React.Component {
 
   aclCleanup = () => {
     let {edstData, acl_data} = this.state;
+    const now = performance.now()
     for (const cid of acl_data?.cid_list) {
-      if (edstData[cid]?.pending_removal) {
+      if (edstData[cid]?.pending_removal - now > 60000) {
         this.deleteEntry('acl', cid);
       }
     }
