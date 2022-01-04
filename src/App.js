@@ -20,6 +20,7 @@ import HeadingMenu from "./components/edst-windows/HeadingMenu";
 import {getRemainingRouteData, getRouteDataDistance, getSignedDistancePointToPolygon, routeWillEnterAirspace} from "./lib";
 import PreviousRouteMenu from "./components/edst-windows/PreviousRouteMenu";
 import HoldMenu from "./components/edst-windows/HoldMenu";
+import CancelHoldMenu from "./components/edst-windows/CancelHoldMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -63,7 +64,7 @@ export default class App extends React.Component {
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
       .then(data => {
-        this.setState({boundary_data: data});
+        this.setState({boundary_data: data[0]});
       });
     await this.refresh();
     const update_interval_id = setInterval(this.refresh, 100000);
@@ -112,7 +113,7 @@ export default class App extends React.Component {
       .then(data => {
         if (data) {
           for (let x of data) {
-            const entry = this.refreshEntry(x, edstData?.[x.cid] || {})
+            const entry = this.refreshEntry(x, edstData?.[x.cid] || {acl_status: -1, dep_status: -1})
             edstData[x.cid] = entry;
             if (this.entryFilter(x)) {
               if (this.depFilter(entry) && !dep_data.deleted.includes(x.cid)) {
@@ -255,6 +256,12 @@ export default class App extends React.Component {
           break;
         case 'hdg':
           this.openMenu(event.target, 'heading-menu', false, asel);
+          break;
+        case 'hold':
+          this.openMenu(event.target, 'hold-menu', false, asel);
+          break;
+        case 'cancel-hold':
+          this.openMenu(event.target, 'cancel-hold-menu', false, asel);
           break;
         default:
           break;
@@ -502,6 +509,7 @@ export default class App extends React.Component {
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
+            deleteEntry={this.deleteEntry}
             // z_index={open_windows.indexOf('acl')}
             closeWindow={() => this.closeWindow('acl')}
           />}
@@ -589,11 +597,23 @@ export default class App extends React.Component {
             dragging={dragging}
             asel={asel}
             data={edstData[asel?.cid]}
+            updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
             pos={pos['hold-menu']}
             closeWindow={() => this.closeMenu('hold-menu')}
+          />}
+          {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
+            dragging={dragging}
+            asel={asel}
+            data={edstData[asel?.cid]}
+            updateEntry={this.updateEntry}
+            amendEntry={this.amendEntry}
+            startDrag={this.startDrag}
+            stopDrag={this.stopDrag}
+            pos={pos['cancel-hold-menu']}
+            closeWindow={() => this.closeMenu('cancel-hold-menu')}
           />}
           {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
             dragging={dragging}

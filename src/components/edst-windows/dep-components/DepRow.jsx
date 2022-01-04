@@ -20,7 +20,7 @@ export default class DepRow extends React.Component {
       <div className={`body-col body-col-1 radio dep-radio ${e.dep_status === 1 ? 'checkmark' : ''}`}
            onMouseDown={() => this.props.updateStatus(e.cid)}
       >
-        {e.dep_status === undefined && 'N'}{e.dep_status === 1 && COMPLETED_SYMBOL}
+        {e.dep_status === -1 && 'N'}{e.dep_status === 1 && COMPLETED_SYMBOL}
       </div>
       <div className="body-col body-col-2">
         0000
@@ -31,10 +31,10 @@ export default class DepRow extends React.Component {
           {e.cid} {e.callsign}
         </div>
         <div className="body-col pa"/>
-        <div className={`body-col spa ${!e.spa ? 'rem-hidden' : ''}`}>
+        <div className={`body-col special ${!e.spa ? 'special-hidden' : ''}`}>
           {e.spa && SPA_INDICATOR}
         </div>
-        <div className="body-col spa rem"
+        <div className="body-col special rem"
              onContextMenu={(event) => {
                event.preventDefault();
                this.props.updateEntry(e.cid, {acl_highlighted: !e.acl_highlighted});

@@ -13,6 +13,10 @@ export default class Acl extends React.Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return nextProps !== this.props || this.state !== nextState;
+  }
+
   togglePosting = () => {
     const posting_manual = this.state.posting_manual;
     this.setState({posting_manual: !posting_manual});
@@ -50,6 +54,7 @@ export default class Acl extends React.Component {
         updateEntry={this.props.updateEntry}
         amendEntry={this.props.amendEntry}
         aircraftSelect={this.props.aircraftSelect}
+        deleteEntry={this.props.deleteEntry}
       />
     </div>);
   }
