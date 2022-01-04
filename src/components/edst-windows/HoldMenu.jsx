@@ -19,17 +19,29 @@ export default class HoldMenu extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({route_data: this.computeCrossingTimes(this.props.data?._route_data)});
+    const {data} = this.props;
+    const route_data = this.computeCrossingTimes(this.props.data?._route_data);
+    const now = new Date();
+    const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    this.setState({
+      hold_fix: data?.hold_data?.hold_fix || 'ppos',
+      leg_length: data?.hold_data?.leg_length || 'STD',
+      hold_direction: data?.hold_data?.hold_direction || 'N',
+      turns: data?.hold_data?.turns || 'RT',
+      efc: data?.hold_data?.efc || utc_minutes + 30,
+      route_data: route_data
+    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.data !== prevProps.data) {
+      const {data} = this.props;
       this.setState({
-        hold_fix: null,
-        leg_length: null,
-        hold_direction: null,
-        turns: null,
-        efc: '',
+        hold_fix: data?.hold_data?.hold_fix,
+        leg_length: data?.hold_data?.leg_length,
+        hold_direction: data?.hold_data?.hold_direction,
+        turns: data?.hold_data?.turns,
+        efc: data?.hold_data?.efc,
         route_data: this.computeCrossingTimes(this.props.data?._route_data),
         focused: false
       });
@@ -46,17 +58,24 @@ export default class HoldMenu extends React.Component {
       let line_data = [[data?.flightplan?.lon, data?.flightplan?.lat]];
       for (let e of route_data) {
         line_data.push(e.pos);
-        console.log(line_data)
         e.minutes_at_fix = utc_minutes + 60 * length(lineString(line_data), {units: 'nauticalmiles'}) / groundspeed;
       }
     }
     return route_data;
   }
 
+  formatEfc = (efc) => ("0" + ((efc / 60 | 0) % 24)).slice(-2) + ("0" + (efc % 60 | 0)).slice(-2);
+
   clearedHold = () => {
     const {data} = this.props;
     const {hold_fix, leg_length, hold_direction, turns, efc} = this.state;
-    const hold_data = {hold_fix: hold_fix, leg_length: leg_length, hold_direction: hold_direction, turns: turns, efc: efc};
+    const hold_data = {
+      hold_fix: hold_fix,
+      leg_length: leg_length,
+      hold_direction: hold_direction,
+      turns: turns,
+      efc: efc
+    };
     this.props.amendEntry(data.cid, {hold_data: hold_data});
     this.props.closeWindow();
   }
@@ -98,8 +117,12 @@ export default class HoldMenu extends React.Component {
           </div>
           <div className="options-row">
             <div className="options-col">
-              <button className={`${(!hold_fix || hold_fix === 'ppos') ? 'selected' : ''}`}
-                      onMouseDown={() => this.setState({hold_fix: 'ppos'})}>
+              <button className={`${(!hold_fix || hold_fix === 'PP') ? 'selected' : ''}`}
+                      onMouseDown={() => {
+                        const now = new Date();
+                        const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+                        this.setState({hold_fix: 'PP', efc: utc_minutes + 30})
+                      }}>
                 Present Position
               </button>
             </div>
@@ -110,14 +133,14 @@ export default class HoldMenu extends React.Component {
               {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
                 const fix = route_data[i + j * 10]?.fix;
                 const minutes_at_fix = route_data[i + j * 10]?.minutes_at_fix;
-                const efc = ("0"+(((minutes_at_fix+30) / 60|0) % 24)).slice(-2)+("0"+((minutes_at_fix+30) % 60|0)).slice(-2);
+                const efc = minutes_at_fix + 30;
                 return (fix && <div className={`options-col hold-col-1 hover ${(hold_fix === fix) ? 'selected' : ''}`}
                                     key={`hold-menu-col-${i}-${j}`}
                                     onMouseDown={() => this.setState({hold_fix: fix, efc: efc})}
                 >
                   {fix}
                   <div className="align-right">
-                    {("0"+((minutes_at_fix / 60|0) % 24)).slice(-2)+("0"+(minutes_at_fix % 60|0)).slice(-2)}
+                    {("0" + ((minutes_at_fix / 60 | 0) % 24)).slice(-2) + ("0" + (minutes_at_fix % 60 | 0)).slice(-2)}
                   </div>
                 </div>);
               })
@@ -246,7 +269,11 @@ export default class HoldMenu extends React.Component {
           </div>
           <div className="options-row hold-row-2 bottom-border">
             <div className="options-col hold-col-4">
-              <button>
+              <button onMouseDown={() => {
+                this.props.amendEntry(data?.cid, {hold_data: null});
+                this.props.updateEntry(data?.cid, {show_hold_info: false});
+                this.props.closeWindow();
+              }}>
                 Delete Hold Instructions
               </button>
             </div>
@@ -261,12 +288,14 @@ export default class HoldMenu extends React.Component {
           >
             <div className="options-col hold-col-7">
               <div className="input efc-input">
-                <input value={efc} onChange={(e) => this.setState({efc: e.target.value})}/>
+                <input value={this.formatEfc(efc)}
+                  // onChange={(e) => this.setState({efc: e.target.value})}
+                />
               </div>
-              <button>
+              <button onMouseDown={() => this.setState({efc: efc - 1})}>
                 -
               </button>
-              <button>
+              <button onMouseDown={() => this.setState({efc: efc + 1})}>
                 +
               </button>
             </div>
@@ -280,14 +309,23 @@ export default class HoldMenu extends React.Component {
           </div>
           <div className="options-row bottom">
             <div className="options-col left">
-              <button>
+              <button onMouseDown={() => {
+                this.props.updateEntry(data?.cid, {spa: true});
+                this.clearedHold();
+              }}
+                      disabled={data?.hold_data}
+              >
                 Hold/SPA
               </button>
-              <button
-              >
+              <button onMouseDown={this.clearedHold} disabled={data?.hold_data}>
                 Hold
               </button>
-              <button disabled={true}>
+              <button disabled={!data?.hold_data}
+                      onMouseDown={() => {
+                        this.props.amendEntry(data?.cid, {hold_data: null});
+                        this.props.updateEntry(data?.cid, {show_hold_info: false});
+                        this.props.closeWindow();
+                      }}>
                 Cancel Hold
               </button>
             </div>

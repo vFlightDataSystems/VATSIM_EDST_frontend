@@ -29,6 +29,10 @@ $route-menu-alert-cyan: #00ADAD;
     width: 360px;
   }
 
+  &.cancel-hold {
+    width: 250px;
+  }
+
   &.speed {
     width: 180px;
   }
@@ -205,6 +209,9 @@ $route-menu-alert-cyan: #00ADAD;
     }
 
     &.bottom {
+      overflow: unset;
+      text-overflow: unset;
+      white-space: unset;
       margin-top: 10px;
       //margin-right: 4px;
       margin-bottom: 4px;

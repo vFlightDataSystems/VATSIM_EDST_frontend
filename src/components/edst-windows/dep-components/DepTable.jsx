@@ -31,10 +31,10 @@ export default class DepTable extends React.Component {
 
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
-    if (entry?.dep_status === undefined) {
+    if (entry?.dep_status === -1) {
       this.props.updateEntry(cid, {dep_status: 0});
     } else {
-      if (entry?.dep_status === 0) {
+      if (entry?.dep_status < 1) {
         this.props.updateEntry(cid, {dep_status: 1});
       } else {
         this.props.updateEntry(cid, {dep_status: 0});
@@ -72,8 +72,8 @@ export default class DepTable extends React.Component {
           Flight ID
         </div>
         <div className="body-col pa header"/>
-        <div className="body-col spa rem-hidden"/>
-        <div className="body-col spa rem rem-hidden"/>
+        <div className="body-col special special-hidden"/>
+        <div className="body-col special rem special-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => this.toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
@@ -104,7 +104,7 @@ export default class DepTable extends React.Component {
             hidden={hidden}
           />)}
         <div className="body-row separator"/>
-        {Object.values(edstData)?.sort(this.sort_func)?.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.dep_status !== undefined) || !posting_manual)) &&
+        {Object.values(edstData)?.sort(this.sort_func)?.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.dep_status > -1) || !posting_manual)) &&
           <DepRow
             entry={e}
             isSelected={this.isSelected}
@@ -114,7 +114,7 @@ export default class DepTable extends React.Component {
             hidden={hidden}
           />)}
         {posting_manual && <div className="body-row separator"/>}
-        {posting_manual && Object.values(edstData)?.map((e) => (!e.spa && cid_list.includes(e.cid) && e.dep_status === undefined) &&
+        {posting_manual && Object.values(edstData)?.map((e) => (!e.spa && cid_list.includes(e.cid) && e.dep_status === -1) &&
           <DepRow
             entry={e}
             isSelected={this.isSelected}

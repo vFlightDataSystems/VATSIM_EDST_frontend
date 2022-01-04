@@ -7,23 +7,35 @@ export default class AclTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // edstData: this.props.edstData,
+      any_holding: false,
       hidden: [],
       alt_mouse_down: false
     };
   }
 
+  componentDidMount() {
+    this.checkHolding();
+  }
+
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return nextProps !== this.props || this.state !== nextState;
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.edstData !== this.props.edstData) {
-      let {edstData} = this.state;
-      let any_holding = false;
-      for (let cid of this.props.cid_list) {
-        if (edstData[cid]?.hold_data) {
-          any_holding = true;
-        }
-      }
-      this.setState({any_holding: any_holding});
+    if (prevProps !== this.props) {
+      this.checkHolding();
     }
+  }
+
+  checkHolding = () => {
+    let {edstData} = this.props;
+    let any_holding = false;
+    for (let cid of this.props.cid_list) {
+      if (edstData[cid]?.hold_data) {
+        any_holding = true;
+      }
+    }
+    this.setState({any_holding: any_holding});
   }
 
   toggleHideColumn = (name) => {
@@ -59,10 +71,10 @@ export default class AclTable extends React.Component {
 
   updateStatus = (cid) => {
     const entry = this.props.edstData[cid];
-    if (entry?.acl_status === undefined && this.props.posting_manual) {
+    if (entry?.acl_status === -1 && this.props.posting_manual) {
       this.props.updateEntry(cid, {acl_status: 0});
     } else {
-      if (!entry?.acl_status) {
+      if (entry?.acl_status < 1) {
         this.props.updateEntry(cid, {acl_status: 1});
       } else {
         this.props.updateEntry(cid, {acl_status: 0});
@@ -85,7 +97,7 @@ export default class AclTable extends React.Component {
   }
 
   render() {
-    const {hidden, alt_mouse_down} = this.state;
+    const {hidden, alt_mouse_down, any_holding} = this.state;
     const {edstData, posting_manual, cid_list} = this.props;
 
     const sorted_edst_data = Object.values(edstData)?.sort(this.sort_func);
@@ -105,83 +117,89 @@ export default class AclTable extends React.Component {
           A
         </div>
         <div className="body-col body-col-1"/>
-        <div className="body-col fid">
-          Flight ID
-        </div>
-        <div className="body-col pa header">
-          <div>
-            PA
+        <div className="inner-row">
+          <div className="body-col fid">
+            Flight ID
           </div>
-        </div>
-        <div className="body-col spa rem-hidden"/>
-        <div className="body-col spa rem rem-hidden"/>
-        <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
-          <div onMouseDown={() => this.toggleHideColumn('type')}>
-            T{!hidden.includes('type') && 'ype'}
+          <div className="body-col pa header">
+            <div>
+              PA
+            </div>
           </div>
-        </div>
-        <div className="body-col alt header hover"
-             onMouseDown={() => this.setState({alt_mouse_down: true})}
-             onMouseUp={() => this.setState({alt_mouse_down: false})}
-        >
-          Alt.
-          {/*<div>Alt.</div>*/}
-        </div>
-        <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
-             onMouseDown={() => this.toggleHideColumn('code')}>
-          C{!hidden.includes('code') && 'ode'}
-        </div>
-        <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
-             onMouseDown={() => this.toggleHideColumn('hdg')}>
-          H{!hidden.includes('hdg') && 'dg'}
-        </div>
-        <div className="body-col hs-slash hover" onMouseDown={this.handleClickSlash}>
-          /
-        </div>
-        <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
-             onMouseDown={() => this.toggleHideColumn('spd')}>
-          S{!hidden.includes('spd') && 'pd'}
-        </div>
-        <div className={`body-col body-col-1`}>
-          {/*H*/}
-        </div>
-        <div className={`body-col body-col-1`}>
-          {/*H*/}
-        </div>
-        <div className="body-col route">
-          Route
+          <div className="body-col special special-hidden"/>
+          <div className="body-col special rem special-hidden"/>
+          <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
+            <div onMouseDown={() => this.toggleHideColumn('type')}>
+              T{!hidden.includes('type') && 'ype'}
+            </div>
+          </div>
+          <div className="body-col alt header hover"
+               onMouseDown={() => this.setState({alt_mouse_down: true})}
+               onMouseUp={() => this.setState({alt_mouse_down: false})}
+          >
+            Alt.
+          </div>
+          <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
+               onMouseDown={() => this.toggleHideColumn('code')}>
+            C{!hidden.includes('code') && 'ode'}
+          </div>
+          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
+               onMouseDown={() => this.toggleHideColumn('hdg')}>
+            H{!hidden.includes('hdg') && 'dg'}
+          </div>
+          <div className="body-col hs-slash hover" onMouseDown={this.handleClickSlash}>
+            /
+          </div>
+          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
+               onMouseDown={() => this.toggleHideColumn('spd')}>
+            S{!hidden.includes('spd') && 'pd'}
+          </div>
+          <div className={`body-col special special-header`}/>
+          <div className={`body-col special special-header`} disabled={!any_holding}>
+            H
+          </div>
+          <div className={`body-col special special-header`}/>
+          <div className="body-col route">
+            Route
+          </div>
         </div>
       </div>
       <div className="scroll-container">
         {sorted_edst_data.map((e) => (cid_list.includes(e.cid) && e.spa) &&
           <AclRow
             entry={e}
+            any_holding={any_holding}
             isSelected={this.isSelected}
             updateStatus={this.updateStatus}
             updateEntry={this.props.updateEntry}
             aircraftSelect={this.props.aircraftSelect}
+            deleteEntry={this.props.deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
           />)}
         <div className="body-row separator"/>
-        {sorted_edst_data.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.acl_status !== undefined) || !posting_manual)) &&
+        {sorted_edst_data.map((e) => (!e.spa && cid_list.includes(e.cid) && ((e.acl_status > -1) || !posting_manual)) &&
           <AclRow
             entry={e}
+            any_holding={any_holding}
             isSelected={this.isSelected}
             updateStatus={this.updateStatus}
             updateEntry={this.props.updateEntry}
             aircraftSelect={this.props.aircraftSelect}
+            deleteEntry={this.props.deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
           />)}
         {posting_manual && <div className="body-row separator"/>}
-        {posting_manual && Object.values(edstData).map((e) => (!e.spa && cid_list.includes(e.cid) && e.acl_status === undefined) &&
+        {posting_manual && Object.values(edstData).map((e) => (!e.spa && cid_list.includes(e.cid) && e.acl_status === -1) &&
           <AclRow
             entry={e}
+            any_holding={any_holding}
             isSelected={this.isSelected}
             updateStatus={this.updateStatus}
             updateEntry={this.props.updateEntry}
             aircraftSelect={this.props.aircraftSelect}
+            deleteEntry={this.props.deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
           />)}
