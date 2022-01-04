@@ -24,7 +24,7 @@ export default class HoldMenu extends React.Component {
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     this.setState({
-      hold_fix: data?.hold_data?.hold_fix || 'ppos',
+      hold_fix: data?.hold_data?.hold_fix || 'PP',
       leg_length: data?.hold_data?.leg_length || 'STD',
       hold_direction: data?.hold_data?.hold_direction || 'N',
       turns: data?.hold_data?.turns || 'RT',

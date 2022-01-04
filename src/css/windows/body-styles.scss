@@ -19,12 +19,17 @@ $body-row-sep-color: #AA8800;
 $body-ac-sep-very-dark-grey: #252525;
 $body-ac-highlight: #414141;
 $body-font-brown: #695547;
+$hody-hover-white: #F0F0F0;
 
 .scroll-container {
   height: auto;
   display: block;
   overflow: scroll;
   scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .sep-border {
@@ -32,18 +37,64 @@ $body-font-brown: #695547;
   border-bottom: 1px solid $body-ac-sep-very-dark-grey;
 }
 
+.body-row-container {
+  margin: 2px 0;
+  flex-flow: wrap;
+
+  .inner-row-2 {
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+    border: 1px;
+    //flex-grow: 1;
+
+    &.highlighted {
+      //outline: 1px solid $body-ac-highlight;
+      background-color: $body-ac-highlight;
+    }
+
+    .free-text-row {
+      margin-left: 208px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 18px;
+      border: 1px solid transparent;
+
+      &.dep-free-text-row {
+        margin-left: 237px;
+      }
+
+      > input {
+        margin-left: 2px;
+        width: 100%;
+        font-size: 16px;
+        background-color: transparent;
+        outline: none;
+        border: none;
+        color: $edst-font-grey;
+        //caret: #FFFFFF;
+      }
+
+      &:hover {
+        border: 1px solid $hody-hover-white;
+      }
+    }
+  }
+}
+
 .body-row {
-  margin: 4px 0;
+  //margin: 4px 0;
   display: flex;
   align-items: center;
-  height: 20px;
-  flex-grow: 1;
+  min-height: 2px;
+  //flex-grow: 2;
   padding: 0 10px;
 
   .inner-row {
     display: flex;
     align-items: center;
-    height: 22px;
+    min-height: 22px;
     //flex-grow: 1;
 
     &.highlighted {
@@ -51,7 +102,6 @@ $body-font-brown: #695547;
       background-color: $body-ac-highlight;
     }
   }
-
 
   &.pending-removal {
     color: $body-window-open-light-grey
@@ -95,7 +145,7 @@ $body-font-brown: #695547;
   }
 
   &.hover:hover {
-    outline: 1px solid #FFFFFF;
+    outline: 1px solid $hody-hover-white;
   }
 
   &.plans-display-col-1 {
@@ -139,7 +189,7 @@ $body-font-brown: #695547;
       }
 
       &:hover {
-        outline: 1px solid #FFFFFF;
+        outline: 1px solid $hody-hover-white;
 
         &.green {
           outline: 1px solid $body-font-green;
@@ -188,6 +238,10 @@ $body-font-brown: #695547;
     justify-content: left;
     width: 130px;
     padding: 0 2px;
+
+    &.dep-fid {
+      margin-right: 30px;
+    }
   }
 
   &.pa {
@@ -206,7 +260,7 @@ $body-font-brown: #695547;
     padding-left: 1px;
 
     &:hover {
-      outline: 1px solid #FFFFFF;
+      outline: 1px solid $hody-hover-white;
     }
   }
 
@@ -242,7 +296,7 @@ $body-font-brown: #695547;
     }
 
     &:hover {
-      border: 1px solid #FFFFFF;
+      border: 1px solid $hody-hover-white;
     }
   }
 
