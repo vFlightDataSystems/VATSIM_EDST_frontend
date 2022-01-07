@@ -97,7 +97,7 @@ export default class AclRow extends React.Component {
         <div className="body-col body-col-1"/>
         <div className={`inner-row ${e.acl_highlighted ? 'highlighted' : ''}`}
              ref={this.hightlightRef}
-             style={{'min-width': e.free_text ? '1200px' : 0}}
+             style={{minWidth: e.free_text ? '1200px' : 0}}
         >
           <div className={`body-col fid hover ${this.props.isSelected(e.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={this.#handleFidClick}
@@ -170,7 +170,7 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', e.cid, 'route')}
           >
             {e.show_hold_info && hold_data && `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${this.formatEfc(hold_data.efc)}`}
-            {!e.show_hold_info && `${e.dep}./${e._route}${isNaN(e._route.slice(-1)) ? '.' : ''}.${e.dest}`}
+            {!e.show_hold_info && `${e.dep}./${e._route}`}
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
         <div className="body-col body-col-1"/>
         <div className="body-col body-col-1"/>
         <div className={`inner-row-2 ${e.acl_highlighted ? 'highlighted' : ''}`}
-             style={{'min-width': Math.max(1200, this.hightlightRef?.current?.clientWidth) + 'px'}}
+             style={{minWidth: Math.max(1200, this.hightlightRef?.current?.clientWidth) + 'px'}}
         >
           <div className="free-text-row">
             <input value={scratchpad}

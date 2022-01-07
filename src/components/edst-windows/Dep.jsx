@@ -12,6 +12,10 @@ export default class Dep extends React.Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return nextProps !== this.props || this.state !== nextState;
+  }
+
   togglePosting = () => {
     const posting_manual = this.state.posting_manual;
     this.setState({posting_manual: !posting_manual});

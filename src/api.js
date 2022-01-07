@@ -6,10 +6,6 @@ export async function getEdstData() {
   return await fetch(`${baseurl}/edst/all`);
 }
 
-export async function getArtccEdstData(artcc) {
-  return await fetch(`${baseurl}/edst/artcc/${artcc}`);
-}
-
 export async function getEdstEntry(callsign) {
   return await fetch(`${baseurl}/edst/entry/${callsign}`);
 }
@@ -22,6 +18,10 @@ export async function updateEdstEntry(plan_data) {
     },
     body: JSON.stringify(plan_data)
   });
+}
+
+export async function getAarData(artcc, cid) {
+  return await fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
 }
 
 export async function getBoundaryData(artcc) {

@@ -115,7 +115,8 @@ $hody-hover-white: #F0F0F0;
 
   &.header {
     margin: 2px 0;
-    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
     border-top: 1px solid $edst-window-header-border-light-grey;
     border-bottom: 1px solid $edst-window-header-border-light-grey;
 

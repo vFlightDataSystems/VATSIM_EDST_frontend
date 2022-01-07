@@ -1,20 +1,21 @@
 import React from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import PreferredRouteDisplay from "./PreferredRouteDisplay";
 
 export default class RouteMenu extends React.Component {
   constructor(props) {
     super(props);
     const dep = this.props.asel?.window === 'dep';
+    const data = this.props.data;
     this.state = {
       dep: dep,
       trial: !dep,
-      route: this.props.data._route,
-      prefroute_eligible_only: false,
+      route: data._route,
+      routes: dep ? data.routes : this.parseAar(data.aar_data),
       append_star: false,
       append_oplus: false,
-      focused: false,
-      prefrouteDeltaY: 0
+      focused: false
     };
     this.routeMenuRef = React.createRef();
   }
@@ -23,16 +24,23 @@ export default class RouteMenu extends React.Component {
     if (this.props.data !== prevProps.data) {
       const {trial} = this.state;
       const dep = this.props.asel?.window === 'dep';
+      const data = this.props.data;
       this.setState({
         dep: dep,
-        route: this.props.data._route,
+        route: data._route,
+        routes: dep ? data.routes : this.parseAar(data.aar_data),
         trial: !dep && trial,
         append_star: false,
         append_oplus: false,
-        focused: false,
-        prefrouteDeltaY: 0
+        focused: false
       });
     }
+  }
+
+  parseAar = (aar_data) => {
+    return aar_data?.map(aar => {
+      return {route: aar.amendment.aar_amendment, dest: this.props.data.dest};
+    });
   }
 
   clearedToFix = (fix) => {
@@ -85,10 +93,9 @@ export default class RouteMenu extends React.Component {
       trial,
       route,
       dep,
-      prefroute_eligible_only,
       append_star,
       append_oplus,
-      prefrouteDeltaY
+      routes
     } = this.state;
     const {pos, data} = this.props;
     const route_data = data?._route_data;
@@ -170,7 +177,7 @@ export default class RouteMenu extends React.Component {
           </div>
           <div className="options-row">
             <div className="options-col display-route">
-              ./{data?._route}.{data?.dest}
+              ./{data?._route}
             </div>
           </div>
           {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
@@ -184,56 +191,8 @@ export default class RouteMenu extends React.Component {
             })
             }
           </div>)}
-          {(data?.routes?.length > 0) && <div>
-            <div className="options-row route-row bottom-border"/>
-            <div className="options-row route-row underline">
-              Apply ATC Preferred Route
-            </div>
-            <div className="options-row route-row"
-              // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
-            >
-              <div className="options-col prefroute-col"
-                // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
-              >
-                <div className="prefroute-button">
-                  <button className={prefroute_eligible_only ? 'selected' : ''}
-                          onMouseDown={() => this.setState({prefroute_eligible_only: true})}
-                  >
-                    ELIGIBLE
-                  </button>
-                </div>
-                <div className="prefroute-button">
-                  <button className={!prefroute_eligible_only ? 'selected' : ''}
-                          onMouseDown={() => this.setState({prefroute_eligible_only: false})}
-                  >
-                    ALL
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="prefroute-container"
-                 onWheel={(e) => this.setState({prefrouteDeltaY: Math.max(Math.min(((prefrouteDeltaY + e.deltaY) / 100 | 0), data?.routes?.length), 0)})}>
-              {Object.entries(data?.routes.slice(prefrouteDeltaY, prefrouteDeltaY + 5) || {}).map(([i, r]) => {
-                if (!dep) {
-                  let route_str = r.route?.slice() || '';
-                  r.route = null;
-                  for (let e of route_data) {
-                    if (route_str.includes(e.fix)) {
-                      r.route = '..' + route_str.slice(route_str.indexOf(e.fix));
-                      break;
-                    }
-                  }
-                }
-                return r.route && (<div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
-                  <div className="options-col prefroute-col hover"
-                       onMouseDown={() => this.clearedReroute(r)}
-                  >
-                    {r.route}.{data?.dest}
-                  </div>
-                </div>)
-              })}
-            </div>
-          </div>}
+          {routes?.length > 0 &&
+          <PreferredRouteDisplay routes={routes} clearedReroute={this.clearedReroute}/>}
           <div className="options-row bottom">
             <div className="options-col left">
               <button>
