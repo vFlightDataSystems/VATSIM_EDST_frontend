@@ -38,20 +38,20 @@ export default class PreviousRouteMenu extends React.Component {
         </div>
         <div className="options-body">
           <div className="options-row fid">
-            {data?.callsign} {data?.type}/{data?.equipment}
+            {data.callsign} {data.type}/{data.equipment}
           </div>
           <div className="options-row prev-route-row">
             <div className="options-col">
-              RTE {data?.previous_route}.{data?.dest}
+              RTE {data.previous_route}
             </div>
           </div>
           <div className="options-row bottom">
             <div className="options-col left">
               <button
                 onMouseDown={() => {
-                  this.props.amendEntry(data?.cid, {
-                    route: data?.previous_route,
-                    route_data: data?.previous_route_data
+                  this.props.amendEntry(data.cid, {
+                    route: data.previous_route,
+                    route_data: data.previous_route_data
                   });
                   this.props.closeWindow();
                 }}

@@ -65,7 +65,7 @@ export default class DepRow extends React.Component {
         </div>
         <div className={`inner-row ${e.dep_highlighted ? 'highlighted' : ''}`}
              ref={this.hightlightRef}
-             style={{'min-width': e.free_text ? '1200px' : 0}}
+             style={{minWidth: e.free_text ? '1200px' : 0}}
         >
           <div className={`body-col fid dep-fid hover ${this.props.isSelected(e.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={this.#handleFidClick}
@@ -106,7 +106,7 @@ export default class DepRow extends React.Component {
           <div className={`body-col route hover ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', e.cid, 'route')}
           >
-            {e.dep}{e.route}{isNaN(e._route.slice(-1)) ? '.' : ''}.{e.dest}
+            {e.dep}{e.route}
           </div>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default class DepRow extends React.Component {
         <div className={`body-col body-col-1 radio`}/>
         <div className="body-col body-col-2"/>
         <div className={`inner-row-2 ${e.dep_highlighted ? 'highlighted' : ''}`}
-             style={{'min-width': Math.max(1200, this.hightlightRef?.current?.clientWidth)+'px'}}
+             style={{minWidth: Math.max(1200, this.hightlightRef?.current?.clientWidth)+'px'}}
         >
           <div className="free-text-row dep-free-text-row">
             <input value={scratchpad}

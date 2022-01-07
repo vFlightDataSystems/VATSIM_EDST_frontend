@@ -18,8 +18,9 @@ export function getSignedDistancePointToPolygon(point, poly) {
   return dist;
 }
 
-export function routeWillEnterAirspace(route_data, poly) {
-  if (route_data?.length > 1) {
+export function routeWillEnterAirspace(route_data, poly, pos) {
+  route_data.unshift({pos: pos});
+  if (route_data.length > 1) {
     const lines = lineString(route_data?.map(e => e.pos));
     return booleanIntersects(lines, poly);
   }
@@ -30,7 +31,7 @@ export function routeWillEnterAirspace(route_data, poly) {
 
 export function getRouteDataDistance(route_data, pos) {
   for (let fix_data of route_data) {
-    fix_data.dist = distance(point(fix_data.pos), point(pos));
+    fix_data.dist = distance(point(fix_data.pos), point(pos), {units: 'nauticalmiles'});
   }
   return route_data;
 }
@@ -49,12 +50,11 @@ export function getRemainingRouteData(route, route_data, pos) {
     const pos_point = point(pos);
     const line = lineString([closest_fix.pos, following_fix.pos]);
     const line_distance = pointToLineDistance(pos_point, line, {units: 'nauticalmiles'});
-    const next_fix = (line_distance > closest_fix.dist) ? closest_fix : following_fix;
-
+    const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
     for (let name of names.slice(0, names.indexOf(next_fix.fix)+1).reverse()) {
       if (route.includes(name)) {
         route = route.slice(route.indexOf(name) + name.length);
-        route = `.${next_fix.fix}` + route;
+        route = `..${next_fix.fix}` + route;
         break;
       }
     }
