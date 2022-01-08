@@ -38,23 +38,23 @@ export function getRouteDataDistance(route_data, pos) {
 
 export function getRemainingRouteData(route, route_data, pos) {
   if (route_data.length > 1) {
-    const names = route_data.map(e => e.fix);
+    const fix_names = route_data.map(e => e.name);
     const route_data_copy = route_data.slice();
     const sorted_route_data = route_data_copy.sort((u, v) => u.dist - v.dist);
     const closest_fix = sorted_route_data[0];
     const index = route_data.indexOf(closest_fix);
     if (index === route_data.length - 1) {
-      return {_route: `.${closest_fix.fix}`, _route_data: [closest_fix]};
+      return {_route: `.${closest_fix.name}`, _route_data: [closest_fix]};
     }
     const following_fix = route_data[index+1];
     const pos_point = point(pos);
     const line = lineString([closest_fix.pos, following_fix.pos]);
     const line_distance = pointToLineDistance(pos_point, line, {units: 'nauticalmiles'});
     const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
-    for (let name of names.slice(0, names.indexOf(next_fix.fix)+1).reverse()) {
+    for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name)+1).reverse()) {
       if (route.includes(name)) {
         route = route.slice(route.indexOf(name) + name.length);
-        route = `..${next_fix.fix}` + route;
+        route = `..${next_fix.name}` + route;
         break;
       }
     }

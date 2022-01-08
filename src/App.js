@@ -63,9 +63,9 @@ export default class App extends React.Component {
     this.globalRef = React.createRef();
   }
 
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   return this.state !== nextState;
-  // }
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return this.state !== nextState;
+  }
 
   async componentDidMount() {
     const sector_artcc = prompt('Choose an ARTCC').toLowerCase();
@@ -107,10 +107,11 @@ export default class App extends React.Component {
     const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
     if (new_entry.dest_info) {
       new_entry.route_data.push({
-        fix: new_entry.dest_info.icao,
+        name: new_entry.dest_info.icao,
         pos: [new_entry.dest_info.lon, new_entry.dest_info.lat]
       });
     }
+
     new_entry.route += new_entry.dest;
     if (current_entry?.route_data === new_entry.route_data) { // if route_data has not changed
       current_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
@@ -119,7 +120,7 @@ export default class App extends React.Component {
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, current_entry._route_data, pos);
     Object.assign(current_entry, remaining_route_data);
-    if (new_entry.update_time === current_entry.update_time) {
+    if (new_entry.update_time === current_entry.update_time || current_entry._route_data?.[-1]?.dist < 20) {
       current_entry.pending_removal = current_entry.pending_removal || performance.now();
     } else {
       current_entry.pending_removal = null;
@@ -146,7 +147,7 @@ export default class App extends React.Component {
                   dep_data.cid_list.push(new_entry.cid);
                 }
               } else {
-                if (current_entry === undefined) {
+                if (current_entry?.aar_data === undefined) {
                   await getAarData(sector_artcc, new_entry.cid)
                     .then(response => response.json())
                     .then(aar_data => entry.aar_data = aar_data);
@@ -163,7 +164,6 @@ export default class App extends React.Component {
             }
             current_data[new_entry.cid] = entry;
           }
-          this.setState({acl_data: acl_data, dep_data: dep_data});
           this.forceUpdate();
         }
       });
@@ -376,7 +376,7 @@ export default class App extends React.Component {
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ? {
           x: x - (plan ? 0 : 570),
-          y: plan ? ref.offsetTop : y - 2 * height,
+          y: plan ? ref.offsetTop : y - 3*height,
           w: width,
           h: height
         } : {
@@ -649,7 +649,7 @@ export default class App extends React.Component {
             trialPlan={this.trialPlan}
             dragging={dragging}
             asel={asel}
-            data={edstData[asel?.cid]}
+            entry={edstData[asel?.cid]}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
