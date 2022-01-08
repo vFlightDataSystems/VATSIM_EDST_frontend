@@ -11,7 +11,7 @@ $body-font-yellow: #ADAD00;
 $body-font-red: #AD0000;
 $body-font-orange: #AD5700;
 $body-font-green: #00AD00;
-$body-font-blue: #21A8A8;
+$body-font-blue: #00ADAD;
 $body-alt-outline-red: #AD3636;
 $body-window-open-light-grey: #595958;
 $body-window-closed-black: #000000;
@@ -19,7 +19,7 @@ $body-row-sep-color: #AA8800;
 $body-ac-sep-very-dark-grey: #252525;
 $body-ac-highlight: #414141;
 $body-font-brown: #695547;
-$hody-hover-white: #F0F0F0;
+$body-hover-white: #F0F0F0;
 
 .scroll-container {
   height: auto;
@@ -77,7 +77,7 @@ $hody-hover-white: #F0F0F0;
       }
 
       &:hover {
-        border: 1px solid $hody-hover-white;
+        border: 1px solid $body-hover-white;
       }
     }
   }
@@ -134,19 +134,22 @@ $hody-hover-white: #F0F0F0;
 }
 
 .body-col {
-  margin: 0 2px;
+  //margin: 0 2px;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 18px;
+  border: 1px solid transparent;
 
   .selected {
+    outline: 1px solid $body-light-grey;
+    border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
 
   &.hover:hover {
-    outline: 1px solid $hody-hover-white;
+    outline: 1px solid $body-hover-white;
   }
 
   &.plans-display-col-1 {
@@ -190,7 +193,7 @@ $hody-hover-white: #F0F0F0;
       }
 
       &:hover {
-        outline: 1px solid $hody-hover-white;
+        outline: 1px solid $body-hover-white;
 
         &.green {
           outline: 1px solid $body-font-green;
@@ -261,7 +264,7 @@ $hody-hover-white: #F0F0F0;
     padding-left: 1px;
 
     &:hover {
-      outline: 1px solid $hody-hover-white;
+      outline: 1px solid $body-hover-white;
     }
   }
 
@@ -297,7 +300,7 @@ $hody-hover-white: #F0F0F0;
     }
 
     &:hover {
-      border: 1px solid $hody-hover-white;
+      border: 1px solid $body-hover-white;
     }
   }
 
@@ -353,6 +356,7 @@ $hody-hover-white: #F0F0F0;
   }
 
   &.selected {
+    border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
@@ -404,7 +408,22 @@ $hody-hover-white: #F0F0F0;
     text-overflow: ellipsis;
     white-space: nowrap;
     justify-content: left;
-    //margin-left: 40px;
-    padding: 0 4px;
+    padding: 0;
+
+    > div {
+      pointer-events: none;
+
+      .amendment {
+        color: $body-font-blue;
+        //padding: 0;
+
+        &.selected {
+          background-color: $body-font-blue;
+          color: #000000;
+        }
+      }
+    }
+
+
   }
 }

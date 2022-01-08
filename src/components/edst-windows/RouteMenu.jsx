@@ -6,13 +6,13 @@ import PreferredRouteDisplay from "./PreferredRouteDisplay";
 export default class RouteMenu extends React.Component {
   constructor(props) {
     super(props);
+    const entry = this.props.entry;
     const dep = this.props.asel?.window === 'dep';
-    const data = this.props.data;
     this.state = {
       dep: dep,
-      trial: !dep,
-      route: data._route,
-      routes: dep ? data.routes : this.parseAar(data.aar_data),
+      trial_plan: !dep,
+      route: entry._route,
+      routes: [],
       append_star: false,
       append_oplus: false,
       focused: false
@@ -20,16 +20,22 @@ export default class RouteMenu extends React.Component {
     this.routeMenuRef = React.createRef();
   }
 
+  componentDidMount() {
+    const entry = this.props.entry;
+    const dep = this.props.asel?.window === 'dep';
+    this.setState({routes: dep ? entry.routes : this.parseAar(entry.aar_data).filter(aar => aar)});
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.data !== prevProps.data) {
-      const {trial} = this.state;
+    if (this.props.entry !== prevProps.entry) {
+      const {trial_plan} = this.state;
       const dep = this.props.asel?.window === 'dep';
-      const data = this.props.data;
+      const entry = this.props.entry;
       this.setState({
         dep: dep,
-        route: data._route,
-        routes: dep ? data.routes : this.parseAar(data.aar_data),
-        trial: !dep && trial,
+        route: entry._route,
+        routes: dep ? entry.routes : this.parseAar(entry.aar_data).filter(aar => aar),
+        trial_plan: !dep && trial_plan,
         append_star: false,
         append_oplus: false,
         focused: false
@@ -37,17 +43,65 @@ export default class RouteMenu extends React.Component {
     }
   }
 
-  parseAar = (aar_data) => {
-    return aar_data?.map(aar => {
-      return {route: aar.amendment.aar_amendment, dest: this.props.data.dest};
+  parseAar = (aar_list) => {
+    const {_route_data: current_route_data} = this.props.entry;
+    return aar_list?.map(aar_data => {
+      const {fix: tfix, info} = aar_data.amendment.tfix_details;
+      const aar_amendment = `${info === 'Prepend' ? tfix : ''}${aar_data.amendment.aar_amendment}`;
+      let amended_route = aar_data.amendment.route;
+      amended_route = amended_route.slice(amended_route.indexOf(current_route_data[0]));
+      const tfix_route_index = amended_route.lastIndexOf(tfix);
+      const tfix_aar_index = aar_amendment.indexOf(tfix);
+      if (tfix_route_index > -1 && tfix_aar_index > -1) {
+        amended_route = amended_route.slice(0, amended_route.indexOf(tfix));
+      }
+      amended_route += aar_amendment;
+      const remaining_fix_names = current_route_data.map(fix => fix.name).concat(aar_data.route_fixes).filter(name => amended_route.includes(name));
+      const first_common_fix = remaining_fix_names[0];
+      if (!first_common_fix) {
+        return null;
+      }
+      amended_route = '..' + amended_route.slice(amended_route.indexOf(first_common_fix));
+      return {
+        amendment: aar_amendment,
+        amended_route: amended_route,
+        amended_route_fixes: remaining_fix_names,
+        dest: this.props.entry.dest,
+        tfix_details: aar_data.amendment.tfix_details,
+        eligible: aar_data.amendment.eligible,
+        aar_data: aar_data
+      };
     });
   }
 
+  clearedReroute = (reroute_data) => {
+    const {trial_plan} = this.state;
+    const {entry} = this.props;
+    let plan_data;
+    if (!reroute_data.aar_data) {
+      plan_data = {route: reroute_data.route, route_data: reroute_data.route_data};
+    } else {
+      plan_data = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
+    }
+    if (trial_plan) {
+      const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`
+      this.props.trialPlan({
+        cid: entry.cid,
+        callsign: entry.callsign,
+        plan_data: plan_data,
+        msg: msg
+      });
+    } else {
+      this.props.amendEntry(entry.cid, plan_data)
+    }
+    this.props.closeWindow();
+  }
+
   clearedToFix = (fix) => {
-    const {trial} = this.state;
-    const {data} = this.props;
-    let {_route: new_route, _route_data} = data;
-    let route_fixes = _route_data.map(e => e.fix);
+    const {trial_plan} = this.state;
+    const {entry} = this.props;
+    let {_route: new_route, _route_data} = entry;
+    let route_fixes = _route_data.map(e => e.name);
     const index = route_fixes.indexOf(fix);
     for (let f of route_fixes.slice(0, index + 1).reverse()) {
       if (new_route.includes(f)) {
@@ -57,32 +111,15 @@ export default class RouteMenu extends React.Component {
     }
     new_route = `..${fix}` + new_route;
     const plan_data = {route: new_route, route_data: _route_data.slice(index)};
-    if (trial) {
+    if (trial_plan) {
       this.props.trialPlan({
-        cid: data.cid,
-        callsign: data.callsign,
+        cid: entry.cid,
+        callsign: entry.callsign,
         plan_data: plan_data,
-        msg: `AM ${data.cid} RTE ${new_route}`
+        msg: `AM ${entry.cid} RTE ${new_route}${entry.dest}`
       });
     } else {
-      this.props.amendEntry(data.cid, plan_data);
-    }
-    this.props.closeWindow();
-  }
-
-  clearedReroute = (route) => {
-    const {trial} = this.state;
-    const {data} = this.props;
-    const plan_data = {route: route.route, route_data: route.route_data};
-    if (trial) {
-      this.props.trialPlan({
-        cid: data.cid,
-        callsign: data.callsign,
-        plan_data: plan_data,
-        msg: `AM ${data.cid} RTE ${route.route}`
-      });
-    } else {
-      this.props.amendEntry(data.cid, plan_data)
+      this.props.amendEntry(entry.cid, plan_data);
     }
     this.props.closeWindow();
   }
@@ -90,15 +127,15 @@ export default class RouteMenu extends React.Component {
   render() {
     const {
       focused,
-      trial,
+      trial_plan,
       route,
       dep,
       append_star,
       append_oplus,
       routes
     } = this.state;
-    const {pos, data} = this.props;
-    const route_data = data?._route_data;
+    const {pos, entry} = this.props;
+    const route_data = entry?._route_data;
 
     return (<div
         onMouseEnter={() => this.setState({focused: true})}
@@ -116,7 +153,7 @@ export default class RouteMenu extends React.Component {
         </div>
         <div className="options-body">
           <div className="options-row fid">
-            {data?.callsign} {data?.type}/{data?.equipment}
+            {entry?.callsign} {entry?.type}/{entry?.equipment}
           </div>
           <div className="options-row route-row"
             // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
@@ -124,18 +161,18 @@ export default class RouteMenu extends React.Component {
             <div className="options-col left"
               // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
             >
-              <button className={`${trial ? 'selected' : ''}`}
-                      onMouseDown={() => this.setState({trial: true})}
+              <button className={`${trial_plan ? 'selected' : ''}`}
+                      onMouseDown={() => this.setState({trial_plan: true})}
                       disabled={dep}
               >
                 Trial Plan
               </button>
             </div>
-            <div className={`options-col right ${!trial ? 'selected' : ''}`}
+            <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}
               // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
             >
-              <button className={`${!trial ? 'selected' : ''}`}
-                      onMouseDown={() => this.setState({trial: false})}>
+              <button className={`${!trial_plan ? 'selected' : ''}`}
+                      onMouseDown={() => this.setState({trial_plan: false})}>
                 Amend
               </button>
             </div>
@@ -177,13 +214,13 @@ export default class RouteMenu extends React.Component {
           </div>
           <div className="options-row">
             <div className="options-col display-route">
-              ./{data?._route}
+              ./{entry?._route}
             </div>
           </div>
           {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
                                                                                   key={`route-menu-row-${i}`}>
             {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
-              const fix = route_data[i + j * 10]?.fix;
+              const fix = route_data[i + j * 10]?.name;
               return (fix && <div className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                   onMouseDown={() => this.clearedToFix(fix)}>
                 {fix}
@@ -198,7 +235,7 @@ export default class RouteMenu extends React.Component {
               <button>
                 Flight Data
               </button>
-              <button disabled={data?.previous_route === undefined}
+              <button disabled={entry?.previous_route === undefined}
                       onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'prev-route-menu', true)}
               >
                 Previous Route

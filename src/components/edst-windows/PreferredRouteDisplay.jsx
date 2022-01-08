@@ -56,13 +56,13 @@ export default class PreferredRouteDisplay extends React.Component {
           </div>
         </div>
         <div className="prefroute-container"
-             onWheel={(e) => this.setState({prefrouteDeltaY: Math.max(Math.min(((prefrouteDeltaY + e.deltaY) / 100 | 0), routes.length), 0)})}>
+             onWheel={(e) => this.setState({prefrouteDeltaY: Math.max(Math.min(((prefrouteDeltaY + e.deltaY) / 100 | 0), routes.length-5), 0)})}>
           {Object.entries(routes.slice(prefrouteDeltaY, prefrouteDeltaY + 5) || {}).map(([i, r]) => {
-            return r.route && (<div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
+            return (!prefroute_eligible_only || r.eligible) && (<div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
               <div className="options-col prefroute-col hover"
                    onMouseDown={() => this.props.clearedReroute(r)}
               >
-                {r.route}{r.dest}
+                {r.route || r.amendment}{r.dest}
               </div>
             </div>)
           })}

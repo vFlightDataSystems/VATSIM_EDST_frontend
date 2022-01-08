@@ -131,14 +131,14 @@ export default class HoldMenu extends React.Component {
             {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
                                                                                     key={`hold-menu-row-${i}`}>
               {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
-                const fix = route_data[i + j * 10]?.fix;
+                const fix_name = route_data[i + j * 10]?.name;
                 const minutes_at_fix = route_data[i + j * 10]?.minutes_at_fix;
                 const efc = minutes_at_fix + 30;
-                return (fix && <div className={`options-col hold-col-1 hover ${(hold_fix === fix) ? 'selected' : ''}`}
+                return (fix_name && <div className={`options-col hold-col-1 hover ${(hold_fix === fix_name) ? 'selected' : ''}`}
                                     key={`hold-menu-col-${i}-${j}`}
-                                    onMouseDown={() => this.setState({hold_fix: fix, efc: efc})}
+                                    onMouseDown={() => this.setState({hold_fix: fix_name, efc: efc})}
                 >
-                  {fix}
+                  {fix_name}
                   <div className="align-right">
                     {("0" + ((minutes_at_fix / 60 | 0) % 24)).slice(-2) + ("0" + (minutes_at_fix % 60 | 0)).slice(-2)}
                   </div>
