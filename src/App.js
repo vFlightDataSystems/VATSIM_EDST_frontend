@@ -144,7 +144,7 @@ export default class App extends React.Component {
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, current_entry._route_data, pos);
     Object.assign(current_entry, remaining_route_data);
-    if (new_entry.update_time === current_entry.update_time || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)) {
+    if (new_entry.update_time === current_entry.update_time || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info) || !this.entryFilter(new_entry)) {
       current_entry.pending_removal = current_entry.pending_removal || performance.now();
     } else {
       current_entry.pending_removal = null;
