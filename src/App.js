@@ -30,9 +30,9 @@ import CancelHoldMenu from "./components/edst-windows/CancelHoldMenu";
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
   'edst-outage': {x: 400, y: 100}
-}
+};
 
-const draggingHideCursor = ['edst-status', 'edst-outage']
+const draggingHideCursor = ['edst-status', 'edst-outage'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
 
 export default class App extends React.Component {
@@ -63,9 +63,9 @@ export default class App extends React.Component {
     this.globalRef = React.createRef();
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.state !== nextState;
-  }
+    // shouldComponentUpdate(nextProps, nextState, nextContext) {
+    //   return this.state !== nextState;
+    // }
 
   async componentDidMount() {
     const sector_artcc = prompt('Choose an ARTCC').toLowerCase();
@@ -105,18 +105,29 @@ export default class App extends React.Component {
 
   refreshEntry = (new_entry, current_entry) => {
     const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
-    if (new_entry.dest_info) {
+    const route_fix_names = new_entry.route_data.map(fix => fix.name);
+    const dest = new_entry.dest;
+    if (new_entry.dest_info && !route_fix_names.includes(dest)) {
       new_entry.route_data.push({
         name: new_entry.dest_info.icao,
         pos: [new_entry.dest_info.lon, new_entry.dest_info.lat]
       });
     }
-
-    new_entry.route += new_entry.dest;
+    if (!(new_entry.route.slice(-dest.length) === dest)) {
+      new_entry.route += new_entry.dest;
+    }
     if (current_entry?.route_data === new_entry.route_data) { // if route_data has not changed
       current_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
+      // recompute aar
+      if (current_entry.aar_list) {
+        current_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
+      }
     } else {
       current_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
+      // recompute aar
+      if (current_entry.aar_list) {
+        current_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
+      }
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, current_entry._route_data, pos);
     Object.assign(current_entry, remaining_route_data);
@@ -147,10 +158,13 @@ export default class App extends React.Component {
                   dep_data.cid_list.push(new_entry.cid);
                 }
               } else {
-                if (current_entry?.aar_data === undefined) {
+                if (current_entry?.aar_list === undefined) {
                   await getAarData(sector_artcc, new_entry.cid)
                     .then(response => response.json())
-                    .then(aar_data => entry.aar_data = aar_data);
+                    .then(aar_list => {
+                      entry.aar_list = aar_list;
+                      entry._aar_list = this.processAar(entry, aar_list);
+                    });
                 }
                 if (!acl_data.cid_list.includes(new_entry.cid) && !acl_data.deleted.includes(new_entry.cid)) {
                   acl_data.cid_list.push(new_entry.cid);
@@ -164,9 +178,57 @@ export default class App extends React.Component {
             }
             current_data[new_entry.cid] = entry;
           }
-          this.forceUpdate();
         }
+        this.forceUpdate();
       });
+  }
+
+  processAar = (entry, aar_list) => {
+    const {_route_data: current_route_data, _route: current_route} = entry;
+    return aar_list?.map(aar_data => {
+      const {fix: tfix, info: tfix_info} = aar_data.amendment.tfix_details;
+      const current_route_data_fix_names = current_route_data.map(fix => fix.name);
+      // if the current route data does not contain the tfix, this aar will not apply
+      if (!current_route_data_fix_names.includes(tfix)) {
+        return null;
+      }
+      let {route: aar_leading_route_string, aar_amendment: aar_amendment_route_string} = aar_data.amendment;
+      let amended_route_string = aar_amendment_route_string;
+      const current_route_data_tfix_index = current_route_data_fix_names.indexOf(tfix);
+      const remaining_fix_names = current_route_data_fix_names.slice(0, current_route_data_tfix_index)
+        .concat(aar_data.route_fixes.slice(aar_data.route_fixes.indexOf(tfix)));
+      if (tfix_info === 'Prepend') {
+        aar_amendment_route_string = tfix + aar_amendment_route_string;
+      }
+      // if current route contains the tfix, append the aar amendment after the tfix
+      if (current_route.includes(tfix)) {
+        amended_route_string = current_route.slice(0, current_route.indexOf(tfix)) + aar_amendment_route_string;
+      }
+      else {
+        // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
+        const first_common_segment = current_route.split(/\.+/).filter(segment => amended_route_string?.includes(segment))?.[0];
+        if (first_common_segment === undefined) {
+          return null;
+        }
+        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment)+first_common_segment.length)
+          + aar_leading_route_string.slice(aar_leading_route_string.indexOf(first_common_segment)+first_common_segment.length);
+      }
+      if (!amended_route_string) {
+        return null;
+      }
+      return {
+        aar: true,
+        aar_amendment_route_string: aar_amendment_route_string,
+        amended_route: amended_route_string,
+        amended_route_fix_names: remaining_fix_names,
+        dest: entry.dest,
+        tfix: tfix,
+        tfix_info: tfix_info,
+        eligible: aar_data.amendment.eligible,
+        on_eligible_aar: aar_data.amendment.eligible && current_route.includes(aar_amendment_route_string),
+        aar_data: aar_data
+      };
+    }).filter(aar_data => aar_data);
   }
 
   deleteEntry = (window, cid) => {
@@ -268,8 +330,9 @@ export default class App extends React.Component {
       plan_data.interim = null;
     }
     if (Object.keys(plan_data).includes('route')) {
-      if (plan_data.route.slice(-4) === current_entry.dest) {
-        plan_data.route = plan_data.route.slice(0, -4);
+      const dest = current_entry.dest
+      if (plan_data.route.slice(-dest.length) === dest) {
+        plan_data.route = plan_data.route.slice(0, -dest.length);
       }
       plan_data.previous_route = current_entry?._route;
       plan_data.previous_route_data = current_entry?._route_data;
@@ -284,6 +347,7 @@ export default class App extends React.Component {
           edstData[cid] = current_entry;
           this.setState({edstData: edstData, asel: null});
         }
+        this.forceUpdate();
       });
   }
 

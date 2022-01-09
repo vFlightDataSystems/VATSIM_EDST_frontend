@@ -23,7 +23,8 @@ export default class RouteMenu extends React.Component {
   componentDidMount() {
     const entry = this.props.entry;
     const dep = this.props.asel?.window === 'dep';
-    this.setState({routes: dep ? entry.routes : this.parseAar(entry.aar_data).filter(aar => aar)});
+    const current_route_fixes = entry._route_data.map(fix => fix.name);
+    this.setState({routes: dep ? entry.routes : entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix))});
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -31,10 +32,11 @@ export default class RouteMenu extends React.Component {
       const {trial_plan} = this.state;
       const dep = this.props.asel?.window === 'dep';
       const entry = this.props.entry;
+      const current_route_fixes = entry._route_data.map(fix => fix.name);
       this.setState({
         dep: dep,
         route: entry._route,
-        routes: dep ? entry.routes : this.parseAar(entry.aar_data).filter(aar => aar),
+        routes: dep ? entry.routes : entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)),
         trial_plan: !dep && trial_plan,
         append_star: false,
         append_oplus: false,
@@ -43,42 +45,11 @@ export default class RouteMenu extends React.Component {
     }
   }
 
-  parseAar = (aar_list) => {
-    const {_route_data: current_route_data} = this.props.entry;
-    return aar_list?.map(aar_data => {
-      const {fix: tfix, info} = aar_data.amendment.tfix_details;
-      const aar_amendment = `${info === 'Prepend' ? tfix : ''}${aar_data.amendment.aar_amendment}`;
-      let amended_route = aar_data.amendment.route;
-      amended_route = amended_route.slice(amended_route.indexOf(current_route_data[0]));
-      const tfix_route_index = amended_route.lastIndexOf(tfix);
-      const tfix_aar_index = aar_amendment.indexOf(tfix);
-      if (tfix_route_index > -1 && tfix_aar_index > -1) {
-        amended_route = amended_route.slice(0, amended_route.indexOf(tfix));
-      }
-      amended_route += aar_amendment;
-      const remaining_fix_names = current_route_data.map(fix => fix.name).concat(aar_data.route_fixes).filter(name => amended_route.includes(name));
-      const first_common_fix = remaining_fix_names[0];
-      if (!first_common_fix) {
-        return null;
-      }
-      amended_route = '..' + amended_route.slice(amended_route.indexOf(first_common_fix));
-      return {
-        amendment: aar_amendment,
-        amended_route: amended_route,
-        amended_route_fixes: remaining_fix_names,
-        dest: this.props.entry.dest,
-        tfix_details: aar_data.amendment.tfix_details,
-        eligible: aar_data.amendment.eligible,
-        aar_data: aar_data
-      };
-    });
-  }
-
   clearedReroute = (reroute_data) => {
     const {trial_plan} = this.state;
     const {entry} = this.props;
     let plan_data;
-    if (!reroute_data.aar_data) {
+    if (!reroute_data.aar) {
       plan_data = {route: reroute_data.route, route_data: reroute_data.route_data};
     } else {
       plan_data = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
@@ -116,7 +87,7 @@ export default class RouteMenu extends React.Component {
         cid: entry.cid,
         callsign: entry.callsign,
         plan_data: plan_data,
-        msg: `AM ${entry.cid} RTE ${new_route}${entry.dest}`
+        msg: `AM ${entry.cid} RTE ${new_route}`
       });
     } else {
       this.props.amendEntry(entry.cid, plan_data);

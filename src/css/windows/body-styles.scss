@@ -149,10 +149,11 @@ $body-hover-white: #F0F0F0;
   }
 
   &.hover:hover {
-    outline: 1px solid $body-hover-white;
+    border: 1px solid $body-hover-white;
   }
 
   &.plans-display-col-1 {
+    //height: 16px;
     width: 150px;
     justify-content: left;
     padding-left: 4px;
@@ -324,6 +325,7 @@ $body-hover-white: #F0F0F0;
     display: flex;
     justify-content: left;
     width: 70px;
+    border: 1px solid transparent;
     /*padding-left: 2px;*/
     margin-right: 8px;
 
@@ -334,6 +336,7 @@ $body-hover-white: #F0F0F0;
     }
 
     > div {
+      border: unset;
 
       &.interim {
         width: 75px;

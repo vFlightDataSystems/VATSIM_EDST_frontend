@@ -62,7 +62,7 @@ export default class PreferredRouteDisplay extends React.Component {
               <div className="options-col prefroute-col hover"
                    onMouseDown={() => this.props.clearedReroute(r)}
               >
-                {r.route || r.amendment}{r.dest}
+                {r.route || r.aar_amendment_route_string}{r.dest}
               </div>
             </div>)
           })}
