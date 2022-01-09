@@ -140,8 +140,9 @@ $body-hover-white: #F0F0F0;
   align-items: center;
   height: 18px;
   border: 1px solid transparent;
+  //outline: 1px solid transparent;
 
-  .selected {
+  &.selected {
     outline: 1px solid $body-light-grey;
     border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
@@ -149,7 +150,7 @@ $body-hover-white: #F0F0F0;
   }
 
   &.hover:hover {
-    border: 1px solid $body-hover-white;
+    outline: 1px solid $body-hover-white;
   }
 
   &.plans-display-col-1 {
@@ -411,22 +412,25 @@ $body-hover-white: #F0F0F0;
     text-overflow: ellipsis;
     white-space: nowrap;
     justify-content: left;
-    padding: 0;
+    border: 1px solid transparent;
+    padding: 0 2px;
+    margin: unset;
 
     > div {
       pointer-events: none;
+      margin: 0;
+      padding: 0;
 
       .amendment {
         color: $body-font-blue;
-        //padding: 0;
 
         &.selected {
           background-color: $body-font-blue;
           color: #000000;
         }
       }
+
+
     }
-
-
   }
 }
