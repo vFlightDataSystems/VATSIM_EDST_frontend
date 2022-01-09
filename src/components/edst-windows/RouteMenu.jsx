@@ -20,15 +20,19 @@ export default class RouteMenu extends React.Component {
     this.routeMenuRef = React.createRef();
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
+  }
+
   componentDidMount() {
     const entry = this.props.entry;
     const dep = this.props.asel?.window === 'dep';
     const current_route_fixes = entry._route_data.map(fix => fix.name);
-    this.setState({routes: dep ? entry.routes : entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix))});
+    this.setState({routes: (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)))});
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.entry !== prevProps.entry) {
+    if (this.props.entry !== prevProps.entry && this.props.entry) {
       const {trial_plan} = this.state;
       const dep = this.props.asel?.window === 'dep';
       const entry = this.props.entry;
@@ -36,7 +40,7 @@ export default class RouteMenu extends React.Component {
       this.setState({
         dep: dep,
         route: entry._route,
-        routes: dep ? entry.routes : entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)),
+        routes: (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)).concat()),
         trial_plan: !dep && trial_plan,
         append_star: false,
         append_oplus: false,

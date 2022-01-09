@@ -13,6 +13,10 @@ export default class DepTable extends React.Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
+  }
+
   toggleHideColumn = (name) => {
     let {hidden} = this.state;
     const index = hidden.indexOf(name);
@@ -30,7 +34,7 @@ export default class DepTable extends React.Component {
   }
 
   updateStatus = (cid) => {
-    const entry = this.props.edstData[cid];
+    const entry = this.props.edst_data[cid];
     if (entry?.dep_status === -1) {
       this.props.updateEntry(cid, {dep_status: 0});
     } else {
@@ -62,9 +66,9 @@ export default class DepTable extends React.Component {
 
   render() {
     const {hidden} = this.state;
-    const {edstData, posting_manual, cid_list} = this.props;
+    const {edst_data, posting_manual, cid_list} = this.props;
 
-    const data = Object.values(edstData)?.filter(e => cid_list.includes(e.cid));
+    const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
 
     return (<div className="dep-body no-select">
       <div className="body-row header" key="dep-table-header">

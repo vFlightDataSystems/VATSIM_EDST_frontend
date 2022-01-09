@@ -18,20 +18,20 @@ export default class AclTable extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return nextProps !== this.props || this.state !== nextState;
+    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps !== this.props) {
+    if (!Object.is(prevProps, this.props)) {
       this.checkHolding();
     }
   }
 
   checkHolding = () => {
-    let {edstData} = this.props;
+    let {edst_data} = this.props;
     let any_holding = false;
     for (let cid of this.props.cid_list) {
-      if (edstData[cid]?.hold_data) {
+      if (edst_data[cid]?.hold_data) {
         any_holding = true;
       }
     }
@@ -70,7 +70,7 @@ export default class AclTable extends React.Component {
   }
 
   updateStatus = (cid) => {
-    const entry = this.props.edstData[cid];
+    const entry = this.props.edst_data[cid];
     if (entry?.acl_status === -1 && this.props.posting_manual) {
       this.props.updateEntry(cid, {acl_status: 0});
     } else {
@@ -102,9 +102,9 @@ export default class AclTable extends React.Component {
 
   render() {
     const {hidden, alt_mouse_down, any_holding} = this.state;
-    const {edstData, posting_manual, cid_list} = this.props;
+    const {edst_data, posting_manual, cid_list} = this.props;
 
-    const data = Object.values(edstData)?.filter(e => cid_list.includes(e.cid));
+    const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
 
     return (<div className="acl-body no-select">
       <div className="body-row header" key="acl-table-header">
@@ -199,6 +199,7 @@ export default class AclTable extends React.Component {
         {posting_manual && <div className="body-row separator"/>}
         {posting_manual && data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)).map((e) =>
           <AclRow
+            key={`acl-table-row-${e.cid}`}
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}
