@@ -23,13 +23,16 @@ export default class AclRow extends React.Component {
   componentDidMount() {
     const {entry} = this.props;
     let route = entry._route;
-    if (route.slice(-4) === entry.dest) {
-      route = route.slice(0, -4);
+    const dest = entry.dest;
+    if (route.slice(-dest.length) === dest) {
+      route = route.slice(0, -dest.length);
     }
+    const current_fix_names = entry._route_data.map(fix => fix.name);
     this.setState({
       route: route,
       pending_aar: this.#checkAarReroutePending(),
-      aar_avail: (entry?.aar_data?.filter((aar) => aar.eligible)?.length > 1)
+      on_aar: entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0,
+      aar_avail: (entry?.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1 && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar) > 0))
     });
   }
 
@@ -37,27 +40,30 @@ export default class AclRow extends React.Component {
     const {entry} = this.props;
     if (prevProps.entry !== entry) {
       let route = entry._route;
-      if (route.slice(-4) === entry.dest) {
-        route = route.slice(0, -4);
+      const dest = entry.dest;
+      if (route.slice(-dest.length) === dest) {
+        route = route.slice(0, -dest.length);
       }
+      const current_fix_names = entry._route_data.map(fix => fix.name);
       this.setState({
         scratchpad: entry?.scratchpad || '',
         route: route,
         pending_aar: this.#checkAarReroutePending(),
-        aar_avail: (entry?.aar_data?.filter((aar) => aar.eligible)?.length > 1)
+        on_aar: entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0,
+        aar_avail: (entry?._aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1)
       });
-
     }
   }
 
   #checkAarReroutePending = () => {
     const entry = this.props.entry;
-    const eligible_aar = entry?.aar_data?.filter((aar) => aar.eligible);
+    const current_fix_names = entry._route_data.map(fix => fix.name);
+    const eligible_aar = entry?._aar_list?.filter((aar) => aar.eligible);
     if (eligible_aar?.length === 1) {
         const aar = eligible_aar[0];
-        if (!entry.route.includes(aar.amendment.aar_amendment)) {
-          return aar.amendment.aar_amendment;
-      }
+        if (current_fix_names.includes(aar.tfix)) {
+          return aar.aar_amendment_route_string;
+        }
     }
     return null;
   }
@@ -114,7 +120,7 @@ export default class AclRow extends React.Component {
   formatEfc = (efc) => ("0" + ((efc / 60 | 0) % 24)).slice(-2) + ("0" + (efc % 60 | 0)).slice(-2);
 
   render() {
-    const {scratchpad, route, pending_aar, aar_avail} = this.state;
+    const {scratchpad, route, pending_aar, aar_avail, on_aar} = this.state;
     const {entry: e, hidden, alt_mouse_down} = this.props;
     const hold_data = e?.hold_data;
     const now = performance.now();
@@ -206,8 +212,8 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
           >
             {e.show_hold_info && hold_data && `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${this.formatEfc(hold_data.efc)}`}
             {!e.show_hold_info && <div>
-              <span className={`${aar_avail ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>./{route}
-              {pending_aar && <span className={`amendment ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>
+              <span className={`${aar_avail && !on_aar ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>./{route}
+              {pending_aar && !on_aar && <span className={`amendment ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>
               [{pending_aar}]
               </span>}
               {e._route?.slice(-1) === '.' && '..'}{e.dest}
