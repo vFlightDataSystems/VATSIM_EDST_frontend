@@ -14,7 +14,7 @@ export default class Acl extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return nextProps !== this.props || this.state !== nextState;
+    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
   }
 
   togglePosting = () => {
@@ -49,7 +49,7 @@ export default class Acl extends React.Component {
         posting_manual={posting_manual}
         sorting={this.props.sorting}
         cid_list={this.props.cid_list}
-        edstData={this.props.edstData}
+        edst_data={this.props.edst_data}
         asel={this.props.asel}
         updateEntry={this.props.updateEntry}
         amendEntry={this.props.amendEntry}

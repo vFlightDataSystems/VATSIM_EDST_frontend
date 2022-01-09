@@ -16,6 +16,58 @@ export default class DepRow extends React.Component {
     this.hightlightRef = React.createRef();
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
+  }
+
+  componentDidMount() {
+    const {entry} = this.props;
+    let route = entry.route;
+    const dest = entry.dest;
+    if (route.slice(-dest.length) === dest) {
+      route = route.slice(0, -dest.length);
+    }
+    const current_fix_names = entry._route_data.map(fix => fix.name);
+    this.setState({
+      route: route,
+      pending_aar: this.#checkAarReroutePending(),
+      on_aar: entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0,
+      aar_avail: (entry?.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1 && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar) > 0))
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!Object.is(prevProps, this.props)) {
+      const {entry} = this.props;
+      let route = entry.route;
+      const dest = entry.dest;
+      if (route.slice(-dest.length) === dest) {
+        route = route.slice(0, -dest.length);
+      }
+      const current_fix_names = entry._route_data.map(fix => fix.name);
+      this.setState({
+        scratchpad: entry?.scratchpad || '',
+        route: route,
+        pending_aar: this.#checkAarReroutePending(),
+        on_aar: entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0,
+        aar_avail: (entry?._aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1)
+      });
+    }
+  }
+
+    #checkAarReroutePending = () => {
+      const entry = this.props.entry;
+      const current_fix_names = entry._route_data.map(fix => fix.name);
+      const eligible_aar = entry?._aar_list?.filter((aar) => aar.eligible);
+      if (eligible_aar?.length === 1) {
+        const aar = eligible_aar[0];
+        if (current_fix_names.includes(aar.tfix)) {
+          return aar.aar_amendment_route_string;
+        }
+      }
+      return null;
+    }
+
   #handleBoxMouseDown = (event, entry) => {
     event.preventDefault();
     if (event.button === 0) {
@@ -43,12 +95,11 @@ export default class DepRow extends React.Component {
       default:
         this.props.aircraftSelect(event, 'dep', e.cid, 'fid');
         break;
-
     }
   }
 
   render() {
-    const {scratchpad} = this.state;
+    const {scratchpad, route, pending_aar, aar_avail, on_aar} = this.state;
     const {hidden, entry: e} = this.props;
     const now = performance.now();
 
@@ -106,6 +157,13 @@ export default class DepRow extends React.Component {
           <div className={`body-col route hover ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => this.props.aircraftSelect(event, 'dep', e.cid, 'route')}
           >
+            <div>
+              <span className={`${aar_avail && !on_aar ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>{route}
+              {pending_aar && !on_aar && <span className={`amendment ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>
+              [{pending_aar}]
+              </span>}
+              {route?.slice(-1) !== '.' && '..'}{e.dest}
+            </div>
             {e.dep}{e.route}
           </div>
         </div>

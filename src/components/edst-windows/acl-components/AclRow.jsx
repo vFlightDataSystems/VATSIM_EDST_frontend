@@ -17,7 +17,7 @@ export default class AclRow extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return nextProps !== this.props || this.state !== nextState;
+    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
   }
 
   componentDidMount() {
@@ -37,8 +37,8 @@ export default class AclRow extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const {entry} = this.props;
-    if (prevProps.entry !== entry) {
+    if (!Object.is(prevProps, this.props)) {
+      const {entry} = this.props;
       let route = entry._route;
       const dest = entry.dest;
       if (route.slice(-dest.length) === dest) {
@@ -125,9 +125,8 @@ export default class AclRow extends React.Component {
     const hold_data = e?.hold_data;
     const now = performance.now();
 
-    return (<div className="body-row-container" key={this.props.key}>
-      <div className={`body-row ${(now - (e.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}
-           key={`acl-body-${e.cid}`}>
+    return (<div className="body-row-container" key={`acl-row-${e.cid}`}>
+      <div className={`body-row ${(now - (e.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
         <div className={`body-col body-col-1 radio ${e.acl_status === 1 ? 'green' : ''}`}
              onMouseDown={() => this.props.updateStatus(e.cid)}>
           {e.acl_status === -1 && 'N'}{e.acl_status === 1 && ON_FREQ_SYMBOL}
@@ -216,7 +215,7 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
               {pending_aar && !on_aar && <span className={`amendment ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>
               [{pending_aar}]
               </span>}
-              {e._route?.slice(-1) === '.' && '..'}{e.dest}
+              {route?.slice(-1) !== '.' && '..'}{e.dest}
             </div>}
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {point, polygon} from '@turf/turf';
+import {distance, point, polygon} from '@turf/turf';
 
 import {getAarData, getBoundaryData, getEdstData, updateEdstEntry} from "./api";
 import './css/styles.scss';
@@ -56,19 +56,19 @@ export default class App extends React.Component {
       draggingRef: null,
       dragPreviewStyle: null,
       pos: defaultPos,
-      edstData: {}, // keys are cid, values are data from db
+      edst_data: {}, // keys are cid, values are data from db
       asel: null, // {cid, field, ref}
       plan_queue: []
     };
     this.globalRef = React.createRef();
   }
 
-    // shouldComponentUpdate(nextProps, nextState, nextContext) {
-    //   return this.state !== nextState;
-    // }
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !Object.is(this.state, nextState);
+  }
 
   async componentDidMount() {
-    const sector_artcc = prompt('Choose an ARTCC').toLowerCase();
+    const sector_artcc = 'zbw' // prompt('Choose an ARTCC').toLowerCase();
     this.setState({sector_id: '37', sector_artcc: sector_artcc});
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
@@ -90,23 +90,36 @@ export default class App extends React.Component {
   }
 
   depFilter = (entry) => {
+    let dep_airport_distance = 0;
+    if (entry.dep_info) {
+      const pos = [entry?.flightplan?.lon, entry?.flightplan?.lat];
+      const dep_pos = [entry.dep_info.lon, entry.dep_info.lat];
+      dep_airport_distance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
+    }
     const {sector_artcc} = this.state;
-    return Number(entry.flightplan.ground_speed) < 40 && entry?.dep_info?.artcc?.toLowerCase() === sector_artcc;
+    return Number(entry.flightplan.ground_speed) < 40
+      && entry?.dep_info?.artcc?.toLowerCase() === sector_artcc
+      && dep_airport_distance < 10;
   }
 
   entryFilter = (entry) => {
+    const {acl_data} = this.state;
     const poly = polygon(this.state.boundary_data?.geometry?.coordinates?.[0]);
     const pos = [entry?.flightplan?.lon, entry?.flightplan?.lat]
     const pos_point = point(pos);
     const sdist = getSignedDistancePointToPolygon(pos_point, poly);
     const will_enter_airspace = routeWillEnterAirspace(entry?.route_data, poly, pos)
-    return (sdist < 100) && will_enter_airspace;
+    const minutes_away = sdist * 60 / entry.flightplan.ground_speed;
+    return ((minutes_away < 30 || acl_data.cid_list.includes(entry.cid))
+      && will_enter_airspace
+      && Number(entry.flightplan.ground_speed) > 40);
   }
 
   refreshEntry = (new_entry, current_entry) => {
     const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
     const route_fix_names = new_entry.route_data.map(fix => fix.name);
     const dest = new_entry.dest;
+    // add departure airport to route_data if we know the coords to compute the distance
     if (new_entry.dest_info && !route_fix_names.includes(dest)) {
       new_entry.route_data.push({
         name: new_entry.dest_info.icao,
@@ -118,20 +131,20 @@ export default class App extends React.Component {
     }
     if (current_entry?.route_data === new_entry.route_data) { // if route_data has not changed
       current_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
-      // recompute aar
+      // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
       if (current_entry.aar_list) {
         current_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     } else {
       current_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
-      // recompute aar
+      // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
       if (current_entry.aar_list) {
         current_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, current_entry._route_data, pos);
     Object.assign(current_entry, remaining_route_data);
-    if (new_entry.update_time === current_entry.update_time || current_entry._route_data?.[-1]?.dist < 20) {
+    if (new_entry.update_time === current_entry.update_time || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)) {
       current_entry.pending_removal = current_entry.pending_removal || performance.now();
     } else {
       current_entry.pending_removal = null;
@@ -141,23 +154,18 @@ export default class App extends React.Component {
   }
 
   refresh = async () => {
-    let {edstData: current_data, acl_data, dep_data, sector_artcc} = this.state;
+    let {edst_data: current_data, acl_data, dep_data, sector_artcc} = this.state;
     await getEdstData()
       .then(response => response.json())
       .then(async new_data => {
-        if (new_data) {
-          for (let new_entry of new_data) {
-            let current_entry = this.state.edstData[new_entry.cid];
-            let entry = this.refreshEntry(new_entry, current_entry || {
-              acl_status: -1,
-              dep_status: -1
-            });
-            if (this.entryFilter(new_entry)) {
+          if (new_data) {
+            for (let new_entry of new_data) {
+              let current_entry = this.state.edst_data[new_entry.cid];
+              let entry = this.refreshEntry(new_entry, current_entry || {
+                acl_status: -1,
+                dep_status: -1
+              });
               if (this.depFilter(entry) && !dep_data.deleted.includes(new_entry.cid)) {
-                if (!dep_data.cid_list.includes(new_entry.cid)) {
-                  dep_data.cid_list.push(new_entry.cid);
-                }
-              } else {
                 if (current_entry?.aar_list === undefined) {
                   await getAarData(sector_artcc, new_entry.cid)
                     .then(response => response.json())
@@ -166,21 +174,35 @@ export default class App extends React.Component {
                       entry._aar_list = this.processAar(entry, aar_list);
                     });
                 }
-                if (!acl_data.cid_list.includes(new_entry.cid) && !acl_data.deleted.includes(new_entry.cid)) {
-                  acl_data.cid_list.push(new_entry.cid);
-                  // remove cid from departure list if will populate the aircraft list
-                  const index = dep_data.cid_list.indexOf(new_entry.cid);
-                  if (index > -1) {
-                    dep_data.cid_list.splice(index, 1);
+                if (!dep_data.cid_list.includes(new_entry.cid)) {
+                  dep_data.cid_list.push(new_entry.cid);
+                }
+              } else {
+                if (this.entryFilter(new_entry)) {
+                  if (current_entry?.aar_list === undefined) {
+                    await getAarData(sector_artcc, new_entry.cid)
+                      .then(response => response.json())
+                      .then(aar_list => {
+                        entry.aar_list = aar_list;
+                        entry._aar_list = this.processAar(entry, aar_list);
+                      });
+                  }
+                  if (!acl_data.cid_list.includes(new_entry.cid) && !acl_data.deleted.includes(new_entry.cid)) {
+                    acl_data.cid_list.push(new_entry.cid);
+                    // remove cid from departure list if will populate the aircraft list
+                    const index = dep_data.cid_list.indexOf(new_entry.cid);
+                    if (index > -1) {
+                      dep_data.cid_list.splice(index, 1);
+                    }
                   }
                 }
               }
+              current_data[new_entry.cid] = entry;
             }
-            current_data[new_entry.cid] = entry;
+            this.forceUpdate();
           }
         }
-        this.forceUpdate();
-      });
+      );
   }
 
   processAar = (entry, aar_list) => {
@@ -203,15 +225,14 @@ export default class App extends React.Component {
       // if current route contains the tfix, append the aar amendment after the tfix
       if (current_route.includes(tfix)) {
         amended_route_string = current_route.slice(0, current_route.indexOf(tfix)) + aar_amendment_route_string;
-      }
-      else {
+      } else {
         // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
         const first_common_segment = current_route.split(/\.+/).filter(segment => amended_route_string?.includes(segment))?.[0];
         if (first_common_segment === undefined) {
           return null;
         }
-        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment)+first_common_segment.length)
-          + aar_leading_route_string.slice(aar_leading_route_string.indexOf(first_common_segment)+first_common_segment.length);
+        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment) + first_common_segment.length)
+          + aar_leading_route_string.slice(aar_leading_route_string.indexOf(first_common_segment) + first_common_segment.length);
       }
       if (!amended_route_string) {
         return null;
@@ -269,21 +290,21 @@ export default class App extends React.Component {
   }
 
   swapSpaEntries = (cid_1, cid_2) => {
-    let {spa_list, edstData} = this.state;
+    let {spa_list, edst_data} = this.state;
     const index_1 = spa_list.indexOf(cid_1)
     const index_2 = spa_list.indexOf(cid_2)
     if (index_1 > 0 && index_2 > 0) {
       spa_list[index_1] = cid_2;
       spa_list[index_2] = cid_1;
-      edstData[cid_1].spa = index_2;
-      edstData[cid_2].spa = index_1;
+      edst_data[cid_1].spa = index_2;
+      edst_data[cid_2].spa = index_1;
     }
-    this.setState({spa_list: spa_list, edstData: edstData});
+    this.setState({spa_list: spa_list, edst_data: edst_data});
   }
 
   updateEntry = (cid, data) => {
-    let {edstData, spa_list} = this.state;
-    let entry = edstData[cid];
+    let {edst_data, spa_list} = this.state;
+    let entry = edst_data[cid];
     if (data?.spa === true) {
       if (!spa_list.includes(cid)) {
         spa_list.push(cid);
@@ -296,13 +317,13 @@ export default class App extends React.Component {
         spa_list.splice(index, 1);
       }
     }
-    edstData[cid] = Object.assign(entry, data);
-    this.setState({edstData: edstData});
+    edst_data[cid] = Object.assign(entry, data);
+    this.setState({edst_data: edst_data});
   }
 
   addEntry = (window, str) => {
-    let {edstData, acl_data, dep_data} = this.state;
-    let entry = Object.values(edstData || {})?.find(e => String(e?.cid) === str || String(e.callsign) === str || String(e.beacon) === str);
+    let {edst_data, acl_data, dep_data} = this.state;
+    let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === str || String(e.callsign) === str || String(e.beacon) === str);
     if (entry && (window === 'acl' || window === 'dep')) {
       let data = window === 'acl' ? acl_data : dep_data;
       const del_index = data.deleted?.indexOf(entry.cid);
@@ -324,8 +345,8 @@ export default class App extends React.Component {
   }
 
   amendEntry = async (cid, plan_data) => {
-    let {edstData} = this.state;
-    let current_entry = edstData[cid];
+    let {edst_data} = this.state;
+    let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
     }
@@ -344,21 +365,21 @@ export default class App extends React.Component {
         if (updated_entry) {
           current_entry = this.refreshEntry(updated_entry, current_entry);
           current_entry.pending_removal = null;
-          edstData[cid] = current_entry;
-          this.setState({edstData: edstData, asel: null});
+          edst_data[cid] = current_entry;
+          this.setState({asel: null});
+          this.forceUpdate();
         }
-        this.forceUpdate();
       });
   }
 
   aircraftSelect = (event, window, cid, field) => {
-    let {asel, edstData} = this.state;
+    let {asel, edst_data} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({asel: null, menu: null});
     } else {
-      const entry = edstData[cid];
+      const entry = edst_data[cid];
       asel = {cid: cid, field: field, window: window};
-      // if (edstData[cid]?.acl_status === undefined) {
+      // if (edst_data[cid]?.acl_status === undefined) {
       //   this.amendEntry(cid, `${window}_status`, '');
       // }
       this.setState({
@@ -440,7 +461,7 @@ export default class App extends React.Component {
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ? {
           x: x - (plan ? 0 : 570),
-          y: plan ? ref.offsetTop : y - 3*height,
+          y: plan ? ref.offsetTop : y - 3 * height,
           w: width,
           h: height
         } : {
@@ -567,10 +588,10 @@ export default class App extends React.Component {
   }
 
   aclCleanup = () => {
-    let {edstData, acl_data} = this.state;
+    let {edst_data, acl_data} = this.state;
     const now = performance.now()
     for (const cid of acl_data?.cid_list) {
-      if (now - (edstData[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
+      if (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
         this.deleteEntry('acl', cid);
       }
     }
@@ -578,7 +599,7 @@ export default class App extends React.Component {
 
   render() {
     const {
-      edstData,
+      edst_data,
       asel,
       disabled_windows,
       sorting,
@@ -631,7 +652,7 @@ export default class App extends React.Component {
             dragging={dragging}
             asel={asel?.window === 'acl' ? asel : null}
             cid_list={acl_data.cid_list}
-            edstData={edstData}
+            edst_data={edst_data}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
@@ -647,7 +668,7 @@ export default class App extends React.Component {
             dragging={dragging}
             asel={asel?.window === 'dep' ? asel : null}
             cid_list={dep_data.cid_list}
-            edstData={edstData}
+            edst_data={edst_data}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
@@ -688,7 +709,7 @@ export default class App extends React.Component {
             openMenu={this.openMenu}
             dragging={dragging}
             asel={asel}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
@@ -713,7 +734,7 @@ export default class App extends React.Component {
             trialPlan={this.trialPlan}
             dragging={dragging}
             asel={asel}
-            entry={edstData[asel?.cid]}
+            entry={edst_data[asel?.cid]}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
@@ -723,7 +744,7 @@ export default class App extends React.Component {
           {menu?.name === 'hold-menu' && <HoldMenu
             dragging={dragging}
             asel={asel}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
@@ -734,7 +755,7 @@ export default class App extends React.Component {
           {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
             dragging={dragging}
             asel={asel}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
@@ -744,7 +765,7 @@ export default class App extends React.Component {
           />}
           {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
             dragging={dragging}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
             stopDrag={this.stopDrag}
@@ -755,14 +776,14 @@ export default class App extends React.Component {
             pos={pos['alt-menu']}
             asel={asel}
             trialPlan={this.trialPlan}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             amendEntry={this.amendEntry}
             closeWindow={() => this.closeMenu('alt-menu')}
           />}
           {menu?.name === 'speed-menu' && <SpeedMenu
             pos={pos['speed-menu']}
             asel={asel}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
@@ -772,7 +793,7 @@ export default class App extends React.Component {
           {menu?.name === 'heading-menu' && <HeadingMenu
             pos={pos['heading-menu']}
             asel={asel}
-            data={edstData[asel?.cid]}
+            data={edst_data[asel?.cid]}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}

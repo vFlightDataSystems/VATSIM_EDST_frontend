@@ -53,7 +53,7 @@ export function getRemainingRouteData(route, route_data, pos) {
     const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
     for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name)+1).reverse()) {
       if (route.includes(name)) {
-        route = route.slice(route.indexOf(name) + name.length);
+        route = route.slice(route.lastIndexOf(name) + name.length);
         route = `..${next_fix.name}` + route;
         break;
       }
