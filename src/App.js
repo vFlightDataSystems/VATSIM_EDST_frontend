@@ -588,7 +588,7 @@ export default class App extends React.Component {
   }
 
   aclCleanup = () => {
-    let {edst_data, acl_data} = this.state;
+    const {edst_data, acl_data} = this.state;
     const now = performance.now()
     for (const cid of acl_data?.cid_list) {
       if (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
