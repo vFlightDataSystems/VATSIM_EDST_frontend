@@ -7,26 +7,31 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 
-const KM_NM_CONVERSION_FACTOR = 0.53996;
 export const REMOVAL_TIMEOUT = 60000;
 
-export function getSignedDistancePointToPolygon(point, poly) {
-  let dist = pointToLineDistance(point, polygonToLineString(poly)) * KM_NM_CONVERSION_FACTOR;
-  if (booleanPointInPolygon(point, poly)) {
-    dist = dist * -1;
+export function getSignedDistancePointToPolygons(point, polygons) {
+  let min_distance = Infinity;
+  for (const poly of polygons) {
+    let dist = pointToLineDistance(point, polygonToLineString(poly), {units: 'nauticalmiles'});
+    if (booleanPointInPolygon(point, poly)) {
+      dist = dist * -1;
+    }
+    min_distance = Math.min(min_distance, dist);
   }
-  return dist;
+  return min_distance;
 }
 
-export function routeWillEnterAirspace(route_data, poly, pos) {
+export function routeWillEnterAirspace(route_data, polygons, pos) {
   route_data.unshift({pos: pos});
   if (route_data.length > 1) {
     const lines = lineString(route_data?.map(e => e.pos));
-    return booleanIntersects(lines, poly);
+    for (let poly of polygons) {
+      if (booleanIntersects(lines, poly)) {
+        return true
+      }
+    }
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 export function getRouteDataDistance(route_data, pos) {
