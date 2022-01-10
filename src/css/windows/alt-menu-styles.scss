@@ -86,7 +86,7 @@ $alt-selected-font-white: #D6D6D6;
       /*border: none;*/
       border: 1px solid #000000;
 
-      &.t-hover {
+      &.temp-alt-hover {
         border: 1px solid $alt-menu-hover-white;
       }
 
@@ -102,7 +102,7 @@ $alt-selected-font-white: #D6D6D6;
           outline: 1px solid $alt-menu-hover-white;
         }
 
-        &.t-hover {
+        &.temp-alt-hover {
           border: 1px solid $alt-menu-hover-white;
         }
 

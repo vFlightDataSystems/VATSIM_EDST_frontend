@@ -1,50 +1,38 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/plans-display-styles.scss';
 import PlansDisplayHeader from "./plans-display-components/PlansDisplayHeader";
 import PlansDisplayTable from "./plans-display-components/PlansDisplayTable";
 
-export default class PlansDisplay extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      focused: false,
-      selected_msg: null
-    };
-  }
+export default function PlansDisplay(props) {
+  const [focused, setFocused] = useState(false);
+  const [selected_msg_index, setSelectedMsgIndex] = useState(null);
+  useEffect(() => props.unmount(), []);
+  const {plan_queue} = props;
 
-  componentWillUnmount() {
-    this.props.unmount();
-  }
-
-  render() {
-    const {focused, selected_msg} = this.state;
-    const {plan_queue} = this.props;
-
-    return (<div
-      className={`plans-display ${this.props.dragging ? 'dragging' : ''}`}
-      // style={{zIndex: this.props.z_index}}
-      onMouseEnter={() => this.setState({focused: true})}
-      onMouseLeave={() => this.setState({focused: false})}
-    >
-      <div>
-        <PlansDisplayHeader
-          cleanup={this.props.cleanup}
-          openMenu={this.props.openMenu}
-          amendEntry={this.props.amendEntry}
-          plan_data={selected_msg ? plan_queue[selected_msg] : null}
-          asel={this.props.asel}
-          focused={focused}
-          closeWindow={this.props.closeWindow}
-        />
-        <PlansDisplayTable
-          messageSelect={(i) => this.setState({selected_msg: i})}
-          selected_msg={selected_msg}
-          plan_queue={plan_queue}
-          asel={this.props.asel}
-          aircraftSelect={this.props.aircraftSelect}
-        />
-      </div>
-    </div>);
-  }
+  return (<div
+    className={`plans-display ${props.dragging ? 'dragging' : ''}`}
+    // style={{zIndex: props.z_index}}
+    onMouseEnter={() => setFocused(true)}
+    onMouseLeave={() => setFocused(false)}
+  >
+    <div>
+      <PlansDisplayHeader
+        cleanup={props.cleanup}
+        openMenu={props.openMenu}
+        amendEntry={props.amendEntry}
+        plan_data={selected_msg_index ? plan_queue[selected_msg_index] : null}
+        asel={props.asel}
+        focused={focused}
+        closeWindow={props.closeWindow}
+      />
+      <PlansDisplayTable
+        messageSelect={(i) => setSelectedMsgIndex(i)}
+        selected_msg={selected_msg_index}
+        plan_queue={plan_queue}
+        asel={props.asel}
+        aircraftSelect={props.aircraftSelect}
+      />
+    </div>
+  </div>);
 }
