@@ -32,7 +32,7 @@ const defaultPos = {
   'edst-outage': {x: 400, y: 100}
 };
 
-const draggingHideCursor = ['edst-status', 'edst-outage'];
+const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
 
 export default class App extends React.Component {
@@ -77,7 +77,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const sector_artcc = 'zbw' // prompt('Choose an ARTCC').toLowerCase();
+    const sector_artcc = prompt('Choose an ARTCC')?.toLowerCase();
     this.setState({sector_id: '37', sector_artcc: sector_artcc});
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
@@ -540,7 +540,7 @@ export default class App extends React.Component {
       dragging: true,
       rel: rel,
       dragPreviewStyle: style,
-      dragging_cursor_hide: draggingHideCursor.includes(ref.current.id)
+      dragging_cursor_hide: DRAGGING_HIDE_CURSOR.includes(ref.current.id)
     });
     this.globalRef.current.addEventListener('mousemove', this.dragging);
   }
