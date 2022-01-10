@@ -8,24 +8,24 @@ import './css/header-styles.scss';
 import EdstHeader from "./components/EdstHeader";
 import Acl from "./components/edst-windows/Acl";
 import Dep from "./components/edst-windows/Dep";
-import Status from "./components/edst-windows/Status";
+import {Status} from "./components/edst-windows/Status";
 import RouteMenu from "./components/edst-windows/RouteMenu";
-import Outage from "./components/edst-windows/Outage";
+import {Outage} from "./components/edst-windows/Outage";
 import AltMenu from "./components/edst-windows/AltMenu";
-import PlanOptions from "./components/edst-windows/PlanOptions";
-import SortMenu from "./components/edst-windows/SortMenu";
+import {PlanOptions} from "./components/edst-windows/PlanOptions";
+import {SortMenu} from "./components/edst-windows/SortMenu";
 import PlansDisplay from "./components/edst-windows/PlansDisplay";
-import SpeedMenu from "./components/edst-windows/SpeedMenu";
-import HeadingMenu from "./components/edst-windows/HeadingMenu";
+import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
+import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
   getRemainingRouteData,
   getRouteDataDistance,
   getSignedDistancePointToPolygon, REMOVAL_TIMEOUT,
   routeWillEnterAirspace,
 } from "./lib";
-import PreviousRouteMenu from "./components/edst-windows/PreviousRouteMenu";
-import HoldMenu from "./components/edst-windows/HoldMenu";
-import CancelHoldMenu from "./components/edst-windows/CancelHoldMenu";
+import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
+import {HoldMenu} from "./components/edst-windows/HoldMenu";
+import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -61,6 +61,15 @@ export default class App extends React.Component {
       plan_queue: []
     };
     this.globalRef = React.createRef();
+    this.planOptionsRef = React.createRef();
+    this.holdMenuRef = React.createRef();
+    this.cancelHoldMenuRef = React.createRef();
+    this.outageRef = React.createRef();
+    this.statusRef = React.createRef();
+    this.prevRouteMenuRef = React.createRef();
+    this.sortRef = React.createRef();
+    this.headingMenuRef = React.createRef();
+    this.speedMenuRef = React.createRef();
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -144,7 +153,9 @@ export default class App extends React.Component {
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, current_entry._route_data, pos);
     Object.assign(current_entry, remaining_route_data);
-    if (new_entry.update_time === current_entry.update_time || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info) || !this.entryFilter(new_entry)) {
+    if (new_entry.update_time === current_entry.update_time
+      || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
+      || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
       current_entry.pending_removal = current_entry.pending_removal || performance.now();
     } else {
       current_entry.pending_removal = null;
@@ -691,6 +702,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeWindow('plans')}
           />}
           {open_windows.includes('status') && <Status
+            ref={this.statusRef}
             dragging={dragging}
             startDrag={this.startDrag}
             pos={pos['edst-status']}
@@ -698,6 +710,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeWindow('status')}
           />}
           {open_windows.includes('outage') && <Outage
+            ref={this.outageRef}
             dragging={dragging}
             startDrag={this.startDrag}
             pos={pos['edst-outage']}
@@ -705,6 +718,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeWindow('outage')}
           />}
           {menu?.name === 'plan-menu' && <PlanOptions
+            ref={this.planOptionsRef}
             deleteEntry={this.deleteEntry}
             openMenu={this.openMenu}
             dragging={dragging}
@@ -719,6 +733,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeMenu('plan-menu')}
           />}
           {menu?.name === 'sort-menu' && <SortMenu
+            ref={this.sortRef}
             ref_id={menu?.ref_id}
             sorting={sorting}
             dragging={dragging}
@@ -742,9 +757,10 @@ export default class App extends React.Component {
             closeWindow={() => this.closeMenu('route-menu')}
           />}
           {menu?.name === 'hold-menu' && <HoldMenu
+            ref={this.holdMenuRef}
             dragging={dragging}
             asel={asel}
-            data={edst_data[asel?.cid]}
+            entry={edst_data[asel?.cid]}
             updateEntry={this.updateEntry}
             amendEntry={this.amendEntry}
             startDrag={this.startDrag}
@@ -753,6 +769,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeMenu('hold-menu')}
           />}
           {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
+            ref={this.cancelHoldMenuRef}
             dragging={dragging}
             asel={asel}
             data={edst_data[asel?.cid]}
@@ -764,6 +781,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeMenu('cancel-hold-menu')}
           />}
           {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
+            ref={this.prevRouteMenuRef}
             dragging={dragging}
             data={edst_data[asel?.cid]}
             amendEntry={this.amendEntry}
@@ -781,6 +799,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeMenu('alt-menu')}
           />}
           {menu?.name === 'speed-menu' && <SpeedMenu
+            ref={this.speedMenuRef}
             pos={pos['speed-menu']}
             asel={asel}
             data={edst_data[asel?.cid]}
@@ -791,6 +810,7 @@ export default class App extends React.Component {
             closeWindow={() => this.closeMenu('speed-menu')}
           />}
           {menu?.name === 'heading-menu' && <HeadingMenu
+            ref={this.headingMenuRef}
             pos={pos['heading-menu']}
             asel={asel}
             data={edst_data[asel?.cid]}

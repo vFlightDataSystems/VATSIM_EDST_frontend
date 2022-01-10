@@ -128,7 +128,7 @@ export default class RouteMenu extends React.Component {
         </div>
         <div className="options-body">
           <div className="options-row fid">
-            {entry?.callsign} {entry?.type}/{entry?.equipment}
+            {entry.callsign} {entry.type}/{entry.equipment}
           </div>
           <div className="options-row route-row"
             // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
@@ -195,7 +195,7 @@ export default class RouteMenu extends React.Component {
           {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
                                                                                   key={`route-menu-row-${i}`}>
             {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
-              const fix = route_data[i + j * 10]?.name;
+              const fix = route_data[i + j * 10].name;
               return (fix && <div className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                   onMouseDown={() => this.clearedToFix(fix)}>
                 {fix}

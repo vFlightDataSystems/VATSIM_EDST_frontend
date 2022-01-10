@@ -17,7 +17,7 @@ export default class DepTable extends React.Component {
     return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
   }
 
-  toggleHideColumn = (name) => {
+  #toggleHideColumn = (name) => {
     let {hidden} = this.state;
     const index = hidden.indexOf(name);
     if (index > -1) {
@@ -50,18 +50,18 @@ export default class DepTable extends React.Component {
     const {sorting} = this.props;
     switch (sorting.name) {
       case 'ACID':
-        return u?.callsign?.localeCompare(v?.callsign);
+        return u.callsign.localeCompare(v.callsign);
       case 'Destination':
-        return u?.dest?.localeCompare(v?.dest);
+        return u.dest.localeCompare(v.dest);
       case 'Origin':
-        return u?.dep?.localeCompare(v?.dep);
+        return u.dep?.localeCompare(v.dep);
       default:
-        return u?.callsign?.localeCompare(v?.callsign);
+        return u.callsign.localeCompare(v.callsign);
     }
   }
 
   sortSpa = (u, v) => {
-    return u?.spa?.localeCompare(v?.spa);
+    return u.spa - v.spa;
   }
 
   render() {
@@ -85,7 +85,7 @@ export default class DepTable extends React.Component {
         <div className="body-col special special-hidden"/>
         <div className="body-col special rem special-hidden"/>
         <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
-          <div onMouseDown={() => this.toggleHideColumn('type')}>
+          <div onMouseDown={() => this.#toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
           </div>
         </div>
@@ -96,7 +96,7 @@ export default class DepTable extends React.Component {
           <div>Alt.</div>
         </div>
         <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
-             onMouseDown={() => this.toggleHideColumn('code')}>
+             onMouseDown={() => this.#toggleHideColumn('code')}>
           C{!hidden.includes('code') && 'ode'}
         </div>
         <div className="body-col route">

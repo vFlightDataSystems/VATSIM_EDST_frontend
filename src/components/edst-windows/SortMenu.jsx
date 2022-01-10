@@ -1,41 +1,29 @@
-import React from 'react';
+import {forwardRef, useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 
-export default class SortMenu extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      focused: false,
-      sorting: this.props.sorting
-    };
-    this.sortMenuRef = React.createRef();
-  }
+export const SortMenu = forwardRef((props, ref) => {
+  const [focused, setFocused] = useState(false);
+  const [sorting, setSorting] = useState(props.sorting);
+  
+  useEffect(() => setSorting(props.sorting), [props.sorting]);
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.sorting !== prevProps.sorting) {
-      this.setState({sorting: this.props.sorting});
-    }
-  }
-
-  render() {
-    let {focused, sorting} = this.state;
-    const {pos, ref_id} = this.props;
+    const {pos, ref_id} = props;
     const acl = ref_id === 'acl-sort-button';
     const dep = ref_id === 'dep-sort-button';
     const selected = acl ? sorting.acl : sorting.dep;
 
     return (<div
-        onMouseEnter={() => this.setState({focused: true})}
-        onMouseLeave={() => this.setState({focused: false})}
+        onMouseEnter={() => setFocused(true)}
+        onMouseLeave={() => setFocused(false)}
         className="options-menu no-select"
-        ref={this.sortMenuRef}
+        ref={ref}
         id="sort-menu"
         style={{left: pos.x, top: pos.y}}
       >
         <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-             onMouseDown={(event) => this.props.startDrag(event, this.sortMenuRef)}
-             onMouseUp={(event) => this.props.stopDrag(event)}
+             onMouseDown={(event) => props.startDrag(event, ref)}
+             onMouseUp={(event) => props.stopDrag(event)}
         >
           Sort Menu
         </div>
@@ -44,7 +32,7 @@ export default class SortMenu extends React.Component {
             <div className="options-col sort"
                  onMouseDown={() => {
                    sorting.acl.sector = !selected.sector;
-                   this.setState({sorting: sorting});
+                   setSorting(sorting);
                  }}
             >
               <div className={`box ${selected?.sector === true ? 'selected' : ''}`}/>
@@ -55,7 +43,7 @@ export default class SortMenu extends React.Component {
             <div className="options-col sort"
                  onMouseDown={() => {
                    sorting[acl ? 'acl' : 'dep'].name = 'ACID';
-                   this.setState({sorting: sorting});
+                   setSorting(sorting);
                  }}
             >
               <div className={`box diamond ${selected?.name === 'ACID' ? 'selected' : ''}`}/>
@@ -66,7 +54,7 @@ export default class SortMenu extends React.Component {
             <div className="options-col sort"
                  onMouseDown={() => {
                    sorting[acl ? 'acl' : 'dep'].name = 'Destination';
-                   this.setState({sorting: sorting});
+                   setSorting(sorting);
                  }}
             >
               <div className={`box diamond ${selected?.name === 'Destination' ? 'selected' : ''}`}/>
@@ -77,7 +65,7 @@ export default class SortMenu extends React.Component {
             <div className="options-col sort"
                  onMouseDown={() => {
                    sorting[acl ? 'acl' : 'dep'].name = 'Origin';
-                   this.setState({sorting: sorting});
+                   setSorting(sorting);
                  }}
             >
               <div className={`box diamond ${selected?.name === 'Origin' ? 'selected' : ''}`}/>
@@ -88,7 +76,7 @@ export default class SortMenu extends React.Component {
             <div className="options-col sort"
                  onMouseDown={() => {
                    sorting.dep.name = 'P-Time';
-                   this.setState({sorting: sorting});
+                   setSorting(sorting);
                  }}
             >
               <div className={`box diamond ${selected?.name === 'P-Time' ? 'selected' : ''}`}/>
@@ -99,15 +87,15 @@ export default class SortMenu extends React.Component {
             <div className="options-col left">
               <button
                 onMouseDown={() => {
-                  this.props.setSorting(sorting);
-                  this.props.closeWindow();
+                  props.setSorting(sorting);
+                  props.closeWindow();
                 }}
               >
                 OK
               </button>
             </div>
             <div className="options-col right">
-              <button onMouseDown={this.props.closeWindow}>
+              <button onMouseDown={props.closeWindow}>
                 Exit
               </button>
             </div>
@@ -115,5 +103,4 @@ export default class SortMenu extends React.Component {
         </div>
       </div>
     );
-  }
-}
+})

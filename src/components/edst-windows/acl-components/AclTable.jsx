@@ -86,18 +86,18 @@ export default class AclTable extends React.Component {
     const {sorting} = this.props;
     switch (sorting.name) {
       case 'ACID':
-        return u?.callsign?.localeCompare(v?.callsign);
+        return u.callsign.localeCompare(v.callsign);
       case 'Destination':
-        return u?.dest?.localeCompare(v?.dest);
+        return u.dest.localeCompare(v.dest);
       case 'Origin':
-        return u?.dep?.localeCompare(v?.dep);
+        return u.dep.localeCompare(v.dep);
       default:
-        return u?.callsign?.localeCompare(v?.callsign);
+        return u.callsign.localeCompare(v.callsign);
     }
   }
 
   sortSpa = (u, v) => {
-    return u?.spa?.localeCompare?.(v?.spa);
+    return u.spa - v.spa;
   }
 
   render() {

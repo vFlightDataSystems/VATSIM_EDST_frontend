@@ -1,58 +1,38 @@
-import React from 'react';
+import {useState, useEffect} from 'react';
 import '../../css/windows/dep-styles.scss';
 import DepHeader from "./dep-components/DepHeader";
 import DepTable from "./dep-components/DepTable";
 
-export default class Dep extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      focused: false,
-      posting_manual: true
-    };
-  }
+export default function Dep(props) {
+  const [focused, setFocused] = useState(false);
+  const [posting_manual, setPostingManual] = useState(true);
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
-  }
+  useEffect(() => props.unmount(), []);
 
-  togglePosting = () => {
-    const posting_manual = this.state.posting_manual;
-    this.setState({posting_manual: !posting_manual});
-  }
-
-  componentWillUnmount() {
-    this.props.unmount();
-  }
-
-  render() {
-    const {focused, posting_manual} = this.state;
-
-    return (<div
-      className={`dep ${this.props.dragging ? 'dragging' : ''}`}
-      onMouseEnter={() => this.setState({focused: true})}
-      onMouseLeave={() => this.setState({focused: false})}
-    >
-      <DepHeader
-        addEntry={this.props.addEntry}
-        sorting={this.props.sorting}
-        openMenu={this.props.openMenu}
-        asel={this.props.asel}
-        focused={focused} posting_manual={posting_manual}
-        closeWindow={this.props.closeWindow}
-        togglePosting={this.togglePosting}
-      />
-      <DepTable
-        posting_manual={posting_manual}
-        sorting={this.props.sorting}
-        cid_list={this.props.cid_list}
-        edst_data={this.props.edst_data}
-        asel={this.props.asel}
-        updateEntry={this.props.updateEntry}
-        amendEntry={this.props.amendEntry}
-        aircraftSelect={this.props.aircraftSelect}
-        deleteEntry={this.props.deleteEntry}
-      />
-    </div>);
-  }
+  return (<div
+    className={`dep ${props.dragging ? 'dragging' : ''}`}
+    onMouseEnter={() => setFocused(true)}
+    onMouseLeave={() => setFocused(false)}
+  >
+    <DepHeader
+      addEntry={props.addEntry}
+      sorting={props.sorting}
+      openMenu={props.openMenu}
+      asel={props.asel}
+      focused={focused} posting_manual={posting_manual}
+      closeWindow={props.closeWindow}
+      togglePosting={() => setPostingManual(!posting_manual)}
+    />
+    <DepTable
+      posting_manual={posting_manual}
+      sorting={props.sorting}
+      cid_list={props.cid_list}
+      edst_data={props.edst_data}
+      asel={props.asel}
+      updateEntry={props.updateEntry}
+      amendEntry={props.amendEntry}
+      aircraftSelect={props.aircraftSelect}
+      deleteEntry={props.deleteEntry}
+    />
+  </div>);
 }

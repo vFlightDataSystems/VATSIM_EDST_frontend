@@ -1,61 +1,41 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/acl-styles.scss';
 import AclHeader from "./acl-components/AclHeader";
 import AclTable from "./acl-components/AclTable";
 
-export default class Acl extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      focused: false,
-      posting_manual: true,
-    };
-  }
+export default function Acl(props) {
+  const [focused, setFocused] = useState(false);
+  const [posting_manual, setPostingManual] = useState(true);
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
-  }
+  useEffect(() => props.unmount(), []);
 
-  togglePosting = () => {
-    const posting_manual = this.state.posting_manual;
-    this.setState({posting_manual: !posting_manual});
-  }
-
-  componentWillUnmount() {
-    this.props.unmount();
-  }
-
-  render() {
-    const {focused, posting_manual} = this.state;
-
-    return (<div
-      className={`acl ${this.props.dragging ? 'dragging' : ''}`}
-      // style={{zIndex: this.props.z_index}}
-      onMouseEnter={() => this.setState({focused: true})}
-      onMouseLeave={() => this.setState({focused: false})}
-    >
-      <AclHeader
-        addEntry={this.props.addEntry}
-        sorting={this.props.sorting}
-        openMenu={this.props.openMenu}
-        asel={this.props.asel}
-        focused={focused} posting_manual={posting_manual}
-        closeWindow={this.props.closeWindow}
-        togglePosting={this.togglePosting}
-        cleanup={this.props.cleanup}
-      />
-      <AclTable
-        posting_manual={posting_manual}
-        sorting={this.props.sorting}
-        cid_list={this.props.cid_list}
-        edst_data={this.props.edst_data}
-        asel={this.props.asel}
-        updateEntry={this.props.updateEntry}
-        amendEntry={this.props.amendEntry}
-        aircraftSelect={this.props.aircraftSelect}
-        deleteEntry={this.props.deleteEntry}
-      />
-    </div>);
-  }
+  return (<div
+    className={`acl ${props.dragging ? 'dragging' : ''}`}
+    // style={{zIndex: props.z_index}}
+    onMouseEnter={() => setFocused(true)}
+    onMouseLeave={() => setFocused(false)}
+  >
+    <AclHeader
+      addEntry={props.addEntry}
+      sorting={props.sorting}
+      openMenu={props.openMenu}
+      asel={props.asel}
+      focused={focused} posting_manual={posting_manual}
+      closeWindow={props.closeWindow}
+      togglePosting={() => setPostingManual(!posting_manual)}
+      cleanup={props.cleanup}
+    />
+    <AclTable
+      posting_manual={posting_manual}
+      sorting={props.sorting}
+      cid_list={props.cid_list}
+      edst_data={props.edst_data}
+      asel={props.asel}
+      updateEntry={props.updateEntry}
+      amendEntry={props.amendEntry}
+      aircraftSelect={props.aircraftSelect}
+      deleteEntry={props.deleteEntry}
+    />
+  </div>);
 }

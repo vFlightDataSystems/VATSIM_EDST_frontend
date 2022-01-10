@@ -9,7 +9,7 @@ $dep-border-light-grey: #ADADAD;
     overflow: hidden;
     flex-flow: column;
     display: flex;
-    height: 40%;
+    min-height: 40%;
     margin: 2px;
     flex-grow: 1;
     border: 3px solid $dep-border-grey;
