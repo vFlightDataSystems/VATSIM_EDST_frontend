@@ -20,7 +20,7 @@ import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
   getRemainingRouteData,
   getRouteDataDistance,
-  getSignedDistancePointToPolygon, REMOVAL_TIMEOUT,
+  getSignedDistancePointToPolygons, REMOVAL_TIMEOUT,
   routeWillEnterAirspace,
 } from "./lib";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
@@ -77,12 +77,13 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const sector_artcc = prompt('Choose an ARTCC')?.toLowerCase();
+    const sector_artcc = 'zbw' // prompt('Choose an ARTCC')?.toLowerCase();
     this.setState({sector_id: '37', sector_artcc: sector_artcc});
     await getBoundaryData(sector_artcc)
       .then(response => response.json())
-      .then(data => {
-        this.setState({boundary_data: data[0]});
+      .then(geo_data => {
+        const polygons = geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates));
+        this.setState({boundary_polygons: polygons});
       });
     await this.refresh();
     const update_interval_id = setInterval(this.refresh, 20000);
@@ -101,23 +102,22 @@ export default class App extends React.Component {
   depFilter = (entry) => {
     let dep_airport_distance = 0;
     if (entry.dep_info) {
-      const pos = [entry?.flightplan?.lon, entry?.flightplan?.lat];
+      const pos = [entry.flightplan.lon, entry.flightplan.lat];
       const dep_pos = [entry.dep_info.lon, entry.dep_info.lat];
       dep_airport_distance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
     }
     const {sector_artcc} = this.state;
     return Number(entry.flightplan.ground_speed) < 40
-      && entry?.dep_info?.artcc?.toLowerCase() === sector_artcc
+      && entry.dep_info?.artcc?.toLowerCase() === sector_artcc
       && dep_airport_distance < 10;
   }
 
   entryFilter = (entry) => {
-    const {acl_data} = this.state;
-    const poly = polygon(this.state.boundary_data?.geometry?.coordinates?.[0]);
-    const pos = [entry?.flightplan?.lon, entry?.flightplan?.lat]
+    const {acl_data, boundary_polygons} = this.state;
+    const pos = [entry.flightplan.lon, entry.flightplan.lat];
     const pos_point = point(pos);
-    const sdist = getSignedDistancePointToPolygon(pos_point, poly);
-    const will_enter_airspace = routeWillEnterAirspace(entry?.route_data, poly, pos)
+    const sdist = getSignedDistancePointToPolygons(pos_point, boundary_polygons);
+    const will_enter_airspace = routeWillEnterAirspace(entry.route_data, boundary_polygons, pos)
     const minutes_away = sdist * 60 / entry.flightplan.ground_speed;
     return ((minutes_away < 30 || acl_data.cid_list.includes(entry.cid))
       && will_enter_airspace
@@ -356,7 +356,7 @@ export default class App extends React.Component {
   }
 
   amendEntry = async (cid, plan_data) => {
-    let {edst_data} = this.state;
+    let {edst_data, sector_artcc} = this.state;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
@@ -372,10 +372,16 @@ export default class App extends React.Component {
     plan_data.callsign = current_entry.callsign;
     await updateEdstEntry(plan_data)
       .then(response => response.json())
-      .then(updated_entry => {
+      .then(async updated_entry => {
         if (updated_entry) {
           current_entry = this.refreshEntry(updated_entry, current_entry);
           current_entry.pending_removal = null;
+          await getAarData(sector_artcc, current_entry.cid)
+            .then(response => response.json())
+            .then(aar_list => {
+              current_entry.aar_list = aar_list;
+              current_entry._aar_list = this.processAar(current_entry, aar_list);
+            });
           edst_data[cid] = current_entry;
           this.setState({asel: null});
           this.forceUpdate();
@@ -601,7 +607,7 @@ export default class App extends React.Component {
   aclCleanup = () => {
     const {edst_data, acl_data} = this.state;
     const now = performance.now()
-    for (const cid of acl_data?.cid_list) {
+    for (const cid of acl_data.cid_list) {
       if (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
         this.deleteEntry('acl', cid);
       }
