@@ -43,7 +43,9 @@ export default class App extends React.Component {
       sorting: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
       disabled_windows: DISABLED_WINDOWS,
       focused_window: '',
-      sector_id: '',
+      artcc_id: null,
+      sector_id: null,
+      boundary_polygons: null,
       menu: null,
       acl_data: {deleted: [], cid_list: []},
       dep_data: {deleted: [], cid_list: []},
@@ -77,9 +79,9 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const sector_artcc = 'zbw' // prompt('Choose an ARTCC')?.toLowerCase();
-    this.setState({sector_id: '37', sector_artcc: sector_artcc});
-    await getBoundaryData(sector_artcc)
+    const artcc_id = 'zbw' // prompt('Choose an ARTCC')?.toLowerCase();
+    this.setState({sector_id: '37', artcc_id: artcc_id});
+    await getBoundaryData(artcc_id)
       .then(response => response.json())
       .then(geo_data => {
         const polygons = geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates));
@@ -106,9 +108,9 @@ export default class App extends React.Component {
       const dep_pos = [entry.dep_info.lon, entry.dep_info.lat];
       dep_airport_distance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
     }
-    const {sector_artcc} = this.state;
+    const {artcc_id} = this.state;
     return Number(entry.flightplan.ground_speed) < 40
-      && entry.dep_info?.artcc?.toLowerCase() === sector_artcc
+      && entry.dep_info?.artcc?.toLowerCase() === artcc_id
       && dep_airport_distance < 10;
   }
 
@@ -117,11 +119,11 @@ export default class App extends React.Component {
     const pos = [entry.flightplan.lon, entry.flightplan.lat];
     const pos_point = point(pos);
     const sdist = getSignedDistancePointToPolygons(pos_point, boundary_polygons);
-    const will_enter_airspace = routeWillEnterAirspace(entry.route_data, boundary_polygons, pos)
+    const will_enter_airspace = routeWillEnterAirspace(entry._route_data, boundary_polygons, pos);
     const minutes_away = sdist * 60 / entry.flightplan.ground_speed;
     return ((minutes_away < 30 || acl_data.cid_list.includes(entry.cid))
       && will_enter_airspace
-      && Number(entry.flightplan.ground_speed) > 40);
+      && Number(entry.flightplan.ground_speed) > 30);
   }
 
   refreshEntry = (new_entry, current_entry) => {
@@ -139,33 +141,33 @@ export default class App extends React.Component {
       new_entry.route += new_entry.dest;
     }
     if (current_entry?.route_data === new_entry.route_data) { // if route_data has not changed
-      current_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
+      new_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
       // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
       if (current_entry.aar_list) {
-        current_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
+        new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     } else {
-      current_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
+      new_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
       // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
       if (current_entry.aar_list) {
-        current_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
+        new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     }
-    const remaining_route_data = getRemainingRouteData(new_entry.route, current_entry._route_data, pos);
-    Object.assign(current_entry, remaining_route_data);
+    const remaining_route_data = getRemainingRouteData(new_entry.route, new_entry._route_data, pos);
+    Object.assign(new_entry, remaining_route_data);
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
-      current_entry.pending_removal = current_entry.pending_removal || performance.now();
+      new_entry.pending_removal = current_entry.pending_removal || performance.now();
     } else {
-      current_entry.pending_removal = null;
+      new_entry.pending_removal = null;
     }
     Object.assign(current_entry, new_entry);
     return current_entry;
   }
 
   refresh = async () => {
-    let {edst_data: current_data, acl_data, dep_data, sector_artcc} = this.state;
+    let {edst_data: current_data, acl_data, dep_data, artcc_id} = this.state;
     await getEdstData()
       .then(response => response.json())
       .then(async new_data => {
@@ -178,7 +180,7 @@ export default class App extends React.Component {
               });
               if (this.depFilter(entry) && !dep_data.deleted.includes(new_entry.cid)) {
                 if (current_entry?.aar_list === undefined) {
-                  await getAarData(sector_artcc, new_entry.cid)
+                  await getAarData(artcc_id, new_entry.cid)
                     .then(response => response.json())
                     .then(aar_list => {
                       entry.aar_list = aar_list;
@@ -189,9 +191,9 @@ export default class App extends React.Component {
                   dep_data.cid_list.push(new_entry.cid);
                 }
               } else {
-                if (this.entryFilter(new_entry)) {
+                if (this.entryFilter(entry)) {
                   if (current_entry?.aar_list === undefined) {
-                    await getAarData(sector_artcc, new_entry.cid)
+                    await getAarData(artcc_id, new_entry.cid)
                       .then(response => response.json())
                       .then(aar_list => {
                         entry.aar_list = aar_list;
@@ -356,7 +358,7 @@ export default class App extends React.Component {
   }
 
   amendEntry = async (cid, plan_data) => {
-    let {edst_data, sector_artcc} = this.state;
+    let {edst_data, artcc_id} = this.state;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
@@ -376,7 +378,7 @@ export default class App extends React.Component {
         if (updated_entry) {
           current_entry = this.refreshEntry(updated_entry, current_entry);
           current_entry.pending_removal = null;
-          await getAarData(sector_artcc, current_entry.cid)
+          await getAarData(artcc_id, current_entry.cid)
             .then(response => response.json())
             .then(aar_list => {
               current_entry.aar_list = aar_list;
