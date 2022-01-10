@@ -22,10 +22,13 @@ export function getSignedDistancePointToPolygons(point, polygons) {
 }
 
 export function routeWillEnterAirspace(route_data, polygons, pos) {
+  if (!route_data) {
+    return false;
+  }
   route_data.unshift({pos: pos});
   if (route_data.length > 1) {
-    const lines = lineString(route_data?.map(e => e.pos));
-    for (let poly of polygons) {
+    const lines = lineString(route_data.map(e => e.pos));
+    for (const poly of polygons) {
       if (booleanIntersects(lines, poly)) {
         return true
       }
