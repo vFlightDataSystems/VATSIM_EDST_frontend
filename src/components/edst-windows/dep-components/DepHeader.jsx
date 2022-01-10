@@ -1,46 +1,60 @@
-import React from 'react';
-import '../../../css/header-button-styles.css';
-import '../../../css/header-styles.css';
+import {useState} from 'react';
+import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 
-export default class DepHeader extends React.Component {
+export default function DepHeader(props) {
+  const [search_str, setSearchString] = useState('');
+  const {focused, posting_manual, asel, sorting} = props;
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      props.addEntry(search_str);
+      setSearchString('');
+    }
+  };
 
-  render() {
-    const {focused, mode} = this.props;
-    return (<div className="edst-window-header">
-      <WindowTitleBar
-        focused={focused}
-        closeWindow={this.props.closeWindow}
-        text={`Aircraft List Sector/Boundary Time ${mode}`}
-      />
-      <div className="edst-window-header-button-bar">
-        <div className="edst-window-header-button-bar edst-plan-options-button" disabled={true}>
-          <button className="edst-window-header-button" disabled={true}>
-            Plan Options...
-          </button>
-        </div>
-        <div className="edst-window-header-button-bar edst-sort-button">
-          <button className="edst-window-header-button">
-            Sort...
-          </button>
-        </div>
-        <div className="edst-window-header-button-bar edst-posting-mode-button">
-          <button className="edst-window-header-button">
-            Posting Mode
-          </button>
-        </div>
-        <div className="edst-window-header-button-bar edst-template-button">
-          <button className="edst-window-header-button">
-            Template...
-          </button>
+  return (<div className="no-select">
+    <WindowTitleBar
+      focused={focused}
+      closeWindow={props.closeWindow}
+      text={['Departure List', `${sorting.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+    />
+    <div>
+      <div className="outer-button" disabled={asel === null}>
+        <div className="edst-window-button" disabled={asel === null}
+             onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+        >
+          Plan Options...
         </div>
       </div>
-      <div className="edst-window-header-bottom-row">
-        Add/Find
-        <div className="input-container">
-          <input/>
+      <div className="outer-button">
+        <div className="edst-window-button"
+             id="dep-sort-button"
+             onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}>
+          Sort...
         </div>
       </div>
-    </div>);
-  }
+      <div className="outer-button">
+        <div className="edst-window-button"
+             onMouseDown={props.togglePosting}
+        >
+          Posting Mode
+        </div>
+      </div>
+      <div className="outer-button" disabled={true}>
+        <div className="edst-window-button" disabled={true}>
+          Template...
+        </div>
+      </div>
+    </div>
+    <div className="edst-window-header-bottom-row no-select">
+      Add/Find
+      <div className="input-container">
+        <input
+          value={search_str}
+          onChange={(e) => setSearchString(e.target.value.toUpperCase())}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
+    </div>
+  </div>);
 }

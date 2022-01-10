@@ -1,0 +1,517 @@
+@import "../styles";
+
+$options-menu-medium-grey: #575757;
+$options-menu-dark-grey: #414141;
+$options-menu-background-medium-grey: #888888;
+$options-menu-light-grey: #ADADAD;
+$options-menu-hover-white: #F0F0F0;
+$route-menu-alert-cyan: #00ADAD;
+
+.options-menu {
+  position: absolute;
+  color: $options-menu-light-grey;
+  border: none;
+
+  &.plan {
+    width: 220px;
+  }
+
+  &.route {
+    width: 570px;
+  }
+
+  &.prev-route {
+    width: 380px;
+    overflow: hidden;
+  }
+
+  &.hold {
+    width: 420px;
+  }
+
+  &.cancel-hold {
+    width: 250px;
+  }
+
+  &.speed {
+    width: 180px;
+  }
+
+  &.heading {
+    width: 180px;
+  }
+
+  &.sort {
+    width: 170px;
+  }
+}
+
+.options-menu-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $options-menu-background-medium-grey;
+  color: #000000;
+  height: 17px;
+  border-top: 1px solid $options-menu-light-grey;
+  border-left: 1px solid $options-menu-light-grey;
+  border-bottom: 1px solid $options-menu-medium-grey;
+  border-right: 1px solid $options-menu-medium-grey;
+
+  &.focused {
+    background-color: $edst-window-light-cyan;
+  }
+}
+
+@mixin options-button {
+
+  *[disabled] {
+    pointer-events: none;
+    color: $options-menu-medium-grey;
+  }
+
+  button {
+    display: inline-flex;
+    height: 20px;
+    justify-content: center;
+    align-items: center;
+    //margin: 0 6px;
+    font-size: 16px;
+    flex-grow: 1;
+    background-color: #000000;
+    color: $edst-font-grey;
+    border-bottom: 2px solid $options-menu-medium-grey;
+    border-right: 2px solid $options-menu-medium-grey;
+    border-top: 2px solid $options-menu-background-medium-grey;
+    border-left: 2px solid $options-menu-background-medium-grey;
+    //width: auto;
+
+    &:hover {
+      outline: 1px solid $options-menu-hover-white;
+    }
+
+    &.selected {
+      background-color: $options-menu-light-grey;
+      color: #000000;
+      border-bottom: 2px solid $options-menu-background-medium-grey;
+      border-right: 2px solid $options-menu-background-medium-grey;
+      border-top: 2px solid $options-menu-medium-grey;
+      border-left: 2px solid $options-menu-medium-grey;
+    }
+
+    &.tiny {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+.options-body {
+  background-color: #000000;
+  padding: 2px 0;
+  border-top: 1px solid $options-menu-medium-grey;
+  border-left: 1px solid $options-menu-medium-grey;
+  border-bottom: 1px solid $options-menu-dark-grey;
+  border-right: 1px solid $options-menu-dark-grey;
+
+  &.sort {
+    padding: 4px 0;
+  }
+
+  * .prefroute-button {
+    padding: 0;
+    display: inline-flex;
+    //height: 20px;
+    width: 75px;
+    margin-left: 6px;
+    margin-right: 6px;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000000;
+
+    &:hover {
+      border: 1px solid $options-menu-hover-white;
+
+      &[disabled] {
+        pointer-events: none;
+        border: 1px solid #000000;
+      }
+    }
+  }
+
+  .hold-fix-container {
+    padding: 4px 0;
+    border-bottom: 1px solid $options-menu-light-grey;
+  }
+
+  .prefroute-container {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 2px solid $options-menu-dark-grey;
+    overflow: hidden;
+    margin: 6px;
+  }
+
+  *.options-row {
+
+    @include options-button;
+
+    display: flex;
+    flex-grow: 1;
+    justify-content: left;
+    align-items: center;
+    padding: 0 4px;
+    border: none;
+    min-height: 20px;
+    overflow: hidden;
+
+    &.hold-row-1 {
+      justify-content: space-between;
+    }
+
+    &.hold-row-2 {
+      //margin-top: 20px;
+      padding: 6px 0;
+    }
+
+    &.bottom {
+      //padding: 0;
+      margin: 0;
+    }
+
+    &.fid {
+      pointer-events: none;
+      justify-content: center;
+      height: 40px;
+    }
+
+    &.sector {
+      padding-bottom: 4px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid $options-menu-light-grey;
+    }
+
+    &.underline {
+      pointer-events: none;
+      justify-content: center;
+      height: 30px;
+      margin-bottom: 4px;
+
+      &:before {
+        content: "";
+        position: absolute;
+        width: 18%;
+        height: 30px;
+        //bottom: 0;
+        left: 41%;
+        border-bottom: 1px solid $options-menu-light-grey;
+      }
+    }
+
+    &.bottom {
+      overflow: unset;
+      text-overflow: unset;
+      white-space: unset;
+      margin-top: 10px;
+      //margin-right: 4px;
+      margin-bottom: 4px;
+      flex-grow: 1;
+
+      *.left > button {
+        margin-right: 12px;
+      }
+
+      * > button {
+        min-width: 47px;
+      }
+
+      &.sort {
+        margin-top: 25px;
+      }
+    }
+
+    &.route-row {
+      padding: 4px 0;
+    }
+
+    &.prev-route-row {
+      padding: 0 8px;
+    }
+
+    &.speed-row {
+      padding: 4px 0;
+      //margin-bottom: 2px;
+    }
+
+    &.top-border {
+      border-top: 1px solid $options-menu-light-grey;
+    }
+
+    &.bottom-border {
+      border-bottom: 1px solid $options-menu-light-grey;
+    }
+
+    &.prefroute-row {
+      padding: 0 0 0 10px;
+      margin: 0;
+    }
+  }
+
+  *[disabled] {
+    pointer-events: none;
+    color: $options-menu-medium-grey;
+  }
+
+  *.hover:hover {
+    border: 1px solid $options-menu-hover-white;
+  }
+
+  *.options-col {
+
+    //@include options-button;
+
+    margin: 0 4px;
+    flex-grow: 1;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+    vertical-align: center;
+    border: 1px solid transparent;
+    padding: 2px 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    &.display-route {
+      border: 2px solid $options-menu-dark-grey;
+      margin: 2px 8px 8px 8px;
+    }
+
+    &.dct-col {
+      height: 18px;
+      padding: 0 4px;
+      flex-grow: 0;
+      width: 100px;
+      margin: 0 12px;
+    }
+
+    &.hold-col-1 {
+      justify-content: left;
+      display: inline-flex;
+      height: 18px;
+      padding: 0 4px;
+      flex-grow: 0;
+      width: 110px;
+      margin: 0 12px;
+
+      .align-right {
+        display: flex;
+        margin-left: auto;
+        margin-right: 0;
+        justify-content: right;
+      }
+
+      &.selected {
+        background-color: $options-menu-light-grey;
+        color: #000000;
+      }
+    }
+
+    &.hold-col-2 {
+      justify-content: left;
+      flex-grow: 0;
+      margin: 5px auto 5px 8px;
+      border-bottom: 1px solid $options-menu-light-grey;
+    }
+
+    &.hold-col-3 {
+      justify-content: left;
+      //display: flex;
+      margin-top: 2px;
+
+      > button {
+        &.button-1 {
+          flex-grow: 0;
+          margin: 0 5px;
+          width: 22px;
+          height: 22px;
+          padding: 0;
+
+          &:disabled {
+            pointer-events: none;
+            border-color: transparent;
+          }
+        }
+
+        &.button-2 {
+          //flex-grow: 1;
+          margin: 0 5px;
+          width: 50px;
+          height: 22px;
+          padding: 0;
+        }
+      }
+    }
+
+    &.hold-col-4 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 80px;
+    }
+
+    &.hold-col-5 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 140px;
+    }
+
+    &.hold-col-6 {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      margin-left: 10px;
+      margin-right: auto;
+    }
+
+    &.hold-col-7 {
+      //display: flex;
+      justify-content: left;
+      align-items: center;
+      margin-left: 10px;
+      margin-right: auto;
+
+      > button {
+        margin-left: 10px;
+        width: 30px;
+      }
+    }
+
+    &.sort {
+      justify-content: left;
+      display: inline-flex;
+      height: 22px;
+      padding: 0 6px;
+
+      &:hover {
+        border: 1px solid $options-menu-light-grey;
+      }
+
+      .box {
+        border-bottom: 2px solid $options-menu-medium-grey;
+        border-right: 2px solid $options-menu-medium-grey;
+        border-top: 2px solid $options-menu-background-medium-grey;
+        border-left: 2px solid $options-menu-background-medium-grey;
+        width: 8px;
+        height: 8px;
+        margin-right: 6px;
+
+        &.selected {
+          background-color: $options-menu-light-grey;
+          border-bottom: 2px solid $options-menu-background-medium-grey;
+          border-right: 2px solid $options-menu-background-medium-grey;
+          border-top: 2px solid $options-menu-medium-grey;
+          border-left: 2px solid $options-menu-medium-grey;
+        }
+
+        &.diamond {
+          width: 6px;
+          height: 6px;
+          transform: rotate(45deg);
+        }
+      }
+    }
+
+    &.button {
+      //width: 120px;
+      padding: 0 4px;
+      display: flex;
+      flex-grow: 0;
+      min-height: 24px;
+
+      > button {
+        margin-right: 5px;
+      }
+    }
+
+    &.hold-menu-left-col {
+      margin-left: 10px;
+      flex-grow: 0;
+      padding: 0;
+      border-bottom: 1px solid $options-menu-light-grey;
+    }
+
+    &.prefroute-col {
+      margin-right: 0;
+    }
+
+    &.right {
+      > button {
+        display: flex;
+        margin-left: auto;
+      }
+    }
+
+    .ppos {
+      border: none;
+      margin: 0 20px 0 3px;
+      font-size: 18px;
+    }
+
+    .input {
+      align-items: center;
+      vertical-align: center;
+      padding: 0;
+      overflow: hidden;
+      border-top: 2px solid $options-menu-medium-grey;
+      border-left: 2px solid $options-menu-medium-grey;
+      border-bottom: 2px solid $options-menu-background-medium-grey;
+      border-right: 2px solid $options-menu-background-medium-grey;
+
+
+      &.route-input {
+        justify-content: center;
+        display: flex;
+        border-top: 2px solid $options-menu-background-medium-grey;
+        border-left: 2px solid $options-menu-background-medium-grey;
+        border-bottom: 2px solid $options-menu-medium-grey;
+        border-right: 2px solid $options-menu-medium-grey;
+      }
+
+      &.speed-input {
+        display: inline-flex;
+        margin-left: 20px;
+        height: 16px;
+        width: 40px;
+      }
+
+      &.efc-input {
+        display: inline-flex;
+        margin-left: 20px;
+        margin-right: 0;
+        height: 17px;
+        width: 55px;
+
+        &:hover {
+          outline: 1px solid $options-menu-hover-white;
+        }
+      }
+
+      > input {
+        cursor: default;
+        font-size: 16px;
+        outline: none;
+        margin: 0 5px;
+        width: 100%;
+        color: $edst-font-grey;
+        background-color: #000000;
+        border: 1px solid transparent;
+
+        //&:hover {
+        //  border: 1px solid $options-menu-hover-white;
+        //}
+      }
+    }
+  }
+}

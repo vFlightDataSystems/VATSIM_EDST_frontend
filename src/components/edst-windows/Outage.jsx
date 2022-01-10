@@ -1,13 +1,13 @@
-import {forwardRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
+import {forwardRef} from "react";
 
-export const Status = forwardRef((props, ref) => {
+export const Outage = forwardRef((props, ref) => {
   const {pos} = props;
 
-  return (<div className="floating-window status-window"
+  return (<div className="floating-window outage-window"
                ref={ref}
-               id="edst-status"
+               id="edst-outage"
                style={{left: pos.x + "px", top: pos.y + "px"}}
     >
       <div className="floating-window-header no-select">
@@ -17,14 +17,14 @@ export const Status = forwardRef((props, ref) => {
         <div className="floating-window-header-middle"
              onMouseDown={(event) => props.startDrag(event, ref)}
         >
-          STATUS
+          OUTAGE
         </div>
         <div className="floating-window-header-right" onMouseDown={props.closeWindow}>
           <div className="floating-window-header-block-8-2"/>
         </div>
       </div>
       <div className="floating-window-body">
-        STATUS TEST
+        OUTAGE TEST
       </div>
     </div>
   );

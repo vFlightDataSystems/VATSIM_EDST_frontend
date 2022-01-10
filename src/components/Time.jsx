@@ -7,7 +7,7 @@ export default function Time() {
     return () => clearInterval(interval)
   }, []);
   return (
-    <div className="edst-header-time">
+    <div className="edst-header-time no-select">
         {("0"+dateState.getUTCHours()).slice(-2)}{("0"+dateState.getUTCMinutes()).slice(-2)} {("0"+dateState.getUTCSeconds()).slice(-2)}
     </div>
   );
