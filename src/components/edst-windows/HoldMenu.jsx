@@ -44,7 +44,7 @@ export const HoldMenu = forwardRef((props, ref) => {
 
   useEffect(() => {
     const {entry} = props;
-    const route_data = computeCrossingTimes(props.data?._route_data);
+    const route_data = computeCrossingTimes(props.entry?._route_data);
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     setHoldFix(entry?.hold_data?.hold_fix || 'PP');
@@ -53,7 +53,7 @@ export const HoldMenu = forwardRef((props, ref) => {
     setTurns(entry?.hold_data?.turns || 'RT');
     setEfc(entry?.hold_data?.efc || utc_minutes + 30);
     setRouteData(route_data);
-  }, [props.data]);
+  }, [props.entry]);
 
   const {pos, entry} = props;
 
