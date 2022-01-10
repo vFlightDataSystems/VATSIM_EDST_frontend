@@ -1,25 +1,38 @@
-import React from 'react';
-import '../../css/windows/dep-styles.css';
+import {useState, useEffect} from 'react';
+import '../../css/windows/dep-styles.scss';
 import DepHeader from "./dep-components/DepHeader";
+import DepTable from "./dep-components/DepTable";
 
-export default class Dep extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      focused: false,
-      mode: 'Manual'
-    };
-  }
+export default function Dep(props) {
+  const [focused, setFocused] = useState(false);
+  const [posting_manual, setPostingManual] = useState(true);
 
-  render() {
-    const {focused, mode} = this.state;
+  useEffect(() => props.unmount(), []);
 
-    return (<div
-      className="dep"
-      onMouseEnter={() => this.setState({focused: true})}
-      onMouseLeave={() => this.setState({focused: false})}
-    >
-      <DepHeader focused={focused} mode={mode} closeWindow={this.props.closeWindow}/>
-    </div>);
-  }
+  return (<div
+    className={`dep ${props.dragging ? 'dragging' : ''}`}
+    onMouseEnter={() => setFocused(true)}
+    onMouseLeave={() => setFocused(false)}
+  >
+    <DepHeader
+      addEntry={props.addEntry}
+      sorting={props.sorting}
+      openMenu={props.openMenu}
+      asel={props.asel}
+      focused={focused} posting_manual={posting_manual}
+      closeWindow={props.closeWindow}
+      togglePosting={() => setPostingManual(!posting_manual)}
+    />
+    <DepTable
+      posting_manual={posting_manual}
+      sorting={props.sorting}
+      cid_list={props.cid_list}
+      edst_data={props.edst_data}
+      asel={props.asel}
+      updateEntry={props.updateEntry}
+      amendEntry={props.amendEntry}
+      aircraftSelect={props.aircraftSelect}
+      deleteEntry={props.deleteEntry}
+    />
+  </div>);
 }
