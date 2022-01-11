@@ -241,10 +241,10 @@ export default class App extends React.Component {
       } else {
         // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
         const first_common_segment = current_route.split(/\.+/).filter(segment => amended_route_string?.includes(segment))?.[0];
-        if (first_common_segment === undefined) {
+        if (!first_common_segment) {
           return null;
         }
-        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment) + first_common_segment.length)
+        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment))
           + aar_leading_route_string.slice(aar_leading_route_string.indexOf(first_common_segment) + first_common_segment.length);
       }
       if (!amended_route_string) {
