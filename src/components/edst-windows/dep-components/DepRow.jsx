@@ -104,8 +104,7 @@ export default class DepRow extends React.Component {
     const now = performance.now();
 
     return (<div className="body-row-container" key={this.props.key}>
-      <div className={`body-row ${(now - (e.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}
-           key={`dep-body-${e.cid}`}>
+      <div className={`body-row ${(now - (e.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
         <div className={`body-col body-col-1 radio dep-radio ${e.dep_status === 1 ? 'checkmark' : ''}`}
              onMouseDown={() => this.props.updateStatus(e.cid)}
         >
