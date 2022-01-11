@@ -154,7 +154,6 @@ export default class App extends React.Component {
       }
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, new_entry._route_data, pos);
-    console.log(remaining_route_data)
     Object.assign(new_entry, remaining_route_data);
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
