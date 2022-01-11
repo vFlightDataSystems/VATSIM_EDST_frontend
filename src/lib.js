@@ -7,26 +7,34 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 
-const KM_NM_CONVERSION_FACTOR = 0.53996;
 export const REMOVAL_TIMEOUT = 60000;
 
-export function getSignedDistancePointToPolygon(point, poly) {
-  let dist = pointToLineDistance(point, polygonToLineString(poly)) * KM_NM_CONVERSION_FACTOR;
-  if (booleanPointInPolygon(point, poly)) {
-    dist = dist * -1;
+export function getSignedDistancePointToPolygons(point, polygons) {
+  let min_distance = Infinity;
+  for (const poly of polygons) {
+    let dist = pointToLineDistance(point, polygonToLineString(poly), {units: 'nauticalmiles'});
+    if (booleanPointInPolygon(point, poly)) {
+      dist = dist * -1;
+    }
+    min_distance = Math.min(min_distance, dist);
   }
-  return dist;
+  return min_distance;
 }
 
-export function routeWillEnterAirspace(route_data, poly, pos) {
-  route_data.unshift({pos: pos});
-  if (route_data.length > 1) {
-    const lines = lineString(route_data?.map(e => e.pos));
-    return booleanIntersects(lines, poly);
-  }
-  else {
+export function routeWillEnterAirspace(route_data, polygons, pos) {
+  if (!route_data) {
     return false;
   }
+  route_data.unshift({pos: pos});
+  if (route_data.length > 1) {
+    const lines = lineString(route_data.map(e => e.pos));
+    for (const poly of polygons) {
+      if (booleanIntersects(lines, poly)) {
+        return true
+      }
+    }
+  }
+  return false;
 }
 
 export function getRouteDataDistance(route_data, pos) {
@@ -52,9 +60,15 @@ export function getRemainingRouteData(route, route_data, pos) {
     const line_distance = pointToLineDistance(pos_point, line, {units: 'nauticalmiles'});
     const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
     for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name)+1).reverse()) {
-      if (route.includes(name)) {
-        route = route.slice(route.lastIndexOf(name) + name.length);
-        route = `..${next_fix.name}` + route;
+      let index = route.indexOf(name);
+      if (index > -1) {
+        route = route.slice(index + name.length);
+        if (route.length > 7) {
+          route = `..${next_fix.name}` + route;
+        }
+        else {
+          route = `..${next_fix.name}.${name}${route}`;
+        }
         break;
       }
     }
