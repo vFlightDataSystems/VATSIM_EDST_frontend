@@ -171,6 +171,7 @@ export default class AclTable extends React.Component {
       <div className="scroll-container">
         {data.filter(e => (typeof (e.spa) === 'number'))?.sort(this.sortSpa)?.map((e) =>
           <AclRow
+            key={`acl-table-row-spa-${e.cid}`}
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}
@@ -185,6 +186,7 @@ export default class AclTable extends React.Component {
         <div className="body-row separator"/>
         {data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !posting_manual)))?.sort(this.sortFunc).map((e) =>
           <AclRow
+            key={`acl-table-row-ack-${e.cid}`}
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}
@@ -199,7 +201,7 @@ export default class AclTable extends React.Component {
         {posting_manual && <div className="body-row separator"/>}
         {posting_manual && data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)).map((e) =>
           <AclRow
-            key={`acl-table-row-${e.cid}`}
+            key={`acl-table-row-no-ack-${e.cid}`}
             entry={e}
             any_holding={any_holding}
             isSelected={this.isSelected}

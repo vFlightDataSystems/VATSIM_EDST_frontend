@@ -106,6 +106,7 @@ export default class DepTable extends React.Component {
       <div className="scroll-container">
         {data.filter(e => (typeof(e.spa) === 'number'))?.sort(this.sortSpa)?.map((e) =>
           <DepRow
+            key={`dep-row-spa-${e.cid}`}
             entry={e}
             isSelected={this.isSelected}
             aircraftSelect={this.props.aircraftSelect}
@@ -118,6 +119,7 @@ export default class DepTable extends React.Component {
         <div className="body-row separator"/>
         {data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !posting_manual)))?.sort(this.sortFunc)?.map((e) =>
           <DepRow
+            key={`dep-row-ack-${e.cid}`}
             entry={e}
             isSelected={this.isSelected}
             aircraftSelect={this.props.aircraftSelect}
@@ -130,6 +132,7 @@ export default class DepTable extends React.Component {
         {posting_manual && <div className="body-row separator"/>}
         {posting_manual && data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1))?.map((e) =>
           <DepRow
+            key={`dep-row-no-ack-${e.cid}`}
             entry={e}
             isSelected={this.isSelected}
             aircraftSelect={this.props.aircraftSelect}
