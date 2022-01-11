@@ -63,7 +63,7 @@ export function getRemainingRouteData(route, route_data, pos) {
       let index = route.indexOf(name);
       if (index > -1) {
         route = route.slice(index + name.length);
-        if (route.length > 7) {
+        if (!Number(route[0])) {
           route = `..${next_fix.name}` + route;
         }
         else {
