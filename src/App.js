@@ -2,7 +2,7 @@ import React from 'react';
 
 import {distance, point, polygon} from '@turf/turf';
 
-import {getAarData, getBoundaryData, getEdstData, updateEdstEntry} from "./api";
+import {getAarData, getBoundaryData, getEdstData, getReferenceFixes, updateEdstEntry} from "./api";
 import './css/styles.scss';
 import './css/header-styles.scss';
 import EdstHeader from "./components/EdstHeader";
@@ -13,7 +13,7 @@ import RouteMenu from "./components/edst-windows/RouteMenu";
 import {Outage} from "./components/edst-windows/Outage";
 import AltMenu from "./components/edst-windows/AltMenu";
 import {PlanOptions} from "./components/edst-windows/PlanOptions";
-import {SortMenu} from "./components/edst-windows/SortMenu";
+import SortMenu from "./components/edst-windows/SortMenu";
 import PlansDisplay from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
@@ -38,31 +38,34 @@ const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
 
 export default class App extends React.Component {
+
+  open_windows = [];
+  reference_fixes = [];
+  acl_data = {deleted: [], cid_list: []};
+  dep_data = {deleted: [], cid_list: []};
+  disabled_windows = DISABLED_WINDOWS;
+  artcc_id = null;
+  sector_id = null;
+  boundary_polygons = null;
+  menu = null;
+  spa_list = [];
+  sig = [];
+  not = [];
+  gi = [];
+  dragging = null;
+  dragging_cursor_hide = null;
+  draggingRef = null;
+  dragPreviewStyle = null;
+  pos = defaultPos;
+  edst_data = {}; // keys are cid, values are data from db
+  asel = null; // {cid, field, ref}
+  plan_queue = [];
+  update_interval_id = null;
+
   constructor(props) {
     super(props);
     this.state = {
-      open_windows: [],
-      sorting: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
-      disabled_windows: DISABLED_WINDOWS,
-      focused_window: '',
-      artcc_id: null,
-      sector_id: null,
-      boundary_polygons: null,
-      menu: null,
-      acl_data: {deleted: [], cid_list: []},
-      dep_data: {deleted: [], cid_list: []},
-      spa_list: [],
-      sig: [],
-      not: [],
-      gi: [],
-      dragging: null,
-      dragging_cursor_hide: null,
-      draggingRef: null,
-      dragPreviewStyle: null,
-      pos: defaultPos,
-      edst_data: {}, // keys are cid, values are data from db
-      asel: null, // {cid, field, ref}
-      plan_queue: []
+      sorting: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}}
     };
     this.globalRef = React.createRef();
     this.planOptionsRef = React.createRef();
@@ -71,7 +74,6 @@ export default class App extends React.Component {
     this.outageRef = React.createRef();
     this.statusRef = React.createRef();
     this.prevRouteMenuRef = React.createRef();
-    this.sortRef = React.createRef();
     this.headingMenuRef = React.createRef();
     this.speedMenuRef = React.createRef();
   }
@@ -81,9 +83,9 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const artcc_id = 'zbw' // prompt('Choose an ARTCC')?.toLowerCase();
-    this.setState({sector_id: '37', artcc_id: artcc_id});
-    await getBoundaryData(artcc_id)
+    this.artcc_id = 'zbw'; // prompt('Choose an ARTCC')?.toLowerCase();
+    this.sector_id = '37';
+    await getBoundaryData(this.artcc_id)
       .then(response => response.json())
       .then(geo_data => {
         this.boundary_polygons = geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates));
@@ -96,16 +98,12 @@ export default class App extends React.Component {
         }
       });
     await this.refresh();
-    const update_interval_id = setInterval(this.refresh, 20000);
-    this.setState({
-      fp_update_interval_id: update_interval_id
-    });
+    this.update_interval_id = setInterval(this.refresh, 20000);
   }
 
   componentWillUnmount() {
-    const {update_interval_id} = this.state;
-    if (update_interval_id) {
-      clearInterval(update_interval_id);
+    if (this.update_interval_id) {
+      clearInterval(this.update_interval_id);
     }
   }
 
@@ -116,14 +114,14 @@ export default class App extends React.Component {
       const dep_pos = [entry.dep_info.lon, entry.dep_info.lat];
       dep_airport_distance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
     }
-    const {artcc_id} = this.state;
+    const {artcc_id} = this;
     return Number(entry.flightplan.ground_speed) < 40
       && entry.dep_info?.artcc?.toLowerCase() === artcc_id
       && dep_airport_distance < 10;
   }
 
   entryFilter = (entry) => {
-    const {acl_data, boundary_polygons} = this.state;
+    const {acl_data, boundary_polygons} = this;
     const pos = [entry.flightplan.lon, entry.flightplan.lat];
     const pos_point = point(pos);
     const sdist = getSignedDistancePointToPolygons(pos_point, boundary_polygons);
@@ -181,7 +179,7 @@ export default class App extends React.Component {
       .then(async new_data => {
           if (new_data) {
             for (let new_entry of new_data) {
-              let current_entry = this.state.edst_data[new_entry.cid];
+              let current_entry = this.edst_data[new_entry.cid];
               let entry = this.refreshEntry(new_entry, current_entry || {
                 acl_status: -1,
                 dep_status: -1
@@ -221,7 +219,7 @@ export default class App extends React.Component {
                   }
                 }
               }
-              current_data[new_entry.cid] = entry;
+              this.edst_data[new_entry.cid] = entry;
             }
             this.forceUpdate();
           }
@@ -232,17 +230,18 @@ export default class App extends React.Component {
   processAar = (entry, aar_list) => {
     const {_route_data: current_route_data, _route: current_route} = entry;
     return aar_list?.map(aar_data => {
-      const {fix: tfix, info: tfix_info} = aar_data.amendment.tfix_details;
+      const {route_fixes, amendment} = aar_data;
+      const {fix: tfix, info: tfix_info} = amendment.tfix_details;
       const current_route_data_fix_names = current_route_data.map(fix => fix.name);
       // if the current route data does not contain the tfix, this aar will not apply
       if (!current_route_data_fix_names.includes(tfix)) {
         return null;
       }
-      let {route: aar_leading_route_string, aar_amendment: aar_amendment_route_string} = aar_data.amendment;
+      let {route: aar_leading_route_string, aar_amendment: aar_amendment_route_string} = amendment;
       let amended_route_string = aar_amendment_route_string;
       const current_route_data_tfix_index = current_route_data_fix_names.indexOf(tfix);
       const remaining_fix_names = current_route_data_fix_names.slice(0, current_route_data_tfix_index)
-        .concat(aar_data.route_fixes.slice(aar_data.route_fixes.indexOf(tfix)));
+        .concat(route_fixes.slice(route_fixes.indexOf(tfix)));
       if (tfix_info === 'Prepend') {
         aar_amendment_route_string = tfix + aar_amendment_route_string;
       }
@@ -269,15 +268,15 @@ export default class App extends React.Component {
         dest: entry.dest,
         tfix: tfix,
         tfix_info: tfix_info,
-        eligible: aar_data.amendment.eligible,
-        on_eligible_aar: aar_data.amendment.eligible && current_route.includes(aar_amendment_route_string),
+        eligible: amendment.eligible,
+        on_eligible_aar: amendment.eligible && current_route.includes(aar_amendment_route_string),
         aar_data: aar_data
       };
     }).filter(aar_data => aar_data);
   }
 
   deleteEntry = (window, cid) => {
-    let {acl_data, dep_data} = this.state;
+    let {acl_data, dep_data} = this;
     let index;
     switch (window) {
       case 'acl':
@@ -297,24 +296,26 @@ export default class App extends React.Component {
       default:
         break;
     }
-    this.setState({acl_data: acl_data, dep_data: dep_data})
+    this.acl_data = acl_data;
+    this.dep_data = dep_data;
+    this.forceUpdate();
   }
 
   trialPlan = (p) => {
-    let {plan_queue, open_windows} = this.state;
+    let {plan_queue, open_windows} = this;
     open_windows.push('plans')
     plan_queue.unshift(p);
-    this.setState({plan_queue: plan_queue});
+    this.plan_queue = plan_queue;
   }
 
   removeTrialPlan = (index) => {
-    let {plan_queue} = this.state;
+    let {plan_queue} = this;
     plan_queue.splice(index);
-    this.setState({plan_queue: plan_queue});
+    this.plan_queue = plan_queue;
   }
 
   swapSpaEntries = (cid_1, cid_2) => {
-    let {spa_list, edst_data} = this.state;
+    let {spa_list, edst_data} = this;
     const index_1 = spa_list.indexOf(cid_1)
     const index_2 = spa_list.indexOf(cid_2)
     if (index_1 > 0 && index_2 > 0) {
@@ -323,12 +324,14 @@ export default class App extends React.Component {
       edst_data[cid_1].spa = index_2;
       edst_data[cid_2].spa = index_1;
     }
-    this.setState({spa_list: spa_list, edst_data: edst_data});
+    this.spa_list = spa_list;
+    this.edst_data = edst_data;
+    this.forceUpdate();
   }
 
   updateEntry = (cid, data) => {
-    let {edst_data, spa_list} = this.state;
-    let entry = edst_data[cid];
+    let {spa_list} = this;
+    let entry = this.edst_data[cid];
     if (data?.spa === true) {
       if (!spa_list.includes(cid)) {
         spa_list.push(cid);
@@ -341,12 +344,12 @@ export default class App extends React.Component {
         spa_list.splice(index, 1);
       }
     }
-    edst_data[cid] = Object.assign(entry, data);
-    this.setState({edst_data: edst_data});
+    this.edst_data[cid] = Object.assign(entry, data);
+    this.forceUpdate();
   }
 
   addEntry = (window, str) => {
-    let {edst_data, acl_data, dep_data} = this.state;
+    let {edst_data, acl_data, dep_data} = this;
     let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === str || String(e.callsign) === str || String(e.beacon) === str);
     if (entry && (window === 'acl' || window === 'dep')) {
       let data = window === 'acl' ? acl_data : dep_data;
@@ -363,13 +366,16 @@ export default class App extends React.Component {
         dep_data = data;
       }
       const asel = {cid: entry.cid, field: 'fid', window: window};
-      this.setState({acl_data: acl_data, dep_data: dep_data, asel: asel});
+      this.acl_data = acl_data;
+      this.dep_data = dep_data;
+      this.asel = asel;
+      this.forceUpdate();
       // this.updateEntry(entry.cid, window === 'acl' ? {acl_highlighted: true} : {dep_highlighted: true});
     }
   }
 
   amendEntry = async (cid, plan_data) => {
-    let {edst_data, artcc_id} = this.state;
+    let {edst_data, artcc_id} = this;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
@@ -395,27 +401,26 @@ export default class App extends React.Component {
               current_entry.aar_list = aar_list;
               current_entry._aar_list = this.processAar(current_entry, aar_list);
             });
-          edst_data[cid] = current_entry;
-          this.setState({asel: null});
+          this.edst_data[cid] = current_entry;
+          this.asel = null
           this.forceUpdate();
         }
       });
   }
 
   aircraftSelect = (event, window, cid, field) => {
-    let {asel, edst_data} = this.state;
+    let {asel, edst_data} = this;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
-      this.setState({asel: null, menu: null});
+      this.asel = null;
+      this.menu = null;
     } else {
       const entry = edst_data[cid];
       asel = {cid: cid, field: field, window: window};
       // if (edst_data[cid]?.acl_status === undefined) {
       //   this.amendEntry(cid, `${window}_status`, '');
       // }
-      this.setState({
-        asel: asel,
-        menu: null
-      });
+      this.asel = asel;
+      this.menu = null;
       switch (field) {
         case 'alt':
           this.openMenu(event.target, 'alt-menu', false);
@@ -443,42 +448,45 @@ export default class App extends React.Component {
           break;
       }
     }
+    this.forceUpdate();
   }
 
   toggleWindow = (name) => {
-    let {open_windows} = this.state;
+    let {open_windows} = this;
     const index = open_windows.indexOf(name);
     if (index > -1) {
       open_windows.splice(index, 1);
     } else {
       open_windows.push(name);
     }
-    this.setState({open_windows: open_windows});
+    this.open_windows = open_windows;
+    this.forceUpdate();
   }
 
   openWindow = (name) => {
-    let {open_windows} = this.state;
+    let {open_windows} = this;
     const index = open_windows.indexOf(name);
     if (index > -1) {
       open_windows.splice(index, 1);
     }
     open_windows.push(name);
-    this.setState({open_windows: open_windows});
-
+    this.open_windows = open_windows;
+    this.forceUpdate();
   }
 
   closeWindow = (name) => {
-    let {open_windows} = this.state;
+    let {open_windows} = this;
     const index = open_windows.indexOf(name);
     if (index > -1) {
       open_windows.splice(index, 1);
-      this.setState({open_windows: open_windows});
+      this.open_windows = open_windows;
+      this.forceUpdate();
     }
   }
 
   openMenu = (ref, name, plan, asel = null) => {
     const {x, y, height, width} = ref.getBoundingClientRect();
-    let {pos} = this.state;
+    let {pos} = this;
     switch (name) {
       case 'alt-menu':
         pos[name] = {
@@ -531,17 +539,20 @@ export default class App extends React.Component {
           y: ref.offsetTop + ref.offsetHeight
         };
     }
-    this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}});
+    this.pos = pos;
+    this.menu = {name: name, ref_id: ref?.id};
+    this.forceUpdate();
   }
 
   closeMenu = (name) => {
-    let {pos} = this.state;
+    let {pos} = this;
     pos[name] = null;
-    this.setState({menu: null});
+    this.menu = null;
+    this.forceUpdate();
   }
 
   startDrag = (event, ref) => {
-    const {pos} = this.state;
+    const {pos} = this;
     const rel = {x: event.pageX, y: event.pageY};
     const relX = event.pageX - rel.x;
     const relY = event.pageY - rel.y;
@@ -554,31 +565,31 @@ export default class App extends React.Component {
       height: ref.current.clientHeight,
       width: ref.current.clientWidth
     };
-    this.setState({
-      draggingRef: ref,
-      dragging: true,
-      rel: rel,
-      dragPreviewStyle: style,
-      dragging_cursor_hide: DRAGGING_HIDE_CURSOR.includes(ref.current.id)
-    });
-    this.globalRef.current.addEventListener('mousemove', this.dragging);
+    this.draggingRef = ref;
+    this.dragging = true;
+    this.rel = rel;
+    this.dragPreviewStyle = style;
+    this.dragging_cursor_hide = DRAGGING_HIDE_CURSOR.includes(ref.current.id);
+    this.globalRef.current.addEventListener('mousemove', this.draggingHandler);
+    this.forceUpdate();
   }
 
   setPos = (key, x, y) => {
-    let pos = this.state.pos;
+    let pos = this.pos;
     pos[key] = {x: x, y: y};
-    this.setState({pos: pos});
+    this.pos = pos;
+    this.forceUpdate();
   }
 
-  dragging = (event) => {
-    const {dragging} = this.state;
+  draggingHandler = (event) => {
+    const {dragging} = this;
     if (dragging) {
-      const {rel, draggingRef} = this.state;
-      let pos = this.state.pos;
+      const {rel, draggingRef} = this;
+      let pos = this.pos;
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
       const ppos = pos[draggingRef.current.id];
-      const style = {
+      this.dragPreviewStyle = {
         left: ppos.x + relX,
         top: ppos.y + relY,
         position: "absolute",
@@ -586,26 +597,25 @@ export default class App extends React.Component {
         height: draggingRef.current.clientHeight,
         width: draggingRef.current.clientWidth
       };
-      this.setState({dragPreviewStyle: style});
+      this.forceUpdate();
     }
   }
 
   stopDrag = (event) => {
-    if (this.state.dragging) {
-      const {rel, draggingRef} = this.state;
-      let pos = this.state.pos;
+    if (this.dragging) {
+      const {rel, draggingRef} = this;
+      let pos = this.pos;
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
       const ppos = pos[draggingRef.current.id]
       pos[draggingRef.current.id] = {x: ppos.x + relX, y: ppos.y + relY};
-      this.setState({
-        pos: pos,
-        rel: null,
-        draggingRef: null,
-        dragging: false,
-        dragging_cursor_hide: false,
-        dragPreviewStyle: null
-      });
+      this.pos = pos;
+      this.rel = rel;
+      this.draggingRef = null;
+      this.dragging = false;
+      this.dragging_cursor_hide = false;
+      this.dragPreviewStyle = null;
+      this.forceUpdate();
     }
   }
 
@@ -614,11 +624,13 @@ export default class App extends React.Component {
   }
 
   unmount = () => {
-    this.setState({menu: null, asel: null});
+    this.menu = null;
+    this.asel = null;
+    this.forceUpdate();
   }
 
   aclCleanup = () => {
-    const {edst_data, acl_data} = this.state;
+    const {edst_data, acl_data} = this;
     const now = performance.now()
     for (const cid of acl_data.cid_list) {
       if (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
@@ -632,7 +644,6 @@ export default class App extends React.Component {
       edst_data,
       asel,
       disabled_windows,
-      sorting,
       open_windows,
       plan_queue,
       sector_id,
@@ -646,7 +657,9 @@ export default class App extends React.Component {
       dragPreviewStyle,
       dragging,
       dragging_cursor_hide
-    } = this.state;
+    } = this;
+
+    const {sorting} = this.state;
 
     return (
       <div className="edst"
@@ -711,9 +724,7 @@ export default class App extends React.Component {
             openMenu={this.openMenu}
             dragging={dragging}
             asel={asel?.window === 'plans' ? asel : null}
-            cleanup={() => {
-              this.setState({plan_queue: []});
-            }}
+            cleanup={() => this.plan_queue = []}
             plan_queue={plan_queue}
             amendEntry={this.amendEntry}
             aircraftSelect={this.aircraftSelect}
@@ -748,11 +759,10 @@ export default class App extends React.Component {
             stopDrag={this.stopDrag}
             pos={pos['plan-menu']}
             // z_index={open_windows.indexOf('route-menu')}
-            clearAsel={() => this.setState({asel: null})}
+            clearAsel={() => this.asel = null}
             closeWindow={() => this.closeMenu('plan-menu')}
           />}
           {menu?.name === 'sort-menu' && <SortMenu
-            ref={this.sortRef}
             ref_id={menu?.ref_id}
             sorting={sorting}
             dragging={dragging}

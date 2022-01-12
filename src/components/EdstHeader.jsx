@@ -25,13 +25,13 @@ export default class EdstHeader extends React.Component {
                     disabled={disabled_windows.includes('acl')}
                     onMouseDown={() => this.props.openWindow('acl')}
             >
-              ACL {acl_num > 0 && ('0'+acl_num).slice(acl_num < 100 ? -2 : -3)}
+              ACL {acl_num.toString().padStart(2, '0')}
             </button>
             <button className={open_windows.includes('dep') ? 'enabled' : ''}
                     disabled={disabled_windows.includes('dep')}
                     onMouseDown={() => this.props.openWindow('dep')}
             >
-              DEP {dep_num > 0 && ('0'+dep_num).slice(dep_num < 100 ? -2 : -3)}
+              DEP {dep_num.toString().padStart(2, '0')}
             </button>
             <button className={open_windows.includes('gpd') ? 'enabled' : ''}
                     disabled={disabled_windows.includes('gpd')}
@@ -55,13 +55,13 @@ export default class EdstHeader extends React.Component {
                     disabled={disabled_windows.includes('sig')}
                     onMouseDown={() => this.props.toggleWindow('sig')}
             >
-              SIG {sig_num > 0 && ('0'+sig_num).slice(-2)}
+              SIG {sig_num > 0 && sig_num.toString().padStart(2, '0')}
             </button>
             <button className={open_windows.includes('not') ? 'enabled' : ''}
                     disabled={disabled_windows.includes('not')}
                     onMouseDown={() => this.props.toggleWindow('not')}
             >
-              NOT {not_num > 0 && ('0'+not_num).slice(-2)}
+              NOT {not_num > 0 && not_num.toString().padStart(2, '0')}
             </button>
             <button className={`yellow-border ${open_windows.includes('gi') ? 'enabled' : ''}`}
                     disabled={disabled_windows.includes('gi')}
