@@ -254,8 +254,11 @@ export default class App extends React.Component {
         if (!first_common_segment) {
           return null;
         }
-        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment))
+        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment) + first_common_segment.length)
           + aar_leading_route_string.slice(aar_leading_route_string.indexOf(first_common_segment) + first_common_segment.length);
+        if (!amended_route_string.includes(first_common_segment)) {
+          amended_route_string = first_common_segment + amended_route_string;
+        }
       }
       if (!amended_route_string) {
         return null;
