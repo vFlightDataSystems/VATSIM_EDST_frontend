@@ -1,4 +1,5 @@
 import {
+  bearing,
   booleanPointInPolygon, distance,
   lineString,
   point,
@@ -47,26 +48,24 @@ export function getRouteDataDistance(route_data, pos) {
 export function getRemainingRouteData(route, route_data, pos) {
   if (route_data.length > 1) {
     const fix_names = route_data.map(e => e.name);
-    const route_data_copy = route_data.slice();
-    const sorted_route_data = route_data_copy.sort((u, v) => u.dist - v.dist);
+    const sorted_route_data = route_data.slice(0).sort((u, v) => u.dist - v.dist);
     const closest_fix = sorted_route_data[0];
     const index = route_data.indexOf(closest_fix);
     if (index === route_data.length - 1) {
       return {_route: `.${closest_fix.name}`, _route_data: [closest_fix]};
     }
-    const following_fix = route_data[index+1];
+    const following_fix = route_data[index + 1];
     const pos_point = point(pos);
     const line = lineString([closest_fix.pos, following_fix.pos]);
     const line_distance = pointToLineDistance(pos_point, line, {units: 'nauticalmiles'});
     const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
-    for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name)+1).reverse()) {
-      let index = route.indexOf(name);
+    for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name) + 1).reverse()) {
+      let index = route.lastIndexOf(name);
       if (index > -1) {
         route = route.slice(index + name.length);
         if (!Number(route[0])) {
           route = `..${next_fix.name}` + route;
-        }
-        else {
+        } else {
           route = `..${next_fix.name}.${name}${route}`;
         }
         break;
@@ -75,4 +74,17 @@ export function getRemainingRouteData(route, route_data, pos) {
     route_data = route_data.slice(route_data.indexOf(next_fix));
   }
   return {_route: route, _route_data: route_data};
+}
+
+export function getClosestReferenceFix(reference_fixes, pos_point) {
+  const fixes_distance = reference_fixes.map(fix => {
+    const fix_point = point([fix.lon, fix.lat]);
+    return Object.assign({
+      point: fix_point,
+      distance: distance(fix_point, pos_point, {units: 'nauticalmiles'})
+    }, fix);
+  });
+  let closest_fix = fixes_distance.sort((u, v) => u.distance - v.distance)[0];
+  closest_fix.bearing = (bearing(closest_fix.point, pos_point) + 360) % 360;
+  return closest_fix;
 }

@@ -27,3 +27,7 @@ export async function getAarData(artcc, cid) {
 export async function getBoundaryData(artcc) {
   return await fetch(`${baseurl}/edst/boundary_data/${artcc}`);
 }
+
+export async function getReferenceFixes(artcc) {
+  return await fetch(`${baseurl}/edst/reference_fixes/${artcc}`);
+}

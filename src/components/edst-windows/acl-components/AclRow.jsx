@@ -211,7 +211,10 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
           >
             {e.show_hold_info && hold_data && `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${this.formatEfc(hold_data.efc)}`}
             {!e.show_hold_info && <div>
-              <span className={`${aar_avail && !on_aar ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>./{route}
+              <span className={`${aar_avail && !on_aar ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>
+              ./{e.reference_fix ?
+              `.${e.reference_fix.waypoint_id}${Math.round(e.reference_fix.bearing).toString().padStart(3, '0')}${Math.round(e.reference_fix.distance).toString().padStart(3, '0')}..` : ''}
+              {route?.replace(/^\.*/, '')}
               {pending_aar && !on_aar && <span className={`amendment ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>
               [{pending_aar}]
               </span>}
