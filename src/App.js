@@ -83,7 +83,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    this.artcc_id = 'zbw'; // prompt('Choose an ARTCC')?.toLowerCase();
+    this.artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
     this.sector_id = '37';
     await getBoundaryData(this.artcc_id)
       .then(response => response.json())
@@ -378,7 +378,7 @@ export default class App extends React.Component {
   }
 
   amendEntry = async (cid, plan_data) => {
-    let {edst_data, artcc_id} = this;
+    let {edst_data, artcc_id, dep_data} = this;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
@@ -388,8 +388,8 @@ export default class App extends React.Component {
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = current_entry?._route;
-      plan_data.previous_route_data = current_entry?._route_data;
+      plan_data.previous_route = dep_data.cid_list.includes(cid) ? current_entry?.route : current_entry?._route;
+      plan_data.previous_route_data = dep_data.cid_list.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
     await updateEdstEntry(plan_data)
