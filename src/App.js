@@ -18,9 +18,11 @@ import PlansDisplay from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
+  getClosestReferenceFix,
   getRemainingRouteData,
   getRouteDataDistance,
-  getSignedDistancePointToPolygons, REMOVAL_TIMEOUT,
+  getSignedDistancePointToPolygons,
+  REMOVAL_TIMEOUT,
   routeWillEnterAirspace,
 } from "./lib";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
@@ -84,8 +86,14 @@ export default class App extends React.Component {
     await getBoundaryData(artcc_id)
       .then(response => response.json())
       .then(geo_data => {
-        const polygons = geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates));
-        this.setState({boundary_polygons: polygons});
+        this.boundary_polygons = geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates));
+      });
+    await getReferenceFixes(this.artcc_id)
+      .then(response => response.json())
+      .then(reference_fixes => {
+        if (reference_fixes) {
+          this.reference_fixes = reference_fixes;
+        }
       });
     await this.refresh();
     const update_interval_id = setInterval(this.refresh, 20000);
@@ -167,7 +175,7 @@ export default class App extends React.Component {
   }
 
   refresh = async () => {
-    let {edst_data: current_data, acl_data, dep_data, artcc_id} = this.state;
+    let {acl_data, dep_data, artcc_id, reference_fixes} = this;
     await getEdstData()
       .then(response => response.json())
       .then(async new_data => {
@@ -207,6 +215,9 @@ export default class App extends React.Component {
                     if (index > -1) {
                       dep_data.cid_list.splice(index, 1);
                     }
+                  }
+                  if (reference_fixes) {
+                    entry.reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
                   }
                 }
               }
