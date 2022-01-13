@@ -7,8 +7,8 @@ import AclTable from "./acl-components/AclTable";
 export default function Acl(props) {
   const [focused, setFocused] = useState(false);
   const [posting_manual, setPostingManual] = useState(true);
-
-  useEffect(() => props.unmount(), []);
+  const unmount = () => props.unmount();
+  useEffect(() => unmount(), []);
 
   return (<div
     className={`acl ${props.dragging ? 'dragging' : ''}`}
@@ -18,24 +18,17 @@ export default function Acl(props) {
   >
     <AclHeader
       addEntry={props.addEntry}
-      sorting={props.sorting}
+      sort_data={props.sort_data}
       openMenu={props.openMenu}
       asel={props.asel}
-      focused={focused} posting_manual={posting_manual}
+      focused={focused}
+      posting_manual={posting_manual}
       closeWindow={props.closeWindow}
       togglePosting={() => setPostingManual(!posting_manual)}
       cleanup={props.cleanup}
     />
     <AclTable
       posting_manual={posting_manual}
-      sorting={props.sorting}
-      cid_list={props.cid_list}
-      edst_data={props.edst_data}
-      asel={props.asel}
-      updateEntry={props.updateEntry}
-      amendEntry={props.amendEntry}
-      aircraftSelect={props.aircraftSelect}
-      deleteEntry={props.deleteEntry}
     />
   </div>);
 }

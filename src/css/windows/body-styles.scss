@@ -32,7 +32,7 @@ $body-hover-white: #F0F0F0;
   }
 }
 
-.sep-border {
+.row-sep-border {
   border: none;
   border-bottom: 1px solid $body-ac-sep-very-dark-grey;
 }
@@ -94,7 +94,7 @@ $body-hover-white: #F0F0F0;
   .inner-row {
     display: flex;
     align-items: center;
-    min-height: 22px;
+    min-height: 20px;
     //flex-grow: 1;
 
     &.highlighted {
@@ -115,19 +115,19 @@ $body-hover-white: #F0F0F0;
 
   &.header {
     margin: 2px 0;
-    min-height: 28px;
-    max-height: 28px;
+    min-height: 24px;
+    max-height: 24px;
     border-top: 1px solid $edst-window-header-border-light-grey;
     border-bottom: 1px solid $edst-window-header-border-light-grey;
 
     .body-col {
       align-items: center;
-      height: 22px;
+      height: 18px;
 
       > div {
         align-items: center;
         display: flex;
-        height: 22px;
+        //height: 22px;
       }
     }
   }
@@ -144,6 +144,12 @@ $body-hover-white: #F0F0F0;
 
   &.selected {
     outline: 1px solid $body-light-grey;
+    border: 1px solid $body-light-grey;
+    background-color: $body-light-grey;
+    color: #000000;
+  }
+
+  .selected {
     border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
@@ -177,7 +183,7 @@ $body-hover-white: #F0F0F0;
   &.body-col-1 {
     border: 1px solid transparent;
     margin: 0 2px;
-    width: 16px;
+    width: 14px;
 
     &.radio {
       border: 1px solid #000000;

@@ -7,23 +7,23 @@ export default class SortMenu extends React.Component {
     super(props);
     this.state = {
       focused: false,
-      sorting: this.props.sorting
+      sort_data: this.props.sort_data
     };
     this.sortMenuRef = React.createRef();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.sorting !== prevProps.sorting) {
-      this.setState({sorting: this.props.sorting});
+    if (this.props.sort_data !== prevProps.sort_data) {
+      this.setState({sort_data: this.props.sort_data});
     }
   }
 
   render() {
-    let {focused, sorting} = this.state;
+    let {focused, sort_data} = this.state;
     const {pos, ref_id} = this.props;
     const acl = ref_id === 'acl-sort-button';
     const dep = ref_id === 'dep-sort-button';
-    const selected = acl ? sorting.acl : sorting.dep;
+    const selected = acl ? sort_data.acl : sort_data.dep;
 
     return (<div
         onMouseEnter={() => this.setState({focused: true})}
@@ -43,8 +43,8 @@ export default class SortMenu extends React.Component {
           {acl && <div className="options-row sector">
             <div className="options-col sort"
                  onMouseDown={() => {
-                   sorting.acl.sector = !selected.sector;
-                   this.setState({sorting: sorting});
+                   sort_data.acl.sector = !selected.sector;
+                   this.setState({sort_data: sort_data});
                  }}
             >
               <div className={`box ${selected?.sector === true ? 'selected' : ''}`}/>
@@ -54,8 +54,8 @@ export default class SortMenu extends React.Component {
           <div className="options-row">
             <div className="options-col sort"
                  onMouseDown={() => {
-                   sorting[acl ? 'acl' : 'dep'].name = 'ACID';
-                   this.setState({sorting: sorting});
+                   sort_data[acl ? 'acl' : 'dep'].name = 'ACID';
+                   this.setState({sort_data: sort_data});
                  }}
             >
               <div className={`box diamond ${selected?.name === 'ACID' ? 'selected' : ''}`}/>
@@ -65,8 +65,8 @@ export default class SortMenu extends React.Component {
           <div className="options-row">
             <div className="options-col sort"
                  onMouseDown={() => {
-                   sorting[acl ? 'acl' : 'dep'].name = 'Destination';
-                   this.setState({sorting: sorting});
+                   sort_data[acl ? 'acl' : 'dep'].name = 'Destination';
+                   this.setState({sort_data: sort_data});
                  }}
             >
               <div className={`box diamond ${selected?.name === 'Destination' ? 'selected' : ''}`}/>
@@ -76,8 +76,8 @@ export default class SortMenu extends React.Component {
           <div className="options-row">
             <div className="options-col sort"
                  onMouseDown={() => {
-                   sorting[acl ? 'acl' : 'dep'].name = 'Origin';
-                   this.setState({sorting: sorting});
+                   sort_data[acl ? 'acl' : 'dep'].name = 'Origin';
+                   this.setState({sort_data: sort_data});
                  }}
             >
               <div className={`box diamond ${selected?.name === 'Origin' ? 'selected' : ''}`}/>
@@ -87,8 +87,8 @@ export default class SortMenu extends React.Component {
           {dep && <div className="options-row">
             <div className="options-col sort"
                  onMouseDown={() => {
-                   sorting.dep.name = 'P-Time';
-                   this.setState({sorting: sorting});
+                   sort_data.dep.name = 'P-Time';
+                   this.setState({sort_data: sort_data});
                  }}
             >
               <div className={`box diamond ${selected?.name === 'P-Time' ? 'selected' : ''}`}/>
@@ -99,7 +99,7 @@ export default class SortMenu extends React.Component {
             <div className="options-col left">
               <button
                 onMouseDown={() => {
-                  this.props.setSorting(sorting);
+                  this.props.setSorting(sort_data);
                   this.props.closeWindow();
                 }}
               >

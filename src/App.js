@@ -28,6 +28,7 @@ import {
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
 import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
+import {AclContext, DepContext, EdstContext} from "./contexts/contexts";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -65,7 +66,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sorting: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}}
+      sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}}
     };
     this.globalRef = React.createRef();
     this.planOptionsRef = React.createRef();
@@ -83,7 +84,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    this.artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
+    this.artcc_id = 'zbw' //prompt('Choose an ARTCC')?.toLowerCase();
     this.sector_id = '37';
     await getBoundaryData(this.artcc_id)
       .then(response => response.json())
@@ -426,7 +427,7 @@ export default class App extends React.Component {
       this.menu = null;
       switch (field) {
         case 'alt':
-          this.openMenu(event.target, 'alt-menu', false);
+          this.openMenu(event.target, 'alt-menu', false, asel);
           break;
         case 'route':
           if (entry?.show_hold_info) {
@@ -506,8 +507,8 @@ export default class App extends React.Component {
           w: width,
           h: height
         } : {
-          x: x,
-          y: y - height,
+          x: x - 1,
+          y: y - height + 3,
           w: width,
           h: height
         };
@@ -548,8 +549,7 @@ export default class App extends React.Component {
   }
 
   closeMenu = (name) => {
-    let {pos} = this;
-    pos[name] = null;
+    this.pos[name] = null;
     this.menu = null;
     this.forceUpdate();
   }
@@ -578,17 +578,14 @@ export default class App extends React.Component {
   }
 
   setPos = (key, x, y) => {
-    let pos = this.pos;
-    pos[key] = {x: x, y: y};
-    this.pos = pos;
+    this.pos[key] = {x: x, y: y};
     this.forceUpdate();
   }
 
   draggingHandler = (event) => {
     const {dragging} = this;
     if (dragging) {
-      const {rel, draggingRef} = this;
-      let pos = this.pos;
+      const {rel, draggingRef, pos} = this;
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
       const ppos = pos[draggingRef.current.id];
@@ -607,12 +604,10 @@ export default class App extends React.Component {
   stopDrag = (event) => {
     if (this.dragging) {
       const {rel, draggingRef} = this;
-      let pos = this.pos;
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
-      const ppos = pos[draggingRef.current.id]
-      pos[draggingRef.current.id] = {x: ppos.x + relX, y: ppos.y + relY};
-      this.pos = pos;
+      const ppos = this.pos[draggingRef.current.id];
+      this.pos[draggingRef.current.id] = {x: ppos.x + relX, y: ppos.y + relY};
       this.rel = rel;
       this.draggingRef = null;
       this.dragging = false;
@@ -622,8 +617,8 @@ export default class App extends React.Component {
     }
   }
 
-  setSorting = (sorting) => {
-    this.setState({sorting: sorting});
+  setSorting = (sort_data) => {
+    this.setState({sort_data: sort_data});
   }
 
   unmount = () => {
@@ -662,7 +657,7 @@ export default class App extends React.Component {
       dragging_cursor_hide
     } = this;
 
-    const {sorting} = this.state;
+    const {sort_data} = this.state;
 
     return (
       <div className="edst"
@@ -689,169 +684,191 @@ export default class App extends React.Component {
           >
             {dragging_cursor_hide && <div className="cursor"/>}
           </div>
-          {open_windows.includes('acl') && <Acl
-            addEntry={(s) => this.addEntry('acl', s)}
-            cleanup={this.aclCleanup}
-            sorting={sorting.acl}
-            unmount={this.unmount}
-            openMenu={this.openMenu}
-            dragging={dragging}
-            asel={asel?.window === 'acl' ? asel : null}
-            cid_list={acl_data.cid_list}
-            edst_data={edst_data}
-            updateEntry={this.updateEntry}
-            amendEntry={this.amendEntry}
-            aircraftSelect={this.aircraftSelect}
-            deleteEntry={this.deleteEntry}
-            // z_index={open_windows.indexOf('acl')}
-            closeWindow={() => this.closeWindow('acl')}
-          />}
-          {open_windows.includes('dep') && <Dep
-            addEntry={(s) => this.addEntry('dep', s)}
-            sorting={sorting.dep}
-            unmount={this.unmount}
-            openMenu={this.openMenu}
-            dragging={dragging}
-            asel={asel?.window === 'dep' ? asel : null}
-            cid_list={dep_data.cid_list}
-            edst_data={edst_data}
-            updateEntry={this.updateEntry}
-            amendEntry={this.amendEntry}
-            aircraftSelect={this.aircraftSelect}
-            deleteEntry={this.deleteEntry}
-            // z_index={open_windows.indexOf('dep')}
-            closeWindow={() => this.closeWindow('dep')}
-          />}
-          {open_windows.includes('plans') && plan_queue.length > 0 && <PlansDisplay
-            unmount={this.unmount}
-            openMenu={this.openMenu}
-            dragging={dragging}
-            asel={asel?.window === 'plans' ? asel : null}
-            cleanup={() => this.plan_queue = []}
-            plan_queue={plan_queue}
-            amendEntry={this.amendEntry}
-            aircraftSelect={this.aircraftSelect}
-            // z_index={open_windows.indexOf('dep')}
-            closeWindow={() => this.closeWindow('plans')}
-          />}
-          {open_windows.includes('status') && <Status
-            ref={this.statusRef}
-            dragging={dragging}
-            startDrag={this.startDrag}
-            pos={pos['edst-status']}
-            // z_index={open_windows.indexOf('status')}
-            closeWindow={() => this.closeWindow('status')}
-          />}
-          {open_windows.includes('outage') && <Outage
-            ref={this.outageRef}
-            dragging={dragging}
-            startDrag={this.startDrag}
-            pos={pos['edst-outage']}
-            // z_index={open_windows.indexOf('status')}
-            closeWindow={() => this.closeWindow('outage')}
-          />}
-          {menu?.name === 'plan-menu' && <PlanOptions
-            ref={this.planOptionsRef}
-            deleteEntry={this.deleteEntry}
-            openMenu={this.openMenu}
-            dragging={dragging}
-            asel={asel}
-            data={edst_data[asel?.cid]}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            pos={pos['plan-menu']}
-            // z_index={open_windows.indexOf('route-menu')}
-            clearAsel={() => this.asel = null}
-            closeWindow={() => this.closeMenu('plan-menu')}
-          />}
-          {menu?.name === 'sort-menu' && <SortMenu
-            ref_id={menu?.ref_id}
-            sorting={sorting}
-            dragging={dragging}
-            setSorting={this.setSorting}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            pos={pos['sort-menu']}
-            // z_index={open_windows.indexOf('route-menu')}
-            closeWindow={() => this.closeMenu('sort-menu')}
-          />}
-          {menu?.name === 'route-menu' && <RouteMenu
-            openMenu={this.openMenu}
-            trialPlan={this.trialPlan}
-            dragging={dragging}
-            asel={asel}
-            entry={edst_data[asel?.cid]}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            pos={pos['route-menu']}
-            closeWindow={() => this.closeMenu('route-menu')}
-          />}
-          {menu?.name === 'hold-menu' && <HoldMenu
-            ref={this.holdMenuRef}
-            dragging={dragging}
-            asel={asel}
-            entry={edst_data[asel?.cid]}
-            updateEntry={this.updateEntry}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            pos={pos['hold-menu']}
-            closeWindow={() => this.closeMenu('hold-menu')}
-          />}
-          {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
-            ref={this.cancelHoldMenuRef}
-            dragging={dragging}
-            asel={asel}
-            data={edst_data[asel?.cid]}
-            updateEntry={this.updateEntry}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            pos={pos['cancel-hold-menu']}
-            closeWindow={() => this.closeMenu('cancel-hold-menu')}
-          />}
-          {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
-            ref={this.prevRouteMenuRef}
-            dragging={dragging}
-            data={edst_data[asel?.cid]}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            pos={pos['prev-route-menu']}
-            closeWindow={() => this.closeMenu('prev-route-menu')}
-          />}
-          {menu?.name === 'alt-menu' && <AltMenu
-            pos={pos['alt-menu']}
-            asel={asel}
-            trialPlan={this.trialPlan}
-            data={edst_data[asel?.cid]}
-            amendEntry={this.amendEntry}
-            closeWindow={() => this.closeMenu('alt-menu')}
-          />}
-          {menu?.name === 'speed-menu' && <SpeedMenu
-            ref={this.speedMenuRef}
-            pos={pos['speed-menu']}
-            asel={asel}
-            data={edst_data[asel?.cid]}
-            updateEntry={this.updateEntry}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            closeWindow={() => this.closeMenu('speed-menu')}
-          />}
-          {menu?.name === 'heading-menu' && <HeadingMenu
-            ref={this.headingMenuRef}
-            pos={pos['heading-menu']}
-            asel={asel}
-            data={edst_data[asel?.cid]}
-            updateEntry={this.updateEntry}
-            amendEntry={this.amendEntry}
-            startDrag={this.startDrag}
-            stopDrag={this.stopDrag}
-            closeWindow={() => this.closeMenu('heading-menu')}
-          />}
+          <EdstContext.Provider value={{
+            edst_data: edst_data,
+            asel: asel,
+            plan_queue: plan_queue,
+            sector_id: sector_id,
+            menu: menu,
+            unmount: this.unmount,
+            openMenu: this.openMenu,
+            closeMenu: this.closeMenu,
+            updateEntry: this.updateEntry,
+            amendEntry: this.amendEntry,
+            deleteEntry: this.deleteEntry,
+            aircraftSelect: this.aircraftSelect,
+            openWindow: this.openWindow,
+            closeWindow: this.closeWindow
+          }}>
+            <AclContext.Provider value={{
+              cid_list: acl_data.cid_list,
+              sort_data: sort_data.acl,
+              asel: asel?.window === 'acl' ? asel : null
+            }}>
+              {open_windows.includes('acl') && <Acl
+                addEntry={(s) => this.addEntry('acl', s)}
+                cleanup={this.aclCleanup}
+                sort_data={sort_data.acl}
+                unmount={this.unmount}
+                openMenu={this.openMenu}
+                dragging={dragging}
+                asel={asel?.window === 'acl' ? asel : null}
+                cid_list={acl_data.cid_list}
+                edst_data={edst_data}
+                updateEntry={this.updateEntry}
+                amendEntry={this.amendEntry}
+                aircraftSelect={this.aircraftSelect}
+                deleteEntry={this.deleteEntry}
+                // z_index={open_windows.indexOf('acl')}
+                closeWindow={() => this.closeWindow('acl')}
+              />}
+            </AclContext.Provider>
+            <DepContext.Provider value={{
+              cid_list: dep_data.cid_list,
+              sort_data: sort_data.dep,
+              asel: asel?.window === 'dep' ? asel : null
+            }}>
+              {open_windows.includes('dep') && <Dep
+                addEntry={(s) => this.addEntry('dep', s)}
+                sort_data={sort_data.dep}
+                unmount={this.unmount}
+                openMenu={this.openMenu}
+                dragging={dragging}
+                // z_index={open_windows.indexOf('dep')}
+                closeWindow={() => this.closeWindow('dep')}
+              />}
+            </DepContext.Provider>
+            {open_windows.includes('plans') && plan_queue.length > 0 && <PlansDisplay
+              unmount={this.unmount}
+              openMenu={this.openMenu}
+              dragging={dragging}
+              asel={asel?.window === 'plans' ? asel : null}
+              cleanup={() => this.plan_queue = []}
+              plan_queue={plan_queue}
+              amendEntry={this.amendEntry}
+              aircraftSelect={this.aircraftSelect}
+              // z_index={open_windows.indexOf('dep')}
+              closeWindow={() => this.closeWindow('plans')}
+            />}
+            {open_windows.includes('status') && <Status
+              ref={this.statusRef}
+              dragging={dragging}
+              startDrag={this.startDrag}
+              pos={pos['edst-status']}
+              // z_index={open_windows.indexOf('status')}
+              closeWindow={() => this.closeWindow('status')}
+            />}
+            {open_windows.includes('outage') && <Outage
+              ref={this.outageRef}
+              dragging={dragging}
+              startDrag={this.startDrag}
+              pos={pos['edst-outage']}
+              // z_index={open_windows.indexOf('status')}
+              closeWindow={() => this.closeWindow('outage')}
+            />}
+            {menu?.name === 'plan-menu' && <PlanOptions
+              ref={this.planOptionsRef}
+              deleteEntry={this.deleteEntry}
+              openMenu={this.openMenu}
+              dragging={dragging}
+              asel={asel}
+              data={edst_data[asel?.cid]}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              pos={pos['plan-menu']}
+              // z_index={open_windows.indexOf('route-menu')}
+              clearAsel={() => this.asel = null}
+              closeWindow={() => this.closeMenu('plan-menu')}
+            />}
+            {menu?.name === 'sort-menu' && <SortMenu
+              ref_id={menu?.ref_id}
+              sort_data={sort_data}
+              dragging={dragging}
+              setSorting={this.setSorting}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              pos={pos['sort-menu']}
+              // z_index={open_windows.indexOf('route-menu')}
+              closeWindow={() => this.closeMenu('sort-menu')}
+            />}
+            {menu?.name === 'route-menu' && <RouteMenu
+              openMenu={this.openMenu}
+              trialPlan={this.trialPlan}
+              dragging={dragging}
+              asel={asel}
+              entry={edst_data[asel?.cid]}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              pos={pos['route-menu']}
+              closeWindow={() => this.closeMenu('route-menu')}
+            />}
+            {menu?.name === 'hold-menu' && <HoldMenu
+              ref={this.holdMenuRef}
+              dragging={dragging}
+              asel={asel}
+              entry={edst_data[asel?.cid]}
+              updateEntry={this.updateEntry}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              pos={pos['hold-menu']}
+              closeWindow={() => this.closeMenu('hold-menu')}
+            />}
+            {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
+              ref={this.cancelHoldMenuRef}
+              dragging={dragging}
+              asel={asel}
+              data={edst_data[asel?.cid]}
+              updateEntry={this.updateEntry}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              pos={pos['cancel-hold-menu']}
+              closeWindow={() => this.closeMenu('cancel-hold-menu')}
+            />}
+            {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
+              ref={this.prevRouteMenuRef}
+              dragging={dragging}
+              data={edst_data[asel?.cid]}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              pos={pos['prev-route-menu']}
+              closeWindow={() => this.closeMenu('prev-route-menu')}
+            />}
+            {menu?.name === 'alt-menu' && <AltMenu
+              pos={pos['alt-menu']}
+              asel={asel}
+              trialPlan={this.trialPlan}
+              data={edst_data[asel?.cid]}
+              amendEntry={this.amendEntry}
+              closeWindow={() => this.closeMenu('alt-menu')}
+            />}
+            {menu?.name === 'speed-menu' && <SpeedMenu
+              ref={this.speedMenuRef}
+              pos={pos['speed-menu']}
+              asel={asel}
+              data={edst_data[asel?.cid]}
+              updateEntry={this.updateEntry}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              closeWindow={() => this.closeMenu('speed-menu')}
+            />}
+            {menu?.name === 'heading-menu' && <HeadingMenu
+              ref={this.headingMenuRef}
+              pos={pos['heading-menu']}
+              asel={asel}
+              data={edst_data[asel?.cid]}
+              updateEntry={this.updateEntry}
+              amendEntry={this.amendEntry}
+              startDrag={this.startDrag}
+              stopDrag={this.stopDrag}
+              closeWindow={() => this.closeMenu('heading-menu')}
+            />}
+          </EdstContext.Provider>
         </div>
       </div>
     );

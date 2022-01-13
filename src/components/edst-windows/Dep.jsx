@@ -16,7 +16,7 @@ export default function Dep(props) {
   >
     <DepHeader
       addEntry={props.addEntry}
-      sorting={props.sorting}
+      sort_data={props.sort_data}
       openMenu={props.openMenu}
       asel={props.asel}
       focused={focused} posting_manual={posting_manual}
@@ -25,14 +25,6 @@ export default function Dep(props) {
     />
     <DepTable
       posting_manual={posting_manual}
-      sorting={props.sorting}
-      cid_list={props.cid_list}
-      edst_data={props.edst_data}
-      asel={props.asel}
-      updateEntry={props.updateEntry}
-      amendEntry={props.amendEntry}
-      aircraftSelect={props.aircraftSelect}
-      deleteEntry={props.deleteEntry}
     />
   </div>);
 }
