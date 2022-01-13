@@ -5,7 +5,7 @@ import WindowTitleBar from "../WindowTitleBar";
 
 export default function AclHeader(props) {
   const [search_str, setSearchString] = React.useState('');
-  const {focused, posting_manual, asel, sorting} = props;
+  const {focused, posting_manual, asel, sort_data} = props;
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       props.addEntry(search_str);
@@ -17,7 +17,7 @@ export default function AclHeader(props) {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Aircraft List', `${sorting.sector ? 'Sector/' : ''}${sorting.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+      text={['Aircraft List', `${sort_data.sector ? 'Sector/' : ''}${sort_data.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
       <div className="outer-button" disabled={asel === null}

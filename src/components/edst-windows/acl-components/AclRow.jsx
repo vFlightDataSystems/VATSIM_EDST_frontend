@@ -121,11 +121,11 @@ export default class AclRow extends React.Component {
 
   render() {
     const {scratchpad, route, pending_aar, aar_avail, on_aar} = this.state;
-    const {entry: e, hidden, alt_mouse_down} = this.props;
+    const {entry: e, hidden, alt_mouse_down, bottom_border} = this.props;
     const hold_data = e?.hold_data;
     const now = performance.now();
 
-    return (<div className="body-row-container" key={`acl-row-${e.cid}`}>
+    return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={`acl-row-${e.cid}`}>
       <div className={`body-row ${(now - (e.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
         <div className={`body-col body-col-1 radio ${e.acl_status === 1 ? 'green' : ''}`}
              onMouseDown={() => this.props.updateStatus(e.cid)}>
@@ -209,7 +209,8 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
           <div className={`body-col route hover ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', e.cid, 'route')}
           >
-            {e.show_hold_info && hold_data && `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${this.formatEfc(hold_data.efc)}`}
+            {e.show_hold_info && hold_data &&
+            `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${this.formatEfc(hold_data.efc)}`}
             {!e.show_hold_info && <div>
               <span className={`${aar_avail && !on_aar ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>
               ./{e.reference_fix ?

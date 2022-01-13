@@ -4,7 +4,7 @@ import WindowTitleBar from "../WindowTitleBar";
 
 export default function DepHeader(props) {
   const [search_str, setSearchString] = useState('');
-  const {focused, posting_manual, asel, sorting} = props;
+  const {focused, posting_manual, asel, sort_data} = props;
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       props.addEntry(search_str);
@@ -16,7 +16,7 @@ export default function DepHeader(props) {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Departure List', `${sorting.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+      text={['Departure List', `${sort_data.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
     />
     <div>
       <div className="outer-button" disabled={asel === null}>
