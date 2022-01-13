@@ -60,7 +60,7 @@ export function getRemainingRouteData(route, route_data, pos) {
     const line_distance = pointToLineDistance(pos_point, line, {units: 'nauticalmiles'});
     const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
     for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name) + 1).reverse()) {
-      let index = route.indexOf(name);
+      let index = route.lastIndexOf(name);
       if (index > -1) {
         route = route.slice(index + name.length);
         if (!Number(route[0])) {
