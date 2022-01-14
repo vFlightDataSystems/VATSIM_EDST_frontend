@@ -4,7 +4,7 @@ import '../../css/windows/acl-styles.scss';
 import AclHeader from "./acl-components/AclHeader";
 import AclTable from "./acl-components/AclTable";
 
-export default function Acl(props) {
+export function Acl(props) {
   const [focused, setFocused] = useState(false);
   const [posting_manual, setPostingManual] = useState(true);
   const unmount = () => props.unmount();

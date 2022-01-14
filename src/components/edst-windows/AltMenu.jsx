@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import _ from 'lodash';
 import '../../css/header-styles.scss';
 import '../../css/windows/alt-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 
-export default function AltMenu(props) {
+export function AltMenu(props) {
   const {
     edst_data,
     asel,
     trialPlan,
     amendEntry
-  } = React.useContext(EdstContext);
+  } = useContext(EdstContext);
   const {pos} = props;
   const [dep, setDep] = useState(asel.window === 'dep');
   const [selected, setSelected] = useState(asel.window !== 'dep' ? 'trial' : 'amend');

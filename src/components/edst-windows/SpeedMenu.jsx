@@ -1,22 +1,23 @@
-import React, {forwardRef, useState, useEffect} from 'react';
+import {useState, useEffect, useRef, useContext} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
 import {EdstContext} from "../../contexts/contexts";
 
-export const SpeedMenu = forwardRef((props, ref) => {
+export function SpeedMenu(props) {
   const {
     edst_data,
     asel,
     updateEntry
-  } = React.useContext(EdstContext);
+  } = useContext(EdstContext);
   const {pos} = props;
   const [focused, setFocused] = useState(false);
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState('');
   const [amend, setAmend] = useState(true);
+  const ref = useRef(null);
   useEffect(() => {
     setFocused(false);
     setSpeed(280);
@@ -155,4 +156,4 @@ export const SpeedMenu = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

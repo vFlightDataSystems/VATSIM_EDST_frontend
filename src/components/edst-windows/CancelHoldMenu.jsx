@@ -1,9 +1,10 @@
-import {forwardRef, useState,} from 'react';
+import {useRef, useState,} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 
-export const CancelHoldMenu = forwardRef((props, ref) => {
+export function CancelHoldMenu(props) {
   const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
   const {pos, data} = props;
 
   return (<div
@@ -43,4 +44,4 @@ export const CancelHoldMenu = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

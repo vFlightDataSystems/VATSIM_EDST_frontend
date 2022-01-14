@@ -1,9 +1,10 @@
-import {forwardRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 
-export const PlanOptions = forwardRef((props, ref) => {
+export function PlanOptions(props) {
   const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
   const {pos, data, asel} = props;
   const dep = asel?.window === 'dep';
 
@@ -92,4 +93,4 @@ export const PlanOptions = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}
