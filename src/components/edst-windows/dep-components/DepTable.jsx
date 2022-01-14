@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
-import DepRow from "./DepRow";
+import {DepRow} from "./DepRow";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 
 const COMPLETED_SYMBOL = '✓';
@@ -10,13 +10,10 @@ export default function DepTable(props) {
   const [hidden, setHidden] = useState([]);
   const {
     edst_data,
-    updateEntry,
-    amendEntry,
-    deleteEntry,
-    aircraftSelect
+    updateEntry
   } = React.useContext(EdstContext);
-  const {cid_list, sort_data, asel} = React.useContext(DepContext);
-  useEffect(() => {}, [edst_data])
+  const {cid_list, sort_data} = React.useContext(DepContext);
+  useEffect(() => {}, [edst_data]);
 
   const toggleHideColumn = (name) => {
     const index = hidden.indexOf(name);
@@ -26,10 +23,6 @@ export default function DepTable(props) {
       hidden.push(name);
     }
     setHidden(hidden);
-  }
-
-  const isSelected = (cid, field) => {
-    return asel?.cid === cid && asel?.field === field;
   }
 
   const updateStatus = (cid) => {
@@ -95,42 +88,27 @@ export default function DepTable(props) {
       <div className="scroll-container">
         {Object.entries(data.filter(e => (typeof(e.spa) === 'number'))?.sort((u,v) => u.spa - v.spa))?.map(([i, e]) =>
           <DepRow
-            bottom_border={i % 3 === 2}
             key={`dep-row-spa-${e.cid}`}
             entry={e}
-            isSelected={isSelected}
-            aircraftSelect={aircraftSelect}
-            updateEntry={updateEntry}
-            amendEntry={amendEntry}
-            deleteEntry={deleteEntry}
+            bottom_border={i % 3 === 2}
             updateStatus={updateStatus}
             hidden={hidden}
           />)}
         <div className="body-row separator"/>
         {Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !posting_manual)))?.sort(sortFunc))?.map(([i, e]) =>
           <DepRow
-            bottom_border={i % 3 === 2}
             key={`dep-row-ack-${e.cid}`}
             entry={e}
-            isSelected={isSelected}
-            aircraftSelect={aircraftSelect}
-            updateEntry={updateEntry}
-            amendEntry={amendEntry}
-            deleteEntry={deleteEntry}
+            bottom_border={i % 3 === 2}
             updateStatus={updateStatus}
             hidden={hidden}
           />)}
         {posting_manual && <div className="body-row separator"/>}
         {posting_manual && Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1)))?.map(([i ,e]) =>
           <DepRow
-            bottom_border={i % 3 === 2}
             key={`dep-row-no-ack-${e.cid}`}
             entry={e}
-            isSelected={isSelected}
-            aircraftSelect={aircraftSelect}
-            updateEntry={updateEntry}
-            amendEntry={amendEntry}
-            deleteEntry={deleteEntry}
+            bottom_border={i % 3 === 2}
             updateStatus={updateStatus}
             hidden={hidden}
           />)}

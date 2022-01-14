@@ -3,7 +3,7 @@ import '../../css/windows/dep-styles.scss';
 import DepHeader from "./dep-components/DepHeader";
 import DepTable from "./dep-components/DepTable";
 
-export default function Dep(props) {
+export function Dep(props) {
   const [focused, setFocused] = useState(false);
   const [posting_manual, setPostingManual] = useState(true);
 

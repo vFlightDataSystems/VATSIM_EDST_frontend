@@ -1,9 +1,9 @@
-import React, {forwardRef, useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {length, lineString} from '@turf/turf';
 
-export const HoldMenu = forwardRef((props, ref) => {
+export function HoldMenu(props) {
   const [hold_fix, setHoldFix] = useState(null);
   const [leg_length, setLegLength] = useState(null);
   const [hold_direction, setHoldDirection] = useState(null);
@@ -11,6 +11,7 @@ export const HoldMenu = forwardRef((props, ref) => {
   const [efc, setEfc] = useState('');
   const [route_data, setRouteData] = useState(null);
   const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
 
   const computeCrossingTimes = (route_data) => {
     const now = new Date();
@@ -308,4 +309,4 @@ export const HoldMenu = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

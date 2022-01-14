@@ -1,13 +1,13 @@
-import {forwardRef, useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 
-export const PreviousRouteMenu = forwardRef((props, ref) => {
+export function PreviousRouteMenu(props) {
   const [focused, setFocused] = useState(false);
   useEffect(() => {
     setFocused(false);
   }, [props.data]);
-
+  const ref = useRef(null);
   const {pos, data} = props;
 
   return (<div
@@ -56,4 +56,4 @@ export const PreviousRouteMenu = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

@@ -443,6 +443,9 @@ $route-menu-alert-cyan: #00ADAD;
     }
 
     &.prefroute-col {
+      align-items: center;
+      vertical-align: center;
+      height: 16px;
       margin-right: 0;
     }
 
@@ -452,8 +455,6 @@ $route-menu-alert-cyan: #00ADAD;
         margin-left: auto;
       }
     }
-
-
 
     .input {
       align-items: center;

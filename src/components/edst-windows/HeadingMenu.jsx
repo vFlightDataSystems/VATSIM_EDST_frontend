@@ -1,10 +1,10 @@
-import {useState, useEffect, forwardRef} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
 
-export const HeadingMenu = forwardRef((props, ref) => {
+export function HeadingMenu(props) {
   const [focused, setFocused] = useState(false);
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
@@ -15,7 +15,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
     setDeltaY(0);
     setAmend(true);
   }, [props.entry]);
-
+  const ref = useRef(null);
   const {pos, entry} = props;
 
   return (<div
@@ -144,4 +144,4 @@ export const HeadingMenu = forwardRef((props, ref) => {
       </div>
     </div>
   </div>);
-})
+}

@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
-import AclRow from "./AclRow";
+import {AclRow} from "./AclRow";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 
 export default function AclTable(props) {
@@ -11,13 +11,10 @@ export default function AclTable(props) {
   const {
     edst_data,
     updateEntry,
-    amendEntry,
-    deleteEntry,
-    aircraftSelect
-  } = React.useContext(EdstContext);
-  const {cid_list, sort_data, asel} = React.useContext(AclContext);
+  } = useContext(EdstContext);
+  const {cid_list, sort_data} = useContext(AclContext);
+  useEffect(() => {}, [edst_data]);
 
-  
   const checkHolding = () => {
     for (let cid of cid_list) {
       if (edst_data[cid]?.hold_data) {
@@ -47,10 +44,6 @@ export default function AclTable(props) {
     } else {
       setHidden(['hdg', 'spd']);
     }
-  }
-
-  const isSelected = (cid, field) => {
-    return asel?.cid === cid && asel?.field === field;
   }
 
   const updateStatus = (cid) => {
@@ -148,50 +141,35 @@ export default function AclTable(props) {
       <div className="scroll-container">
         {Object.entries(data.filter(e => (typeof (e.spa) === 'number'))?.sort((u,v) => u.spa - v.spa))?.map(([i, e]) =>
           <AclRow
-            bottom_border={i % 3 === 2}
             key={`acl-table-row-spa-${e.cid}`}
             entry={e}
+            bottom_border={i % 3 === 2}
             any_holding={any_holding}
-            isSelected={isSelected}
-            updateStatus={updateStatus}
-            updateEntry={updateEntry}
-            amendEntry={amendEntry}
-            aircraftSelect={aircraftSelect}
-            deleteEntry={deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
+            updateStatus={updateStatus}
           />)}
         <div className="body-row separator"/>
         {Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !posting_manual)))?.sort(sortFunc))?.map(([i, e]) =>
           <AclRow
-            bottom_border={i % 3 === 2}
             key={`acl-table-row-ack-${e.cid}`}
             entry={e}
+            bottom_border={i % 3 === 2}
             any_holding={any_holding}
-            isSelected={isSelected}
-            updateStatus={updateStatus}
-            updateEntry={updateEntry}
-            amendEntry={amendEntry}
-            aircraftSelect={aircraftSelect}
-            deleteEntry={deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
+            updateStatus={updateStatus}
           />)}
         {posting_manual && <div className="body-row separator"/>}
         {posting_manual && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
           <AclRow
-            bottom_border={i % 3 === 2}
             key={`acl-table-row-no-ack-${e.cid}`}
             entry={e}
+            bottom_border={i % 3 === 2}
             any_holding={any_holding}
-            isSelected={isSelected}
-            updateStatus={updateStatus}
-            updateEntry={updateEntry}
-            amendEntry={amendEntry}
-            aircraftSelect={aircraftSelect}
-            deleteEntry={deleteEntry}
             hidden={hidden}
             alt_mouse_down={alt_mouse_down}
+            updateStatus={updateStatus}
           />)}
       </div>
     </div>);

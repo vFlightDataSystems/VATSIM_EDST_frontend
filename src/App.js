@@ -5,15 +5,15 @@ import {distance, point, polygon} from '@turf/turf';
 import {getAarData, getBoundaryData, getEdstData, getReferenceFixes, updateEdstEntry} from "./api";
 import './css/styles.scss';
 import './css/header-styles.scss';
-import EdstHeader from "./components/EdstHeader";
-import Acl from "./components/edst-windows/Acl";
-import Dep from "./components/edst-windows/Dep";
+import {EdstHeader} from "./components/EdstHeader";
+import {Acl} from "./components/edst-windows/Acl";
+import {Dep} from "./components/edst-windows/Dep";
 import {Status} from "./components/edst-windows/Status";
-import RouteMenu from "./components/edst-windows/RouteMenu";
+import {RouteMenu} from "./components/edst-windows/RouteMenu";
 import {Outage} from "./components/edst-windows/Outage";
-import AltMenu from "./components/edst-windows/AltMenu";
+import {AltMenu} from "./components/edst-windows/AltMenu";
 import {PlanOptions} from "./components/edst-windows/PlanOptions";
-import SortMenu from "./components/edst-windows/SortMenu";
+import {SortMenu} from "./components/edst-windows/SortMenu";
 import PlansDisplay from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
@@ -29,14 +29,16 @@ import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
 import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
 import {AclContext, DepContext, EdstContext} from "./contexts/contexts";
+import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
-  'edst-outage': {x: 400, y: 100}
+  'edst-outage': {x: 400, y: 100},
+  'edst-mca': {x: 100, y: 800}
 };
 
-const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage'];
-const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'mca', 'ra', 'fel'];
+const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca'];
+const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'ra', 'fel'];
 
 export default class App extends React.Component {
 
@@ -68,15 +70,7 @@ export default class App extends React.Component {
     this.state = {
       sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}}
     };
-    this.globalRef = React.createRef();
-    this.planOptionsRef = React.createRef();
-    this.holdMenuRef = React.createRef();
-    this.cancelHoldMenuRef = React.createRef();
-    this.outageRef = React.createRef();
-    this.statusRef = React.createRef();
-    this.prevRouteMenuRef = React.createRef();
-    this.headingMenuRef = React.createRef();
-    this.speedMenuRef = React.createRef();
+    this.outlineRef = React.createRef();
   }
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -84,7 +78,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    this.artcc_id = 'zbw'; //prompt('Choose an ARTCC')?.toLowerCase();
+    this.artcc_id = 'zbw'; // prompt('Choose an ARTCC')?.toLowerCase();
     this.sector_id = '37';
     await getBoundaryData(this.artcc_id)
       .then(response => response.json())
@@ -573,7 +567,7 @@ export default class App extends React.Component {
     this.rel = rel;
     this.dragPreviewStyle = style;
     this.dragging_cursor_hide = DRAGGING_HIDE_CURSOR.includes(ref.current.id);
-    this.globalRef.current.addEventListener('mousemove', this.draggingHandler);
+    this.outlineRef.current.addEventListener('mousemove', this.draggingHandler);
     this.forceUpdate();
   }
 
@@ -676,7 +670,7 @@ export default class App extends React.Component {
                     gi_num={gi.length}
         />
         <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
-             ref={this.globalRef}
+             ref={this.outlineRef}
              onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
         >
           <div className="edst-dragging-outline" style={dragPreviewStyle || {display: 'none'}}
@@ -699,7 +693,9 @@ export default class App extends React.Component {
             trialPlan: this.trialPlan,
             aircraftSelect: this.aircraftSelect,
             openWindow: this.openWindow,
-            closeWindow: this.closeWindow
+            closeWindow: this.closeWindow,
+            startDrag: this.startDrag,
+            stopDrag: this.stopDrag
           }}>
             <AclContext.Provider value={{
               cid_list: acl_data.cid_list,
@@ -752,7 +748,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeWindow('plans')}
             />}
             {open_windows.includes('status') && <Status
-              ref={this.statusRef}
               dragging={dragging}
               startDrag={this.startDrag}
               pos={pos['edst-status']}
@@ -760,7 +755,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeWindow('status')}
             />}
             {open_windows.includes('outage') && <Outage
-              ref={this.outageRef}
               dragging={dragging}
               startDrag={this.startDrag}
               pos={pos['edst-outage']}
@@ -768,7 +762,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeWindow('outage')}
             />}
             {menu?.name === 'plan-menu' && <PlanOptions
-              ref={this.planOptionsRef}
               deleteEntry={this.deleteEntry}
               openMenu={this.openMenu}
               dragging={dragging}
@@ -794,19 +787,10 @@ export default class App extends React.Component {
               closeWindow={() => this.closeMenu('sort-menu')}
             />}
             {menu?.name === 'route-menu' && <RouteMenu
-              openMenu={this.openMenu}
-              trialPlan={this.trialPlan}
-              dragging={dragging}
-              asel={asel}
-              entry={edst_data[asel?.cid]}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
               pos={pos['route-menu']}
               closeWindow={() => this.closeMenu('route-menu')}
             />}
             {menu?.name === 'hold-menu' && <HoldMenu
-              ref={this.holdMenuRef}
               dragging={dragging}
               asel={asel}
               entry={edst_data[asel?.cid]}
@@ -818,7 +802,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeMenu('hold-menu')}
             />}
             {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
-              ref={this.cancelHoldMenuRef}
               dragging={dragging}
               asel={asel}
               data={edst_data[asel?.cid]}
@@ -830,7 +813,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeMenu('cancel-hold-menu')}
             />}
             {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
-              ref={this.prevRouteMenuRef}
               dragging={dragging}
               data={edst_data[asel?.cid]}
               amendEntry={this.amendEntry}
@@ -844,7 +826,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeMenu('alt-menu')}
             />}
             {menu?.name === 'speed-menu' && <SpeedMenu
-              ref={this.speedMenuRef}
               pos={pos['speed-menu']}
               asel={asel}
               entry={edst_data[asel?.cid]}
@@ -855,7 +836,6 @@ export default class App extends React.Component {
               closeWindow={() => this.closeMenu('speed-menu')}
             />}
             {menu?.name === 'heading-menu' && <HeadingMenu
-              ref={this.headingMenuRef}
               pos={pos['heading-menu']}
               asel={asel}
               entry={edst_data[asel?.cid]}
@@ -864,6 +844,10 @@ export default class App extends React.Component {
               startDrag={this.startDrag}
               stopDrag={this.stopDrag}
               closeWindow={() => this.closeMenu('heading-menu')}
+            />}
+            {open_windows.includes('mca') && <MessageComposeArea
+              pos={pos['edst-mca']}
+              startDrag={this.startDrag}
             />}
           </EdstContext.Provider>
         </div>
