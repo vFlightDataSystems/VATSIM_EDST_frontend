@@ -710,12 +710,6 @@ export default class App extends React.Component {
                 openMenu={this.openMenu}
                 dragging={dragging}
                 asel={asel?.window === 'acl' ? asel : null}
-                cid_list={acl_data.cid_list}
-                edst_data={edst_data}
-                updateEntry={this.updateEntry}
-                amendEntry={this.amendEntry}
-                aircraftSelect={this.aircraftSelect}
-                deleteEntry={this.deleteEntry}
                 // z_index={open_windows.indexOf('acl')}
                 closeWindow={() => this.closeWindow('acl')}
               />}
@@ -794,10 +788,6 @@ export default class App extends React.Component {
               dragging={dragging}
               asel={asel}
               entry={edst_data[asel?.cid]}
-              updateEntry={this.updateEntry}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
               pos={pos['hold-menu']}
               closeWindow={() => this.closeMenu('hold-menu')}
             />}
@@ -805,19 +795,12 @@ export default class App extends React.Component {
               dragging={dragging}
               asel={asel}
               data={edst_data[asel?.cid]}
-              updateEntry={this.updateEntry}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
               pos={pos['cancel-hold-menu']}
               closeWindow={() => this.closeMenu('cancel-hold-menu')}
             />}
             {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
               dragging={dragging}
               data={edst_data[asel?.cid]}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
               pos={pos['prev-route-menu']}
               closeWindow={() => this.closeMenu('prev-route-menu')}
             />}
@@ -829,10 +812,6 @@ export default class App extends React.Component {
               pos={pos['speed-menu']}
               asel={asel}
               entry={edst_data[asel?.cid]}
-              updateEntry={this.updateEntry}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
               closeWindow={() => this.closeMenu('speed-menu')}
             />}
             {menu?.name === 'heading-menu' && <HeadingMenu

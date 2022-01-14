@@ -1,8 +1,15 @@
-import {useRef, useState,} from 'react';
+import {useContext, useRef, useState,} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import {EdstContext} from "../../contexts/contexts";
 
 export function CancelHoldMenu(props) {
+  const {
+    startDrag,
+    stopDrag,
+    amendEntry,
+    updateEntry
+  } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
   const {pos, data} = props;
@@ -16,8 +23,8 @@ export function CancelHoldMenu(props) {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => props.startDrag(event, ref)}
-           onMouseUp={(event) => props.stopDrag(event)}
+           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseUp={(event) => stopDrag(event)}
       >
         Cancel Hold Confirmation
       </div>
@@ -28,8 +35,8 @@ export function CancelHoldMenu(props) {
         <div className="options-row">
           <div className="options-col left">
             <button onMouseDown={() => {
-              props.amendEntry(data.cid, {hold_data: null});
-              props.updateEntry(data.cid, {show_hold_info: false});
+              amendEntry(data.cid, {hold_data: null});
+              updateEntry(data.cid, {show_hold_info: false});
               props.closeWindow();
             }}>
               Cancel Hold
