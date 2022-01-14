@@ -445,8 +445,12 @@ $route-menu-alert-cyan: #00ADAD;
     &.prefroute-col {
       align-items: center;
       vertical-align: center;
-      height: 16px;
+      //height: 16px;
       margin-right: 0;
+
+      &.small {
+        height: 16px;
+      }
     }
 
     &.right {
@@ -496,17 +500,25 @@ $route-menu-alert-cyan: #00ADAD;
         height: 17px;
         width: 55px;
 
+        input {
+          width: 100%;
+
+          &:hover {
+            border: 1px solid transparent;
+          }
+        }
+
         &:hover {
           outline: 1px solid $options-menu-hover-white;
         }
       }
 
-      > input {
+      input {
         cursor: default;
         font-size: 16px;
         outline: none;
-        margin: 0 5px;
         width: calc(100% - 115px);
+        margin: 0 5px;
         color: $edst-font-grey;
         background-color: #000000;
         border: 1px solid transparent;

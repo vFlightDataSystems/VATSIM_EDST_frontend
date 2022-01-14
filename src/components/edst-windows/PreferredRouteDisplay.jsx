@@ -41,7 +41,7 @@ export default function PreferredRouteDisplay(props) {
         {Object.entries(routes.slice(deltaY, deltaY + 5) || {}).map(([i, r]) => {
           return (!eligible_only || r.eligible) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
-              <div className="options-col prefroute-col hover"
+              <div className="options-col prefroute-col small hover"
                    onMouseDown={() => props.clearedReroute(r)}
               >
                 {r.route || r.aar_amendment_route_string}{r.dest}

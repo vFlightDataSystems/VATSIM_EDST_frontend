@@ -9,6 +9,8 @@ export function SpeedMenu(props) {
   const {
     edst_data,
     asel,
+    startDrag,
+    stopDrag,
     updateEntry
   } = useContext(EdstContext);
   const {pos} = props;
@@ -41,8 +43,8 @@ export function SpeedMenu(props) {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => props.startDrag(event, ref)}
-           onMouseUp={(event) => props.stopDrag(event)}
+           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseUp={(event) => stopDrag(event)}
       >
         Speed Information
       </div>

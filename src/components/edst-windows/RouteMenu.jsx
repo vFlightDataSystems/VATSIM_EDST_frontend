@@ -1,4 +1,4 @@
-import {useContext, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import PreferredRouteDisplay from "./PreferredRouteDisplay";
@@ -28,6 +28,10 @@ export function RouteMenu(props) {
 
   const ref = useRef(null);
   const {pos} = props;
+
+  useEffect(() => {
+    setRoute(entry._route.replace(/^\.*/, ''));
+  }, [entry])
 
   const clearedReroute = (reroute_data) => {
     let plan_data;
@@ -125,7 +129,9 @@ export function RouteMenu(props) {
                 <span className="ppos" disabled={true}>
                   {entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000'}..
                 </span>
-              <input value={route} onChange={(e) => setRoute(e.target.value)}/>
+              <span className="route-after-ppos">
+                <input value={route} onChange={(e) => setRoute(e.target.value)}/>
+              </span>
             </div>
           </div>
         </div>
