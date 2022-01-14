@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import DepRow from "./DepRow";
@@ -16,6 +16,7 @@ export default function DepTable(props) {
     aircraftSelect
   } = React.useContext(EdstContext);
   const {cid_list, sort_data, asel} = React.useContext(DepContext);
+  useEffect(() => {}, [edst_data])
 
   const toggleHideColumn = (name) => {
     const index = hidden.indexOf(name);

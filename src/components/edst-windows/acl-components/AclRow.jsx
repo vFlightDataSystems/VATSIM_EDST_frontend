@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
-import {REMOVAL_TIMEOUT} from "../../../lib";
+import {computeFrd, REMOVAL_TIMEOUT} from "../../../lib";
 
 const SPA_INDICATOR = '^';
 const ON_FREQ_SYMBOL = 'N';
@@ -125,7 +125,8 @@ export default class AclRow extends React.Component {
     const hold_data = e?.hold_data;
     const now = performance.now();
 
-    return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={`acl-row-${e.cid}`}>
+    return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={`acl-row-${e.cid}`}
+                 onContextMenu={(event) => event.preventDefault()}>
       <div className={`body-row ${(now - (e.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
         <div className={`body-col body-col-1 radio ${e.acl_status === 1 ? 'green' : ''}`}
              onMouseDown={() => this.props.updateStatus(e.cid)}>
@@ -141,7 +142,6 @@ export default class AclRow extends React.Component {
         >
           <div className={`body-col fid hover ${this.props.isSelected(e.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={this.#handleFidClick}
-               onContextMenu={(event) => event.preventDefault()}
           >
             {e.cid} {e.callsign}
           </div>
@@ -178,7 +178,13 @@ export default class AclRow extends React.Component {
           </div>
           <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}
               ${this.props.isSelected(e.cid, 'hdg') ? 'selected' : ''} ${e?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', e.cid, 'hdg')}
+               onMouseDown={(event) => {
+                 if (event.button === 0) {
+                   this.props.aircraftSelect(event, 'acl', e.cid, 'hdg');
+                 }
+                 else if (event.button === 2) {
+                   this.props.updateEntry(e.cid, {scratch_hdg: null});
+                 }}}
           >
             {e?.scratch_hdg?.val}
           </div>
@@ -187,7 +193,13 @@ export default class AclRow extends React.Component {
           </div>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
 ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
-               onMouseDown={(event) => this.props.aircraftSelect(event, 'acl', e.cid, 'spd')}
+               onMouseDown={(event) => {
+                 if (event.button === 0) {
+                   this.props.aircraftSelect(event, 'acl', e.cid, 'spd');
+                 }
+                 else if (event.button === 2) {
+                   this.props.updateEntry(e.cid, {scratch_spd: null});
+                 }}}
           >
             {e?.scratch_spd?.val}
           </div>
@@ -213,8 +225,7 @@ ${this.props.isSelected(e.cid, 'spd') ? 'selected' : ''} ${e?.scratch_spd?.scrat
             `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${this.formatEfc(hold_data.efc)}`}
             {!e.show_hold_info && <div>
               <span className={`${aar_avail && !on_aar ? 'amendment' : ''} ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>{e.dep}</span>
-              ./{e.reference_fix ?
-              `.${e.reference_fix.waypoint_id}${Math.round(e.reference_fix.bearing).toString().padStart(3, '0')}${Math.round(e.reference_fix.distance).toString().padStart(3, '0')}..` : ''}
+              ./.{e.reference_fix ? computeFrd(e.reference_fix) + '..' : '.'}
               {route?.replace(/^\.*/, '')}
               {pending_aar && !on_aar && <span className={`amendment ${this.props.isSelected(e.cid, 'route') ? 'selected' : ''}`}>
               [{pending_aar}]

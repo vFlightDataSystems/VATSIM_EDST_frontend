@@ -453,11 +453,7 @@ $route-menu-alert-cyan: #00ADAD;
       }
     }
 
-    .ppos {
-      border: none;
-      margin: 0 20px 0 3px;
-      font-size: 18px;
-    }
+
 
     .input {
       align-items: center;
@@ -469,6 +465,12 @@ $route-menu-alert-cyan: #00ADAD;
       border-bottom: 2px solid $options-menu-background-medium-grey;
       border-right: 2px solid $options-menu-background-medium-grey;
 
+      .ppos {
+        border: 2px solid transparent;
+        padding: 0 2px;
+        width: 120px;
+        font-size: 16px;
+      }
 
       &.route-input {
         justify-content: center;
@@ -503,14 +505,14 @@ $route-menu-alert-cyan: #00ADAD;
         font-size: 16px;
         outline: none;
         margin: 0 5px;
-        width: 100%;
+        width: calc(100% - 115px);
         color: $edst-font-grey;
         background-color: #000000;
         border: 1px solid transparent;
 
-        //&:hover {
-        //  border: 1px solid $options-menu-hover-white;
-        //}
+        &:hover {
+          border: 1px solid $options-menu-hover-white;
+        }
       }
     }
   }
