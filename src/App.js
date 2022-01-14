@@ -84,7 +84,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    this.artcc_id = 'zbw' //prompt('Choose an ARTCC')?.toLowerCase();
+    this.artcc_id = 'zbw'; //prompt('Choose an ARTCC')?.toLowerCase();
     this.sector_id = '37';
     await getBoundaryData(this.artcc_id)
       .then(response => response.json())
@@ -215,7 +215,7 @@ export default class App extends React.Component {
                       dep_data.cid_list.splice(index, 1);
                     }
                   }
-                  if (reference_fixes) {
+                  if (reference_fixes.length > 0) {
                     entry.reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
                   }
                 }
@@ -502,13 +502,13 @@ export default class App extends React.Component {
         break;
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ? {
-          x: x - (plan ? 0 : 570),
+          x: x - (plan ? 0 : 569),
           y: plan ? ref.offsetTop : y - 3 * height,
           w: width,
           h: height
         } : {
           x: x - 1,
-          y: y - height + 3,
+          y: 200,
           w: width,
           h: height
         };
@@ -696,6 +696,7 @@ export default class App extends React.Component {
             updateEntry: this.updateEntry,
             amendEntry: this.amendEntry,
             deleteEntry: this.deleteEntry,
+            trialPlan: this.trialPlan,
             aircraftSelect: this.aircraftSelect,
             openWindow: this.openWindow,
             closeWindow: this.closeWindow
@@ -840,17 +841,13 @@ export default class App extends React.Component {
             />}
             {menu?.name === 'alt-menu' && <AltMenu
               pos={pos['alt-menu']}
-              asel={asel}
-              trialPlan={this.trialPlan}
-              data={edst_data[asel?.cid]}
-              amendEntry={this.amendEntry}
               closeWindow={() => this.closeMenu('alt-menu')}
             />}
             {menu?.name === 'speed-menu' && <SpeedMenu
               ref={this.speedMenuRef}
               pos={pos['speed-menu']}
               asel={asel}
-              data={edst_data[asel?.cid]}
+              entry={edst_data[asel?.cid]}
               updateEntry={this.updateEntry}
               amendEntry={this.amendEntry}
               startDrag={this.startDrag}
@@ -861,7 +858,7 @@ export default class App extends React.Component {
               ref={this.headingMenuRef}
               pos={pos['heading-menu']}
               asel={asel}
-              data={edst_data[asel?.cid]}
+              entry={edst_data[asel?.cid]}
               updateEntry={this.updateEntry}
               amendEntry={this.amendEntry}
               startDrag={this.startDrag}

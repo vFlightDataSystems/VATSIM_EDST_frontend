@@ -45,16 +45,16 @@ $body-hover-white: #F0F0F0;
     display: flex;
     align-items: center;
     min-height: 22px;
-    border: 1px;
+    border-top: 1px solid transparent;
     //flex-grow: 1;
 
     &.highlighted {
-      //outline: 1px solid $body-ac-highlight;
+      border-top: 1px solid $body-ac-highlight;
       background-color: $body-ac-highlight;
     }
 
     .free-text-row {
-      margin-left: 208px;
+      margin-left: 195px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -95,10 +95,11 @@ $body-hover-white: #F0F0F0;
     display: flex;
     align-items: center;
     min-height: 20px;
+    border-bottom: 1px solid transparent;
     //flex-grow: 1;
 
     &.highlighted {
-      //outline: 1px solid $body-ac-highlight;
+      border-bottom: 1px solid $body-ac-highlight;
       background-color: $body-ac-highlight;
     }
   }
@@ -143,20 +144,20 @@ $body-hover-white: #F0F0F0;
   //outline: 1px solid transparent;
 
   &.selected {
-    outline: 1px solid $body-light-grey;
+    //outline: 1px solid $body-light-grey;
     border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
 
   .selected {
-    border: 1px solid $body-light-grey;
+    //border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
 
   &.hover:hover {
-    outline: 1px solid $body-hover-white;
+    border: 1px solid $body-hover-white;
   }
 
   &.plans-display-col-1 {
@@ -201,7 +202,7 @@ $body-hover-white: #F0F0F0;
       }
 
       &:hover {
-        outline: 1px solid $body-hover-white;
+        border: 1px solid $body-hover-white;
 
         &.green {
           outline: 1px solid $body-font-green;
@@ -272,7 +273,7 @@ $body-hover-white: #F0F0F0;
     padding-left: 1px;
 
     &:hover {
-      outline: 1px solid $body-hover-white;
+      border: 1px solid $body-hover-white;
     }
   }
 
@@ -356,6 +357,10 @@ $body-hover-white: #F0F0F0;
       &:active {
         background-color: $body-light-grey;
         color: #000000;
+      }
+
+      &:hover {
+        outline: 1px solid $body-hover-white;
       }
 
     }

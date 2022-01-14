@@ -14,9 +14,9 @@ export const HeadingMenu = forwardRef((props, ref) => {
     setHeading(280);
     setDeltaY(0);
     setAmend(true);
-  }, [props.data]);
+  }, [props.entry]);
 
-  const {pos, data} = props;
+  const {pos, entry} = props;
 
   return (<div
     onMouseEnter={() => setFocused(true)}
@@ -34,7 +34,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
     </div>
     <div className="options-body">
       <div className="options-row fid">
-        {data.callsign} {data.type}/{data.equipment}
+        {entry.callsign} {entry.type}/{entry.equipment}
       </div>
       <div className="options-row speed-row"
         // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
@@ -52,7 +52,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
         >
           <button className={`${!amend ? 'selected' : ''}`}
-                  onMouseDown={() => setAmend(true)}
+                  onMouseDown={() => setAmend(false)}
           >
             Scratchpad
           </button>
@@ -90,7 +90,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
           return <div className="spd-hdg-menu-container-row" key={`heading-menu-${i}`}>
             <div className="spd-hdg-menu-container-col"
                  onMouseDown={() => {
-                   props.updateEntry(data.cid, {
+                   props.updateEntry(entry.cid, {
                      scratch_hdg: {
                        scratchpad: !amend,
                        val: `${amend ? 'H' : ''}${hdg}`
@@ -103,7 +103,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
             </div>
             <div className="spd-hdg-menu-container-col"
                  onMouseDown={() => {
-                   props.updateEntry(data.cid, {
+                   props.updateEntry(entry.cid, {
                      scratch_hdg: {
                        scratchpad: !amend,
                        val: `${amend ? 'H' : ''}${hdg + 5}`
@@ -116,7 +116,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
                  onMouseDown={() => {
-                   props.updateEntry(data.cid, {scratch_hdg: {scratchpad: !amend, val: `${rel_hdg}L`}});
+                   props.updateEntry(entry.cid, {scratch_hdg: {scratchpad: !amend, val: `${rel_hdg}L`}});
                    props.closeWindow();
                  }}
             >
@@ -124,7 +124,7 @@ export const HeadingMenu = forwardRef((props, ref) => {
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
                  onMouseDown={() => {
-                   props.updateEntry(data.cid, {scratch_hdg: {scratchpad: !amend, val: `${rel_hdg}R`}});
+                   props.updateEntry(entry.cid, {scratch_hdg: {scratchpad: !amend, val: `${rel_hdg}R`}});
                    props.closeWindow();
                  }}
             >

@@ -88,3 +88,9 @@ export function getClosestReferenceFix(reference_fixes, pos_point) {
   closest_fix.bearing = (bearing(closest_fix.point, pos_point) + 360) % 360;
   return closest_fix;
 }
+
+
+export function computeFrd(reference_fix) {
+  return reference_fix.waypoint_id + Math.round(reference_fix.bearing).toString().padStart(3, '0')
+    + Math.round(reference_fix.distance).toString().padStart(3, '0')
+}

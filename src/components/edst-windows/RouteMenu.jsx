@@ -2,6 +2,7 @@ import React from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import PreferredRouteDisplay from "./PreferredRouteDisplay";
+import {computeFrd} from "../../lib";
 
 export default class RouteMenu extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ export default class RouteMenu extends React.Component {
     this.state = {
       dep: dep,
       trial_plan: !dep,
-      route: entry._route,
+      route: entry._route.replace(/^\.*/, ''),
       routes: [],
       append_star: false,
       append_oplus: false,
@@ -20,9 +21,9 @@ export default class RouteMenu extends React.Component {
     this.routeMenuRef = React.createRef();
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
-  }
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
+  // }
 
   componentDidMount() {
     const entry = this.props.entry;
@@ -39,7 +40,7 @@ export default class RouteMenu extends React.Component {
       const current_route_fixes = entry._route_data.map(fix => fix.name);
       this.setState({
         dep: dep,
-        route: entry._route,
+        route: entry._route.replace(/^\.*/, ''),
         routes: (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)).concat()),
         trial_plan: !dep && trial_plan,
         append_star: false,
@@ -157,9 +158,9 @@ export default class RouteMenu extends React.Component {
           >
             <div className="options-col">
               <div className="input">
-                {/*<div className="ppos" disabled={true}>*/}
-                {/*  XXX000000..*/}
-                {/*</div>*/}
+                <span className="ppos" disabled={true}>
+                  {entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000'}..
+                </span>
                 <input value={route} onChange={(e) => this.setState({route: e.target.value})}/>
               </div>
             </div>
