@@ -7,7 +7,9 @@ export function Dep(props) {
   const [focused, setFocused] = useState(false);
   const [posting_manual, setPostingManual] = useState(true);
 
-  useEffect(() => props.unmount(), []);
+  useEffect(() => {
+    return () => props.unmount();
+  }, []);
 
   return (<div
     className={`dep ${props.dragging ? 'dragging' : ''}`}

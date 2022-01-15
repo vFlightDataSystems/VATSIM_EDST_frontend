@@ -14,8 +14,7 @@ export default function AclTable(props) {
     updateEntry,
   } = useContext(EdstContext);
   const {cid_list, sort_data} = useContext(AclContext);
-  useEffect(() => {
-  }, [edst_data]);
+  useEffect(() => {}, [edst_data]);
 
   const checkHolding = () => {
     for (let cid of cid_list) {
