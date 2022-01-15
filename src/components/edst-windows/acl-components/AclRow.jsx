@@ -13,7 +13,8 @@ export function AclRow(props) {
     updateEntry,
     amendEntry,
     deleteEntry,
-    asel
+    asel,
+    setInputFocused
   } = useContext(EdstContext);
   const {entry, hidden, alt_mouse_down, bottom_border, any_holding} = props;
   const hold_data = entry.hold_data;
@@ -101,7 +102,7 @@ export function AclRow(props) {
     <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
            onMouseDown={() => props.updateStatus(entry.cid)}>
-        {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/> }
+        {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
       </div>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
@@ -218,7 +219,10 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
            style={{minWidth: Math.max(1200, ref.current?.clientWidth) + 'px'}}
       >
         <div className="free-text-row">
-          <input value={scratchpad}
+          <input
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            value={scratchpad}
                  onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
         </div>
       </div>

@@ -2,6 +2,7 @@ import {useContext, useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
+import VCI from '../../../css/images/VCI.png';
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 
 export default function AclTable(props) {
@@ -86,7 +87,7 @@ export default function AclTable(props) {
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
       <div className="body-col radio-header green">
-        N
+        <img src={VCI} alt="wifi-symbol"/>
       </div>
       <div className="body-col body-col-1 red">
         R
