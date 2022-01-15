@@ -62,11 +62,11 @@ export function DepRow(props) {
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {
-          deleteEntry('acl', entry.cid);
+          deleteEntry('dep', entry.cid);
         }
         break;
       default:
-        aircraftSelect(event, 'acl', entry.cid, 'fid');
+        aircraftSelect(event, 'dep', entry.cid, 'fid');
         break;
 
     }
@@ -76,7 +76,7 @@ export function DepRow(props) {
     return asel?.cid === cid && asel?.field === field;
   }
 
-  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={props.key}
+  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
