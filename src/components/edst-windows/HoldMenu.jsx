@@ -1,21 +1,33 @@
-import React, {forwardRef, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {length, lineString} from '@turf/turf';
+import {EdstContext} from "../../contexts/contexts";
 
-export const HoldMenu = forwardRef((props, ref) => {
+export function HoldMenu(props) {
+  const {
+    startDrag,
+    stopDrag,
+    amendEntry,
+    updateEntry
+  } = useContext(EdstContext);
+  const {pos, entry} = props;
+
+  const now = new Date();
+  const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+
   const [hold_fix, setHoldFix] = useState(null);
   const [leg_length, setLegLength] = useState(null);
   const [hold_direction, setHoldDirection] = useState(null);
   const [turns, setTurns] = useState(null);
-  const [efc, setEfc] = useState('');
+  const [efc, setEfc] = useState(utc_minutes);
   const [route_data, setRouteData] = useState(null);
   const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
 
   const computeCrossingTimes = (route_data) => {
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const {entry} = props;
     const groundspeed = Number(entry?.flightplan?.ground_speed);
     if (route_data && groundspeed > 0) {
       let line_data = [[entry?.flightplan?.lon, entry?.flightplan?.lat]];
@@ -27,10 +39,9 @@ export const HoldMenu = forwardRef((props, ref) => {
     return route_data;
   }
 
-  const formatEfc = (efc) => ("0" + ((efc / 60 | 0) % 24)).slice(-2) + ("0" + (efc % 60 | 0)).slice(-2);
+  const formatEfc = (minutes) => ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
 
   const clearedHold = () => {
-    const {entry} = props;
     const hold_data = {
       hold_fix: hold_fix,
       leg_length: leg_length,
@@ -38,13 +49,12 @@ export const HoldMenu = forwardRef((props, ref) => {
       turns: turns,
       efc: efc
     };
-    props.amendEntry(entry.cid, {hold_data: hold_data});
+    amendEntry(entry.cid, {hold_data: hold_data});
     props.closeWindow();
   }
 
   useEffect(() => {
-    const {entry} = props;
-    const route_data = computeCrossingTimes(props.entry?._route_data);
+    const route_data = computeCrossingTimes(entry?._route_data);
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     setHoldFix(entry?.hold_data?.hold_fix || 'PP');
@@ -53,9 +63,7 @@ export const HoldMenu = forwardRef((props, ref) => {
     setTurns(entry?.hold_data?.turns || 'RT');
     setEfc(entry?.hold_data?.efc || utc_minutes + 30);
     setRouteData(route_data);
-  }, [props.entry]);
-
-  const {pos, entry} = props;
+  }, [props]);
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -66,8 +74,8 @@ export const HoldMenu = forwardRef((props, ref) => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => props.startDrag(event, ref)}
-           onMouseUp={(event) => props.stopDrag(event)}
+           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseUp={(event) => stopDrag(event)}
       >
         Hold Data Menu
       </div>
@@ -94,28 +102,26 @@ export const HoldMenu = forwardRef((props, ref) => {
           </div>
         </div>
         <div className="hold-fix-container">
-          {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
-                                                                                  key={`hold-menu-row-${i}`}>
-            {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
-              const fix_name = route_data[i + j * 10]?.name;
-              const minutes_at_fix = route_data[i + j * 10]?.minutes_at_fix;
-              const efc = minutes_at_fix + 30;
-              return (fix_name &&
-                <div className={`options-col hold-col-1 hover ${(hold_fix === fix_name) ? 'selected' : ''}`}
-                     key={`hold-menu-col-${i}-${j}`}
-                     onMouseDown={() => {
-                       setHoldFix(fix_name);
-                       setEfc(efc);
-                     }}
-                >
-                  {fix_name}
-                  <div className="align-right">
-                    {("0" + ((minutes_at_fix / 60 | 0) % 24)).slice(-2) + ("0" + (minutes_at_fix % 60 | 0)).slice(-2)}
-                  </div>
-                </div>);
-            })
-            }
-          </div>)}
+          {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i =>
+            <div className="options-row" key={`hold-menu-row-${i}`}>
+              {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
+                const fix_name = route_data[i + j * 10]?.name;
+                const minutes_at_fix = route_data[i + j * 10]?.minutes_at_fix;
+                return (fix_name &&
+                  <div className={`options-col hold-col-1 hover ${(hold_fix === fix_name) ? 'selected' : ''}`}
+                       key={`hold-menu-col-${i}-${j}`}
+                       onMouseDown={() => {
+                         setHoldFix(fix_name);
+                         setEfc(minutes_at_fix + 30);
+                       }}
+                  >
+                    {fix_name}
+                    <div className="align-right">
+                      {("0" + ((minutes_at_fix / 60 | 0) % 24)).slice(-2) + ("0" + (minutes_at_fix % 60 | 0)).slice(-2)}
+                    </div>
+                  </div>);
+              })}
+            </div>)}
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-2">
@@ -240,8 +246,8 @@ export const HoldMenu = forwardRef((props, ref) => {
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-4">
             <button onMouseDown={() => {
-              props.amendEntry(entry.cid, {hold_data: null});
-              props.updateEntry(entry.cid, {show_hold_info: false});
+              amendEntry(entry.cid, {hold_data: null});
+              updateEntry(entry.cid, {show_hold_info: false});
               props.closeWindow();
             }}>
               Delete Hold Instructions
@@ -259,7 +265,7 @@ export const HoldMenu = forwardRef((props, ref) => {
           <div className="options-col hold-col-7">
             <div className="input efc-input">
               <input value={formatEfc(efc)}
-                // onChange={(e) => setState({efc: e.target.value})}
+                // onChange={(e) => setEfc(e.target.value)}
               />
             </div>
             <button onMouseDown={() => setEfc(efc - 1)}>
@@ -280,7 +286,7 @@ export const HoldMenu = forwardRef((props, ref) => {
         <div className="options-row bottom">
           <div className="options-col left">
             <button onMouseDown={() => {
-              props.updateEntry(entry.cid, {spa: true});
+              updateEntry(entry.cid, {spa: true});
               clearedHold();
             }}
                     disabled={entry?.hold_data}
@@ -292,8 +298,8 @@ export const HoldMenu = forwardRef((props, ref) => {
             </button>
             <button disabled={!entry?.hold_data}
                     onMouseDown={() => {
-                      props.amendEntry(entry?.cid, {hold_data: null});
-                      props.updateEntry(entry?.cid, {show_hold_info: false});
+                      amendEntry(entry?.cid, {hold_data: null});
+                      updateEntry(entry?.cid, {show_hold_info: false});
                       props.closeWindow();
                     }}>
               Cancel Hold
@@ -308,4 +314,4 @@ export const HoldMenu = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

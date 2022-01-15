@@ -1,8 +1,9 @@
-import {forwardRef} from 'react';
+import {useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 
-export const Status = forwardRef((props, ref) => {
+export function Status(props) {
+  const ref = useRef(null);
   const {pos} = props;
 
   return (<div className="floating-window status-window"
@@ -28,4 +29,4 @@ export const Status = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

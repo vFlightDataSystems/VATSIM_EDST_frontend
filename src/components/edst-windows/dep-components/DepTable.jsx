@@ -1,54 +1,45 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
-import DepRow from "./DepRow";
+import {DepRow} from "./DepRow";
+import {DepContext, EdstContext} from "../../../contexts/contexts";
 
 const COMPLETED_SYMBOL = '✓';
 
-export default class DepTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hidden: []
-    };
-  }
+export default function DepTable(props) {
+  const [hidden, setHidden] = useState([]);
+  const {
+    edst_data,
+    updateEntry
+  } = React.useContext(EdstContext);
+  const {cid_list, sort_data} = React.useContext(DepContext);
+  useEffect(() => {}, [edst_data]);
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !Object.is(nextProps, this.props) || !Object.is(nextState, this.state);
-  }
-
-  #toggleHideColumn = (name) => {
-    let {hidden} = this.state;
+  const toggleHideColumn = (name) => {
     const index = hidden.indexOf(name);
     if (index > -1) {
       hidden.splice(index, 1);
     } else {
       hidden.push(name);
     }
-    this.setState({hidden: hidden});
+    setHidden(hidden);
   }
 
-  isSelected = (cid, field) => {
-    const asel = this.props.asel;
-    return asel?.cid === cid && asel?.field === field && asel?.window === 'dep';
-  }
-
-  updateStatus = (cid) => {
-    const entry = this.props.edst_data[cid];
+  const updateStatus = (cid) => {
+    const entry = edst_data[cid];
     if (entry?.dep_status === -1) {
-      this.props.updateEntry(cid, {dep_status: 0});
+      updateEntry(cid, {dep_status: 0});
     } else {
       if (entry?.dep_status < 1) {
-        this.props.updateEntry(cid, {dep_status: 1});
+        updateEntry(cid, {dep_status: 1});
       } else {
-        this.props.updateEntry(cid, {dep_status: 0});
+        updateEntry(cid, {dep_status: 0});
       }
     }
   }
 
-  sortFunc = (u, v) => {
-    const {sorting} = this.props;
-    switch (sorting.name) {
+  const sortFunc = (u, v) => {
+    switch (sort_data.name) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
       case 'Destination':
@@ -60,13 +51,7 @@ export default class DepTable extends React.Component {
     }
   }
 
-  sortSpa = (u, v) => {
-    return u.spa - v.spa;
-  }
-
-  render() {
-    const {hidden} = this.state;
-    const {edst_data, posting_manual, cid_list} = this.props;
+    const {posting_manual} = props;
 
     const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
 
@@ -85,18 +70,15 @@ export default class DepTable extends React.Component {
         <div className="body-col special special-hidden"/>
         <div className="body-col special rem special-hidden"/>
         <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
-          <div onMouseDown={() => this.#toggleHideColumn('type')}>
+          <div onMouseDown={() => toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
           </div>
         </div>
-        <div className="body-col alt header"
-             onMouseDown={() => this.setState({alt_mouse_down: true})}
-             onMouseUp={() => this.setState({alt_mouse_down: false})}
-        >
+        <div className="body-col alt header">
           <div>Alt.</div>
         </div>
         <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
-             onMouseDown={() => this.#toggleHideColumn('code')}>
+             onMouseDown={() => toggleHideColumn('code')}>
           C{!hidden.includes('code') && 'ode'}
         </div>
         <div className="body-col route">
@@ -104,42 +86,32 @@ export default class DepTable extends React.Component {
         </div>
       </div>
       <div className="scroll-container">
-        {data.filter(e => (typeof(e.spa) === 'number'))?.sort(this.sortSpa)?.map((e) =>
+        {Object.entries(data.filter(e => (typeof(e.spa) === 'number'))?.sort((u,v) => u.spa - v.spa))?.map(([i, e]) =>
           <DepRow
+            key={`dep-row-spa-${e.cid}`}
             entry={e}
-            isSelected={this.isSelected}
-            aircraftSelect={this.props.aircraftSelect}
-            updateEntry={this.props.updateEntry}
-            amendEntry={this.props.amendEntry}
-            deleteEntry={this.props.deleteEntry}
-            updateStatus={this.updateStatus}
+            bottom_border={i % 3 === 2}
+            updateStatus={updateStatus}
             hidden={hidden}
           />)}
         <div className="body-row separator"/>
-        {data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !posting_manual)))?.sort(this.sortFunc)?.map((e) =>
+        {Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !posting_manual)))?.sort(sortFunc))?.map(([i, e]) =>
           <DepRow
+            key={`dep-row-ack-${e.cid}`}
             entry={e}
-            isSelected={this.isSelected}
-            aircraftSelect={this.props.aircraftSelect}
-            updateEntry={this.props.updateEntry}
-            amendEntry={this.props.amendEntry}
-            deleteEntry={this.props.deleteEntry}
-            updateStatus={this.updateStatus}
+            bottom_border={i % 3 === 2}
+            updateStatus={updateStatus}
             hidden={hidden}
           />)}
         {posting_manual && <div className="body-row separator"/>}
-        {posting_manual && data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1))?.map((e) =>
+        {posting_manual && Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1)))?.map(([i ,e]) =>
           <DepRow
+            key={`dep-row-no-ack-${e.cid}`}
             entry={e}
-            isSelected={this.isSelected}
-            aircraftSelect={this.props.aircraftSelect}
-            updateEntry={this.props.updateEntry}
-            amendEntry={this.props.amendEntry}
-            deleteEntry={this.props.deleteEntry}
-            updateStatus={this.updateStatus}
+            bottom_border={i % 3 === 2}
+            updateStatus={updateStatus}
             hidden={hidden}
           />)}
       </div>
     </div>);
-  }
 }

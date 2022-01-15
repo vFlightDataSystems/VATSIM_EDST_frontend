@@ -1,11 +1,13 @@
-import React from 'react';
+import {useContext, useState} from 'react';
 import '../../../css/windows/titlebar-styles.scss';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
+import {EdstContext} from "../../../contexts/contexts";
 
 export default function AclHeader(props) {
-  const [search_str, setSearchString] = React.useState('');
-  const {focused, posting_manual, asel, sorting} = props;
+  const {setInputFocused} = useContext(EdstContext)
+  const [search_str, setSearchString] = useState('');
+  const {focused, posting_manual, asel, sort_data} = props;
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       props.addEntry(search_str);
@@ -17,7 +19,7 @@ export default function AclHeader(props) {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Aircraft List', `${sorting.sector ? 'Sector/' : ''}${sorting.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+      text={['Aircraft List', `${sort_data.sector ? 'Sector/' : ''}${sort_data.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
       <div className="outer-button" disabled={asel === null}
@@ -82,6 +84,8 @@ export default function AclHeader(props) {
       Add/Find
       <div className="input-container">
         <input
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
           value={search_str}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
