@@ -335,7 +335,6 @@ $body-hover-white: #F0F0F0;
     display: flex;
     justify-content: left;
     width: 70px;
-    border: 1px solid transparent;
     /*padding-left: 2px;*/
     margin-right: 8px;
 
@@ -346,7 +345,7 @@ $body-hover-white: #F0F0F0;
     }
 
     > div {
-      border: unset;
+      border: 1px solid transparent;
 
       &.interim {
         width: 75px;
@@ -356,14 +355,14 @@ $body-hover-white: #F0F0F0;
         outline: 1px solid $body-alt-outline-red;
       }
 
-      &:active {
+      &.selected {
         outline: 1px solid $body-light-grey;
         background-color: $body-light-grey;
         color: #000000;
       }
 
       &:hover {
-        outline: 1px solid $body-hover-white;
+        border: 1px solid $body-hover-white;
       }
     }
   }
@@ -373,7 +372,7 @@ $body-hover-white: #F0F0F0;
   }
 
   &.selected {
-    border: 1px solid $body-light-grey;
+    outline: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
