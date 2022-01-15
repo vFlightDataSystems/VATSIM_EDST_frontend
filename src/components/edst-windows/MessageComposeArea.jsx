@@ -8,25 +8,38 @@ export function MessageComposeArea(props) {
   const [mca_focused, setMcaFocused] = useState(false);
   const ref = useRef(null);
   const inputRef = useRef(null);
-  const {pos} = props;
-  const {setMcaInputRef, setInputFocused, openWindow} = useContext(EdstContext);
+  const {pos, acl_data, dep_data} = props;
+  const {setMcaInputRef, setInputFocused, openWindow, updateEntry, edst_data} = useContext(EdstContext);
   useEffect(() => {
     setMcaInputRef(inputRef)
     inputRef.current.focus();
     return () => setMcaInputRef(null);
   }, []);
 
+  const highlightEntry = (aid) => {
+    const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === aid || String(e.callsign) === aid || String(e.beacon) === aid);
+    console.log(aid)
+    if (entry) {
+      if (dep_data.cid_list.includes(entry.cid)) {
+        updateEntry(entry.cid, {dep_highlighted: true});
+      }
+      if (acl_data.cid_list.includes(entry.cid)) {
+        updateEntry(entry.cid, {acl_highlighted: true});
+      }
+    }
+  }
+
   const parseCommand = () => {
     const [command, ...args] = command_str.split(/\s+/);
     // console.log(command, args)
-    switch(command) {
+    switch (command) {
       case 'UU':
-        switch(args.length) {
+        switch (args.length) {
           case 0:
             openWindow('acl');
             break;
           case 1:
-            switch(args[0]) {
+            switch (args[0]) {
               case 'C':
                 props.aclCleanup();
                 break;
@@ -34,14 +47,21 @@ export function MessageComposeArea(props) {
                 openWindow('dep');
                 break;
               default:
-                props.addEntry('acl', args[0]);
+                props.addEntry(null, args[0]);
                 break;
             }
             break;
-          default: break;
+          case 2:
+            if (args[0] === 'H') {
+              highlightEntry(args[1]);
+            }
+            break;
+          default:
+            break;
         }
         break;
-      default: break;
+      default:
+        break;
     }
     setCommandStr('');
   }

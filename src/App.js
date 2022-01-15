@@ -64,7 +64,7 @@ export default class App extends React.Component {
   asel = null; // {cid, field, ref}
   plan_queue = [];
   update_interval_id = null;
-  mcaInputRef = null
+  mcaInputRef = null;
 
   constructor(props) {
     super(props);
@@ -348,10 +348,18 @@ export default class App extends React.Component {
     this.forceUpdate();
   }
 
-  addEntry = (window, str) => {
+  addEntry = (window, aid) => {
     let {edst_data, acl_data, dep_data} = this;
-    let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === str || String(e.callsign) === str || String(e.beacon) === str);
-    if (entry && (window === 'acl' || window === 'dep')) {
+    let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === aid || String(e.callsign) === aid || String(e.beacon) === aid);
+    if (window === null && entry) {
+      if (this.depFilter(entry)) {
+        this.addEntry('dep', aid);
+      }
+      else {
+        this.addEntry('acl', aid);
+      }
+    }
+    else if (entry && (window === 'acl' || window === 'dep')) {
       let data = window === 'acl' ? acl_data : dep_data;
       const del_index = data.deleted?.indexOf(entry.cid);
       if (del_index > -1) {
@@ -845,6 +853,8 @@ export default class App extends React.Component {
               startDrag={this.startDrag}
               aclCleanup={this.aclCleanup}
               addEntry={this.addEntry}
+              acl_data={acl_data}
+              dep_data={dep_data}
             />}
           </EdstContext.Provider>
         </div>
