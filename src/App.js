@@ -64,12 +64,13 @@ export default class App extends React.Component {
   asel = null; // {cid, field, ref}
   plan_queue = [];
   update_interval_id = null;
+  mcaInputRef = null
 
   constructor(props) {
     super(props);
     this.state = {
       sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
-      mcaInputRef: null
+      input_focused: false
     };
     this.outlineRef = React.createRef();
   }
@@ -634,7 +635,12 @@ export default class App extends React.Component {
 
   handleKeyDown = (event) => {
     event.preventDefault();
-    this.openWindow('mca');
+    if (this.mcaInputRef === null) {
+      this.openWindow('mca');
+    }
+    else {
+      this.mcaInputRef.current.focus();
+    }
   }
 
   render() {
@@ -657,13 +663,13 @@ export default class App extends React.Component {
       dragging_cursor_hide
     } = this;
 
-    const {sort_data} = this.state;
+    const {sort_data, input_focused} = this.state;
 
     return (
       <div className="edst"
         // onContextMenu={(event) => event.preventDefault()}
-        tabIndex="-1"
-        // onKeyDown={!open_windows.includes('mca') && this.handleKeyDown}
+        tabIndex={!input_focused ? '-1' : "0"}
+        onKeyDown={(event) => !input_focused && this.handleKeyDown(event)}
       >
         <EdstHeader open_windows={open_windows}
                     disabled_windows={disabled_windows}
@@ -704,7 +710,8 @@ export default class App extends React.Component {
             closeWindow: this.closeWindow,
             startDrag: this.startDrag,
             stopDrag: this.stopDrag,
-            setMcaInputRef: (ref) => this.setState({mcaInputRef: ref})
+            setMcaInputRef: (ref) => this.mcaInputRef = ref,
+            setInputFocused: (v) => this.setState({input_focused: v})
           }}>
             <AclContext.Provider value={{
               cid_list: acl_data.cid_list,
@@ -836,6 +843,8 @@ export default class App extends React.Component {
             {open_windows.includes('mca') && <MessageComposeArea
               pos={pos['edst-mca']}
               startDrag={this.startDrag}
+              aclCleanup={this.aclCleanup}
+              addEntry={this.addEntry}
             />}
           </EdstContext.Provider>
         </div>

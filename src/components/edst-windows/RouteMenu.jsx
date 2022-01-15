@@ -13,14 +13,15 @@ export function RouteMenu(props) {
     trialPlan,
     amendEntry,
     startDrag,
-    stopDrag
+    stopDrag,
+    setInputFocused
   } = useContext(EdstContext);
   const dep = asel?.window === 'dep';
   const entry = edst_data?.[asel?.cid]
   const current_route_fixes = entry?._route_data.map(fix => fix.name);
 
   const [focused, setFocused] = useState(false);
-  const [route, setRoute] = useState(entry._route.replace(/^\.*/, ''));
+  const [route, setRoute] = useState(entry._route?.replace(/^\.*/, ''));
   const [trial_plan, setTrialPlan] = useState(!dep);
   const routes = (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({append_oplus: false, append_star: false});
@@ -130,7 +131,11 @@ export function RouteMenu(props) {
                   {entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000'}..
                 </span>
               <span className="route-after-ppos">
-                <input value={route} onChange={(e) => setRoute(e.target.value)}/>
+                <input
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
+                  value={route}
+                  onChange={(e) => setRoute(e.target.value.toUpperCase())}/>
               </span>
             </div>
           </div>
