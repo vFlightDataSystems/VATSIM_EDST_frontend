@@ -16,7 +16,7 @@ export function RouteMenu(props) {
     stopDrag
   } = useContext(EdstContext);
   const dep = asel?.window === 'dep';
-  const entry = edst_data[asel?.cid]
+  const entry = edst_data?.[asel?.cid]
   const current_route_fixes = entry?._route_data.map(fix => fix.name);
 
   const [focused, setFocused] = useState(false);

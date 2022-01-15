@@ -68,7 +68,8 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}}
+      sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
+      mcaInputRef: null
     };
     this.outlineRef = React.createRef();
   }
@@ -631,6 +632,11 @@ export default class App extends React.Component {
     }
   }
 
+  handleKeyDown = (event) => {
+    event.preventDefault();
+    this.openWindow('mca');
+  }
+
   render() {
     const {
       edst_data,
@@ -656,6 +662,8 @@ export default class App extends React.Component {
     return (
       <div className="edst"
         // onContextMenu={(event) => event.preventDefault()}
+        tabIndex="-1"
+        // onKeyDown={!open_windows.includes('mca') && this.handleKeyDown}
       >
         <EdstHeader open_windows={open_windows}
                     disabled_windows={disabled_windows}
@@ -695,7 +703,8 @@ export default class App extends React.Component {
             openWindow: this.openWindow,
             closeWindow: this.closeWindow,
             startDrag: this.startDrag,
-            stopDrag: this.stopDrag
+            stopDrag: this.stopDrag,
+            setMcaInputRef: (ref) => this.setState({mcaInputRef: ref})
           }}>
             <AclContext.Provider value={{
               cid_list: acl_data.cid_list,

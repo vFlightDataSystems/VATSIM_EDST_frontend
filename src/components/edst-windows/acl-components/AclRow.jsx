@@ -3,9 +3,9 @@ import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {computeFrd, REMOVAL_TIMEOUT} from "../../../lib";
 import {EdstContext} from "../../../contexts/contexts";
+import VCI from '../../../css/images/VCI.png';
 
 const SPA_INDICATOR = '^';
-const ON_FREQ_SYMBOL = 'N';
 
 export function AclRow(props) {
   const {
@@ -94,14 +94,14 @@ export function AclRow(props) {
     return asel?.cid === cid && asel?.field === field;
   }
 
-  const formatEfc = (efc) => ("0" + ((efc / 60 | 0) % 24)).slice(-2) + ("0" + (efc % 60 | 0)).slice(-2);
+  const formatEfc = (minutes) => ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
 
   return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={props.key}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
            onMouseDown={() => props.updateStatus(entry.cid)}>
-        {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && ON_FREQ_SYMBOL}
+        {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/> }
       </div>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
