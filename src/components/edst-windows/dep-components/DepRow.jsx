@@ -13,7 +13,8 @@ export function DepRow(props) {
     updateEntry,
     amendEntry,
     deleteEntry,
-    asel
+    asel,
+    setInputFocused
   } = useContext(EdstContext);
   const {entry, hidden, bottom_border} = props;
   const now = performance.now();
@@ -76,7 +77,8 @@ export function DepRow(props) {
     return asel?.cid === cid && asel?.field === field;
   }
 
-  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={`dep-row-container-${entry.cid}`}
+  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
+               key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
@@ -149,8 +151,11 @@ export function DepRow(props) {
            style={{minWidth: Math.max(1200, ref.current?.clientWidth) + 'px'}}
       >
         <div className="free-text-row dep-free-text-row">
-          <input value={scratchpad}
-                 onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
+          <input
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            value={scratchpad}
+            onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
         </div>
       </div>
     </div>}

@@ -1,8 +1,10 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
+import {EdstContext} from "../../../contexts/contexts";
 
 export default function DepHeader(props) {
+  const {setInputFocused} = useContext(EdstContext);
   const [search_str, setSearchString] = useState('');
   const {focused, posting_manual, asel, sort_data} = props;
   const handleKeyDown = event => {
@@ -50,6 +52,8 @@ export default function DepHeader(props) {
       Add/Find
       <div className="input-container">
         <input
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
           value={search_str}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
