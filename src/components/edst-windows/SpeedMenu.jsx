@@ -1,24 +1,38 @@
-import {forwardRef, useState, useEffect} from 'react';
+import {useState, useEffect, useRef, useContext} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
+import {EdstContext} from "../../contexts/contexts";
 
-export const SpeedMenu = forwardRef((props, ref) => {
+export function SpeedMenu(props) {
+  const {
+    edst_data,
+    asel,
+    startDrag,
+    stopDrag,
+    updateEntry
+  } = useContext(EdstContext);
+  const {pos} = props;
   const [focused, setFocused] = useState(false);
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState('');
   const [amend, setAmend] = useState(true);
+  const ref = useRef(null);
   useEffect(() => {
     setFocused(false);
     setSpeed(280);
     setDeltaY(0);
     setSign('');
     setAmend(true);
-  }, [props.data]);
+  }, [asel]);
+  const entry = edst_data[asel.cid];
 
-  const {pos, data} = props;
+  const handleScroll = (e) => {
+    const new_deltaY = Math.min(Math.max((speed - 400)* 10, deltaY + e.deltaY), (speed - 160) * 10);
+    setDeltaY(new_deltaY);
+  }
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -29,14 +43,14 @@ export const SpeedMenu = forwardRef((props, ref) => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => props.startDrag(event, ref)}
-           onMouseUp={(event) => props.stopDrag(event)}
+           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseUp={(event) => stopDrag(event)}
       >
         Speed Information
       </div>
       <div className="options-body">
         <div className="options-row fid">
-          {data.callsign} {data.type}/{data.equipment}
+          {entry.callsign} {entry.type}/{entry.equipment}
         </div>
         <div className="options-row speed-row"
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
@@ -84,7 +98,7 @@ export const SpeedMenu = forwardRef((props, ref) => {
           MACH
         </div>
         <div className="spd-hdg-menu-select-container"
-             onWheel={(e) => setDeltaY(deltaY + e.deltaY)}
+             onWheel={handleScroll}
         >
           {_.range(5, -6, -1).map(i => {
             const spd = speed - (deltaY / 100 | 0) * 10 + i * 10;
@@ -92,7 +106,7 @@ export const SpeedMenu = forwardRef((props, ref) => {
             return <div className="spd-hdg-menu-container-row" key={`speed-menu-${i}`}>
               <div className="spd-hdg-menu-container-col"
                    onMouseDown={() => {
-                     props.updateEntry(data.cid, {
+                     updateEntry(entry.cid, {
                        scratch_spd: {
                          scratchpad: !amend,
                          val: `${(amend && sign === '') ? 'S' : ''}${spd}${sign}`
@@ -105,7 +119,7 @@ export const SpeedMenu = forwardRef((props, ref) => {
               </div>
               <div className="spd-hdg-menu-container-col"
                    onMouseDown={() => {
-                     props.updateEntry(data.cid, {
+                     updateEntry(entry.cid, {
                        scratch_spd: {
                          scratchpad: !amend,
                          val: `${(amend && sign === '') ? 'S' : ''}${spd + 5}${sign}`
@@ -118,7 +132,7 @@ export const SpeedMenu = forwardRef((props, ref) => {
               </div>
               <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-2"
                    onMouseDown={() => {
-                     props.updateEntry(data.cid, {
+                     updateEntry(entry.cid, {
                        scratch_spd: {
                          scratchpad: !amend,
                          val: `M${Number(mach * 100)}${sign}`
@@ -144,4 +158,4 @@ export const SpeedMenu = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/plans-display-styles.scss';
 import PlansDisplayHeader from "./plans-display-components/PlansDisplayHeader";
@@ -7,7 +7,10 @@ import PlansDisplayTable from "./plans-display-components/PlansDisplayTable";
 export default function PlansDisplay(props) {
   const [focused, setFocused] = useState(false);
   const [selected_msg_index, setSelectedMsgIndex] = useState(null);
-  useEffect(() => props.unmount(), []);
+  const unmount = () => props.unmount();
+  useEffect(() => {
+    return () => unmount();
+  }, []);
   const {plan_queue} = props;
 
   return (<div

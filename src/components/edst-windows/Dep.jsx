@@ -3,11 +3,13 @@ import '../../css/windows/dep-styles.scss';
 import DepHeader from "./dep-components/DepHeader";
 import DepTable from "./dep-components/DepTable";
 
-export default function Dep(props) {
+export function Dep(props) {
   const [focused, setFocused] = useState(false);
   const [posting_manual, setPostingManual] = useState(true);
 
-  useEffect(() => props.unmount(), []);
+  useEffect(() => {
+    return () => props.unmount();
+  }, []);
 
   return (<div
     className={`dep ${props.dragging ? 'dragging' : ''}`}
@@ -16,7 +18,7 @@ export default function Dep(props) {
   >
     <DepHeader
       addEntry={props.addEntry}
-      sorting={props.sorting}
+      sort_data={props.sort_data}
       openMenu={props.openMenu}
       asel={props.asel}
       focused={focused} posting_manual={posting_manual}
@@ -25,14 +27,6 @@ export default function Dep(props) {
     />
     <DepTable
       posting_manual={posting_manual}
-      sorting={props.sorting}
-      cid_list={props.cid_list}
-      edst_data={props.edst_data}
-      asel={props.asel}
-      updateEntry={props.updateEntry}
-      amendEntry={props.amendEntry}
-      aircraftSelect={props.aircraftSelect}
-      deleteEntry={props.deleteEntry}
     />
   </div>);
 }

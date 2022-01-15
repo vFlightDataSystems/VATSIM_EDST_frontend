@@ -1,8 +1,9 @@
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
-import {forwardRef} from "react";
+import {useRef} from "react";
 
-export const Outage = forwardRef((props, ref) => {
+export function Outage(props) {
+  const ref = useRef(null);
   const {pos} = props;
 
   return (<div className="floating-window outage-window"
@@ -28,4 +29,4 @@ export const Outage = forwardRef((props, ref) => {
       </div>
     </div>
   );
-})
+}

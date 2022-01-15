@@ -1,10 +1,12 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
+import {EdstContext} from "../../../contexts/contexts";
 
 export default function DepHeader(props) {
+  const {setInputFocused} = useContext(EdstContext);
   const [search_str, setSearchString] = useState('');
-  const {focused, posting_manual, asel, sorting} = props;
+  const {focused, posting_manual, asel, sort_data} = props;
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       props.addEntry(search_str);
@@ -16,7 +18,7 @@ export default function DepHeader(props) {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Departure List', `${sorting.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+      text={['Departure List', `${sort_data.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
     />
     <div>
       <div className="outer-button" disabled={asel === null}>
@@ -50,6 +52,8 @@ export default function DepHeader(props) {
       Add/Find
       <div className="input-container">
         <input
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
           value={search_str}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}

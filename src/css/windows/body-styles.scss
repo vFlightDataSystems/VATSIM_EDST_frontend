@@ -32,7 +32,7 @@ $body-hover-white: #F0F0F0;
   }
 }
 
-.sep-border {
+.row-sep-border {
   border: none;
   border-bottom: 1px solid $body-ac-sep-very-dark-grey;
 }
@@ -45,16 +45,16 @@ $body-hover-white: #F0F0F0;
     display: flex;
     align-items: center;
     min-height: 22px;
-    border: 1px;
+    border-top: 1px solid transparent;
     //flex-grow: 1;
 
     &.highlighted {
-      //outline: 1px solid $body-ac-highlight;
+      border-top: 1px solid $body-ac-highlight;
       background-color: $body-ac-highlight;
     }
 
     .free-text-row {
-      margin-left: 208px;
+      margin-left: 196px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -62,7 +62,7 @@ $body-hover-white: #F0F0F0;
       border: 1px solid transparent;
 
       &.dep-free-text-row {
-        margin-left: 237px;
+        margin-left: 226px;
       }
 
       > input {
@@ -94,11 +94,12 @@ $body-hover-white: #F0F0F0;
   .inner-row {
     display: flex;
     align-items: center;
-    min-height: 22px;
+    min-height: 20px;
+    border-bottom: 1px solid transparent;
     //flex-grow: 1;
 
     &.highlighted {
-      //outline: 1px solid $body-ac-highlight;
+      border-bottom: 1px solid $body-ac-highlight;
       background-color: $body-ac-highlight;
     }
   }
@@ -115,19 +116,19 @@ $body-hover-white: #F0F0F0;
 
   &.header {
     margin: 2px 0;
-    min-height: 28px;
-    max-height: 28px;
+    min-height: 24px;
+    max-height: 24px;
     border-top: 1px solid $edst-window-header-border-light-grey;
     border-bottom: 1px solid $edst-window-header-border-light-grey;
 
     .body-col {
       align-items: center;
-      height: 22px;
+      height: 18px;
 
       > div {
         align-items: center;
         display: flex;
-        height: 22px;
+        //height: 22px;
       }
     }
   }
@@ -143,14 +144,20 @@ $body-hover-white: #F0F0F0;
   //outline: 1px solid transparent;
 
   &.selected {
-    outline: 1px solid $body-light-grey;
+    //outline: 1px solid $body-light-grey;
     border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
 
+  .selected {
+    //border: 1px solid $body-light-grey;
+    background-color: $body-light-grey;
+    color: #000000;
+  }
+
   &.hover:hover {
-    outline: 1px solid $body-hover-white;
+    border: 1px solid $body-hover-white;
   }
 
   &.plans-display-col-1 {
@@ -177,7 +184,7 @@ $body-hover-white: #F0F0F0;
   &.body-col-1 {
     border: 1px solid transparent;
     margin: 0 2px;
-    width: 16px;
+    width: 14px;
 
     &.radio {
       border: 1px solid #000000;
@@ -188,6 +195,7 @@ $body-hover-white: #F0F0F0;
         border-left: 1px solid $body-medium-grey;
         border-bottom: 1px solid $body-dark-grey;
         border-right: 1px solid $body-dark-grey;
+
         &.checkmark {
           color: #FFFFFF;
           font-size: 10px;
@@ -195,10 +203,10 @@ $body-hover-white: #F0F0F0;
       }
 
       &:hover {
-        outline: 1px solid $body-hover-white;
+        border: 1px solid $body-hover-white;
 
         &.green {
-          outline: 1px solid $body-font-green;
+          border: 1px solid $body-font-green;
           color: $body-font-green;
         }
       }
@@ -218,6 +226,7 @@ $body-hover-white: #F0F0F0;
     border: 1px solid transparent;
     margin: 0 2px;
     width: 10px;
+
     &.checkmark {
       color: #FFFFFF;
       font-size: 10px;
@@ -266,7 +275,7 @@ $body-hover-white: #F0F0F0;
     padding-left: 1px;
 
     &:hover {
-      outline: 1px solid $body-hover-white;
+      border: 1px solid $body-hover-white;
     }
   }
 
@@ -326,7 +335,6 @@ $body-hover-white: #F0F0F0;
     display: flex;
     justify-content: left;
     width: 70px;
-    border: 1px solid transparent;
     /*padding-left: 2px;*/
     margin-right: 8px;
 
@@ -337,7 +345,7 @@ $body-hover-white: #F0F0F0;
     }
 
     > div {
-      border: unset;
+      border: 1px solid transparent;
 
       &.interim {
         width: 75px;
@@ -347,11 +355,15 @@ $body-hover-white: #F0F0F0;
         outline: 1px solid $body-alt-outline-red;
       }
 
-      &:active {
+      &.selected {
+        outline: 1px solid $body-light-grey;
         background-color: $body-light-grey;
         color: #000000;
       }
 
+      &:hover {
+        border: 1px solid $body-hover-white;
+      }
     }
   }
 
@@ -360,7 +372,7 @@ $body-hover-white: #F0F0F0;
   }
 
   &.selected {
-    border: 1px solid $body-light-grey;
+    outline: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
@@ -408,12 +420,11 @@ $body-hover-white: #F0F0F0;
   &.route {
     max-width: 1100px;
     overflow: hidden;
-    display: inline-block;
     text-overflow: ellipsis;
     white-space: nowrap;
     justify-content: left;
     border: 1px solid transparent;
-    padding: 0 2px;
+    padding-right: 2px;
     margin: unset;
 
     > div {
@@ -421,16 +432,28 @@ $body-hover-white: #F0F0F0;
       margin: 0;
       padding: 0;
 
-      .amendment {
-        color: $body-font-blue;
+      span {
+        padding: 0 2px;
 
-        &.selected {
-          background-color: $body-font-blue;
-          color: #000000;
+        &.amendment-1 {
+          padding-right: 0;
+          color: $body-font-blue;
+
+          &.selected {
+            background-color: $body-font-blue;
+            color: #000000;
+          }
+        }
+
+        &.amendment-2 {
+          color: $body-font-blue;
+
+          &.selected {
+            background-color: $body-font-blue;
+            color: #000000;
+          }
         }
       }
-
-
     }
   }
 }
