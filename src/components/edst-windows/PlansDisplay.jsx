@@ -8,7 +8,9 @@ export default function PlansDisplay(props) {
   const [focused, setFocused] = useState(false);
   const [selected_msg_index, setSelectedMsgIndex] = useState(null);
   const unmount = () => props.unmount();
-  useEffect(() => unmount(), []);
+  useEffect(() => {
+    return () => unmount();
+  }, []);
   const {plan_queue} = props;
 
   return (<div

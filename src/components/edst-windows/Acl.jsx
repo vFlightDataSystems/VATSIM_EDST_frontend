@@ -8,7 +8,9 @@ export function Acl(props) {
   const [focused, setFocused] = useState(false);
   const [posting_manual, setPostingManual] = useState(true);
   const unmount = () => props.unmount();
-  useEffect(() => unmount(), []);
+  useEffect(() => {
+    return () => unmount();
+  }, []);
 
   return (<div
     className={`acl ${props.dragging ? 'dragging' : ''}`}
