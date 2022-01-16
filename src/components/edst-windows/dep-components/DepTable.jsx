@@ -6,13 +6,13 @@ import {DepContext, EdstContext} from "../../../contexts/contexts";
 
 const COMPLETED_SYMBOL = '✓';
 
-export default function DepTable(props) {
+export default function DepTable() {
   const [hidden, setHidden] = useState([]);
   const {
     edst_data,
     updateEntry
   } = React.useContext(EdstContext);
-  const {cid_list, sort_data} = React.useContext(DepContext);
+  const {cid_list, sort_data, manual_posting} = React.useContext(DepContext);
   useEffect(() => {}, [edst_data]);
 
   const toggleHideColumn = (name) => {
@@ -50,8 +50,6 @@ export default function DepTable(props) {
         return u.callsign.localeCompare(v.callsign);
     }
   }
-
-    const {posting_manual} = props;
 
     const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
 
@@ -95,7 +93,7 @@ export default function DepTable(props) {
             hidden={hidden}
           />)}
         <div className="body-row separator"/>
-        {Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !posting_manual)))?.sort(sortFunc))?.map(([i, e]) =>
+        {Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
           <DepRow
             key={`dep-row-ack-${e.cid}`}
             entry={e}
@@ -103,8 +101,8 @@ export default function DepTable(props) {
             updateStatus={updateStatus}
             hidden={hidden}
           />)}
-        {posting_manual && <div className="body-row separator"/>}
-        {posting_manual && Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1)))?.map(([i ,e]) =>
+        {manual_posting && <div className="body-row separator"/>}
+        {manual_posting && Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1)))?.map(([i ,e]) =>
           <DepRow
             key={`dep-row-no-ack-${e.cid}`}
             entry={e}

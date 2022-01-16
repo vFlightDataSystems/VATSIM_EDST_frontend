@@ -2,12 +2,13 @@ import {useContext, useState} from 'react';
 import '../../../css/windows/titlebar-styles.scss';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
-import {EdstContext} from "../../../contexts/contexts";
+import {AclContext, EdstContext} from "../../../contexts/contexts";
 
 export default function AclHeader(props) {
   const {setInputFocused} = useContext(EdstContext)
+  const {manual_posting, togglePosting} = useContext(AclContext);
   const [search_str, setSearchString] = useState('');
-  const {focused, posting_manual, asel, sort_data} = props;
+  const {focused, asel, sort_data} = props;
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       props.addEntry(search_str);
@@ -19,7 +20,7 @@ export default function AclHeader(props) {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Aircraft List', `${sort_data.sector ? 'Sector/' : ''}${sort_data.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+      text={['Aircraft List', `${sort_data.sector ? 'Sector/' : ''}${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
       <div className="outer-button" disabled={asel === null}
@@ -62,7 +63,7 @@ export default function AclHeader(props) {
       </div>
       <div className="outer-button">
         <div className="edst-window-button"
-             onMouseDown={props.togglePosting}
+             onMouseDown={togglePosting}
         >
           Posting Mode
         </div>

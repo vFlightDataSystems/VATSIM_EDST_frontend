@@ -6,7 +6,6 @@ import AclTable from "./acl-components/AclTable";
 
 export function Acl(props) {
   const [focused, setFocused] = useState(false);
-  const [posting_manual, setPostingManual] = useState(true);
   const unmount = () => props.unmount();
   useEffect(() => {
     return () => unmount();
@@ -24,13 +23,9 @@ export function Acl(props) {
       openMenu={props.openMenu}
       asel={props.asel}
       focused={focused}
-      posting_manual={posting_manual}
-      closeWindow={props.closeWindow}
-      togglePosting={() => setPostingManual(!posting_manual)}
       cleanup={props.cleanup}
+      closeWindow={props.closeWindow}
     />
-    <AclTable
-      posting_manual={posting_manual}
-    />
+    <AclTable/>
   </div>);
 }
