@@ -3,6 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {length, lineString} from '@turf/turf';
 import {EdstContext} from "../../contexts/contexts";
+import {formatUtcMinutes} from "../../lib";
 
 export function HoldMenu(props) {
   const {
@@ -38,8 +39,6 @@ export function HoldMenu(props) {
     }
     return route_data;
   }
-
-  const formatEfc = (minutes) => ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
 
   const clearedHold = () => {
     const hold_data = {
@@ -264,7 +263,7 @@ export function HoldMenu(props) {
         >
           <div className="options-col hold-col-7">
             <div className="input efc-input">
-              <input value={formatEfc(efc)}
+              <input value={formatUtcMinutes(efc)}
                 // onChange={(e) => setEfc(e.target.value)}
               />
             </div>

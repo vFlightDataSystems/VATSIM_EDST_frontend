@@ -94,3 +94,7 @@ export function computeFrd(reference_fix) {
   return reference_fix.waypoint_id + Math.round(reference_fix.bearing).toString().padStart(3, '0')
     + Math.round(reference_fix.distance).toString().padStart(3, '0')
 }
+
+export function formatUtcMinutes(minutes) {
+  return ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
+}

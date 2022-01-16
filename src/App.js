@@ -30,19 +30,20 @@ import {HoldMenu} from "./components/edst-windows/HoldMenu";
 import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
 import {AclContext, DepContext, EdstContext} from "./contexts/contexts";
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
+import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
   'edst-outage': {x: 400, y: 100},
-  'edst-mca': {x: 100, y: 800}
+  'edst-mca': {x: 100, y: 600},
+  'edst-mra': {x: 100, y: 100}
 };
 
-const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca'];
-const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'ra', 'fel'];
+const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mra'];
+const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'fel'];
 
 export default class App extends React.Component {
 
-  open_windows = [];
   reference_fixes = [];
   acl_data = {deleted: [], cid_list: []};
   dep_data = {deleted: [], cid_list: []};
@@ -78,9 +79,9 @@ export default class App extends React.Component {
     this.outlineRef = React.createRef();
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !Object.is(this.state, nextState);
-  }
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return !Object.is(this.state, nextState);
+  // }
 
   async componentDidMount() {
     this.artcc_id = 'zbw'; // prompt('Choose an ARTCC')?.toLowerCase();
@@ -305,10 +306,12 @@ export default class App extends React.Component {
   }
 
   trialPlan = (p) => {
-    let {plan_queue, open_windows} = this;
+    let {plan_queue} = this;
+    let {open_windows} = this.state;
     open_windows.push('plans')
     plan_queue.unshift(p);
     this.plan_queue = plan_queue;
+    this.setState({open_windows: open_windows});
   }
 
   removeTrialPlan = (index) => {
@@ -351,15 +354,15 @@ export default class App extends React.Component {
     this.forceUpdate();
   }
 
-  addEntry = (window, aid) => {
+  addEntry = (window, fid) => {
     let {edst_data, acl_data, dep_data} = this;
-    let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === aid || String(e.callsign) === aid || String(e.beacon) === aid);
+    let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
       if (this.depFilter(entry)) {
-        this.addEntry('dep', aid);
+        this.addEntry('dep', fid);
       }
       else {
-        this.addEntry('acl', aid);
+        this.addEntry('acl', fid);
       }
     }
     else if (entry && (window === 'acl' || window === 'dep')) {
@@ -641,6 +644,23 @@ export default class App extends React.Component {
     }
   }
 
+  togglePosting = (window) => {
+    let {manual_posting} = this.state;
+    if (Object.keys(manual_posting).includes(window)) {
+      manual_posting[window] = !manual_posting[window];
+      this.setState({manual_posting: manual_posting})
+    }
+  }
+
+  setMraMessage = (msg) => {
+    let {open_windows} = this.state;
+    if (!open_windows.includes('mra')) {
+      open_windows.push('mra');
+    }
+    this.setState({mra_msg: msg, open_windows: open_windows});
+  }
+
+
   handleKeyDown = (event) => {
     event.preventDefault();
     if (this.mcaInputRef === null) {
@@ -656,7 +676,6 @@ export default class App extends React.Component {
       edst_data,
       asel,
       disabled_windows,
-      open_windows,
       plan_queue,
       sector_id,
       menu,
@@ -719,7 +738,8 @@ export default class App extends React.Component {
             startDrag: this.startDrag,
             stopDrag: this.stopDrag,
             setMcaInputRef: (ref) => this.mcaInputRef = ref,
-            setInputFocused: (v) => this.setState({input_focused: v})
+            setInputFocused: (v) => this.setState({input_focused: v}),
+            setMraMessage: this.setMraMessage
           }}>
             <AclContext.Provider value={{
               cid_list: acl_data.cid_list,
@@ -859,6 +879,23 @@ export default class App extends React.Component {
               addEntry={this.addEntry}
               acl_data={acl_data}
               dep_data={dep_data}
+              togglePosting={this.togglePosting}
+              closeAllWindows={() => this.setState({open_windows: ['mca']})}
+            />}
+            {open_windows.includes('mca') && <MessageComposeArea
+              pos={pos['edst-mca']}
+              startDrag={this.startDrag}
+              aclCleanup={this.aclCleanup}
+              addEntry={this.addEntry}
+              acl_data={acl_data}
+              dep_data={dep_data}
+              togglePosting={this.togglePosting}
+              closeAllWindows={() => this.setState({open_windows: ['mca']})}
+            />}
+            {open_windows.includes('mra') && <MessageResponseArea
+              pos={pos['edst-mra']}
+              startDrag={this.startDrag}
+              msg={mra_msg}
             />}
           </EdstContext.Provider>
         </div>
