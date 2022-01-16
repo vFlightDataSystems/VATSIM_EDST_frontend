@@ -132,9 +132,9 @@ export function EdstHeader(props) {
             >
               MCA
             </button>
-            <button className={open_windows.includes('ra') ? 'enabled' : ''}
-                    disabled={disabled_windows.includes('ra')}
-                    onMouseDown={() => props.toggleWindow('ra')}
+            <button className={open_windows.includes('mra') ? 'enabled' : ''}
+                    disabled={disabled_windows.includes('mra')}
+                    onMouseDown={() => props.toggleWindow('mra')}
             >
               RA
             </button>
