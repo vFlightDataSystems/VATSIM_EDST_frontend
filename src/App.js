@@ -70,7 +70,10 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
-      input_focused: false
+      manual_posting: {acl: true, dep: true},
+      input_focused: false,
+      open_windows: [],
+      mra_msg: ''
     };
     this.outlineRef = React.createRef();
   }
@@ -460,35 +463,32 @@ export default class App extends React.Component {
   }
 
   toggleWindow = (name) => {
-    let {open_windows} = this;
+    let {open_windows} = this.state;
     const index = open_windows.indexOf(name);
     if (index > -1) {
       open_windows.splice(index, 1);
     } else {
       open_windows.push(name);
     }
-    this.open_windows = open_windows;
-    this.forceUpdate();
+    this.setState({open_windows: open_windows});
   }
 
   openWindow = (name) => {
-    let {open_windows} = this;
+    let {open_windows} = this.state;
     const index = open_windows.indexOf(name);
     if (index > -1) {
       open_windows.splice(index, 1);
     }
     open_windows.push(name);
-    this.open_windows = open_windows;
-    this.forceUpdate();
+    this.setState({open_windows: open_windows});
   }
 
   closeWindow = (name) => {
-    let {open_windows} = this;
+    let {open_windows} = this.state;
     const index = open_windows.indexOf(name);
     if (index > -1) {
       open_windows.splice(index, 1);
-      this.open_windows = open_windows;
-      this.forceUpdate();
+      this.setState({open_windows: open_windows});
     }
   }
 
@@ -671,7 +671,7 @@ export default class App extends React.Component {
       dragging_cursor_hide
     } = this;
 
-    const {sort_data, input_focused} = this.state;
+    const {sort_data, input_focused, manual_posting, open_windows, mra_msg} = this.state;
 
     return (
       <div className="edst"
@@ -724,7 +724,9 @@ export default class App extends React.Component {
             <AclContext.Provider value={{
               cid_list: acl_data.cid_list,
               sort_data: sort_data.acl,
-              asel: asel?.window === 'acl' ? asel : null
+              asel: asel?.window === 'acl' ? asel : null,
+              manual_posting: manual_posting.acl,
+              togglePosting: () => this.togglePosting('acl')
             }}>
               {open_windows.includes('acl') && <Acl
                 addEntry={(s) => this.addEntry('acl', s)}
@@ -741,7 +743,9 @@ export default class App extends React.Component {
             <DepContext.Provider value={{
               cid_list: dep_data.cid_list,
               sort_data: sort_data.dep,
-              asel: asel?.window === 'dep' ? asel : null
+              asel: asel?.window === 'dep' ? asel : null,
+              manual_posting: manual_posting.dep,
+              togglePosting: () => this.togglePosting('dep')
             }}>
               {open_windows.includes('dep') && <Dep
                 addEntry={(s) => this.addEntry('dep', s)}

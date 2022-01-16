@@ -1,12 +1,13 @@
 import {useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
-import {EdstContext} from "../../../contexts/contexts";
+import {DepContext, EdstContext} from "../../../contexts/contexts";
 
 export default function DepHeader(props) {
   const {setInputFocused} = useContext(EdstContext);
+  const {manual_posting, togglePosting} = useContext(DepContext);
   const [search_str, setSearchString] = useState('');
-  const {focused, posting_manual, asel, sort_data} = props;
+  const {focused, asel, sort_data} = props;
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       props.addEntry(search_str);
@@ -18,7 +19,7 @@ export default function DepHeader(props) {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Departure List', `${sort_data.name}`, `${posting_manual ? 'Manual' : 'Automatic'}`]}
+      text={['Departure List', `${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
     />
     <div>
       <div className="outer-button" disabled={asel === null}>
@@ -37,7 +38,7 @@ export default function DepHeader(props) {
       </div>
       <div className="outer-button">
         <div className="edst-window-button"
-             onMouseDown={props.togglePosting}
+             onMouseDown={togglePosting}
         >
           Posting Mode
         </div>

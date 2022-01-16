@@ -1,9 +1,9 @@
 import React, {useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
-import {computeFrd, REMOVAL_TIMEOUT} from "../../../lib";
-import {EdstContext} from "../../../contexts/contexts";
-import VCI from '../../../css/images/VCI.png';
+import {computeFrd, formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
+import {AclContext, EdstContext} from "../../../contexts/contexts";
+import VCI from '../../../css/images/VCI_v3.png';
 
 const SPA_INDICATOR = '^';
 
@@ -13,9 +13,9 @@ export function AclRow(props) {
     updateEntry,
     amendEntry,
     deleteEntry,
-    asel,
     setInputFocused
   } = useContext(EdstContext);
+  const {asel} = useContext(AclContext);
   const {entry, hidden, alt_mouse_down, bottom_border, any_holding} = props;
   const hold_data = entry.hold_data;
   const now = performance.now();
@@ -95,9 +95,8 @@ export function AclRow(props) {
     return asel?.cid === cid && asel?.field === field;
   }
 
-  const formatEfc = (minutes) => ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
-
-  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={props.key}
+  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
+               key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
@@ -194,7 +193,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
              onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
         >
           {entry.show_hold_info && hold_data &&
-          `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatEfc(hold_data.efc)}`}
+          `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
           {!entry.show_hold_info && <div>
             <span
               className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>
@@ -223,7 +222,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
             onFocus={() => setInputFocused(true)}
             onBlur={() => setInputFocused(false)}
             value={scratchpad}
-                 onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
+            onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
         </div>
       </div>
     </div>}

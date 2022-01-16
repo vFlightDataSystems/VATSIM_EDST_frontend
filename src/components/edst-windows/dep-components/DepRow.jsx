@@ -2,7 +2,7 @@ import {useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
-import {EdstContext} from "../../../contexts/contexts";
+import {DepContext, EdstContext} from "../../../contexts/contexts";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
@@ -13,9 +13,9 @@ export function DepRow(props) {
     updateEntry,
     amendEntry,
     deleteEntry,
-    asel,
     setInputFocused
   } = useContext(EdstContext);
+  const {asel} = useContext(DepContext);
   const {entry, hidden, bottom_border} = props;
   const now = performance.now();
   let route = entry._route;

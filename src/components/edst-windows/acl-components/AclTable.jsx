@@ -2,10 +2,10 @@ import {useContext, useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
-import VCI from '../../../css/images/VCI.png';
+import VCI from '../../../css/images/VCI_v3.png';
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 
-export default function AclTable(props) {
+export default function AclTable() {
   const [any_holding, setAnyHolding] = useState(false);
   const [hidden, setHidden] = useState([]);
   const [alt_mouse_down, setAltMouseDown] = useState(false);
@@ -13,7 +13,7 @@ export default function AclTable(props) {
     edst_data,
     updateEntry,
   } = useContext(EdstContext);
-  const {cid_list, sort_data} = useContext(AclContext);
+  const {cid_list, sort_data, manual_posting} = useContext(AclContext);
   useEffect(() => {}, [edst_data]);
 
   const checkHolding = () => {
@@ -55,7 +55,7 @@ export default function AclTable(props) {
 
   const updateStatus = (cid) => {
     const entry = edst_data[cid];
-    if (entry?.acl_status === -1 && posting_manual) {
+    if (entry?.acl_status === -1 && manual_posting) {
       updateEntry(cid, {acl_status: 0});
     } else {
       if (entry?.acl_status < 1) {
@@ -78,8 +78,6 @@ export default function AclTable(props) {
         return u.callsign.localeCompare(v.callsign);
     }
   }
-
-  const {posting_manual} = props;
 
   const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
 
@@ -157,7 +155,7 @@ export default function AclTable(props) {
           updateStatus={updateStatus}
         />)}
       <div className="body-row separator"/>
-      {Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !posting_manual)))?.sort(sortFunc))?.map(([i, e]) =>
+      {Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-ack-${e.cid}`}
           entry={e}
@@ -167,8 +165,8 @@ export default function AclTable(props) {
           alt_mouse_down={alt_mouse_down}
           updateStatus={updateStatus}
         />)}
-      {posting_manual && <div className="body-row separator"/>}
-      {posting_manual && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
+      {manual_posting && <div className="body-row separator"/>}
+      {manual_posting && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-no-ack-${e.cid}`}
           entry={e}
