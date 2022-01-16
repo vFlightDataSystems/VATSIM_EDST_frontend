@@ -10,7 +10,7 @@ export function MessageComposeArea(props) {
   const [mca_focused, setMcaFocused] = useState(false);
   const ref = useRef(null);
   const inputRef = useRef(null);
-  const {pos, acl_data, dep_data} = props;
+  const {pos, acl_cid_list, dep_cid_list} = props;
   const {setMcaInputRef, setInputFocused, openWindow, updateEntry, edst_data, setMraMessage} = useContext(EdstContext);
   useEffect(() => {
     setMcaInputRef(inputRef)
@@ -21,11 +21,11 @@ export function MessageComposeArea(props) {
   const highlightEntry = (fid) => {
     const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
-      if (dep_data.cid_list.includes(entry.cid)) {
-        updateEntry(entry.cid, {dep_highlighted: true});
-      }
-      if (acl_data.cid_list.includes(entry.cid)) {
+      if (acl_cid_list.cid_list.includes(entry.cid)) {
         updateEntry(entry.cid, {acl_highlighted: true});
+      }
+      if (dep_cid_list.cid_list.includes(entry.cid)) {
+        updateEntry(entry.cid, {dep_highlighted: true});
       }
     }
   }

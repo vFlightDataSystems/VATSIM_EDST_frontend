@@ -48,8 +48,10 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       reference_fixes: [],
-      acl_data: {deleted: [], cid_list: []},
-      dep_data: {deleted: [], cid_list: []},
+      acl_cid_list: [],
+      acl_deleted_list: [],
+      dep_cid_list: [],
+      dep_deleted_list: [],
       disabled_windows: DISABLED_WINDOWS,
       artcc_id: null,
       sector_id: null,
@@ -83,7 +85,7 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const artcc_id = 'zbw'; // prompt('Choose an ARTCC')?.toLowerCase();
+    const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
     const sector_id = '37';
     this.setState({artcc_id: artcc_id, sector_id: sector_id});
     await getBoundaryData(artcc_id)
@@ -122,13 +124,13 @@ export default class App extends React.Component {
   }
 
   entryFilter = (entry) => {
-    const {acl_data, boundary_polygons} = this.state;
+    const {acl_cid_list, boundary_polygons} = this.state;
     const pos = [entry.flightplan.lon, entry.flightplan.lat];
     const pos_point = point(pos);
     const sdist = getSignedDistancePointToPolygons(pos_point, boundary_polygons);
     const will_enter_airspace = routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos);
     const minutes_away = sdist * 60 / entry.flightplan.ground_speed;
-    return ((minutes_away < 30 || acl_data.cid_list.includes(entry.cid))
+    return ((minutes_away < 30 || acl_cid_list.includes(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
   }
@@ -185,7 +187,7 @@ export default class App extends React.Component {
                 acl_status: -1,
                 dep_status: -1
               });
-              if (this.depFilter(entry) && !this.state.dep_data.deleted.includes(new_entry.cid)) {
+              if (this.depFilter(entry) && !this.state.dep_deleted_list.includes(new_entry.cid)) {
                 if (current_entry?.aar_list === undefined) {
                   await getAarData(artcc_id, new_entry.cid)
                     .then(response => response.json())
@@ -194,8 +196,8 @@ export default class App extends React.Component {
                       entry._aar_list = this.processAar(entry, aar_list);
                     });
                 }
-                if (!this.state.dep_data.cid_list.includes(new_entry.cid)) {
-                  this.state.dep_data.cid_list.push(new_entry.cid);
+                if (!this.state.dep_cid_list.includes(new_entry.cid)) {
+                  this.setState({dep_cid_list: [...this.state.dep_cid_list, new_entry.cid]});
                 }
               } else {
                 if (this.entryFilter(entry)) {
@@ -207,12 +209,15 @@ export default class App extends React.Component {
                         entry._aar_list = this.processAar(entry, aar_list);
                       });
                   }
-                  if (!this.state.acl_data.cid_list.includes(new_entry.cid) && !this.state.acl_data.deleted.includes(new_entry.cid)) {
-                    this.state.acl_data.cid_list.push(new_entry.cid);
+                  if (!this.state.acl_cid_list.includes(new_entry.cid) && !this.state.acl_deleted_list.includes(new_entry.cid)) {
+                    this.setState({acl_cid_list: [...this.state.acl_cid_list, new_entry.cid]});
+                    // this.state.acl_data.cid_list.push(new_entry.cid);
                     // remove cid from departure list if will populate the aircraft list
-                    const index = this.state.dep_data.cid_list.indexOf(new_entry.cid);
+                    const index = this.state.dep_cid_list.indexOf(new_entry.cid);
                     if (index > -1) {
-                      this.state.dep_data.cid_list.splice(index, 1);
+                      let {dep_cid_list} = this.state;
+                      dep_cid_list.splice(index, 1);
+                      this.setState({dep_cid_list: dep_cid_list});
                     }
                   }
                   if (reference_fixes.length > 0) {
@@ -282,27 +287,28 @@ export default class App extends React.Component {
   }
 
   deleteEntry = (window, cid) => {
-    let {acl_data, dep_data} = this.state;
+    let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
     let index;
     switch (window) {
       case 'acl':
-        acl_data.deleted.push(cid);
-        index = acl_data.cid_list.indexOf(cid);
+        acl_deleted_list.push(cid);
+        index = acl_cid_list.indexOf(cid);
         if (index > -1) {
-          acl_data.cid_list.splice(index, 1);
+          acl_cid_list.splice(index, 1);
         }
+        this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
         break;
       case 'dep':
-        dep_data.deleted.push(cid);
-        index = dep_data.cid_list.indexOf(cid)
+        dep_deleted_list.push(cid);
+        index = dep_cid_list.indexOf(cid)
         if (index > -1) {
-          dep_data.cid_list.splice(index, 1);
+          dep_cid_list.splice(index, 1);
         }
+        this.setState({dep_cid_list: dep_cid_list, dep_deleted_list: dep_deleted_list});
         break;
       default:
         break;
     }
-    this.setState({acl_data: acl_data, dep_data: dep_data});
   }
 
   trialPlan = (p) => {
@@ -358,7 +364,7 @@ export default class App extends React.Component {
   }
 
   addEntry = (window, fid) => {
-    let {edst_data, acl_data, dep_data} = this.state;
+    let {edst_data, acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
     let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
       if (this.depFilter(entry)) {
@@ -367,21 +373,30 @@ export default class App extends React.Component {
         this.addEntry('acl', fid);
       }
     } else if (entry && (window === 'acl' || window === 'dep')) {
-      let data = window === 'acl' ? acl_data : dep_data;
-      const del_index = data.deleted?.indexOf(entry.cid);
+      let cid_list = window === 'acl' ? acl_cid_list : dep_cid_list;
+      let deleted_list = window === 'acl' ? acl_deleted_list : dep_deleted_list;
+      const del_index = deleted_list?.indexOf(entry.cid);
       if (del_index > -1) {
-        data.deleted.splice(del_index);
+        deleted_list.splice(del_index);
       }
-      if (!data.cid_list.includes(entry.cid)) {
-        data.cid_list.push(entry.cid);
+      if (!cid_list.includes(entry.cid)) {
+        cid_list.push(entry.cid);
       }
       if (window === 'acl') {
-        acl_data = data;
+        acl_cid_list = cid_list;
+        acl_deleted_list = deleted_list;
       } else {
-        dep_data = data;
+        dep_cid_list = cid_list;
+        dep_deleted_list = deleted_list;
       }
       const asel = {cid: entry.cid, field: 'fid', window: window};
-      this.setState({acl_data: acl_data, dep_data: dep_data, asel: asel});
+      this.setState({
+        acl_cid_list: acl_cid_list,
+        acl_deleted_list: acl_deleted_list,
+        dep_cid_list: dep_cid_list,
+        dep_deleted_list: dep_deleted_list,
+        asel: asel
+      });
       // this.updateEntry(entry.cid, window === 'acl' ? {acl_highlighted: true} : {dep_highlighted: true});
     }
   }
@@ -633,9 +648,9 @@ export default class App extends React.Component {
   }
 
   aclCleanup = () => {
-    const {edst_data, acl_data} = this.state;
+    const {edst_data, acl_cid_list} = this.state;
     const now = performance.now()
-    for (const cid of acl_data.cid_list) {
+    for (const cid of acl_cid_list) {
       if (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
         this.deleteEntry('acl', cid);
       }
@@ -676,8 +691,8 @@ export default class App extends React.Component {
       plan_queue,
       sector_id,
       menu,
-      acl_data,
-      dep_data,
+      acl_cid_list,
+      dep_cid_list,
       sig,
       not,
       gi,
@@ -704,8 +719,8 @@ export default class App extends React.Component {
                     toggleWindow={this.toggleWindow}
                     plan_disabled={plan_queue.length === 0}
                     sector_id={sector_id}
-                    acl_num={acl_data.cid_list.length}
-                    dep_num={dep_data.cid_list.length}
+                    acl_num={acl_cid_list.length}
+                    dep_num={dep_cid_list.length}
                     sig_num={sig.length}
                     not_num={not.length}
                     gi_num={gi.length}
@@ -742,7 +757,7 @@ export default class App extends React.Component {
             setMraMessage: this.setMraMessage
           }}>
             <AclContext.Provider value={{
-              cid_list: acl_data.cid_list,
+              cid_list: acl_cid_list,
               sort_data: sort_data.acl,
               asel: asel?.window === 'acl' ? asel : null,
               manual_posting: manual_posting.acl,
@@ -761,7 +776,7 @@ export default class App extends React.Component {
               />}
             </AclContext.Provider>
             <DepContext.Provider value={{
-              cid_list: dep_data.cid_list,
+              cid_list: dep_cid_list,
               sort_data: sort_data.dep,
               asel: asel?.window === 'dep' ? asel : null,
               manual_posting: manual_posting.dep,
@@ -877,18 +892,8 @@ export default class App extends React.Component {
               startDrag={this.startDrag}
               aclCleanup={this.aclCleanup}
               addEntry={this.addEntry}
-              acl_data={acl_data}
-              dep_data={dep_data}
-              togglePosting={this.togglePosting}
-              closeAllWindows={() => this.setState({open_windows: ['mca']})}
-            />}
-            {open_windows.includes('mca') && <MessageComposeArea
-              pos={pos['edst-mca']}
-              startDrag={this.startDrag}
-              aclCleanup={this.aclCleanup}
-              addEntry={this.addEntry}
-              acl_data={acl_data}
-              dep_data={dep_data}
+              acl_cid_list={acl_cid_list}
+              dep_cid_list={dep_cid_list}
               togglePosting={this.togglePosting}
               closeAllWindows={() => this.setState({open_windows: ['mca']})}
             />}

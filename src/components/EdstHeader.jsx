@@ -1,8 +1,10 @@
 import '../css/edst/edst-header-styles.scss';
 import Time from "./Time";
+import {useEffect} from "react";
 
 export function EdstHeader(props) {
     const {open_windows, plan_disabled, disabled_windows, sector_id, acl_num, dep_num, sig_num, not_num, gi_num} = props;
+    useEffect(() => {}, [props]);
 
     return (
       <div className="edst-header">
