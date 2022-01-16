@@ -87,7 +87,7 @@ export function SortMenu(props) {
           <div className="options-col left">
             <button
               onMouseDown={() => {
-                props.setSorting(sort_data);
+                props.setSortData(sort_data);
                 props.closeWindow();
               }}
             >
