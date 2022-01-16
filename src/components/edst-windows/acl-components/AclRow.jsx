@@ -3,7 +3,7 @@ import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {computeFrd, formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
-import VCI from '../../../css/images/VCI_v3.png';
+import VCI from '../../../css/images/VCI_v4.png';
 
 const SPA_INDICATOR = '^';
 
