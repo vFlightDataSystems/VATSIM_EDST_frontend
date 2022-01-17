@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { EdstContext } from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/plans-display-styles.scss';
 import PlansDisplayHeader from "./plans-display-components/PlansDisplayHeader";
 import PlansDisplayTable from "./plans-display-components/PlansDisplayTable";
 
 export default function PlansDisplay(props) {
+  const { amendEntry } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const [selected_msg_index, setSelectedMsgIndex] = useState(null);
   const unmount = () => props.unmount();
@@ -23,7 +25,7 @@ export default function PlansDisplay(props) {
       <PlansDisplayHeader
         cleanup={props.cleanup}
         openMenu={props.openMenu}
-        amendEntry={props.amendEntry}
+        amendEntry={amendEntry}
         plan_data={selected_msg_index ? plan_queue[selected_msg_index] : null}
         asel={props.asel}
         focused={focused}
