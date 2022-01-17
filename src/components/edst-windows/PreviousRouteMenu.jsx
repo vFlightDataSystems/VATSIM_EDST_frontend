@@ -1,8 +1,10 @@
-import {useEffect, useRef, useState} from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { EdstContext } from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 
 export function PreviousRouteMenu(props) {
+  const { amendEntry } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   useEffect(() => {
     setFocused(false);
@@ -37,7 +39,7 @@ export function PreviousRouteMenu(props) {
           <div className="options-col left">
             <button
               onMouseDown={() => {
-                props.amendEntry(data.cid, {
+                amendEntry(data.cid, {
                   route: data.previous_route,
                   route_data: data.previous_route_data
                 });

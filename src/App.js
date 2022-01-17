@@ -402,7 +402,7 @@ export default class App extends React.Component {
   }
 
   amendEntry = async (cid, plan_data) => {
-    let {edst_data, artcc_id, dep_data} = this.state;
+    let {edst_data, artcc_id, dep_cid_list} = this.state;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
@@ -412,8 +412,8 @@ export default class App extends React.Component {
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = dep_data.cid_list.includes(cid) ? current_entry?.route : current_entry?._route;
-      plan_data.previous_route_data = dep_data.cid_list.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
+      plan_data.previous_route = dep_cid_list.includes(cid) ? current_entry?.route : current_entry?._route;
+      plan_data.previous_route_data = dep_cid_list.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
     await updateEdstEntry(plan_data)
