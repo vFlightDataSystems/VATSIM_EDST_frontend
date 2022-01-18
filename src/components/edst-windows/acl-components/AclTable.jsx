@@ -14,7 +14,6 @@ export default function AclTable() {
     updateEntry,
   } = useContext(EdstContext);
   const {cid_list, sort_data, manual_posting} = useContext(AclContext);
-  useEffect(() => {}, [edst_data]);
 
   const checkHolding = () => {
     for (let cid of cid_list) {
@@ -40,17 +39,18 @@ export default function AclTable() {
 
   const handleClickSlash = () => {
     let hidden_copy = hidden.slice(0);
-    const spd_index = hidden_copy.indexOf('spd');
-    const hdg_index = hidden_copy.indexOf('hdg');
-    if (spd_index > 0 && hdg_index > 0) {
-      hidden_copy.splice(spd_index, 1);
-      hidden_copy.splice(hdg_index, 1);
-      setHidden(hidden_copy);
+    if (hidden_copy.includes('spd') && hidden_copy.includes('hdg')) {
+      hidden_copy.splice(hidden_copy.indexOf('spd'), 1);
+      hidden_copy.splice(hidden_copy.indexOf('hdg'), 1);
     } else {
-      hidden_copy.push('spd');
-      hidden_copy.push('hdg');
-      setHidden([...new Set(hidden_copy)]);
+      if (!hidden_copy.includes('hdg')) {
+        hidden_copy.push('hdg');
+      }
+      if (!hidden_copy.includes('spd')) {
+        hidden_copy.push('spd');
+      }
     }
+    setHidden(hidden_copy);
   }
 
   const updateStatus = (cid) => {

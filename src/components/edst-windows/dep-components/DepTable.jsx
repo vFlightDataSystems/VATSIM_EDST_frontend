@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
@@ -13,16 +13,16 @@ export default function DepTable() {
     updateEntry
   } = React.useContext(EdstContext);
   const {cid_list, sort_data, manual_posting} = React.useContext(DepContext);
-  useEffect(() => {}, [edst_data]);
 
   const toggleHideColumn = (name) => {
-    const index = hidden.indexOf(name);
+    let hidden_copy = hidden.slice(0);
+    const index = hidden_copy.indexOf(name);
     if (index > -1) {
-      hidden.splice(index, 1);
+      hidden_copy.splice(index, 1);
     } else {
-      hidden.push(name);
+      hidden_copy.push(name);
     }
-    setHidden(hidden);
+    setHidden(hidden_copy);
   }
 
   const updateStatus = (cid) => {
