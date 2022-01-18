@@ -300,7 +300,7 @@ export default class App extends React.Component {
         break;
       case 'dep':
         dep_deleted_list.push(cid);
-        index = dep_cid_list.indexOf(cid)
+        index = dep_cid_list.indexOf(cid);
         if (index > -1) {
           dep_cid_list.splice(index, 1);
         }
@@ -648,13 +648,12 @@ export default class App extends React.Component {
   }
 
   aclCleanup = () => {
-    const {edst_data, acl_cid_list} = this.state;
+    let {edst_data, acl_cid_list, acl_deleted_list} = this.state;
     const now = performance.now()
-    for (const cid of acl_cid_list) {
-      if (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT) {
-        this.deleteEntry('acl', cid);
-      }
-    }
+    const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT));
+    acl_cid_list = acl_cid_list.filter(cid => !cid_pending_removal_list.includes(cid));
+    acl_deleted_list += cid_pending_removal_list;
+    this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
   }
 
   togglePosting = (window) => {
