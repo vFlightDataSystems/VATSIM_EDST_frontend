@@ -22,10 +22,10 @@ export function MessageComposeArea(props) {
   const highlightEntry = (fid) => {
     const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
-      if (acl_cid_list.includes(entry.cid)) {
+      if (acl_cid_list.has(entry.cid)) {
         updateEntry(entry.cid, {acl_highlighted: true});
       }
-      if (dep_cid_list.includes(entry.cid)) {
+      if (dep_cid_list.has(entry.cid)) {
         updateEntry(entry.cid, {dep_highlighted: true});
       }
     }
