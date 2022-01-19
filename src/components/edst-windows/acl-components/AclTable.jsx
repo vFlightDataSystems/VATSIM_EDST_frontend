@@ -138,6 +138,7 @@ export default function AclTable() {
           H
         </div>
         <div className={`body-col special special-header`}/>
+        <div className={`body-col special special-header`}/>
         <div className="body-col route">
           Route
         </div>
