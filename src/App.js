@@ -39,53 +39,58 @@ const defaultPos = {
   'edst-mra': {x: 100, y: 100}
 };
 
+const CACHE_TIMEOUT = 300000; // ms
+
 const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mra'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'fel'];
+
+const intial_state = {
+  reference_fixes: [],
+  acl_cid_list: [],
+  acl_deleted_list: [],
+  dep_cid_list: [],
+  dep_deleted_list: [],
+  disabled_windows: DISABLED_WINDOWS,
+  artcc_id: null,
+  sector_id: null,
+  boundary_polygons: [],
+  menu: null,
+  spa_list: [],
+  sig: [],
+  not: [],
+  gi: [],
+  dragging: null,
+  dragging_cursor_hide: null,
+  draggingRef: null,
+  dragPreviewStyle: null,
+  pos: defaultPos,
+  edst_data: {}, // keys are cid, values are data from db
+  asel: null, // {cid, field, ref}
+  plan_queue: [],
+  update_interval_id: null,
+  sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
+  manual_posting: {acl: true, dep: true},
+  input_focused: false,
+  open_windows: [],
+  mra_msg: ''
+};
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      reference_fixes: [],
-      acl_cid_list: [],
-      acl_deleted_list: [],
-      dep_cid_list: [],
-      dep_deleted_list: [],
-      disabled_windows: DISABLED_WINDOWS,
-      artcc_id: null,
-      sector_id: null,
-      boundary_polygons: [],
-      menu: null,
-      spa_list: [],
-      sig: [],
-      not: [],
-      gi: [],
-      dragging: null,
-      dragging_cursor_hide: null,
-      draggingRef: null,
-      dragPreviewStyle: null,
-      pos: defaultPos,
-      edst_data: {}, // keys are cid, values are data from db
-      asel: null, // {cid, field, ref}
-      plan_queue: [],
-      update_interval_id: null,
-      sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
-      manual_posting: {acl: true, dep: true},
-      input_focused: false,
-      open_windows: [],
-      mra_msg: ''
-    };
+    this.state =  intial_state;
     this.mcaInputRef = null;
     this.outlineRef = React.createRef();
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return !Object.is(this.state, nextState);
-  }
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return !Object.is(this.state, nextState);
+  // }
 
   async componentDidMount() {
-    const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
+    // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
+    const artcc_id = 'zbw';
     const sector_id = '37';
     this.setState({artcc_id: artcc_id, sector_id: sector_id});
     await getBoundaryData(artcc_id)
@@ -100,6 +105,12 @@ export default class App extends React.Component {
           this.setState({reference_fixes: reference_fixes});
         }
       });
+    const now = new Date().getTime();
+    const local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
+    if (now - local_data?.timestamp < CACHE_TIMEOUT) {
+      this.setState(local_data ?? {});
+    }
+    localStorage.removeItem(`vEDST_${artcc_id}_${sector_id}`);
     await this.refresh();
     this.update_interval_id = setInterval(this.refresh, 20000);
   }
@@ -167,7 +178,7 @@ export default class App extends React.Component {
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
-      new_entry.pending_removal = current_entry.pending_removal || performance.now();
+      new_entry.pending_removal = current_entry.pending_removal || new Date().getTime();
     } else {
       new_entry.pending_removal = null;
     }
@@ -176,7 +187,7 @@ export default class App extends React.Component {
   }
 
   refresh = async () => {
-    let {artcc_id, reference_fixes} = this.state;
+    let {artcc_id, sector_id, reference_fixes} = this.state;
     getEdstData()
       .then(response => response.json())
       .then(async new_data => {
@@ -211,7 +222,6 @@ export default class App extends React.Component {
                   }
                   if (!this.state.acl_cid_list.includes(new_entry.cid) && !this.state.acl_deleted_list.includes(new_entry.cid)) {
                     this.setState({acl_cid_list: [...this.state.acl_cid_list, new_entry.cid]});
-                    // this.state.acl_data.cid_list.push(new_entry.cid);
                     // remove cid from departure list if will populate the aircraft list
                     const index = this.state.dep_cid_list.indexOf(new_entry.cid);
                     if (index > -1) {
@@ -233,6 +243,7 @@ export default class App extends React.Component {
           }
         }
       );
+    localStorage.setItem(`vEDST_${artcc_id}_${sector_id}`, JSON.stringify({...this.state, timestamp: new Date().getTime()}));
   }
 
   processAar = (entry, aar_list) => {
@@ -649,10 +660,10 @@ export default class App extends React.Component {
 
   aclCleanup = () => {
     let {edst_data, acl_cid_list, acl_deleted_list} = this.state;
-    const now = performance.now()
+    const now = new Date().getTime();
     const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT));
     acl_cid_list = acl_cid_list.filter(cid => !cid_pending_removal_list.includes(cid));
-    acl_deleted_list += cid_pending_removal_list;
+    acl_deleted_list = acl_deleted_list.concat(cid_pending_removal_list);
     this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
   }
 
@@ -796,7 +807,7 @@ export default class App extends React.Component {
               openMenu={this.openMenu}
               dragging={dragging}
               asel={asel?.window === 'plans' ? asel : null}
-              cleanup={() => this.plan_queue = []}
+              cleanup={() => this.setState({plan_queue: []})}
               plan_queue={plan_queue}
               amendEntry={this.amendEntry}
               aircraftSelect={this.aircraftSelect}

@@ -26,20 +26,6 @@ export function HoldMenu(props) {
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
 
-  const computeCrossingTimes = (route_data) => {
-    const now = new Date();
-    const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const groundspeed = Number(entry?.flightplan?.ground_speed);
-    if (route_data && groundspeed > 0) {
-      let line_data = [[entry?.flightplan?.lon, entry?.flightplan?.lat]];
-      for (let e of route_data) {
-        line_data.push(e.pos);
-        e.minutes_at_fix = utc_minutes + 60 * length(lineString(line_data), {units: 'nauticalmiles'}) / groundspeed;
-      }
-    }
-    return route_data;
-  }
-
   const clearedHold = () => {
     const hold_data = {
       hold_fix: hold_fix,
@@ -53,6 +39,19 @@ export function HoldMenu(props) {
   }
 
   useEffect(() => {
+    const computeCrossingTimes = (route_data) => {
+      const now = new Date();
+      const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const groundspeed = Number(entry?.flightplan?.ground_speed);
+      if (route_data && groundspeed > 0) {
+        let line_data = [[entry?.flightplan?.lon, entry?.flightplan?.lat]];
+        for (let e of route_data) {
+          line_data.push(e.pos);
+          e.minutes_at_fix = utc_minutes + 60 * length(lineString(line_data), {units: 'nauticalmiles'}) / groundspeed;
+        }
+      }
+      return route_data;
+    }
     const route_data = computeCrossingTimes(entry?._route_data);
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -62,7 +61,7 @@ export function HoldMenu(props) {
     setTurns(entry?.hold_data?.turns || 'RT');
     setEfc(entry?.hold_data?.efc || utc_minutes + 30);
     setRouteData(route_data);
-  }, [props]);
+  }, [entry]);
 
   return (<div
       onMouseEnter={() => setFocused(true)}

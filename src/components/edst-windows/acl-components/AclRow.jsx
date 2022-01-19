@@ -18,7 +18,7 @@ export function AclRow(props) {
   const {asel} = useContext(AclContext);
   const {entry, hidden, alt_mouse_down, bottom_border, any_holding} = props;
   const hold_data = entry.hold_data;
-  const now = performance.now();
+  const now = new Date().getTime();
   let route = entry._route;
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
@@ -77,7 +77,7 @@ export function AclRow(props) {
   }
 
   const handleFidClick = (event) => {
-    const now = performance.now();
+    const now = new Date().getTime();
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {
