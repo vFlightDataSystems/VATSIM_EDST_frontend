@@ -79,7 +79,7 @@ export default function AclTable() {
     }
   }
 
-  const data = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
+  const entry_list = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -145,7 +145,7 @@ export default function AclTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {Object.entries(data.filter(e => (typeof (e.spa) === 'number'))?.sort((u, v) => u.spa - v.spa))?.map(([i, e]) =>
+      {Object.entries(entry_list.filter(e => (typeof (e.spa) === 'number'))?.sort((u, v) => u.spa - v.spa))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-spa-${e.cid}`}
           entry={e}
@@ -156,7 +156,7 @@ export default function AclTable() {
           updateStatus={updateStatus}
         />)}
       <div className="body-row separator"/>
-      {Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
+      {Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-ack-${e.cid}`}
           entry={e}
@@ -167,7 +167,7 @@ export default function AclTable() {
           updateStatus={updateStatus}
         />)}
       {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.has(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
+      {manual_posting && Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.has(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-no-ack-${e.cid}`}
           entry={e}
