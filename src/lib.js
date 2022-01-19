@@ -96,7 +96,7 @@ export function computeFrd(reference_fix) {
 }
 
 export function formatUtcMinutes(minutes) {
-  return ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
+  return (((minutes + 1440) / 60 | 0) % 24).toString().padStart(2, "0") + ((minutes + 60) % 60 | 0).toString().padStart(2, "0");
 }
 
 export function copy(text) {
