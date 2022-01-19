@@ -79,7 +79,7 @@ export default function AclTable() {
     }
   }
 
-  const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
+  const data = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -166,7 +166,7 @@ export default function AclTable() {
           updateStatus={updateStatus}
         />)}
       {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
+      {manual_posting && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.has(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-no-ack-${e.cid}`}
           entry={e}

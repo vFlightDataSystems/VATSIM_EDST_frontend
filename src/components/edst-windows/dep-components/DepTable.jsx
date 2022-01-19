@@ -51,7 +51,7 @@ export default function DepTable() {
     }
   }
 
-    const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
+    const data = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
 
     return (<div className="dep-body no-select">
       <div className="body-row header" key="dep-table-header">

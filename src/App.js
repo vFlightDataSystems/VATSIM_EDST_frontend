@@ -46,10 +46,10 @@ const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb',
 
 const intial_state = {
   reference_fixes: [],
-  acl_cid_list: [],
-  acl_deleted_list: [],
-  dep_cid_list: [],
-  dep_deleted_list: [],
+  acl_cid_list: new Set(),
+  acl_deleted_list: new Set(),
+  dep_cid_list: new Set(),
+  dep_deleted_list: new Set(),
   disabled_windows: DISABLED_WINDOWS,
   artcc_id: null,
   sector_id: null,
@@ -67,11 +67,10 @@ const intial_state = {
   edst_data: {}, // keys are cid, values are data from db
   asel: null, // {cid, field, ref}
   plan_queue: [],
-  update_interval_id: null,
   sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
   manual_posting: {acl: true, dep: true},
   input_focused: false,
-  open_windows: [],
+  open_windows: new Set(),
   mra_msg: ''
 };
 
@@ -106,8 +105,13 @@ export default class App extends React.Component {
         }
       });
     const now = new Date().getTime();
-    const local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
+    let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
     if (now - local_data?.timestamp < CACHE_TIMEOUT) {
+      local_data.open_windows = new Set( local_data.open_windows[Symbol.iterator] ?? []);
+      local_data.acl_cid_list = new Set(local_data.acl_cid_list[Symbol.iterator] ?? []);
+      local_data.dep_cid_list = new Set(local_data.dep_cid_list[Symbol.iterator] ?? []);
+      local_data.acl_deleted_list = new Set(local_data.acl_deleted_list[Symbol.iterator] ?? []);
+      local_data.dep_deleted_list = new Set(local_data.dep_deleted_list[Symbol.iterator] ?? []);
       this.setState(local_data ?? {});
     }
     localStorage.removeItem(`vEDST_${artcc_id}_${sector_id}`);
@@ -141,7 +145,7 @@ export default class App extends React.Component {
     const sdist = getSignedDistancePointToPolygons(pos_point, boundary_polygons);
     const will_enter_airspace = routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos);
     const minutes_away = sdist * 60 / entry.flightplan.ground_speed;
-    return ((minutes_away < 30 || acl_cid_list.includes(entry.cid))
+    return ((minutes_away < 30 || acl_cid_list.has(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
   }
@@ -198,7 +202,8 @@ export default class App extends React.Component {
                 acl_status: -1,
                 dep_status: -1
               });
-              if (this.depFilter(entry) && !this.state.dep_deleted_list.includes(new_entry.cid)) {
+              let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
+              if (this.depFilter(entry) && !dep_deleted_list.has(new_entry.cid)) {
                 if (current_entry?.aar_list === undefined) {
                   await getAarData(artcc_id, new_entry.cid)
                     .then(response => response.json())
@@ -207,8 +212,9 @@ export default class App extends React.Component {
                       entry._aar_list = this.processAar(entry, aar_list);
                     });
                 }
-                if (!this.state.dep_cid_list.includes(new_entry.cid)) {
-                  this.setState({dep_cid_list: [...this.state.dep_cid_list, new_entry.cid]});
+                if (!dep_cid_list.has(new_entry.cid)) {
+                  dep_cid_list.add(new_entry.cid);
+                  this.setState({dep_cid_list: dep_cid_list});
                 }
               } else {
                 if (this.entryFilter(entry)) {
@@ -220,15 +226,11 @@ export default class App extends React.Component {
                         entry._aar_list = this.processAar(entry, aar_list);
                       });
                   }
-                  if (!this.state.acl_cid_list.includes(new_entry.cid) && !this.state.acl_deleted_list.includes(new_entry.cid)) {
-                    this.setState({acl_cid_list: [...this.state.acl_cid_list, new_entry.cid]});
+                  if (!acl_cid_list.has(new_entry.cid) && !acl_deleted_list.has(new_entry.cid)) {
                     // remove cid from departure list if will populate the aircraft list
-                    const index = this.state.dep_cid_list.indexOf(new_entry.cid);
-                    if (index > -1) {
-                      let {dep_cid_list} = this.state;
-                      dep_cid_list.splice(index, 1);
-                      this.setState({dep_cid_list: dep_cid_list});
-                    }
+                    acl_cid_list.add(new_entry.cid);
+                    dep_cid_list.delete(new_entry.cid);
+                    this.setState({acl_cid_list: acl_cid_list, dep_cid_list: dep_cid_list});
                   }
                   if (reference_fixes.length > 0) {
                     entry.reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
@@ -299,22 +301,15 @@ export default class App extends React.Component {
 
   deleteEntry = (window, cid) => {
     let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
-    let index;
     switch (window) {
       case 'acl':
-        acl_deleted_list.push(cid);
-        index = acl_cid_list.indexOf(cid);
-        if (index > -1) {
-          acl_cid_list.splice(index, 1);
-        }
+        acl_cid_list.delete(cid);
+        acl_deleted_list.add(cid);
         this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
         break;
       case 'dep':
-        dep_deleted_list.push(cid);
-        index = dep_cid_list.indexOf(cid);
-        if (index > -1) {
-          dep_cid_list.splice(index, 1);
-        }
+        dep_cid_list.delete(cid);
+        dep_deleted_list.add(cid);
         this.setState({dep_cid_list: dep_cid_list, dep_deleted_list: dep_deleted_list});
         break;
       default:
@@ -324,9 +319,8 @@ export default class App extends React.Component {
 
   trialPlan = (p) => {
     let {plan_queue, open_windows} = this.state;
-    open_windows.push('plans')
     plan_queue.unshift(p);
-    this.plan_queue = plan_queue;
+    open_windows.add('plans');
     this.setState({open_windows: open_windows, plan_queue: plan_queue});
   }
 
@@ -386,13 +380,8 @@ export default class App extends React.Component {
     } else if (entry && (window === 'acl' || window === 'dep')) {
       let cid_list = window === 'acl' ? acl_cid_list : dep_cid_list;
       let deleted_list = window === 'acl' ? acl_deleted_list : dep_deleted_list;
-      const del_index = deleted_list?.indexOf(entry.cid);
-      if (del_index > -1) {
-        deleted_list.splice(del_index);
-      }
-      if (!cid_list.includes(entry.cid)) {
-        cid_list.push(entry.cid);
-      }
+      cid_list.add(entry.cid);
+      deleted_list.delete(entry.cid);
       if (window === 'acl') {
         acl_cid_list = cid_list;
         acl_deleted_list = deleted_list;
@@ -423,8 +412,8 @@ export default class App extends React.Component {
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = dep_cid_list.includes(cid) ? current_entry?.route : current_entry?._route;
-      plan_data.previous_route_data = dep_cid_list.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
+      plan_data.previous_route = dep_cid_list.has(cid) ? current_entry?.route : current_entry?._route;
+      plan_data.previous_route_data = dep_cid_list.has(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
     await updateEdstEntry(plan_data)
@@ -491,32 +480,24 @@ export default class App extends React.Component {
 
   toggleWindow = (name) => {
     let {open_windows} = this.state;
-    const index = open_windows.indexOf(name);
-    if (index > -1) {
-      open_windows.splice(index, 1);
+    if (open_windows.has(name)) {
+      open_windows.delete(name);
     } else {
-      open_windows.push(name);
+      open_windows.add(name);
     }
     this.setState({open_windows: open_windows});
   }
 
   openWindow = (name) => {
     let {open_windows} = this.state;
-    const index = open_windows.indexOf(name);
-    if (index > -1) {
-      open_windows.splice(index, 1);
-    }
-    open_windows.push(name);
+    open_windows.add(name);
     this.setState({open_windows: open_windows});
   }
 
   closeWindow = (name) => {
     let {open_windows} = this.state;
-    const index = open_windows.indexOf(name);
-    if (index > -1) {
-      open_windows.splice(index, 1);
-      this.setState({open_windows: open_windows});
-    }
+    open_windows.delete(name);
+    this.setState({open_windows: open_windows});
   }
 
   openMenu = (ref, name, plan, asel = null) => {
@@ -574,7 +555,7 @@ export default class App extends React.Component {
           y: ref.offsetTop + ref.offsetHeight
         };
     }
-    this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}})
+    this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}});
   }
 
   closeMenu = (name) => {
@@ -661,9 +642,11 @@ export default class App extends React.Component {
   aclCleanup = () => {
     let {edst_data, acl_cid_list, acl_deleted_list} = this.state;
     const now = new Date().getTime();
+    acl_cid_list = [...acl_cid_list];
+    acl_deleted_list = [...acl_deleted_list];
     const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT));
-    acl_cid_list = acl_cid_list.filter(cid => !cid_pending_removal_list.includes(cid));
-    acl_deleted_list = acl_deleted_list.concat(cid_pending_removal_list);
+    acl_cid_list = new Set(acl_cid_list.filter(cid => !cid_pending_removal_list.includes(cid)));
+    acl_deleted_list = new Set(acl_deleted_list.concat(cid_pending_removal_list));
     this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
   }
 
@@ -677,9 +660,7 @@ export default class App extends React.Component {
 
   setMraMessage = (msg) => {
     let {open_windows} = this.state;
-    if (!open_windows.includes('mra')) {
-      open_windows.push('mra');
-    }
+    open_windows.add('mra');
     this.setState({mra_msg: msg, open_windows: open_windows});
   }
 
@@ -729,8 +710,8 @@ export default class App extends React.Component {
                     toggleWindow={this.toggleWindow}
                     plan_disabled={plan_queue.length === 0}
                     sector_id={sector_id}
-                    acl_num={acl_cid_list.length}
-                    dep_num={dep_cid_list.length}
+                    acl_num={acl_cid_list.size}
+                    dep_num={dep_cid_list.size}
                     sig_num={sig.length}
                     not_num={not.length}
                     gi_num={gi.length}
@@ -773,7 +754,7 @@ export default class App extends React.Component {
               manual_posting: manual_posting.acl,
               togglePosting: () => this.togglePosting('acl')
             }}>
-              {open_windows.includes('acl') && <Acl
+              {open_windows.has('acl') && <Acl
                 addEntry={(s) => this.addEntry('acl', s)}
                 cleanup={this.aclCleanup}
                 sort_data={sort_data.acl}
@@ -792,7 +773,7 @@ export default class App extends React.Component {
               manual_posting: manual_posting.dep,
               togglePosting: () => this.togglePosting('dep')
             }}>
-              {open_windows.includes('dep') && <Dep
+              {open_windows.has('dep') && <Dep
                 addEntry={(s) => this.addEntry('dep', s)}
                 sort_data={sort_data.dep}
                 unmount={this.unmount}
@@ -802,7 +783,7 @@ export default class App extends React.Component {
                 closeWindow={() => this.closeWindow('dep')}
               />}
             </DepContext.Provider>
-            {open_windows.includes('plans') && plan_queue.length > 0 && <PlansDisplay
+            {open_windows.has('plans') && plan_queue.length > 0 && <PlansDisplay
               unmount={this.unmount}
               openMenu={this.openMenu}
               dragging={dragging}
@@ -814,14 +795,14 @@ export default class App extends React.Component {
               // z_index={open_windows.indexOf('dep')}
               closeWindow={() => this.closeWindow('plans')}
             />}
-            {open_windows.includes('status') && <Status
+            {open_windows.has('status') && <Status
               dragging={dragging}
               startDrag={this.startDrag}
               pos={pos['edst-status']}
               // z_index={open_windows.indexOf('status')}
               closeWindow={() => this.closeWindow('status')}
             />}
-            {open_windows.includes('outage') && <Outage
+            {open_windows.has('outage') && <Outage
               dragging={dragging}
               startDrag={this.startDrag}
               pos={pos['edst-outage']}
@@ -897,7 +878,7 @@ export default class App extends React.Component {
               stopDrag={this.stopDrag}
               closeWindow={() => this.closeMenu('heading-menu')}
             />}
-            {open_windows.includes('mca') && <MessageComposeArea
+            {open_windows.has('mca') && <MessageComposeArea
               pos={pos['edst-mca']}
               startDrag={this.startDrag}
               aclCleanup={this.aclCleanup}
@@ -905,9 +886,9 @@ export default class App extends React.Component {
               acl_cid_list={acl_cid_list}
               dep_cid_list={dep_cid_list}
               togglePosting={this.togglePosting}
-              closeAllWindows={() => this.setState({open_windows: ['mca']})}
+              closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
             />}
-            {open_windows.includes('mra') && <MessageResponseArea
+            {open_windows.has('mra') && <MessageResponseArea
               pos={pos['edst-mra']}
               startDrag={this.startDrag}
               msg={mra_msg}
