@@ -288,6 +288,11 @@ $body-hover-white: #F0F0F0;
     border: 1px solid transparent;
     //font-family: Verdana, sans-serif;
 
+    &.remarks-unchecked {
+      color: $body-font-yellow;
+      border: 1px solid $body-font-yellow;
+    }
+
     &.rem {
       border-top: 1px solid $body-medium-grey;
       border-left: 1px solid $body-medium-grey;
@@ -428,8 +433,8 @@ $body-hover-white: #F0F0F0;
     white-space: nowrap;
     justify-content: left;
     border: 1px solid transparent;
+    margin-left: 4px;
     padding-right: 2px;
-    margin: unset;
 
     > div {
       pointer-events: none;

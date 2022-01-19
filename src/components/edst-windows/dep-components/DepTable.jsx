@@ -66,7 +66,7 @@ export default function DepTable() {
         </div>
         <div className="body-col pa header"/>
         <div className="body-col special special-hidden"/>
-        <div className="body-col special rem special-hidden"/>
+        <div className="body-col special special-hidden"/>
         <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
