@@ -187,6 +187,11 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.hold_data ? 'H' : ''}
         </div>
+        <div className={`body-col special`}
+             disabled={true}
+        >
+          *
+        </div>
         <div className={`body-col special`} disabled={true}>
         </div>
         <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
