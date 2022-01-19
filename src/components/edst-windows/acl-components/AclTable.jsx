@@ -106,7 +106,7 @@ export default function AclTable() {
           </div>
         </div>
         <div className="body-col special special-hidden"/>
-        <div className="body-col special rem special-hidden"/>
+        <div className="body-col special special-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}

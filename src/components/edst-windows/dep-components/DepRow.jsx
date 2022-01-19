@@ -17,7 +17,7 @@ export function DepRow(props) {
   } = useContext(EdstContext);
   const {asel} = useContext(DepContext);
   const {entry, hidden, bottom_border} = props;
-  const now = performance.now();
+  const now = new Date().getTime();
   let route = entry._route;
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
@@ -59,7 +59,7 @@ export function DepRow(props) {
   }
 
   const handleFidClick = (event) => {
-    const now = performance.now();
+    const now = new Date().getTime();
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {

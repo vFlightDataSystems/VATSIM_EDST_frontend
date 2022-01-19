@@ -12,8 +12,9 @@ export function MessageComposeArea(props) {
   const inputRef = useRef(null);
   const {pos, acl_cid_list, dep_cid_list} = props;
   const {setMcaInputRef, setInputFocused, openWindow, updateEntry, edst_data, setMraMessage} = useContext(EdstContext);
+
   useEffect(() => {
-    setMcaInputRef(inputRef)
+    setMcaInputRef(inputRef);
     inputRef.current.focus();
     return () => setMcaInputRef(null);
   }, []);
@@ -21,10 +22,10 @@ export function MessageComposeArea(props) {
   const highlightEntry = (fid) => {
     const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
-      if (acl_cid_list.cid_list.includes(entry.cid)) {
+      if (acl_cid_list.includes(entry.cid)) {
         updateEntry(entry.cid, {acl_highlighted: true});
       }
-      if (dep_cid_list.cid_list.includes(entry.cid)) {
+      if (dep_cid_list.includes(entry.cid)) {
         updateEntry(entry.cid, {dep_highlighted: true});
       }
     }
@@ -36,8 +37,8 @@ export function MessageComposeArea(props) {
     const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
       let msg = formatUtcMinutes(utc_minutes) + '\n'
-      + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXXXX`
-      + ` ${entry.altitude} ${entry.dep}./.${computeFrd(entry.reference_fix)}..${entry._route}`;
+      + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
+      + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route}`;
       setMraMessage(msg);
     }
   }
