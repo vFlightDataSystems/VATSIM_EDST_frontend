@@ -38,10 +38,14 @@ export function RouteMenu(props) {
 
   const clearedReroute = (reroute_data) => {
     let plan_data;
+    const dest = entry.dest
     if (!reroute_data.aar) {
       plan_data = {route: reroute_data.route, route_data: reroute_data.route_data};
     } else {
       plan_data = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
+    }
+    if (plan_data.route.slice(-dest.length) === dest) {
+      plan_data.route = plan_data.route.slice(0, -dest.length);
     }
     // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or localhost
     copy(`${!dep ? frd + '..' : ''}${plan_data.route}`);
@@ -60,7 +64,7 @@ export function RouteMenu(props) {
   }
 
   const clearedToFix = (fix) => {
-    let {_route: new_route, _route_data} = entry;
+    let {_route: new_route, _route_data, dest} = entry;
     let route_fixes = _route_data.map(e => e.name);
     const index = route_fixes.indexOf(fix);
     for (let f of route_fixes.slice(0, index + 1).reverse()) {
@@ -70,8 +74,11 @@ export function RouteMenu(props) {
       }
     }
     new_route = `..${fix}` + new_route;
+    if (new_route.slice(-dest.length) === dest) {
+      new_route = new_route.slice(0, -dest.length);
+    }
     // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
-    copy(`${!dep ? frd : ''}${new_route}`);
+    copy(`${!dep ? frd : ''}${new_route}`.replace(/\.+$/, ''));
     const plan_data = {route: new_route, route_data: _route_data.slice(index)};
     if (trial_plan) {
       trialPlan({
@@ -84,6 +91,29 @@ export function RouteMenu(props) {
       amendEntry(entry.cid, plan_data);
     }
     props.closeWindow();
+  }
+
+  const handleInputChange = (event) => {
+    event.preventDefault();
+    setRoute(event.target.value.toUpperCase());
+  }
+
+  const handleInputKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      copy(`${!dep ? frd : ''}${route}`.replace(/\.+$/, ''));
+      const plan_data = {route: route};
+      if (trial_plan) {
+        trialPlan({
+          cid: entry.cid,
+          callsign: entry.callsign,
+          plan_data: plan_data,
+          msg: `AM ${entry.cid} RTE ${route}`
+        });
+      } else {
+        amendEntry(entry.cid, plan_data);
+      }
+      props.closeWindow();
+    }
   }
 
   const route_data = entry?._route_data;
@@ -133,7 +163,11 @@ export function RouteMenu(props) {
         >
           <div className="options-col">
             <div className="input">
-              {!dep && <span className="ppos" disabled={true}>
+              {!dep && <span className="ppos"
+                             onContextMenu={(event) => {
+                               event.preventDefault();
+                               copy(frd);
+                             }}>
                   {frd}..
                 </span>}
               <span className="route-input">
@@ -141,7 +175,8 @@ export function RouteMenu(props) {
                   onFocus={() => setInputFocused(true)}
                   onBlur={() => setInputFocused(false)}
                   value={route}
-                  onChange={(e) => setRoute(e.target.value.toUpperCase())}
+                  onChange={handleInputChange}
+                  onKeyDown={handleInputKeyDown}
                 />
               </span>
             </div>
@@ -172,7 +207,7 @@ export function RouteMenu(props) {
         </div>
         <div className="options-row">
           <div className="options-col display-route">
-            ./{entry?._route}
+            {dep ? entry.dep : './'}{entry?._route}
           </div>
         </div>
         {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
