@@ -91,19 +91,6 @@ export default class App extends React.Component {
     // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
     const artcc_id = 'zbw';
     const sector_id = '37';
-    this.setState({artcc_id: artcc_id, sector_id: sector_id});
-    await getBoundaryData(artcc_id)
-      .then(response => response.json())
-      .then(geo_data => {
-        this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))})
-      });
-    await getReferenceFixes(artcc_id)
-      .then(response => response.json())
-      .then(reference_fixes => {
-        if (reference_fixes) {
-          this.setState({reference_fixes: reference_fixes});
-        }
-      });
     const now = new Date().getTime();
     let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
     if (now - local_data?.timestamp < CACHE_TIMEOUT) {
@@ -114,7 +101,23 @@ export default class App extends React.Component {
       local_data.dep_deleted_list = new Set(local_data.dep_deleted_list[Symbol.iterator] ?? []);
       this.setState(local_data ?? {});
     }
-    localStorage.removeItem(`vEDST_${artcc_id}_${sector_id}`);
+    this.setState({artcc_id: artcc_id, sector_id: sector_id});
+    if (!(this.state.boundary_polygons.length > 0)) {
+      await getBoundaryData(artcc_id)
+        .then(response => response.json())
+        .then(geo_data => {
+          this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))})
+        });
+    }
+    if (!(this.state.reference_fixes.length > 0)) {
+      await getReferenceFixes(artcc_id)
+        .then(response => response.json())
+        .then(reference_fixes => {
+          if (reference_fixes) {
+            this.setState({reference_fixes: reference_fixes});
+          }
+        });
+    }
     await this.refresh();
     this.update_interval_id = setInterval(this.refresh, 20000);
   }
