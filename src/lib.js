@@ -98,3 +98,13 @@ export function computeFrd(reference_fix) {
 export function formatUtcMinutes(minutes) {
   return ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
 }
+
+export function copy(text) {
+  const input = document.createElement('textarea');
+  input.innerHTML = text;
+  document.body.appendChild(input);
+  input.select();
+  const result = document.execCommand('copy');
+  document.body.removeChild(input);
+  return result;
+}

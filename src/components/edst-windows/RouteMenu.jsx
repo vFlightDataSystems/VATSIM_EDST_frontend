@@ -2,7 +2,7 @@ import {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import PreferredRouteDisplay from "./PreferredRouteDisplay";
-import {computeFrd} from "../../lib";
+import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 
 export function RouteMenu(props) {
@@ -43,7 +43,8 @@ export function RouteMenu(props) {
     } else {
       plan_data = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
     }
-    navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`);
+    // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or localhost
+    copy(`${!dep ? frd + '..' : ''}${plan_data.route}`);
     if (trial_plan) {
       const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`;
       trialPlan({
@@ -69,7 +70,8 @@ export function RouteMenu(props) {
       }
     }
     new_route = `..${fix}` + new_route;
-    navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`);
+    // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
+    copy(`${!dep ? frd : ''}${new_route}`);
     const plan_data = {route: new_route, route_data: _route_data.slice(index)};
     if (trial_plan) {
       trialPlan({
