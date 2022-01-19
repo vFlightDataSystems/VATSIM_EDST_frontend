@@ -62,14 +62,27 @@ export function AclRow(props) {
   const handleHoldClick = (event) => {
     switch (event.button) {
       case 0:
-        if (!entry?.hold_data) {
+        if (!entry.hold_data) {
           aircraftSelect(event, 'acl', entry.cid, 'hold');
         } else {
-          updateEntry(entry.cid, {show_hold_info: !entry.show_hold_info});
+          updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'hold_data' : null});
         }
         break;
       case 1:
         aircraftSelect(event, 'acl', entry.cid, 'hold');
+        break;
+      default:
+        break;
+    }
+  }
+
+  const handleRemarksClick = (event) => {
+    switch (event.button) {
+      case 0:
+        updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'remarks' : null, remarks_checked: true});
+        break;
+      case 2:
+        updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'raw_route' : null, remarks_checked: true});
         break;
       default:
         break;
@@ -187,19 +200,21 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.hold_data ? 'H' : ''}
         </div>
-        <div className={`body-col special`}
-             disabled={true}
+        <div className={`body-col special`} disabled={true}/>
+        <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
+             disabled={!(entry.flightplan.remarks?.length > 0)}
+             onMouseDown={handleRemarksClick}
         >
           *
-        </div>
-        <div className={`body-col special`} disabled={true}>
         </div>
         <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
         >
-          {entry.show_hold_info && hold_data &&
+          {entry.acl_route_display === 'hold_data' && hold_data &&
           `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
-          {!entry.show_hold_info && <div>
+          {entry.acl_route_display === 'remarks' && entry.flightplan.remarks}
+          {entry.acl_route_display === 'raw_route' && entry.flightplan.route}
+          {!entry.acl_route_display && <div>
             <span
               className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>
             ./.{entry.reference_fix ? computeFrd(entry.reference_fix) + '..' : '.'}
