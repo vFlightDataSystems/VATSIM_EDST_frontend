@@ -92,7 +92,7 @@ export function getClosestReferenceFix(reference_fixes, pos_point) {
 
 export function computeFrd(reference_fix) {
   return reference_fix.waypoint_id + Math.round(reference_fix.bearing).toString().padStart(3, '0')
-    + Math.round(reference_fix.distance).toString().padStart(3, '0')
+    + Math.round(reference_fix.distance).toString().padStart(3, '0');
 }
 
 export function formatUtcMinutes(minutes) {

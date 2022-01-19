@@ -25,6 +25,7 @@ export function RouteMenu(props) {
   const [trial_plan, setTrialPlan] = useState(!dep);
   const routes = (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({append_oplus: false, append_star: false});
+  const [frd, setFrd] = useState(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
   const {append_oplus, append_star} = append;
 
   const ref = useRef(null);
@@ -32,6 +33,7 @@ export function RouteMenu(props) {
 
   useEffect(() => {
     setRoute(entry._route.replace(/^\.*/, ''));
+    setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
   }, [entry])
 
   const clearedReroute = (reroute_data) => {
@@ -41,8 +43,9 @@ export function RouteMenu(props) {
     } else {
       plan_data = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
     }
+    navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`);
     if (trial_plan) {
-      const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`
+      const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`;
       trialPlan({
         cid: entry.cid,
         callsign: entry.callsign,
@@ -50,7 +53,7 @@ export function RouteMenu(props) {
         msg: msg
       });
     } else {
-      amendEntry(entry.cid, plan_data)
+      amendEntry(entry.cid, plan_data);
     }
     props.closeWindow();
   }
@@ -66,6 +69,7 @@ export function RouteMenu(props) {
       }
     }
     new_route = `..${fix}` + new_route;
+    navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`);
     const plan_data = {route: new_route, route_data: _route_data.slice(index)};
     if (trial_plan) {
       trialPlan({
@@ -127,15 +131,16 @@ export function RouteMenu(props) {
         >
           <div className="options-col">
             <div className="input">
-                <span className="ppos" disabled={true}>
-                  {entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000'}..
-                </span>
-              <span className="route-after-ppos">
+              {!dep && <span className="ppos" disabled={true}>
+                  {frd}..
+                </span>}
+              <span className="route-input">
                 <input
                   onFocus={() => setInputFocused(true)}
                   onBlur={() => setInputFocused(false)}
                   value={route}
-                  onChange={(e) => setRoute(e.target.value.toUpperCase())}/>
+                  onChange={(e) => setRoute(e.target.value.toUpperCase())}
+                />
               </span>
             </div>
           </div>
