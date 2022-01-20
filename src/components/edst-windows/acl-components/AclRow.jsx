@@ -79,10 +79,10 @@ export function AclRow(props) {
   const handleRemarksClick = (event) => {
     switch (event.button) {
       case 0:
-        updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'remarks' : null, remarks_checked: true});
+        updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'remarks') ? 'remarks' : null, remarks_checked: true});
         break;
       case 2:
-        updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'raw_route' : null, remarks_checked: true});
+        updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'raw_route') ? 'raw_route' : null});
         break;
       default:
         break;
@@ -188,6 +188,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
           {entry?.scratch_spd?.val}
         </div>
         <div className={`body-col special`} disabled={true}/>
+        <div className={`body-col special`} disabled={true}/>
         <div className={`body-col special hold-col ${isSelected(entry.cid, 'hold') ? 'selected' : ''}`}
              onMouseDown={handleHoldClick}
              onContextMenu={(event) => {
@@ -200,7 +201,6 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.hold_data ? 'H' : ''}
         </div>
-        <div className={`body-col special`} disabled={true}/>
         <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
              disabled={!(entry.flightplan.remarks?.length > 0)}
              onMouseDown={handleRemarksClick}
@@ -212,11 +212,12 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.acl_route_display === 'hold_data' && hold_data &&
           `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
-          {entry.acl_route_display === 'remarks' && entry.flightplan.remarks}
-          {entry.acl_route_display === 'raw_route' && entry.flightplan.route}
-          {!entry.acl_route_display && <div>
-            <span
-              className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>
+          {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
+          {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
+          {!entry.acl_route_display && <span className="no-pad">
+            <span className={`${aar_avail && !on_aar ? 'amendment-1' : ''}${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+              {entry.dep}
+            </span>
             ./.{entry.reference_fix ? computeFrd(entry.reference_fix) + '..' : '.'}
             {route?.replace(/^\.*/, '')}
             {pending_aar && !on_aar &&
@@ -224,7 +225,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
               {`[${pending_aar}]`}
               </span>}
             {route?.slice(-1) !== '.' && '..'}{entry.dest}
-          </div>}
+          </span>}
         </div>
       </div>
     </div>
