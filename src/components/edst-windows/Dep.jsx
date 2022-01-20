@@ -8,6 +8,7 @@ export function Dep(props) {
 
   useEffect(() => {
     return () => props.unmount();
+    // eslint-disable-next-line
   }, []);
 
   return (<div

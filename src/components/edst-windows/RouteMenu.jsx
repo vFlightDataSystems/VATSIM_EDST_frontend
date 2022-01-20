@@ -213,9 +213,9 @@ export function RouteMenu(props) {
             {dep ? entry.dep : './'}{entry?._route}
           </div>
         </div>
-        {[...Array(Math.min(route_data?.length || 0, 10)).keys()].map(i => <div className="options-row"
+        {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map(i => <div className="options-row"
                                                                                 key={`route-menu-row-${i}`}>
-          {[...Array(((route_data?.length || 0) / 10 | 0) + 1).keys()].map(j => {
+          {[...Array(((route_data?.length ?? 0) / 10 | 0) + 1).keys()].map(j => {
             const fix_name = route_data[i + j * 10]?.name;
             return (fix_name && <div className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                      onMouseDown={() => clearedToFix(fix_name)}>

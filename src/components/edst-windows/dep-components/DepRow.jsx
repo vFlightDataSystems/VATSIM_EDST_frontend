@@ -18,13 +18,13 @@ export function DepRow(props) {
   const {asel} = useContext(DepContext);
   const {entry, hidden, bottom_border} = props;
   const now = new Date().getTime();
-  let route = entry._route;
+  let route = entry.route;
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry?.scratchpad || '');
+  const [scratchpad, setScratchpad] = useState(entry?.scratchpad ?? '');
   const ref = useRef(null);
 
   const current_fix_names = entry._route_data.map(fix => fix.name);
@@ -62,7 +62,7 @@ export function DepRow(props) {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
-        if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {
+        if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
           deleteEntry('dep', entry.cid);
         }
         break;
@@ -80,7 +80,7 @@ export function DepRow(props) {
   return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
-    <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+    <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
            onMouseDown={() => props.updateStatus(entry.cid)}
       >

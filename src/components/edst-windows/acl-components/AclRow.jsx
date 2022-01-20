@@ -25,7 +25,7 @@ export function AclRow(props) {
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry?.scratchpad || '');
+  const [scratchpad, setScratchpad] = useState(entry?.scratchpad ?? '');
   const ref = useRef(null);
 
   const current_fix_names = entry._route_data.map(fix => fix.name);
@@ -93,7 +93,7 @@ export function AclRow(props) {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
-        if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {
+        if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
           deleteEntry('acl', entry.cid);
         }
         break;
@@ -111,7 +111,7 @@ export function AclRow(props) {
   return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
                key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
-    <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+    <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
            onMouseDown={() => props.updateStatus(entry.cid)}>
         {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}

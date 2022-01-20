@@ -5,7 +5,7 @@ import WindowTitleBar from "../WindowTitleBar";
 
 export default function PlansDisplayHeader(props) {
   const {focused, asel, plan_data} = props;
-  const interim_disabled = asel ? !Object.keys(plan_data.plan_data || {}).includes('altitude') : true;
+  const interim_disabled = asel ? !Object.keys(plan_data.plan_data ?? {}).includes('altitude') : true;
 
   return (<div>
     <WindowTitleBar
