@@ -4,6 +4,7 @@ import '../../css/windows/options-menu-styles.scss';
 import PreferredRouteDisplay from "./PreferredRouteDisplay";
 import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
+import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
 
 export function RouteMenu(props) {
   const {
@@ -19,8 +20,8 @@ export function RouteMenu(props) {
   const dep = asel?.window === 'dep';
   const entry = edst_data?.[asel?.cid]
   const current_route_fixes = entry?._route_data.map(fix => fix.name);
-
   const [focused, setFocused] = useState(false);
+  const [display_raw_route, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(entry._route?.replace(/^\.*/, ''));
   const [trial_plan, setTrialPlan] = useState(!dep);
   const routes = (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
@@ -48,7 +49,7 @@ export function RouteMenu(props) {
       plan_data.route = plan_data.route.slice(0, -dest.length);
     }
     // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or localhost
-    copy(`${!dep ? frd + '..' : ''}${plan_data.route}`);
+    copy(`${!dep ? frd : ''}${plan_data.route}`);
     if (trial_plan) {
       const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`;
       trialPlan({
@@ -136,18 +137,20 @@ export function RouteMenu(props) {
         <div className="options-row fid">
           {entry.callsign} {entry.type}/{entry.equipment}
         </div>
-        <div className="options-row route-row"
-          // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
-        >
-          <div className="options-col left"
-            // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
-          >
+        <div className="options-row route-row">
+          <div className="options-col">
             <button className={`${trial_plan ? 'selected' : ''}`}
                     onMouseDown={() => setTrialPlan(true)}
                     disabled={dep}
             >
               Trial Plan
             </button>
+          </div>
+          <div className="options-col center">
+            <img src={VATSIM_LOGO} alt="vatsim-logo"
+                 onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
+                 onContextMenu={(event) => event.preventDefault()}
+            />
           </div>
           <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}
             // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
@@ -171,13 +174,13 @@ export function RouteMenu(props) {
                   {frd}..
                 </span>}
               <span className="route-input">
-                <input
-                  onFocus={() => setInputFocused(true)}
-                  onBlur={() => setInputFocused(false)}
-                  value={route}
-                  onChange={handleInputChange}
-                  onKeyDown={handleInputKeyDown}
-                />
+                  <input
+                    onFocus={() => setInputFocused(true)}
+                    onBlur={() => setInputFocused(false)}
+                    value={display_raw_route ? entry.flightplan.route : route}
+                    onChange={(event) => !display_raw_route && handleInputChange(event)}
+                    onKeyDown={(event) => !display_raw_route && handleInputKeyDown(event)}
+                  />
               </span>
             </div>
           </div>
