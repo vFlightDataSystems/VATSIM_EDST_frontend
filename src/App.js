@@ -39,7 +39,7 @@ const defaultPos = {
   'edst-mra': {x: 100, y: 100}
 };
 
-const CACHE_TIMEOUT = 300000; // ms
+// const CACHE_TIMEOUT = 300000; // ms
 
 const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mra'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'fel'];
@@ -78,7 +78,7 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state =  intial_state;
+    this.state = intial_state;
     this.mcaInputRef = null;
     this.outlineRef = React.createRef();
   }
@@ -91,16 +91,16 @@ export default class App extends React.Component {
     // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
     const artcc_id = 'zbw';
     const sector_id = '37';
-    const now = new Date().getTime();
-    let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
-    if (now - local_data?.timestamp < CACHE_TIMEOUT) {
-      local_data.open_windows = new Set( local_data.open_windows[Symbol.iterator] ?? []);
-      local_data.acl_cid_list = new Set(local_data.acl_cid_list[Symbol.iterator] ?? []);
-      local_data.dep_cid_list = new Set(local_data.dep_cid_list[Symbol.iterator] ?? []);
-      local_data.acl_deleted_list = new Set(local_data.acl_deleted_list[Symbol.iterator] ?? []);
-      local_data.dep_deleted_list = new Set(local_data.dep_deleted_list[Symbol.iterator] ?? []);
-      this.setState(local_data ?? {});
-    }
+    // const now = new Date().getTime();
+    // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
+    // if (now - local_data?.timestamp < CACHE_TIMEOUT) {
+    //   local_data.open_windows = new Set(local_data.open_windows[Symbol.iterator] ?? []);
+    //   local_data.acl_cid_list = new Set(local_data.acl_cid_list[Symbol.iterator] ?? []);
+    //   local_data.dep_cid_list = new Set(local_data.dep_cid_list[Symbol.iterator] ?? []);
+    //   local_data.acl_deleted_list = new Set(local_data.acl_deleted_list[Symbol.iterator] ?? []);
+    //   local_data.dep_deleted_list = new Set(local_data.dep_deleted_list[Symbol.iterator] ?? []);
+    //   this.setState(local_data ?? {});
+    // }
     this.setState({artcc_id: artcc_id, sector_id: sector_id});
     if (!(this.state.boundary_polygons.length > 0)) {
       await getBoundaryData(artcc_id)
@@ -123,6 +123,7 @@ export default class App extends React.Component {
   }
 
   componentWillUnmount() {
+    // localStorage.setItem(`vEDST_${this.state.artcc_id}_${this.state.sector_id}`, JSON.stringify({...this.state, timestamp: new Date().getTime()}));
     if (this.update_interval_id) {
       clearInterval(this.update_interval_id);
     }
@@ -194,7 +195,7 @@ export default class App extends React.Component {
   }
 
   refresh = async () => {
-    let {artcc_id, sector_id, reference_fixes} = this.state;
+    let {artcc_id, reference_fixes} = this.state;
     getEdstData()
       .then(response => response.json())
       .then(async new_data => {
@@ -248,7 +249,6 @@ export default class App extends React.Component {
           }
         }
       );
-    localStorage.setItem(`vEDST_${artcc_id}_${sector_id}`, JSON.stringify({...this.state, timestamp: new Date().getTime()}));
   }
 
   processAar = (entry, aar_list) => {
