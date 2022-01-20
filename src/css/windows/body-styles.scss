@@ -427,9 +427,7 @@ $body-hover-white: #F0F0F0;
   }
 
   &.route {
-    max-width: 1100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //max-width: 1100px;
     white-space: nowrap;
     justify-content: left;
     border: 1px solid transparent;
@@ -437,9 +435,12 @@ $body-hover-white: #F0F0F0;
     padding-right: 2px;
 
     > span {
+      max-width: 50vw;
       pointer-events: none;
       margin: 0;
       padding: 0 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       .no-pad {
         padding: 0;
