@@ -453,6 +453,12 @@ $route-menu-alert-cyan: #00ADAD;
       }
     }
 
+    &.center {
+      max-width: 24px;
+      max-height: 24px;
+      //transform: scale(0.2);
+    }
+
     &.right {
       > button {
         display: flex;
@@ -535,4 +541,8 @@ $route-menu-alert-cyan: #00ADAD;
       }
     }
   }
+}
+
+.vatsim-logo {
+  background-image: url(../images/VATSIM-social_icon.svg);
 }
