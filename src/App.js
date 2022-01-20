@@ -31,6 +31,7 @@ import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
 import {AclContext, DepContext, EdstContext} from "./contexts/contexts";
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
+import {BoundarySelector} from "./components/BoundarySelector";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -71,7 +72,11 @@ const intial_state = {
   manual_posting: {acl: true, dep: true},
   input_focused: false,
   open_windows: new Set(),
-  mra_msg: ''
+  mra_msg: '',
+  boundaries: {},
+  boundary_ids: [],
+  shown: true,
+  selected_boundary_ids: new Set()
 };
 
 export default class App extends React.Component {
@@ -89,7 +94,7 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
-    const artcc_id = 'zbw';
+    const artcc_id = 'zlc';
     const sector_id = '37';
     // const now = new Date().getTime();
     // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
@@ -106,7 +111,9 @@ export default class App extends React.Component {
       await getBoundaryData(artcc_id)
         .then(response => response.json())
         .then(geo_data => {
-          this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))})
+          this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
+          this.setState({boundaries: geo_data.map(sector_boundary => sector_boundary)});
+          //this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))})
         });
     }
     if (!(this.state.reference_fixes.length > 0)) {
@@ -249,6 +256,7 @@ export default class App extends React.Component {
           }
         }
       );
+      localStorage.clear();
   }
 
   processAar = (entry, aar_list) => {
@@ -676,6 +684,26 @@ export default class App extends React.Component {
       this.mcaInputRef.current.focus();
     }
   }
+  
+  changeShown = (bool) => {
+    this.setState({shown: bool})
+  }
+  
+  updateSelectedBoundaries = (label) => {
+    if (this.state.selected_boundary_ids.has(label)) {
+      this.state.selected_boundary_ids.delete(label);
+    } else {
+      this.state.selected_boundary_ids.add(label);
+    }
+  }
+  
+  updateBoundaryPolygons = () =>{
+    this.setState({
+      boundary_polygons: this.state.boundaries.filter(
+          id => this.state.selected_boundary_ids.has(id.properties.id))
+          .map(coordinates => polygon(coordinates.geometry.coordinates))})
+  }
+  
 
   render() {
     const {
@@ -698,7 +726,9 @@ export default class App extends React.Component {
       input_focused,
       manual_posting,
       open_windows,
-      mra_msg
+      mra_msg,
+      boundary_ids,
+      shown
     } = this.state;
 
     return (
@@ -723,6 +753,13 @@ export default class App extends React.Component {
              ref={this.outlineRef}
              onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
         >
+          {shown && <BoundarySelector
+              boundaries={boundary_ids}
+              changer={this.changeShown}
+              updateSelected={this.updateSelectedBoundaries}
+              updatePolygon={this.updateBoundaryPolygons}/>
+          }
+          
           <div className="edst-dragging-outline" style={dragPreviewStyle || {display: 'none'}}
                onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
           >
