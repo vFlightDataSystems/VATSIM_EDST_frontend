@@ -17,10 +17,11 @@ export function MessageComposeArea(props) {
     setMcaInputRef(inputRef);
     inputRef.current.focus();
     return () => setMcaInputRef(null);
+    // eslint-disable-next-line
   }, []);
 
   const highlightEntry = (fid) => {
-    const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    const entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
       if (acl_cid_list.has(entry.cid)) {
         updateEntry(entry.cid, {acl_highlighted: true});
@@ -34,7 +35,7 @@ export function MessageComposeArea(props) {
   const flightplanReadout = (fid) => {
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    const entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
       let msg = formatUtcMinutes(utc_minutes) + '\n'
       + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`

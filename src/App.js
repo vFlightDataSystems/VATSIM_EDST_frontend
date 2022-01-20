@@ -186,7 +186,7 @@ export default class App extends React.Component {
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
-      new_entry.pending_removal = current_entry.pending_removal || new Date().getTime();
+      new_entry.pending_removal = current_entry.pending_removal ?? new Date().getTime();
     } else {
       new_entry.pending_removal = null;
     }
@@ -202,7 +202,7 @@ export default class App extends React.Component {
           if (new_data) {
             for (let new_entry of new_data) {
               let current_entry = this.state.edst_data[new_entry.cid];
-              let entry = this.refreshEntry(new_entry, current_entry || {
+              let entry = this.refreshEntry(new_entry, current_entry ?? {
                 acl_status: -1,
                 dep_status: -1
               });
@@ -373,7 +373,7 @@ export default class App extends React.Component {
 
   addEntry = (window, fid) => {
     let {edst_data, acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
-    let entry = Object.values(edst_data || {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    let entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
       if (this.depFilter(entry)) {
         this.addEntry('dep', fid);
@@ -647,7 +647,7 @@ export default class App extends React.Component {
     const now = new Date().getTime();
     acl_cid_list = [...acl_cid_list];
     acl_deleted_list = [...acl_deleted_list];
-    const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal || now) > REMOVAL_TIMEOUT));
+    const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
     acl_cid_list = new Set(acl_cid_list.filter(cid => !cid_pending_removal_list.includes(cid)));
     acl_deleted_list = new Set(acl_deleted_list.concat(cid_pending_removal_list));
     this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
@@ -723,7 +723,7 @@ export default class App extends React.Component {
              ref={this.outlineRef}
              onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
         >
-          <div className="edst-dragging-outline" style={dragPreviewStyle || {display: 'none'}}
+          <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
                onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
           >
             {dragging_cursor_hide && <div className="cursor"/>}

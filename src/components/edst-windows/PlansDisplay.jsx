@@ -12,6 +12,7 @@ export default function PlansDisplay(props) {
   const unmount = () => props.unmount();
   useEffect(() => {
     return () => unmount();
+    // eslint-disable-next-line
   }, []);
   const {plan_queue} = props;
 

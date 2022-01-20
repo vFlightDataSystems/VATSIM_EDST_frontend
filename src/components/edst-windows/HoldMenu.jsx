@@ -55,11 +55,11 @@ export function HoldMenu(props) {
     const route_data = computeCrossingTimes(entry?._route_data);
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    setHoldFix(entry?.hold_data?.hold_fix || 'PP');
-    setLegLength(entry?.hold_data?.leg_length || 'STD');
-    setHoldDirection(entry?.hold_data?.hold_direction || 'N');
-    setTurns(entry?.hold_data?.turns || 'RT');
-    setEfc(entry?.hold_data?.efc || utc_minutes + 30);
+    setHoldFix(entry?.hold_data?.hold_fix ?? 'PP');
+    setLegLength(entry?.hold_data?.leg_length ?? 'STD');
+    setHoldDirection(entry?.hold_data?.hold_direction ?? 'N');
+    setTurns(entry?.hold_data?.turns ?? 'RT');
+    setEfc(entry?.hold_data?.efc ?? utc_minutes + 30);
     setRouteData(route_data);
   }, [entry]);
 

@@ -38,13 +38,13 @@ export default function PreferredRouteDisplay(props) {
       </div>
       <div className="prefroute-container"
            onWheel={(e) => setDeltaY(Math.max(Math.min(((deltaY + e.deltaY) / 100 | 0), routes.length - 5), 0))}>
-        {Object.entries(routes.slice(deltaY, deltaY + 5) || {}).map(([i, r]) => {
+        {Object.entries(routes.slice(deltaY, deltaY + 5) ?? {}).map(([i, r]) => {
           return (!eligible_only || r.eligible) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
               <div className="options-col prefroute-col small hover"
                    onMouseDown={() => props.clearedReroute(r)}
               >
-                {r.route || r.aar_amendment_route_string}{r.dest}
+                {r.route ?? r.aar_amendment_route_string}{r.dest}
               </div>
             </div>)
         })}
