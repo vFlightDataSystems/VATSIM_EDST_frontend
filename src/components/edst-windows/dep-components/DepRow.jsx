@@ -132,7 +132,7 @@ export function DepRow(props) {
         <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
         >
-          <div>
+          <span>
               <span
                 className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>{route}
             {pending_aar && !on_aar &&
@@ -140,7 +140,7 @@ export function DepRow(props) {
               {`[${pending_aar}]`}
               </span>}
             {route?.slice(-1) !== '.' && '..'}{entry.dest}
-          </div>
+          </span>
         </div>
       </div>
     </div>

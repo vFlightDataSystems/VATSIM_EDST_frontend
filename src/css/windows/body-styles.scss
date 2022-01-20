@@ -283,7 +283,7 @@ $body-hover-white: #F0F0F0;
   }
 
   &.special {
-    //margin-right: 10px;
+    margin: 0 2px;
     width: 8px;
     border: 1px solid transparent;
     //font-family: Verdana, sans-serif;
@@ -436,31 +436,31 @@ $body-hover-white: #F0F0F0;
     margin-left: 4px;
     padding-right: 2px;
 
-    > div {
+    > span {
       pointer-events: none;
       margin: 0;
-      padding: 0;
+      padding: 0 2px;
 
-      span {
-        padding: 0 2px;
+      .no-pad {
+        padding: 0;
+      }
 
-        &.amendment-1 {
-          padding-right: 0;
-          color: $body-font-blue;
+      .amendment-1 {
+        padding: 0;
+        color: $body-font-blue;
 
-          &.selected {
-            background-color: $body-font-blue;
-            color: #000000;
-          }
+        &.selected {
+          background-color: $body-font-blue;
+          color: #000000;
         }
+      }
 
-        &.amendment-2 {
-          color: $body-font-blue;
+      .amendment-2 {
+        color: $body-font-blue;
 
-          &.selected {
-            background-color: $body-font-blue;
-            color: #000000;
-          }
+        &.selected {
+          background-color: $body-font-blue;
+          color: #000000;
         }
       }
     }
