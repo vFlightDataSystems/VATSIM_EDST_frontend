@@ -12,6 +12,14 @@ $route-menu-alert-cyan: #00ADAD;
   color: $options-menu-light-grey;
   border: none;
 
+  &.sort-acl {
+    width: 220px;
+  }
+
+  &.sort-dep {
+    width: 150px;
+  }
+
   &.plan {
     width: 220px;
   }
@@ -39,10 +47,6 @@ $route-menu-alert-cyan: #00ADAD;
 
   &.heading {
     width: 180px;
-  }
-
-  &.sort {
-    width: 170px;
   }
 }
 

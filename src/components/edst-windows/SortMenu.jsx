@@ -8,15 +8,14 @@ export function SortMenu(props) {
   const ref = useRef(null);
 
   const {pos, ref_id} = props;
-  const acl = ref_id === 'acl-sort-button';
-  const dep = ref_id === 'dep-sort-button';
-  const selected = acl ? sort_data.acl : sort_data.dep;
+  const window = ref_id === 'acl-sort-button' ? 'acl' : 'dep';
+  const selected = sort_data[window];
   let sort_data_copy = Object.assign({}, sort_data);
 
   return (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
-      className="options-menu no-select"
+      className={`options-menu no-select ${`sort-${window}`}`}
       ref={ref}
       id="sort-menu"
       style={{left: pos.x, top: pos.y}}
@@ -28,7 +27,7 @@ export function SortMenu(props) {
         Sort Menu
       </div>
       <div className="options-body sort">
-        {acl && <div className="options-row sector">
+        {window === 'acl' && <div className="options-row sector">
           <div className="options-col sort"
                onMouseDown={() => {
                  sort_data_copy.acl.sector = !selected.sector;
@@ -42,7 +41,7 @@ export function SortMenu(props) {
         <div className="options-row">
           <div className="options-col sort"
                onMouseDown={() => {
-                 sort_data_copy[acl ? 'acl' : 'dep'].name = 'ACID';
+                 sort_data_copy[window].name = 'ACID';
                  setSortData(sort_data_copy);
                }}
           >
@@ -50,10 +49,46 @@ export function SortMenu(props) {
             ACID
           </div>
         </div>
+        {window === 'acl' && <div className="options-row">
+          <div className="options-col sort"
+               onMouseDown={() => {
+                 sort_data_copy.acl.name = 'Boundary Time';
+                 setSortData(sort_data_copy);
+               }}
+               disabled={true}
+          >
+            <div className={`box diamond ${selected?.name === 'Boundary Time' ? 'selected' : ''}`}/>
+            Boundary Time
+          </div>
+        </div>}
+        {window === 'acl' && <div className="options-row">
+          <div className="options-col sort"
+               onMouseDown={() => {
+                 sort_data_copy.acl.name = 'Conflict Status';
+                 setSortData(sort_data_copy);
+               }}
+               disabled={true}
+          >
+            <div className={`box diamond ${selected?.name === 'Conflict Status' ? 'selected' : ''}`}/>
+            Conflict Status
+          </div>
+        </div>}
+        {window === 'acl' && <div className="options-row">
+          <div className="options-col sort"
+               onMouseDown={() => {
+                 sort_data_copy.acl.name = 'Conflict Time';
+                 setSortData(sort_data_copy);
+               }}
+               disabled={true}
+          >
+            <div className={`box diamond ${selected?.name === 'Conflict Time' ? 'selected' : ''}`}/>
+            Conflict Time
+          </div>
+        </div>}
         <div className="options-row">
           <div className="options-col sort"
                onMouseDown={() => {
-                 sort_data_copy[acl ? 'acl' : 'dep'].name = 'Destination';
+                 sort_data_copy[window].name = 'Destination';
                  setSortData(sort_data_copy);
                }}
           >
@@ -61,23 +96,36 @@ export function SortMenu(props) {
             Destination
           </div>
         </div>
-        <div className="options-row">
+        {window === 'acl' && <div className="options-row">
           <div className="options-col sort"
                onMouseDown={() => {
-                 sort_data_copy[acl ? 'acl' : 'dep'].name = 'Origin';
+                 sort_data_copy.acl.name = 'Sector-by-Sector';
+                 setSortData(sort_data_copy);
+               }}
+               disabled={true}
+          >
+            <div className={`box diamond ${selected?.name === 'Sector-by-Sector' ? 'selected' : ''}`}/>
+            Sector-by-Sector
+          </div>
+        </div>}
+        {window === 'dep' && <div className="options-row">
+          <div className="options-col sort"
+               onMouseDown={() => {
+                 sort_data_copy.dep.name = 'Origin';
                  setSortData(sort_data_copy);
                }}
           >
             <div className={`box diamond ${selected?.name === 'Origin' ? 'selected' : ''}`}/>
             Origin
           </div>
-        </div>
-        {dep && <div className="options-row">
+        </div>}
+        {window === 'dep' && <div className="options-row">
           <div className="options-col sort"
                onMouseDown={() => {
                  sort_data_copy.dep.name = 'P-Time';
                  setSortData(sort_data_copy);
                }}
+               disabled={true}
           >
             <div className={`box diamond ${selected?.name === 'P-Time' ? 'selected' : ''}`}/>
             P-Time
@@ -85,12 +133,10 @@ export function SortMenu(props) {
         </div>}
         <div className="options-row bottom sort">
           <div className="options-col left">
-            <button
-              onMouseDown={() => {
-                props.setSortData(sort_data);
-                props.closeWindow();
-              }}
-            >
+            <button onMouseDown={() => {
+              props.setSortData(sort_data);
+              props.closeWindow();
+            }}>
               OK
             </button>
           </div>
