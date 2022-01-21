@@ -64,17 +64,22 @@ export function RouteMenu(props) {
     props.closeWindow();
   }
 
-  const clearedToFix = (fix) => {
+  const clearedToFix = (cleared_fix_name) => {
     let {_route: new_route, _route_data, dest} = entry;
-    let route_fixes = _route_data.map(e => e.name);
-    const index = route_fixes.indexOf(fix);
-    for (let f of route_fixes.slice(0, index + 1).reverse()) {
-      if (new_route.includes(f)) {
-        new_route = new_route.slice(new_route.indexOf(f) + f.length);
+    let fix_names = _route_data.map(e => e.name);
+    const index = fix_names.indexOf(cleared_fix_name);
+    for (let name of fix_names.slice(0, index + 1).reverse()) {
+      if (new_route.includes(name)) {
+        new_route = new_route.slice(new_route.indexOf(name) + name.length);
+        if (!Number(new_route[0])) {
+          new_route = `..${cleared_fix_name}` + new_route;
+        } else {
+          new_route = `..${cleared_fix_name}.${name}${new_route}`;
+        }
         break;
       }
     }
-    new_route = `..${fix}` + new_route;
+    // new_route = `..${fix}` + new_route;
     if (new_route.slice(-dest.length) === dest) {
       new_route = new_route.slice(0, -dest.length);
     }
