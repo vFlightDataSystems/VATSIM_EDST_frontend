@@ -18,12 +18,12 @@ import PlansDisplay from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
+  computeMinutesAway,
   getClosestReferenceFix,
   getRemainingRouteData,
   getRouteDataDistance,
-  getSignedDistancePointToPolygons,
-  REMOVAL_TIMEOUT,
   routeWillEnterAirspace,
+  REMOVAL_TIMEOUT, completeAssign
 } from "./lib";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
@@ -145,17 +145,15 @@ export default class App extends React.Component {
   entryFilter = (entry) => {
     const {acl_cid_list, boundary_polygons} = this.state;
     const pos = [entry.flightplan.lon, entry.flightplan.lat];
-    const pos_point = point(pos);
-    const sdist = getSignedDistancePointToPolygons(pos_point, boundary_polygons);
     const will_enter_airspace = routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos);
-    const minutes_away = sdist * 60 / entry.flightplan.ground_speed;
-    return ((minutes_away < 30 || acl_cid_list.has(entry.cid))
+    return ((entry.minutes_away < 30 || acl_cid_list.has(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
   }
 
   refreshEntry = (new_entry, current_entry) => {
     const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
+    new_entry.minutes_away = computeMinutesAway(new_entry, this.state.boundary_polygons);
     const route_fix_names = new_entry.route_data.map(fix => fix.name);
     const dest = new_entry.dest;
     // add departure airport to route_data if we know the coords to compute the distance
@@ -182,7 +180,7 @@ export default class App extends React.Component {
       }
     }
     const remaining_route_data = getRemainingRouteData(new_entry.route, new_entry._route_data, pos);
-    Object.assign(new_entry, remaining_route_data);
+    completeAssign(new_entry, remaining_route_data);
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
@@ -190,7 +188,7 @@ export default class App extends React.Component {
     } else {
       new_entry.pending_removal = null;
     }
-    Object.assign(current_entry, new_entry);
+    completeAssign(current_entry, new_entry);
     return current_entry;
   }
 
@@ -367,7 +365,7 @@ export default class App extends React.Component {
       }
     }
     this.setState((prevState) => {
-      return {edst_data: {...prevState.edst_data, [cid]: Object.assign(entry, data)}};
+      return {edst_data: {...prevState.edst_data, [cid]: completeAssign(entry, data)}};
     });
   }
 
@@ -857,7 +855,7 @@ export default class App extends React.Component {
             />}
             {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
               dragging={dragging}
-              data={edst_data[asel?.cid]}
+              entry={edst_data[asel?.cid]}
               pos={pos['prev-route-menu']}
               closeWindow={() => this.closeMenu('prev-route-menu')}
             />}
