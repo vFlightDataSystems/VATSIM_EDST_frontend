@@ -82,17 +82,7 @@ $floating-window-light-grey: #ADADAD;
     border-bottom: 1px solid $floating-window-light-grey;
 
     input {
-      cursor: default;
       width: 98%;
-      font-size: 16px;
-      outline: none;
-      display: flex;
-      //overflow: hidden;
-      overflow-wrap: anywhere;
-      color: $edst-font-grey;
-      border: none;
-      caret: underscore;
-      background-color: #000000;
     }
   }
 

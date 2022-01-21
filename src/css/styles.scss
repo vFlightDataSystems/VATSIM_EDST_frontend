@@ -30,6 +30,7 @@
 
 $edst-background-black: #000000;
 $edst-font-grey: #ADADAD;
+$edst-font-yellow: #ADAD00;
 
 $edst-window-light-cyan: #008585;
 $edst-window-dark-cyan: #005757;
@@ -53,6 +54,16 @@ button {
 
 input {
     font-family: Consolas, monospace;
+    cursor: default;
+    font-size: 16px;
+    outline: none;
+    display: flex;
+    //overflow: hidden;
+    overflow-wrap: anywhere;
+    color: $edst-font-grey;
+    border: none;
+    caret: underscore;
+    background-color: #000000;
 }
 
 .edst-body {
