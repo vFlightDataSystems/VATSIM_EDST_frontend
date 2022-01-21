@@ -510,7 +510,7 @@ export default class App extends React.Component {
       case 'alt-menu':
         pos[name] = {
           x: x + (plan ? 0 : width),
-          y: plan ? ref.offsetTop : y - 2 * height,
+          y: plan ? ref.offsetTop : y - 76,
           w: width,
           h: height
         };
@@ -639,7 +639,7 @@ export default class App extends React.Component {
   }
 
   unmount = () => {
-    this.setState({asel: null, menu: null});
+    this.setState({asel: null, menu: null, input_focused: false});
   }
 
   aclCleanup = () => {
@@ -704,7 +704,7 @@ export default class App extends React.Component {
     return (
       <div className="edst"
         // onContextMenu={(event) => event.preventDefault()}
-           tabIndex={!input_focused ? '-1' : "0"}
+           tabIndex={!(input_focused || menu?.name === 'alt-menu') ? '-1' : "0"}
            onKeyDown={(event) => !input_focused && this.handleKeyDown(event)}
       >
         <EdstHeader open_windows={open_windows}
