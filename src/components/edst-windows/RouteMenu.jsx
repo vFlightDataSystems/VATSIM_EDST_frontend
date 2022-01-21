@@ -22,7 +22,8 @@ export function RouteMenu(props) {
   const current_route_fixes = entry?._route_data.map(fix => fix.name);
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
-  const [route, setRoute] = useState(entry._route?.replace(/^\.*/, ''));
+  const [route, setRoute] = useState(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
+  const [route_input, setRouteInput] = useState(dep ? entry.dep + route : route);
   const [trial_plan, setTrialPlan] = useState(!dep);
   const routes = (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({append_oplus: false, append_star: false});
@@ -33,9 +34,9 @@ export function RouteMenu(props) {
   const {pos} = props;
 
   useEffect(() => {
-    setRoute(entry._route.replace(/^\.*/, ''));
+    setRoute(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  }, [entry])
+  }, [dep, entry])
 
   const clearedReroute = (reroute_data) => {
     let plan_data;
@@ -85,13 +86,13 @@ export function RouteMenu(props) {
     }
     // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
     copy(`${!dep ? frd : ''}${new_route}`.replace(/\.+$/, ''));
-    const plan_data = {route: new_route, route_data: _route_data.slice(index)};
+    const plan_data = {route: new_route, route_data: _route_data.slice(index), cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}};
     if (trial_plan) {
       trialPlan({
         cid: entry.cid,
         callsign: entry.callsign,
         plan_data: plan_data,
-        msg: `AM ${entry.cid} RTE ${new_route}`
+        msg: `AM ${entry.cid} RTE ${!dep && plan_data.cleared_direct.frd}${new_route}`
       });
     } else {
       amendEntry(entry.cid, plan_data);
@@ -101,7 +102,7 @@ export function RouteMenu(props) {
 
   const handleInputChange = (event) => {
     event.preventDefault();
-    setRoute(event.target.value.toUpperCase());
+    setRouteInput(event.target.value.toUpperCase());
   }
 
   const handleInputKeyDown = (event) => {
@@ -122,7 +123,7 @@ export function RouteMenu(props) {
     }
   }
 
-  const route_data = entry?._route_data;
+  const route_data = dep ? entry.route_data : entry?._route_data;
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -182,7 +183,7 @@ export function RouteMenu(props) {
                   <input
                     onFocus={() => setInputFocused(true)}
                     onBlur={() => setInputFocused(false)}
-                    value={display_raw_route ? entry.flightplan.route : route}
+                    value={display_raw_route ? entry.flightplan.route : route_input}
                     onChange={(event) => !display_raw_route && handleInputChange(event)}
                     onKeyDown={(event) => !display_raw_route && handleInputKeyDown(event)}
                   />
@@ -215,7 +216,7 @@ export function RouteMenu(props) {
         </div>
         <div className="options-row">
           <div className="options-col display-route">
-            {dep ? entry.dep : './'}{entry?._route}
+            {dep ? entry.dep + route : `./.${route}`}
           </div>
         </div>
         {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map(i => <div className="options-row"

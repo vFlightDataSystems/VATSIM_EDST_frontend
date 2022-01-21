@@ -89,6 +89,12 @@ export function getClosestReferenceFix(reference_fixes, pos_point) {
   return closest_fix;
 }
 
+export function computeMinutesAway(entry, polygons) {
+  const pos = [entry.flightplan.lon, entry.flightplan.lat];
+  const pos_point = point(pos);
+  const sdist = getSignedDistancePointToPolygons(pos_point, polygons);
+  return sdist * 60 / entry.flightplan.ground_speed;
+}
 
 export function computeFrd(reference_fix) {
   return reference_fix.waypoint_id + Math.round(reference_fix.bearing).toString().padStart(3, '0')
@@ -107,4 +113,24 @@ export function copy(text) {
   const result = document.execCommand('copy');
   document.body.removeChild(input);
   return result;
+}
+
+// This is an assign function that copies full descriptors
+export function completeAssign(target, ...sources) {
+  sources.forEach(source => {
+    let descriptors = Object.keys(source).reduce((descriptors, key) => {
+      descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
+      return descriptors;
+    }, {});
+
+    // By default, Object.assign copies enumerable Symbols, too
+    Object.getOwnPropertySymbols(source).forEach(sym => {
+      let descriptor = Object.getOwnPropertyDescriptor(source, sym);
+      if (descriptor.enumerable) {
+        descriptors[sym] = descriptor;
+      }
+    });
+    Object.defineProperties(target, descriptors);
+  });
+  return target;
 }
