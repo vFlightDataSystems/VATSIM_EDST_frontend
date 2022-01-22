@@ -19,7 +19,7 @@ export function AclRow(props) {
   const {entry, hidden, alt_mouse_down, bottom_border, any_holding} = props;
   const hold_data = entry.hold_data;
   const now = new Date().getTime();
-  let route = entry._route?.replace(/^\.*/, '');
+  let route = entry._route.replace(/^\.+/, '');
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
     route = route.slice(0, -dest.length);
@@ -215,13 +215,13 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
           {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
           {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
           {!entry.acl_route_display && <span className="no-pad">
-            <span className={`${aar_avail && !on_aar ? 'amendment-1' : ''}${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+            <span className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {entry.dep}
             </span>
             ./.
             {route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
             {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
-            {route}{!route.endsWith('.') && `.${route.length > 0 ? '.' : ''}`}
+            {route}{!route.endsWith('.') && route.length > 0 && `.`}
             {pending_aar && !on_aar &&
             <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pending_aar}]`}
