@@ -151,8 +151,12 @@ export default class App extends React.Component {
       && Number(entry.flightplan.ground_speed) > 30);
   }
 
-  refreshEntry = (new_entry, current_entry) => {
+  refreshEntry = (new_entry) => {
     const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
+    let current_entry = this.state.edst_data[new_entry.cid] ?? {
+      acl_status: -1,
+      dep_status: -1
+    };
     new_entry.minutes_away = computeMinutesAway(new_entry, this.state.boundary_polygons);
     const route_fix_names = new_entry.route_data.map(fix => fix.name);
     const dest = new_entry.dest;
@@ -166,7 +170,7 @@ export default class App extends React.Component {
     if (!(new_entry.route.slice(-dest.length) === dest)) {
       new_entry.route += new_entry.dest;
     }
-    if (current_entry?.route_data === new_entry.route_data) { // if route_data has not changed
+    if (current_entry.route_data === new_entry.route_data) { // if route_data has not changed
       new_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
       // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
       if (current_entry.aar_list) {
@@ -193,25 +197,22 @@ export default class App extends React.Component {
   }
 
   refresh = async () => {
-    let {artcc_id, reference_fixes} = this.state;
+    let {artcc_id, reference_fixes, edst_data} = this.state;
     getEdstData()
       .then(response => response.json())
       .then(async new_data => {
           if (new_data) {
             for (let new_entry of new_data) {
-              let current_entry = this.state.edst_data[new_entry.cid];
-              let entry = this.refreshEntry(new_entry, current_entry ?? {
-                acl_status: -1,
-                dep_status: -1
-              });
+              // yes, this is ugly... gotta find something better
+              edst_data[new_entry.cid] = completeAssign(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
               let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
-              if (this.depFilter(entry) && !dep_deleted_list.has(new_entry.cid)) {
-                if (current_entry?.aar_list === undefined) {
+              if (this.depFilter(edst_data[new_entry.cid]) && !dep_deleted_list.has(new_entry.cid)) {
+                if (edst_data[new_entry.cid] === undefined) {
                   await getAarData(artcc_id, new_entry.cid)
                     .then(response => response.json())
                     .then(aar_list => {
-                      entry.aar_list = aar_list;
-                      entry._aar_list = this.processAar(entry, aar_list);
+                      edst_data[new_entry.cid].aar_list = aar_list;
+                      edst_data[new_entry.cid]._aar_list = this.processAar(edst_data[new_entry.cid], aar_list);
                     });
                 }
                 if (!dep_cid_list.has(new_entry.cid)) {
@@ -219,13 +220,13 @@ export default class App extends React.Component {
                   this.setState({dep_cid_list: dep_cid_list});
                 }
               } else {
-                if (this.entryFilter(entry)) {
-                  if (current_entry?.aar_list === undefined) {
+                if (this.entryFilter(edst_data[new_entry.cid])) {
+                  if (edst_data[new_entry.cid]?.aar_list === undefined) {
                     await getAarData(artcc_id, new_entry.cid)
                       .then(response => response.json())
                       .then(aar_list => {
-                        entry.aar_list = aar_list;
-                        entry._aar_list = this.processAar(entry, aar_list);
+                        edst_data[new_entry.cid].aar_list = aar_list;
+                        edst_data[new_entry.cid]._aar_list = this.processAar(edst_data[new_entry.cid], aar_list);
                       });
                   }
                   if (!acl_cid_list.has(new_entry.cid) && !acl_deleted_list.has(new_entry.cid)) {
@@ -235,11 +236,11 @@ export default class App extends React.Component {
                     this.setState({acl_cid_list: acl_cid_list, dep_cid_list: dep_cid_list});
                   }
                   if (reference_fixes.length > 0) {
-                    entry.reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
+                    edst_data[new_entry.cid].reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
                   }
                 }
               }
-              this.state.edst_data[new_entry.cid] = entry;
+              // this.state.edst_data[new_entry.cid] = entry;
               // this.setState((prevState) => {
               //   return {edst_data: {...prevState.edst_data, [new_entry.cid]: entry}}
               // });
