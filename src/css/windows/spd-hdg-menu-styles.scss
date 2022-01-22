@@ -12,8 +12,14 @@ $spd-hdg-menu-selected-light-pink: #AD6C6C;
 $spd-hdg-selected-font-white: #D6D6D6;
 
 
-
 .spd-hdg-menu-row {
+
+  padding: 6px;
+  min-height: 4px;
+  //height: 20px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
 
   @include options-button;
 
@@ -23,20 +29,15 @@ $spd-hdg-selected-font-white: #D6D6D6;
     height: 20px;
 
     &.button-1 {
-      margin: auto 5px 0 14px;
+      margin-left: 22px;
+      margin-right: auto;
     }
 
     &.button-2 {
-      margin-right: auto;
+      margin-right: 16px;
+      margin-left: auto;
     }
   }
-
-  padding: 6px;
-  min-height: 4px;
-  //height: 20px;
-  display: flex;
-  justify-content: left;
-  align-items: center;
 
   &.top-border {
     border-top: 1px solid $options-menu-light-grey;
@@ -52,9 +53,10 @@ $spd-hdg-selected-font-white: #D6D6D6;
     justify-content: left;
     align-items: center;
   }
+
   .hdg-col-2 {
     margin-left: auto;
-    margin-right: 24px;
+    margin-right: 14px;
     display: flex;
     justify-content: right;
     align-items: center;
@@ -79,7 +81,7 @@ $spd-hdg-selected-font-white: #D6D6D6;
 
     .spd-hdg-menu-container-col {
       display: flex;
-      width: 40px;
+      width: 42px;
       justify-content: center;
       align-items: center;
       color: $spd-hdg-menu-light-grey;
@@ -91,11 +93,11 @@ $spd-hdg-selected-font-white: #D6D6D6;
 
       &.spd-hdg-menu-container-col-2 {
         width: 30px;
-        margin-left: 15px;
+        margin-left: 30px;
       }
 
       &.spd-hdg-menu-container-col-3 {
-        justify-content: left;
+        //justify-content: left;
         width: 30px;
         margin-left: 15px;
       }

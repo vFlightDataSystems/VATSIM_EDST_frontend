@@ -135,12 +135,11 @@ export function SpeedMenu(props) {
                      updateEntry(entry.cid, {
                        scratch_spd: {
                          scratchpad: !amend,
-                         val: `M${Number(mach * 100)}${sign}`
+                         val: `M${Number(mach * 100) | 0}${sign}`
                        }
                      });
                      props.closeWindow();
-                   }}
-              >
+                   }}>
                 {String(mach.toFixed(2)).slice(1)}{sign}
               </div>
             </div>;
