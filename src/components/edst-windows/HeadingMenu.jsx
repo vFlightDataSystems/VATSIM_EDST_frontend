@@ -78,7 +78,7 @@ export function HeadingMenu(props) {
       </div>
       <div className="spd-hdg-menu-row bottom-border">
         <div className="hdg-col-2">
-          L &nbsp;&nbsp;R
+          L &nbsp;&nbsp; R
         </div>
       </div>
       <div className="spd-hdg-menu-select-container"
