@@ -43,8 +43,10 @@ export default function DepHeader(props) {
           Posting Mode
         </div>
       </div>
-      <div className="outer-button" disabled={true}>
-        <div className="edst-window-button" disabled={true}>
+      <div className="outer-button">
+        <div className="edst-window-button"
+             onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
+        >
           Template...
         </div>
       </div>

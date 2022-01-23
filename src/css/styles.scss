@@ -52,7 +52,7 @@ button {
     font-family: Consolas, monospace;
 }
 
-input {
+input, textarea {
     font-family: Consolas, monospace;
     cursor: default;
     font-size: 16px;
@@ -116,8 +116,9 @@ input {
         border: 1px solid #FFFFFF;
     }
 
-    input {
+    input, textarea {
         width: calc(100% - 7px);
+        height: calc(100% - 8px);
         cursor: default;
         font-size: 16px;
         outline: none;
@@ -129,6 +130,7 @@ input {
         border-bottom: 2px solid $edst-window-light-grey;
         border-right: 2px solid $edst-window-light-grey;
         background-color: #000000;
+        resize: none;
     }
 }
 

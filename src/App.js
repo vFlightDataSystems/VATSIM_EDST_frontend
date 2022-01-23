@@ -31,12 +31,14 @@ import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
 import {AclContext, DepContext, EdstContext} from "./contexts/contexts";
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
+import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
   'edst-outage': {x: 400, y: 100},
   'edst-mca': {x: 100, y: 600},
-  'edst-mra': {x: 100, y: 100}
+  'edst-mra': {x: 100, y: 100},
+  'edst-template': {x: 100, y: 100}
 };
 
 // const CACHE_TIMEOUT = 300000; // ms
@@ -840,6 +842,10 @@ export default class App extends React.Component {
               pos={pos['route-menu']}
               closeWindow={() => this.closeMenu('route-menu')}
             />}
+            {menu?.name === 'template-menu' && <TemplateMenu
+              pos={pos['template-menu']}
+              closeWindow={() => this.closeMenu('template-menu')}
+            />}
             {menu?.name === 'hold-menu' && <HoldMenu
               dragging={dragging}
               asel={asel}
@@ -850,7 +856,7 @@ export default class App extends React.Component {
             {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
               dragging={dragging}
               asel={asel}
-              data={edst_data[asel?.cid]}
+              entry={edst_data[asel?.cid]}
               pos={pos['cancel-hold-menu']}
               closeWindow={() => this.closeMenu('cancel-hold-menu')}
             />}
