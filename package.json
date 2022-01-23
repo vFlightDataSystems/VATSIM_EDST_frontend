@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "rm -rf edst_build && react-scripts build && mv build edst_build",
+    "build": "rm -rf edst_testing && react-scripts build && mv build edst_testing",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
