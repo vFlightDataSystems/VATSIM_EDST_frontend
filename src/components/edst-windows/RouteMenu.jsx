@@ -17,8 +17,8 @@ export function RouteMenu(props) {
     stopDrag,
     setInputFocused
   } = useContext(EdstContext);
-  const dep = asel?.window === 'dep';
-  const entry = edst_data?.[asel?.cid]
+  const [dep, setDep] = useState(asel?.window === 'dep');
+  const [entry, setEntry] = useState(edst_data?.[asel?.cid]);
   const current_route_fixes = entry?._route_data.map(fix => fix.name);
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
@@ -34,9 +34,15 @@ export function RouteMenu(props) {
   const {pos} = props;
 
   useEffect(() => {
-    setRoute(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
+    const entry = edst_data?.[asel?.cid];
+    const dep = asel?.window === 'dep';
+    const route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
+    setDep(dep);
+    setEntry(entry);
+    setRoute(route);
+    setRouteInput(dep ? entry.dep + route : route);
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  }, [dep, entry])
+  }, [asel, edst_data]);
 
   const clearedReroute = (reroute_data) => {
     let plan_data;
@@ -234,7 +240,7 @@ export function RouteMenu(props) {
         <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute}/>}
         <div className="options-row bottom">
           <div className="options-col left">
-            <button>
+            <button disabled={true}>
               Flight Data
             </button>
             <button disabled={entry?.previous_route === undefined}
