@@ -134,7 +134,10 @@ export function DepRow(props) {
         >
           <span>
               <span
-                className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>{route}
+                className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+                {entry.dep}
+              </span>
+             {route}
             {pending_aar && !on_aar &&
             <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pending_aar}]`}
