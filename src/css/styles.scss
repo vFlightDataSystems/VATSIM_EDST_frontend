@@ -35,7 +35,7 @@ $edst-font-yellow: #ADAD00;
 $edst-window-light-cyan: #008585;
 $edst-window-dark-cyan: #005757;
 $edst-window-light-grey: #888888;
-$edst-window-header-dark-grey: #575757;
+$edst-window-dark-grey: #575757;
 
 .edst {
     display: flex;
@@ -107,4 +107,43 @@ input {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+@mixin input-container {
+    border: 1px solid transparent;
+
+    &:hover {
+        border: 1px solid #FFFFFF;
+    }
+
+    input {
+        width: calc(100% - 7px);
+        cursor: default;
+        font-size: 16px;
+        outline: none;
+        display: flex;
+        overflow: hidden;
+        color: $edst-font-grey;
+        border-top: 2px solid $edst-window-dark-grey;
+        border-left: 2px solid $edst-window-dark-grey;
+        border-bottom: 2px solid $edst-window-light-grey;
+        border-right: 2px solid $edst-window-light-grey;
+        background-color: #000000;
+    }
+}
+
+@mixin outer-button {
+
+    display: inline-flex;
+    height: 22px;
+    border: 1px solid #000000;
+
+    &:hover {
+        border: 1px solid #FFFFFF;
+    }
+
+    &[disabled] {
+        pointer-events: none;
+        border: 1px solid #000000;
+    }
 }
