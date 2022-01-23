@@ -37,7 +37,7 @@ $edst-header-window-closed-black: #000000;
     display: inline-flex;
   }
 
-  :is(.edst-header-row-left-2, .edst-header-row-left, .edst-header-row-right) > button {
+  :is(.edst-header-row-left-2, .edst-header-row-left, .edst-header-row-right) button {
     z-index: 999;
     display: inline-flex;
     justify-content: center;

@@ -12,7 +12,7 @@ export function CancelHoldMenu(props) {
   } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const {pos, data} = props;
+  const {pos, entry} = props;
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -30,13 +30,13 @@ export function CancelHoldMenu(props) {
       </div>
       <div className="options-body">
         <div className="options-row fid">
-          {data.callsign} {data.type}/{data.equipment}
+          {entry.callsign} {entry.type}/{entry.equipment}
         </div>
         <div className="options-row">
           <div className="options-col left">
             <button onMouseDown={() => {
-              amendEntry(data.cid, {hold_data: null});
-              updateEntry(data.cid, {show_hold_info: false});
+              amendEntry(entry.cid, {hold_data: null});
+              updateEntry(entry.cid, {show_hold_info: false});
               props.closeWindow();
             }}>
               Cancel Hold
