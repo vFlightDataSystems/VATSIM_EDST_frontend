@@ -8,7 +8,7 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 
-export const REMOVAL_TIMEOUT = 60000;
+export const REMOVAL_TIMEOUT = 120000;
 
 export function getSignedDistancePointToPolygons(point, polygons) {
   let min_distance = Infinity;
