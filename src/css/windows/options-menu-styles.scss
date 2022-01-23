@@ -1,5 +1,4 @@
 @import "../styles";
-
 $options-menu-medium-grey: #575757;
 $options-menu-dark-grey: #414141;
 $options-menu-background-medium-grey: #888888;
@@ -47,6 +46,10 @@ $route-menu-alert-cyan: #00ADAD;
 
   &.heading {
     width: 180px;
+  }
+
+  &.template {
+    width: 850px;
   }
 }
 
@@ -156,7 +159,7 @@ $route-menu-alert-cyan: #00ADAD;
     margin: 6px;
   }
 
-  *.options-row {
+  @mixin options-row {
 
     @include options-button;
 
@@ -261,6 +264,86 @@ $route-menu-alert-cyan: #00ADAD;
     }
   }
 
+  .options-row {
+    @include options-row;
+  }
+
+  .template-row {
+
+    padding: 0 16px;
+    display: flex;
+    //flex-grow: 1;
+    border: none;
+    overflow: hidden;
+
+    &.template-header-row {
+      padding: 10px 16px 4px 16px;
+    }
+
+    .template-col {
+      //flex-grow: 1;
+      //flex-flow: row;
+      align-items: center;
+      vertical-align: center;
+      padding: 0 4px;
+      //overflow: hidden;
+      justify-content: left;
+      width: 40px;
+      //max-width: 80px;
+      display: flex;
+
+      &.col-1 {
+        //justify-content: left;
+        width: 75px;
+      }
+
+      &.col-2 {
+        width: 90px;
+      }
+
+      &.col-3 {
+        margin-right: 0;
+        //justify-content: right;
+      }
+
+      &.col-4 {
+        padding: 0;
+        margin-right: 8px;
+       }
+
+      &.col-5 {
+        width: 60px;
+      }
+
+      &.col-6 {
+        width: 74px;
+        padding-left: 4px;
+        //margin-right: 1px;
+      }
+
+      &.col-7 {
+        width: 136px;
+        margin: 0;
+        padding: 0;
+      }
+
+      &.col-8 {
+        width: 98px;
+      }
+
+      .input-container {
+        @include input-container;
+        width: calc(100% - 6px);
+      }
+
+      .outer-template-button {
+        margin-left: 1px;
+        //margin-right: 0;
+        @include outer-button;
+      }
+    }
+  }
+
   *[disabled] {
     pointer-events: none;
     color: $options-menu-medium-grey;
@@ -270,7 +353,7 @@ $route-menu-alert-cyan: #00ADAD;
     border: 1px solid $options-menu-hover-white;
   }
 
-  *.options-col {
+  .options-col {
 
     //@include options-button;
 

@@ -1,6 +1,5 @@
 @import "styles";
 
-$edst-window-header-button-border-light-grey: #ADADAD;
 $edst-window-header-border-light-grey: #ADADAD;
 $edst-window-header-button-border-medium-grey: #888888;
 $edst-window-header-button-border-dark-grey: #575757;
@@ -9,25 +8,13 @@ $edst-window-header-button-disabled-font-grey: #707070;
 $edst-window-header-button-disabled-border-grey: #707070;
 $edst-window-header-button-hover-border: #FFFFFF;
 $edst-window-header-outage-background-red: #590000;
-$edst-windowl-header-window-open-light-grey: #595958;
+$edst-windowl-header-window-open-light-grey: #595959;
 
 .outer-button {
-
-  display: inline-flex;
-  height: 22px;
+  @include outer-button;
   margin-left: 6px;
   margin-right: 6px;
   margin-bottom: 1px;
-  border: 1px solid #000000;
-
-  &:hover {
-    border: 1px solid $edst-window-header-button-hover-border;
-  }
-
-  &[disabled] {
-    pointer-events: none;
-    border: 1px solid #000000;
-  }
 }
 
 .edst-window-button {
@@ -58,27 +45,10 @@ $edst-windowl-header-window-open-light-grey: #595958;
   /* border-bottom: 1px solid $edst-window-header-border-light-grey; */
 
   .input-container {
+    @include input-container;
     display: inline-flex;
     border: 1px solid #000000;
     margin: 1px 8px;
     width: 68px;
-
-    &:hover {
-      border: 1px solid $edst-window-header-button-hover-border;
-    }
-
-    > input {
-      cursor: default;
-      font-size: 16px;
-      outline: none;
-      display: flex;
-      overflow: hidden;
-      color: $edst-font-grey;
-      border-top: 2px solid $edst-window-header-button-border-dark-grey;
-      border-left: 2px solid $edst-window-header-button-border-dark-grey;
-      border-bottom: 2px solid $edst-window-header-button-border-medium-grey;
-      border-right: 2px solid $edst-window-header-button-border-medium-grey;
-      background-color: #000000;
-    }
   }
 }
