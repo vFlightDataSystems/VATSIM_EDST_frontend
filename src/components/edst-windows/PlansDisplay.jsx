@@ -5,7 +5,7 @@ import '../../css/windows/plans-display-styles.scss';
 import PlansDisplayHeader from "./plans-display-components/PlansDisplayHeader";
 import PlansDisplayTable from "./plans-display-components/PlansDisplayTable";
 
-export default function PlansDisplay(props) {
+export function PlansDisplay(props) {
   const { amendEntry } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const [selected_msg_index, setSelectedMsgIndex] = useState(null);
