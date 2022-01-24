@@ -1,6 +1,7 @@
 import {useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import {EdstButton} from "../resources/EdstButton";
 
 export function SortMenu(props) {
   const [focused, setFocused] = useState(false);
@@ -15,7 +16,7 @@ export function SortMenu(props) {
   return (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
-      className={`options-menu no-select ${`sort-${window}`}`}
+      className={`options-menu no-select sort-${window}`}
       ref={ref}
       id="sort-menu"
       style={{left: pos.x, top: pos.y}}
@@ -133,17 +134,13 @@ export function SortMenu(props) {
         </div>}
         <div className="options-row bottom sort">
           <div className="options-col left">
-            <button onMouseDown={() => {
+            <EdstButton content="OK" onMouseDown={() => {
               props.setSortData(sort_data);
               props.closeWindow();
-            }}>
-              OK
-            </button>
+            }}/>
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

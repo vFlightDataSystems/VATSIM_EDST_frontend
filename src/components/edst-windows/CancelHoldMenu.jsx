@@ -2,6 +2,7 @@ import {useContext, useRef, useState,} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
+import {EdstButton} from "../resources/EdstButton";
 
 export function CancelHoldMenu(props) {
   const {
@@ -34,18 +35,14 @@ export function CancelHoldMenu(props) {
         </div>
         <div className="options-row">
           <div className="options-col left">
-            <button onMouseDown={() => {
+            <EdstButton content="Cancel Hold" onMouseDown={() => {
               amendEntry(entry.cid, {hold_data: null});
               updateEntry(entry.cid, {show_hold_info: false});
               props.closeWindow();
-            }}>
-              Cancel Hold
-            </button>
+            }}/>
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

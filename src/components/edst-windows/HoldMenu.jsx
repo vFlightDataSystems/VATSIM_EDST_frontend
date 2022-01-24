@@ -4,6 +4,7 @@ import '../../css/windows/options-menu-styles.scss';
 import {length, lineString} from '@turf/turf';
 import {EdstContext} from "../../contexts/contexts";
 import {formatUtcMinutes} from "../../lib";
+import {EdstButton} from "../resources/EdstButton";
 
 export function HoldMenu(props) {
   const {
@@ -88,15 +89,15 @@ export function HoldMenu(props) {
         </div>
         <div className="options-row">
           <div className="options-col">
-            <button className={`${(!hold_fix || hold_fix === 'PP') ? 'selected' : ''}`}
-                    onMouseDown={() => {
-                      const now = new Date();
-                      const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-                      setHoldFix('PP');
-                      setEfc(utc_minutes + 30);
-                    }}>
+            <EdstButton content="Present Position" selected={(!hold_fix || hold_fix === 'PP')}
+                        onMouseDown={() => {
+                          const now = new Date();
+                          const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+                          setHoldFix('PP');
+                          setEfc(utc_minutes + 30);
+                        }}>
               Present Position
-            </button>
+            </EdstButton>
           </div>
         </div>
         <div className="hold-fix-container">
@@ -134,122 +135,88 @@ export function HoldMenu(props) {
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <button className={`button-1 ${(hold_direction === 'NW') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('NW')}
-            >
-              NW
-            </button>
-            <button className={`button-1 ${(!hold_direction || hold_direction === 'N') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('N')}
-            >
-              N
-            </button>
-            <button className={`button-1 ${(hold_direction === 'NE') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('NE')}
-            >
-              NE
-            </button>
+            <EdstButton content="NW" classes='button-1' selected={hold_direction === 'NW'}
+                        onMouseDown={() => setHoldDirection('NW')}
+            />
+            <EdstButton content="N" classes='button-1' selected={hold_direction === 'N'}
+                        onMouseDown={() => setHoldDirection('N')}
+            />
+            <EdstButton content="NE" classes='button-1' selected={hold_direction === 'NE'}
+                        onMouseDown={() => setHoldDirection('NE')}
+            />
           </div>
           <div className="options-col hold-col-3">
-            <button className={`button-1 ${(turns === 'LT') ? 'selected' : ''}`}
-                    onMouseDown={() => setTurns('LT')}
-            >
-              LT
-            </button>
-            <button className={`button-1 ${(!turns || turns === 'RT') ? 'selected' : ''}`}
-                    onMouseDown={() => setTurns('RT')}
-            >
-              RT
-            </button>
+            <EdstButton content="LT" classes='button-1' selected={turns === 'LT'}
+                        onMouseDown={() => setTurns('LT')}
+            />
+            <EdstButton content="RT" classes='button-1' selected={turns === 'RT'}
+                        onMouseDown={() => setTurns('RT')}
+            />
           </div>
           <div className="options-col hold-col-3">
-            <button className={`button-2 ${(!leg_length || leg_length === 'STD') ? 'selected' : ''}`}
-                    onMouseDown={() => setLegLength('STD')}
-            >
-              STD
-            </button>
-            <button className={`button-2 ${(leg_length === 15) ? 'selected' : ''}`}
-                    onMouseDown={() => setLegLength(15)}
-            >
-              15 NM
-            </button>
+            <EdstButton content="STD" classes='button-2' selected={!leg_length || leg_length === 'STD'}
+                        onMouseDown={() => setLegLength('STD')}
+            />
+            <EdstButton content="15 NM" classes='button-2' selected={!leg_length || leg_length === 15}
+                        onMouseDown={() => setLegLength(15)}
+            />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <button className={`button-1 ${(hold_direction === 'W') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('W')}
-            >
-              W
-            </button>
-            <button className="button-1" disabled={true}/>
-            <button className={`button-1 ${(hold_direction === 'E') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('E')}
-            >
-              E
-            </button>
+            <EdstButton content="W" classes='button-1' selected={hold_direction === 'W'}
+                        onMouseDown={() => setHoldDirection('W')}
+            />
+            <EdstButton classes='button-1' disabled={true}/>
+            <EdstButton content="E" classes='button-1' selected={hold_direction === 'E'}
+                        onMouseDown={() => setHoldDirection('E')}
+            />
           </div>
           <div className="options-col hold-col-3">
-            <button className="button-1" disabled={true}/>
-            <button className="button-1" disabled={true}/>
+            <EdstButton classes="button-1" disabled={true}/>
+            <EdstButton classes="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <button className={`button-2 ${(leg_length === 5) ? 'selected' : ''}`}
-                    onMouseDown={() => setLegLength(5)}
-            >
-              5 NM
-            </button>
-            <button className={`button-2 ${(leg_length === 20) ? 'selected' : ''}`}
-                    onMouseDown={() => setLegLength(20)}
-            >
-              20 NM
-            </button>
+            <EdstButton content="5 NM" classes='button-2' selected={!leg_length || leg_length === 5}
+                        onMouseDown={() => setLegLength(5)}
+            />
+            <EdstButton content="20 NM" classes='button-2' selected={!leg_length || leg_length === 20}
+                        onMouseDown={() => setLegLength(20)}
+            />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <button className={`button-1 ${(hold_direction === 'SW') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('SW')}
-            >
-              SW
-            </button>
-            <button className={`button-1 ${(hold_direction === 'S') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('S')}
-            >
-              S
-            </button>
-            <button className={`button-1 ${(hold_direction === 'SE') ? 'selected' : ''}`}
-                    onMouseDown={() => setHoldDirection('SE')}
-            >
-              SE
-            </button>
+            <EdstButton content="SW" classes='button-1' selected={hold_direction === 'SW'}
+                        onMouseDown={() => setHoldDirection('SW')}
+            />
+            <EdstButton content="S" classes='button-1' selected={hold_direction === 'S'}
+                        onMouseDown={() => setHoldDirection('S')}
+            />
+            <EdstButton content="SE" classes='button-1' selected={hold_direction === 'SE'}
+                        onMouseDown={() => setHoldDirection('SE')}
+            />
           </div>
           <div className="options-col hold-col-3">
-            <button className="button-1" disabled={true}/>
-            <button className="button-1" disabled={true}/>
+            <EdstButton classes="button-1" disabled={true}/>
+            <EdstButton classes="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <button className={`button-2 ${(leg_length === 10) ? 'selected' : ''}`}
-                    onMouseDown={() => setLegLength(10)}
-            >
-              10 NM
-            </button>
-            <button className={`button-2 ${(leg_length === 25) ? 'selected' : ''}`}
-                    onMouseDown={() => setLegLength(25)}
-            >
-              25 NM
-            </button>
+            <EdstButton content="10 NM" classes='button-2' selected={!leg_length || leg_length === 10}
+                        onMouseDown={() => setLegLength(10)}
+            />
+            <EdstButton content="25 NM" classes='button-2' selected={!leg_length || leg_length === 25}
+                        onMouseDown={() => setLegLength(25)}
+            />
           </div>
         </div>
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-4">
-            <button onMouseDown={() => {
+            <EdstButton content="Delete Hold Instructions" onMouseDown={() => {
               amendEntry(entry.cid, {hold_data: null});
               updateEntry(entry.cid, {show_hold_info: false});
               props.closeWindow();
-            }}>
-              Delete Hold Instructions
-            </button>
+            }}/>
           </div>
         </div>
         <div className="options-row hold-row-1">
@@ -266,47 +233,34 @@ export function HoldMenu(props) {
                 // onChange={(e) => setEfc(e.target.value)}
               />
             </div>
-            <button onMouseDown={() => setEfc(efc - 1)}>
-              -
-            </button>
-            <button onMouseDown={() => setEfc(efc + 1)}>
-              +
-            </button>
+            <EdstButton content="-" onMouseDown={() => setEfc(efc - 1)}/>
+            <EdstButton content="+" onMouseDown={() => setEfc(efc + 1)}/>
           </div>
         </div>
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-5">
-            <button onMouseDown={() => setEfc('')}>
-              Delete EFC
-            </button>
+            <EdstButton content="Delete EFC" onMouseDown={() => setEfc('')}/>
           </div>
         </div>
         <div className="options-row bottom">
           <div className="options-col left">
-            <button onMouseDown={() => {
-              updateEntry(entry.cid, {spa: true});
-              clearedHold();
-            }}
-                    disabled={entry?.hold_data}
-            >
-              Hold/SPA
-            </button>
-            <button onMouseDown={clearedHold} disabled={entry?.hold_data}>
-              Hold
-            </button>
-            <button disabled={!entry?.hold_data}
-                    onMouseDown={() => {
-                      amendEntry(entry?.cid, {hold_data: null});
-                      updateEntry(entry?.cid, {show_hold_info: false});
-                      props.closeWindow();
-                    }}>
-              Cancel Hold
-            </button>
+            <EdstButton content="Hold/SPA" disabled={entry?.hold_data}
+                        onMouseDown={() => {
+                          updateEntry(entry.cid, {spa: true});
+                          clearedHold();
+                        }}
+            />
+            <EdstButton content="Hold" onMouseDown={clearedHold} disabled={entry?.hold_data}/>
+            <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
+                        onMouseDown={() => {
+                          amendEntry(entry?.cid, {hold_data: null});
+                          updateEntry(entry?.cid, {show_hold_info: false});
+                          props.closeWindow();
+                        }}
+            />
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

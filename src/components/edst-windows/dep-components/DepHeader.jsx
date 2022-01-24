@@ -2,6 +2,7 @@ import {useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
+import {EdstHeaderButton} from "../../resources/EdstButton";
 
 export default function DepHeader(props) {
   const {setInputFocused} = useContext(EdstContext);
@@ -22,34 +23,24 @@ export default function DepHeader(props) {
       text={['Departure List', `${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
     />
     <div>
-      <div className="outer-button" disabled={asel === null}>
-        <div className="edst-window-button" disabled={asel === null}
-             onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
-        >
-          Plan Options...
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             id="dep-sort-button"
-             onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}>
-          Sort...
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             onMouseDown={togglePosting}
-        >
-          Posting Mode
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
-        >
-          Template...
-        </div>
-      </div>
+      <EdstHeaderButton disabled={asel === null}
+                        onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+                        content="Plan Options..."
+      />
+      <EdstHeaderButton
+        id="dep-sort-button"
+        onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
+        content="Sort..."
+      />
+      <EdstHeaderButton disabled={true} content="Tools..."/>
+      <EdstHeaderButton
+        onMouseDown={togglePosting}
+        content="Posting Mode"
+      />
+      <EdstHeaderButton
+        onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
+        content="Template..."
+      />
     </div>
     <div className="edst-window-header-bottom-row no-select">
       Add/Find

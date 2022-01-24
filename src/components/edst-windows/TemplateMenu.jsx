@@ -3,6 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
+import {EdstButton} from "../resources/EdstButton";
 
 export function TemplateMenu(props) {
   const {
@@ -98,11 +99,7 @@ export function TemplateMenu(props) {
             TYP
           </div>
           <div className="template-col col-6">
-            <div className="outer-template-button" disabled={true}>
-              <div className="edst-window-button" disabled={true}>
-                EQP...
-              </div>
-            </div>
+            <EdstButton disabled={true} content="EQP..."/>
           </div>
           <div className="template-col col-5">
             BCN
@@ -120,11 +117,7 @@ export function TemplateMenu(props) {
             ALT
           </div>
           <div className="template-col right">
-            <div className="outer-template-button" disabled={true}>
-              <div className="edst-window-button" disabled={true}>
-                MORE...
-              </div>
-            </div>
+            <EdstButton disabled={true} content="MORE..."/>
           </div>
         </div>
         <div className="template-row">
@@ -249,11 +242,7 @@ export function TemplateMenu(props) {
             RMK
           </div>
           <div className="template-col right">
-            <div className="outer-template-button" disabled={true}>
-              <div className="edst-window-button" disabled={true}>
-                Create FP...
-              </div>
-            </div>
+            <EdstButton disabled={true} content="Create FP..."/>
           </div>
         </div>
         <div className="template-row">
@@ -269,18 +258,10 @@ export function TemplateMenu(props) {
         </div>
         <div className="template-row">
           <div className="template-col bottom">
-            <div className="outer-template-button" disabled={true}>
-              <div className="edst-window-button" disabled={true}>
-                Send
-              </div>
-            </div>
+            <EdstButton disabled={true} content="Send"/>
           </div>
           <div className="template-col bottom right">
-            <div className="outer-template-button">
-              <div className="edst-window-button" onMouseDown={() => props.closeWindow()}>
-                Exit
-              </div>
-            </div>
+            <EdstButton content="Exit" onMouseDown={() => props.closeWindow()}/>
           </div>
         </div>
       </div>

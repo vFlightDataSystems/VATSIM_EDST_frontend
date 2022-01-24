@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { EdstContext } from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import {EdstButton} from "../resources/EdstButton";
 
 export function PreviousRouteMenu(props) {
   const { amendEntry } = useContext(EdstContext);
@@ -38,7 +39,7 @@ export function PreviousRouteMenu(props) {
         </div>
         <div className="options-row bottom">
           <div className="options-col left">
-            <button
+            <EdstButton content="Apply Previous Route"
               onMouseDown={() => {
                 amendEntry(entry.cid, {
                   route: entry.previous_route,
@@ -46,14 +47,10 @@ export function PreviousRouteMenu(props) {
                 });
                 props.closeWindow();
               }}
-            >
-              Apply Previous Route
-            </button>
+            />
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

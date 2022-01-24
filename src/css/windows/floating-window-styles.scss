@@ -22,7 +22,7 @@ $floating-window-light-grey: #ADADAD;
     display: flex;
     height: 24px;
 
-    > div {
+    div {
       background-color: $floating-window-background-dark-grey;
       border: 1px solid $floating-window-light-grey;
 

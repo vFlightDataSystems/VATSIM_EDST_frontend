@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../css/header-styles.scss';
+import '../../css/windows/titlebar-styles.scss';
 
 export default function WindowTitleBar(props) {
   const {focused, text} = props;

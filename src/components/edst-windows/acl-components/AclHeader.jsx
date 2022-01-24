@@ -1,8 +1,7 @@
 import {useContext, useState} from 'react';
-import '../../../css/windows/titlebar-styles.scss';
-import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
+import {EdstHeaderButton} from "../../resources/EdstButton";
 
 export default function AclHeader(props) {
   const {setInputFocused} = useContext(EdstContext)
@@ -23,65 +22,35 @@ export default function AclHeader(props) {
       text={['Aircraft List', `${sort_data.sector ? 'Sector/' : ''}${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
-      <div className="outer-button" disabled={asel === null}
-           onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
-      >
-        <div className="edst-window-button"
-             disabled={asel === null}>
-          Plan Options...
-        </div>
-      </div>
-      <div className="outer-button"
-           disabled={asel === null}
-           onMouseDown={(e) => props.openMenu(e.target, 'hold-menu')}
-      >
-        <div className="edst-window-button" disabled={asel === null}>
-          Hold...
-        </div>
-      </div>
-      <div className="outer-button" disabled={true}>
-        <div className="edst-window-button" disabled={true}>
-          Show
-        </div>
-      </div>
-      <div className="outer-button" disabled={true}>
-        <div className="edst-window-button" disabled={true}>
-          Show ALL
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             id="acl-sort-button"
-             onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}>
-          Sort...
-        </div>
-      </div>
-      <div className="outer-button" disabled={true}>
-        <div className="edst-window-button" disabled={true}>
-          Tools...
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             onMouseDown={togglePosting}
-        >
-          Posting Mode
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
-          >
-          Template...
-        </div>
-      </div>
-      <div className="outer-button">
-        <div className="edst-window-button"
-             onMouseDown={props.cleanup}
-        >
-          Clean Up
-        </div>
-      </div>
+      <EdstHeaderButton disabled={asel === null}
+                        onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+                        content="Plan Options..."
+      />
+      <EdstHeaderButton
+        disabled={asel === null}
+        onMouseDown={(e) => props.openMenu(e.target, 'hold-menu')}
+        content="Hold..."
+      />
+      <EdstHeaderButton disabled={true} content="Show"/>
+      <EdstHeaderButton disabled={true} content="Show ALL"/>
+      <EdstHeaderButton
+        id="acl-sort-button"
+        onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
+        content="Sort..."
+      />
+      <EdstHeaderButton disabled={true} content="Tools..."/>
+      <EdstHeaderButton
+        onMouseDown={togglePosting}
+        content="Posting Mode"
+      />
+      <EdstHeaderButton
+        onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
+        content="Template..."
+      />
+      <EdstHeaderButton
+        onMouseDown={props.cleanup}
+        content="Clean Up"
+      />
     </div>
     <div className="edst-window-header-bottom-row no-select">
       Add/Find

@@ -10,33 +10,6 @@ $edst-window-header-button-hover-border: #FFFFFF;
 $edst-window-header-outage-background-red: #590000;
 $edst-windowl-header-window-open-light-grey: #595959;
 
-.outer-button {
-  @include outer-button;
-  margin-left: 6px;
-  margin-right: 6px;
-  margin-bottom: 1px;
-}
-
-.edst-window-button {
-  display: flex;
-  font-size: 17px;
-  flex-grow: 1;
-  justify-content: center;
-  align-items: center;
-  background-color: #000000;
-  color: $edst-font-grey;
-  border-bottom: 2px solid $edst-window-header-button-border-dark-grey;
-  border-right: 2px solid $edst-window-header-button-border-dark-grey;
-  border-top: 2px solid $edst-window-header-button-border-medium-grey;
-  border-left: 2px solid $edst-window-header-button-border-medium-grey;
-  padding: 0 4px;
-
-  &[disabled] {
-    pointer-events: none;
-    color: $edst-window-header-button-disabled-font-grey;
-  }
-}
-
 .edst-window-header-bottom-row {
   align-items: center;
   display: flex;
