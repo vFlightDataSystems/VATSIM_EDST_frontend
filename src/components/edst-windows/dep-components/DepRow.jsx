@@ -44,7 +44,7 @@ export function DepRow(props) {
   }
   const pending_aar = checkAarReroutePending();
 
-  const handleBoxMouseDown = (event, entry) => {
+  const handleHotboxMouseDown = (event, entry) => {
     event.preventDefault();
     if (event.button === 0) {
       amendEntry(entry.cid, {scratchpad: scratchpad});
@@ -103,9 +103,9 @@ export function DepRow(props) {
         <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
           {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
         </div>
-        <div className="body-col special rem"
+        <div className="body-col special hotbox"
              onContextMenu={event => event.preventDefault()}
-             onMouseDown={(event) => handleBoxMouseDown(event, entry)}
+             onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
         >
           {scratchpad && '*'}
         </div>
