@@ -14,7 +14,7 @@ import {Outage} from "./components/edst-windows/Outage";
 import {AltMenu} from "./components/edst-windows/AltMenu";
 import {PlanOptions} from "./components/edst-windows/PlanOptions";
 import {SortMenu} from "./components/edst-windows/SortMenu";
-import PlansDisplay from "./components/edst-windows/PlansDisplay";
+import {PlansDisplay} from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
@@ -23,7 +23,8 @@ import {
   getRemainingRouteData,
   getRouteDataDistance,
   routeWillEnterAirspace,
-  REMOVAL_TIMEOUT, completeAssign
+  REMOVAL_TIMEOUT,
+  completeAssign
 } from "./lib";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
