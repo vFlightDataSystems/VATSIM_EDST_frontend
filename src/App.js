@@ -449,9 +449,12 @@ export default class App extends React.Component {
     } else {
       const entry = edst_data[cid];
       asel = {cid: cid, field: field, window: window};
-      // if (edst_data[cid]?.acl_status === undefined) {
-      //   this.amendEntry(cid, `${window}_status`, '');
-      // }
+      if (window === 'acl' && edst_data[cid]?.acl_status === -1) {
+        this.updateEntry(cid, {acl_status: 0});
+      }
+      if (window === 'dep' && edst_data[cid]?.dep_status === -1) {
+        this.updateEntry(cid, {dep_status: 0});
+      }
       this.setState({menu: null, asel: asel});
       switch (field) {
         case 'alt':
