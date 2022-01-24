@@ -32,7 +32,6 @@ export default function DepHeader(props) {
         onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
         content="Sort..."
       />
-      <EdstHeaderButton disabled={true} content="Tools..."/>
       <EdstHeaderButton
         onMouseDown={togglePosting}
         content="Posting Mode"
