@@ -2,10 +2,10 @@ import {useContext, useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
-import VCI from '../../../css/images/VCI.png';
+import VCI from '../../../css/images/VCI_v4.png';
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 
-export default function AclTable(props) {
+export default function AclTable() {
   const [any_holding, setAnyHolding] = useState(false);
   const [hidden, setHidden] = useState([]);
   const [alt_mouse_down, setAltMouseDown] = useState(false);
@@ -13,8 +13,7 @@ export default function AclTable(props) {
     edst_data,
     updateEntry,
   } = useContext(EdstContext);
-  const {cid_list, sort_data} = useContext(AclContext);
-  useEffect(() => {}, [edst_data]);
+  const {cid_list, sort_data, manual_posting} = useContext(AclContext);
 
   const checkHolding = () => {
     for (let cid of cid_list) {
@@ -40,22 +39,23 @@ export default function AclTable(props) {
 
   const handleClickSlash = () => {
     let hidden_copy = hidden.slice(0);
-    const spd_index = hidden_copy.indexOf('spd');
-    const hdg_index = hidden_copy.indexOf('hdg');
-    if (spd_index > 0 && hdg_index > 0) {
-      hidden_copy.splice(spd_index, 1);
-      hidden_copy.splice(hdg_index, 1);
-      setHidden(hidden_copy);
+    if (hidden_copy.includes('spd') && hidden_copy.includes('hdg')) {
+      hidden_copy.splice(hidden_copy.indexOf('spd'), 1);
+      hidden_copy.splice(hidden_copy.indexOf('hdg'), 1);
     } else {
-      hidden_copy.push('spd');
-      hidden_copy.push('hdg');
-      setHidden([...new Set(hidden_copy)]);
+      if (!hidden_copy.includes('hdg')) {
+        hidden_copy.push('hdg');
+      }
+      if (!hidden_copy.includes('spd')) {
+        hidden_copy.push('spd');
+      }
     }
+    setHidden(hidden_copy);
   }
 
   const updateStatus = (cid) => {
     const entry = edst_data[cid];
-    if (entry?.acl_status === -1 && posting_manual) {
+    if (entry?.acl_status === -1 && manual_posting) {
       updateEntry(cid, {acl_status: 0});
     } else {
       if (entry?.acl_status < 1) {
@@ -79,9 +79,7 @@ export default function AclTable(props) {
     }
   }
 
-  const {posting_manual} = props;
-
-  const data = Object.values(edst_data)?.filter(e => cid_list.includes(e.cid));
+  const entry_list = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -108,7 +106,7 @@ export default function AclTable(props) {
           </div>
         </div>
         <div className="body-col special special-hidden"/>
-        <div className="body-col special rem special-hidden"/>
+        <div className="body-col special special-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
           <div onMouseDown={() => toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
@@ -140,13 +138,14 @@ export default function AclTable(props) {
           H
         </div>
         <div className={`body-col special special-header`}/>
+        <div className={`body-col special special-header`}/>
         <div className="body-col route">
           Route
         </div>
       </div>
     </div>
     <div className="scroll-container">
-      {Object.entries(data.filter(e => (typeof (e.spa) === 'number'))?.sort((u, v) => u.spa - v.spa))?.map(([i, e]) =>
+      {Object.entries(entry_list.filter(e => (typeof (e.spa) === 'number'))?.sort((u, v) => u.spa - v.spa))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-spa-${e.cid}`}
           entry={e}
@@ -157,7 +156,7 @@ export default function AclTable(props) {
           updateStatus={updateStatus}
         />)}
       <div className="body-row separator"/>
-      {Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !posting_manual)))?.sort(sortFunc))?.map(([i, e]) =>
+      {Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-ack-${e.cid}`}
           entry={e}
@@ -167,8 +166,8 @@ export default function AclTable(props) {
           alt_mouse_down={alt_mouse_down}
           updateStatus={updateStatus}
         />)}
-      {posting_manual && <div className="body-row separator"/>}
-      {posting_manual && Object.entries(data?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.includes(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
+      {manual_posting && <div className="body-row separator"/>}
+      {manual_posting && Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.has(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
         <AclRow
           key={`acl-table-row-no-ack-${e.cid}`}
           entry={e}

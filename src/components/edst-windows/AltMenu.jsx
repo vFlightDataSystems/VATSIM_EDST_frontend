@@ -9,13 +9,16 @@ export function AltMenu(props) {
     edst_data,
     asel,
     trialPlan,
-    amendEntry
+    amendEntry,
+    setInputFocused
   } = useContext(EdstContext);
   const {pos} = props;
   const [dep, setDep] = useState(asel.window === 'dep');
   const [selected, setSelected] = useState(asel.window !== 'dep' ? 'trial' : 'amend');
   const [temp_alt_hover, setTempAltHover] = useState(null);
   const [deltaY, setDeltaY] = useState(0);
+  const [manual_input, setManualInput] = useState(null);
+  const [show_invalid, setShowInvalid] = useState(false);
   const entry = edst_data[asel.cid];
 
   useEffect(() => {
@@ -40,6 +43,7 @@ export function AltMenu(props) {
     }
     props.closeWindow();
   }
+
   const handleTempAltClick = (alt) => {
     if (selected === 'amend') {
       amendEntry(entry?.cid, {interim: alt})
@@ -54,15 +58,26 @@ export function AltMenu(props) {
     }
     props.closeWindow();
   }
+
   const handleScroll = (e) => {
     const new_deltaY = Math.min(Math.max((Number(entry.altitude) - 560) * 10, deltaY + e.deltaY), (Number(entry.altitude) - 40) * 10);
     setDeltaY(new_deltaY);
   }
 
+  const handleKeyDown = () => {
+    if (manual_input === null) {
+      setManualInput('');
+      setInputFocused(true);
+      // setSelected('trial');
+    }
+  }
+
   return (<div
-      className="alt-menu no-select"
+      className={`alt-menu no-select ${manual_input !== null ? 'manual-input' : ''}`}
       id="alt-menu"
+      tabIndex="0"
       style={{left: pos.x, top: pos.y}}
+      onKeyDown={handleKeyDown}
     >
       <div className={`alt-menu-header no-select`}
       >
@@ -75,21 +90,41 @@ export function AltMenu(props) {
           X
         </div>
       </div>
-      <div className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
-           onMouseDown={() => setSelected('trial')}
-           disabled={dep}
-      >
+      {manual_input !== null ? <span>
+        <div className="alt-menu-row">
+        FP{entry.altitude}
+      </div>
+        <div className="alt-menu-row input-container">
+          <input value={manual_input}
+                 onChange={(event) => setManualInput(event.target.value.toUpperCase())}
+                 onKeyDown={(event) => {
+                   if (event.key === 'Enter') {
+                     // check if input is number and length matches valid input
+                     if (!isNaN(manual_input) && manual_input.length === 3) {
+                       handleAltClick(manual_input);
+                     } else {
+                       setShowInvalid(true);
+                     }
+                   }
+                 }}
+                 onFocus={() => setInputFocused(true)}
+                 // onBlur={() => setInputFocused(false)}
+          />
+        </div>
+        {show_invalid && <div className="alt-menu-row invalid-input">
+          INVALID
+        </div>}
+      </span> : <span>
+        <div className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
+             onMouseDown={() => setSelected('trial')}
+             disabled={dep}
+        >
         TRIAL PLAN
       </div>
       <div className={`alt-menu-row hover ${selected === 'amend' ? 'selected' : ''}`}
            onMouseDown={() => setSelected('amend')}
       >
         AMEND
-      </div>
-      <div className={`alt-menu-row hover ${selected === 'fp' ? 'selected' : ''}`}
-           onMouseDown={() => setSelected('fp')}
-      >
-        FP {entry.altitude}
       </div>
       <div className={`alt-menu-row`} disabled={true}>
         {!dep ? 'PROCEDURE' : 'NO ALT'}
@@ -119,6 +154,7 @@ export function AltMenu(props) {
           </div>;
         })}
       </div>
+      </span>}
     </div>
   );
 }

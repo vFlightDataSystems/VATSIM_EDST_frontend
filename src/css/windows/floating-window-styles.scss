@@ -22,7 +22,7 @@ $floating-window-light-grey: #ADADAD;
     display: flex;
     height: 24px;
 
-    > div {
+    div {
       background-color: $floating-window-background-dark-grey;
       border: 1px solid $floating-window-light-grey;
 
@@ -54,32 +54,6 @@ $floating-window-light-grey: #ADADAD;
   }
 }
 
-.mca {
-  height: 80px;
-  width: 400px;
-  background-color: #000000;
-  border: 1px solid $floating-window-light-grey;
-
-  .mca-input-area {
-    width: 100%;
-    height: 40%;
-    border-bottom: 1px solid $floating-window-light-grey;
-
-    input {
-      cursor: default;
-      width: 98%;
-      font-size: 16px;
-      outline: none;
-      display: flex;
-      overflow: hidden;
-      color: $edst-font-grey;
-      border: none;
-      caret: underscore;
-      background-color: #000000;
-    }
-  }
-}
-
 .floating-window-header-block-8-2 {
   width: 8px;
   height: 2px;
@@ -93,4 +67,41 @@ $floating-window-light-grey: #ADADAD;
   border-left: 1px solid $floating-window-light-grey;
   border-bottom: 1px solid $floating-window-light-grey;
   border-right: 1px solid $floating-window-light-grey;
+}
+
+.mca {
+  height: 84px;
+  width: 400px;
+  background-color: #000000;
+  border: 1px solid $floating-window-light-grey;
+
+  .mca-input-area {
+    line-height: 1;
+    width: 100%;
+    height: 40%;
+    border-bottom: 1px solid $floating-window-light-grey;
+
+    input {
+      width: 98%;
+    }
+  }
+
+  .mca-response-area {
+    line-height: 1;
+    padding: 0 2px;
+    display: flex;
+    flex-grow: 1;
+    white-space: pre-line;
+  }
+}
+
+.mra {
+  line-height: 1;
+  padding: 0 2px;
+  height: 80px;
+  width: 340px;
+  background-color: #000000;
+  border: 1px solid $floating-window-light-grey;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }

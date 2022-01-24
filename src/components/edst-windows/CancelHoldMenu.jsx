@@ -2,6 +2,7 @@ import {useContext, useRef, useState,} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
+import {EdstButton} from "../resources/EdstButton";
 
 export function CancelHoldMenu(props) {
   const {
@@ -12,7 +13,7 @@ export function CancelHoldMenu(props) {
   } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const {pos, data} = props;
+  const {pos, entry} = props;
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -30,22 +31,18 @@ export function CancelHoldMenu(props) {
       </div>
       <div className="options-body">
         <div className="options-row fid">
-          {data.callsign} {data.type}/{data.equipment}
+          {entry.callsign} {entry.type}/{entry.equipment}
         </div>
         <div className="options-row">
           <div className="options-col left">
-            <button onMouseDown={() => {
-              amendEntry(data.cid, {hold_data: null});
-              updateEntry(data.cid, {show_hold_info: false});
+            <EdstButton content="Cancel Hold" onMouseDown={() => {
+              amendEntry(entry.cid, {hold_data: null});
+              updateEntry(entry.cid, {show_hold_info: false});
               props.closeWindow();
-            }}>
-              Cancel Hold
-            </button>
+            }}/>
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

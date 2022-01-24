@@ -38,7 +38,7 @@ $body-hover-white: #F0F0F0;
 }
 
 .body-row-container {
-  margin: 2px 0;
+  margin: 3px 0;
   flex-flow: wrap;
 
   .inner-row-2 {
@@ -49,12 +49,13 @@ $body-hover-white: #F0F0F0;
     //flex-grow: 1;
 
     &.highlighted {
+      outline: 1px solid $body-ac-highlight;
       border-top: 1px solid $body-ac-highlight;
       background-color: $body-ac-highlight;
     }
 
     .free-text-row {
-      margin-left: 196px;
+      margin-left: 204px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -62,13 +63,12 @@ $body-hover-white: #F0F0F0;
       border: 1px solid transparent;
 
       &.dep-free-text-row {
-        margin-left: 226px;
+        margin-left: 234px;
       }
 
-      > input {
+      input {
         margin-left: 2px;
         width: 100%;
-        font-size: 16px;
         background-color: transparent;
         outline: none;
         border: none;
@@ -99,6 +99,7 @@ $body-hover-white: #F0F0F0;
     //flex-grow: 1;
 
     &.highlighted {
+      outline: 1px solid $body-ac-highlight;
       border-bottom: 1px solid $body-ac-highlight;
       background-color: $body-ac-highlight;
     }
@@ -125,7 +126,7 @@ $body-hover-white: #F0F0F0;
       align-items: center;
       height: 18px;
 
-      > div {
+      div {
         align-items: center;
         display: flex;
         //height: 22px;
@@ -145,7 +146,7 @@ $body-hover-white: #F0F0F0;
 
   &.selected {
     //outline: 1px solid $body-light-grey;
-    border: 1px solid $body-light-grey;
+    //border: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
@@ -268,9 +269,10 @@ $body-hover-white: #F0F0F0;
 
   }
 
-  > div {
+  div {
+    border: 1px solid transparent;
     display: block;
-    margin: 0;
+    margin: 0 1px;
     min-width: 20px;
     padding-left: 1px;
 
@@ -280,10 +282,15 @@ $body-hover-white: #F0F0F0;
   }
 
   &.special {
-    //margin-right: 10px;
+    margin: 0 2px;
     width: 8px;
     border: 1px solid transparent;
     //font-family: Verdana, sans-serif;
+
+    &.remarks-unchecked {
+      color: $body-font-yellow;
+      border: 1px solid $body-font-yellow;
+    }
 
     &.rem {
       border-top: 1px solid $body-medium-grey;
@@ -306,7 +313,6 @@ $body-hover-white: #F0F0F0;
     }
 
     &.special-hidden {
-      border: 1px solid transparent;
       pointer-events: none;
     }
 
@@ -356,7 +362,7 @@ $body-hover-white: #F0F0F0;
       }
 
       &.selected {
-        outline: 1px solid $body-light-grey;
+        //outline: 1px solid $body-light-grey;
         background-color: $body-light-grey;
         color: #000000;
       }
@@ -372,12 +378,14 @@ $body-hover-white: #F0F0F0;
   }
 
   &.selected {
-    outline: 1px solid $body-light-grey;
+    //outline: 1px solid $body-light-grey;
     background-color: $body-light-grey;
     color: #000000;
   }
 
   &.code {
+    padding: 0 2px;
+    justify-content: left;
     width: 40px;
     margin-left: 0;
     margin-right: 10px;
@@ -418,40 +426,44 @@ $body-hover-white: #F0F0F0;
   }
 
   &.route {
-    max-width: 1100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    //max-width: 1100px;
     white-space: nowrap;
     justify-content: left;
     border: 1px solid transparent;
+    margin-left: 4px;
     padding-right: 2px;
-    margin: unset;
 
-    > div {
+    > span {
+      height: 100%;
+      max-width: 50vw;
       pointer-events: none;
+      border: none;
       margin: 0;
-      padding: 0;
+      border: transparent;
+      padding: 0 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
-      span {
-        padding: 0 2px;
+      .no-pad {
+        padding: 0;
+      }
 
-        &.amendment-1 {
-          padding-right: 0;
-          color: $body-font-blue;
+      .amendment-1 {
+        padding: 0;
+        color: $body-font-blue;
 
-          &.selected {
-            background-color: $body-font-blue;
-            color: #000000;
-          }
+        &.selected {
+          background-color: $body-font-blue;
+          color: #000000;
         }
+      }
 
-        &.amendment-2 {
-          color: $body-font-blue;
+      .amendment-2 {
+        color: $body-font-blue;
 
-          &.selected {
-            background-color: $body-font-blue;
-            color: #000000;
-          }
+        &.selected {
+          background-color: $body-font-blue;
+          color: #000000;
         }
       }
     }

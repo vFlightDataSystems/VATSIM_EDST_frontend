@@ -1,7 +1,7 @@
-@font-face {
-    font-family: 'VRC Terminal', monospace;
-    src: url('./fonts/VRC_Standard.ttf')
-}
+//@font-face {
+//    font-family: 'VRC Terminal', monospace;
+//    src: url('./fonts/VRC_Standard.ttf')
+//}
 
 /*@font-face {*/
 /*    font-family: 'ERAM-font-1';*/
@@ -30,70 +30,108 @@
 
 $edst-background-black: #000000;
 $edst-font-grey: #ADADAD;
+$edst-font-yellow: #ADAD00;
 
 $edst-window-light-cyan: #008585;
 $edst-window-dark-cyan: #005757;
 $edst-window-light-grey: #888888;
-$edst-window-header-dark-grey: #575757;
+$edst-window-dark-grey: #575757;
 
 .edst {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding: 0;
-    margin: 0;
-    background-color: black;
-    //font-family: 'VRC Terminal';
-    font-family: Consolas, monospace;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background-color: black;
+  //font-family: 'VRC Terminal';
+  font-family: Consolas, monospace;
+  caret-color: transparent;
 }
 
 button {
-    font-family: Consolas, monospace;
+  font-family: Consolas, monospace;
 }
 
-input {
-    font-family: Consolas, monospace;
+input, textarea {
+  caret-color: $edst-font-grey;
+  font-family: Consolas, monospace;
+  cursor: default;
+  font-size: 16px;
+  outline: none;
+  display: flex;
+  //overflow: hidden;
+  overflow-wrap: anywhere;
+  color: $edst-font-grey;
+  border: none;
+  //caret: underscore;
+  background-color: #000000;
 }
 
 .edst-body {
-    overflow: hidden;
-    flex-flow: column;
-    position: absolute;
-    top: 36px;
-    left: 0;
-    height: calc(100vh - 36px);
-    width: 100vw;
-    flex-grow: 1;
-    display: flex;
+  overflow: hidden;
+  flex-flow: column;
+  position: absolute;
+  top: 36px;
+  left: 0;
+  height: calc(100vh - 36px);
+  width: 100vw;
+  flex-grow: 1;
+  display: flex;
 
-    &.hide-cursor {
-        cursor: none;
-    }
+  &.hide-cursor {
+    cursor: none;
+  }
 
-    .edst-dragging-outline {
-        background-color: transparent;
-        border: 1px solid #FFFFFF;
-    }
+  .edst-dragging-outline {
+    background-color: transparent;
+    border: 1px solid #FFFFFF;
+  }
 }
 
 .cursor {
-    z-index: 999;
-    width: 25px;
-    height: 25px;
-    content: url('images/aero_arrow.cur');
+  z-index: 999;
+  width: 25px;
+  height: 25px;
+  content: url('images/aero_arrow.cur');
 }
 
 .no-select {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .dragging {
-    pointer-events: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+@mixin input-container {
+  border: 1px solid transparent;
+
+  &:hover {
+    border: 1px solid #FFFFFF;
+  }
+
+  input, textarea {
+    width: calc(100% - 7px);
+    height: calc(100% - 9px);
+    cursor: default;
+    font-size: 16px;
+    outline: none;
+    display: flex;
+    overflow: hidden;
+    color: $edst-font-grey;
+    border-top: 2px solid $edst-window-dark-grey;
+    border-left: 2px solid $edst-window-dark-grey;
+    border-bottom: 2px solid $edst-window-light-grey;
+    border-right: 2px solid $edst-window-light-grey;
+    background-color: #000000;
+    resize: none;
+  }
 }

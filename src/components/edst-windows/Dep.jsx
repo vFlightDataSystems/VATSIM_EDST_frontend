@@ -5,10 +5,10 @@ import DepTable from "./dep-components/DepTable";
 
 export function Dep(props) {
   const [focused, setFocused] = useState(false);
-  const [posting_manual, setPostingManual] = useState(true);
 
   useEffect(() => {
     return () => props.unmount();
+    // eslint-disable-next-line
   }, []);
 
   return (<div
@@ -21,12 +21,10 @@ export function Dep(props) {
       sort_data={props.sort_data}
       openMenu={props.openMenu}
       asel={props.asel}
-      focused={focused} posting_manual={posting_manual}
+      focused={focused}
       closeWindow={props.closeWindow}
-      togglePosting={() => setPostingManual(!posting_manual)}
     />
     <DepTable
-      posting_manual={posting_manual}
     />
   </div>);
 }

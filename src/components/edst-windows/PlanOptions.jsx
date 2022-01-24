@@ -1,6 +1,7 @@
 import {useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import {EdstButton} from "../resources/EdstButton";
 
 export function PlanOptions(props) {
   const [focused, setFocused] = useState(false);
@@ -85,9 +86,7 @@ export function PlanOptions(props) {
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

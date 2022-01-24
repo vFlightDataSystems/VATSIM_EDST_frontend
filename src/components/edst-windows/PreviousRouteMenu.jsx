@@ -1,14 +1,18 @@
-import {useEffect, useRef, useState} from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { EdstContext } from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import {EdstButton} from "../resources/EdstButton";
 
 export function PreviousRouteMenu(props) {
+  const { amendEntry } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
+  const {pos, entry} = props;
   useEffect(() => {
     setFocused(false);
-  }, [props.data]);
+  }, [entry]);
   const ref = useRef(null);
-  const {pos, data} = props;
+
 
   return (<div
       ref={ref}
@@ -26,31 +30,27 @@ export function PreviousRouteMenu(props) {
       </div>
       <div className="options-body">
         <div className="options-row fid">
-          {data.callsign} {data.type}/{data.equipment}
+          {entry.callsign} {entry.type}/{entry.equipment}
         </div>
         <div className="options-row prev-route-row">
           <div className="options-col">
-            RTE {data.previous_route}
+            RTE {entry.previous_route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}{entry.previous_route}
           </div>
         </div>
         <div className="options-row bottom">
           <div className="options-col left">
-            <button
+            <EdstButton content="Apply Previous Route"
               onMouseDown={() => {
-                props.amendEntry(data.cid, {
-                  route: data.previous_route,
-                  route_data: data.previous_route_data
+                amendEntry(entry.cid, {
+                  route: entry.previous_route,
+                  route_data: entry.previous_route_data
                 });
                 props.closeWindow();
               }}
-            >
-              Apply Previous Route
-            </button>
+            />
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>
