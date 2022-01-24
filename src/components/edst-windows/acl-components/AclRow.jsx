@@ -77,6 +77,9 @@ export function AclRow(props) {
   }
 
   const handleRemarksClick = (event) => {
+    if (entry.acl_status === -1) {
+      updateEntry(entry.cid, {acl_status: 0});
+    }
     switch (event.button) {
       case 0:
         updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'remarks') ? 'remarks' : null, remarks_checked: true});
