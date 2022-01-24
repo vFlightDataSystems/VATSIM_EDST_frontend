@@ -2,7 +2,7 @@ import {useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
-import {EdstContext} from "../../../contexts/contexts";
+import {DepContext, EdstContext} from "../../../contexts/contexts";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
@@ -13,18 +13,18 @@ export function DepRow(props) {
     updateEntry,
     amendEntry,
     deleteEntry,
-    asel,
     setInputFocused
   } = useContext(EdstContext);
+  const {asel} = useContext(DepContext);
   const {entry, hidden, bottom_border} = props;
-  const now = performance.now();
-  let route = entry._route;
+  const now = new Date().getTime();
+  let route = entry.route;
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry?.scratchpad || '');
+  const [scratchpad, setScratchpad] = useState(entry?.scratchpad ?? '');
   const ref = useRef(null);
 
   const current_fix_names = entry._route_data.map(fix => fix.name);
@@ -59,10 +59,10 @@ export function DepRow(props) {
   }
 
   const handleFidClick = (event) => {
-    const now = performance.now();
+    const now = new Date().getTime();
     switch (event.button) {
       case 2:
-        if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {
+        if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
           deleteEntry('dep', entry.cid);
         }
         break;
@@ -80,7 +80,7 @@ export function DepRow(props) {
   return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
-    <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+    <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
            onMouseDown={() => props.updateStatus(entry.cid)}
       >
@@ -132,15 +132,18 @@ export function DepRow(props) {
         <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
         >
-          <div>
+          <span>
               <span
-                className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>{route}
+                className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+                {entry.dep}
+              </span>
+             {route}
             {pending_aar && !on_aar &&
             <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pending_aar}]`}
               </span>}
             {route?.slice(-1) !== '.' && '..'}{entry.dest}
-          </div>
+          </span>
         </div>
       </div>
     </div>

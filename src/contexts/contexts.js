@@ -1,5 +1,5 @@
 import React from "react";
 
-export const EdstContext = React.createContext();
-export const AclContext = React.createContext();
-export const DepContext = React.createContext();
+export const EdstContext = React.createContext(null);
+export const AclContext = React.createContext(null);
+export const DepContext = React.createContext(null);

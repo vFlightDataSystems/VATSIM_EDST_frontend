@@ -3,6 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
+import {EdstButton} from "../resources/EdstButton";
 
 export function HeadingMenu(props) {
   const [focused, setFocused] = useState(false);
@@ -42,20 +43,16 @@ export function HeadingMenu(props) {
         <div className="options-col"
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
         >
-          <button className={`${amend ? 'selected' : ''}`}
-                  onMouseDown={() => setAmend(true)}
-          >
-            Amend
-          </button>
+          <EdstButton content="Amend" selected={amend}
+                      onMouseDown={() => setAmend(true)}
+          />
         </div>
         <div className={`options-col right ${!amend ? 'selected' : ''}`}
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
         >
-          <button className={`${!amend ? 'selected' : ''}`}
-                  onMouseDown={() => setAmend(false)}
-          >
-            Scratchpad
-          </button>
+          <EdstButton content="Scratchpad" selected={!amend}
+                      onMouseDown={() => setAmend(false)}
+          />
         </div>
       </div>
       <div className="options-row"
@@ -78,7 +75,7 @@ export function HeadingMenu(props) {
       </div>
       <div className="spd-hdg-menu-row bottom-border">
         <div className="hdg-col-2">
-          L &nbsp;&nbsp;R
+          L &nbsp;&nbsp; R
         </div>
       </div>
       <div className="spd-hdg-menu-select-container"
@@ -133,12 +130,8 @@ export function HeadingMenu(props) {
           </div>;
         })}
         <div className="options-row bottom">
-          <div className="options-col left">
-          </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

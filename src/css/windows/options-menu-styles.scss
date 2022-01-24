@@ -1,4 +1,5 @@
 @import "../styles";
+@import "../resources/button";
 
 $options-menu-medium-grey: #575757;
 $options-menu-dark-grey: #414141;
@@ -11,6 +12,14 @@ $route-menu-alert-cyan: #00ADAD;
   position: absolute;
   color: $options-menu-light-grey;
   border: none;
+
+  &.sort-acl {
+    width: 220px;
+  }
+
+  &.sort-dep {
+    width: 150px;
+  }
 
   &.plan {
     width: 220px;
@@ -41,8 +50,8 @@ $route-menu-alert-cyan: #00ADAD;
     width: 180px;
   }
 
-  &.sort {
-    width: 170px;
+  &.template {
+    width: 850px;
   }
 }
 
@@ -63,49 +72,6 @@ $route-menu-alert-cyan: #00ADAD;
   }
 }
 
-@mixin options-button {
-
-  *[disabled] {
-    pointer-events: none;
-    color: $options-menu-medium-grey;
-  }
-
-  button {
-    display: inline-flex;
-    height: 20px;
-    justify-content: center;
-    align-items: center;
-    //margin: 0 6px;
-    font-size: 16px;
-    flex-grow: 1;
-    background-color: #000000;
-    color: $edst-font-grey;
-    border-bottom: 2px solid $options-menu-medium-grey;
-    border-right: 2px solid $options-menu-medium-grey;
-    border-top: 2px solid $options-menu-background-medium-grey;
-    border-left: 2px solid $options-menu-background-medium-grey;
-    //width: auto;
-
-    &:hover {
-      outline: 1px solid $options-menu-hover-white;
-    }
-
-    &.selected {
-      background-color: $options-menu-light-grey;
-      color: #000000;
-      border-bottom: 2px solid $options-menu-background-medium-grey;
-      border-right: 2px solid $options-menu-background-medium-grey;
-      border-top: 2px solid $options-menu-medium-grey;
-      border-left: 2px solid $options-menu-medium-grey;
-    }
-
-    &.tiny {
-      width: 12px;
-      height: 12px;
-    }
-  }
-}
-
 .options-body {
   background-color: #000000;
   padding: 2px 0;
@@ -114,29 +80,12 @@ $route-menu-alert-cyan: #00ADAD;
   border-bottom: 1px solid $options-menu-dark-grey;
   border-right: 1px solid $options-menu-dark-grey;
 
-  &.sort {
-    padding: 4px 0;
+  &.template-body {
+    padding: 10px 0 2px 0;
   }
 
-  * .prefroute-button {
-    padding: 0;
-    display: inline-flex;
-    //height: 20px;
-    width: 75px;
-    margin-left: 6px;
-    margin-right: 6px;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #000000;
-
-    &:hover {
-      border: 1px solid $options-menu-hover-white;
-
-      &[disabled] {
-        pointer-events: none;
-        border: 1px solid #000000;
-      }
-    }
+  &.sort {
+    padding: 4px 0;
   }
 
   .hold-fix-container {
@@ -152,9 +101,7 @@ $route-menu-alert-cyan: #00ADAD;
     margin: 6px;
   }
 
-  *.options-row {
-
-    @include options-button;
+  @mixin options-row {
 
     display: flex;
     flex-grow: 1;
@@ -164,6 +111,10 @@ $route-menu-alert-cyan: #00ADAD;
     border: none;
     min-height: 20px;
     overflow: hidden;
+  }
+
+  .options-row {
+    @include options-row;
 
     &.hold-row-1 {
       justify-content: space-between;
@@ -217,11 +168,15 @@ $route-menu-alert-cyan: #00ADAD;
       margin-bottom: 4px;
       flex-grow: 1;
 
-      *.left > button {
+      .left .edst-outer-button {
         margin-right: 12px;
+
+        .edst-inner-button {
+          padding: 0 6px;
+        }
       }
 
-      * > button {
+      .right .edst-outer-button {
         min-width: 47px;
       }
 
@@ -257,6 +212,93 @@ $route-menu-alert-cyan: #00ADAD;
     }
   }
 
+  .template-row {
+
+    padding: 2px 16px;
+    display: flex;
+    //flex-grow: 1;
+    border: none;
+    overflow: hidden;
+
+    .template-col {
+
+      //flex-grow: 1;
+      //flex-flow: row;
+      align-items: center;
+      vertical-align: center;
+      padding: 0 4px;
+      //overflow: hidden;
+      justify-content: left;
+      width: 40px;
+      //max-width: 80px;
+      display: flex;
+
+      &.input-col {
+        padding: 0 4px 0 0;
+        margin: 0 1px;
+      }
+
+      &.col-1 {
+        width: 78px;
+      }
+
+      &.col-2 {
+        width: 90px;
+      }
+
+      &.col-3 {
+        width: auto;
+        margin-left: auto;
+        margin-right: 0;
+        //justify-content: right;
+      }
+
+      &.col-5 {
+        width: 66px;
+      }
+
+      &.col-6 {
+        width: 72px;
+        padding: 0 1px;
+        margin: 0 1px;
+      }
+
+      &.col-7 {
+        width: 130px;
+        padding: 0;
+        //margin: 0 auto 0 0;
+      }
+
+      &.col-8 {
+        width: 110px;
+      }
+
+      &.bottom {
+        padding: 2px;
+      }
+
+      &.right {
+        width: auto;
+        margin-left: auto;
+        padding: 0;
+        //margin-right: 10px;
+      }
+    }
+
+    .input-container {
+      @include input-container;
+      width: calc(100% - 2px);
+    }
+
+    &.left {
+      flex-grow: 1;
+    }
+
+    &.right {
+      width: auto;
+    }
+  }
+
   *[disabled] {
     pointer-events: none;
     color: $options-menu-medium-grey;
@@ -266,9 +308,7 @@ $route-menu-alert-cyan: #00ADAD;
     border: 1px solid $options-menu-hover-white;
   }
 
-  *.options-col {
-
-    //@include options-button;
+  .options-col {
 
     margin: 0 4px;
     flex-grow: 1;
@@ -329,27 +369,28 @@ $route-menu-alert-cyan: #00ADAD;
       //display: flex;
       margin-top: 2px;
 
-      > button {
-        &.button-1 {
+      .button-1 {
+        margin: 0 4px;
+
+        .edst-inner-button {
           flex-grow: 0;
-          margin: 0 5px;
-          width: 22px;
-          height: 22px;
-          padding: 0;
-
-          &:disabled {
-            pointer-events: none;
-            border-color: transparent;
-          }
+          width: 20px;
+          height: 20px;
         }
+      }
 
-        &.button-2 {
-          //flex-grow: 1;
-          margin: 0 5px;
+      .button-2 {
+        margin: 0 4px;
+
+        .edst-inner-button {
           width: 50px;
-          height: 22px;
-          padding: 0;
+          height: 20px;
         }
+      }
+
+      *[disabled] {
+        pointer-events: none;
+        border-color: transparent;
       }
     }
 
@@ -358,6 +399,10 @@ $route-menu-alert-cyan: #00ADAD;
       justify-content: center;
       align-items: center;
       margin: 0 80px;
+
+      * .edst-inner-button {
+        padding: 0 20px;
+      }
     }
 
     &.hold-col-5 {
@@ -365,6 +410,10 @@ $route-menu-alert-cyan: #00ADAD;
       justify-content: center;
       align-items: center;
       margin: 0 140px;
+
+      * .edst-inner-button {
+        padding: 0 20px;
+      }
     }
 
     &.hold-col-6 {
@@ -382,9 +431,12 @@ $route-menu-alert-cyan: #00ADAD;
       margin-left: 10px;
       margin-right: auto;
 
-      > button {
+      .edst-outer-button {
         margin-left: 10px;
-        width: 30px;
+
+        .edst-inner-button {
+          width: 24px;
+        }
       }
     }
 
@@ -430,7 +482,8 @@ $route-menu-alert-cyan: #00ADAD;
       flex-grow: 0;
       min-height: 24px;
 
-      > button {
+      *.edst-outer-button {
+        padding: 0 4px;
         margin-right: 5px;
       }
     }
@@ -448,21 +501,39 @@ $route-menu-alert-cyan: #00ADAD;
       //height: 16px;
       margin-right: 0;
 
+      .edst-outer-button {
+        display: inline-flex;
+        //height: 20px;
+        margin-left: 6px;
+        margin-right: 6px;
+        justify-content: center;
+        align-items: center;
+        .edst-inner-button {
+          width: 75px;
+        }
+      }
+
       &.small {
         height: 16px;
       }
     }
 
+    &.center {
+      max-width: 24px;
+      max-height: 24px;
+      //transform: scale(0.2);
+    }
+
     &.right {
-      > button {
-        display: flex;
-        margin-left: auto;
-      }
+      justify-content: right;
+      display: flex;
+      margin-left: auto
     }
 
     .input {
       align-items: center;
       vertical-align: center;
+      display: flex;
       padding: 0;
       overflow: hidden;
       border-top: 2px solid $options-menu-medium-grey;
@@ -475,15 +546,17 @@ $route-menu-alert-cyan: #00ADAD;
         padding: 0 2px;
         width: 120px;
         font-size: 16px;
+        color: $options-menu-medium-grey;
       }
 
-      &.route-input {
-        justify-content: center;
+      .route-input {
+        justify-content: left;
         display: flex;
-        border-top: 2px solid $options-menu-background-medium-grey;
-        border-left: 2px solid $options-menu-background-medium-grey;
-        border-bottom: 2px solid $options-menu-medium-grey;
-        border-right: 2px solid $options-menu-medium-grey;
+        flex-grow: 1;
+        //border-top: 2px solid $options-menu-background-medium-grey;
+        //border-left: 2px solid $options-menu-background-medium-grey;
+        //border-bottom: 2px solid $options-menu-medium-grey;
+        //border-right: 2px solid $options-menu-medium-grey;
       }
 
       &.speed-input {
@@ -514,11 +587,14 @@ $route-menu-alert-cyan: #00ADAD;
       }
 
       input {
+        //display: flex;
         cursor: default;
         font-size: 16px;
         outline: none;
-        width: calc(100% - 115px);
-        margin: 0 5px;
+        flex: 1;
+        //width: 100%;
+        //width: calc(100% - 115px);
+        //margin: 0 5px;
         color: $edst-font-grey;
         background-color: #000000;
         border: 1px solid transparent;
@@ -529,4 +605,8 @@ $route-menu-alert-cyan: #00ADAD;
       }
     }
   }
+}
+
+.vatsim-logo {
+  background-image: url(../images/VATSIM-social_icon.svg);
 }

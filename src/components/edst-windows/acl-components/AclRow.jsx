@@ -1,9 +1,9 @@
 import React, {useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
-import {computeFrd, REMOVAL_TIMEOUT} from "../../../lib";
-import {EdstContext} from "../../../contexts/contexts";
-import VCI from '../../../css/images/VCI.png';
+import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
+import {AclContext, EdstContext} from "../../../contexts/contexts";
+import VCI from '../../../css/images/VCI_v4.png';
 
 const SPA_INDICATOR = '^';
 
@@ -13,19 +13,19 @@ export function AclRow(props) {
     updateEntry,
     amendEntry,
     deleteEntry,
-    asel,
     setInputFocused
   } = useContext(EdstContext);
+  const {asel} = useContext(AclContext);
   const {entry, hidden, alt_mouse_down, bottom_border, any_holding} = props;
   const hold_data = entry.hold_data;
-  const now = performance.now();
-  let route = entry._route;
+  const now = new Date().getTime();
+  let route = entry._route.replace(/^\.+/, '');
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry?.scratchpad || '');
+  const [scratchpad, setScratchpad] = useState(entry?.scratchpad ?? '');
   const ref = useRef(null);
 
   const current_fix_names = entry._route_data.map(fix => fix.name);
@@ -62,10 +62,10 @@ export function AclRow(props) {
   const handleHoldClick = (event) => {
     switch (event.button) {
       case 0:
-        if (!entry?.hold_data) {
+        if (!entry.hold_data) {
           aircraftSelect(event, 'acl', entry.cid, 'hold');
         } else {
-          updateEntry(entry.cid, {show_hold_info: !entry.show_hold_info});
+          updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'hold_data' : null});
         }
         break;
       case 1:
@@ -76,11 +76,27 @@ export function AclRow(props) {
     }
   }
 
+  const handleRemarksClick = (event) => {
+    if (entry.acl_status === -1) {
+      updateEntry(entry.cid, {acl_status: 0});
+    }
+    switch (event.button) {
+      case 0:
+        updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'remarks') ? 'remarks' : null, remarks_checked: true});
+        break;
+      case 2:
+        updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'raw_route') ? 'raw_route' : null});
+        break;
+      default:
+        break;
+    }
+  }
+
   const handleFidClick = (event) => {
-    const now = performance.now();
+    const now = new Date().getTime();
     switch (event.button) {
       case 2:
-        if (now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) {
+        if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
           deleteEntry('acl', entry.cid);
         }
         break;
@@ -95,11 +111,10 @@ export function AclRow(props) {
     return asel?.cid === cid && asel?.field === field;
   }
 
-  const formatEfc = (minutes) => ((minutes / 60 | 0) % 24).toString().padStart(2, "0") + (minutes % 60 | 0).toString().padStart(2, "0");
-
-  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`} key={props.key}
+  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
+               key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
-    <div className={`body-row ${(now - (entry.pending_removal || now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+    <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
            onMouseDown={() => props.updateStatus(entry.cid)}>
         {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
@@ -176,6 +191,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
           {entry?.scratch_spd?.val}
         </div>
         <div className={`body-col special`} disabled={true}/>
+        <div className={`body-col special`} disabled={true}/>
         <div className={`body-col special hold-col ${isSelected(entry.cid, 'hold') ? 'selected' : ''}`}
              onMouseDown={handleHoldClick}
              onContextMenu={(event) => {
@@ -188,24 +204,33 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.hold_data ? 'H' : ''}
         </div>
-        <div className={`body-col special`} disabled={true}>
+        <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
+             disabled={!(entry.flightplan.remarks?.length > 0)}
+             onMouseDown={handleRemarksClick}
+        >
+          *
         </div>
         <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
              onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
         >
-          {entry.show_hold_info && hold_data &&
-          `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatEfc(hold_data.efc)}`}
-          {!entry.show_hold_info && <div>
-            <span
-              className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>{entry.dep}</span>
-            ./.{entry.reference_fix ? computeFrd(entry.reference_fix) + '..' : '.'}
-            {route?.replace(/^\.*/, '')}
+          {entry.acl_route_display === 'hold_data' && hold_data &&
+          `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
+          {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
+          {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
+          {!entry.acl_route_display && <span className="no-pad">
+            <span className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+              {entry.dep}
+            </span>
+            ./.
+            {route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
+            {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
+            {route}{!route.endsWith('.') && route.length > 0 && `.`}
             {pending_aar && !on_aar &&
             <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pending_aar}]`}
               </span>}
-            {route?.slice(-1) !== '.' && '..'}{entry.dest}
-          </div>}
+            {entry.dest}
+          </span>}
         </div>
       </div>
     </div>
@@ -223,7 +248,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
             onFocus={() => setInputFocused(true)}
             onBlur={() => setInputFocused(false)}
             value={scratchpad}
-                 onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
+            onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
         </div>
       </div>
     </div>}

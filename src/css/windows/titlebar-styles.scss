@@ -5,11 +5,10 @@ $edst-window-header-border-light-grey: #ADADAD;
 $edst-window-header-button-border-medium-grey: #888888;
 $edst-window-header-button-border-dark-grey: #575757;
 
-$edst-window-header-button-disabled-font-grey: #707070;
-$edst-window-header-button-disabled-border-grey: #707070;
+$edst-window-header-button-disabled-grey: #707070;
 $edst-window-header-button-hover-border: #FFFFFF;
 $edst-window-header-outage-background-red: #590000;
-$edst-windowl-header-window-open-light-grey: #595958;
+$edst-windowl-header-window-open-light-grey: #595959;
 
 .edst-window-title-bar {
   display: flex;
@@ -36,15 +35,15 @@ $edst-windowl-header-window-open-light-grey: #595958;
       background-color: $edst-window-light-grey;
       border-top: 1px solid $edst-window-header-border-light-grey;
       border-left: 1px solid $edst-window-header-border-light-grey;
-      border-bottom: 1px solid $edst-window-header-dark-grey;
-      border-right: 1px solid $edst-window-header-dark-grey;
+      border-bottom: 1px solid $edst-window-header-button-border-dark-grey;
+      border-right: 1px solid $edst-window-header-button-border-dark-grey;
 
       &.focused {
         background-color: $edst-window-light-cyan;
       }
     }
 
-    > button {
+    button {
       flex-grow: 1;
       vertical-align: center;
       background-color: $edst-window-light-grey;
@@ -59,8 +58,8 @@ $edst-windowl-header-window-open-light-grey: #595958;
   align-items: center;
   border-top: 1px solid $edst-window-header-border-light-grey;
   border-left: 1px solid $edst-window-header-border-light-grey;
-  border-bottom: 1px solid $edst-window-header-dark-grey;
-  border-right: 1px solid $edst-window-header-dark-grey;
+  border-bottom: 1px solid $edst-window-header-button-border-dark-grey;
+  border-right: 1px solid $edst-window-header-button-border-dark-grey;
 }
 
 :is(button, div).edst-window-header-block.focused {
@@ -75,8 +74,8 @@ button {
     &.edst-window-header-block {
       border-bottom: 1px solid $edst-window-header-border-light-grey;
       border-right: 1px solid $edst-window-header-border-light-grey;
-      border-top: 1px solid $edst-window-header-dark-grey;
-      border-left: 1px solid $edst-window-header-dark-grey;
+      border-top: 1px solid $edst-window-header-button-border-dark-grey;
+      border-left: 1px solid $edst-window-header-button-border-dark-grey;
     }
 
     &.focused.edst-window-header-block {
