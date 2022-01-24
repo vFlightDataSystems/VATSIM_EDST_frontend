@@ -21,22 +21,15 @@ $spd-hdg-selected-font-white: #D6D6D6;
   justify-content: left;
   align-items: center;
 
-  @include options-button;
 
-  button {
-    flex-grow: 0;
-    width: 20px;
-    height: 20px;
+  .button-1 {
+    margin-left: 22px;
+    margin-right: auto;
+  }
 
-    &.button-1 {
-      margin-left: 22px;
-      margin-right: auto;
-    }
-
-    &.button-2 {
-      margin-right: 16px;
-      margin-left: auto;
-    }
+  .button-2 {
+    margin-right: 16px;
+    margin-left: auto;
   }
 
   &.top-border {

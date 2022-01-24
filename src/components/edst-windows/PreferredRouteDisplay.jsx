@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
+import {EdstButton} from "../resources/EdstButton";
 
 export default function PreferredRouteDisplay(props) {
   const [eligible_only, setEligibleOnly] = useState(false);
@@ -20,20 +21,12 @@ export default function PreferredRouteDisplay(props) {
       >
         <div className="options-col prefroute-col"
         >
-          <div className="prefroute-button">
-            <button className={eligible_only ? 'selected' : ''}
-                    onMouseDown={() => setEligibleOnly(true)}
-            >
-              ELIGIBLE
-            </button>
-          </div>
-          <div className="prefroute-button">
-            <button className={!eligible_only ? 'selected' : ''}
-                    onMouseDown={() => setEligibleOnly(false)}
-            >
-              ALL
-            </button>
-          </div>
+          <EdstButton content="ELIGIBLE" selected={eligible_only}
+                      onMouseDown={() => setEligibleOnly(true)}
+          />
+          <EdstButton content="ALL" selected={!eligible_only}
+                      onMouseDown={() => setEligibleOnly(false)}
+          />
         </div>
       </div>
       <div className="prefroute-container"

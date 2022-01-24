@@ -4,6 +4,7 @@ import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
 import {EdstContext} from "../../contexts/contexts";
+import {EdstButton} from "../resources/EdstButton";
 
 export function SpeedMenu(props) {
   const {
@@ -55,23 +56,19 @@ export function SpeedMenu(props) {
         <div className="options-row speed-row"
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
         >
-          <div className="options-col left"
+          <div className="options-col"
             // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
           >
-            <button className={`${amend ? 'selected' : ''}`}
-                    onMouseDown={() => setAmend(true)}
-            >
-              Amend
-            </button>
+            <EdstButton content="Amend" selected={amend}
+                        onMouseDown={() => setAmend(true)}
+            />
           </div>
           <div className={`options-col right ${!amend ? 'selected' : ''}`}
             // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
           >
-            <button className={`${!amend ? 'selected' : ''}`}
-                    onMouseDown={() => setAmend(false)}
-            >
-              Scratchpad
-            </button>
+            <EdstButton content="Scratchpad" selected={!amend}
+                        onMouseDown={() => setAmend(false)}
+            />
           </div>
         </div>
         <div className="options-row"
@@ -87,14 +84,12 @@ export function SpeedMenu(props) {
         <div className="spd-hdg-menu-row top-border"/>
         <div className="spd-hdg-menu-row bottom-border">
           KNOTS
-          <button className={`button-1 ${sign === '+' ? 'selected' : ''}`}
-                  onMouseDown={() => setSign(sign === '+' ? '' : '+')}>
-            +
-          </button>
-          <button className={`button-2 ${sign === '-' ? 'selected' : ''}`}
-                  onMouseDown={() => setSign(sign === '-' ? '' : '-')}>
-            -
-          </button>
+          <EdstButton content="+" classes="medium button-1" selected={sign === '+'}
+                  onMouseDown={() => setSign(sign === '+' ? '' : '+')}
+          />
+          <EdstButton content="-" classes="medium button-2" selected={sign === '-'}
+                      onMouseDown={() => setSign(sign === '-' ? '' : '-')}
+          />
           MACH
         </div>
         <div className="spd-hdg-menu-select-container"
@@ -145,12 +140,8 @@ export function SpeedMenu(props) {
             </div>;
           })}
           <div className="options-row bottom">
-            <div className="options-col left">
-            </div>
             <div className="options-col right">
-              <button onMouseDown={props.closeWindow}>
-                Exit
-              </button>
+              <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import PreferredRouteDisplay from "./PreferredRouteDisplay";
 import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
+import {EdstButton} from "../resources/EdstButton";
 
 export function RouteMenu(props) {
   const {
@@ -38,6 +39,7 @@ export function RouteMenu(props) {
     const dep = asel?.window === 'dep';
     const route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
     setDep(dep);
+    setTrialPlan(!dep);
     setEntry(entry);
     setRoute(route);
     setRouteInput(dep ? entry.dep + route : route);
@@ -92,7 +94,11 @@ export function RouteMenu(props) {
     }
     // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
     copy(`${!dep ? frd : ''}${new_route}`.replace(/\.+$/, ''));
-    const plan_data = {route: new_route, route_data: _route_data.slice(index), cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}};
+    const plan_data = {
+      route: new_route,
+      route_data: _route_data.slice(index),
+      cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}
+    };
     if (trial_plan) {
       trialPlan({
         cid: entry.cid,
@@ -151,12 +157,7 @@ export function RouteMenu(props) {
         </div>
         <div className="options-row route-row">
           <div className="options-col">
-            <button className={`${trial_plan ? 'selected' : ''}`}
-                    onMouseDown={() => setTrialPlan(true)}
-                    disabled={dep}
-            >
-              Trial Plan
-            </button>
+            <EdstButton content="Trial Plan" selected={trial_plan} onMouseDown={() => setTrialPlan(true)}/>
           </div>
           <div className="options-col center">
             <img src={VATSIM_LOGO} alt="vatsim-logo"
@@ -167,10 +168,7 @@ export function RouteMenu(props) {
           <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}
             // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
           >
-            <button className={`${!trial_plan ? 'selected' : ''}`}
-                    onMouseDown={() => setTrialPlan(false)}>
-              Amend
-            </button>
+            <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}/>
           </div>
         </div>
         <div className="options-row route-row"
@@ -199,7 +197,7 @@ export function RouteMenu(props) {
         </div>
         <div className="options-row route-row top-border">
           <div className="options-col hover button" disabled={true}>
-            <button className="tiny" disabled={true}/>
+            <EdstButton disabled={true} classes="tiny"/>
             Include PAR
           </div>
         </div>
@@ -207,13 +205,13 @@ export function RouteMenu(props) {
           <div className="options-col hover button"
                onMouseDown={() => setAppend({append_star: !append_star, append_oplus: false})}
           >
-            <button className={`tiny ${append_star ? 'selected' : ''}`} disabled={true}/>
+            <EdstButton disabled={true} classes="tiny" selected={append_star}/>
             Append *
           </div>
           <div className="options-col hover button"
                onMouseDown={() => setAppend({append_oplus: !append_oplus, append_star: false})}
           >
-            <button className={`tiny ${append_oplus ? 'selected' : ''}`} disabled={true}/>
+            <EdstButton disabled={true} classes="tiny" selected={append_oplus}/>
             Append<span>&nbsp;⊕</span>
           </div>
         </div>
@@ -240,22 +238,14 @@ export function RouteMenu(props) {
         <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute}/>}
         <div className="options-row bottom">
           <div className="options-col left">
-            <button disabled={true}>
-              Flight Data
-            </button>
-            <button disabled={entry?.previous_route === undefined}
-                    onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
-            >
-              Previous Route
-            </button>
-            <button disabled={true}>
-              TFM Reroute Menu
-            </button>
+            <EdstButton disabled={true} content="Flight Data"/>
+            <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
+                        onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
+            />
+            <EdstButton disabled={true} content="TFM Reroute Menu"/>
           </div>
           <div className="options-col right">
-            <button onMouseDown={props.closeWindow}>
-              Exit
-            </button>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>
