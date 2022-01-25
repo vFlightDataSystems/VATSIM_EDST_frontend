@@ -48,6 +48,7 @@ export function MessageComposeArea(props) {
     const [command, ...args] = command_str.split(/\s+/);
     // console.log(command, args)
     switch (command) {
+      // case '//': // should turn wifi on/off for a CID
       case 'UU':
         switch (args.length) {
           case 0:

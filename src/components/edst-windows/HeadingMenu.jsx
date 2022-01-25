@@ -4,6 +4,8 @@ import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
 import {EdstButton} from "../resources/EdstButton";
+import {Tooltips} from "../../tooltips";
+import {EdstTooltip} from "../resources/EdstTooltip";
 
 export function HeadingMenu(props) {
   const [focused, setFocused] = useState(false);
@@ -45,6 +47,7 @@ export function HeadingMenu(props) {
         >
           <EdstButton content="Amend" selected={amend}
                       onMouseDown={() => setAmend(true)}
+                      tooltip={Tooltips.acl_hdg_amend}
           />
         </div>
         <div className={`options-col right ${!amend ? 'selected' : ''}`}
@@ -52,12 +55,11 @@ export function HeadingMenu(props) {
         >
           <EdstButton content="Scratchpad" selected={!amend}
                       onMouseDown={() => setAmend(false)}
+                      tooltip={Tooltips.acl_hdg_scratchpad}
           />
         </div>
       </div>
-      <div className="options-row"
-        // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
-      >
+      <div className="options-row">
         <div className="options-col">
           Heading:
           <div className="input speed-input">
@@ -66,12 +68,8 @@ export function HeadingMenu(props) {
         </div>
       </div>
       <div className="spd-hdg-menu-row top-border">
-        <div className="hdg-col-1">
-          Heading
-        </div>
-        <div className="hdg-col-1">
-          Turn
-        </div>
+        <EdstTooltip className="hdg-col-1" content="Heading" tooltip={Tooltips.acl_hdg_hdg}/>
+        <EdstTooltip className="hdg-col-1" content="Turn" tooltip={Tooltips.acl_hdg_turn}/>
       </div>
       <div className="spd-hdg-menu-row bottom-border">
         <div className="hdg-col-2">

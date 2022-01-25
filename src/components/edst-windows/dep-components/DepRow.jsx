@@ -3,6 +3,8 @@ import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
+import {EdstTooltip} from "../../resources/EdstTooltip";
+import {Tooltips} from "../../../tooltips";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
@@ -81,11 +83,13 @@ export function DepRow(props) {
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
-           onMouseDown={() => props.updateStatus(entry.cid)}
-      >
-        {entry.dep_status === -1 && 'N'}{entry.dep_status === 1 && COMPLETED_SYMBOL}
-      </div>
+      <EdstTooltip tooltip={Tooltips.dep_checkmark_box}>
+        <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
+             onMouseDown={() => props.updateStatus(entry.cid)}
+        >
+          {entry.dep_status === -1 && 'N'}{entry.dep_status === 1 && COMPLETED_SYMBOL}
+        </div>
+      </EdstTooltip>
       <div className="body-col body-col-2">
         0000
       </div>
@@ -93,58 +97,69 @@ export function DepRow(props) {
            ref={ref}
            style={{minWidth: entry.free_text ? '1200px' : 0}}
       >
-        <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
-             onMouseDown={handleFidClick}
-             onContextMenu={(event) => event.preventDefault()}
-        >
-          {entry.cid} {entry.callsign}
-        </div>
+        <EdstTooltip tooltip={Tooltips.dep_flight_id}>
+          <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
+               onMouseDown={handleFidClick}
+               onContextMenu={(event) => event.preventDefault()}
+          >
+            {entry.cid} {entry.callsign}
+          </div>
+        </EdstTooltip>
         <div className="body-col pa"/>
         <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
           {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
         </div>
-        <div className="body-col special hotbox"
-             onContextMenu={event => event.preventDefault()}
-             onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
-        >
-          {scratchpad && '*'}
-        </div>
-        <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
-             onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'type')}
-        >
-          {`${entry.type}/${entry.equipment}`}
-        </div>
-        <div className={`body-col alt`}>
-          <div className={`${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'alt')}
+        <EdstTooltip tooltip={Tooltips.dep_hotbox}>
+          <div className="body-col special hotbox"
+               onContextMenu={event => event.preventDefault()}
+               onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
           >
-            {entry.altitude}
+            {scratchpad && '*'}
           </div>
-        </div>
-        <div
-          className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.dep_type}>
+          <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
+        ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
+               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'type')}
+          >
+            {`${entry.type}/${entry.equipment}`}
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.dep_alt}>
+          <div className={`body-col alt`}>
+            <div className={`${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
+                 onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'alt')}
+            >
+              {entry.altitude}
+            </div>
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.dep_code}>
+          <div className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
           ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
-          onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'code')}
-        >
-          {entry.beacon}
-        </div>
-        <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
-             onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
-        >
+               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'code')}
+          >
+            {entry.beacon}
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.dep_route}>
+          <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
+               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
+          >
           <span>
               <span
                 className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
                 {entry.dep}
               </span>
-             {route}
+            {route}
             {pending_aar && !on_aar &&
             <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pending_aar}]`}
               </span>}
             {route?.slice(-1) !== '.' && '..'}{entry.dest}
           </span>
-        </div>
+          </div>
+        </EdstTooltip>
       </div>
     </div>
     {entry.free_text && <div className="body-row">

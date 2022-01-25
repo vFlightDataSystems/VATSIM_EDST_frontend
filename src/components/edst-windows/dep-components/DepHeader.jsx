@@ -2,7 +2,8 @@ import {useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import WindowTitleBar from "../WindowTitleBar";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
-import {EdstHeaderButton} from "../../resources/EdstButton";
+import {EdstWindowHeaderButton} from "../../resources/EdstButton";
+import {Tooltips} from "../../../tooltips";
 
 export default function DepHeader(props) {
   const {setInputFocused} = useContext(EdstContext);
@@ -23,22 +24,27 @@ export default function DepHeader(props) {
       text={['Departure List', `${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
     />
     <div>
-      <EdstHeaderButton disabled={asel === null}
-                        onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
-                        content="Plan Options..."
+      <EdstWindowHeaderButton
+        disabled={asel === null}
+        onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+        content="Plan Options..."
+        tooltip={Tooltips.plan_options}
       />
-      <EdstHeaderButton
+      <EdstWindowHeaderButton
         id="dep-sort-button"
         onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
         content="Sort..."
+        tooltip={Tooltips.sort}
       />
-      <EdstHeaderButton
+      <EdstWindowHeaderButton
         onMouseDown={togglePosting}
         content="Posting Mode"
+        tooltip={Tooltips.posting_mode}
       />
-      <EdstHeaderButton
+      <EdstWindowHeaderButton
         onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
         content="Template..."
+        tooltip={Tooltips.template}
       />
     </div>
     <div className="edst-window-header-bottom-row no-select">

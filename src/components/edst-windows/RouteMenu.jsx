@@ -6,6 +6,8 @@ import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
 import {EdstButton} from "../resources/EdstButton";
+import {Tooltips} from "../../tooltips";
+import {EdstTooltip} from "../resources/EdstTooltip";
 
 export function RouteMenu(props) {
   const {
@@ -157,18 +159,20 @@ export function RouteMenu(props) {
         </div>
         <div className="options-row route-row">
           <div className="options-col">
-            <EdstButton content="Trial Plan" selected={trial_plan} onMouseDown={() => setTrialPlan(true)}/>
+            <EdstButton content="Trial Plan" selected={trial_plan} onMouseDown={() => setTrialPlan(true)}
+                        tooltip={Tooltips.route_menu_trial_plan}
+            />
           </div>
-          <div className="options-col center">
+          <EdstTooltip className="options-col center" tooltip={Tooltips.route_menu_vatsim_logo}>
             <img src={VATSIM_LOGO} alt="vatsim-logo"
                  onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
                  onContextMenu={(event) => event.preventDefault()}
             />
-          </div>
-          <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}
-            // onMouseDown={() => this.props.openMenu(this.routeMenuRef.current, 'alt-menu', false)}
-          >
-            <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}/>
+          </EdstTooltip>
+          <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}>
+            <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}
+                        tooltip={Tooltips.route_menu_amend}
+            />
           </div>
         </div>
         <div className="options-row route-row"
@@ -176,14 +180,14 @@ export function RouteMenu(props) {
         >
           <div className="options-col">
             <div className="input">
-              {!dep && <span className="ppos"
-                             onContextMenu={(event) => {
-                               event.preventDefault();
-                               copy(frd);
-                             }}>
-                  {frd}..
-                </span>}
-              <span className="route-input">
+              {!dep && <EdstTooltip className="ppos" tooltip={Tooltips.route_menu_frd}
+                                    onContextMenu={(event) => {
+                                      event.preventDefault();
+                                      copy(frd);
+                                    }}>
+                {frd}..
+              </EdstTooltip>}
+              <EdstTooltip className="route-input" tooltip={Tooltips.route_menu_route_input}>
                   <input
                     onFocus={() => setInputFocused(true)}
                     onBlur={() => setInputFocused(false)}
@@ -191,29 +195,31 @@ export function RouteMenu(props) {
                     onChange={(event) => !display_raw_route && handleInputChange(event)}
                     onKeyDown={(event) => !display_raw_route && handleInputKeyDown(event)}
                   />
-              </span>
+              </EdstTooltip>
             </div>
           </div>
         </div>
         <div className="options-row route-row top-border">
-          <div className="options-col hover button" disabled={true}>
-            <EdstButton disabled={true} classes="tiny"/>
+          <EdstTooltip className="options-col hover button" disabled={true} tooltip={Tooltips.route_menu_par}>
+            <EdstButton disabled={true} className="tiny"/>
             Include PAR
-          </div>
+          </EdstTooltip>
         </div>
         <div className="options-row route-row bottom-border">
-          <div className="options-col hover button"
-               onMouseDown={() => setAppend({append_star: !append_star, append_oplus: false})}
+          <EdstTooltip className="options-col hover button"
+                       tooltip={Tooltips.route_menu_append_star}
+                       onMouseDown={() => setAppend({append_star: !append_star, append_oplus: false})}
           >
-            <EdstButton disabled={true} classes="tiny" selected={append_star}/>
+            <EdstButton disabled={true} className="tiny" selected={append_star}/>
             Append *
-          </div>
-          <div className="options-col hover button"
-               onMouseDown={() => setAppend({append_oplus: !append_oplus, append_star: false})}
+          </EdstTooltip>
+          <EdstTooltip className="options-col hover button"
+                       tooltip={Tooltips.route_menu_append_oplus}
+                       onMouseDown={() => setAppend({append_oplus: !append_oplus, append_star: false})}
           >
-            <EdstButton disabled={true} classes="tiny" selected={append_oplus}/>
+            <EdstButton disabled={true} className="tiny" selected={append_oplus}/>
             Append<span>&nbsp;⊕</span>
-          </div>
+          </EdstTooltip>
         </div>
         <div className="options-row route-row underline">
           Direct-To-Fix
@@ -238,11 +244,12 @@ export function RouteMenu(props) {
         <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute}/>}
         <div className="options-row bottom">
           <div className="options-col left">
-            <EdstButton disabled={true} content="Flight Data"/>
+            <EdstButton disabled={true} content="Flight Data" tooltip={Tooltips.route_menu_flight_data}/>
             <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
                         onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
+                        tooltip={Tooltips.route_menu_prev_route}
             />
-            <EdstButton disabled={true} content="TFM Reroute Menu"/>
+            <EdstButton disabled={true} content="TFM Reroute Menu" tooltip={Tooltips.route_menu_tfm_reroute}/>
           </div>
           <div className="options-col right">
             <EdstButton content="Exit" onMouseDown={props.closeWindow}/>

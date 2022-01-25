@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
+import {Tooltips} from "../../tooltips";
 
 export default function PreferredRouteDisplay(props) {
   const [eligible_only, setEligibleOnly] = useState(false);
@@ -23,9 +24,11 @@ export default function PreferredRouteDisplay(props) {
         >
           <EdstButton content="ELIGIBLE" selected={eligible_only}
                       onMouseDown={() => setEligibleOnly(true)}
+                      tooltip={Tooltips.route_menu_preferred_eligible}
           />
           <EdstButton content="ALL" selected={!eligible_only}
                       onMouseDown={() => setEligibleOnly(false)}
+                      tooltip={Tooltips.route_menu_preferred_all}
           />
         </div>
       </div>
