@@ -82,7 +82,10 @@ export function AclRow(props) {
     }
     switch (event.button) {
       case 0:
-        updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'remarks') ? 'remarks' : null, remarks_checked: true});
+        updateEntry(entry.cid, {
+          acl_route_display: !(entry.acl_route_display === 'remarks') ? 'remarks' : null,
+          remarks_checked: true
+        });
         break;
       case 2:
         updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'raw_route') ? 'raw_route' : null});
@@ -104,6 +107,44 @@ export function AclRow(props) {
         aircraftSelect(event, 'acl', entry.cid, 'fid');
         break;
 
+    }
+  }
+
+  const handleHeadingClick = (event) => {
+    event.preventDefault();
+    switch (event.button) {
+      case 0:
+        aircraftSelect(event, 'acl', entry.cid, 'hdg');
+        break;
+      case 1:
+        if (entry.scratch_hdg.scratchpad) {
+          updateEntry(entry.cid, {scratch_hdg: {val: `H${entry.scratch_hdg.val}`, scratchpad: false}});
+        }
+        break;
+      case 2:
+        updateEntry(entry.cid, {scratch_hdg: null});
+        break;
+      default:
+        break;
+    }
+  }
+
+  const handleSpeedClick = (event) => {
+    event.preventDefault();
+    switch (event.button) {
+      case 0:
+        aircraftSelect(event, 'acl', entry.cid, 'spd');
+        break;
+      case 1:
+        if (entry.scratch_spd.scratchpad) {
+          updateEntry(entry.cid, {scratch_spd: {val: `S${entry.scratch_spd.val}`, scratchpad: false}});
+        }
+        break;
+      case 2:
+        updateEntry(entry.cid, {scratch_spd: null});
+        break;
+      default:
+        break;
     }
   }
 
@@ -165,13 +206,7 @@ export function AclRow(props) {
         </div>
         <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}
               ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${entry?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
-             onMouseDown={(event) => {
-               if (event.button === 0) {
-                 aircraftSelect(event, 'acl', entry.cid, 'hdg');
-               } else if (event.button === 2) {
-                 updateEntry(entry.cid, {scratch_hdg: null});
-               }
-             }}
+             onMouseDown={handleHeadingClick}
         >
           {entry?.scratch_hdg?.val}
         </div>
@@ -180,13 +215,7 @@ export function AclRow(props) {
         </div>
         <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
 ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
-             onMouseDown={(event) => {
-               if (event.button === 0) {
-                 aircraftSelect(event, 'acl', entry.cid, 'spd');
-               } else if (event.button === 2) {
-                 updateEntry(entry.cid, {scratch_spd: null});
-               }
-             }}
+             onMouseDown={handleSpeedClick}
         >
           {entry?.scratch_spd?.val}
         </div>
@@ -218,7 +247,8 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
           {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
           {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
           {!entry.acl_route_display && <span className="no-pad">
-            <span className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+            <span
+              className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {entry.dep}
             </span>
             ./.
