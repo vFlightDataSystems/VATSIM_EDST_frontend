@@ -51,65 +51,66 @@ export default function DepTable() {
     }
   }
 
-    const data = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
+  const entry_list = Object.values(edst_data)?.filter(e => cid_list.has(e.cid));
+  const spa_entry_list = Object.entries(entry_list.filter(e => (typeof (e.spa) === 'number'))?.sort((u, v) => u.spa - v.spa));
 
-    return (<div className="dep-body no-select">
-      <div className="body-row header" key="dep-table-header">
-        <div className="body-col radio-header checkmark">
-          {COMPLETED_SYMBOL}
-        </div>
-        <div className="body-col body-col-2">
-          P Time
-        </div>
-        <div className="body-col fid dep-fid">
-          Flight ID
-        </div>
-        <div className="body-col pa header"/>
-        <div className="body-col special special-hidden"/>
-        <div className="body-col special special-hidden"/>
-        <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
-          <div onMouseDown={() => toggleHideColumn('type')}>
-            T{!hidden.includes('type') && 'ype'}
-          </div>
-        </div>
-        <div className="body-col alt header">
-          <div>Alt.</div>
-        </div>
-        <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
-             onMouseDown={() => toggleHideColumn('code')}>
-          C{!hidden.includes('code') && 'ode'}
-        </div>
-        <div className="body-col route">
-          Route
+  return (<div className="dep-body no-select">
+    <div className="body-row header" key="dep-table-header">
+      <div className="body-col radio-header checkmark">
+        {COMPLETED_SYMBOL}
+      </div>
+      <div className="body-col body-col-2">
+        P Time
+      </div>
+      <div className="body-col fid dep-fid">
+        Flight ID
+      </div>
+      <div className="body-col pa header"/>
+      <div className="body-col special special-hidden"/>
+      <div className="body-col special special-hidden"/>
+      <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
+        <div onMouseDown={() => toggleHideColumn('type')}>
+          T{!hidden.includes('type') && 'ype'}
         </div>
       </div>
-      <div className="scroll-container">
-        {Object.entries(data.filter(e => (typeof(e.spa) === 'number'))?.sort((u,v) => u.spa - v.spa))?.map(([i, e]) =>
-          <DepRow
-            key={`dep-row-spa-${e.cid}`}
-            entry={e}
-            bottom_border={i % 3 === 2}
-            updateStatus={updateStatus}
-            hidden={hidden}
-          />)}
-        <div className="body-row separator"/>
-        {Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && ((e.dep_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
-          <DepRow
-            key={`dep-row-ack-${e.cid}`}
-            entry={e}
-            bottom_border={i % 3 === 2}
-            updateStatus={updateStatus}
-            hidden={hidden}
-          />)}
-        {manual_posting && <div className="body-row separator"/>}
-        {manual_posting && Object.entries(data?.filter(e => (!(typeof(e.spa) === 'number') && e.dep_status === -1)))?.map(([i ,e]) =>
-          <DepRow
-            key={`dep-row-no-ack-${e.cid}`}
-            entry={e}
-            bottom_border={i % 3 === 2}
-            updateStatus={updateStatus}
-            hidden={hidden}
-          />)}
+      <div className="body-col alt header">
+        <div>Alt.</div>
       </div>
-    </div>);
+      <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
+           onMouseDown={() => toggleHideColumn('code')}>
+        C{!hidden.includes('code') && 'ode'}
+      </div>
+      <div className="body-col route">
+        Route
+      </div>
+    </div>
+    <div className="scroll-container">
+      {spa_entry_list?.map(([i, e]) =>
+        <DepRow
+          key={`dep-row-spa-${e.cid}`}
+          entry={e}
+          bottom_border={i % 3 === 2}
+          updateStatus={updateStatus}
+          hidden={hidden}
+        />)}
+      {spa_entry_list.length > 0 && <div className="body-row separator"/>}
+      {Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && ((e.dep_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
+        <DepRow
+          key={`dep-row-ack-${e.cid}`}
+          entry={e}
+          bottom_border={i % 3 === 2}
+          updateStatus={updateStatus}
+          hidden={hidden}
+        />)}
+      {manual_posting && <div className="body-row separator"/>}
+      {manual_posting && Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && e.dep_status === -1)))?.map(([i, e]) =>
+        <DepRow
+          key={`dep-row-no-ack-${e.cid}`}
+          entry={e}
+          bottom_border={i % 3 === 2}
+          updateStatus={updateStatus}
+          hidden={hidden}
+        />)}
+    </div>
+  </div>);
 }
