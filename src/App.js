@@ -444,16 +444,16 @@ export default class App extends React.Component {
   }
 
   aircraftSelect = (event, window, cid, field) => {
-    let {asel, edst_data} = this.state;
+    let {asel, edst_data, manual_posting} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({menu: null, asel: null});
     } else {
       const entry = edst_data[cid];
       asel = {cid: cid, field: field, window: window};
-      if (window === 'acl' && edst_data[cid]?.acl_status === -1) {
+      if (window === 'acl' && !manual_posting.acl && edst_data[cid]?.acl_status === -1) {
         this.updateEntry(cid, {acl_status: 0});
       }
-      if (window === 'dep' && edst_data[cid]?.dep_status === -1) {
+      if (window === 'dep' && !manual_posting.dep && edst_data[cid]?.dep_status === -1) {
         this.updateEntry(cid, {dep_status: 0});
       }
       this.setState({menu: null, asel: asel});
@@ -673,7 +673,7 @@ export default class App extends React.Component {
   }
 
 
-  handleKeyDown = (event) => {
+  handleKeyDownCapture = (event) => {
     event.preventDefault();
     if (this.mcaInputRef === null) {
       this.openWindow('mca');
@@ -710,7 +710,7 @@ export default class App extends React.Component {
       <div className="edst"
         // onContextMenu={(event) => event.preventDefault()}
            tabIndex={!(input_focused || menu?.name === 'alt-menu') ? '-1' : "0"}
-           onKeyDown={(event) => !input_focused && this.handleKeyDown(event)}
+           onKeyDownCapture={(e) => !input_focused && this.handleKeyDownCapture(e)}
       >
         <EdstHeader open_windows={open_windows}
                     disabled_windows={disabled_windows}
