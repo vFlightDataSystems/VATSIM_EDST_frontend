@@ -20,14 +20,14 @@ export function MessageComposeArea(props) {
     // eslint-disable-next-line
   }, []);
 
-  const highlightEntry = (fid) => {
+  const toggleHighlightEntry = (fid) => {
     const entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
       if (acl_cid_list.has(entry.cid)) {
-        updateEntry(entry.cid, {acl_highlighted: true});
+        updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
       }
       if (dep_cid_list.has(entry.cid)) {
-        updateEntry(entry.cid, {dep_highlighted: true});
+        updateEntry(entry.cid, {dep_highlighted: !entry.dep_highlighted});
       }
     }
   }
@@ -39,7 +39,7 @@ export function MessageComposeArea(props) {
     if (entry) {
       let msg = formatUtcMinutes(utc_minutes) + '\n'
       + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
-      + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route}`;
+      + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route.replace(/^\.+/, '')}`;
       setMraMessage(msg);
     }
   }
@@ -77,7 +77,7 @@ export function MessageComposeArea(props) {
             break;
           case 2:
             if (args[0] === 'H') {
-              highlightEntry(args[1]);
+              toggleHighlightEntry(args[1]);
               setResponse(`ACCEPT\nD POS KEYBD`);
             }
             else {
@@ -146,7 +146,7 @@ export function MessageComposeArea(props) {
           tabIndex={mca_focused ? '-1' : null}
           value={command_str}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
+          onKeyDownCapture={handleKeyDown}
         />
       </div>
       <div className="mca-response-area">
