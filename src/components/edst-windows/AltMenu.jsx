@@ -3,6 +3,8 @@ import _ from 'lodash';
 import '../../css/header-styles.scss';
 import '../../css/windows/alt-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
+import {EdstTooltip} from "../resources/EdstTooltip";
+import {Tooltips} from "../../tooltips";
 
 export function AltMenu(props) {
   const {
@@ -108,24 +110,30 @@ export function AltMenu(props) {
                    }
                  }}
                  onFocus={() => setInputFocused(true)}
-                 // onBlur={() => setInputFocused(false)}
+            // onBlur={() => setInputFocused(false)}
           />
         </div>
-        {show_invalid && <div className="alt-menu-row invalid-input">
-          INVALID
-        </div>}
-      </span> : <span>
-        <div className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
-             onMouseDown={() => setSelected('trial')}
-             disabled={dep}
-        >
-        TRIAL PLAN
-      </div>
-      <div className={`alt-menu-row hover ${selected === 'amend' ? 'selected' : ''}`}
-           onMouseDown={() => setSelected('amend')}
-      >
-        AMEND
-      </div>
+          {show_invalid && <div className="alt-menu-row invalid-input">
+            INVALID
+          </div>}
+      </span> :
+        <span>
+        <EdstTooltip tooltip={Tooltips.alt_menu_trial_plan}>
+          <div
+            className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
+            onMouseDown={() => setSelected('trial')}
+            disabled={dep}
+          >
+            TRIAL PLAN
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.alt_menu_amend}>
+          <div className={`alt-menu-row hover ${selected === 'amend' ? 'selected' : ''}`}
+               onMouseDown={() => setSelected('amend')}
+          >
+            AMEND
+          </div>
+        </EdstTooltip>
       <div className={`alt-menu-row`} disabled={true}>
         {!dep ? 'PROCEDURE' : 'NO ALT'}
       </div>
@@ -144,13 +152,15 @@ export function AltMenu(props) {
               {String(alt).padStart(3, '0')}
             </div>
             {!dep &&
-            <div className={`alt-menu-container-col-t`}
-                 disabled={!(selected === 'amend')}
-                 onMouseEnter={() => (selected === 'amend') && setTempAltHover(alt)}
-                 onMouseLeave={() => (selected === 'amend') && setTempAltHover(null)}
-                 onMouseDown={() => handleTempAltClick(alt)}>
-              T
-            </div>}
+            <EdstTooltip tooltip={Tooltips.alt_menu_t}>
+              <div className={`alt-menu-container-col-t`}
+                   disabled={!(selected === 'amend')}
+                   onMouseEnter={() => (selected === 'amend') && setTempAltHover(alt)}
+                   onMouseLeave={() => (selected === 'amend') && setTempAltHover(null)}
+                   onMouseDown={() => handleTempAltClick(alt)}>
+                T
+              </div>
+            </EdstTooltip>}
           </div>;
         })}
       </div>

@@ -4,6 +4,8 @@ import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 import VCI from '../../../css/images/VCI_v4.png';
+import {EdstTooltip} from "../../resources/EdstTooltip";
+import {Tooltips} from "../../../tooltips";
 
 const SPA_INDICATOR = '^';
 
@@ -156,10 +158,12 @@ export function AclRow(props) {
                key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
-           onMouseDown={() => props.updateStatus(entry.cid)}>
-        {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
-      </div>
+      <EdstTooltip tooltip={Tooltips.acl_wifi_button}>
+        <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
+             onMouseDown={() => props.updateVci(entry.cid)}>
+          {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
+        </div>
+      </EdstTooltip>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
@@ -168,57 +172,71 @@ export function AclRow(props) {
            ref={ref}
            style={{minWidth: entry.free_text ? '1200px' : 0}}
       >
-        <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
-             onMouseDown={handleFidClick}
-        >
-          {entry.cid} {entry.callsign}
-        </div>
+        <EdstTooltip tooltip={Tooltips.acl_flight_id}>
+          <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
+               onMouseDown={handleFidClick}
+          >
+            {entry.cid} {entry.callsign}
+          </div>
+        </EdstTooltip>
         <div className="body-col pa"/>
         <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
           {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
         </div>
-        <div className="body-col special hotbox"
-             onContextMenu={event => event.preventDefault()}
-             onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
-        >
-          {scratchpad && '*'}
-        </div>
-        <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
-             onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'type')}
-        >
-          {`${entry.type}/${entry.equipment}`}
-        </div>
-        <div className={`body-col alt`}>
-          <div className={`${alt_mouse_down ? 'md' : ''} ${entry.interim ? 'interim' : ''}
-          ${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'alt')}
+        <EdstTooltip tooltip={Tooltips.acl_hotbox}>
+          <div className="body-col special hotbox"
+               onContextMenu={event => event.preventDefault()}
+               onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
           >
-            {entry.altitude}{entry.interim && `T${entry.interim}`}
+            {scratchpad && '*'}
           </div>
-        </div>
-        <div
-          className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_type}>
+          <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
+        ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
+               onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'type')}
+          >
+            {`${entry.type}/${entry.equipment}`}
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_alt}>
+          <div className={`body-col alt`}>
+            <div className={`${alt_mouse_down ? 'md' : ''} ${entry.interim ? 'interim' : ''}
+          ${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
+                 onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'alt')}
+            >
+              {entry.altitude}{entry.interim && `T${entry.interim}`}
+            </div>
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_code}>
+          <div
+            className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
           ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
-          onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'code')}
-        >
-          {entry.beacon}
-        </div>
-        <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}
+            onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'code')}
+          >
+            {entry.beacon}
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_hdg}>
+          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}
               ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${entry?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
-             onMouseDown={handleHeadingClick}
-        >
-          {entry?.scratch_hdg?.val}
-        </div>
+               onMouseDown={handleHeadingClick}
+          >
+            {entry?.scratch_hdg?.val}
+          </div>
+        </EdstTooltip>
         <div className="body-col hs-slash">
           /
         </div>
-        <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
+        <EdstTooltip tooltip={Tooltips.acl_spd}>
+          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
 ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
-             onMouseDown={handleSpeedClick}
-        >
-          {entry?.scratch_spd?.val}
-        </div>
+               onMouseDown={handleSpeedClick}
+          >
+            {entry?.scratch_spd?.val}
+          </div>
+        </EdstTooltip>
         <div className={`body-col special`} disabled={true}/>
         <div className={`body-col special`} disabled={true}/>
         <div className={`body-col special hold-col ${isSelected(entry.cid, 'hold') ? 'selected' : ''}`}
@@ -233,35 +251,39 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.hold_data ? 'H' : ''}
         </div>
-        <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
-             disabled={!(entry.flightplan.remarks?.length > 0)}
-             onMouseDown={handleRemarksClick}
-        >
-          *
-        </div>
-        <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
-             onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
-        >
-          {entry.acl_route_display === 'hold_data' && hold_data &&
-          `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
-          {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
-          {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
-          {!entry.acl_route_display && <span className="no-pad">
+        <EdstTooltip tooltip={Tooltips.acl_remark_btn}>
+          <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
+               disabled={!(entry.flightplan.remarks?.length > 0)}
+               onMouseDown={handleRemarksClick}
+          >
+            *
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_route}>
+          <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
+               onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
+          >
+            {entry.acl_route_display === 'hold_data' && hold_data &&
+            `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
+            {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
+            {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
+            {!entry.acl_route_display && <span className="no-pad">
             <span
               className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {entry.dep}
             </span>
             ./.
-            {route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
-            {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
-            {route}{!route.endsWith('.') && route.length > 0 && `.`}
-            {pending_aar && !on_aar &&
-            <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+              {route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
+              {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
+              {route}{!route.endsWith('.') && route.length > 0 && `.`}
+              {pending_aar && !on_aar &&
+              <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pending_aar}]`}
               </span>}
-            {entry.dest}
+              {entry.dest}
           </span>}
-        </div>
+          </div>
+        </EdstTooltip>
       </div>
     </div>
     {entry.free_text && <div className="body-row">

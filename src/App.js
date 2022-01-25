@@ -29,7 +29,7 @@ import {
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
 import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
-import {AclContext, DepContext, EdstContext} from "./contexts/contexts";
+import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/contexts";
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
@@ -74,7 +74,8 @@ const intial_state = {
   manual_posting: {acl: true, dep: true},
   input_focused: false,
   open_windows: new Set(),
-  mra_msg: ''
+  mra_msg: '',
+  tooltips_enabled: true
 };
 
 export default class App extends React.Component {
@@ -703,7 +704,8 @@ export default class App extends React.Component {
       input_focused,
       manual_posting,
       open_windows,
-      mra_msg
+      mra_msg,
+      tooltips_enabled
     } = this.state;
 
     return (
@@ -712,201 +714,203 @@ export default class App extends React.Component {
            tabIndex={!(input_focused || menu?.name === 'alt-menu') ? '-1' : "0"}
            onKeyDownCapture={(e) => !input_focused && this.handleKeyDownCapture(e)}
       >
-        <EdstHeader open_windows={open_windows}
-                    disabled_windows={disabled_windows}
-                    openWindow={this.openWindow}
-                    toggleWindow={this.toggleWindow}
-                    plan_disabled={plan_queue.length === 0}
-                    sector_id={sector_id}
-                    acl_num={acl_cid_list.size}
-                    dep_num={dep_cid_list.size}
-                    sig_num={sig.length}
-                    not_num={not.length}
-                    gi_num={gi.length}
-        />
-        <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
-             ref={this.outlineRef}
-             onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
-        >
-          <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
-               onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
+        <TooltipContext.Provider value={{global_tooltips_enabled: tooltips_enabled}}>
+          <EdstHeader open_windows={open_windows}
+                      disabled_windows={disabled_windows}
+                      openWindow={this.openWindow}
+                      toggleWindow={this.toggleWindow}
+                      plan_disabled={plan_queue.length === 0}
+                      sector_id={sector_id}
+                      acl_num={acl_cid_list.size}
+                      dep_num={dep_cid_list.size}
+                      sig_num={sig.length}
+                      not_num={not.length}
+                      gi_num={gi.length}
+          />
+          <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
+               ref={this.outlineRef}
+               onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
           >
-            {dragging_cursor_hide && <div className="cursor"/>}
-          </div>
-          <EdstContext.Provider value={{
-            edst_data: edst_data,
-            asel: asel,
-            plan_queue: plan_queue,
-            sector_id: sector_id,
-            menu: menu,
-            unmount: this.unmount,
-            openMenu: this.openMenu,
-            closeMenu: this.closeMenu,
-            updateEntry: this.updateEntry,
-            amendEntry: this.amendEntry,
-            deleteEntry: this.deleteEntry,
-            trialPlan: this.trialPlan,
-            aircraftSelect: this.aircraftSelect,
-            openWindow: this.openWindow,
-            closeWindow: this.closeWindow,
-            startDrag: this.startDrag,
-            stopDrag: this.stopDrag,
-            setMcaInputRef: (ref) => this.mcaInputRef = ref,
-            setInputFocused: (v) => this.setState({input_focused: v}),
-            setMraMessage: this.setMraMessage
-          }}>
-            <AclContext.Provider value={{
-              cid_list: acl_cid_list,
-              sort_data: sort_data.acl,
-              asel: asel?.window === 'acl' ? asel : null,
-              manual_posting: manual_posting.acl,
-              togglePosting: () => this.togglePosting('acl')
+            <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
+                 onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
+            >
+              {dragging_cursor_hide && <div className="cursor"/>}
+            </div>
+            <EdstContext.Provider value={{
+              edst_data: edst_data,
+              asel: asel,
+              plan_queue: plan_queue,
+              sector_id: sector_id,
+              menu: menu,
+              unmount: this.unmount,
+              openMenu: this.openMenu,
+              closeMenu: this.closeMenu,
+              updateEntry: this.updateEntry,
+              amendEntry: this.amendEntry,
+              deleteEntry: this.deleteEntry,
+              trialPlan: this.trialPlan,
+              aircraftSelect: this.aircraftSelect,
+              openWindow: this.openWindow,
+              closeWindow: this.closeWindow,
+              startDrag: this.startDrag,
+              stopDrag: this.stopDrag,
+              setMcaInputRef: (ref) => this.mcaInputRef = ref,
+              setInputFocused: (v) => this.setState({input_focused: v}),
+              setMraMessage: this.setMraMessage
             }}>
-              {open_windows.has('acl') && <Acl
-                addEntry={(s) => this.addEntry('acl', s)}
-                cleanup={this.aclCleanup}
-                sort_data={sort_data.acl}
+              <AclContext.Provider value={{
+                cid_list: acl_cid_list,
+                sort_data: sort_data.acl,
+                asel: asel?.window === 'acl' ? asel : null,
+                manual_posting: manual_posting.acl,
+                togglePosting: () => this.togglePosting('acl')
+              }}>
+                {open_windows.has('acl') && <Acl
+                  addEntry={(s) => this.addEntry('acl', s)}
+                  cleanup={this.aclCleanup}
+                  sort_data={sort_data.acl}
+                  unmount={this.unmount}
+                  openMenu={this.openMenu}
+                  dragging={dragging}
+                  asel={asel?.window === 'acl' ? asel : null}
+                  // z_index={open_windows.indexOf('acl')}
+                  closeWindow={() => this.closeWindow('acl')}
+                />}
+              </AclContext.Provider>
+              <DepContext.Provider value={{
+                cid_list: dep_cid_list,
+                sort_data: sort_data.dep,
+                asel: asel?.window === 'dep' ? asel : null,
+                manual_posting: manual_posting.dep,
+                togglePosting: () => this.togglePosting('dep')
+              }}>
+                {open_windows.has('dep') && <Dep
+                  addEntry={(s) => this.addEntry('dep', s)}
+                  sort_data={sort_data.dep}
+                  unmount={this.unmount}
+                  openMenu={this.openMenu}
+                  dragging={dragging}
+                  // z_index={open_windows.indexOf('dep')}
+                  closeWindow={() => this.closeWindow('dep')}
+                />}
+              </DepContext.Provider>
+              {open_windows.has('plans') && plan_queue.length > 0 && <PlansDisplay
                 unmount={this.unmount}
                 openMenu={this.openMenu}
                 dragging={dragging}
-                asel={asel?.window === 'acl' ? asel : null}
-                // z_index={open_windows.indexOf('acl')}
-                closeWindow={() => this.closeWindow('acl')}
-              />}
-            </AclContext.Provider>
-            <DepContext.Provider value={{
-              cid_list: dep_cid_list,
-              sort_data: sort_data.dep,
-              asel: asel?.window === 'dep' ? asel : null,
-              manual_posting: manual_posting.dep,
-              togglePosting: () => this.togglePosting('dep')
-            }}>
-              {open_windows.has('dep') && <Dep
-                addEntry={(s) => this.addEntry('dep', s)}
-                sort_data={sort_data.dep}
-                unmount={this.unmount}
-                openMenu={this.openMenu}
-                dragging={dragging}
+                asel={asel?.window === 'plans' ? asel : null}
+                cleanup={() => this.setState({plan_queue: []})}
+                plan_queue={plan_queue}
+                amendEntry={this.amendEntry}
+                aircraftSelect={this.aircraftSelect}
                 // z_index={open_windows.indexOf('dep')}
-                closeWindow={() => this.closeWindow('dep')}
+                closeWindow={() => this.closeWindow('plans')}
               />}
-            </DepContext.Provider>
-            {open_windows.has('plans') && plan_queue.length > 0 && <PlansDisplay
-              unmount={this.unmount}
-              openMenu={this.openMenu}
-              dragging={dragging}
-              asel={asel?.window === 'plans' ? asel : null}
-              cleanup={() => this.setState({plan_queue: []})}
-              plan_queue={plan_queue}
-              amendEntry={this.amendEntry}
-              aircraftSelect={this.aircraftSelect}
-              // z_index={open_windows.indexOf('dep')}
-              closeWindow={() => this.closeWindow('plans')}
-            />}
-            {open_windows.has('status') && <Status
-              dragging={dragging}
-              startDrag={this.startDrag}
-              pos={pos['edst-status']}
-              // z_index={open_windows.indexOf('status')}
-              closeWindow={() => this.closeWindow('status')}
-            />}
-            {open_windows.has('outage') && <Outage
-              dragging={dragging}
-              startDrag={this.startDrag}
-              pos={pos['edst-outage']}
-              // z_index={open_windows.indexOf('status')}
-              closeWindow={() => this.closeWindow('outage')}
-            />}
-            {menu?.name === 'plan-menu' && <PlanOptions
-              deleteEntry={this.deleteEntry}
-              openMenu={this.openMenu}
-              dragging={dragging}
-              asel={asel}
-              data={edst_data[asel?.cid]}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
-              pos={pos['plan-menu']}
-              // z_index={open_windows.indexOf('route-menu')}
-              clearAsel={() => this.asel = null}
-              closeWindow={() => this.closeMenu('plan-menu')}
-            />}
-            {menu?.name === 'sort-menu' && <SortMenu
-              ref_id={menu?.ref_id}
-              sort_data={sort_data}
-              dragging={dragging}
-              setSortData={this.setSortData}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
-              pos={pos['sort-menu']}
-              // z_index={open_windows.indexOf('route-menu')}
-              closeWindow={() => this.closeMenu('sort-menu')}
-            />}
-            {menu?.name === 'route-menu' && <RouteMenu
-              pos={pos['route-menu']}
-              closeWindow={() => this.closeMenu('route-menu')}
-            />}
-            {menu?.name === 'template-menu' && <TemplateMenu
-              pos={pos['template-menu']}
-              closeWindow={() => this.closeMenu('template-menu')}
-            />}
-            {menu?.name === 'hold-menu' && <HoldMenu
-              dragging={dragging}
-              asel={asel}
-              entry={edst_data[asel?.cid]}
-              pos={pos['hold-menu']}
-              closeWindow={() => this.closeMenu('hold-menu')}
-            />}
-            {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
-              dragging={dragging}
-              asel={asel}
-              entry={edst_data[asel?.cid]}
-              pos={pos['cancel-hold-menu']}
-              closeWindow={() => this.closeMenu('cancel-hold-menu')}
-            />}
-            {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
-              dragging={dragging}
-              entry={edst_data[asel?.cid]}
-              pos={pos['prev-route-menu']}
-              closeWindow={() => this.closeMenu('prev-route-menu')}
-            />}
-            {menu?.name === 'alt-menu' && <AltMenu
-              pos={pos['alt-menu']}
-              closeWindow={() => this.closeMenu('alt-menu')}
-            />}
-            {menu?.name === 'speed-menu' && <SpeedMenu
-              pos={pos['speed-menu']}
-              asel={asel}
-              entry={edst_data[asel?.cid]}
-              closeWindow={() => this.closeMenu('speed-menu')}
-            />}
-            {menu?.name === 'heading-menu' && <HeadingMenu
-              pos={pos['heading-menu']}
-              asel={asel}
-              entry={edst_data[asel?.cid]}
-              updateEntry={this.updateEntry}
-              amendEntry={this.amendEntry}
-              startDrag={this.startDrag}
-              stopDrag={this.stopDrag}
-              closeWindow={() => this.closeMenu('heading-menu')}
-            />}
-            {open_windows.has('mca') && <MessageComposeArea
-              pos={pos['edst-mca']}
-              startDrag={this.startDrag}
-              aclCleanup={this.aclCleanup}
-              addEntry={this.addEntry}
-              acl_cid_list={acl_cid_list}
-              dep_cid_list={dep_cid_list}
-              togglePosting={this.togglePosting}
-              closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
-            />}
-            {open_windows.has('mra') && <MessageResponseArea
-              pos={pos['edst-mra']}
-              startDrag={this.startDrag}
-              msg={mra_msg}
-            />}
-          </EdstContext.Provider>
-        </div>
+              {open_windows.has('status') && <Status
+                dragging={dragging}
+                startDrag={this.startDrag}
+                pos={pos['edst-status']}
+                // z_index={open_windows.indexOf('status')}
+                closeWindow={() => this.closeWindow('status')}
+              />}
+              {open_windows.has('outage') && <Outage
+                dragging={dragging}
+                startDrag={this.startDrag}
+                pos={pos['edst-outage']}
+                // z_index={open_windows.indexOf('status')}
+                closeWindow={() => this.closeWindow('outage')}
+              />}
+              {menu?.name === 'plan-menu' && <PlanOptions
+                deleteEntry={this.deleteEntry}
+                openMenu={this.openMenu}
+                dragging={dragging}
+                asel={asel}
+                data={edst_data[asel?.cid]}
+                amendEntry={this.amendEntry}
+                startDrag={this.startDrag}
+                stopDrag={this.stopDrag}
+                pos={pos['plan-menu']}
+                // z_index={open_windows.indexOf('route-menu')}
+                clearAsel={() => this.asel = null}
+                closeWindow={() => this.closeMenu('plan-menu')}
+              />}
+              {menu?.name === 'sort-menu' && <SortMenu
+                ref_id={menu?.ref_id}
+                sort_data={sort_data}
+                dragging={dragging}
+                setSortData={this.setSortData}
+                startDrag={this.startDrag}
+                stopDrag={this.stopDrag}
+                pos={pos['sort-menu']}
+                // z_index={open_windows.indexOf('route-menu')}
+                closeWindow={() => this.closeMenu('sort-menu')}
+              />}
+              {menu?.name === 'route-menu' && <RouteMenu
+                pos={pos['route-menu']}
+                closeWindow={() => this.closeMenu('route-menu')}
+              />}
+              {menu?.name === 'template-menu' && <TemplateMenu
+                pos={pos['template-menu']}
+                closeWindow={() => this.closeMenu('template-menu')}
+              />}
+              {menu?.name === 'hold-menu' && <HoldMenu
+                dragging={dragging}
+                asel={asel}
+                entry={edst_data[asel?.cid]}
+                pos={pos['hold-menu']}
+                closeWindow={() => this.closeMenu('hold-menu')}
+              />}
+              {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
+                dragging={dragging}
+                asel={asel}
+                entry={edst_data[asel?.cid]}
+                pos={pos['cancel-hold-menu']}
+                closeWindow={() => this.closeMenu('cancel-hold-menu')}
+              />}
+              {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
+                dragging={dragging}
+                entry={edst_data[asel?.cid]}
+                pos={pos['prev-route-menu']}
+                closeWindow={() => this.closeMenu('prev-route-menu')}
+              />}
+              {menu?.name === 'alt-menu' && <AltMenu
+                pos={pos['alt-menu']}
+                closeWindow={() => this.closeMenu('alt-menu')}
+              />}
+              {menu?.name === 'speed-menu' && <SpeedMenu
+                pos={pos['speed-menu']}
+                asel={asel}
+                entry={edst_data[asel?.cid]}
+                closeWindow={() => this.closeMenu('speed-menu')}
+              />}
+              {menu?.name === 'heading-menu' && <HeadingMenu
+                pos={pos['heading-menu']}
+                asel={asel}
+                entry={edst_data[asel?.cid]}
+                updateEntry={this.updateEntry}
+                amendEntry={this.amendEntry}
+                startDrag={this.startDrag}
+                stopDrag={this.stopDrag}
+                closeWindow={() => this.closeMenu('heading-menu')}
+              />}
+              {open_windows.has('mca') && <MessageComposeArea
+                pos={pos['edst-mca']}
+                startDrag={this.startDrag}
+                aclCleanup={this.aclCleanup}
+                addEntry={this.addEntry}
+                acl_cid_list={acl_cid_list}
+                dep_cid_list={dep_cid_list}
+                togglePosting={this.togglePosting}
+                closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
+              />}
+              {open_windows.has('mra') && <MessageResponseArea
+                pos={pos['edst-mra']}
+                startDrag={this.startDrag}
+                msg={mra_msg}
+              />}
+            </EdstContext.Provider>
+          </div>
+        </TooltipContext.Provider>
       </div>
     );
   }

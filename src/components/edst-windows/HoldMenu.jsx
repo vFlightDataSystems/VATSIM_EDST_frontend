@@ -5,6 +5,8 @@ import {length, lineString} from '@turf/turf';
 import {EdstContext} from "../../contexts/contexts";
 import {formatUtcMinutes} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
+import {EdstTooltip} from "../resources/EdstTooltip";
+import {Tooltips} from "../../tooltips";
 
 export function HoldMenu(props) {
   const {
@@ -83,9 +85,10 @@ export function HoldMenu(props) {
           {entry.callsign} {entry.type}/{entry.equipment}
         </div>
         <div className="options-row">
-          <div className="options-col hold-menu-left-col">
-            Location
-          </div>
+          <EdstTooltip className="options-col hold-menu-left-col"
+                       tooltip={Tooltips.hold_direction}
+                       content="Location"
+          />
         </div>
         <div className="options-row">
           <div className="options-col">
@@ -123,106 +126,113 @@ export function HoldMenu(props) {
             </div>)}
         </div>
         <div className="options-row hold-row-1">
-          <div className="options-col hold-col-2">
-            Direction
-          </div>
-          <div className="options-col hold-col-2">
-            Turns
-          </div>
-          <div className="options-col hold-col-2">
-            Leg Lengths
-          </div>
+          <EdstTooltip className="options-col hold-col-2"
+                       content="Direction"
+                       tooltip={Tooltips.hold_direction}
+          />
+          <EdstTooltip className="options-col hold-col-2"
+                       content="Turns"
+                       tooltip={Tooltips.hold_turns}
+          />
+          <EdstTooltip className="options-col hold-col-2"
+                       content="Leg Lengths"
+                       tooltip={Tooltips.hold_leg_length}
+          />
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="NW" classes='button-1' selected={hold_direction === 'NW'}
+            <EdstButton content="NW" className='button-1' selected={hold_direction === 'NW'}
                         onMouseDown={() => setHoldDirection('NW')}
             />
-            <EdstButton content="N" classes='button-1' selected={hold_direction === 'N'}
+            <EdstButton content="N" className='button-1' selected={hold_direction === 'N'}
                         onMouseDown={() => setHoldDirection('N')}
             />
-            <EdstButton content="NE" classes='button-1' selected={hold_direction === 'NE'}
+            <EdstButton content="NE" className='button-1' selected={hold_direction === 'NE'}
                         onMouseDown={() => setHoldDirection('NE')}
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="LT" classes='button-1' selected={turns === 'LT'}
+            <EdstButton content="LT" className='button-1' selected={turns === 'LT'}
                         onMouseDown={() => setTurns('LT')}
             />
-            <EdstButton content="RT" classes='button-1' selected={turns === 'RT'}
+            <EdstButton content="RT" className='button-1' selected={turns === 'RT'}
                         onMouseDown={() => setTurns('RT')}
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="STD" classes='button-2' selected={!leg_length || leg_length === 'STD'}
+            <EdstButton content="STD" className='button-2' selected={!leg_length || leg_length === 'STD'}
                         onMouseDown={() => setLegLength('STD')}
             />
-            <EdstButton content="15 NM" classes='button-2' selected={!leg_length || leg_length === 15}
+            <EdstButton content="15 NM" className='button-2' selected={!leg_length || leg_length === 15}
                         onMouseDown={() => setLegLength(15)}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="W" classes='button-1' selected={hold_direction === 'W'}
+            <EdstButton content="W" className='button-1' selected={hold_direction === 'W'}
                         onMouseDown={() => setHoldDirection('W')}
             />
-            <EdstButton classes='button-1' disabled={true}/>
-            <EdstButton content="E" classes='button-1' selected={hold_direction === 'E'}
+            <EdstButton className='button-1' disabled={true}/>
+            <EdstButton content="E" className='button-1' selected={hold_direction === 'E'}
                         onMouseDown={() => setHoldDirection('E')}
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton classes="button-1" disabled={true}/>
-            <EdstButton classes="button-1" disabled={true}/>
+            <EdstButton className="button-1" disabled={true}/>
+            <EdstButton className="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="5 NM" classes='button-2' selected={!leg_length || leg_length === 5}
+            <EdstButton content="5 NM" className='button-2' selected={!leg_length || leg_length === 5}
                         onMouseDown={() => setLegLength(5)}
             />
-            <EdstButton content="20 NM" classes='button-2' selected={!leg_length || leg_length === 20}
+            <EdstButton content="20 NM" className='button-2' selected={!leg_length || leg_length === 20}
                         onMouseDown={() => setLegLength(20)}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="SW" classes='button-1' selected={hold_direction === 'SW'}
+            <EdstButton content="SW" className='button-1' selected={hold_direction === 'SW'}
                         onMouseDown={() => setHoldDirection('SW')}
             />
-            <EdstButton content="S" classes='button-1' selected={hold_direction === 'S'}
+            <EdstButton content="S" className='button-1' selected={hold_direction === 'S'}
                         onMouseDown={() => setHoldDirection('S')}
             />
-            <EdstButton content="SE" classes='button-1' selected={hold_direction === 'SE'}
+            <EdstButton content="SE" className='button-1' selected={hold_direction === 'SE'}
                         onMouseDown={() => setHoldDirection('SE')}
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton classes="button-1" disabled={true}/>
-            <EdstButton classes="button-1" disabled={true}/>
+            <EdstButton className="button-1" disabled={true}/>
+            <EdstButton className="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="10 NM" classes='button-2' selected={!leg_length || leg_length === 10}
+            <EdstButton content="10 NM" className='button-2' selected={!leg_length || leg_length === 10}
                         onMouseDown={() => setLegLength(10)}
             />
-            <EdstButton content="25 NM" classes='button-2' selected={!leg_length || leg_length === 25}
+            <EdstButton content="25 NM" className='button-2' selected={!leg_length || leg_length === 25}
                         onMouseDown={() => setLegLength(25)}
             />
           </div>
         </div>
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-4">
-            <EdstButton content="Delete Hold Instructions" onMouseDown={() => {
-              amendEntry(entry.cid, {hold_data: null});
-              updateEntry(entry.cid, {show_hold_info: false});
-              props.closeWindow();
-            }}/>
+            <EdstButton
+              content="Delete Hold Instructions"
+              onMouseDown={() => {
+                amendEntry(entry.cid, {hold_data: null});
+                updateEntry(entry.cid, {show_hold_info: false});
+                props.closeWindow();
+              }}
+              tooltip={Tooltips.hold_delete_hold_instr}
+            />
           </div>
         </div>
         <div className="options-row hold-row-1">
-          <div className="options-col hold-col-2">
+          <EdstTooltip className="options-col hold-col-2" tooltip={Tooltips.hold_efc}>
             EFC
-          </div>
+          </EdstTooltip>
         </div>
         <div className="options-row"
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'alt-menu', false)}
@@ -239,7 +249,7 @@ export function HoldMenu(props) {
         </div>
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-5">
-            <EdstButton content="Delete EFC" onMouseDown={() => setEfc('')}/>
+            <EdstButton content="Delete EFC" onMouseDown={() => setEfc('')} tooltip={Tooltips.hold_del_efc}/>
           </div>
         </div>
         <div className="options-row bottom">
@@ -249,8 +259,10 @@ export function HoldMenu(props) {
                           updateEntry(entry.cid, {spa: true});
                           clearedHold();
                         }}
+                        tooltip={Tooltips.hold_hold_spa_btn}
             />
-            <EdstButton content="Hold" onMouseDown={clearedHold} disabled={entry?.hold_data}/>
+            <EdstButton content="Hold" onMouseDown={clearedHold} disabled={entry?.hold_data}
+                        tooltip={Tooltips.hold_hold_btn}/>
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
                           amendEntry(entry?.cid, {hold_data: null});

@@ -5,6 +5,8 @@ import '../../css/windows/spd-hdg-menu-styles.scss';
 import _ from "lodash";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
+import {Tooltips} from "../../tooltips";
+import {EdstTooltip} from "../resources/EdstTooltip";
 
 export function SpeedMenu(props) {
   const {
@@ -31,7 +33,7 @@ export function SpeedMenu(props) {
   const entry = edst_data[asel.cid];
 
   const handleScroll = (e) => {
-    const new_deltaY = Math.min(Math.max((speed - 400)* 10, deltaY + e.deltaY), (speed - 160) * 10);
+    const new_deltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);
     setDeltaY(new_deltaY);
   }
 
@@ -61,6 +63,7 @@ export function SpeedMenu(props) {
           >
             <EdstButton content="Amend" selected={amend}
                         onMouseDown={() => setAmend(true)}
+                        tooltip={Tooltips.acl_spd_amend}
             />
           </div>
           <div className={`options-col right ${!amend ? 'selected' : ''}`}
@@ -68,6 +71,7 @@ export function SpeedMenu(props) {
           >
             <EdstButton content="Scratchpad" selected={!amend}
                         onMouseDown={() => setAmend(false)}
+                        tooltip={Tooltips.acl_spd_scratchpad}
             />
           </div>
         </div>
@@ -83,14 +87,14 @@ export function SpeedMenu(props) {
         </div>
         <div className="spd-hdg-menu-row top-border"/>
         <div className="spd-hdg-menu-row bottom-border">
-          KNOTS
-          <EdstButton content="+" classes="medium button-1" selected={sign === '+'}
-                  onMouseDown={() => setSign(sign === '+' ? '' : '+')}
+          <EdstTooltip content="KNOTS" tooltip={Tooltips.acl_spd_knots}/>
+          <EdstButton content="+" className="medium button-1" selected={sign === '+'}
+                      onMouseDown={() => setSign(sign === '+' ? '' : '+')}
           />
-          <EdstButton content="-" classes="medium button-2" selected={sign === '-'}
+          <EdstButton content="-" className="medium button-2" selected={sign === '-'}
                       onMouseDown={() => setSign(sign === '-' ? '' : '-')}
           />
-          MACH
+          <EdstTooltip content="MACH" tooltip={Tooltips.acl_spd_mach}/>
         </div>
         <div className="spd-hdg-menu-select-container"
              onWheel={handleScroll}

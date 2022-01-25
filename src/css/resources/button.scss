@@ -15,8 +15,7 @@ $edst-button-disabled-grey: #707070;
     border: 1px solid #FFFFFF;
   }
 
-  &[disabled] {
-    pointer-events: none;
+  &.disabled {
     border: 1px solid #000000;
   }
 

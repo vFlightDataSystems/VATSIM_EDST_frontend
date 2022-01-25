@@ -4,9 +4,14 @@ import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
 import VCI from '../../../css/images/VCI_v4.png';
 import {AclContext, EdstContext} from "../../../contexts/contexts";
+import {EdstTooltip} from "../../resources/EdstTooltip";
+import {Tooltips} from "../../../tooltips";
+
 
 export default function AclTable() {
   const [any_holding, setAnyHolding] = useState(false);
+  const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
+  const [any_assigned_speed, setAnyAssignedSpeed] = useState(false);
   const [hidden, setHidden] = useState([]);
   const [alt_mouse_down, setAltMouseDown] = useState(false);
   const {
@@ -15,6 +20,7 @@ export default function AclTable() {
   } = useContext(EdstContext);
   const {cid_list, sort_data, manual_posting} = useContext(AclContext);
 
+  // check whether any aircraft in the list is holding
   const checkHolding = () => {
     for (let cid of cid_list) {
       if (edst_data[cid]?.hold_data) {
@@ -24,7 +30,28 @@ export default function AclTable() {
     }
     setAnyHolding(false);
   }
-  useEffect(() => checkHolding());
+  // check whether any aircraft in the list has an assigned heading or a speed
+  // will display a * next to Hdg or Spd if the column is hidden, respectively
+  const checkAssignedHdgSpd = () => {
+    let any_hdg = false;
+    let any_spd = false;
+    for (let cid of cid_list) {
+      if (edst_data[cid]?.scratch_hdg && !any_hdg) {
+        any_hdg = true
+      }
+      if (edst_data[cid]?.scratch_spd && !any_spd) {
+        any_spd = true
+      }
+      if (any_spd && any_hdg) break;
+    }
+    setAnyAssignedHeading(any_hdg);
+    setAnyAssignedSpeed(any_spd);
+  }
+
+  useEffect(() => {
+    checkHolding();
+    checkAssignedHdgSpd();
+  });
 
   const toggleHideColumn = (name) => {
     let hidden_copy = hidden.slice(0);
@@ -53,7 +80,7 @@ export default function AclTable() {
     setHidden(hidden_copy);
   }
 
-  const updateStatus = (cid) => {
+  const updateVci = (cid) => {
     const entry = edst_data[cid];
     if (entry?.acl_status === -1 && manual_posting) {
       updateEntry(cid, {acl_status: 0});
@@ -102,9 +129,11 @@ export default function AclTable() {
           Flight ID
         </div>
         <div className="body-col pa header">
-          <div>
-            PA
-          </div>
+          <EdstTooltip tooltip={Tooltips.acl_header_pa}>
+            <div>
+              PA
+            </div>
+          </EdstTooltip>
         </div>
         <div className="body-col special special-hidden"/>
         <div className="body-col special special-hidden"/>
@@ -123,17 +152,23 @@ export default function AclTable() {
              onMouseDown={() => toggleHideColumn('code')}>
           C{!hidden.includes('code') && 'ode'}
         </div>
-        <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
-             onMouseDown={() => toggleHideColumn('hdg')}>
-          H{!hidden.includes('hdg') && 'dg'}
-        </div>
-        <div className="body-col hs-slash hover" onMouseDown={handleClickSlash}>
-          /
-        </div>
-        <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
-             onMouseDown={() => toggleHideColumn('spd')}>
-          S{!hidden.includes('spd') && 'pd'}
-        </div>
+        <EdstTooltip tooltip={Tooltips.acl_header_hdg}>
+          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
+               onMouseDown={() => toggleHideColumn('hdg')}>
+            H{!hidden.includes('hdg') && 'dg'}
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_header_slash}>
+          <div className="body-col hs-slash hover" onMouseDown={handleClickSlash}>
+            /
+          </div>
+        </EdstTooltip>
+        <EdstTooltip tooltip={Tooltips.acl_header_spd}>
+          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
+               onMouseDown={() => toggleHideColumn('spd')}>
+            S{!hidden.includes('spd') && 'pd'}
+          </div>
+        </EdstTooltip>
         <div className={`body-col special special-header`}/>
         <div className={`body-col special special-header`} disabled={!any_holding}>
           H
@@ -154,7 +189,7 @@ export default function AclTable() {
           any_holding={any_holding}
           hidden={hidden}
           alt_mouse_down={alt_mouse_down}
-          updateStatus={updateStatus}
+          updateVci={updateVci}
         />)}
       {spa_entry_list.length > 0 && <div className="body-row separator"/>}
       {Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && ((e.acl_status > -1) || !manual_posting)))?.sort(sortFunc))?.map(([i, e]) =>
@@ -165,7 +200,7 @@ export default function AclTable() {
           any_holding={any_holding}
           hidden={hidden}
           alt_mouse_down={alt_mouse_down}
-          updateStatus={updateStatus}
+          updateVci={updateVci}
         />)}
       {manual_posting && <div className="body-row separator"/>}
       {manual_posting && Object.entries(entry_list?.filter(e => (!(typeof (e.spa) === 'number') && cid_list.has(e.cid) && e.acl_status === -1)))?.map(([i, e]) =>
@@ -176,7 +211,7 @@ export default function AclTable() {
           any_holding={any_holding}
           hidden={hidden}
           alt_mouse_down={alt_mouse_down}
-          updateStatus={updateStatus}
+          updateVci={updateVci}
         />)}
     </div>
   </div>);

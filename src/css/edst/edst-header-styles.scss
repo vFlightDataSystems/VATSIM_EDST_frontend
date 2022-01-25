@@ -37,9 +37,13 @@ $edst-header-window-closed-black: #000000;
     display: inline-flex;
   }
 
-  :is(.edst-header-row-left-2, .edst-header-row-left, .edst-header-row-right) button {
-    z-index: 999;
+  * span {
     display: inline-flex;
+  }
+
+  * button {
+    z-index: 999;
+    display: flex;
     justify-content: center;
     line-height: 13px;
     width: 70px;
@@ -65,7 +69,7 @@ $edst-header-window-closed-black: #000000;
       width: 18px;
     }
 
-    &.enabled {
+    &.open {
       background-color: $edst-header-window-open-light-grey;
     }
 
