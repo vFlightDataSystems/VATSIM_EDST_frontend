@@ -127,9 +127,15 @@ $body-hover-white: #F0F0F0;
       height: 18px;
 
       div {
+        border: 1px solid transparent;
         align-items: center;
+        min-width: 20px;
         display: flex;
-        //height: 22px;
+        padding: 0 2px;
+
+        &.hover:hover {
+          border: 1px solid $body-hover-white;
+        }
       }
     }
   }
@@ -266,20 +272,19 @@ $body-hover-white: #F0F0F0;
     &.header {
       justify-content: left;
     }
-
   }
 
-  div {
-    border: 1px solid transparent;
-    display: block;
-    margin: 0 1px;
-    min-width: 20px;
-    padding-left: 1px;
+  // div {
+  //   border: 1px solid transparent;
+  //   display: block;
+  //   margin: 0 1px;
+  //   min-width: 20px;
+  //   padding-left: 1px;
 
-    &:hover {
-      border: 1px solid $body-hover-white;
-    }
-  }
+  //   &:hover {
+  //     border: 1px solid $body-hover-white;
+  //   }
+  // }
 
   &.special {
     margin: 0 2px;
@@ -322,6 +327,7 @@ $body-hover-white: #F0F0F0;
   }
 
   &.type {
+    min-width: 30px;
     justify-content: left;
     width: 100px;
     margin-right: 0;

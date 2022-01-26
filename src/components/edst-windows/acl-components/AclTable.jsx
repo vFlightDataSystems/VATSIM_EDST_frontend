@@ -128,17 +128,11 @@ export default function AclTable() {
         <div className="body-col fid">
           Flight ID
         </div>
-        <div className="body-col pa header">
-          <EdstTooltip tooltip={Tooltips.acl_header_pa}>
-            <div>
-              PA
-            </div>
-          </EdstTooltip>
-        </div>
+        <EdstTooltip className="body-col pa header" title={Tooltips.acl_header_pa} content="PA"/>
         <div className="body-col special special-hidden"/>
         <div className="body-col special special-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
-          <div onMouseDown={() => toggleHideColumn('type')}>
+          <div className="hover" onMouseDown={() => toggleHideColumn('type')}>
             T{!hidden.includes('type') && 'ype'}
           </div>
         </div>
@@ -152,21 +146,21 @@ export default function AclTable() {
              onMouseDown={() => toggleHideColumn('code')}>
           C{!hidden.includes('code') && 'ode'}
         </div>
-        <EdstTooltip tooltip={Tooltips.acl_header_hdg}>
+        <EdstTooltip title={Tooltips.acl_header_hdg}>
           <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('hdg')}>
-            H{!hidden.includes('hdg') && 'dg'}
+            {hidden.includes('hdg') && any_assigned_heading && '*'}H{!hidden.includes('hdg') && 'dg'}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_header_slash}>
+        <EdstTooltip title={Tooltips.acl_header_slash}>
           <div className="body-col hs-slash hover" onMouseDown={handleClickSlash}>
             /
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_header_spd}>
+        <EdstTooltip title={Tooltips.acl_header_spd}>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('spd')}>
-            S{!hidden.includes('spd') && 'pd'}
+            S{!hidden.includes('spd') && 'pd'}{hidden.includes('spd') && any_assigned_speed && '*'}
           </div>
         </EdstTooltip>
         <div className={`body-col special special-header`}/>

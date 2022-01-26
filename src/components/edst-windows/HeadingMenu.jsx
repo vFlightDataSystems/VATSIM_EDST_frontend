@@ -47,7 +47,7 @@ export function HeadingMenu(props) {
         >
           <EdstButton content="Amend" selected={amend}
                       onMouseDown={() => setAmend(true)}
-                      tooltip={Tooltips.acl_hdg_amend}
+                      title={Tooltips.acl_hdg_amend}
           />
         </div>
         <div className={`options-col right ${!amend ? 'selected' : ''}`}
@@ -55,7 +55,7 @@ export function HeadingMenu(props) {
         >
           <EdstButton content="Scratchpad" selected={!amend}
                       onMouseDown={() => setAmend(false)}
-                      tooltip={Tooltips.acl_hdg_scratchpad}
+                      title={Tooltips.acl_hdg_scratchpad}
           />
         </div>
       </div>
@@ -68,8 +68,8 @@ export function HeadingMenu(props) {
         </div>
       </div>
       <div className="spd-hdg-menu-row top-border">
-        <EdstTooltip className="hdg-col-1" content="Heading" tooltip={Tooltips.acl_hdg_hdg}/>
-        <EdstTooltip className="hdg-col-1" content="Turn" tooltip={Tooltips.acl_hdg_turn}/>
+        <EdstTooltip className="hdg-col-1" content="Heading" title={Tooltips.acl_hdg_hdg}/>
+        <EdstTooltip className="hdg-col-1" content="Turn" title={Tooltips.acl_hdg_turn}/>
       </div>
       <div className="spd-hdg-menu-row bottom-border">
         <div className="hdg-col-2">

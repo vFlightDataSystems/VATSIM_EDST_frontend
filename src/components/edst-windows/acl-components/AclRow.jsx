@@ -158,7 +158,7 @@ export function AclRow(props) {
                key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <EdstTooltip tooltip={Tooltips.acl_wifi_button}>
+      <EdstTooltip title={Tooltips.acl_wifi_button}>
         <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
              onMouseDown={() => props.updateVci(entry.cid)}>
           {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
@@ -172,7 +172,7 @@ export function AclRow(props) {
            ref={ref}
            style={{minWidth: entry.free_text ? '1200px' : 0}}
       >
-        <EdstTooltip tooltip={Tooltips.acl_flight_id}>
+        <EdstTooltip title={Tooltips.acl_flight_id}>
           <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={handleFidClick}
           >
@@ -183,7 +183,7 @@ export function AclRow(props) {
         <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
           {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
         </div>
-        <EdstTooltip tooltip={Tooltips.acl_hotbox}>
+        <EdstTooltip title={Tooltips.acl_hotbox}>
           <div className="body-col special hotbox"
                onContextMenu={event => event.preventDefault()}
                onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
@@ -191,7 +191,7 @@ export function AclRow(props) {
             {scratchpad && '*'}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_type}>
+        <EdstTooltip title={Tooltips.acl_type}>
           <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
         ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'type')}
@@ -199,7 +199,7 @@ export function AclRow(props) {
             {`${entry.type}/${entry.equipment}`}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_alt}>
+        <EdstTooltip title={Tooltips.acl_alt}>
           <div className={`body-col alt`}>
             <div className={`${alt_mouse_down ? 'md' : ''} ${entry.interim ? 'interim' : ''}
           ${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
@@ -209,7 +209,7 @@ export function AclRow(props) {
             </div>
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_code}>
+        <EdstTooltip title={Tooltips.acl_code}>
           <div
             className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
           ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
@@ -218,7 +218,7 @@ export function AclRow(props) {
             {entry.beacon}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_hdg}>
+        <EdstTooltip title={Tooltips.acl_hdg}>
           <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}
               ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${entry?.scratch_hdg?.scratchpad ? 'yellow' : ''}`}
                onMouseDown={handleHeadingClick}
@@ -229,7 +229,7 @@ export function AclRow(props) {
         <div className="body-col hs-slash">
           /
         </div>
-        <EdstTooltip tooltip={Tooltips.acl_spd}>
+        <EdstTooltip title={Tooltips.acl_spd}>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
 ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchpad ? 'yellow' : ''}`}
                onMouseDown={handleSpeedClick}
@@ -251,7 +251,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
         >
           {entry.hold_data ? 'H' : ''}
         </div>
-        <EdstTooltip tooltip={Tooltips.acl_remark_btn}>
+        <EdstTooltip title={Tooltips.acl_remark_btn}>
           <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
                disabled={!(entry.flightplan.remarks?.length > 0)}
                onMouseDown={handleRemarksClick}
@@ -259,7 +259,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${entry?.scratch_spd?.scratchp
             *
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.acl_route}>
+        <EdstTooltip title={Tooltips.acl_route}>
           <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
           >

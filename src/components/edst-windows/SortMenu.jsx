@@ -36,7 +36,7 @@ export function SortMenu(props) {
                          sort_data_copy.acl.sector = !selected.sector;
                          setSortData(sort_data_copy);
                        }}
-                       tooltip={Tooltips.sort_acl_sector_non_sector}
+                       title={Tooltips.sort_acl_sector_non_sector}
           >
             <div className={`box ${selected?.sector === true ? 'selected' : ''}`}/>
             Sector/Non-Sector
@@ -48,7 +48,7 @@ export function SortMenu(props) {
                          sort_data_copy[window].name = 'ACID';
                          setSortData(sort_data_copy);
                        }}
-                       tooltip={Tooltips.sort_acid}
+                       title={Tooltips.sort_acid}
           >
             <div className={`box diamond ${selected?.name === 'ACID' ? 'selected' : ''}`}/>
             ACID
@@ -61,7 +61,7 @@ export function SortMenu(props) {
                          setSortData(sort_data_copy);
                        }}
                        disabled={true}
-                       tooltip={Tooltips.sort_boundary_time}
+                       title={Tooltips.sort_boundary_time}
           >
             <div className={`box diamond ${selected?.name === 'Boundary Time' ? 'selected' : ''}`}/>
             Boundary Time
@@ -74,7 +74,7 @@ export function SortMenu(props) {
                          setSortData(sort_data_copy);
                        }}
                        disabled={true}
-                       tooltip={Tooltips.sort_conflict_status}
+                       title={Tooltips.sort_conflict_status}
           >
             <div className={`box diamond ${selected?.name === 'Conflict Status' ? 'selected' : ''}`}/>
             Conflict Status
@@ -87,7 +87,7 @@ export function SortMenu(props) {
                          setSortData(sort_data_copy);
                        }}
                        disabled={true}
-                       tooltip={Tooltips.sort_conflict_time}
+                       title={Tooltips.sort_conflict_time}
           >
             <div className={`box diamond ${selected?.name === 'Conflict Time' ? 'selected' : ''}`}/>
             Conflict Time
@@ -99,7 +99,7 @@ export function SortMenu(props) {
                          sort_data_copy[window].name = 'Destination';
                          setSortData(sort_data_copy);
                        }}
-                       tooltip={Tooltips.sort_destination}
+                       title={Tooltips.sort_destination}
           >
             <div className={`box diamond ${selected?.name === 'Destination' ? 'selected' : ''}`}/>
             Destination
@@ -112,7 +112,7 @@ export function SortMenu(props) {
                          setSortData(sort_data_copy);
                        }}
                        disabled={true}
-                       tooltip={Tooltips.sort_sector_by_sector}
+                       title={Tooltips.sort_sector_by_sector}
           >
             <div className={`box diamond ${selected?.name === 'Sector-by-Sector' ? 'selected' : ''}`}/>
             Sector-by-Sector
@@ -124,7 +124,7 @@ export function SortMenu(props) {
                          sort_data_copy.dep.name = 'Origin';
                          setSortData(sort_data_copy);
                        }}
-                       tooltip={Tooltips.sort_origin}
+                       title={Tooltips.sort_origin}
           >
             <div className={`box diamond ${selected?.name === 'Origin' ? 'selected' : ''}`}/>
             Origin
@@ -137,7 +137,7 @@ export function SortMenu(props) {
                  setSortData(sort_data_copy);
                }}
                disabled={true}
-               tooltip={Tooltips.sort_p_time}
+               title={Tooltips.sort_p_time}
           >
             <div className={`box diamond ${selected?.name === 'P-Time' ? 'selected' : ''}`}/>
             P-Time
