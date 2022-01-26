@@ -19,26 +19,26 @@ export default function PlansDisplayHeader(props) {
       <EdstWindowHeaderButton disabled={asel === null}
                               onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
                               content="Plan Options..."
-                              tooltip={Tooltips.plan_options}
+                              title={Tooltips.plan_options}
       />
       <EdstWindowHeaderButton disabled={true} content="Show"/>
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton disabled={asel === null} content="Amend"
                               onMouseDown={() => props.amendEntry(asel.cid, plan_data.plan_data)}
-                              tooltip={Tooltips.plans_amend}
+                              title={Tooltips.plans_amend}
       />
       <EdstWindowHeaderButton disabled={interim_disabled} content="Interim"
                               onMouseDown={() => {
                                 const interim_plan_data = {interim: plan_data.plan_data.altitude};
                                 props.amendEntry(asel.cid, interim_plan_data);
                               }}
-                              tooltip={Tooltips.plans_interim}
+                              title={Tooltips.plans_interim}
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
         onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
         content="Template..."
-        tooltip={Tooltips.template}
+        title={Tooltips.template}
       />
       <EdstWindowHeaderButton disabled={true} content="ICAO"/>
       <EdstWindowHeaderButton
@@ -47,7 +47,7 @@ export default function PlansDisplayHeader(props) {
           props.closeWindow();
         }}
         content="Clean Up"
-        tooltip={Tooltips.plans_clean_up}
+        title={Tooltips.plans_clean_up}
       />
     </div>
   </div>);

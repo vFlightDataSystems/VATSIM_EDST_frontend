@@ -63,7 +63,7 @@ export function SpeedMenu(props) {
           >
             <EdstButton content="Amend" selected={amend}
                         onMouseDown={() => setAmend(true)}
-                        tooltip={Tooltips.acl_spd_amend}
+                        title={Tooltips.acl_spd_amend}
             />
           </div>
           <div className={`options-col right ${!amend ? 'selected' : ''}`}
@@ -71,7 +71,7 @@ export function SpeedMenu(props) {
           >
             <EdstButton content="Scratchpad" selected={!amend}
                         onMouseDown={() => setAmend(false)}
-                        tooltip={Tooltips.acl_spd_scratchpad}
+                        title={Tooltips.acl_spd_scratchpad}
             />
           </div>
         </div>
@@ -87,14 +87,14 @@ export function SpeedMenu(props) {
         </div>
         <div className="spd-hdg-menu-row top-border"/>
         <div className="spd-hdg-menu-row bottom-border">
-          <EdstTooltip content="KNOTS" tooltip={Tooltips.acl_spd_knots}/>
-          <EdstButton content="+" className="medium button-1" selected={sign === '+'}
+          <EdstTooltip content="KNOTS" title={Tooltips.acl_spd_knots}/>
+          <EdstButton content="+" className="button-1" selected={sign === '+'}
                       onMouseDown={() => setSign(sign === '+' ? '' : '+')}
           />
-          <EdstButton content="-" className="medium button-2" selected={sign === '-'}
+          <EdstButton content="-" className="button-2" selected={sign === '-'}
                       onMouseDown={() => setSign(sign === '-' ? '' : '-')}
           />
-          <EdstTooltip content="MACH" tooltip={Tooltips.acl_spd_mach}/>
+          <EdstTooltip content="MACH" title={Tooltips.acl_spd_mach}/>
         </div>
         <div className="spd-hdg-menu-select-container"
              onWheel={handleScroll}

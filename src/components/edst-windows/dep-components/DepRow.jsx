@@ -83,7 +83,7 @@ export function DepRow(props) {
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <EdstTooltip tooltip={Tooltips.dep_checkmark_box}>
+      <EdstTooltip title={Tooltips.dep_checkmark_box}>
         <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
              onMouseDown={() => props.updateStatus(entry.cid)}
         >
@@ -97,7 +97,7 @@ export function DepRow(props) {
            ref={ref}
            style={{minWidth: entry.free_text ? '1200px' : 0}}
       >
-        <EdstTooltip tooltip={Tooltips.dep_flight_id}>
+        <EdstTooltip title={Tooltips.dep_flight_id}>
           <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={handleFidClick}
                onContextMenu={(event) => event.preventDefault()}
@@ -109,7 +109,7 @@ export function DepRow(props) {
         <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
           {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
         </div>
-        <EdstTooltip tooltip={Tooltips.dep_hotbox}>
+        <EdstTooltip title={Tooltips.dep_hotbox}>
           <div className="body-col special hotbox"
                onContextMenu={event => event.preventDefault()}
                onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
@@ -117,7 +117,7 @@ export function DepRow(props) {
             {scratchpad && '*'}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.dep_type}>
+        <EdstTooltip title={Tooltips.dep_type}>
           <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
         ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'type')}
@@ -125,7 +125,7 @@ export function DepRow(props) {
             {`${entry.type}/${entry.equipment}`}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.dep_alt}>
+        <EdstTooltip title={Tooltips.dep_alt}>
           <div className={`body-col alt`}>
             <div className={`${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
                  onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'alt')}
@@ -134,7 +134,7 @@ export function DepRow(props) {
             </div>
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.dep_code}>
+        <EdstTooltip title={Tooltips.dep_code}>
           <div className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
           ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'code')}
@@ -142,7 +142,7 @@ export function DepRow(props) {
             {entry.beacon}
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.dep_route}>
+        <EdstTooltip title={Tooltips.dep_route}>
           <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
           >

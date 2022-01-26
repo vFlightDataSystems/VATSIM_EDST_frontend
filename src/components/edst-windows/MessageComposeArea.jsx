@@ -110,6 +110,9 @@ export function MessageComposeArea(props) {
   }
 
   const handleKeyDown = (event) => {
+    if (event.shiftKey || event.ctrlKey) {
+      inputRef.current.blur();
+    }
     switch (event.key) {
       case "Enter":
         if (command_str.length > 0) {

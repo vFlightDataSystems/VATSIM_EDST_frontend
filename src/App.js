@@ -75,7 +75,8 @@ const intial_state = {
   input_focused: false,
   open_windows: new Set(),
   mra_msg: '',
-  tooltips_enabled: true
+  tooltips_enabled: true,
+  show_all_tooltips: false
 };
 
 export default class App extends React.Component {
@@ -676,10 +677,14 @@ export default class App extends React.Component {
 
   handleKeyDownCapture = (event) => {
     event.preventDefault();
-    if (this.mcaInputRef === null) {
-      this.openWindow('mca');
-    } else {
-      this.mcaInputRef.current.focus();
+    if (event.shiftKey && event.ctrlKey) {
+      this.setState({show_all_tooltips: !this.state.show_all_tooltips})
+    } else if (!(event.shiftKey || event.ctrlKey || this.state.show_all_tooltips)) {
+      if (this.mcaInputRef === null) {
+        this.openWindow('mca');
+      } else {
+        this.mcaInputRef.current.focus();
+      }
     }
   }
 
@@ -705,7 +710,8 @@ export default class App extends React.Component {
       manual_posting,
       open_windows,
       mra_msg,
-      tooltips_enabled
+      tooltips_enabled,
+      show_all_tooltips
     } = this.state;
 
     return (
@@ -714,7 +720,8 @@ export default class App extends React.Component {
            tabIndex={!(input_focused || menu?.name === 'alt-menu') ? '-1' : "0"}
            onKeyDownCapture={(e) => !input_focused && this.handleKeyDownCapture(e)}
       >
-        <TooltipContext.Provider value={{global_tooltips_enabled: tooltips_enabled}}>
+        <TooltipContext.Provider
+          value={{global_tooltips_enabled: tooltips_enabled, show_all_tooltips: show_all_tooltips}}>
           <EdstHeader open_windows={open_windows}
                       disabled_windows={disabled_windows}
                       openWindow={this.openWindow}

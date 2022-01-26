@@ -22,14 +22,20 @@ $spd-hdg-selected-font-white: #D6D6D6;
   align-items: center;
 
 
-  .button-1 {
-    margin-left: 22px;
-    margin-right: auto;
-  }
+  .edst-outer-button {
+    &.button-1 {
+      width: 20px;
+      height: 20px;
+      margin-left: 22px;
+      margin-right: auto;
+    }
 
-  .button-2 {
-    margin-right: 16px;
-    margin-left: auto;
+    &.button-2 {
+      width: 20px;
+      height: 20px;
+      margin-right: 16px;
+      margin-left: auto;
+    }
   }
 
   &.top-border {

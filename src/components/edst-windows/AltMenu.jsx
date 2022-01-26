@@ -118,7 +118,7 @@ export function AltMenu(props) {
           </div>}
       </span> :
         <span>
-        <EdstTooltip tooltip={Tooltips.alt_menu_trial_plan}>
+        <EdstTooltip title={Tooltips.alt_menu_trial_plan}>
           <div
             className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
             onMouseDown={() => setSelected('trial')}
@@ -127,7 +127,7 @@ export function AltMenu(props) {
             TRIAL PLAN
           </div>
         </EdstTooltip>
-        <EdstTooltip tooltip={Tooltips.alt_menu_amend}>
+        <EdstTooltip title={Tooltips.alt_menu_amend}>
           <div className={`alt-menu-row hover ${selected === 'amend' ? 'selected' : ''}`}
                onMouseDown={() => setSelected('amend')}
           >
@@ -152,7 +152,7 @@ export function AltMenu(props) {
               {String(alt).padStart(3, '0')}
             </div>
             {!dep &&
-            <EdstTooltip tooltip={Tooltips.alt_menu_t}>
+            <EdstTooltip title={Tooltips.alt_menu_t}>
               <div className={`alt-menu-container-col-t`}
                    disabled={!(selected === 'amend')}
                    onMouseEnter={() => (selected === 'amend') && setTempAltHover(alt)}

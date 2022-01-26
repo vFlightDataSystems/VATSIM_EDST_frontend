@@ -27,13 +27,13 @@ export default function AclHeader(props) {
         disabled={asel === null}
         onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
         content="Plan Options..."
-        tooltip={Tooltips.plan_options}
+        title={Tooltips.plan_options}
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
         onMouseDown={(e) => props.openMenu(e.target, 'hold-menu')}
         content="Hold..."
-        tooltip={Tooltips.hold}
+        title={Tooltips.hold}
       />
       <EdstWindowHeaderButton disabled={true} content="Show"/>
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
@@ -41,23 +41,23 @@ export default function AclHeader(props) {
         id="acl-sort-button"
         onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
         content="Sort..."
-        tooltip={Tooltips.sort}
+        title={Tooltips.sort}
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
         onMouseDown={togglePosting}
         content="Posting Mode"
-        tooltip={Tooltips.posting_mode}
+        title={Tooltips.posting_mode}
       />
       <EdstWindowHeaderButton
         onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
         content="Template..."
-        tooltip={Tooltips.template}
+        title={Tooltips.template}
       />
       <EdstWindowHeaderButton
         onMouseDown={props.cleanup}
         content="Clean Up"
-        tooltip={Tooltips.acl_clean_up}
+        title={Tooltips.acl_clean_up}
       />
     </div>
     <div className="edst-window-header-bottom-row no-select">

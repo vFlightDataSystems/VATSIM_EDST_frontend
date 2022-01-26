@@ -86,7 +86,7 @@ export function HoldMenu(props) {
         </div>
         <div className="options-row">
           <EdstTooltip className="options-col hold-menu-left-col"
-                       tooltip={Tooltips.hold_direction}
+                       title={Tooltips.hold_direction}
                        content="Location"
           />
         </div>
@@ -128,15 +128,15 @@ export function HoldMenu(props) {
         <div className="options-row hold-row-1">
           <EdstTooltip className="options-col hold-col-2"
                        content="Direction"
-                       tooltip={Tooltips.hold_direction}
+                       title={Tooltips.hold_direction}
           />
           <EdstTooltip className="options-col hold-col-2"
                        content="Turns"
-                       tooltip={Tooltips.hold_turns}
+                       title={Tooltips.hold_turns}
           />
           <EdstTooltip className="options-col hold-col-2"
                        content="Leg Lengths"
-                       tooltip={Tooltips.hold_leg_length}
+                       title={Tooltips.hold_leg_length}
           />
         </div>
         <div className="options-row hold-row-1">
@@ -225,12 +225,12 @@ export function HoldMenu(props) {
                 updateEntry(entry.cid, {show_hold_info: false});
                 props.closeWindow();
               }}
-              tooltip={Tooltips.hold_delete_hold_instr}
+              title={Tooltips.hold_delete_hold_instr}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
-          <EdstTooltip className="options-col hold-col-2" tooltip={Tooltips.hold_efc}>
+          <EdstTooltip className="options-col hold-col-2" title={Tooltips.hold_efc}>
             EFC
           </EdstTooltip>
         </div>
@@ -249,7 +249,7 @@ export function HoldMenu(props) {
         </div>
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-5">
-            <EdstButton content="Delete EFC" onMouseDown={() => setEfc('')} tooltip={Tooltips.hold_del_efc}/>
+            <EdstButton content="Delete EFC" onMouseDown={() => setEfc('')} title={Tooltips.hold_del_efc}/>
           </div>
         </div>
         <div className="options-row bottom">
@@ -259,10 +259,10 @@ export function HoldMenu(props) {
                           updateEntry(entry.cid, {spa: true});
                           clearedHold();
                         }}
-                        tooltip={Tooltips.hold_hold_spa_btn}
+                        title={Tooltips.hold_hold_spa_btn}
             />
             <EdstButton content="Hold" onMouseDown={clearedHold} disabled={entry?.hold_data}
-                        tooltip={Tooltips.hold_hold_btn}/>
+                        title={Tooltips.hold_hold_btn}/>
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
                           amendEntry(entry?.cid, {hold_data: null});
