@@ -14,7 +14,7 @@ export function SpeedMenu(props) {
     asel,
     startDrag,
     stopDrag,
-    updateEntry
+    amendEntry
   } = useContext(EdstContext);
   const {pos} = props;
   const [focused, setFocused] = useState(false);
@@ -35,6 +35,28 @@ export function SpeedMenu(props) {
   const handleScroll = (e) => {
     const new_deltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);
     setDeltaY(new_deltaY);
+  }
+
+  const handleMouseDown = (event: any, value: number, mach = false) => {
+    event.preventDefault();
+    const value_str = !mach ? `${(amend && sign === '') ? 'S' : ''}${value}${sign}`
+      : `M${Number(value * 100) | 0}${sign}`;
+    switch (event.button) {
+      case 0:
+        amendEntry(entry.cid, {
+          [amend ? 'spd' : 'scratch_spd']: value_str,
+          [!amend ? 'spd' : 'scratch_spd']: null
+        });
+        break;
+      case 1:
+        amendEntry(entry.cid, {
+          [amend ? 'spd' : 'scratch_spd']: value_str
+        });
+        break;
+      default:
+        break;
+    }
+    props.closeWindow();
   }
 
   return (<div
@@ -104,41 +126,17 @@ export function SpeedMenu(props) {
             const mach = 0.79 - (deltaY / 100 | 0) / 100 + i / 100;
             return <div className="spd-hdg-menu-container-row" key={`speed-menu-${i}`}>
               <div className="spd-hdg-menu-container-col"
-                   onMouseDown={() => {
-                     updateEntry(entry.cid, {
-                       scratch_spd: {
-                         scratchpad: !amend,
-                         val: `${(amend && sign === '') ? 'S' : ''}${spd}${sign}`
-                       }
-                     });
-                     props.closeWindow();
-                   }}
+                   onMouseDown={(e) => handleMouseDown(e, spd)}
               >
                 {String(spd).padStart(3, '0')}{sign}
               </div>
               <div className="spd-hdg-menu-container-col"
-                   onMouseDown={() => {
-                     updateEntry(entry.cid, {
-                       scratch_spd: {
-                         scratchpad: !amend,
-                         val: `${(amend && sign === '') ? 'S' : ''}${spd + 5}${sign}`
-                       }
-                     });
-                     props.closeWindow();
-                   }}
+                   onMouseDown={(e) => handleMouseDown(e, spd + 5)}
               >
                 {String(spd + 5).padStart(3, '0')}{sign}
               </div>
               <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-2"
-                   onMouseDown={() => {
-                     updateEntry(entry.cid, {
-                       scratch_spd: {
-                         scratchpad: !amend,
-                         val: `M${Number(mach * 100) | 0}${sign}`
-                       }
-                     });
-                     props.closeWindow();
-                   }}>
+                   onMouseDown={(e) => handleMouseDown(e, mach, true)}>
                 {String(mach.toFixed(2)).slice(1)}{sign}
               </div>
             </div>;

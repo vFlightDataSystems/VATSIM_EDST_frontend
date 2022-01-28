@@ -82,37 +82,37 @@ export const EdstHeader: FunctionComponent<EdstHeaderProps> = (props) => {
           <EdstHeaderButton open={open_windows.has('wx')}
                             content="WX REPORT"
                             disabled={plan_disabled}
-                            // title={Tooltips.wx}
+            // title={Tooltips.wx}
                             onMouseDown={() => props.toggleWindow('wx')}
           />
           <EdstHeaderButton open={open_windows.has('sig')}
                             content={`SIG ${sig_num > 0 ? sig_num.toString().padStart(2, '0') : ''}`}
                             disabled={disabled_windows.includes('sig')}
-                            // title={Tooltips.sig}
+            // title={Tooltips.sig}
                             onMouseDown={() => props.toggleWindow('sig')}
           />
           <EdstHeaderButton open={open_windows.has('not')}
                             content={`NOT ${not_num > 0 ? not_num.toString().padStart(2, '0') : ''}`}
                             disabled={disabled_windows.includes('not')}
-                            // title={Tooltips.not}
+            // title={Tooltips.not}
                             onMouseDown={() => props.toggleWindow('not')}
           />
           <EdstHeaderButton open={open_windows.has('gi')}
                             content={`GI ${gi_num > 0 ? gi_num.toString().padStart(2, '0') : ''}`}
                             disabled={disabled_windows.includes('gi')}
-                            // title={Tooltips.gi}
+            // title={Tooltips.gi}
                             onMouseDown={() => props.toggleWindow('gi')}
           />
           <EdstHeaderButton open={open_windows.has('ua')}
                             content="UA"
                             disabled={disabled_windows.includes('ua')}
-                            // title={Tooltips.ua}
+            // title={Tooltips.ua}
                             onMouseDown={() => props.toggleWindow('ua')}
           />
           <EdstHeaderButton open={open_windows.has('keep')}
                             content="KEEP ALL"
                             disabled={disabled_windows.includes('keep')}
-                            // title={Tooltips.keep}
+            // title={Tooltips.keep}
             // onMouseDown={() => props.toggleWindow('keep')}
           />
         </div>
@@ -134,21 +134,21 @@ export const EdstHeader: FunctionComponent<EdstHeaderProps> = (props) => {
                             className="small"
                             content="NON-ADSB"
                             disabled={disabled_windows.includes('adsb')}
-                            // title={Tooltips.adsb}
+            // title={Tooltips.adsb}
                             onMouseDown={() => props.toggleWindow('adsb')}
           />
           <EdstHeaderButton open={open_windows.has('sat')}
                             className="small"
                             content="SAT COMM"
                             disabled={disabled_windows.includes('sat')}
-                            // title={Tooltips.sat}
+            // title={Tooltips.sat}
                             onMouseDown={() => props.toggleWindow('sat')}
           />
           <EdstHeaderButton open={open_windows.has('msg')}
                             className="small yellow-border"
                             content="MSG WAIT"
                             disabled={disabled_windows.includes('msg')}
-                            // title={Tooltips.msg}
+            // title={Tooltips.msg}
                             onMouseDown={() => props.openWindow('msg')}
           />
         </div>
@@ -158,13 +158,13 @@ export const EdstHeader: FunctionComponent<EdstHeaderProps> = (props) => {
           <EdstHeaderButton open={open_windows.has('wind')}
                             content="WIND"
                             disabled={disabled_windows.includes('wind')}
-                            // title={Tooltips.wind}
+            // title={Tooltips.wind}
                             onMouseDown={() => props.toggleWindow('wind')}
           />
           <EdstHeaderButton open={open_windows.has('alt')}
                             content="ALTIM SET"
                             disabled={disabled_windows.includes('alt')}
-                            // title={Tooltips.alt}
+            // title={Tooltips.alt}
                             onMouseDown={() => props.toggleWindow('alt')}
           />
           <EdstHeaderButton open={open_windows.has('mca')}
@@ -182,21 +182,21 @@ export const EdstHeader: FunctionComponent<EdstHeaderProps> = (props) => {
           <EdstHeaderButton open={open_windows.has('fel')}
                             content="FEL"
                             disabled={disabled_windows.includes('fel')}
-                            // title={Tooltips.fel}
+            // title={Tooltips.fel}
                             onMouseDown={() => props.toggleWindow('fel')}
           />
           <EdstHeaderButton open={open_windows.has('cpdlc-hist')}
                             className="yellow-border yellow-background"
                             content="CPDLC HIST"
                             disabled={disabled_windows.includes('cpdlc-hist')}
-                            // title={Tooltips.cpdlc_hist}
+            // title={Tooltips.cpdlc_hist}
                             onMouseDown={() => props.toggleWindow('cpdlc-hist')}
           />
           <EdstHeaderButton open={open_windows.has('cpdlc-msg-out')}
                             className="yellow-border yellow-background"
                             content="CPDLC MSGOUT"
                             disabled={disabled_windows.includes('cpdlc-msg-out')}
-                            // title={Tooltips.cpdlc_msg_out}
+            // title={Tooltips.cpdlc_msg_out}
                             onMouseDown={() => props.toggleWindow('cpdlc-msg-out')}
           />
         </div>

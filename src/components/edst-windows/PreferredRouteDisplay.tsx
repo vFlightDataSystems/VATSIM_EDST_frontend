@@ -3,7 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
-import {EdstPreferredRoute} from "../../interfaces";
+import {EdstPreferredRouteProps} from "../../interfaces";
 
 export function PreferredRouteDisplay(props) {
   const [eligible_only, setEligibleOnly] = useState(false);
@@ -35,7 +35,7 @@ export function PreferredRouteDisplay(props) {
       </div>
       <div className="prefroute-container"
            onWheel={(e) => setDeltaY(Math.max(Math.min(((deltaY + e.deltaY) / 100 | 0), routes.length - 5), 0))}>
-        {Object.entries(routes.slice(deltaY, deltaY + 5) ?? {}).map(([i, r]: [string, EdstPreferredRoute]) => {
+        {Object.entries(routes.slice(deltaY, deltaY + 5) ?? {}).map(([i, r]: [string, EdstPreferredRouteProps]) => {
           return r && (!eligible_only || r?.eligible) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
               <div className="options-col prefroute-col small hover"

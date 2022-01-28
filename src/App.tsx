@@ -33,7 +33,7 @@ import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/co
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
-import {EdstEntry} from "./interfaces";
+import {AselProps, EdstEntryProps} from "./interfaces";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -91,7 +91,7 @@ export interface State {
   artcc_id: string | null;
   sector_id: string | null;
   boundary_polygons: Array<any>;
-  menu: {name: string, ref_id: string | null} | null;
+  menu: { name: string, ref_id: string | null } | null;
   spa_list: Array<string>;
   sig: Array<string>;
   not: Array<string>;
@@ -100,13 +100,13 @@ export interface State {
   dragging_cursor_hide: boolean | null;
   draggingRef: any | null;
   dragPreviewStyle: any | null;
-  rel: {x: number, y: number} | null;
+  rel: { x: number, y: number } | null;
   pos: typeof defaultPos;
-  edst_data: Object; // keys are cid, values are data from db
-  asel: {cid: string, field: string, window: string} | null; // {cid, field, ref}
+  edst_data: { [cid: string]: EdstEntryProps }; // keys are cid, values are data from db
+  asel: AselProps | null; // {cid, field, ref}
   plan_queue: Array<string>,
-  sort_data: {acl: {name: string, sector: boolean}, dep: {name: string}};
-  manual_posting: {acl: boolean, dep: boolean};
+  sort_data: { acl: { name: string, sector: boolean }, dep: { name: string } };
+  manual_posting: { acl: boolean, dep: boolean };
   input_focused: boolean;
   open_windows: Set<string>;
   mra_msg: string;
@@ -185,7 +185,7 @@ export class App extends React.Component<{} | null, State> {
       && dep_airport_distance < 10;
   }
 
-  entryFilter = (entry: EdstEntry) => {
+  entryFilter = (entry: EdstEntryProps) => {
     const {acl_cid_list, boundary_polygons} = this.state;
     const pos = [entry.flightplan.lon, entry.flightplan.lat];
     const will_enter_airspace = routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos);
@@ -194,9 +194,9 @@ export class App extends React.Component<{} | null, State> {
       && Number(entry.flightplan.ground_speed) > 30);
   }
 
-  refreshEntry = (new_entry: any) => {
+  refreshEntry = (new_entry: EdstEntryProps) => {
     const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
-    let current_entry = this.state.edst_data[new_entry.cid] ?? {
+    let current_entry: EdstEntryProps | any = this.state.edst_data[new_entry.cid] ?? {
       acl_status: -1,
       dep_status: -1
     };
@@ -293,7 +293,7 @@ export class App extends React.Component<{} | null, State> {
       );
   }
 
-  processAar = (entry, aar_list) => {
+  processAar = (entry: EdstEntryProps, aar_list: Array<any>) => {
     const {_route_data: current_route_data, _route: current_route} = entry;
     return aar_list?.map(aar_data => {
       const {route_fixes, amendment} = aar_data;
@@ -344,7 +344,7 @@ export class App extends React.Component<{} | null, State> {
     }).filter(aar_data => aar_data);
   }
 
-  deleteEntry = (window, cid) => {
+  deleteEntry = (window: string, cid: string) => {
     let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
     switch (window) {
       case 'acl':
@@ -369,11 +369,11 @@ export class App extends React.Component<{} | null, State> {
     this.setState({open_windows: open_windows, plan_queue: plan_queue});
   }
 
-  removeTrialPlan = (index) => {
-    let {plan_queue} = this.state;
-    plan_queue.splice(index);
-    this.setState({plan_queue: plan_queue});
-  }
+  // removeTrialPlan = (index) => {
+  //   let {plan_queue} = this.state;
+  //   plan_queue.splice(index);
+  //   this.setState({plan_queue: plan_queue});
+  // }
 
   // swapSpaEntries = (cid_1, cid_2) => {
   //   let {spa_list, edst_data} = this.state;
@@ -393,7 +393,7 @@ export class App extends React.Component<{} | null, State> {
   //   });
   // }
 
-  updateEntry = (cid, data) => {
+  updateEntry = (cid: string, data: any) => {
     let {spa_list, edst_data} = this.state;
     let entry = edst_data[cid];
     if (data?.spa === true) {
@@ -413,7 +413,7 @@ export class App extends React.Component<{} | null, State> {
     });
   }
 
-  addEntry = (window, fid) => {
+  addEntry = (window: string | null, fid: string) => {
     let {edst_data, acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
     let entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
@@ -446,7 +446,7 @@ export class App extends React.Component<{} | null, State> {
     }
   }
 
-  amendEntry = async (cid, plan_data) => {
+  amendEntry = async (cid: string, plan_data: any) => {
     let {edst_data, artcc_id, dep_cid_list} = this.state;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
@@ -461,11 +461,13 @@ export class App extends React.Component<{} | null, State> {
       plan_data.previous_route_data = dep_cid_list.has(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
+    current_entry.scratch_hdg = plan_data.scratch_hdg;
+    current_entry.scratch_spd = plan_data.scratch_spd;
     await updateEdstEntry(plan_data)
       .then(response => response.json())
       .then(async updated_entry => {
         if (updated_entry) {
-          current_entry = this.refreshEntry(updated_entry);
+          completeAssign(current_entry, this.refreshEntry(updated_entry));
           current_entry.pending_removal = null;
           await getAarData(artcc_id, current_entry.cid)
             .then(response => response.json())
@@ -475,15 +477,14 @@ export class App extends React.Component<{} | null, State> {
             });
           this.setState(({edst_data}) => {
             return {
-              edst_data: {...edst_data, [cid]: current_entry},
-              asel: null
+              edst_data: {...edst_data, [cid]: current_entry}
             };
           });
         }
       });
   }
 
-  aircraftSelect = (event, window, cid, field) => {
+  aircraftSelect = (event: Event, window: string, cid: string, field: string) => {
     let {asel, edst_data, manual_posting} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({menu: null, asel: null});
@@ -526,7 +527,7 @@ export class App extends React.Component<{} | null, State> {
     }
   }
 
-  toggleWindow = (name) => {
+  toggleWindow = (name: string) => {
     let {open_windows} = this.state;
     if (open_windows.has(name)) {
       open_windows.delete(name);
@@ -536,19 +537,19 @@ export class App extends React.Component<{} | null, State> {
     this.setState({open_windows: open_windows});
   }
 
-  openWindow = (name) => {
+  openWindow = (name: string) => {
     let {open_windows} = this.state;
     open_windows.add(name);
     this.setState({open_windows: open_windows});
   }
 
-  closeWindow = (name) => {
+  closeWindow = (name: string) => {
     let {open_windows} = this.state;
     open_windows.delete(name);
     this.setState({open_windows: open_windows});
   }
 
-  openMenu = (ref, name, plan, asel = null) => {
+  openMenu = (ref: EventTarget | any, name: string, plan, asel = null) => {
     const {x, y, height, width} = ref.getBoundingClientRect();
     let {pos} = this.state;
     switch (name) {
@@ -606,13 +607,13 @@ export class App extends React.Component<{} | null, State> {
     this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}});
   }
 
-  closeMenu = (name) => {
+  closeMenu = (name: string) => {
     this.setState((prevState) => {
       return {pos: {...prevState.pos, [name]: null}, menu: null};
     });
   }
 
-  startDrag = (event, ref) => {
+  startDrag = (event: MouseEvent, ref: React.RefObject<any>) => {
     const {pos} = this.state;
     const rel = {x: event.pageX, y: event.pageY};
     const relX = event.pageX - rel.x;
@@ -636,13 +637,13 @@ export class App extends React.Component<{} | null, State> {
     });
   }
 
-  setPos = (key, x, y) => {
+  setPos = (key: string, x: number, y: number) => {
     this.setState((prevState) => {
       return {pos: {...prevState.pos, [key]: {x: x, y: y}}};
     });
   }
 
-  draggingHandler = (event) => {
+  draggingHandler = (event: React.MouseEvent) => {
     if (this.state.dragging) {
       const {rel, draggingRef, pos} = this.state;
       const relX = event.pageX - rel.x;
@@ -661,7 +662,7 @@ export class App extends React.Component<{} | null, State> {
     }
   }
 
-  stopDrag = (event) => {
+  stopDrag = (event: React.MouseEvent) => {
     if (this.state.dragging) {
       const {rel, draggingRef, pos} = this.state;
       const relX = event.pageX - rel.x;
@@ -690,15 +691,15 @@ export class App extends React.Component<{} | null, State> {
   aclCleanup = () => {
     let {edst_data, acl_cid_list, acl_deleted_list} = this.state;
     const now = new Date().getTime();
-    let acl_cid_list_copy: any[] = Array(acl_cid_list);
-    let acl_deleted_list_copy: any[] = Array(acl_deleted_list);
+    let acl_cid_list_copy = [...acl_cid_list];
+    let acl_deleted_list_copy = [...acl_deleted_list];
     const cid_pending_removal_list = acl_cid_list_copy.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
     acl_cid_list = new Set(acl_cid_list_copy.filter(cid => !cid_pending_removal_list.includes(cid)));
     acl_deleted_list = new Set(acl_deleted_list_copy.concat(cid_pending_removal_list));
     this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
   }
 
-  togglePosting = (window) => {
+  togglePosting = (window: string) => {
     let {manual_posting} = this.state;
     if (Object.keys(manual_posting).includes(window)) {
       manual_posting[window] = !manual_posting[window];
@@ -706,14 +707,14 @@ export class App extends React.Component<{} | null, State> {
     }
   }
 
-  setMraMessage = (msg) => {
+  setMraMessage = (msg: string) => {
     let {open_windows} = this.state;
     open_windows.add('mra');
     this.setState({mra_msg: msg, open_windows: open_windows});
   }
 
 
-  handleKeyDownCapture = (event) => {
+  handleKeyDownCapture = (event: React.KeyboardEvent) => {
     event.preventDefault();
     if (event.shiftKey && event.ctrlKey) {
       this.setState({show_all_tooltips: !this.state.show_all_tooltips})
@@ -924,18 +925,10 @@ export class App extends React.Component<{} | null, State> {
               />}
               {menu?.name === 'speed-menu' && <SpeedMenu
                 pos={pos['speed-menu']}
-                asel={asel}
-                entry={edst_data[asel?.cid]}
                 closeWindow={() => this.closeMenu('speed-menu')}
               />}
               {menu?.name === 'heading-menu' && <HeadingMenu
                 pos={pos['heading-menu']}
-                asel={asel}
-                entry={edst_data[asel?.cid]}
-                updateEntry={this.updateEntry}
-                amendEntry={this.amendEntry}
-                startDrag={this.startDrag}
-                stopDrag={this.stopDrag}
                 closeWindow={() => this.closeMenu('heading-menu')}
               />}
               {open_windows.has('mca') && <MessageComposeArea

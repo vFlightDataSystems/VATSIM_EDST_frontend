@@ -3,14 +3,15 @@ import {
   booleanPointInPolygon, distance,
   lineString, Point,
   point,
-  pointToLineDistance,
+  pointToLineDistance, Polygon,
   polygonToLineString
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
+import {EdstEntryProps} from "./interfaces";
 
 export const REMOVAL_TIMEOUT = 120000;
 
-export function getSignedDistancePointToPolygons(point: Point, polygons) {
+export function getSignedDistancePointToPolygons(point: Point, polygons: Array<Polygon>): number {
   let min_distance = Infinity;
   for (const poly of polygons) {
     // @ts-ignore
@@ -23,7 +24,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons) {
   return min_distance;
 }
 
-export function routeWillEnterAirspace(route_data, polygons, pos: Array<number>) {
+export function routeWillEnterAirspace(route_data: Array<any>, polygons: Array<Polygon>, pos: Array<number>): boolean {
   if (!route_data) {
     return false;
   }
@@ -39,14 +40,14 @@ export function routeWillEnterAirspace(route_data, polygons, pos: Array<number>)
   return false;
 }
 
-export function getRouteDataDistance(route_data, pos: Array<number>) {
+export function getRouteDataDistance(route_data: Array<any>, pos: Array<number>): Array<any> {
   for (let fix_data of route_data) {
     fix_data.dist = distance(point(fix_data.pos), point(pos), {units: 'nauticalmiles'});
   }
   return route_data;
 }
 
-export function getRemainingRouteData(route: string, route_data: Array<any>, pos: Array<number>) {
+export function getRemainingRouteData(route: string, route_data: Array<any>, pos: Array<number>): { _route: string, _route_data: Array<any> } {
   if (route_data.length > 1) {
     const fix_names = route_data.map(e => e.name);
     const sorted_route_data = route_data.slice(0).sort((u, v) => u.dist - v.dist);
@@ -77,7 +78,7 @@ export function getRemainingRouteData(route: string, route_data: Array<any>, pos
   return {_route: route, _route_data: route_data};
 }
 
-export function getClosestReferenceFix(reference_fixes, pos_point) {
+export function getClosestReferenceFix(reference_fixes: Array<any>, pos_point: any): any {
   const fixes_distance = reference_fixes.map(fix => {
     const fix_point = point([fix.lon, fix.lat]);
     return Object.assign({
@@ -90,7 +91,7 @@ export function getClosestReferenceFix(reference_fixes, pos_point) {
   return closest_fix;
 }
 
-export function computeMinutesAway(entry, polygons) {
+export function computeMinutesAway(entry: EdstEntryProps, polygons: Array<Polygon>) {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
   const pos_point = point(pos);
   // @ts-ignore
@@ -98,12 +99,12 @@ export function computeMinutesAway(entry, polygons) {
   return sdist * 60 / entry.flightplan.ground_speed;
 }
 
-export function computeFrd(reference_fix) {
+export function computeFrd(reference_fix: { waypoint_id: string, bearing: number, distance: number }): string {
   return reference_fix.waypoint_id + Math.round(reference_fix.bearing).toString().padStart(3, '0')
     + Math.round(reference_fix.distance).toString().padStart(3, '0');
 }
 
-export function formatUtcMinutes(minutes) {
+export function formatUtcMinutes(minutes: number): string {
   return (((minutes + 1440) / 60 | 0) % 24).toString().padStart(2, "0") + ((minutes + 60) % 60 | 0).toString().padStart(2, "0");
 }
 

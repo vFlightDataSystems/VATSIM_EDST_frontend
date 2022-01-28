@@ -3,7 +3,7 @@ import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
-import {EdstEntry} from "../../../interfaces";
+import {EdstEntryProps} from "../../../interfaces";
 
 const COMPLETED_SYMBOL = '✓';
 
@@ -39,7 +39,7 @@ export function DepTable() {
     }
   }
 
-  const sortFunc = (u: EdstEntry, v: EdstEntry) => {
+  const sortFunc = (u: EdstEntryProps, v: EdstEntryProps) => {
     switch (sort_data.name) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
@@ -52,9 +52,9 @@ export function DepTable() {
     }
   }
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntry) => cid_list.has(entry.cid));
-  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntry) => (typeof (entry.spa) === 'number'))
-      ?.sort((u: EdstEntry, v: EdstEntry) => u.spa - v.spa));
+  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.has(entry.cid));
+  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryProps) => (typeof (entry.spa) === 'number'))
+    ?.sort((u: EdstEntryProps, v: EdstEntryProps) => u.spa - v.spa));
 
   return (<div className="dep-body no-select">
     <div className="body-row header" key="dep-table-header">
@@ -87,34 +87,35 @@ export function DepTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spa_entry_list?.map(([i, entry]: [string, EdstEntry]) =>
+      {spa_entry_list?.map(([i, entry]: [string, EdstEntryProps]) =>
         <DepRow
-          key={`dep-row-spa-${entry.cid}`}
+          key={`dep-row-spa-${entry.cid}-${i}`}
+          index={Number(i)}
           entry={entry}
-          bottom_border={Number(i) % 3 === 2}
-          updateStatus={updateStatus}
-          hidden={hidden}
+        updateStatus={updateStatus}
+        hidden={hidden}
         />)}
       {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntry) => (!(typeof (entry.spa) === 'number') && ((entry.dep_status > -1) || !manual_posting)))
-          ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntry]) =>
+      {Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && ((entry.dep_status > -1) || !manual_posting)))
+        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryProps]) =>
         <DepRow
-          key={`dep-row-ack-${entry.cid}`}
-          entry={entry}
-          bottom_border={Number(i) % 3 === 2}
-          updateStatus={updateStatus}
-          hidden={hidden}
+        key={`dep-row-ack-${entry.cid}-${i}`}
+        index={Number(i)}
+        entry={entry}
+
+        updateStatus={updateStatus}
+        hidden={hidden}
         />)}
       {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntry) => (!(typeof (entry.spa) === 'number') && entry.dep_status === -1)))
-          ?.map(([i, entry]: [string, EdstEntry]) =>
+      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && entry.dep_status === -1)))
+        ?.map(([i, entry]: [string, EdstEntryProps]) =>
         <DepRow
-          key={`dep-row-no-ack-${entry.cid}`}
-          entry={entry}
-          bottom_border={Number(i) % 3 === 2}
-          updateStatus={updateStatus}
-          hidden={hidden}
+        key={`dep-row-no-ack-${entry.cid}-${i}`}
+        index={Number(i)}
+        entry={entry}
+        updateStatus={updateStatus}
+        hidden={hidden}
         />)}
-    </div>
-  </div>);
-}
+        </div>
+        </div>);
+      }

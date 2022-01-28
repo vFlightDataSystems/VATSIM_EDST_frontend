@@ -1,15 +1,23 @@
-import {useContext, useRef, useState} from 'react';
+import {FunctionComponent, useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
+import {EdstEntryProps} from "../../../interfaces";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
 
-export function DepRow(props) {
+interface DepRowProps {
+  entry: EdstEntryProps;
+  hidden: Array<string>;
+  index: number;
+  updateStatus: Function;
+}
+
+export const DepRow: FunctionComponent<DepRowProps> = (props) => {
   const {
     aircraftSelect,
     updateEntry,
@@ -18,7 +26,7 @@ export function DepRow(props) {
     setInputFocused
   } = useContext(EdstContext);
   const {asel} = useContext(DepContext);
-  const {entry, hidden, bottom_border} = props;
+  const {entry, hidden, index} = props;
   const now = new Date().getTime();
   let route = entry.route;
   const dest = entry.dest;
@@ -26,11 +34,12 @@ export function DepRow(props) {
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry?.scratchpad ?? '');
+  const [scratchpad, setScratchpad] = useState(entry?.free_text ?? '');
   const ref = useRef(null);
 
   const current_fix_names = entry._route_data.map(fix => fix.name);
-  const aar_avail = (entry?.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1 && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar) > 0));
+  const aar_avail = (entry?.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1
+    && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0));
   const on_aar = entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0;
 
   const checkAarReroutePending = () => {
@@ -79,7 +88,7 @@ export function DepRow(props) {
     return asel?.cid === cid && asel?.field === field;
   }
 
-  return (<div className={`body-row-container ${bottom_border ? 'row-sep-border' : ''}`}
+  return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>

@@ -1,11 +1,21 @@
-import {useContext, useState} from 'react';
+import {FunctionComponent, useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
+import {AselProps} from "../../../interfaces";
 
-export function DepHeader(props) {
+interface DepHeaderProps {
+  addEntry: Function;
+  sort_data: { sector: boolean, name: string };
+  openMenu: Function;
+  asel: AselProps;
+  focused: boolean;
+  closeWindow: Function;
+}
+
+export const DepHeader: FunctionComponent<DepHeaderProps> = (props) => {
   const {setInputFocused} = useContext(EdstContext);
   const {manual_posting, togglePosting} = useContext(DepContext);
   const [search_str, setSearchString] = useState('');
@@ -26,13 +36,13 @@ export function DepHeader(props) {
     <div>
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'plan-menu')}
         content="Plan Options..."
         title={Tooltips.plan_options}
       />
       <EdstWindowHeaderButton
         id="dep-sort-button"
-        onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'sort-menu')}
         content="Sort..."
         title={Tooltips.sort}
       />
@@ -42,7 +52,7 @@ export function DepHeader(props) {
         title={Tooltips.posting_mode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'template-menu')}
         content="Template..."
         title={Tooltips.template}
       />

@@ -205,6 +205,7 @@ export function TemplateMenu(props) {
             <div className="input-container">
               <input
                 value={time_input}
+                onChange={(event) => setTimeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />

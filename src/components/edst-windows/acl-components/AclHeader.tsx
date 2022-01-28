@@ -1,10 +1,21 @@
-import {useContext, useState} from 'react';
+import {FunctionComponent, useContext, useState} from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
+import {AselProps} from "../../../interfaces";
 
-export function AclHeader(props) {
+interface AclHeaderProps {
+  addEntry: Function;
+  sort_data: { sector: boolean, name: string };
+  openMenu: Function;
+  asel: AselProps;
+  focused: boolean;
+  cleanup: Function;
+  closeWindow: Function;
+}
+
+export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
   const {setInputFocused} = useContext(EdstContext)
   const {manual_posting, togglePosting} = useContext(AclContext);
   const [search_str, setSearchString] = useState('');
@@ -25,13 +36,13 @@ export function AclHeader(props) {
     <div className="no-select">
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'plan-menu')}
         content="Plan Options..."
         title={Tooltips.plan_options}
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e) => props.openMenu(e.target, 'hold-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'hold-menu')}
         content="Hold..."
         title={Tooltips.hold}
       />
@@ -39,7 +50,9 @@ export function AclHeader(props) {
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton
         id="acl-sort-button"
-        onMouseDown={(e) => props.openMenu(e.target, 'sort-menu')}
+        onMouseDown={(e) => {
+          props.openMenu(e.currentTarget, 'sort-menu')
+        }}
         content="Sort..."
         title={Tooltips.sort}
       />
@@ -50,7 +63,7 @@ export function AclHeader(props) {
         title={Tooltips.posting_mode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'template-menu')}
         content="Template..."
         title={Tooltips.template}
       />

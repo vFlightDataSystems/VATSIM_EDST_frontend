@@ -229,17 +229,16 @@ export function RouteMenu(props) {
             {dep ? entry.dep + route : `./.${route}`}
           </div>
         </div>
-        {Object.keys(Array(Math.min(route_data?.length ?? 0, 10))).map((i) => <div className="options-row"
+        {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
                                                                                 key={`route-menu-row-${i}`}>
-          {Object.keys(Array(((route_data?.length ?? 0) / 10 | 0) + 1)).map((j) => {
+          {[...Array(((route_data?.length ?? 0) / 10 | 0) + 1).keys()].map((j) => {
             const fix_name = route_data[Number(i) + Number(j) * 10]?.name;
             return (fix_name && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                              content={fix_name}
                                              onMouseDown={() => clearedToFix(fix_name)}
                                              title={Tooltips.route_menu_direct_fix}
             />);
-          })
-          }
+          })}
         </div>)}
         {routes?.length > 0 &&
         <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute}/>}
