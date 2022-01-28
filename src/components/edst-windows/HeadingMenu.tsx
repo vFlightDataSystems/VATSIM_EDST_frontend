@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useContext} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
@@ -6,8 +6,19 @@ import _ from "lodash";
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
+import {EdstContext} from "../../contexts/contexts";
 
 export function HeadingMenu(props) {
+  const {
+    edst_data,
+    asel,
+    startDrag,
+    stopDrag,
+    amendEntry
+  } = useContext(EdstContext);
+
+  let entry = edst_data[asel.cid];
+
   const [focused, setFocused] = useState(false);
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
@@ -17,9 +28,31 @@ export function HeadingMenu(props) {
     setHeading(280);
     setDeltaY(0);
     setAmend(true);
-  }, [props.entry]);
+  }, [asel]);
   const ref = useRef(null);
-  const {pos, entry} = props;
+  const {pos} = props;
+
+  const handleMouseDown = (event, value: number, direction = null) => {
+    const value_str = direction === null ? `${amend ? 'H' : ''}${value}`
+      : `${value}${direction}`;
+
+    switch (event.button) {
+      case 0:
+        amendEntry(entry.cid, {
+          [amend ? 'hdg' : 'scratch_hdg']: value_str,
+          [!amend ? 'hdg' : 'scratch_hdg']: null
+        });
+        break;
+      case 1:
+        amendEntry(entry.cid, {
+          [amend ? 'hdg' : 'scratch_hdg']: value_str
+        });
+        break;
+      default:
+        break;
+    }
+    props.closeWindow();
+  }
 
   return (<div
     onMouseEnter={() => setFocused(true)}
@@ -30,8 +63,8 @@ export function HeadingMenu(props) {
     style={{left: pos.x, top: pos.y}}
   >
     <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-         onMouseDown={(event) => props.startDrag(event, ref)}
-         onMouseUp={(event) => props.stopDrag(event)}
+         onMouseDown={(event) => startDrag(event, ref)}
+         onMouseUp={(event) => stopDrag(event)}
     >
       Heading Information
     </div>
@@ -84,44 +117,22 @@ export function HeadingMenu(props) {
           const rel_hdg = 35 + i / 2;
           return <div className="spd-hdg-menu-container-row" key={`heading-menu-${i}`}>
             <div className="spd-hdg-menu-container-col"
-                 onMouseDown={() => {
-                   props.updateEntry(entry.cid, {
-                     scratch_hdg: {
-                       scratchpad: !amend,
-                       val: `${amend ? 'H' : ''}${hdg}`
-                     }
-                   });
-                   props.closeWindow();
-                 }}
+                 onMouseDown={(e) => handleMouseDown(e, hdg)}
             >
               {String(hdg).padStart(3, '0')}
             </div>
             <div className="spd-hdg-menu-container-col"
-                 onMouseDown={() => {
-                   props.updateEntry(entry.cid, {
-                     scratch_hdg: {
-                       scratchpad: !amend,
-                       val: `${amend ? 'H' : ''}${hdg + 5}`
-                     }
-                   });
-                   props.closeWindow();
-                 }}
+                 onMouseDown={(e) => handleMouseDown(e, hdg + 5)}
             >
               {String(hdg + 5).padStart(3, '0')}
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
-                 onMouseDown={() => {
-                   props.updateEntry(entry.cid, {scratch_hdg: {scratchpad: !amend, val: `${rel_hdg}L`}});
-                   props.closeWindow();
-                 }}
+                 onMouseDown={(e) => handleMouseDown(e, rel_hdg, 'L')}
             >
               {rel_hdg}
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
-                 onMouseDown={() => {
-                   props.updateEntry(entry.cid, {scratch_hdg: {scratchpad: !amend, val: `${rel_hdg}R`}});
-                   props.closeWindow();
-                 }}
+                 onMouseDown={(e) => handleMouseDown(e, rel_hdg, 'R')}
             >
               {rel_hdg}
             </div>

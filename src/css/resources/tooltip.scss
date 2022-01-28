@@ -1,0 +1,17 @@
+@import '../styles.scss';
+
+.tooltip-wrapper {
+    pointer-events: none;
+}
+
+.tooltip-content {
+    position: absolute;
+    color: #FFFFFF;
+    background-color: #000000;
+    border: 1px solid $edst-font-yellow;
+    padding: 2px;
+    font-size: 0.85em;
+    transform: translateY(32px);
+    z-index: 999;
+    white-space: pre-line;
+}

@@ -36,7 +36,7 @@ export const PlansDisplayHeader = (props) => {
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={(e) => props.openMenu(e.target, 'template-menu')}
+        onMouseDown={(e) => props.openMenu(e.currentTarget, 'template-menu')}
         content="Template..."
         title={Tooltips.template}
       />
