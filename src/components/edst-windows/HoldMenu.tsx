@@ -39,7 +39,7 @@ export function HoldMenu(props) {
     };
     amendEntry(entry.cid, {hold_data: hold_data});
     props.closeWindow();
-  }
+  };
 
   useEffect(() => {
     const computeCrossingTimes = (route_data) => {
@@ -54,7 +54,7 @@ export function HoldMenu(props) {
         }
       }
       return route_data;
-    }
+    };
     const route_data = computeCrossingTimes(entry?._route_data);
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -141,40 +141,40 @@ export function HoldMenu(props) {
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="NW" className='button-1' selected={hold_direction === 'NW'}
+            <EdstButton content="NW" className="button-1" selected={hold_direction === 'NW'}
                         onMouseDown={() => setHoldDirection('NW')}
             />
-            <EdstButton content="N" className='button-1' selected={hold_direction === 'N'}
+            <EdstButton content="N" className="button-1" selected={hold_direction === 'N'}
                         onMouseDown={() => setHoldDirection('N')}
             />
-            <EdstButton content="NE" className='button-1' selected={hold_direction === 'NE'}
+            <EdstButton content="NE" className="button-1" selected={hold_direction === 'NE'}
                         onMouseDown={() => setHoldDirection('NE')}
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="LT" className='button-1' selected={turns === 'LT'}
+            <EdstButton content="LT" className="button-1" selected={turns === 'LT'}
                         onMouseDown={() => setTurns('LT')}
             />
-            <EdstButton content="RT" className='button-1' selected={turns === 'RT'}
+            <EdstButton content="RT" className="button-1" selected={turns === 'RT'}
                         onMouseDown={() => setTurns('RT')}
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="STD" className='button-2' selected={!leg_length || leg_length === 'STD'}
+            <EdstButton content="STD" className="button-2" selected={!leg_length || leg_length === 'STD'}
                         onMouseDown={() => setLegLength('STD')}
             />
-            <EdstButton content="15 NM" className='button-2' selected={!leg_length || leg_length === 15}
+            <EdstButton content="15 NM" className="button-2" selected={!leg_length || leg_length === 15}
                         onMouseDown={() => setLegLength(15)}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="W" className='button-1' selected={hold_direction === 'W'}
+            <EdstButton content="W" className="button-1" selected={hold_direction === 'W'}
                         onMouseDown={() => setHoldDirection('W')}
             />
-            <EdstButton className='button-1' disabled={true}/>
-            <EdstButton content="E" className='button-1' selected={hold_direction === 'E'}
+            <EdstButton className="button-1" disabled={true}/>
+            <EdstButton content="E" className="button-1" selected={hold_direction === 'E'}
                         onMouseDown={() => setHoldDirection('E')}
             />
           </div>
@@ -183,23 +183,23 @@ export function HoldMenu(props) {
             <EdstButton className="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="5 NM" className='button-2' selected={!leg_length || leg_length === 5}
+            <EdstButton content="5 NM" className="button-2" selected={!leg_length || leg_length === 5}
                         onMouseDown={() => setLegLength(5)}
             />
-            <EdstButton content="20 NM" className='button-2' selected={!leg_length || leg_length === 20}
+            <EdstButton content="20 NM" className="button-2" selected={!leg_length || leg_length === 20}
                         onMouseDown={() => setLegLength(20)}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="SW" className='button-1' selected={hold_direction === 'SW'}
+            <EdstButton content="SW" className="button-1" selected={hold_direction === 'SW'}
                         onMouseDown={() => setHoldDirection('SW')}
             />
-            <EdstButton content="S" className='button-1' selected={hold_direction === 'S'}
+            <EdstButton content="S" className="button-1" selected={hold_direction === 'S'}
                         onMouseDown={() => setHoldDirection('S')}
             />
-            <EdstButton content="SE" className='button-1' selected={hold_direction === 'SE'}
+            <EdstButton content="SE" className="button-1" selected={hold_direction === 'SE'}
                         onMouseDown={() => setHoldDirection('SE')}
             />
           </div>
@@ -208,10 +208,10 @@ export function HoldMenu(props) {
             <EdstButton className="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="10 NM" className='button-2' selected={!leg_length || leg_length === 10}
+            <EdstButton content="10 NM" className="button-2" selected={!leg_length || leg_length === 10}
                         onMouseDown={() => setLegLength(10)}
             />
-            <EdstButton content="25 NM" className='button-2' selected={!leg_length || leg_length === 25}
+            <EdstButton content="25 NM" className="button-2" selected={!leg_length || leg_length === 25}
                         onMouseDown={() => setLegLength(25)}
             />
           </div>
@@ -240,6 +240,7 @@ export function HoldMenu(props) {
           <div className="options-col hold-col-7">
             <div className="input efc-input">
               <input value={formatUtcMinutes(efc)}
+                     readOnly={true}
                 // onChange={(e) => setEfc(e.target.value)}
               />
             </div>

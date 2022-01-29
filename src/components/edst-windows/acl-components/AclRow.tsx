@@ -1,9 +1,8 @@
-import {FunctionComponent, useContext, useRef, useState} from 'react';
+import {FunctionComponent, MouseEventHandler, useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
-// @ts-ignore
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
@@ -13,7 +12,7 @@ const SPA_INDICATOR = '^';
 
 interface AclRowProps {
   key: string;
-  entry: EdstEntryProps
+  entry: EdstEntryProps;
   index: number;
   any_holding: boolean;
   hidden: Array<string>;
@@ -41,7 +40,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
 
   const [display_scratch_hdg, setDisplayScratchHdg] = useState(false);
   const [display_scratch_spd, setDisplayScratchSpd] = useState(false);
-  const [scratchpad, setScratchpad] = useState(entry?.free_text ?? '');
+  const [scratchpad, setScratchpad] = useState(entry.free_text ?? '');
   const ref = useRef(null);
 
   const current_fix_names = entry._route_data.map(fix => fix.name);
@@ -58,7 +57,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
       }
     }
     return null;
-  }
+  };
   const pending_aar = checkAarReroutePending();
 
   const handleHotboxMouseDown = (event, entry) => {
@@ -73,7 +72,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     if (event.button === 2) {
       updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
     }
-  }
+  };
 
   const handleHoldClick = (event) => {
     switch (event.button) {
@@ -90,7 +89,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
       default:
         break;
     }
-  }
+  };
 
   const handleRemarksClick = (event) => {
     if (entry.acl_status === -1) {
@@ -109,9 +108,9 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
       default:
         break;
     }
-  }
+  };
 
-  const handleFidClick = (event) => {
+  const handleFidClick: MouseEventHandler = (event) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -124,9 +123,9 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
         break;
 
     }
-  }
+  };
 
-  const handleHeadingClick = (event) => {
+  const handleHeadingClick: MouseEventHandler = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -134,7 +133,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
         break;
       case 1:
         if (entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) {
-          let promoted_hdg = 'LR'.includes(entry.scratch_hdg[-1]) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
+          let promoted_hdg = 'LR'.includes(entry.scratch_hdg.slice(-1)) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
           amendEntry(entry.cid, {hdg: promoted_hdg, scratch_hdg: null});
         }
         break;
@@ -144,9 +143,9 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
       default:
         break;
     }
-  }
+  };
 
-  const handleSpeedClick = (event) => {
+  const handleSpeedClick: MouseEventHandler = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -154,7 +153,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
         break;
       case 1:
         if (entry.scratch_spd && (display_scratch_spd || entry.spd === null)) {
-          let promoted_spd = entry.scratch_spd[0] === 'M' ? entry.scratch_spd : `S${entry.scratch_spd}`;
+          let promoted_spd = entry.scratch_spd.slice(0, 1) === 'M' ? entry.scratch_spd : `S${entry.scratch_spd}`;
           amendEntry(entry.cid, {spd: promoted_spd, scratch_spd: null});
         }
         break;
@@ -164,11 +163,11 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
       default:
         break;
     }
-  }
+  };
 
-  const isSelected = (cid, field) => {
+  const isSelected = (cid: string, field: string): boolean => {
     return asel?.cid === cid && asel?.field === field;
-  }
+  };
 
   return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
                key={`acl-row-container-${entry.cid}`}
@@ -337,4 +336,4 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
       </div>
     </div>}
   </div>);
-}
+};

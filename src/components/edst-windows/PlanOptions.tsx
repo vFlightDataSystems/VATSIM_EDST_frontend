@@ -4,100 +4,100 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 
 export function PlanOptions(props) {
-    const [focused, setFocused] = useState(false);
-    const ref = useRef(null);
-    const {pos, data, asel} = props;
-    const dep = asel?.window === 'dep';
+  const [focused, setFocused] = useState(false);
+  const ref = useRef(null);
+  const {pos, data, asel} = props;
+  const dep = asel?.window === 'dep';
 
-    return (<div
-            onMouseEnter={() => setFocused(true)}
-            onMouseLeave={() => setFocused(false)}
-            className="options-menu plan no-select"
-            ref={ref}
-            id="plan-menu"
-            style={{left: pos.x, top: pos.y}}
-        >
-            <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-                 onMouseDown={(event) => props.startDrag(event, ref)}
-                 onMouseUp={(event) => props.stopDrag(event)}
-            >
-                Plan Options Menu
-            </div>
-            <div className="options-body">
-                <div className="options-row fid">
-                    {data?.cid} {data?.callsign}
-                </div>
-                <div className="options-row">
-                    <div className="options-col hover"
-                         onMouseDown={() => props.openMenu(ref.current, 'alt-menu', true)}
-                    >
-                        Altitude...
-                    </div>
-                </div>
-                {!dep && <div className="options-row">
-                  <div className="options-col hover"
-                      // @ts-ignore
-                       disabled={true}>
-                    Speed...
-                  </div>
-                </div>}
-                <div className="options-row">
-                    <div className="options-col hover"
-                         onMouseDown={() => props.openMenu(ref.current, 'route-menu', true)}
-                    >
-                        Route...
-                    </div>
-                </div>
-                <div className="options-row">
-                    <div className="options-col hover"
-                        // @ts-ignore
-                         disabled={data?.previous_route === undefined}
-                         onMouseDown={() => props.openMenu(ref.current, 'prev-route-menu', true)}
-                    >
-                        Previous Route
-                    </div>
-                </div>
-                {!dep && <div className="options-row">
-                  <div className="options-col hover"
-                      // @ts-ignore
-                       disabled={true}>
-                    Stop Probe...
-                  </div>
-                </div>}
-                <div className="options-row">
-                    <div className="options-col hover"
-                        // @ts-ignore
-                         disabled={true}>
-                        Trial {dep ? 'Departure' : 'Restrictions'}...
-                    </div>
-                </div>
-                {!dep && <div className="options-row">
-                  <div className="options-col hover">
-                    Plans
-                  </div>
-                </div>}
-                <div className="options-row">
-                    <div className="options-col hover">
-                        Keep
-                    </div>
-                </div>
-                <div className="options-row">
-                    <div className="options-col hover"
-                         onMouseDown={() => {
-                             props.deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
-                             props.clearAsel();
-                             props.closeWindow();
-                         }}
-                    >
-                        Delete
-                    </div>
-                </div>
-                <div className="options-row bottom">
-                    <div className="options-col right">
-                        <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
-                    </div>
-                </div>
-            </div>
+  return (<div
+      onMouseEnter={() => setFocused(true)}
+      onMouseLeave={() => setFocused(false)}
+      className="options-menu plan no-select"
+      ref={ref}
+      id="plan-menu"
+      style={{left: pos.x, top: pos.y}}
+    >
+      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
+           onMouseDown={(event) => props.startDrag(event, ref)}
+           onMouseUp={(event) => props.stopDrag(event)}
+      >
+        Plan Options Menu
+      </div>
+      <div className="options-body">
+        <div className="options-row fid">
+          {data?.cid} {data?.callsign}
         </div>
-    );
+        <div className="options-row">
+          <div className="options-col hover"
+               onMouseDown={() => props.openMenu(ref.current, 'alt-menu', true)}
+          >
+            Altitude...
+          </div>
+        </div>
+        {!dep && <div className="options-row">
+          <div className="options-col hover"
+            // @ts-ignore
+               disabled={true}>
+            Speed...
+          </div>
+        </div>}
+        <div className="options-row">
+          <div className="options-col hover"
+               onMouseDown={() => props.openMenu(ref.current, 'route-menu', true)}
+          >
+            Route...
+          </div>
+        </div>
+        <div className="options-row">
+          <div className="options-col hover"
+            // @ts-ignore
+               disabled={data?.previous_route === undefined}
+               onMouseDown={() => props.openMenu(ref.current, 'prev-route-menu', true)}
+          >
+            Previous Route
+          </div>
+        </div>
+        {!dep && <div className="options-row">
+          <div className="options-col hover"
+            // @ts-ignore
+               disabled={true}>
+            Stop Probe...
+          </div>
+        </div>}
+        <div className="options-row">
+          <div className="options-col hover"
+            // @ts-ignore
+               disabled={true}>
+            Trial {dep ? 'Departure' : 'Restrictions'}...
+          </div>
+        </div>
+        {!dep && <div className="options-row">
+          <div className="options-col hover">
+            Plans
+          </div>
+        </div>}
+        <div className="options-row">
+          <div className="options-col hover">
+            Keep
+          </div>
+        </div>
+        <div className="options-row">
+          <div className="options-col hover"
+               onMouseDown={() => {
+                 props.deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
+                 props.clearAsel();
+                 props.closeWindow();
+               }}
+          >
+            Delete
+          </div>
+        </div>
+        <div className="options-row bottom">
+          <div className="options-col right">
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
