@@ -7,92 +7,92 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 
 export function AltMenu(props) {
-    const {
-        edst_data,
-        asel,
-        trialPlan,
-        amendEntry,
-        setInputFocused
-    } = useContext(EdstContext);
-    const {pos} = props;
-    const [dep, setDep] = useState(asel.window === 'dep');
-    const [selected, setSelected] = useState(asel.window !== 'dep' ? 'trial' : 'amend');
-    const [temp_alt_hover, setTempAltHover] = useState(null);
-    const [deltaY, setDeltaY] = useState(0);
-    const [manual_input, setManualInput] = useState(null);
-    const [show_invalid, setShowInvalid] = useState(false);
-    const entry = edst_data[asel.cid];
+  const {
+    edst_data,
+    asel,
+    trialPlan,
+    amendEntry,
+    setInputFocused
+  } = useContext(EdstContext);
+  const {pos} = props;
+  const [dep, setDep] = useState(asel.window === 'dep');
+  const [selected, setSelected] = useState(asel.window !== 'dep' ? 'trial' : 'amend');
+  const [temp_alt_hover, setTempAltHover] = useState(null);
+  const [deltaY, setDeltaY] = useState(0);
+  const [manual_input, setManualInput] = useState(null);
+  const [show_invalid, setShowInvalid] = useState(false);
+  const entry = edst_data[asel.cid];
 
-    useEffect(() => {
-        setDep(asel.window === 'dep');
-        setSelected(asel.window !== 'dep' ? 'trial' : 'amend');
-        setTempAltHover(null);
-        setDeltaY(0);
-    }, [asel]);
+  useEffect(() => {
+    setDep(asel.window === 'dep');
+    setSelected(asel.window !== 'dep' ? 'trial' : 'amend');
+    setTempAltHover(null);
+    setDeltaY(0);
+  }, [asel]);
 
-    const handleAltClick = (alt) => {
-        if (selected === 'amend') {
-            amendEntry(entry.cid, {altitude: alt})
-        } else {
-            const trial_plan = {
-                cid: entry.cid, callsign: entry.callsign, plan_data: {
-                    altitude: alt,
-                    interim: null
-                },
-                msg: `AM ${entry.cid} ALT ${alt}`
-            };
-            trialPlan(trial_plan);
-        }
-        props.closeWindow();
+  const handleAltClick = (alt) => {
+    if (selected === 'amend') {
+      amendEntry(entry.cid, {altitude: alt});
+    } else {
+      const trial_plan = {
+        cid: entry.cid, callsign: entry.callsign, plan_data: {
+          altitude: alt,
+          interim: null
+        },
+        msg: `AM ${entry.cid} ALT ${alt}`
+      };
+      trialPlan(trial_plan);
     }
+    props.closeWindow();
+  };
 
-    const handleTempAltClick = (alt) => {
-        if (selected === 'amend') {
-            amendEntry(entry?.cid, {interim: alt})
-        } else {
-            const trial_plan = {
-                cid: entry.cid, callsign: entry.callsign, plan_data: {
-                    interim: alt
-                },
-                msg: `QQ /TT ${alt} ${entry?.cid}`
-            };
-            trialPlan(trial_plan);
-        }
-        props.closeWindow();
+  const handleTempAltClick = (alt) => {
+    if (selected === 'amend') {
+      amendEntry(entry?.cid, {interim: alt});
+    } else {
+      const trial_plan = {
+        cid: entry.cid, callsign: entry.callsign, plan_data: {
+          interim: alt
+        },
+        msg: `QQ /TT ${alt} ${entry?.cid}`
+      };
+      trialPlan(trial_plan);
     }
+    props.closeWindow();
+  };
 
-    const handleScroll = (e) => {
-        const new_deltaY = Math.min(Math.max((Number(entry.altitude) - 560) * 10, deltaY + e.deltaY), (Number(entry.altitude) - 40) * 10);
-        setDeltaY(new_deltaY);
+  const handleScroll = (e) => {
+    const new_deltaY = Math.min(Math.max((Number(entry.altitude) - 560) * 10, deltaY + e.deltaY), (Number(entry.altitude) - 40) * 10);
+    setDeltaY(new_deltaY);
+  };
+
+  const handleKeyDown = () => {
+    if (manual_input === null) {
+      setManualInput('');
+      setInputFocused(true);
+      // setSelected('trial');
     }
+  };
 
-    const handleKeyDown = () => {
-        if (manual_input === null) {
-            setManualInput('');
-            setInputFocused(true);
-            // setSelected('trial');
-        }
-    }
-
-    return (<div
-            className={`alt-menu no-select ${manual_input !== null ? 'manual-input' : ''}`}
-            id="alt-menu"
-            tabIndex={0}
-            style={{left: pos.x, top: pos.y}}
-            onKeyDown={handleKeyDown}
+  return (<div
+      className={`alt-menu no-select ${manual_input !== null ? 'manual-input' : ''}`}
+      id="alt-menu"
+      tabIndex={0}
+      style={{left: pos.x, top: pos.y}}
+      onKeyDown={handleKeyDown}
+    >
+      <div className={`alt-menu-header no-select`}
+      >
+        <div className="alt-menu-header-left">
+          {entry?.callsign}
+        </div>
+        <div className="alt-menu-header-right"
+             onMouseDown={props.closeWindow}
         >
-            <div className={`alt-menu-header no-select`}
-            >
-                <div className="alt-menu-header-left">
-                    {entry?.callsign}
-                </div>
-                <div className="alt-menu-header-right"
-                     onMouseDown={props.closeWindow}
-                >
-                    X
-                </div>
-            </div>
-            {manual_input !== null ? <span>
+          X
+        </div>
+      </div>
+      {manual_input !== null ? <span>
         <div className="alt-menu-row">
         FP{entry.altitude}
       </div>
@@ -100,30 +100,30 @@ export function AltMenu(props) {
           <input value={manual_input}
                  onChange={(event) => setManualInput(event.target.value.toUpperCase())}
                  onKeyDown={(event) => {
-                     if (event.key === 'Enter') {
-                         // check if input is number and length matches valid input
-                         if (!isNaN(manual_input) && manual_input.length === 3) {
-                             handleAltClick(manual_input);
-                         } else {
-                             setShowInvalid(true);
-                         }
+                   if (event.key === 'Enter') {
+                     // check if input is number and length matches valid input
+                     if (!isNaN(manual_input) && manual_input.length === 3) {
+                       handleAltClick(manual_input);
+                     } else {
+                       setShowInvalid(true);
                      }
+                   }
                  }}
                  onFocus={() => setInputFocused(true)}
-              // onBlur={() => setInputFocused(false)}
+            // onBlur={() => setInputFocused(false)}
           />
         </div>
-                    {show_invalid && <div className="alt-menu-row invalid-input">
-                      INVALID
-                    </div>}
+          {show_invalid && <div className="alt-menu-row invalid-input">
+            INVALID
+          </div>}
       </span> :
-                <span>
+        <span>
         <EdstTooltip title={Tooltips.alt_menu_trial_plan}>
           <div
-              className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
-              onMouseDown={() => setSelected('trial')}
-              // @ts-ignore
-              disabled={dep}
+            className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
+            onMouseDown={() => setSelected('trial')}
+            // @ts-ignore
+            disabled={dep}
           >
             TRIAL PLAN
           </div>
@@ -136,7 +136,7 @@ export function AltMenu(props) {
           </div>
         </EdstTooltip>
       <div className={`alt-menu-row`}
-          // @ts-ignore
+        // @ts-ignore
            disabled={true}>
         {!dep ? 'PROCEDURE' : 'NO ALT'}
       </div>
@@ -144,31 +144,31 @@ export function AltMenu(props) {
            onWheel={handleScroll}
       >
         {_.range(30, -40, -10).map(i => {
-            const alt = Number(entry.altitude) - (deltaY / 100 | 0) * 10 + i;
-            return <div
-                className={`alt-menu-container-row ${((selected === 'amend') && (temp_alt_hover === alt)) ? 'temp-alt-hover' : ''}`}
-                key={`alt-${i}`}
+          const alt = Number(entry.altitude) - (deltaY / 100 | 0) * 10 + i;
+          return <div
+            className={`alt-menu-container-row ${((selected === 'amend') && (temp_alt_hover === alt)) ? 'temp-alt-hover' : ''}`}
+            key={`alt-${i}`}
+          >
+            <div className={`alt-menu-container-col ${alt === Number(entry.altitude) ? 'selected' : ''}`}
+                 onMouseDown={() => handleAltClick(alt)}
             >
-                <div className={`alt-menu-container-col ${alt === Number(entry.altitude) ? 'selected' : ''}`}
-                     onMouseDown={() => handleAltClick(alt)}
-                >
-                    {String(alt).padStart(3, '0')}
-                </div>
-                {!dep &&
-                <EdstTooltip title={Tooltips.alt_menu_t}>
-                  <div className={`alt-menu-container-col-t`}
-                      // @ts-ignore
-                       disabled={!(selected === 'amend')}
-                       onMouseEnter={() => (selected === 'amend') && setTempAltHover(alt)}
-                       onMouseLeave={() => (selected === 'amend') && setTempAltHover(null)}
-                       onMouseDown={() => handleTempAltClick(alt)}>
-                    T
-                  </div>
-                </EdstTooltip>}
-            </div>;
+              {String(alt).padStart(3, '0')}
+            </div>
+            {!dep &&
+            <EdstTooltip title={Tooltips.alt_menu_t}>
+              <div className={`alt-menu-container-col-t`}
+                // @ts-ignore
+                   disabled={!(selected === 'amend')}
+                   onMouseEnter={() => (selected === 'amend') && setTempAltHover(alt)}
+                   onMouseLeave={() => (selected === 'amend') && setTempAltHover(null)}
+                   onMouseDown={() => handleTempAltClick(alt)}>
+                T
+              </div>
+            </EdstTooltip>}
+          </div>;
         })}
       </div>
       </span>}
-        </div>
-    );
+    </div>
+  );
 }

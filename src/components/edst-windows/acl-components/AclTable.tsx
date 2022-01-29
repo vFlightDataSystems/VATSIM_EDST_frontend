@@ -2,7 +2,6 @@ import {useContext, useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
-// @ts-ignore
 import VCI from '../../../css/images/VCI_v4.png';
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";

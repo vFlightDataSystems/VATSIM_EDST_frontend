@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import {distance, point, polygon} from '@turf/turf';
 
@@ -81,7 +81,7 @@ const intial_state = {
   show_all_tooltips: false
 };
 
-export interface State {
+interface State {
   reference_fixes: Array<any>;
   acl_cid_list: Set<string>;
   acl_deleted_list: Set<string>;
@@ -149,7 +149,7 @@ export class App extends React.Component<{} | null, State> {
       await getBoundaryData(artcc_id)
         .then(response => response.json())
         .then(geo_data => {
-          this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))})
+          this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))});
         });
     }
     if (!(this.state.reference_fixes.length > 0)) {
@@ -183,19 +183,19 @@ export class App extends React.Component<{} | null, State> {
     return Number(entry.flightplan.ground_speed) < 40
       && entry.dep_info?.artcc?.toLowerCase() === artcc_id
       && dep_airport_distance < 10;
-  }
+  };
 
   entryFilter = (entry: EdstEntryProps) => {
     const {acl_cid_list, boundary_polygons} = this.state;
-    const pos = [entry.flightplan.lon, entry.flightplan.lat];
+    const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
     const will_enter_airspace = routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos);
     return ((entry.minutes_away < 30 || acl_cid_list.has(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
-  }
+  };
 
   refreshEntry = (new_entry: EdstEntryProps) => {
-    const pos = [new_entry.flightplan.lon, new_entry.flightplan.lat];
+    const pos: [number, number] = [new_entry.flightplan.lon, new_entry.flightplan.lat];
     let current_entry: EdstEntryProps | any = this.state.edst_data[new_entry.cid] ?? {
       acl_status: -1,
       dep_status: -1
@@ -237,7 +237,7 @@ export class App extends React.Component<{} | null, State> {
     }
     completeAssign(current_entry, new_entry);
     return current_entry;
-  }
+  };
 
   refresh = async () => {
     let {artcc_id, reference_fixes, edst_data} = this.state;
@@ -291,7 +291,7 @@ export class App extends React.Component<{} | null, State> {
           }
         }
       );
-  }
+  };
 
   processAar = (entry: EdstEntryProps, aar_list: Array<any>) => {
     const {_route_data: current_route_data, _route: current_route} = entry;
@@ -342,7 +342,7 @@ export class App extends React.Component<{} | null, State> {
         aar_data: aar_data
       };
     }).filter(aar_data => aar_data);
-  }
+  };
 
   deleteEntry = (window: string, cid: string) => {
     let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
@@ -360,14 +360,14 @@ export class App extends React.Component<{} | null, State> {
       default:
         break;
     }
-  }
+  };
 
   trialPlan = (p) => {
     let {plan_queue, open_windows} = this.state;
     plan_queue.unshift(p);
     open_windows.add('plans');
     this.setState({open_windows: open_windows, plan_queue: plan_queue});
-  }
+  };
 
   // removeTrialPlan = (index) => {
   //   let {plan_queue} = this.state;
@@ -411,7 +411,7 @@ export class App extends React.Component<{} | null, State> {
     this.setState(({edst_data}) => {
       return {edst_data: {...edst_data, [cid]: completeAssign(entry, data)}};
     });
-  }
+  };
 
   addEntry = (window: string | null, fid: string) => {
     let {edst_data, acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
@@ -444,7 +444,7 @@ export class App extends React.Component<{} | null, State> {
       });
       // this.updateEntry(entry.cid, window === 'acl' ? {acl_highlighted: true} : {dep_highlighted: true});
     }
-  }
+  };
 
   amendEntry = async (cid: string, plan_data: any) => {
     let {edst_data, artcc_id, dep_cid_list} = this.state;
@@ -453,7 +453,7 @@ export class App extends React.Component<{} | null, State> {
       plan_data.interim = null;
     }
     if (Object.keys(plan_data).includes('route')) {
-      const dest = current_entry.dest
+      const dest = current_entry.dest;
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
@@ -482,7 +482,7 @@ export class App extends React.Component<{} | null, State> {
           });
         }
       });
-  }
+  };
 
   aircraftSelect = (event: Event, window: string, cid: string, field: string) => {
     let {asel, edst_data, manual_posting} = this.state;
@@ -525,7 +525,7 @@ export class App extends React.Component<{} | null, State> {
           break;
       }
     }
-  }
+  };
 
   toggleWindow = (name: string) => {
     let {open_windows} = this.state;
@@ -535,19 +535,19 @@ export class App extends React.Component<{} | null, State> {
       open_windows.add(name);
     }
     this.setState({open_windows: open_windows});
-  }
+  };
 
   openWindow = (name: string) => {
     let {open_windows} = this.state;
     open_windows.add(name);
     this.setState({open_windows: open_windows});
-  }
+  };
 
   closeWindow = (name: string) => {
     let {open_windows} = this.state;
     open_windows.delete(name);
     this.setState({open_windows: open_windows});
-  }
+  };
 
   openMenu = (ref: EventTarget | any, name: string, plan, asel = null) => {
     const {x, y, height, width} = ref.getBoundingClientRect();
@@ -605,20 +605,20 @@ export class App extends React.Component<{} | null, State> {
         };
     }
     this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}});
-  }
+  };
 
   closeMenu = (name: string) => {
     this.setState((prevState) => {
       return {pos: {...prevState.pos, [name]: null}, menu: null};
     });
-  }
+  };
 
   startDrag = (event: MouseEvent, ref: React.RefObject<any>) => {
     const {pos} = this.state;
     const rel = {x: event.pageX, y: event.pageY};
     const relX = event.pageX - rel.x;
     const relY = event.pageY - rel.y;
-    const ppos = pos[ref.current.id]
+    const ppos = pos[ref.current.id];
     const style = {
       left: ppos?.x + relX,
       top: ppos?.y + relY,
@@ -635,13 +635,13 @@ export class App extends React.Component<{} | null, State> {
       dragPreviewStyle: style,
       dragging_cursor_hide: DRAGGING_HIDE_CURSOR.includes(ref.current.id)
     });
-  }
+  };
 
   setPos = (key: string, x: number, y: number) => {
     this.setState((prevState) => {
       return {pos: {...prevState.pos, [key]: {x: x, y: y}}};
     });
-  }
+  };
 
   draggingHandler = (event: React.MouseEvent) => {
     if (this.state.dragging) {
@@ -660,7 +660,7 @@ export class App extends React.Component<{} | null, State> {
         }
       });
     }
-  }
+  };
 
   stopDrag = (event: React.MouseEvent) => {
     if (this.state.dragging) {
@@ -678,15 +678,15 @@ export class App extends React.Component<{} | null, State> {
         pos: pos
       });
     }
-  }
+  };
 
   setSortData = (sort_data) => {
     this.setState({sort_data: sort_data});
-  }
+  };
 
   unmount = () => {
     this.setState({asel: null, menu: null, input_focused: false});
-  }
+  };
 
   aclCleanup = () => {
     let {edst_data, acl_cid_list, acl_deleted_list} = this.state;
@@ -697,7 +697,7 @@ export class App extends React.Component<{} | null, State> {
     acl_cid_list = new Set(acl_cid_list_copy.filter(cid => !cid_pending_removal_list.includes(cid)));
     acl_deleted_list = new Set(acl_deleted_list_copy.concat(cid_pending_removal_list));
     this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
-  }
+  };
 
   togglePosting = (window: string) => {
     let {manual_posting} = this.state;
@@ -705,19 +705,19 @@ export class App extends React.Component<{} | null, State> {
       manual_posting[window] = !manual_posting[window];
       this.setState({manual_posting: manual_posting});
     }
-  }
+  };
 
   setMraMessage = (msg: string) => {
     let {open_windows} = this.state;
     open_windows.add('mra');
     this.setState({mra_msg: msg, open_windows: open_windows});
-  }
+  };
 
 
   handleKeyDownCapture = (event: React.KeyboardEvent) => {
     event.preventDefault();
     if (event.shiftKey && event.ctrlKey) {
-      this.setState({show_all_tooltips: !this.state.show_all_tooltips})
+      this.setState({show_all_tooltips: !this.state.show_all_tooltips});
     } else if (!(event.shiftKey || event.ctrlKey || this.state.show_all_tooltips)) {
       if (this.mcaInputRef === null) {
         this.openWindow('mca');
@@ -725,7 +725,7 @@ export class App extends React.Component<{} | null, State> {
         this.mcaInputRef.current.focus();
       }
     }
-  }
+  };
 
   render() {
     const {
