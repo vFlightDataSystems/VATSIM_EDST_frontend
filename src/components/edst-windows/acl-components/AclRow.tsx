@@ -133,7 +133,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
         break;
       case 1:
         if (entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) {
-          let promoted_hdg = 'LR'.includes(entry.scratch_hdg.slice(-1)) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
+          let promoted_hdg = 'LRH'.includes(entry.scratch_hdg.slice(-1)) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
           amendEntry(entry.cid, {hdg: promoted_hdg, scratch_hdg: null});
         }
         break;
@@ -241,7 +241,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
           {entry.hdg && entry.scratch_hdg && '*'}
         </div>
         <EdstTooltip title={Tooltips.acl_hdg}>
-          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'content hidden' : ''}
+          <div className={`body-col hs spd hover ${hidden.includes('hdg') ? 'content hidden' : ''}
               ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${(entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) ? 'yellow' : ''}`}
                onMouseDown={handleHeadingClick}
           >
