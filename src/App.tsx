@@ -81,7 +81,7 @@ const intial_state = {
   show_all_tooltips: false
 };
 
-interface State {
+export interface State {
   reference_fixes: Array<any>;
   acl_cid_list: Set<string>;
   acl_deleted_list: Set<string>;
@@ -114,7 +114,7 @@ interface State {
   show_all_tooltips: boolean;
 }
 
-export class App extends React.Component<{} | null, State> {
+export default class App extends React.Component<{} | null, State> {
   private mcaInputRef: React.RefObject<any> | null;
   private readonly outlineRef: React.RefObject<any>;
   private update_interval_id: any | null;
@@ -131,8 +131,8 @@ export class App extends React.Component<{} | null, State> {
   // }
 
   async componentDidMount() {
-    // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
-    const artcc_id = 'zbw';
+    const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
+    // const artcc_id = 'zbw';
     const sector_id = '37';
     // const now = new Date().getTime();
     // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
