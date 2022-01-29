@@ -52,7 +52,7 @@ export function HeadingMenu(props) {
         break;
     }
     props.closeWindow();
-  }
+  };
 
   return (<div
     onMouseEnter={() => setFocused(true)}
@@ -138,6 +138,26 @@ export function HeadingMenu(props) {
             </div>
           </div>;
         })}
+        <div className="options-row present-headging-row">
+          <EdstButton content="Present Heading" onMouseDown={(event) => {
+            switch (event.button) {
+              case 0:
+                amendEntry(entry.cid, {
+                  [amend ? 'hdg' : 'scratch_hdg']: 'PH',
+                  [!amend ? 'hdg' : 'scratch_hdg']: null
+                });
+                break;
+              case 1:
+                amendEntry(entry.cid, {
+                  [amend ? 'hdg' : 'scratch_hdg']: 'PH'
+                });
+                break;
+              default:
+                break;
+            }
+            props.closeWindow();
+          }}/>
+        </div>
         <div className="options-row bottom">
           <div className="options-col right">
             <EdstButton content="Exit" onMouseDown={props.closeWindow}/>

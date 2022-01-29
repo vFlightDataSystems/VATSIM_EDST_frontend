@@ -116,6 +116,15 @@ $route-menu-alert-cyan: #00ADAD;
   .options-row {
     @include options-row;
 
+    &.present-headging-row {
+      justify-content: center;
+      margin-top: 8px;
+
+      .edst-outer-button .edst-inner-button {
+        padding: 0 12px;
+      }
+    }
+
     &.hold-row-1 {
       justify-content: space-between;
     }

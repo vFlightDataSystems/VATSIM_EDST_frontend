@@ -461,8 +461,8 @@ export class App extends React.Component<{} | null, State> {
       plan_data.previous_route_data = dep_cid_list.has(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
-    current_entry.scratch_hdg = plan_data.scratch_hdg;
-    current_entry.scratch_spd = plan_data.scratch_spd;
+    if (plan_data.scratch_hdg !== undefined) current_entry.scratch_hdg = plan_data.scratch_hdg;
+    if (plan_data.scratch_spd !== undefined) current_entry.scratch_spd = plan_data.scratch_spd;
     await updateEdstEntry(plan_data)
       .then(response => response.json())
       .then(async updated_entry => {
