@@ -39,7 +39,8 @@ export interface EdstEntryProps {
   hold_data?: any;
   scratch_hdg?: string;
   scratch_spd?: string;
-  free_text?: string;
+  scratchpad?: string;
+  free_text?: boolean;
   remarks_checked?: boolean;
   cleared_direct?: { frd: string, fix: string };
 }

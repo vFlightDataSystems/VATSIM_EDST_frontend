@@ -27,7 +27,6 @@ export const Dep: FunctionComponent<DepProps> = (props) => {
       focused={focused}
       closeWindow={props.closeWindow}
     />
-    <DepTable
-    />
+    <DepTable/>
   </div>);
 }

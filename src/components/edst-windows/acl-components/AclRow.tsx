@@ -17,7 +17,7 @@ interface AclRowProps {
   any_holding: boolean;
   hidden: Array<string>;
   alt_mouse_down: boolean;
-  updateVci: Function;
+  updateVci: (cid: string) => void;
 }
 
 export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse_down, index, any_holding, ...props}) => {
@@ -39,7 +39,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse
 
   const [display_scratch_hdg, setDisplayScratchHdg] = useState(false);
   const [display_scratch_spd, setDisplayScratchSpd] = useState(false);
-  const [scratchpad, setScratchpad] = useState(entry.free_text ?? '');
+  const [scratchpad, setScratchpad] = useState(entry.scratchpad ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
   const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
