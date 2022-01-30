@@ -4,7 +4,16 @@ import {Tooltips} from "../tooltips";
 import {EdstTooltip} from "./resources/EdstTooltip";
 import {FunctionComponent} from "react";
 
-function EdstHeaderButton(props) {
+interface EdstHeaderButtonProps {
+  title?: string;
+  className?: string;
+  open: boolean;
+  disabled?: boolean;
+  content?: string;
+  onMouseDown?: () => void;
+}
+
+const EdstHeaderButton: FunctionComponent<EdstHeaderButtonProps> = (props) => {
   return (<EdstTooltip title={props.title}>
     <button className={`${props.className} ${props.open ? 'open' : ''}`}
             disabled={props.disabled}

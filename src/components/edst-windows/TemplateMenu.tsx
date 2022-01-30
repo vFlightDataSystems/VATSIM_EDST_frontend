@@ -1,11 +1,17 @@
-import {useContext, useEffect, useRef, useState} from 'react';
+import {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
+import {EdstEntryProps} from "../../interfaces";
 
-export function TemplateMenu(props) {
+interface TemplateMenuProps {
+  pos: {x: number, y: number};
+  closeWindow: () => void;
+}
+
+export const TemplateMenu: FunctionComponent<TemplateMenuProps> = (props) => {
   const {
     edst_data,
     asel,
@@ -14,7 +20,7 @@ export function TemplateMenu(props) {
     setInputFocused
   } = useContext(EdstContext);
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState(edst_data?.[asel?.cid]);
+  const [entry, setEntry] = useState<EdstEntryProps | null>(asel?.cid ? edst_data[asel.cid] : null);
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState((dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
@@ -38,7 +44,7 @@ export function TemplateMenu(props) {
 
   useEffect(() => {
     const dep = asel?.window === 'dep';
-    const entry = edst_data?.[asel?.cid];
+    const entry = asel?.cid ? edst_data[asel.cid] : null;
     const route = (dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
     const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
     const aid_input = entry?.callsign ?? '';

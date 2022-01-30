@@ -1,36 +1,35 @@
-import {useContext, useEffect, useState} from 'react';
+import React, {FunctionComponent, useContext, useEffect, useState} from 'react';
 import _ from 'lodash';
 import '../../css/header-styles.scss';
 import '../../css/windows/alt-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
+import {EdstWindowProps} from '../../interfaces';
 
-export function AltMenu(props) {
+export const AltMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
-    asel,
     trialPlan,
     amendEntry,
     setInputFocused
   } = useContext(EdstContext);
-  const {pos} = props;
-  const [dep, setDep] = useState(asel.window === 'dep');
-  const [selected, setSelected] = useState(asel.window !== 'dep' ? 'trial' : 'amend');
-  const [temp_alt_hover, setTempAltHover] = useState(null);
+  const [dep, setDep] = useState(asel?.window === 'dep');
+  const [selected, setSelected] = useState(asel?.window !== 'dep' ? 'trial' : 'amend');
+  const [temp_alt_hover, setTempAltHover] = useState<number | null>(null);
   const [deltaY, setDeltaY] = useState(0);
-  const [manual_input, setManualInput] = useState(null);
+  const [manual_input, setManualInput] = useState<string | null>(null);
   const [show_invalid, setShowInvalid] = useState(false);
   const entry = edst_data[asel.cid];
 
   useEffect(() => {
-    setDep(asel.window === 'dep');
+    setDep(asel?.window === 'dep');
     setSelected(asel.window !== 'dep' ? 'trial' : 'amend');
     setTempAltHover(null);
     setDeltaY(0);
   }, [asel]);
 
-  const handleAltClick = (alt) => {
+  const handleAltClick = (alt: string | number) => {
     if (selected === 'amend') {
       amendEntry(entry.cid, {altitude: alt});
     } else {
@@ -43,10 +42,10 @@ export function AltMenu(props) {
       };
       trialPlan(trial_plan);
     }
-    props.closeWindow();
+    closeWindow();
   };
 
-  const handleTempAltClick = (alt) => {
+  const handleTempAltClick = (alt: number) => {
     if (selected === 'amend') {
       amendEntry(entry?.cid, {interim: alt});
     } else {
@@ -58,10 +57,10 @@ export function AltMenu(props) {
       };
       trialPlan(trial_plan);
     }
-    props.closeWindow();
+    closeWindow();
   };
 
-  const handleScroll = (e) => {
+  const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
     const new_deltaY = Math.min(Math.max((Number(entry.altitude) - 560) * 10, deltaY + e.deltaY), (Number(entry.altitude) - 40) * 10);
     setDeltaY(new_deltaY);
   };
@@ -87,7 +86,7 @@ export function AltMenu(props) {
           {entry?.callsign}
         </div>
         <div className="alt-menu-header-right"
-             onMouseDown={props.closeWindow}
+             onMouseDown={closeWindow}
         >
           X
         </div>
@@ -102,7 +101,7 @@ export function AltMenu(props) {
                  onKeyDown={(event) => {
                    if (event.key === 'Enter') {
                      // check if input is number and length matches valid input
-                     if (!isNaN(manual_input) && manual_input.length === 3) {
+                     if (!_.isNumber(manual_input) && manual_input.length === 3) {
                        handleAltClick(manual_input);
                      } else {
                        setShowInvalid(true);

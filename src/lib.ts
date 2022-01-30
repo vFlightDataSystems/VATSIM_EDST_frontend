@@ -38,8 +38,8 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
  * @param {Array<number>} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(route_data: Array<FixProps>, polygons: Array<Polygon>, pos: [number, number]): boolean {
-  if (!route_data) {
+export function routeWillEnterAirspace(route_data: Array<FixProps> | null, polygons: Array<Polygon>, pos: [number, number]): boolean {
+  if (route_data === null) {
     return false;
   }
   route_data.unshift({pos: pos, name: 'ppos'});
@@ -165,24 +165,4 @@ export function copy(text: string) {
   const result = document.execCommand('copy');
   document.body.removeChild(input);
   return result;
-}
-
-// This is an assign function that copies full descriptors
-export function completeAssign(target, ...sources) {
-  sources.forEach(source => {
-    let descriptors = Object.keys(source).reduce((descriptors, key) => {
-      descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-      return descriptors;
-    }, {});
-
-    // By default, Object.assign copies enumerable Symbols, too
-    Object.getOwnPropertySymbols(source).forEach(sym => {
-      let descriptor = Object.getOwnPropertyDescriptor(source, sym);
-      if (descriptor.enumerable) {
-        descriptors[sym] = descriptor;
-      }
-    });
-    Object.defineProperties(target, descriptors);
-  });
-  return target;
 }

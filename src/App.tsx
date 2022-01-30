@@ -23,8 +23,7 @@ import {
   getRemainingRouteData,
   getRouteDataDistance,
   routeWillEnterAirspace,
-  REMOVAL_TIMEOUT,
-  completeAssign
+  REMOVAL_TIMEOUT
 } from "./lib";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
@@ -33,7 +32,8 @@ import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/co
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
-import {AselProps, EdstEntryProps} from "./interfaces";
+import {AselProps, EdstEntryProps, PlanDataProps, SectorDataProps, SortDataProps} from "./interfaces";
+import _ from "lodash";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -55,15 +55,15 @@ const intial_state = {
   dep_cid_list: new Set<string>(),
   dep_deleted_list: new Set<string>(),
   disabled_windows: DISABLED_WINDOWS,
-  artcc_id: null,
-  sector_id: null,
+  artcc_id: '',
+  sector_id: '',
   boundary_polygons: [],
   menu: null,
   spa_list: [],
   sig: [],
   not: [],
   gi: [],
-  dragging: null,
+  dragging: false,
   dragging_cursor_hide: null,
   draggingRef: null,
   dragPreviewStyle: null,
@@ -88,24 +88,24 @@ export interface State {
   dep_cid_list: Set<string>;
   dep_deleted_list: Set<string>;
   disabled_windows: Array<string>;
-  artcc_id: string | null;
-  sector_id: string | null;
+  artcc_id: string;
+  sector_id: string;
   boundary_polygons: Array<any>;
   menu: { name: string, ref_id: string | null } | null;
   spa_list: Array<string>;
   sig: Array<string>;
   not: Array<string>;
   gi: Array<string>;
-  dragging: boolean | null;
+  dragging: boolean;
   dragging_cursor_hide: boolean | null;
   draggingRef: any | null;
   dragPreviewStyle: any | null;
   rel: { x: number, y: number } | null;
-  pos: typeof defaultPos;
+  pos: { [window_name: string]: { x: number, y: number, w?: number, h?: number } | null };
   edst_data: { [cid: string]: EdstEntryProps }; // keys are cid, values are data from db
   asel: AselProps | null; // {cid, field, ref}
-  plan_queue: Array<string>,
-  sort_data: { acl: { name: string, sector: boolean }, dep: { name: string } };
+  plan_queue: Array<PlanDataProps>,
+  sort_data: SortDataProps;
   manual_posting: { acl: boolean, dep: boolean };
   input_focused: boolean;
   open_windows: Set<string>;
@@ -119,7 +119,7 @@ export default class App extends React.Component<{} | null, State> {
   private readonly outlineRef: React.RefObject<any>;
   private update_interval_id: any | null;
 
-  constructor(props) {
+  constructor(props: {}) {
     super(props);
     this.state = intial_state;
     this.mcaInputRef = null;
@@ -131,8 +131,8 @@ export default class App extends React.Component<{} | null, State> {
   // }
 
   async componentDidMount() {
-    const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
-    // const artcc_id = 'zbw';
+    // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
+    const artcc_id = 'zbw';
     const sector_id = '37';
     // const now = new Date().getTime();
     // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
@@ -149,7 +149,7 @@ export default class App extends React.Component<{} | null, State> {
       await getBoundaryData(artcc_id)
         .then(response => response.json())
         .then(geo_data => {
-          this.setState({boundary_polygons: geo_data.map(sector_boundary => polygon(sector_boundary.geometry.coordinates))});
+          this.setState({boundary_polygons: geo_data.map((sector_boundary: SectorDataProps) => polygon(sector_boundary.geometry.coordinates))});
         });
     }
     if (!(this.state.reference_fixes.length > 0)) {
@@ -172,7 +172,7 @@ export default class App extends React.Component<{} | null, State> {
     }
   }
 
-  depFilter = (entry) => {
+  depFilter = (entry: EdstEntryProps) => {
     let dep_airport_distance = 0;
     if (entry.dep_info) {
       const pos = [entry.flightplan.lon, entry.flightplan.lat];
@@ -188,7 +188,7 @@ export default class App extends React.Component<{} | null, State> {
   entryFilter = (entry: EdstEntryProps) => {
     const {acl_cid_list, boundary_polygons} = this.state;
     const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
-    const will_enter_airspace = routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos);
+    const will_enter_airspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos) : false;
     return ((entry.minutes_away < 30 || acl_cid_list.has(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
@@ -220,14 +220,15 @@ export default class App extends React.Component<{} | null, State> {
         new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     } else {
-      new_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
+      if (new_entry.route_data) {
+        new_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
+      }
       // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
       if (current_entry.aar_list) {
         new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     }
-    const remaining_route_data = getRemainingRouteData(new_entry.route, new_entry._route_data, pos);
-    completeAssign(new_entry, remaining_route_data);
+    const remaining_route_data = new_entry._route_data ? getRemainingRouteData(new_entry.route, new_entry._route_data, pos) : {};
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
@@ -235,8 +236,7 @@ export default class App extends React.Component<{} | null, State> {
     } else {
       new_entry.pending_removal = null;
     }
-    completeAssign(current_entry, new_entry);
-    return current_entry;
+    return _.merge(current_entry, new_entry, remaining_route_data);
   };
 
   refresh = async () => {
@@ -247,7 +247,7 @@ export default class App extends React.Component<{} | null, State> {
           if (new_data) {
             for (let new_entry of new_data) {
               // yes, this is ugly... gotta find something better
-              edst_data[new_entry.cid] = completeAssign(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
+              edst_data[new_entry.cid] = _.merge(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
               let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
               if (this.depFilter(edst_data[new_entry.cid]) && !dep_deleted_list.has(new_entry.cid)) {
                 if (edst_data[new_entry.cid] === undefined) {
@@ -295,6 +295,9 @@ export default class App extends React.Component<{} | null, State> {
 
   processAar = (entry: EdstEntryProps, aar_list: Array<any>) => {
     const {_route_data: current_route_data, _route: current_route} = entry;
+    if (!current_route_data || !current_route) {
+      return null;
+    }
     return aar_list?.map(aar_data => {
       const {route_fixes, amendment} = aar_data;
       const {fix: tfix, info: tfix_info} = amendment.tfix_details;
@@ -362,7 +365,7 @@ export default class App extends React.Component<{} | null, State> {
     }
   };
 
-  trialPlan = (p) => {
+  trialPlan = (p: PlanDataProps) => {
     let {plan_queue, open_windows} = this.state;
     plan_queue.unshift(p);
     open_windows.add('plans');
@@ -409,7 +412,7 @@ export default class App extends React.Component<{} | null, State> {
       }
     }
     this.setState(({edst_data}) => {
-      return {edst_data: {...edst_data, [cid]: completeAssign(entry, data)}};
+      return {edst_data: {...edst_data, [cid]: _.merge(entry, data)}};
     });
   };
 
@@ -467,7 +470,7 @@ export default class App extends React.Component<{} | null, State> {
       .then(response => response.json())
       .then(async updated_entry => {
         if (updated_entry) {
-          completeAssign(current_entry, this.refreshEntry(updated_entry));
+          current_entry = _.merge(current_entry, this.refreshEntry(updated_entry));
           current_entry.pending_removal = null;
           await getAarData(artcc_id, current_entry.cid)
             .then(response => response.json())
@@ -484,7 +487,7 @@ export default class App extends React.Component<{} | null, State> {
       });
   };
 
-  aircraftSelect = (event: Event, window: string, cid: string, field: string) => {
+  aircraftSelect = (event: any & Event, window: string | null, cid: string, field: string) => {
     let {asel, edst_data, manual_posting} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({menu: null, asel: null});
@@ -549,7 +552,7 @@ export default class App extends React.Component<{} | null, State> {
     this.setState({open_windows: open_windows});
   };
 
-  openMenu = (ref: EventTarget | any, name: string, plan, asel = null) => {
+  openMenu = (ref: EventTarget | any, name: string, plan: boolean = false, asel?: AselProps) => {
     const {x, y, height, width} = ref.getBoundingClientRect();
     let {pos} = this.state;
     switch (name) {
@@ -608,17 +611,20 @@ export default class App extends React.Component<{} | null, State> {
   };
 
   closeMenu = (name: string) => {
-    this.setState((prevState) => {
+    this.setState((prevState: State) => {
       return {pos: {...prevState.pos, [name]: null}, menu: null};
     });
   };
 
-  startDrag = (event: MouseEvent, ref: React.RefObject<any>) => {
+  startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>) => {
     const {pos} = this.state;
     const rel = {x: event.pageX, y: event.pageY};
     const relX = event.pageX - rel.x;
     const relY = event.pageY - rel.y;
     const ppos = pos[ref.current.id];
+    if (!ppos) {
+      return;
+    }
     const style = {
       left: ppos?.x + relX,
       top: ppos?.y + relY,
@@ -643,12 +649,15 @@ export default class App extends React.Component<{} | null, State> {
     });
   };
 
-  draggingHandler = (event: React.MouseEvent) => {
-    if (this.state.dragging) {
-      const {rel, draggingRef, pos} = this.state;
+  draggingHandler = (event: React.MouseEvent<HTMLDivElement>) => {
+    const {rel, draggingRef, pos, dragging} = this.state;
+    if (dragging && rel) {
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
       const ppos = pos[draggingRef.current.id];
+      if (!ppos) {
+        return;
+      }
       this.setState({
         dragPreviewStyle: {
           left: ppos.x + relX,
@@ -662,12 +671,15 @@ export default class App extends React.Component<{} | null, State> {
     }
   };
 
-  stopDrag = (event: React.MouseEvent) => {
-    if (this.state.dragging) {
-      const {rel, draggingRef, pos} = this.state;
+  stopDrag = (event: React.MouseEvent<HTMLDivElement>) => {
+    const {rel, draggingRef, pos, dragging} = this.state;
+    if (dragging && rel) {
       const relX = event.pageX - rel.x;
       const relY = event.pageY - rel.y;
       const ppos = pos[draggingRef.current.id];
+      if (!ppos) {
+        return;
+      }
       pos[draggingRef.current.id] = {x: ppos.x + relX, y: ppos.y + relY};
       this.setState({
         draggingRef: null,
@@ -680,7 +692,7 @@ export default class App extends React.Component<{} | null, State> {
     }
   };
 
-  setSortData = (sort_data) => {
+  setSortData = (sort_data: SortDataProps) => {
     this.setState({sort_data: sort_data});
   };
 
@@ -701,7 +713,7 @@ export default class App extends React.Component<{} | null, State> {
 
   togglePosting = (window: string) => {
     let {manual_posting} = this.state;
-    if (Object.keys(manual_posting).includes(window)) {
+    if (window === 'acl' || window === 'dep') {
       manual_posting[window] = !manual_posting[window];
       this.setState({manual_posting: manual_posting});
     }
@@ -800,25 +812,22 @@ export default class App extends React.Component<{} | null, State> {
               closeWindow: this.closeWindow,
               startDrag: this.startDrag,
               stopDrag: this.stopDrag,
-              setMcaInputRef: (ref) => this.mcaInputRef = ref,
-              setInputFocused: (v) => this.setState({input_focused: v}),
+              dragging: dragging,
+              setMcaInputRef: (ref: React.RefObject<any> | null) => this.mcaInputRef = ref,
+              setInputFocused: (v: boolean) => this.setState({input_focused: v}),
               setMraMessage: this.setMraMessage
             }}>
               <AclContext.Provider value={{
-                cid_list: acl_cid_list,
+                addEntry: (fid: string) => this.addEntry('acl', fid),
                 sort_data: sort_data.acl,
+                cid_list: acl_cid_list,
                 asel: asel?.window === 'acl' ? asel : null,
                 manual_posting: manual_posting.acl,
                 togglePosting: () => this.togglePosting('acl')
               }}>
                 {open_windows.has('acl') && <Acl
-                  addEntry={(s) => this.addEntry('acl', s)}
                   cleanup={this.aclCleanup}
-                  sort_data={sort_data.acl}
                   unmount={this.unmount}
-                  openMenu={this.openMenu}
-                  dragging={dragging}
-                  asel={asel?.window === 'acl' ? asel : null}
                   // z_index={open_windows.indexOf('acl')}
                   closeWindow={() => this.closeWindow('acl')}
                 />}
@@ -828,50 +837,40 @@ export default class App extends React.Component<{} | null, State> {
                 sort_data: sort_data.dep,
                 asel: asel?.window === 'dep' ? asel : null,
                 manual_posting: manual_posting.dep,
+                addEntry: (fid) => this.addEntry('dep', fid),
                 togglePosting: () => this.togglePosting('dep')
               }}>
                 {open_windows.has('dep') && <Dep
-                  addEntry={(s) => this.addEntry('dep', s)}
-                  sort_data={sort_data.dep}
                   unmount={this.unmount}
-                  openMenu={this.openMenu}
-                  dragging={dragging}
                   // z_index={open_windows.indexOf('dep')}
                   closeWindow={() => this.closeWindow('dep')}
                 />}
               </DepContext.Provider>
               {open_windows.has('plans') && plan_queue.length > 0 && <PlansDisplay
                 unmount={this.unmount}
-                openMenu={this.openMenu}
-                dragging={dragging}
                 asel={asel?.window === 'plans' ? asel : null}
                 cleanup={() => this.setState({plan_queue: []})}
                 plan_queue={plan_queue}
-                amendEntry={this.amendEntry}
-                aircraftSelect={this.aircraftSelect}
                 // z_index={open_windows.indexOf('dep')}
                 closeWindow={() => this.closeWindow('plans')}
               />}
-              {open_windows.has('status') && <Status
-                dragging={dragging}
+              {open_windows.has('status') && pos['edst-status'] && <Status
                 startDrag={this.startDrag}
                 pos={pos['edst-status']}
                 // z_index={open_windows.indexOf('status')}
                 closeWindow={() => this.closeWindow('status')}
               />}
-              {open_windows.has('outage') && <Outage
-                dragging={dragging}
+              {open_windows.has('outage') && pos['edst-outage'] && <Outage
                 startDrag={this.startDrag}
                 pos={pos['edst-outage']}
                 // z_index={open_windows.indexOf('status')}
                 closeWindow={() => this.closeWindow('outage')}
               />}
-              {menu?.name === 'plan-menu' && <PlanOptions
+              {menu?.name === 'plan-menu' && pos['plan-menu'] && asel && <PlanOptions
                 deleteEntry={this.deleteEntry}
                 openMenu={this.openMenu}
-                dragging={dragging}
                 asel={asel}
-                data={edst_data[asel?.cid]}
+                entry={edst_data[asel.cid]}
                 amendEntry={this.amendEntry}
                 startDrag={this.startDrag}
                 stopDrag={this.stopDrag}
@@ -880,58 +879,55 @@ export default class App extends React.Component<{} | null, State> {
                 clearAsel={() => this.setState({asel: null})}
                 closeWindow={() => this.closeMenu('plan-menu')}
               />}
-              {menu?.name === 'sort-menu' && <SortMenu
+              {menu?.name === 'sort-menu' && pos['sort-menu'] && <SortMenu
                 ref_id={menu?.ref_id}
                 sort_data={sort_data}
-                dragging={dragging}
                 setSortData={this.setSortData}
-                startDrag={this.startDrag}
-                stopDrag={this.stopDrag}
                 pos={pos['sort-menu']}
                 // z_index={open_windows.indexOf('route-menu')}
                 closeWindow={() => this.closeMenu('sort-menu')}
               />}
-              {menu?.name === 'route-menu' && <RouteMenu
+              {menu?.name === 'route-menu' && pos['route-menu'] && asel && <RouteMenu
+                asel={asel}
                 pos={pos['route-menu']}
                 closeWindow={() => this.closeMenu('route-menu')}
               />}
-              {menu?.name === 'template-menu' && <TemplateMenu
+              {menu?.name === 'template-menu' && pos['template-menu'] && <TemplateMenu
                 pos={pos['template-menu']}
                 closeWindow={() => this.closeMenu('template-menu')}
               />}
-              {menu?.name === 'hold-menu' && <HoldMenu
-                dragging={dragging}
+              {menu?.name === 'hold-menu' && pos['hold-menu'] && asel && <HoldMenu
                 asel={asel}
-                entry={edst_data[asel?.cid]}
+                entry={edst_data[asel.cid]}
                 pos={pos['hold-menu']}
                 closeWindow={() => this.closeMenu('hold-menu')}
               />}
-              {menu?.name === 'cancel-hold-menu' && <CancelHoldMenu
-                dragging={dragging}
+              {menu?.name === 'cancel-hold-menu' && pos['cancel-hold-menu'] && asel && <CancelHoldMenu
                 asel={asel}
-                entry={edst_data[asel?.cid]}
                 pos={pos['cancel-hold-menu']}
                 closeWindow={() => this.closeMenu('cancel-hold-menu')}
               />}
-              {menu?.name === 'prev-route-menu' && <PreviousRouteMenu
-                dragging={dragging}
-                entry={edst_data[asel?.cid]}
+              {menu?.name === 'prev-route-menu' && pos['prev-route-menu'] && asel && <PreviousRouteMenu
+                asel={asel}
                 pos={pos['prev-route-menu']}
                 closeWindow={() => this.closeMenu('prev-route-menu')}
               />}
-              {menu?.name === 'alt-menu' && <AltMenu
+              {menu?.name === 'alt-menu' && pos['alt-menu'] && asel && <AltMenu
+                asel={asel}
                 pos={pos['alt-menu']}
                 closeWindow={() => this.closeMenu('alt-menu')}
               />}
-              {menu?.name === 'speed-menu' && <SpeedMenu
+              {menu?.name === 'speed-menu' && pos['speed-menu'] && asel && <SpeedMenu
+                asel={asel}
                 pos={pos['speed-menu']}
                 closeWindow={() => this.closeMenu('speed-menu')}
               />}
-              {menu?.name === 'heading-menu' && <HeadingMenu
+              {menu?.name === 'heading-menu' && pos['heading-menu'] && asel && <HeadingMenu
+                asel={asel}
                 pos={pos['heading-menu']}
                 closeWindow={() => this.closeMenu('heading-menu')}
               />}
-              {open_windows.has('mca') && <MessageComposeArea
+              {open_windows.has('mca') && pos['edst-mca'] && <MessageComposeArea
                 pos={pos['edst-mca']}
                 startDrag={this.startDrag}
                 aclCleanup={this.aclCleanup}
@@ -941,7 +937,7 @@ export default class App extends React.Component<{} | null, State> {
                 togglePosting={this.togglePosting}
                 closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
               />}
-              {open_windows.has('mra') && <MessageResponseArea
+              {open_windows.has('mra') && pos['edst-mra'] && <MessageResponseArea
                 pos={pos['edst-mra']}
                 startDrag={this.startDrag}
                 msg={mra_msg}

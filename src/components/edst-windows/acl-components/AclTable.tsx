@@ -13,7 +13,7 @@ export function AclTable() {
   const [any_holding, setAnyHolding] = useState(false);
   const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
   const [any_assigned_speed, setAnyAssignedSpeed] = useState(false);
-  const [hidden, setHidden] = useState([]);
+  const [hidden, setHidden] = useState<Array<string>>([]);
   const [alt_mouse_down, setAltMouseDown] = useState(false);
   const {
     edst_data,
@@ -54,7 +54,7 @@ export function AclTable() {
     checkAssignedHdgSpd();
   });
 
-  const toggleHideColumn = (name) => {
+  const toggleHideColumn = (name: string) => {
     let hidden_copy = hidden.slice(0);
     const index = hidden_copy.indexOf(name);
     if (index > -1) {
@@ -81,12 +81,12 @@ export function AclTable() {
     setHidden(hidden_copy);
   }
 
-  const updateVci = (cid) => {
+  const updateVci = (cid: string) => {
     const entry = edst_data[cid];
     if (entry?.acl_status === -1 && manual_posting) {
       updateEntry(cid, {acl_status: 0});
     } else {
-      if (entry?.acl_status < 1) {
+      if (entry.acl_status < 1) {
         updateEntry(cid, {acl_status: 1});
       } else {
         updateEntry(cid, {acl_status: 0});
@@ -94,7 +94,7 @@ export function AclTable() {
     }
   }
 
-  const sortFunc = (u, v) => {
+  const sortFunc = (u: EdstEntryProps, v: EdstEntryProps) => {
     switch (sort_data.name) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
@@ -181,11 +181,11 @@ export function AclTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spa_entry_list?.map(([i, e]: [string, EdstEntryProps]) =>
+      {spa_entry_list?.map(([i, entry]: [string, EdstEntryProps]) =>
         <AclRow
-          key={`acl-table-row-spa-${e.cid}-${i}`}
+          key={`acl-table-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
-          entry={e}
+          entry={entry}
           any_holding={any_holding}
           hidden={hidden}
           alt_mouse_down={alt_mouse_down}
@@ -193,11 +193,11 @@ export function AclTable() {
         />)}
       {spa_entry_list.length > 0 && <div className="body-row separator"/>}
       {Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && ((entry.acl_status > -1) || !manual_posting)))
-        ?.sort(sortFunc))?.map(([i, e]: [string, EdstEntryProps]) =>
+        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryProps]) =>
         <AclRow
-          key={`acl-table-row-ack-${e.cid}-${i}`}
+          key={`acl-table-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
-          entry={e}
+          entry={entry}
           any_holding={any_holding}
           hidden={hidden}
           alt_mouse_down={alt_mouse_down}

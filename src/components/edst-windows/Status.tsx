@@ -1,8 +1,14 @@
-import {useRef} from 'react';
+import React, {FunctionComponent, useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 
-export function Status(props) {
+interface StatusProps {
+  pos: {x: number, y: number};
+  startDrag: (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>) => void;
+  closeWindow: () => void;
+}
+
+export const Status: FunctionComponent<StatusProps> = (props) => {
   const ref = useRef(null);
   const {pos} = props;
 

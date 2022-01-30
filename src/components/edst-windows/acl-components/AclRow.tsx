@@ -1,4 +1,4 @@
-import {FunctionComponent, MouseEventHandler, useContext, useRef, useState} from 'react';
+import React, {FunctionComponent, MouseEventHandler, useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
@@ -32,7 +32,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
   const {entry, hidden, alt_mouse_down, index, any_holding} = props;
   const hold_data = entry.hold_data;
   const now = new Date().getTime();
-  let route = entry._route.replace(/^\.+/, '');
+  let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
   const dest = entry.dest;
   if (route.slice(-dest.length) === dest) {
     route = route.slice(0, -dest.length);
@@ -41,14 +41,14 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
   const [display_scratch_hdg, setDisplayScratchHdg] = useState(false);
   const [display_scratch_spd, setDisplayScratchSpd] = useState(false);
   const [scratchpad, setScratchpad] = useState(entry.free_text ?? '');
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  const current_fix_names = entry._route_data.map(fix => fix.name);
-  const aar_avail = (entry?.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1 && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0));
-  const on_aar = entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0;
+  const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
+  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.on_eligible_aar)));
+  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligible_aar);
 
   const checkAarReroutePending = () => {
-    const current_fix_names = entry._route_data.map(fix => fix.name);
+    const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
     const eligible_aar = entry?._aar_list?.filter((aar) => aar.eligible);
     if (eligible_aar?.length === 1) {
       const aar = eligible_aar[0];
@@ -60,7 +60,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
   };
   const pending_aar = checkAarReroutePending();
 
-  const handleHotboxMouseDown = (event, entry) => {
+  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryProps) => {
     event.preventDefault();
     if (event.button === 0) {
       amendEntry(entry.cid, {scratchpad: scratchpad});
@@ -74,7 +74,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     }
   };
 
-  const handleHoldClick = (event) => {
+  const handleHoldClick = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
         if (!entry.hold_data) {
@@ -91,7 +91,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     }
   };
 
-  const handleRemarksClick = (event) => {
+  const handleRemarksClick = (event: React.MouseEvent) => {
     if (entry.acl_status === -1) {
       updateEntry(entry.cid, {acl_status: 0});
     }
@@ -110,7 +110,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     }
   };
 
-  const handleFidClick: MouseEventHandler = (event) => {
+  const handleFidClick: MouseEventHandler = (event: React.MouseEvent & Event) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -125,7 +125,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     }
   };
 
-  const handleHeadingClick: MouseEventHandler = (event) => {
+  const handleHeadingClick: MouseEventHandler = (event: React.MouseEvent & Event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -145,7 +145,7 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     }
   };
 
-  const handleSpeedClick: MouseEventHandler = (event) => {
+  const handleSpeedClick: MouseEventHandler = (event: React.MouseEvent & Event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -304,7 +304,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
               {entry.dep}
             </span>
             ./.
-              {route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
+              {entry.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
               {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
               {route}{!route.endsWith('.') && route.length > 0 && `.`}
               {pending_aar && !on_aar &&
@@ -324,7 +324,7 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
       <div className="body-col body-col-1"/>
       <div className="body-col body-col-1"/>
       <div className={`inner-row-2 ${entry.acl_highlighted ? 'highlighted' : ''}`}
-           style={{minWidth: Math.max(1200, ref.current?.clientWidth) + 'px'}}
+           style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
       >
         <div className="free-text-row">
           <input

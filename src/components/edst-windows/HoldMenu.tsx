@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef, useState} from 'react';
+import {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {length, lineString} from '@turf/turf';
@@ -7,8 +7,16 @@ import {formatUtcMinutes} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
+import {AselProps, EdstEntryProps} from "../../interfaces";
 
-export function HoldMenu(props) {
+interface HoldMenuProps {
+  asel: AselProps | null;
+  entry: EdstEntryProps | null;
+  pos: { x: number, y: number };
+  closeWindow: () => void;
+}
+
+export const HoldMenu: FunctionComponent<HoldMenuProps> = (props) => {
   const {
     startDrag,
     stopDrag,
@@ -20,29 +28,31 @@ export function HoldMenu(props) {
   const now = new Date();
   const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
 
-  const [hold_fix, setHoldFix] = useState(null);
-  const [leg_length, setLegLength] = useState(null);
-  const [hold_direction, setHoldDirection] = useState(null);
-  const [turns, setTurns] = useState(null);
+  const [hold_fix, setHoldFix] = useState<string | null>(null);
+  const [leg_length, setLegLength] = useState<string | number | null>(null);
+  const [hold_direction, setHoldDirection] = useState<string | null>(null);
+  const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utc_minutes);
-  const [route_data, setRouteData] = useState(null);
+  const [route_data, setRouteData] = useState<Array<any> | null>(null);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
 
   const clearedHold = () => {
-    const hold_data = {
-      hold_fix: hold_fix,
-      leg_length: leg_length,
-      hold_direction: hold_direction,
-      turns: turns,
-      efc: efc
-    };
-    amendEntry(entry.cid, {hold_data: hold_data});
+    if (entry) {
+      const hold_data = {
+        hold_fix: hold_fix,
+        leg_length: leg_length,
+        hold_direction: hold_direction,
+        turns: turns,
+        efc: efc
+      };
+      amendEntry(entry.cid, {hold_data: hold_data});
+    }
     props.closeWindow();
   };
 
   useEffect(() => {
-    const computeCrossingTimes = (route_data) => {
+    const computeCrossingTimes = (route_data?: Array<any>) => {
       const now = new Date();
       const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
       const groundspeed = Number(entry?.flightplan?.ground_speed);
@@ -63,10 +73,10 @@ export function HoldMenu(props) {
     setHoldDirection(entry?.hold_data?.hold_direction ?? 'N');
     setTurns(entry?.hold_data?.turns ?? 'RT');
     setEfc(entry?.hold_data?.efc ?? utc_minutes + 30);
-    setRouteData(route_data);
+    setRouteData(route_data ?? null);
   }, [entry]);
 
-  return (<div
+  return (entry && <div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className="options-menu hold no-select"
@@ -107,8 +117,8 @@ export function HoldMenu(props) {
           {Object.keys(Array(Math.min(route_data?.length || 0, 10))).map(i =>
             <div className="options-row" key={`hold-menu-row-${i}`}>
               {Object.keys(Array(((route_data?.length || 0) / 10 | 0) + 1)).map(j => {
-                const fix_name = route_data[Number(i) + Number(j) * 10]?.name;
-                const minutes_at_fix = route_data[Number(i) + Number(j) * 10]?.minutes_at_fix;
+                const fix_name = route_data?.[Number(i) + Number(j) * 10]?.name;
+                const minutes_at_fix = route_data?.[Number(i) + Number(j) * 10]?.minutes_at_fix;
                 return (fix_name &&
                   <div className={`options-col hold-col-1 hover ${(hold_fix === fix_name) ? 'selected' : ''}`}
                        key={`hold-menu-col-${i}-${j}`}

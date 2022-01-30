@@ -19,10 +19,10 @@ interface MessageComposeAreaProps {
 
 export const MessageComposeArea: FunctionComponent<MessageComposeAreaProps> = (props) => {
     const [command_str, setCommandStr] = useState('');
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState<string | null>(null);
     const [mca_focused, setMcaFocused] = useState(false);
     const ref = useRef(null);
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const {pos, acl_cid_list, dep_cid_list} = props;
     const {
         setMcaInputRef,
@@ -35,7 +35,7 @@ export const MessageComposeArea: FunctionComponent<MessageComposeAreaProps> = (p
 
     useEffect(() => {
         setMcaInputRef(inputRef);
-        inputRef.current.focus();
+        inputRef?.current?.focus();
         return () => setMcaInputRef(null);
         // eslint-disable-next-line
     }, []);
@@ -124,14 +124,14 @@ export const MessageComposeArea: FunctionComponent<MessageComposeAreaProps> = (p
         setCommandStr('');
     }
 
-    const handleChange = (event) => {
+    const handleChange = (event: React.ChangeEvent<any>) => {
         event.preventDefault();
         setCommandStr(event.target.value.toUpperCase());
     }
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: React.KeyboardEvent<any>) => {
         if (event.shiftKey || event.ctrlKey) {
-            inputRef.current.blur();
+            inputRef?.current?.blur();
         }
         switch (event.key) {
             case "Enter":
@@ -167,7 +167,7 @@ export const MessageComposeArea: FunctionComponent<MessageComposeAreaProps> = (p
                         setInputFocused(false);
                         setMcaFocused(false);
                     }}
-                    tabIndex={mca_focused ? -1 : null}
+                    tabIndex={mca_focused ? -1 : undefined}
                     value={command_str}
                     onChange={handleChange}
                     onKeyDownCapture={handleKeyDown}

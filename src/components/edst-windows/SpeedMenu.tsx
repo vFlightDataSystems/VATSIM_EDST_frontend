@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, useContext} from 'react';
+import React, {useState, useEffect, useRef, useContext, FunctionComponent} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
@@ -7,16 +7,17 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
+import {EdstWindowProps} from "../../interfaces";
 
-export function SpeedMenu(props) {
+
+
+export const SpeedMenu: FunctionComponent<EdstWindowProps> = ({asel, pos, ...props}) => {
   const {
     edst_data,
-    asel,
     startDrag,
     stopDrag,
     amendEntry
   } = useContext(EdstContext);
-  const {pos} = props;
   const [focused, setFocused] = useState(false);
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
@@ -32,7 +33,7 @@ export function SpeedMenu(props) {
   }, [asel]);
   const entry = edst_data[asel.cid];
 
-  const handleScroll = (e) => {
+  const handleScroll = (e: React.WheelEvent) => {
     const new_deltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);
     setDeltaY(new_deltaY);
   }

@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext, useRef, useState} from 'react';
+import React, {FunctionComponent, useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
@@ -35,15 +35,15 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
   }
 
   const [scratchpad, setScratchpad] = useState(entry?.free_text ?? '');
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  const current_fix_names = entry._route_data.map(fix => fix.name);
-  const aar_avail = (entry?.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))?.length > 1
-    && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0));
-  const on_aar = entry?._aar_list?.filter((aar) => aar.on_eligible_aar).length > 0;
+  const current_fix_names = entry.route_data.map(fix => fix.name);
+  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))
+    && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar)));
+  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligible_aar);
 
   const checkAarReroutePending = () => {
-    const current_fix_names = entry._route_data.map(fix => fix.name);
+    const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
     const eligible_aar = entry?._aar_list?.filter((aar) => aar.eligible);
     if (eligible_aar?.length === 1) {
       const aar = eligible_aar[0];
@@ -55,7 +55,7 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
   }
   const pending_aar = checkAarReroutePending();
 
-  const handleHotboxMouseDown = (event, entry) => {
+  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryProps) => {
     event.preventDefault();
     if (event.button === 0) {
       amendEntry(entry.cid, {scratchpad: scratchpad});
@@ -69,7 +69,7 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
     }
   }
 
-  const handleFidClick = (event) => {
+  const handleFidClick = (event: React.MouseEvent) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -84,7 +84,7 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
     }
   }
 
-  const isSelected = (cid, field) => {
+  const isSelected = (cid: string, field: string) => {
     return asel?.cid === cid && asel?.field === field;
   }
 
@@ -175,7 +175,7 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
       <div className={`body-col body-col-1 radio`}/>
       <div className="body-col body-col-2"/>
       <div className={`inner-row-2 ${entry.dep_highlighted ? 'highlighted' : ''}`}
-           style={{minWidth: Math.max(1200, ref.current?.clientWidth) + 'px'}}
+           style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
       >
         <div className="free-text-row dep-free-text-row">
           <input

@@ -1,11 +1,13 @@
-import {useContext, useRef, useState,} from 'react';
+import {FunctionComponent, useContext, useRef, useState,} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
+import {EdstWindowProps} from "../../interfaces";
 
-export function CancelHoldMenu(props) {
+export const CancelHoldMenu: FunctionComponent<EdstWindowProps> = (props) => {
   const {
+    edst_data,
     startDrag,
     stopDrag,
     amendEntry,
@@ -13,7 +15,9 @@ export function CancelHoldMenu(props) {
   } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const {pos, entry} = props;
+  const {pos, asel} = props;
+
+  const entry = edst_data[asel.cid];
 
   return (<div
       onMouseEnter={() => setFocused(true)}
