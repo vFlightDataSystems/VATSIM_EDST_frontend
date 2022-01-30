@@ -48,7 +48,7 @@ const defaultPos = {
 const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mra'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'fel', 'cpdlc-hist', 'cpdlc-msg-out'];
 
-const intial_state = {
+const initial_state = {
   reference_fixes: [],
   acl_cid_list: new Set<string>(),
   acl_deleted_list: new Set<string>(),
@@ -121,7 +121,7 @@ export default class App extends React.Component<{} | null, State> {
 
   constructor(props: {}) {
     super(props);
-    this.state = intial_state;
+    this.state = initial_state;
     this.mcaInputRef = null;
     this.outlineRef = React.createRef();
   }
@@ -131,8 +131,8 @@ export default class App extends React.Component<{} | null, State> {
   // }
 
   async componentDidMount() {
-    // const artcc_id = prompt('Choose an ARTCC')?.toLowerCase();
-    const artcc_id = 'zbw';
+    const artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+    // const artcc_id = 'zbw';
     const sector_id = '37';
     // const now = new Date().getTime();
     // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
