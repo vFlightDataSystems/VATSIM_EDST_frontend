@@ -16,9 +16,8 @@ interface PlansDisplayHeaderProps {
   closeWindow: () => void;
 }
 
-export const PlansDisplayHeader: FunctionComponent<PlansDisplayHeaderProps> = (props) => {
+export const PlansDisplayHeader: FunctionComponent<PlansDisplayHeaderProps> = ({focused, asel, plan_data, ...props}) => {
   const {openMenu, amendEntry} = useContext(EdstContext);
-  const {focused, asel, plan_data} = props;
   const interim_disabled = asel ? !Object.keys(plan_data.plan_data ?? {}).includes('altitude') : true;
 
   return (<div>

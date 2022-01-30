@@ -7,23 +7,17 @@ import {formatUtcMinutes} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {AselProps, EdstEntryProps} from "../../interfaces";
+import {EdstWindowProps} from "../../interfaces";
 
-interface HoldMenuProps {
-  asel: AselProps | null;
-  entry: EdstEntryProps | null;
-  pos: { x: number, y: number };
-  closeWindow: () => void;
-}
-
-export const HoldMenu: FunctionComponent<HoldMenuProps> = (props) => {
+export const HoldMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     startDrag,
     stopDrag,
     amendEntry,
-    updateEntry
+    updateEntry,
+    edst_data
   } = useContext(EdstContext);
-  const {pos, entry} = props;
+  const entry = edst_data[asel.cid];
 
   const now = new Date();
   const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -48,7 +42,7 @@ export const HoldMenu: FunctionComponent<HoldMenuProps> = (props) => {
       };
       amendEntry(entry.cid, {hold_data: hold_data});
     }
-    props.closeWindow();
+    closeWindow();
   };
 
   useEffect(() => {
@@ -233,7 +227,7 @@ export const HoldMenu: FunctionComponent<HoldMenuProps> = (props) => {
               onMouseDown={() => {
                 amendEntry(entry.cid, {hold_data: null});
                 updateEntry(entry.cid, {show_hold_info: false});
-                props.closeWindow();
+                closeWindow();
               }}
               title={Tooltips.hold_delete_hold_instr}
             />
@@ -278,12 +272,12 @@ export const HoldMenu: FunctionComponent<HoldMenuProps> = (props) => {
                         onMouseDown={() => {
                           amendEntry(entry?.cid, {hold_data: null});
                           updateEntry(entry?.cid, {show_hold_info: false});
-                          props.closeWindow();
+                          closeWindow();
                         }}
             />
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={closeWindow}/>
           </div>
         </div>
       </div>

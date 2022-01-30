@@ -11,7 +11,7 @@ interface TemplateMenuProps {
   closeWindow: () => void;
 }
 
-export const TemplateMenu: FunctionComponent<TemplateMenuProps> = (props) => {
+export const TemplateMenu: FunctionComponent<TemplateMenuProps> = ({pos, closeWindow}) => {
   const {
     edst_data,
     asel,
@@ -40,7 +40,6 @@ export const TemplateMenu: FunctionComponent<TemplateMenuProps> = (props) => {
   const [rmk_input, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
-  const {pos} = props;
 
   useEffect(() => {
     const dep = asel?.window === 'dep';
@@ -268,7 +267,7 @@ export const TemplateMenu: FunctionComponent<TemplateMenuProps> = (props) => {
             <EdstButton disabled={true} content="Send"/>
           </div>
           <div className="template-col bottom right">
-            <EdstButton content="Exit" onMouseDown={() => props.closeWindow()}/>
+            <EdstButton content="Exit" onMouseDown={() => closeWindow()}/>
           </div>
         </div>
       </div>

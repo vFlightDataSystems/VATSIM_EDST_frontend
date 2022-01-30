@@ -13,6 +13,7 @@ interface EdstContextProps {
   closeMenu: (name: string) => void;
   updateEntry: (cid: string, data: any) => void;
   amendEntry: (cid: string, plan_data: any) => void;
+  addEntry: (window: string | null, fid: string) => void;
   deleteEntry: (window: string, cid: string) => void;
   trialPlan: (p: PlanDataProps) => void;
   aircraftSelect: (event: any & Event, window: string | null, cid: string, field: string) => void;

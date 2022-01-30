@@ -706,7 +706,7 @@ export default class App extends React.Component<{} | null, State> {
     let acl_cid_list_copy = [...acl_cid_list];
     let acl_deleted_list_copy = [...acl_deleted_list];
     const cid_pending_removal_list = acl_cid_list_copy.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
-    acl_cid_list = new Set(acl_cid_list_copy.filter(cid => !cid_pending_removal_list.includes(cid)));
+    acl_cid_list = new Set(_.difference(acl_cid_list_copy, cid_pending_removal_list));
     acl_deleted_list = new Set(acl_deleted_list_copy.concat(cid_pending_removal_list));
     this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
   };
@@ -805,6 +805,7 @@ export default class App extends React.Component<{} | null, State> {
               closeMenu: this.closeMenu,
               updateEntry: this.updateEntry,
               amendEntry: this.amendEntry,
+              addEntry: this.addEntry,
               deleteEntry: this.deleteEntry,
               trialPlan: this.trialPlan,
               aircraftSelect: this.aircraftSelect,
@@ -855,25 +856,17 @@ export default class App extends React.Component<{} | null, State> {
                 closeWindow={() => this.closeWindow('plans')}
               />}
               {open_windows.has('status') && pos['edst-status'] && <Status
-                startDrag={this.startDrag}
                 pos={pos['edst-status']}
                 // z_index={open_windows.indexOf('status')}
                 closeWindow={() => this.closeWindow('status')}
               />}
               {open_windows.has('outage') && pos['edst-outage'] && <Outage
-                startDrag={this.startDrag}
                 pos={pos['edst-outage']}
                 // z_index={open_windows.indexOf('status')}
                 closeWindow={() => this.closeWindow('outage')}
               />}
               {menu?.name === 'plan-menu' && pos['plan-menu'] && asel && <PlanOptions
-                deleteEntry={this.deleteEntry}
-                openMenu={this.openMenu}
                 asel={asel}
-                entry={edst_data[asel.cid]}
-                amendEntry={this.amendEntry}
-                startDrag={this.startDrag}
-                stopDrag={this.stopDrag}
                 pos={pos['plan-menu']}
                 // z_index={open_windows.indexOf('route-menu')}
                 clearAsel={() => this.setState({asel: null})}
@@ -898,7 +891,6 @@ export default class App extends React.Component<{} | null, State> {
               />}
               {menu?.name === 'hold-menu' && pos['hold-menu'] && asel && <HoldMenu
                 asel={asel}
-                entry={edst_data[asel.cid]}
                 pos={pos['hold-menu']}
                 closeWindow={() => this.closeMenu('hold-menu')}
               />}
@@ -929,17 +921,14 @@ export default class App extends React.Component<{} | null, State> {
               />}
               {open_windows.has('mca') && pos['edst-mca'] && <MessageComposeArea
                 pos={pos['edst-mca']}
-                startDrag={this.startDrag}
                 aclCleanup={this.aclCleanup}
-                addEntry={this.addEntry}
+                togglePosting={this.togglePosting}
                 acl_cid_list={acl_cid_list}
                 dep_cid_list={dep_cid_list}
-                togglePosting={this.togglePosting}
                 closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
               />}
               {open_windows.has('mra') && pos['edst-mra'] && <MessageResponseArea
                 pos={pos['edst-mra']}
-                startDrag={this.startDrag}
                 msg={mra_msg}
               />}
             </EdstContext.Provider>

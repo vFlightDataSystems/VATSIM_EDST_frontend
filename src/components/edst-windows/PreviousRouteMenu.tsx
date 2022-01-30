@@ -5,10 +5,9 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowProps} from "../../interfaces";
 
-export const PreviousRouteMenu: FunctionComponent<EdstWindowProps> = (props) => {
+export const PreviousRouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {amendEntry, edst_data, startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
-  const {pos, asel} = props;
   const entry = edst_data[asel.cid];
   useEffect(() => {
     setFocused(false);
@@ -46,12 +45,12 @@ export const PreviousRouteMenu: FunctionComponent<EdstWindowProps> = (props) => 
                             route: entry.previous_route,
                             route_data: entry.previous_route_data
                           });
-                          props.closeWindow();
+                          closeWindow();
                         }}
             />
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={closeWindow}/>
           </div>
         </div>
       </div>

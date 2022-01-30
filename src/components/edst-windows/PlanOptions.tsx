@@ -1,27 +1,23 @@
-import {FunctionComponent, useRef, useState} from 'react';
+import {FunctionComponent, useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {AselProps, EdstEntryProps} from "../../interfaces";
+import {AselProps} from "../../interfaces";
+import {EdstContext} from "../../contexts/contexts";
 
 interface PlanOptionsProps {
-  deleteEntry: Function;
-  openMenu: Function;
-  asel: AselProps | null;
-  entry: EdstEntryProps;
-  amendEntry: Function;
-  startDrag: Function;
-  stopDrag: Function;
+  asel: AselProps;
   pos: { x: number, y: number };
-  clearAsel: Function;
-  closeWindow: Function;
+  clearAsel: () => void;
+  closeWindow: () => void;
 }
 
-export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
+export const PlanOptions: FunctionComponent<PlanOptionsProps> = ({asel, pos, ...props}) => {
+  const {startDrag, stopDrag, deleteEntry, openMenu, edst_data} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const {pos, entry, asel} = props;
-  const dep = asel?.window === 'dep';
+  const entry = edst_data[asel.cid];
+  const dep = asel.window === 'dep';
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -32,18 +28,18 @@ export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => props.startDrag(event, ref)}
-           onMouseUp={(event) => props.stopDrag(event)}
+           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseUp={(event) => stopDrag(event)}
       >
         Plan Options Menu
       </div>
       <div className="options-body">
         <div className="options-row fid">
-          {entry?.cid} {entry?.callsign}
+          {entry.cid} {entry.callsign}
         </div>
         <div className="options-row">
           <div className="options-col hover"
-               onMouseDown={() => props.openMenu(ref.current, 'alt-menu', true)}
+               onMouseDown={() => openMenu(ref.current, 'alt-menu', true)}
           >
             Altitude...
           </div>
@@ -57,7 +53,7 @@ export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
         </div>}
         <div className="options-row">
           <div className="options-col hover"
-               onMouseDown={() => props.openMenu(ref.current, 'route-menu', true)}
+               onMouseDown={() => openMenu(ref.current, 'route-menu', true)}
           >
             Route...
           </div>
@@ -66,7 +62,7 @@ export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
           <div className="options-col hover"
             // @ts-ignore
                disabled={entry?.previous_route === undefined}
-               onMouseDown={() => props.openMenu(ref.current, 'prev-route-menu', true)}
+               onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
           >
             Previous Route
           </div>
@@ -98,7 +94,7 @@ export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
         <div className="options-row">
           <div className="options-col hover"
                onMouseDown={() => {
-                 props.deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
+                 deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
                  props.clearAsel();
                  props.closeWindow();
                }}
@@ -108,7 +104,7 @@ export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={(e) => props.closeWindow()}/>
+            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
           </div>
         </div>
       </div>

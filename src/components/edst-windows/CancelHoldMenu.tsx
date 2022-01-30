@@ -5,7 +5,7 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowProps} from "../../interfaces";
 
-export const CancelHoldMenu: FunctionComponent<EdstWindowProps> = (props) => {
+export const CancelHoldMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     startDrag,
@@ -15,7 +15,6 @@ export const CancelHoldMenu: FunctionComponent<EdstWindowProps> = (props) => {
   } = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const {pos, asel} = props;
 
   const entry = edst_data[asel.cid];
 
@@ -42,11 +41,11 @@ export const CancelHoldMenu: FunctionComponent<EdstWindowProps> = (props) => {
             <EdstButton content="Cancel Hold" onMouseDown={() => {
               amendEntry(entry.cid, {hold_data: null});
               updateEntry(entry.cid, {show_hold_info: false});
-              props.closeWindow();
+              closeWindow();
             }}/>
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={closeWindow}/>
           </div>
         </div>
       </div>
