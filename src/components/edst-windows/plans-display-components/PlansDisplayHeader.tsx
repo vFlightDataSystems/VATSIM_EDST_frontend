@@ -4,8 +4,20 @@ import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
+import {FunctionComponent, useContext} from "react";
+import {AselProps} from "../../../interfaces";
+import {EdstContext} from "../../../contexts/contexts";
 
-export const PlansDisplayHeader = (props) => {
+interface PlansDisplayHeaderProps {
+  cleanup: () => void;
+  plan_data: any;
+  asel: AselProps | null;
+  focused: boolean;
+  closeWindow: () => void;
+}
+
+export const PlansDisplayHeader: FunctionComponent<PlansDisplayHeaderProps> = (props) => {
+  const {openMenu, amendEntry} = useContext(EdstContext);
   const {focused, asel, plan_data} = props;
   const interim_disabled = asel ? !Object.keys(plan_data.plan_data ?? {}).includes('altitude') : true;
 
@@ -17,26 +29,28 @@ export const PlansDisplayHeader = (props) => {
     />
     <div className="no-select">
       <EdstWindowHeaderButton disabled={asel === null}
-                              onMouseDown={(e) => props.openMenu(e.target, 'plan-menu')}
+                              onMouseDown={(e: React.MouseEvent) => openMenu(e.target, 'plan-menu')}
                               content="Plan Options..."
                               title={Tooltips.plan_options}
       />
       <EdstWindowHeaderButton disabled={true} content="Show"/>
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton disabled={asel === null} content="Amend"
-                              onMouseDown={() => props.amendEntry(asel.cid, plan_data.plan_data)}
+                              onMouseDown={() => asel && amendEntry(asel.cid, plan_data.plan_data)}
                               title={Tooltips.plans_amend}
       />
       <EdstWindowHeaderButton disabled={interim_disabled} content="Interim"
                               onMouseDown={() => {
-                                const interim_plan_data = {interim: plan_data.plan_data.altitude};
-                                props.amendEntry(asel.cid, interim_plan_data);
+                                if (asel) {
+                                  const interim_plan_data = {interim: plan_data.plan_data.altitude};
+                                  amendEntry(asel.cid, interim_plan_data);
+                                }
                               }}
                               title={Tooltips.plans_interim}
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={(e) => props.openMenu(e.currentTarget, 'template-menu')}
+        onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'template-menu')}
         content="Template..."
         title={Tooltips.template}
       />
@@ -51,4 +65,4 @@ export const PlansDisplayHeader = (props) => {
       />
     </div>
   </div>);
-}
+};

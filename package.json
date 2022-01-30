@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rm -rf edst_testing && mv build edst_testing",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

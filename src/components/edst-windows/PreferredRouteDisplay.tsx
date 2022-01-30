@@ -1,17 +1,17 @@
-import {useEffect, useState} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstPreferredRouteProps} from "../../interfaces";
 
-export function PreferredRouteDisplay(props) {
+export const PreferredRouteDisplay: FunctionComponent<{routes: Array<any>, clearedReroute: (reroute_data: any) => void}> = (props) => {
   const [eligible_only, setEligibleOnly] = useState(false);
   const [deltaY, setDeltaY] = useState(0);
 
   useEffect(() => {
     setDeltaY(0);
-  }, [props.data]);
+  }, [props.routes]);
   const {routes} = props;
 
   return (<div>

@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef, useContext} from 'react';
+import React, {useState, useEffect, useRef, useContext, FunctionComponent} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
@@ -7,16 +7,15 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
+import {EdstWindowProps} from "../../interfaces";
 
-export function HeadingMenu(props) {
+export const HeadingMenu: FunctionComponent<EdstWindowProps> = ({asel, pos, ...props} ) => {
   const {
     edst_data,
-    asel,
     startDrag,
     stopDrag,
     amendEntry
   } = useContext(EdstContext);
-
   let entry = edst_data[asel.cid];
 
   const [focused, setFocused] = useState(false);
@@ -30,9 +29,8 @@ export function HeadingMenu(props) {
     setAmend(true);
   }, [asel]);
   const ref = useRef(null);
-  const {pos} = props;
 
-  const handleMouseDown = (event, value: number, direction = null) => {
+  const handleMouseDown = (event: React.MouseEvent, value: number, direction: string | null = null) => {
     const value_str = direction === null ? `${amend ? 'H' : ''}${value}`
       : `${value}${direction}`;
 

@@ -1,11 +1,22 @@
-import {useRef, useState} from 'react';
+import {FunctionComponent, useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
+import {SortDataProps} from "../../interfaces";
+import {EdstContext} from "../../contexts/contexts";
 
-export function SortMenu(props) {
+interface SortMenuProps {
+    ref_id: string | null;
+sort_data: SortDataProps;
+setSortData: (sort_data: SortDataProps) => void;
+pos: {x: number, y: number};
+closeWindow: () => void;
+}
+
+export const SortMenu: FunctionComponent<SortMenuProps> = (props) => {
+    const {startDrag, stopDrag} = useContext(EdstContext);
     const [focused, setFocused] = useState(false);
     const [sort_data, setSortData] = useState(props.sort_data);
     const ref = useRef(null);
@@ -24,8 +35,8 @@ export function SortMenu(props) {
             style={{left: pos.x, top: pos.y}}
         >
             <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-                 onMouseDown={(event) => props.startDrag(event, ref)}
-                 onMouseUp={(event) => props.stopDrag(event)}
+                 onMouseDown={(event) => startDrag(event, ref)}
+                 onMouseUp={(event) => stopDrag(event)}
             >
                 Sort Menu
             </div>
@@ -38,7 +49,7 @@ export function SortMenu(props) {
                                }}
                                title={Tooltips.sort_acl_sector_non_sector}
                   >
-                    <div className={`box ${selected?.sector === true ? 'selected' : ''}`}/>
+                    <div className={`box ${selected.sector === true ? 'selected' : ''}`}/>
                     Sector/Non-Sector
                   </EdstTooltip>
                 </div>}

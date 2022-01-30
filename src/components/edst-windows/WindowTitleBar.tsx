@@ -1,6 +1,7 @@
 import '../../css/windows/titlebar-styles.scss';
+import {FunctionComponent} from "react";
 
-export function WindowTitleBar(props) {
+export const WindowTitleBar: FunctionComponent<{ focused: boolean, closeWindow: () => void, text: Array<string> }> = (props) => {
   const {focused, text} = props;
   return (<div className="edst-window-title-bar no-select">
     <div className="edst-window-title-bar-left">
@@ -24,4 +25,4 @@ export function WindowTitleBar(props) {
       </button>
     </div>
   </div>);
-}
+};

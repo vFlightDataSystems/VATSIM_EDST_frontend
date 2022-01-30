@@ -1,9 +1,16 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, FunctionComponent, useContext} from 'react';
 import '../../css/windows/dep-styles.scss';
 import {DepHeader} from "./dep-components/DepHeader";
 import {DepTable} from "./dep-components/DepTable";
+import {EdstContext} from "../../contexts/contexts";
 
-export function Dep(props) {
+interface DepProps {
+  unmount: () => void;
+  closeWindow: () => void;
+}
+
+export const Dep: FunctionComponent<DepProps> = (props) => {
+  const {dragging} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
@@ -12,15 +19,11 @@ export function Dep(props) {
   }, []);
 
   return (<div
-    className={`dep ${props.dragging ? 'dragging' : ''}`}
+    className={`dep ${dragging ? 'dragging' : ''}`}
     onMouseEnter={() => setFocused(true)}
     onMouseLeave={() => setFocused(false)}
   >
     <DepHeader
-      addEntry={props.addEntry}
-      sort_data={props.sort_data}
-      openMenu={props.openMenu}
-      asel={props.asel}
       focused={focused}
       closeWindow={props.closeWindow}
     />

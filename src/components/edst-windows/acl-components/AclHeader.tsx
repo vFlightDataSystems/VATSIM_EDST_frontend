@@ -1,28 +1,23 @@
-import {FunctionComponent, useContext, useState} from 'react';
+import React, {FunctionComponent, useContext, useState} from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
-import {AselProps} from "../../../interfaces";
 
 interface AclHeaderProps {
-  addEntry: Function;
-  sort_data: { sector: boolean, name: string };
-  openMenu: Function;
-  asel: AselProps;
   focused: boolean;
-  cleanup: Function;
-  closeWindow: Function;
+  cleanup: () => void;
+  closeWindow: () => void;
 }
 
 export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
-  const {setInputFocused} = useContext(EdstContext)
-  const {manual_posting, togglePosting} = useContext(AclContext);
+  const {setInputFocused, asel, openMenu} = useContext(EdstContext);
+  const {manual_posting, togglePosting, sort_data, addEntry} = useContext(AclContext);
   const [search_str, setSearchString] = useState('');
-  const {focused, asel, sort_data} = props;
-  const handleKeyDown = event => {
+  const {focused} = props;
+  const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      props.addEntry(search_str);
+      addEntry(search_str);
       setSearchString('');
     }
   };
@@ -36,13 +31,13 @@ export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
     <div className="no-select">
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e) => props.openMenu(e.currentTarget, 'plan-menu')}
+        onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'plan-menu')}
         content="Plan Options..."
         title={Tooltips.plan_options}
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e) => props.openMenu(e.currentTarget, 'hold-menu')}
+        onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'hold-menu')}
         content="Hold..."
         title={Tooltips.hold}
       />
@@ -50,8 +45,8 @@ export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton
         id="acl-sort-button"
-        onMouseDown={(e) => {
-          props.openMenu(e.currentTarget, 'sort-menu')
+        onMouseDown={(e: React.KeyboardEvent) => {
+          openMenu(e.currentTarget, 'sort-menu');
         }}
         content="Sort..."
         title={Tooltips.sort}
@@ -63,7 +58,7 @@ export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
         title={Tooltips.posting_mode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e) => props.openMenu(e.currentTarget, 'template-menu')}
+        onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'template-menu')}
         content="Template..."
         title={Tooltips.template}
       />
@@ -86,4 +81,4 @@ export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
       </div>
     </div>
   </div>);
-}
+};

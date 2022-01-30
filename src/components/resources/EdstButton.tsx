@@ -1,6 +1,6 @@
 import '../../css/resources/button.scss';
 import {EdstTooltip} from './EdstTooltip';
-import {FunctionComponent, MouseEventHandler} from "react";
+import React, {FunctionComponent} from "react";
 
 interface EdstButtonProps {
   disabled?: boolean;
@@ -9,7 +9,7 @@ interface EdstButtonProps {
   content?: string;
   id?: string;
   title?: string;
-  onMouseDown?: MouseEventHandler<any>;
+  onMouseDown?: (event: React.MouseEvent) => void;
 }
 
 export const EdstButton: FunctionComponent<EdstButtonProps> = ({onMouseDown, className, id, ...props}) => {

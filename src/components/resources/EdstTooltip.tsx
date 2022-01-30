@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {TooltipContext} from "../../contexts/contexts";
 import '../../css/resources/tooltip.scss';
+import {FunctionComponent} from "react";
 
-function TooltipContent(props) {
+const TooltipContent: FunctionComponent<{content: any}> = (props) => {
   return (<div className="tooltip-content" tabIndex={999}>
     {props.content}
   </div>);

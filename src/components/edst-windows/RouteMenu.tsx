@@ -1,20 +1,20 @@
-import {useContext, useEffect, useRef, useState} from 'react';
+import React, {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
 import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
-// @ts-ignore
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
+import {EdstWindowProps} from "../../interfaces";
 
-export function RouteMenu(props) {
+
+export const RouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     openMenu,
-    asel,
     trialPlan,
     amendEntry,
     startDrag,
@@ -22,20 +22,20 @@ export function RouteMenu(props) {
     setInputFocused
   } = useContext(EdstContext);
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState(edst_data?.[asel?.cid]);
-  const current_route_fixes = entry?._route_data.map(fix => fix.name);
+  const [entry, setEntry] = useState(edst_data[asel.cid]);
+  const current_route_fixes = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
   const [route_input, setRouteInput] = useState(dep ? entry.dep + route : route);
   const [trial_plan, setTrialPlan] = useState(!dep);
-  const routes = (dep ? entry.routes : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
+  const routes = (dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({append_oplus: false, append_star: false});
   const [frd, setFrd] = useState(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
   const {append_oplus, append_star} = append;
 
   const ref = useRef(null);
-  const {pos} = props;
+
 
   useEffect(() => {
     const entry = edst_data?.[asel?.cid];
@@ -49,9 +49,9 @@ export function RouteMenu(props) {
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
   }, [asel, edst_data]);
 
-  const clearedReroute = (reroute_data) => {
+  const clearedReroute = (reroute_data: any) => {
     let plan_data;
-    const dest = entry.dest
+    const dest = entry.dest;
     if (!reroute_data.aar) {
       plan_data = {route: reroute_data.route, route_data: reroute_data.route_data};
     } else {
@@ -73,54 +73,56 @@ export function RouteMenu(props) {
     } else {
       amendEntry(entry.cid, plan_data);
     }
-    props.closeWindow();
-  }
+    closeWindow();
+  };
 
-  const clearedToFix = (cleared_fix_name) => {
+  const clearedToFix = (cleared_fix_name: string) => {
     let {_route: new_route, _route_data, dest} = entry;
-    let fix_names = _route_data.map(e => e.name);
-    const index = fix_names.indexOf(cleared_fix_name);
-    for (let name of fix_names.slice(0, index + 1).reverse()) {
-      if (new_route.includes(name)) {
-        new_route = new_route.slice(new_route.indexOf(name) + name.length);
-        if (!Number(new_route[0])) {
-          new_route = `..${cleared_fix_name}` + new_route;
-        } else {
-          new_route = `..${cleared_fix_name}.${name}${new_route}`;
+    if (new_route && _route_data) {
+      let fix_names = _route_data.map(e => e.name);
+      const index = fix_names?.indexOf(cleared_fix_name);
+      for (let name of fix_names.slice(0, index + 1).reverse()) {
+        if (new_route.includes(name)) {
+          new_route = new_route.slice(new_route.indexOf(name) + name.length);
+          if (!Number(new_route[0])) {
+            new_route = `..${cleared_fix_name}` + new_route;
+          } else {
+            new_route = `..${cleared_fix_name}.${name}${new_route}`;
+          }
+          break;
         }
-        break;
+      }
+      // new_route = `..${fix}` + new_route;
+      if (new_route.slice(-dest.length) === dest) {
+        new_route = new_route.slice(0, -dest.length);
+      }
+      // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
+      copy(`${!dep ? frd : ''}${new_route}`.replace(/\.+$/, ''));
+      const plan_data = {
+        route: new_route,
+        route_data: _route_data.slice(index),
+        cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}
+      };
+      if (trial_plan) {
+        trialPlan({
+          cid: entry.cid,
+          callsign: entry.callsign,
+          plan_data: plan_data,
+          msg: `AM ${entry.cid} RTE ${!dep && plan_data.cleared_direct.frd}${new_route}${dest}`
+        });
+      } else {
+        amendEntry(entry.cid, plan_data);
       }
     }
-    // new_route = `..${fix}` + new_route;
-    if (new_route.slice(-dest.length) === dest) {
-      new_route = new_route.slice(0, -dest.length);
-    }
-    // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
-    copy(`${!dep ? frd : ''}${new_route}`.replace(/\.+$/, ''));
-    const plan_data = {
-      route: new_route,
-      route_data: _route_data.slice(index),
-      cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}
-    };
-    if (trial_plan) {
-      trialPlan({
-        cid: entry.cid,
-        callsign: entry.callsign,
-        plan_data: plan_data,
-        msg: `AM ${entry.cid} RTE ${!dep && plan_data.cleared_direct.frd}${new_route}${dest}`
-      });
-    } else {
-      amendEntry(entry.cid, plan_data);
-    }
-    props.closeWindow();
-  }
+    closeWindow();
+  };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     setRouteInput(event.target.value.toUpperCase());
-  }
+  };
 
-  const handleInputKeyDown = (event) => {
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       copy(`${!dep ? frd : ''}${route}`.replace(/\.+$/, ''));
       const plan_data = {route: route};
@@ -134,9 +136,9 @@ export function RouteMenu(props) {
       } else {
         amendEntry(entry.cid, plan_data);
       }
-      props.closeWindow();
+      closeWindow();
     }
-  }
+  };
 
   const route_data = dep ? entry.route_data : entry?._route_data;
 
@@ -230,9 +232,9 @@ export function RouteMenu(props) {
           </div>
         </div>
         {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
-                                                                                key={`route-menu-row-${i}`}>
+                                                                                  key={`route-menu-row-${i}`}>
           {[...Array(((route_data?.length ?? 0) / 10 | 0) + 1).keys()].map((j) => {
-            const fix_name = route_data[Number(i) + Number(j) * 10]?.name;
+            const fix_name = route_data?.[Number(i) + Number(j) * 10]?.name;
             return (fix_name && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                              content={fix_name}
                                              onMouseDown={() => clearedToFix(fix_name)}
@@ -252,10 +254,10 @@ export function RouteMenu(props) {
             <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.route_menu_tfm_reroute}/>
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={closeWindow}/>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};

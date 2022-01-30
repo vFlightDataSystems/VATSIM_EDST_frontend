@@ -1,12 +1,26 @@
-import {useRef, useState} from 'react';
+import {FunctionComponent, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
+import {AselProps, EdstEntryProps} from "../../interfaces";
 
-export function PlanOptions(props) {
+interface PlanOptionsProps {
+  deleteEntry: Function;
+  openMenu: Function;
+  asel: AselProps | null;
+  entry: EdstEntryProps;
+  amendEntry: Function;
+  startDrag: Function;
+  stopDrag: Function;
+  pos: { x: number, y: number };
+  clearAsel: Function;
+  closeWindow: Function;
+}
+
+export const PlanOptions: FunctionComponent<PlanOptionsProps> = (props) => {
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const {pos, data, asel} = props;
+  const {pos, entry, asel} = props;
   const dep = asel?.window === 'dep';
 
   return (<div
@@ -25,7 +39,7 @@ export function PlanOptions(props) {
       </div>
       <div className="options-body">
         <div className="options-row fid">
-          {data?.cid} {data?.callsign}
+          {entry?.cid} {entry?.callsign}
         </div>
         <div className="options-row">
           <div className="options-col hover"
@@ -51,7 +65,7 @@ export function PlanOptions(props) {
         <div className="options-row">
           <div className="options-col hover"
             // @ts-ignore
-               disabled={data?.previous_route === undefined}
+               disabled={entry?.previous_route === undefined}
                onMouseDown={() => props.openMenu(ref.current, 'prev-route-menu', true)}
           >
             Previous Route
@@ -94,10 +108,10 @@ export function PlanOptions(props) {
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={(e) => props.closeWindow()}/>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};

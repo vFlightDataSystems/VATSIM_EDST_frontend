@@ -1,8 +1,14 @@
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
-import {useRef} from "react";
+import React, {FunctionComponent, useRef} from "react";
 
-export function Outage(props) {
+interface OutageProps {
+  pos: {x: number, y: number};
+  startDrag: (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>) => void;
+  closeWindow: () => void;
+}
+
+export const Outage: FunctionComponent<OutageProps> = (props) => {
   const ref = useRef(null);
   const {pos} = props;
 
