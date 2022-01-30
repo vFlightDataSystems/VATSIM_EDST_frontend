@@ -5,14 +5,13 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstPreferredRouteProps} from "../../interfaces";
 
-export const PreferredRouteDisplay: FunctionComponent<{routes: Array<any>, clearedReroute: (reroute_data: any) => void}> = (props) => {
+export const PreferredRouteDisplay: FunctionComponent<{routes: Array<any>, clearedReroute: (reroute_data: any) => void}> = ({routes, clearedReroute}) => {
   const [eligible_only, setEligibleOnly] = useState(false);
   const [deltaY, setDeltaY] = useState(0);
 
   useEffect(() => {
     setDeltaY(0);
-  }, [props.routes]);
-  const {routes} = props;
+  }, [routes]);
 
   return (<div>
       <div className="options-row route-row bottom-border"/>
@@ -39,7 +38,7 @@ export const PreferredRouteDisplay: FunctionComponent<{routes: Array<any>, clear
           return r && (!eligible_only || r?.eligible) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
               <div className="options-col prefroute-col small hover"
-                   onMouseDown={() => props.clearedReroute(r)}
+                   onMouseDown={() => clearedReroute(r)}
               >
                 {r.route ?? r.aar_amendment_route_string}{r.dest}
               </div>

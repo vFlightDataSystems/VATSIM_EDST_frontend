@@ -14,7 +14,7 @@ interface PlansDisplayProps {
   closeWindow: () => void;
 }
 
-export const PlansDisplay: FunctionComponent<PlansDisplayProps> = (props) => {
+export const PlansDisplay: FunctionComponent<PlansDisplayProps> = ({plan_queue, asel, ...props}) => {
   const {dragging} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const [selected_msg_index, setSelectedMsgIndex] = useState<string | null>(null);
@@ -23,7 +23,6 @@ export const PlansDisplay: FunctionComponent<PlansDisplayProps> = (props) => {
     return () => unmount();
     // eslint-disable-next-line
   }, []);
-  const {plan_queue} = props;
 
   return (<div
     className={`plans-display ${dragging ? 'dragging' : ''}`}
@@ -35,7 +34,7 @@ export const PlansDisplay: FunctionComponent<PlansDisplayProps> = (props) => {
       <PlansDisplayHeader
         cleanup={props.cleanup}
         plan_data={selected_msg_index ? plan_queue[Number(selected_msg_index)] : null}
-        asel={props.asel}
+        asel={asel}
         focused={focused}
         closeWindow={props.closeWindow}
       />
@@ -43,7 +42,7 @@ export const PlansDisplay: FunctionComponent<PlansDisplayProps> = (props) => {
         messageSelect={(i: string) => setSelectedMsgIndex(i)}
         selected_msg={selected_msg_index}
         plan_queue={plan_queue}
-        asel={props.asel}
+        asel={asel}
       />
     </div>
   </div>);

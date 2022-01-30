@@ -17,7 +17,7 @@ interface DepRowProps {
   updateStatus: Function;
 }
 
-export const DepRow: FunctionComponent<DepRowProps> = (props) => {
+export const DepRow: FunctionComponent<DepRowProps> = ({entry, hidden, index, updateStatus}) => {
   const {
     aircraftSelect,
     updateEntry,
@@ -26,7 +26,6 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
     setInputFocused
   } = useContext(EdstContext);
   const {asel} = useContext(DepContext);
-  const {entry, hidden, index} = props;
   const now = new Date().getTime();
   let route = entry.route;
   const dest = entry.dest;
@@ -94,7 +93,7 @@ export const DepRow: FunctionComponent<DepRowProps> = (props) => {
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <EdstTooltip title={Tooltips.dep_checkmark_box}>
         <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
-             onMouseDown={() => props.updateStatus(entry.cid)}
+             onMouseDown={() => updateStatus(entry.cid)}
         >
           {entry.dep_status === -1 && 'N'}{entry.dep_status === 1 && COMPLETED_SYMBOL}
         </div>

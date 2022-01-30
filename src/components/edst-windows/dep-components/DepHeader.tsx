@@ -10,11 +10,10 @@ interface DepHeaderProps {
   closeWindow: () => void;
 }
 
-export const DepHeader: FunctionComponent<DepHeaderProps> = (props) => {
+export const DepHeader: FunctionComponent<DepHeaderProps> = ({focused, closeWindow}) => {
   const {setInputFocused, openMenu} = useContext(EdstContext);
   const {manual_posting, togglePosting, sort_data, addEntry, asel} = useContext(DepContext);
   const [search_str, setSearchString] = useState('');
-  const {focused} = props;
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       addEntry(search_str);
@@ -25,7 +24,7 @@ export const DepHeader: FunctionComponent<DepHeaderProps> = (props) => {
   return (<div className="no-select">
     <WindowTitleBar
       focused={focused}
-      closeWindow={props.closeWindow}
+      closeWindow={closeWindow}
       text={['Departure List', `${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
     />
     <div>

@@ -20,7 +20,7 @@ interface AclRowProps {
   updateVci: Function;
 }
 
-export const AclRow: FunctionComponent<AclRowProps> = (props) => {
+export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse_down, index, any_holding, ...props}) => {
   const {
     aircraftSelect,
     updateEntry,
@@ -29,7 +29,6 @@ export const AclRow: FunctionComponent<AclRowProps> = (props) => {
     setInputFocused
   } = useContext(EdstContext);
   const {asel} = useContext(AclContext);
-  const {entry, hidden, alt_mouse_down, index, any_holding} = props;
   const hold_data = entry.hold_data;
   const now = new Date().getTime();
   let route = entry._route?.replace(/^\.+/, '') ?? entry.route;

@@ -1,16 +1,16 @@
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
-import React, {FunctionComponent, useRef} from "react";
+import React, {FunctionComponent, useContext, useRef} from "react";
+import {EdstContext} from "../../contexts/contexts";
 
 interface OutageProps {
   pos: {x: number, y: number};
-  startDrag: (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>) => void;
   closeWindow: () => void;
 }
 
-export const Outage: FunctionComponent<OutageProps> = (props) => {
+export const Outage: FunctionComponent<OutageProps> = ({pos, closeWindow}) => {
+  const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
-  const {pos} = props;
 
   return (<div className="floating-window outage-window"
                ref={ref}
@@ -22,11 +22,11 @@ export const Outage: FunctionComponent<OutageProps> = (props) => {
           M
         </div>
         <div className="floating-window-header-middle"
-             onMouseDown={(event) => props.startDrag(event, ref)}
+             onMouseDown={(event) => startDrag(event, ref)}
         >
           OUTAGE
         </div>
-        <div className="floating-window-header-right" onMouseDown={props.closeWindow}>
+        <div className="floating-window-header-right" onMouseDown={closeWindow}>
           <div className="floating-window-header-block-8-2"/>
         </div>
       </div>
