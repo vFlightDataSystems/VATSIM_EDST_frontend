@@ -229,9 +229,7 @@ export default class App extends React.Component<{} | null, State> {
       }
     }
     if (new_entry._route_data) {
-      const {_route, _route_data} = getRemainingRouteData(new_entry.route, new_entry._route_data.slice(0), pos);
-      new_entry._route = _route;
-      new_entry._route_data = _route_data;
+      _.assign(new_entry, getRemainingRouteData(new_entry.route, new_entry._route_data.slice(0), pos));
     }
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
@@ -240,7 +238,7 @@ export default class App extends React.Component<{} | null, State> {
     } else {
       new_entry.pending_removal = null;
     }
-    return _.merge(current_entry, new_entry);
+    return _.assign(current_entry, new_entry);
   };
 
   refresh = async () => {
@@ -251,7 +249,7 @@ export default class App extends React.Component<{} | null, State> {
           if (new_data) {
             for (let new_entry of new_data) {
               // yes, this is ugly... gotta find something better
-              edst_data[new_entry.cid] = _.merge(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
+              edst_data[new_entry.cid] = _.assign(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
               let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
               if (this.depFilter(edst_data[new_entry.cid]) && !dep_deleted_list.has(new_entry.cid)) {
                 if (edst_data[new_entry.cid] === undefined) {
@@ -416,7 +414,7 @@ export default class App extends React.Component<{} | null, State> {
       }
     }
     this.setState(({edst_data}) => {
-      return {edst_data: {...edst_data, [cid]: _.merge(entry, data)}};
+      return {edst_data: {...edst_data, [cid]: _.assign(entry, data)}};
     });
   };
 
@@ -474,7 +472,7 @@ export default class App extends React.Component<{} | null, State> {
       .then(response => response.json())
       .then(async updated_entry => {
         if (updated_entry) {
-          current_entry = _.merge(current_entry, this.refreshEntry(updated_entry));
+          _.assign(current_entry, this.refreshEntry(updated_entry));
           current_entry.pending_removal = null;
           await getAarData(artcc_id, current_entry.cid)
             .then(response => response.json())
