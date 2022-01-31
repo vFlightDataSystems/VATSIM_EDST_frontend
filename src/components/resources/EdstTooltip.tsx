@@ -26,7 +26,6 @@ export const EdstTooltip: React.FunctionComponent<EdstTooltipProps> = ({title, c
   return (<span
     {...props}
     onMouseDown={(e) => {
-      e.preventDefault();
       onMouseDown && onMouseDown(e);
     }}
     onMouseEnter={(e) => e.shiftKey && setTooltipEnabled(true)}
