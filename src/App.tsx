@@ -207,7 +207,7 @@ export default class App extends React.Component<{} | null, State> {
     if (new_entry.dest_info && !route_fix_names.includes(dest)) {
       new_entry.route_data.push({
         name: new_entry.dest_info.icao,
-        pos: [new_entry.dest_info.lon, new_entry.dest_info.lat]
+        pos: [Number(new_entry.dest_info.lon), Number(new_entry.dest_info.lat)]
       });
     }
     if (!(new_entry.route.slice(-dest.length) === dest)) {
@@ -228,7 +228,11 @@ export default class App extends React.Component<{} | null, State> {
         new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
       }
     }
-    const remaining_route_data = new_entry._route_data ? getRemainingRouteData(new_entry.route, new_entry._route_data, pos) : {};
+    if (new_entry._route_data) {
+      const {_route, _route_data} = getRemainingRouteData(new_entry.route, new_entry._route_data.slice(0), pos);
+      new_entry._route = _route;
+      new_entry._route_data = _route_data;
+    }
     if (new_entry.update_time === current_entry.update_time
       || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
@@ -236,7 +240,7 @@ export default class App extends React.Component<{} | null, State> {
     } else {
       new_entry.pending_removal = null;
     }
-    return _.merge(current_entry, new_entry, remaining_route_data);
+    return _.merge(current_entry, new_entry);
   };
 
   refresh = async () => {
