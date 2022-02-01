@@ -31,7 +31,8 @@ export const Status: FunctionComponent<StatusProps> = ({pos, closeWindow}) => {
         </div>
       </div>
       <div className="floating-window-body">
-        STATUS TEST
+        Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a><br/>
+        <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank" rel="noreferrer">Roadmap</a>
       </div>
     </div>
   );
