@@ -4,6 +4,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowProps} from "../../interfaces";
+import {copy} from "../../lib";
 
 export const PreviousRouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {amendEntry, edst_data, startDrag, stopDrag} = useContext(EdstContext);
@@ -13,6 +14,12 @@ export const PreviousRouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel
     setFocused(false);
   }, [entry]);
   const ref = useRef(null);
+
+  const dest = entry.dest;
+  let route = entry.previous_route;
+  if (route.slice(-dest.length) === dest) {
+    route = route.slice(0, -dest.length);
+  }
 
   return (<div
       ref={ref}
@@ -41,6 +48,7 @@ export const PreviousRouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel
           <div className="options-col left">
             <EdstButton content="Apply Previous Route"
                         onMouseDown={() => {
+                          copy(route.replace(/\.+$/, ''));
                           amendEntry(entry.cid, {
                             route: entry.previous_route,
                             route_data: entry.previous_route_data
