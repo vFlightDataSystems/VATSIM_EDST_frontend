@@ -38,7 +38,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
  * @param {Array<number>} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(route_data: Array<FixProps> | null, polygons: Array<Polygon>, pos: [number, number]): boolean {
+export function routeWillEnterAirspace(route_data: Array<FixProps> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
   if (route_data === null) {
     return false;
   }
@@ -130,7 +130,7 @@ export function getClosestReferenceFix(reference_fixes: Array<any>, pos_point: F
  * @param {Array<Polygon>} polygons - airspace boundaries
  * @returns {number} - minutes until the aircraft enters the airspace
  */
-export function computeBoundaryTime(entry: EdstEntryProps, polygons: Array<Polygon>): number {
+export function computeBoundaryTime(entry: EdstEntryProps, polygons: Array<Feature<Polygon>>): number {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
   const pos_point = point(pos);
   // @ts-ignore

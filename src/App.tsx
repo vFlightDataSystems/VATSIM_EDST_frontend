@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {distance, point, polygon} from '@turf/turf';
+import {distance, Feature, point, Polygon, polygon} from '@turf/turf';
 
 import {getAarData, getBoundaryData, getEdstData, getReferenceFixes, updateEdstEntry} from "./api";
 import './css/styles.scss';
@@ -90,7 +90,7 @@ export interface State {
   disabled_windows: Array<string>;
   artcc_id: string;
   sector_id: string;
-  boundary_polygons: Array<any>;
+  boundary_polygons: Array<Feature<Polygon>>;
   menu: { name: string, ref_id: string | null } | null;
   spa_list: Array<string>;
   sig: Array<string>;
@@ -149,7 +149,7 @@ export default class App extends React.Component<{} | null, State> {
       await getBoundaryData(artcc_id)
         .then(response => response.json())
         .then(geo_data => {
-          this.setState({boundary_polygons: geo_data.map((sector_boundary: SectorDataProps) => polygon(sector_boundary.geometry.coordinates))});
+          this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
         });
     }
     if (!(this.state.reference_fixes.length > 0)) {
