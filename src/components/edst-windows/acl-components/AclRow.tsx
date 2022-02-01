@@ -7,6 +7,7 @@ import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryProps} from "../../../interfaces";
+import _ from "lodash";
 
 const SPA_INDICATOR = '^';
 
@@ -20,7 +21,14 @@ interface AclRowProps {
   updateVci: (cid: string) => void;
 }
 
-export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse_down, index, any_holding, ...props}) => {
+export const AclRow: FunctionComponent<AclRowProps> = ({
+                                                         entry,
+                                                         hidden,
+                                                         alt_mouse_down,
+                                                         index,
+                                                         any_holding,
+                                                         ...props
+                                                       }) => {
   const {
     aircraftSelect,
     updateEntry,
@@ -28,7 +36,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse
     deleteEntry,
     setInputFocused
   } = useContext(EdstContext);
-  const {asel} = useContext(AclContext);
+  const {asel, manual_posting} = useContext(AclContext);
   const hold_data = entry.hold_data;
   const now = new Date().getTime();
   let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
@@ -66,7 +74,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse
       updateEntry(entry.cid, {free_text: !entry.free_text});
     }
     if (event.button === 1) {
-      updateEntry(entry.cid, {spa: !(typeof (entry.spa) === 'number')});
+      updateEntry(entry.cid, {spa: !_.isNumber(entry.spa)});
     }
     if (event.button === 2) {
       updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
@@ -91,7 +99,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse
   };
 
   const handleRemarksClick = (event: React.MouseEvent) => {
-    if (entry.acl_status === -1) {
+    if (entry.acl_status === -1 && !manual_posting) {
       updateEntry(entry.cid, {acl_status: 0});
     }
     switch (event.button) {
@@ -174,7 +182,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse
     <div
       className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <EdstTooltip title={Tooltips.acl_wifi_button}>
-        <div className={`body-col body-col-1 radio ${entry.acl_status === 1 ? 'green' : ''}`}
+        <div className={`body-col body-col-1 radio`}
              onMouseDown={() => props.updateVci(entry.cid)}>
           {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
         </div>
@@ -191,7 +199,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({entry, hidden, alt_mouse
           <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={handleFidClick}
           >
-            {entry.cid} {entry.callsign}
+            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '(R)' : entry.voice_type === 't' ? '(T)' : ''}
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>

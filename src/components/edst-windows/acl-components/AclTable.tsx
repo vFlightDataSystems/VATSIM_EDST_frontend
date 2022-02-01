@@ -30,7 +30,7 @@ export function AclTable() {
       }
     }
     setAnyHolding(false);
-  }
+  };
   // check whether any aircraft in the list has an assigned heading or a speed
   // will display a * next to Hdg or Spd if the column is hidden, respectively
   const checkAssignedHdgSpd = () => {
@@ -38,16 +38,16 @@ export function AclTable() {
     let any_spd = false;
     for (let cid of cid_list) {
       if (edst_data[cid]?.hdg || edst_data[cid]?.scratch_hdg) {
-        any_hdg = true
+        any_hdg = true;
       }
       if (edst_data[cid]?.spd || edst_data[cid]?.scratch_spd) {
-        any_spd = true
+        any_spd = true;
       }
       if (any_spd && any_hdg) break;
     }
     setAnyAssignedHeading(any_hdg);
     setAnyAssignedSpeed(any_spd);
-  }
+  };
 
   useEffect(() => {
     checkHolding();
@@ -63,7 +63,7 @@ export function AclTable() {
       hidden_copy.push(name);
     }
     setHidden(hidden_copy);
-  }
+  };
 
   const handleClickSlash = () => {
     let hidden_copy = hidden.slice(0);
@@ -79,7 +79,7 @@ export function AclTable() {
       }
     }
     setHidden(hidden_copy);
-  }
+  };
 
   const updateVci = (cid: string) => {
     const entry = edst_data[cid];
@@ -92,7 +92,7 @@ export function AclTable() {
         updateEntry(cid, {acl_status: 0});
       }
     }
-  }
+  };
 
   const sortFunc = (u: EdstEntryProps, v: EdstEntryProps) => {
     switch (sort_data.name) {
@@ -102,10 +102,12 @@ export function AclTable() {
         return u.dest.localeCompare(v.dest);
       case 'Origin':
         return u.dep.localeCompare(v.dep);
+      case 'Boundary Time':
+        return u.boundary_time - v.boundary_time;
       default:
         return u.callsign.localeCompare(v.callsign);
     }
-  }
+  };
 
   const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.has(entry.cid));
   const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryProps) => (typeof (entry.spa) === 'number'))
@@ -168,8 +170,7 @@ export function AclTable() {
         </EdstTooltip>
         <div className={`body-col special special-header`}/>
         <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`}
-          // @ts-ignore
+        <div className={`body-col special special-header`} // @ts-ignore
              disabled={!any_holding}>
           H
         </div>

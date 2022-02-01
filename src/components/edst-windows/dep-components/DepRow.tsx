@@ -110,7 +110,7 @@ export const DepRow: FunctionComponent<DepRowProps> = ({entry, hidden, index, up
                onMouseDown={handleFidClick}
                onContextMenu={(event) => event.preventDefault()}
           >
-            {entry.cid} {entry.callsign}
+            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '(R)' : entry.voice_type === 't' ? '(T)' : ''}
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
