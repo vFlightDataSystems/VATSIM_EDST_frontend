@@ -47,7 +47,7 @@ export const AclRow: FunctionComponent<AclRowProps> = ({
 
   const [display_scratch_hdg, setDisplayScratchHdg] = useState(false);
   const [display_scratch_spd, setDisplayScratchSpd] = useState(false);
-  const [scratchpad, setScratchpad] = useState(entry.scratchpad ?? '');
+  const [scratchpad, setScratchpad] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
   const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
