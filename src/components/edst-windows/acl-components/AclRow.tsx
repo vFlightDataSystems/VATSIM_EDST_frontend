@@ -199,7 +199,10 @@ export const AclRow: FunctionComponent<AclRowProps> = ({
           <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
                onMouseDown={handleFidClick}
           >
-            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '(R)' : entry.voice_type === 't' ? '(T)' : ''}
+            {entry.cid} {entry.callsign}
+            <span className="voice-type">
+              {entry.voice_type === 'r' ? '/R' : entry.voice_type === 't' ? '/T' : ''}
+            </span>
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>

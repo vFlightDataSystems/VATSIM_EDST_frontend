@@ -20,6 +20,7 @@ $body-ac-sep-very-dark-grey: #252525;
 $body-ac-highlight: #414141;
 $body-font-brown: #695547;
 $body-hover-white: #F0F0F0;
+$body-voice-type-font-color: #989898;
 
 .scroll-container {
   height: auto;
@@ -149,6 +150,10 @@ $body-hover-white: #F0F0F0;
   height: 18px;
   border: 1px solid transparent;
   //outline: 1px solid transparent;
+
+  .voice-type {
+    color: $body-voice-type-font-color;
+  }
 
   &.selected {
     //outline: 1px solid $body-light-grey;
