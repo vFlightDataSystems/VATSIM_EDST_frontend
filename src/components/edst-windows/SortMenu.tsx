@@ -69,9 +69,7 @@ export const SortMenu: FunctionComponent<SortMenuProps> = ({pos, ref_id, ...prop
                        onMouseDown={() => {
                          sort_data_copy.acl.name = 'Boundary Time';
                          setSortData(sort_data_copy);
-                       }}
-            // @ts-ignore
-                       disabled={true}
+                       }} // @ts-ignore
                        title={Tooltips.sort_boundary_time}
           >
             <div className={`box diamond ${selected?.name === 'Boundary Time' ? 'selected' : ''}`}/>
@@ -83,8 +81,7 @@ export const SortMenu: FunctionComponent<SortMenuProps> = ({pos, ref_id, ...prop
                        onMouseDown={() => {
                          sort_data_copy.acl.name = 'Conflict Status';
                          setSortData(sort_data_copy);
-                       }}
-            // @ts-ignore
+                       }} // @ts-ignore
                        disabled={true}
                        title={Tooltips.sort_conflict_status}
           >
