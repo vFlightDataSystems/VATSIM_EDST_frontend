@@ -238,6 +238,9 @@ export default class App extends React.Component<{} | null, State> {
     } else {
       new_entry.pending_removal = null;
     }
+    if (new_entry.remarks.match(/\/v\//gi)) new_entry.voice_type = 'v';
+    if (new_entry.remarks.match(/\/r\//gi)) new_entry.voice_type = 'r';
+    if (new_entry.remarks.match(/\/t\//gi)) new_entry.voice_type = 't';
     return _.assign(current_entry, new_entry);
   };
 
@@ -496,10 +499,10 @@ export default class App extends React.Component<{} | null, State> {
     } else {
       const entry = edst_data[cid];
       asel = {cid: cid, field: field, window: window};
-      if (window === 'acl' && !manual_posting.acl && edst_data[cid]?.acl_status === -1) {
+      if (window === 'acl' && !manual_posting.acl && field === 'fid' && edst_data[cid]?.acl_status === -1) {
         this.updateEntry(cid, {acl_status: 0});
       }
-      if (window === 'dep' && !manual_posting.dep && edst_data[cid]?.dep_status === -1) {
+      if (window === 'dep' && !manual_posting.dep && field === 'fid' && edst_data[cid]?.dep_status === -1) {
         this.updateEntry(cid, {dep_status: 0});
       }
       this.setState({menu: null, asel: asel});

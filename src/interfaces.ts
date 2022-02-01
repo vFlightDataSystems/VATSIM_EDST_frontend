@@ -31,7 +31,7 @@ export interface EdstEntryProps {
   spd?: string;
   hdg?: string;
   spa?: number | null;
-  minutes_away: number;
+  boundary_time: number;
   reference_fix?: any;
   update_time: number;
   pending_removal?: number | null;
@@ -42,6 +42,7 @@ export interface EdstEntryProps {
   scratchpad?: string;
   free_text?: boolean;
   remarks_checked?: boolean;
+  voice_type?: string;
   cleared_direct?: { frd: string, fix: string };
 }
 
