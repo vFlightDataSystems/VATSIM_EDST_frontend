@@ -18,7 +18,7 @@ import {PlansDisplay} from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
-  computeMinutesAway,
+  computeBoundaryTime,
   getClosestReferenceFix,
   getRemainingRouteData,
   getRouteDataDistance,
@@ -189,7 +189,7 @@ export default class App extends React.Component<{} | null, State> {
     const {acl_cid_list, boundary_polygons} = this.state;
     const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
     const will_enter_airspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos) : false;
-    return ((entry.minutes_away < 30 || acl_cid_list.has(entry.cid))
+    return ((entry.boundary_time < 30 || acl_cid_list.has(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
   };
@@ -200,7 +200,7 @@ export default class App extends React.Component<{} | null, State> {
       acl_status: -1,
       dep_status: -1
     };
-    new_entry.minutes_away = computeMinutesAway(new_entry, this.state.boundary_polygons);
+    new_entry.boundary_time = computeBoundaryTime(new_entry, this.state.boundary_polygons);
     const route_fix_names = new_entry.route_data.map(fix => fix.name);
     const dest = new_entry.dest;
     // add departure airport to route_data if we know the coords to compute the distance
