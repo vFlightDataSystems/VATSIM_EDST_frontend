@@ -23,7 +23,7 @@ export const RouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeW
   } = useContext(EdstContext);
   const [dep, setDep] = useState(asel?.window === 'dep');
   const [entry, setEntry] = useState(edst_data[asel.cid]);
-  const current_route_fixes = entry?._route_data?.map(fix => fix.name) ?? [];
+  const current_route_fixes: Array<any> = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
@@ -140,7 +140,7 @@ export const RouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeW
     }
   };
 
-  const route_data = dep ? entry.route_data : entry?._route_data;
+  const route_data = dep ? entry.route_data : entry._route_data;
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -194,7 +194,7 @@ export const RouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeW
                   onBlur={() => setInputFocused(false)}
                   value={display_raw_route ? entry.flightplan.route : route_input}
                   onChange={(event) => !display_raw_route && handleInputChange(event)}
-                  onKeyDown={(event) => !display_raw_route && handleInputKeyDown(event)}
+                  onKeyDownCapture={(event) => !display_raw_route && handleInputKeyDown(event)}
                 />
               </EdstTooltip>
             </div>
