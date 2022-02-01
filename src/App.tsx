@@ -152,6 +152,7 @@ export default class App extends React.Component<{} | null, State> {
           this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
         });
     }
+    // if we have no reference fixes for computing FRD, get some
     if (!(this.state.reference_fixes.length > 0)) {
       await getReferenceFixes(artcc_id)
         .then(response => response.json())
@@ -162,7 +163,7 @@ export default class App extends React.Component<{} | null, State> {
         });
     }
     await this.refresh();
-    this.update_interval_id = setInterval(this.refresh, 20000);
+    this.update_interval_id = setInterval(this.refresh, 20000); // update loop will run every 20 seconds
   }
 
   componentWillUnmount() {
@@ -511,7 +512,7 @@ export default class App extends React.Component<{} | null, State> {
           this.openMenu(event.target, 'alt-menu', false, asel);
           break;
         case 'route':
-          if (entry?.show_hold_info) {
+          if (entry.acl_route_display === 'hold_data') {
             this.openMenu(event.target, 'hold-menu', false, asel);
           } else {
             this.openMenu(event.target, 'route-menu', false, asel);

@@ -33,7 +33,7 @@ export const DepRow: FunctionComponent<DepRowProps> = ({entry, hidden, index, up
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry.scratchpad ?? '');
+  const [scratchpad, setScratchpad] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
   const current_fix_names = entry.route_data.map(fix => fix.name);
