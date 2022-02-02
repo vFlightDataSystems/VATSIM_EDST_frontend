@@ -1,0 +1,46 @@
+@import "styles";
+
+#toast-container-main {
+  position: fixed;
+  top: 80px;
+  right: 50px;
+  z-index: 9999999;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+
+  > div {
+    background-color: rgba(0, 0, 0, 1);
+    color: $edst-font-grey;
+    border: 1px solid $edst-window-light-grey;
+    overflow-wrap: anywhere;
+    width: 100%;
+    margin-bottom: 10px;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 12px;
+    animation: slide-in 0.2s;
+    transition: all 0.3s ease;
+  }
+
+  .toast-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateX(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0px);
+      opacity: 1;
+    }
+  }
+}
