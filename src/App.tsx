@@ -131,9 +131,18 @@ export default class App extends React.Component<{} | null, State> {
   // }
 
   async componentDidMount() {
-    const artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
-    // const artcc_id = 'zbw';
-    const sector_id = '37';
+    let artcc_id: string;
+    let sector_id: string;
+    if (process.env.NODE_ENV === 'development') {
+      artcc_id = 'zbw';
+      // artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+      sector_id = '37';
+    }
+    else {
+      artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+      sector_id = '37';
+    }
+
     // const now = new Date().getTime();
     // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
     // if (now - local_data?.timestamp < CACHE_TIMEOUT) {
@@ -773,7 +782,7 @@ export default class App extends React.Component<{} | null, State> {
 
     return (
       <div className="edst"
-        // onContextMenu={(event) => event.preventDefault()}
+           onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
            tabIndex={!(input_focused || menu?.name === 'alt-menu') ? -1 : 0}
            onKeyDownCapture={(e) => !input_focused && this.handleKeyDownCapture(e)}
       >
