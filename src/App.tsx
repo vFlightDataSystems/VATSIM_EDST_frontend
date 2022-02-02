@@ -77,6 +77,7 @@ const initial_state = {
   input_focused: false,
   open_windows: new Set<string>(),
   mra_msg: '',
+  mca_command_string: '',
   tooltips_enabled: true,
   show_all_tooltips: false
 };
@@ -110,6 +111,7 @@ export interface State {
   input_focused: boolean;
   open_windows: Set<string>;
   mra_msg: string;
+  mca_command_string: string;
   tooltips_enabled: boolean;
   show_all_tooltips: boolean;
 }
@@ -746,6 +748,9 @@ export default class App extends React.Component<{} | null, State> {
     if (event.shiftKey && event.ctrlKey) {
       this.setState({show_all_tooltips: !this.state.show_all_tooltips});
     } else if (!(event.shiftKey || event.ctrlKey || this.state.show_all_tooltips)) {
+      if (event.key.match(/(\w|\s|\d|\/)/gi)) {
+        this.setState({mca_command_string: this.state.mca_command_string + event.key.toUpperCase()});
+      }
       if (this.mcaInputRef === null) {
         this.openWindow('mca');
       } else {
@@ -776,6 +781,7 @@ export default class App extends React.Component<{} | null, State> {
       manual_posting,
       open_windows,
       mra_msg,
+      mca_command_string,
       tooltips_enabled,
       show_all_tooltips
     } = this.state;
@@ -936,6 +942,8 @@ export default class App extends React.Component<{} | null, State> {
               />}
               {open_windows.has('mca') && pos['edst-mca'] && <MessageComposeArea
                 pos={pos['edst-mca']}
+                mca_command_string={mca_command_string}
+                setMcaCommandString={(s: string) => this.setState({mca_command_string: s})}
                 aclCleanup={this.aclCleanup}
                 togglePosting={this.togglePosting}
                 acl_cid_list={acl_cid_list}
