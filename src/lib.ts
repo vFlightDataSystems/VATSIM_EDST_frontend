@@ -8,6 +8,7 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import {EdstEntryProps, FixProps} from "./interfaces";
+import {toast} from "./components/toast/ToastManager";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -164,5 +165,10 @@ export function copy(text: string) {
   input.select();
   const result = document.execCommand('copy');
   document.body.removeChild(input);
+  toast.show({
+    title: "copied to clipboard",
+    content: text,
+    duration: 3000,
+  })
   return result;
 }
