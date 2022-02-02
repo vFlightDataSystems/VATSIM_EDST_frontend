@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -8,7 +8,7 @@ interface MessageResponseAreaProps {
   msg: string
 }
 
-export const MessageResponseArea: FunctionComponent<MessageResponseAreaProps> = ({pos, msg}) => {
+export const MessageResponseArea: React.FC<MessageResponseAreaProps> = ({pos, msg}) => {
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 

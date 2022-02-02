@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
@@ -17,7 +17,7 @@ interface DepRowProps {
   updateStatus: Function;
 }
 
-export const DepRow: FunctionComponent<DepRowProps> = ({entry, hidden, index, updateStatus}) => {
+export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatus}) => {
   const {
     aircraftSelect,
     updateEntry,

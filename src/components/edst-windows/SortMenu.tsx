@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext, useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
@@ -15,7 +15,7 @@ interface SortMenuProps {
   closeWindow: () => void;
 }
 
-export const SortMenu: FunctionComponent<SortMenuProps> = ({pos, ref_id, ...props}) => {
+export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const [sort_data, setSortData] = useState(props.sort_data);

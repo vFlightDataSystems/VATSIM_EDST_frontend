@@ -1,10 +1,9 @@
-import * as React from 'react';
 import '../../../css/windows/titlebar-styles.scss';
 import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
-import {FunctionComponent, useContext} from "react";
+import React, {useContext} from "react";
 import {AselProps} from "../../../interfaces";
 import {EdstContext} from "../../../contexts/contexts";
 
@@ -16,7 +15,7 @@ interface PlansDisplayHeaderProps {
   closeWindow: () => void;
 }
 
-export const PlansDisplayHeader: FunctionComponent<PlansDisplayHeaderProps> = ({focused, asel, plan_data, ...props}) => {
+export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused, asel, plan_data, ...props}) => {
   const {openMenu, amendEntry} = useContext(EdstContext);
   const interim_disabled = asel ? !Object.keys(plan_data.plan_data ?? {}).includes('altitude') : true;
 

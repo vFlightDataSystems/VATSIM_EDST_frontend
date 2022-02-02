@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext, useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
@@ -12,7 +12,7 @@ interface PlanOptionsProps {
   closeWindow: () => void;
 }
 
-export const PlanOptions: FunctionComponent<PlanOptionsProps> = ({asel, pos, ...props}) => {
+export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) => {
   const {startDrag, stopDrag, deleteEntry, openMenu, edst_data} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);

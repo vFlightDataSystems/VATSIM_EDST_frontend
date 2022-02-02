@@ -1,7 +1,6 @@
-import * as React from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/plans-display-styles.scss';
-import {FunctionComponent, useContext} from "react";
+import React, {useContext} from "react";
 import {AselProps} from "../../../interfaces";
 import {EdstContext} from "../../../contexts/contexts";
 
@@ -18,7 +17,7 @@ interface PlansDisplayTableProps {
   asel: AselProps | null;
 }
 
-export const PlansDisplayTable: FunctionComponent<PlansDisplayTableProps> = ({plan_queue, selected_msg, asel, messageSelect}) => {
+export const PlansDisplayTable: React.FC<PlansDisplayTableProps> = ({plan_queue, selected_msg, asel, messageSelect}) => {
   const {aircraftSelect} = useContext(EdstContext);
   return (<div className="plans-display-body no-select">
     {Object.entries(plan_queue)?.map(([i, p]: [string, plan]) =>

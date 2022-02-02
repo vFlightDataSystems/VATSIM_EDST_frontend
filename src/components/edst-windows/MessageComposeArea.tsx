@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -17,7 +17,7 @@ interface MessageComposeAreaProps {
 }
 
 
-export const MessageComposeArea: FunctionComponent<MessageComposeAreaProps> = (
+export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   {
     mca_command_string,
     setMcaCommandString,

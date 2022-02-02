@@ -1,4 +1,4 @@
-import {useState, useEffect, FunctionComponent, useContext} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import '../../css/windows/dep-styles.scss';
 import {DepHeader} from "./dep-components/DepHeader";
 import {DepTable} from "./dep-components/DepTable";
@@ -9,7 +9,7 @@ interface DepProps {
   closeWindow: () => void;
 }
 
-export const Dep: FunctionComponent<DepProps> = (props) => {
+export const Dep: React.FC<DepProps> = (props) => {
   const {dragging} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
 

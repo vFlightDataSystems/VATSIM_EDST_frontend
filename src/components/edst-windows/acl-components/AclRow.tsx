@@ -1,4 +1,4 @@
-import React, {FunctionComponent, MouseEventHandler, useContext, useRef, useState} from 'react';
+import React, {MouseEventHandler, useContext, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
@@ -21,14 +21,15 @@ interface AclRowProps {
   updateVci: (cid: string) => void;
 }
 
-export const AclRow: FunctionComponent<AclRowProps> = ({
-                                                         entry,
-                                                         hidden,
-                                                         alt_mouse_down,
-                                                         index,
-                                                         any_holding,
-                                                         ...props
-                                                       }) => {
+export const AclRow: React.FC<AclRowProps> = (
+  {
+    entry,
+    hidden,
+    alt_mouse_down,
+    index,
+    any_holding,
+    ...props
+  }) => {
   const {
     aircraftSelect,
     updateEntry,

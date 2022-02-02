@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -11,7 +11,7 @@ interface TemplateMenuProps {
   closeWindow: () => void;
 }
 
-export const TemplateMenu: FunctionComponent<TemplateMenuProps> = ({pos, closeWindow}) => {
+export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) => {
   const {
     edst_data,
     asel,

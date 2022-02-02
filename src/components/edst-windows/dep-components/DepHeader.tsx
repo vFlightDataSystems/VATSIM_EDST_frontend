@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
@@ -10,7 +10,7 @@ interface DepHeaderProps {
   closeWindow: () => void;
 }
 
-export const DepHeader: FunctionComponent<DepHeaderProps> = ({focused, closeWindow}) => {
+export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
   const {setInputFocused, openMenu} = useContext(EdstContext);
   const {manual_posting, togglePosting, sort_data, addEntry, asel} = useContext(DepContext);
   const [search_str, setSearchString] = useState('');

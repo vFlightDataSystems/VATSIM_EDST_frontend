@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
@@ -10,8 +10,7 @@ import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstWindowProps} from "../../interfaces";
 
-
-export const RouteMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     openMenu,

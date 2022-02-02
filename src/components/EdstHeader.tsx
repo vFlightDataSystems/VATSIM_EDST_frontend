@@ -2,7 +2,7 @@ import '../css/edst/edst-header-styles.scss';
 import {Time} from "./Time";
 import {Tooltips} from "../tooltips";
 import {EdstTooltip} from "./resources/EdstTooltip";
-import {FunctionComponent} from "react";
+import React from "react";
 
 interface EdstHeaderButtonProps {
   title?: string;
@@ -13,7 +13,7 @@ interface EdstHeaderButtonProps {
   onMouseDown?: () => void;
 }
 
-const EdstHeaderButton: FunctionComponent<EdstHeaderButtonProps> = (props) => {
+const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = (props) => {
   return (<EdstTooltip title={props.title}>
     <button className={`${props.className} ${props.open ? 'open' : ''}`}
             disabled={props.disabled}
@@ -38,7 +38,7 @@ interface EdstHeaderProps {
   toggleWindow: Function;
 }
 
-export const EdstHeader: FunctionComponent<EdstHeaderProps> = (props) => {
+export const EdstHeader: React.FC<EdstHeaderProps> = (props) => {
   const {
     open_windows,
     plan_disabled,

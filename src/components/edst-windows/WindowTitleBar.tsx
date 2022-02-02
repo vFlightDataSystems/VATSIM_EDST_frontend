@@ -1,7 +1,7 @@
 import '../../css/windows/titlebar-styles.scss';
-import {FunctionComponent} from "react";
+import React from "react";
 
-export const WindowTitleBar: FunctionComponent<{ focused: boolean, closeWindow: () => void, text: Array<string> }> = ({focused, text, closeWindow}) => {
+export const WindowTitleBar: React.FC<{ focused: boolean, closeWindow: () => void, text: Array<string> }> = ({focused, text, closeWindow}) => {
   return (<div className="edst-window-title-bar no-select">
     <div className="edst-window-title-bar-left">
       <button className={`edst-window-header-block ${focused ? 'focused' : ''}`}>

@@ -1,11 +1,11 @@
-import {FunctionComponent, useContext, useRef, useState,} from 'react';
+import React, {useContext, useRef, useState,} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowProps} from "../../interfaces";
 
-export const CancelHoldMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const CancelHoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     startDrag,
