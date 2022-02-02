@@ -16,18 +16,14 @@ interface EdstTooltipProps {
     onMouseDown?: React.EventHandler<any>;
     onContextMenu?: React.EventHandler<any>;
     disabled?: boolean;
-    props?: any;
 }
 
-export const EdstTooltip: React.FunctionComponent<EdstTooltipProps> = ({title, content, onMouseDown, ...props}) => {
+export const EdstTooltip: React.FunctionComponent<EdstTooltipProps> = ({title, content, ...props}) => {
   const {global_tooltips_enabled, show_all_tooltips} = React.useContext(TooltipContext);
   const [tooltip_enabled, setTooltipEnabled] = React.useState(false);
 
   return (<span
     {...props}
-    onMouseDown={(e) => {
-      onMouseDown && onMouseDown(e);
-    }}
     onMouseEnter={(e) => e.shiftKey && setTooltipEnabled(true)}
     // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
     onMouseLeave={() => setTooltipEnabled(false)}
