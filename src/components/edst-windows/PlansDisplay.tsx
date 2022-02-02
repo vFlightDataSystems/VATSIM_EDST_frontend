@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/plans-display-styles.scss';
@@ -14,7 +14,7 @@ interface PlansDisplayProps {
   closeWindow: () => void;
 }
 
-export const PlansDisplay: FunctionComponent<PlansDisplayProps> = ({plan_queue, asel, ...props}) => {
+export const PlansDisplay: React.FC<PlansDisplayProps> = ({plan_queue, asel, ...props}) => {
   const {dragging} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const [selected_msg_index, setSelectedMsgIndex] = useState<string | null>(null);

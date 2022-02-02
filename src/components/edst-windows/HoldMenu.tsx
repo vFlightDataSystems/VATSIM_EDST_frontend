@@ -1,4 +1,4 @@
-import {FunctionComponent, useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {length, lineString} from '@turf/turf';
@@ -9,7 +9,7 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {EdstWindowProps} from "../../interfaces";
 
-export const HoldMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const HoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     startDrag,
     stopDrag,

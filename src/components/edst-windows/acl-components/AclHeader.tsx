@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
@@ -10,7 +10,7 @@ interface AclHeaderProps {
   closeWindow: () => void;
 }
 
-export const AclHeader: FunctionComponent<AclHeaderProps> = (props) => {
+export const AclHeader: React.FC<AclHeaderProps> = (props) => {
   const {setInputFocused, asel, openMenu} = useContext(EdstContext);
   const {manual_posting, togglePosting, sort_data, addEntry} = useContext(AclContext);
   const [search_str, setSearchString] = useState('');

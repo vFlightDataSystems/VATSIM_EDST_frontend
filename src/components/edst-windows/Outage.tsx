@@ -1,6 +1,6 @@
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
-import React, {FunctionComponent, useContext, useRef} from "react";
+import React, {useContext, useRef} from "react";
 import {EdstContext} from "../../contexts/contexts";
 
 interface OutageProps {
@@ -8,7 +8,7 @@ interface OutageProps {
   closeWindow: () => void;
 }
 
-export const Outage: FunctionComponent<OutageProps> = ({pos, closeWindow}) => {
+export const Outage: React.FC<OutageProps> = ({pos, closeWindow}) => {
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 

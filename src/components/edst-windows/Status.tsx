@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -8,7 +8,7 @@ interface StatusProps {
   closeWindow: () => void;
 }
 
-export const Status: FunctionComponent<StatusProps> = ({pos, closeWindow}) => {
+export const Status: React.FC<StatusProps> = ({pos, closeWindow}) => {
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 

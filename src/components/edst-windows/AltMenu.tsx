@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import _ from 'lodash';
 import '../../css/header-styles.scss';
 import '../../css/windows/alt-menu-styles.scss';
@@ -7,7 +7,7 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {EdstWindowProps} from '../../interfaces';
 
-export const AltMenu: FunctionComponent<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const AltMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     trialPlan,

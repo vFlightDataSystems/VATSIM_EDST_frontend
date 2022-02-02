@@ -1,9 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import {TooltipContext} from "../../contexts/contexts";
 import '../../css/resources/tooltip.scss';
-import {FunctionComponent} from "react";
 
-const TooltipContent: FunctionComponent<{content: any}> = (props) => {
+const TooltipContent: React.FC<{content: any}> = (props) => {
   return (<div className="tooltip-content" tabIndex={999}>
     {props.content}
   </div>);
@@ -18,7 +17,7 @@ interface EdstTooltipProps {
     disabled?: boolean;
 }
 
-export const EdstTooltip: React.FunctionComponent<EdstTooltipProps> = ({title, content, ...props}) => {
+export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...props}) => {
   const {global_tooltips_enabled, show_all_tooltips} = React.useContext(TooltipContext);
   const [tooltip_enabled, setTooltipEnabled] = React.useState(false);
 

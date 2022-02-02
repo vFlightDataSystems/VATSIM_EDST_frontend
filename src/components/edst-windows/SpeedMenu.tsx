@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useContext, FunctionComponent} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
@@ -11,7 +11,7 @@ import {EdstWindowProps} from "../../interfaces";
 
 
 
-export const SpeedMenu: FunctionComponent<EdstWindowProps> = ({asel, pos, ...props}) => {
+export const SpeedMenu: React.FC<EdstWindowProps> = ({asel, pos, ...props}) => {
   const {
     edst_data,
     startDrag,

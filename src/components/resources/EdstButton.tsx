@@ -1,6 +1,6 @@
 import '../../css/resources/button.scss';
 import {EdstTooltip} from './EdstTooltip';
-import React, {FunctionComponent} from "react";
+import React from "react";
 
 interface EdstButtonProps {
   disabled?: boolean;
@@ -12,7 +12,7 @@ interface EdstButtonProps {
   onMouseDown?: (event: React.MouseEvent) => void;
 }
 
-export const EdstButton: FunctionComponent<EdstButtonProps> = ({onMouseDown, className, id, ...props}) => {
+export const EdstButton: React.FC<EdstButtonProps> = ({onMouseDown, className, id, ...props}) => {
   // @ts-ignore
   return (<div className={`edst-outer-button ${className ?? ''}`} disabled={props.disabled}
                id={id}
@@ -26,6 +26,6 @@ export const EdstButton: FunctionComponent<EdstButtonProps> = ({onMouseDown, cla
   </div>);
 }
 
-export const EdstWindowHeaderButton: FunctionComponent<any> = ({className, ...props}) => {
+export const EdstWindowHeaderButton: React.FC<any> = ({className, ...props}) => {
   return (<EdstButton {...props} className={`${className ?? ''} window-header-button`}/>);
 }
