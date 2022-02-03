@@ -145,7 +145,7 @@ export default class App extends React.Component<{} | null, State> {
     let artcc_id: string;
     let sector_id: string;
     if (process.env.NODE_ENV === 'development') {
-      artcc_id = 'zbw';
+      artcc_id = 'zlc';
       // artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sector_id = '37';
     }
@@ -841,17 +841,20 @@ export default class App extends React.Component<{} | null, State> {
                       gi_num={gi.length}
           />
 
-          {isOpen && <BoundarySelector
-              boundaries={boundary_ids}
-              changer={this.changeBoundarySelectorShown}
-              updateSelected={this.updateSelectedBoundaries}
-              updatePolygon={this.updateBoundaryPolygons}
-          />}
+
 
           <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
                ref={this.outlineRef}
                onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
           >
+
+
+            {isOpen && <BoundarySelector
+                boundaries={boundary_ids}
+                changer={this.changeBoundarySelectorShown}
+                updateSelected={this.updateSelectedBoundaries}
+                updatePolygon={this.updateBoundaryPolygons}
+            />}
             <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
                  onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
             >
