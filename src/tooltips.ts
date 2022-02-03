@@ -81,6 +81,8 @@ export const Tooltips = {
   plans_clean_up: 'cancel all trial plans',
   route_menu_trial_plan: 'trial plan only',
   route_menu_vatsim_logo: 'toggle full vatsim route',
+  route_menu_flightaware: 'open flightaware route analyzer',
+  route_menu_skyvector: 'show filed route on skyvector',
   route_menu_amend: 'apply route amendment now',
   route_menu_frd: 'current location fix/radial/distance\nRMS: copy frd to clipboard',
   route_menu_route_input: 'route to assign',

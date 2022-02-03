@@ -165,11 +165,23 @@ export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) =
                         title={Tooltips.route_menu_trial_plan}
             />
           </div>
+          <EdstTooltip title={Tooltips.route_menu_skyvector}>
+            <a href={`https://skyvector.com/?fpl=${entry.dep} ${entry.flightplan.route} ${entry.dest}`}
+               target="_blank" rel="noreferrer">
+              SV
+            </a>
+          </EdstTooltip>
           <EdstTooltip className="options-col center" title={Tooltips.route_menu_vatsim_logo}>
             <img src={VATSIM_LOGO} alt="vatsim-logo"
                  onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
                  onContextMenu={(event) => event.preventDefault()}
             />
+          </EdstTooltip>
+          <EdstTooltip title={Tooltips.route_menu_flightaware}>
+            <a href={`https://flightaware.com/analysis/route.rvt?origin=${entry.dep}&destination=${entry.dest}`}
+               target="_blank" rel="noreferrer">
+              FA
+            </a>
           </EdstTooltip>
           <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}>
             <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}
