@@ -745,10 +745,10 @@ export default class App extends React.Component<{} | null, State> {
 
   handleKeyDownCapture = (event: React.KeyboardEvent) => {
     event.preventDefault();
-    if (event.shiftKey && event.ctrlKey) {
+    if (event.shiftKey) {
       this.setState({show_all_tooltips: !this.state.show_all_tooltips});
-    } else if (!(event.shiftKey || event.ctrlKey || this.state.show_all_tooltips)) {
-      if (event.key.match(/(\w|\s|\d|\/)/gi)) {
+    } else if (!(event.shiftKey || this.state.show_all_tooltips)) {
+      if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
         this.setState({mca_command_string: this.state.mca_command_string + event.key.toUpperCase()});
       }
       if (this.mcaInputRef === null) {
