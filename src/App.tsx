@@ -148,10 +148,29 @@ export default class App extends React.Component<{} | null, State> {
       artcc_id = 'zlc';
       // artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sector_id = '37';
+      if (!(this.state.boundary_polygons.length > 0)) {
+        await getBoundaryData(artcc_id)
+            .then(response => response.json())
+            .then(geo_data => {
+              //this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
+              //this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
+              this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+            });
+        this.changeBoundarySelectorShown(false)
+      }
     }
     else {
       artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sector_id = '37';
+      if (!(this.state.boundary_polygons.length > 0)) {
+        await getBoundaryData(artcc_id)
+            .then(response => response.json())
+            .then(geo_data => {
+              this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
+              this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
+              //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+            });
+      }
     }
 
     // const now = new Date().getTime();
@@ -165,15 +184,15 @@ export default class App extends React.Component<{} | null, State> {
     //   this.setState(local_data ?? {});
     // }
     this.setState({artcc_id: artcc_id, sector_id: sector_id});
-    if (!(this.state.boundary_polygons.length > 0)) {
-      await getBoundaryData(artcc_id)
-        .then(response => response.json())
-        .then(geo_data => {
-          this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
-          this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
-          //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-        });
-    }
+    // if (!(this.state.boundary_polygons.length > 0)) {
+    //   await getBoundaryData(artcc_id)
+    //     .then(response => response.json())
+    //     .then(geo_data => {
+    //       this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
+    //       this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
+    //       //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+    //     });
+    // }
     // if we have no reference fixes for computing FRD, get some
     if (!(this.state.reference_fixes.length > 0)) {
       await getReferenceFixes(artcc_id)
