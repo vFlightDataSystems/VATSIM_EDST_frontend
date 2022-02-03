@@ -18,14 +18,14 @@ export function BoundarySelector(props){
                         {props.boundaries.map((name, index) => {
                             return(
                                 [
-                                    <input type="checkbox" className="checkbox-effect checkbox-effect-1" onChange={() => props.updateSelected(name)} id={index} value={name} name={name} />,
+                                    <input type="checkbox" className="checkbox-effect checkbox-effect-2" onChange={() => props.updateSelected(name)} id={index} value={name} name={name} />,
                                     <label htmlFor={index}>{name}</label>
                                 ]
                             )
                         })}
                     </div>
                 </form>
-                <button className="close-btn" onClick={() => props.changer(false)}>Close</button>
+                {/*<button className="close-btn" onClick={() => props.changer(false)}>Close</button>*/}
                 <button className="save-btn" onClick={() => {
                     props.updatePolygon()
                     props.changer(false)
