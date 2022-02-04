@@ -1,0 +1,134 @@
+.boundary-selector {
+  color: white;
+  h1 {
+    text-align: center;
+    font-size: 25px;
+  }
+  form {
+    margin-top: 55px;
+    margin-bottom: 55px;
+  }
+  .checkbox-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    max-height: 25vh;
+  }
+  .checkbox-effect:not(:checked),
+  .checkbox-effect:checked {
+    position: absolute;
+    left: -9999px;
+  }
+  label {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  label::before,
+  label::after {
+    display: flex;
+    align-items: center;
+    height: 18px;
+    width: 23px;
+    margin: 0px 12px;
+  }
+  .checkbox-effect-1:not(:checked) + label:before,
+  .checkbox-effect-1:checked + label:before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #5a5a5a;
+    box-sizing: border-box;
+    border-radius: 3px;
+  }
+  .checkbox-effect-1:not(:checked) + label:after,
+  .checkbox-effect-1:checked + label:after {
+    content: "";
+    font-family: fontawesome;
+    font-size: 11px;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 2px;
+    color: #fff;
+    transform-origin: center center;
+  }
+  .checkbox-effect-1:not(:checked) + label:after {
+    transform: scale(0);
+  }
+  .checkbox-effect-1:checked + label:before {
+    background-color: #1b998b;
+    border-color: #1b998b;
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    transition-delay: 0s;
+  }
+
+  .checkbox-effect-1:checked + label:after {
+    transform: scale(1);
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    transition-delay: 0.2s;
+  }
+
+  .checkbox-effect-2:not(:checked) + label:before,
+  .checkbox-effect-2:checked + label:before {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 12px;
+    border: 2px solid #5a5a5a;
+    box-sizing: border-box;
+    border-radius: 25%;
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    transition-delay: 0.2s;
+  }
+
+  .checkbox-effect-2:not(:checked) + label:after,
+  .checkbox-effect-2:checked + label:after {
+    content: "";
+    font-family: fontawesome;
+    font-size: 18px;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0px;
+    color: #00711b;
+  }
+
+  .checkbox-effect-2:not(:checked) + label:after {
+    opacity: 0;
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    transition-delay: 0s;
+  }
+
+  .checkbox-effect-2:checked + label:before {
+    opacity: 0;
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    transition-delay: 0s;
+  }
+
+  .checkbox-effect-2:checked + label:after {
+    opacity: 1;
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    transition-delay: 0.2s;
+  }
+}

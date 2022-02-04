@@ -34,6 +34,7 @@ import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 import {AselProps, EdstEntryProps, PlanDataProps, SectorDataProps, SortDataProps} from "./interfaces";
 import _ from "lodash";
+import {BoundarySelector} from "./components/BoundarySelector";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -58,6 +59,7 @@ const initial_state = {
   artcc_id: '',
   sector_id: '',
   boundary_polygons: [],
+  all_boundaries: [],
   menu: null,
   spa_list: [],
   sig: [],
@@ -79,7 +81,10 @@ const initial_state = {
   mra_msg: '',
   mca_command_string: '',
   tooltips_enabled: true,
-  show_all_tooltips: false
+  show_all_tooltips: false,
+  boundary_ids: [],
+  isOpen: true,
+  selected_boundary_ids: new Set<string>()
 };
 
 export interface State {
@@ -92,6 +97,7 @@ export interface State {
   artcc_id: string;
   sector_id: string;
   boundary_polygons: Array<Feature<Polygon>>;
+  all_boundaries: Array<any>;
   menu: { name: string, ref_id: string | null } | null;
   spa_list: Array<string>;
   sig: Array<string>;
@@ -114,6 +120,9 @@ export interface State {
   mca_command_string: string;
   tooltips_enabled: boolean;
   show_all_tooltips: boolean;
+  boundary_ids: Array<string>;
+  selected_boundary_ids: Set<string>;
+  isOpen: boolean;
 }
 
 export default class App extends React.Component<{} | null, State> {
@@ -136,13 +145,32 @@ export default class App extends React.Component<{} | null, State> {
     let artcc_id: string;
     let sector_id: string;
     if (process.env.NODE_ENV === 'development') {
-      artcc_id = 'zbw';
+      artcc_id = 'zlc';
       // artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sector_id = '37';
+      if (!(this.state.boundary_polygons.length > 0)) {
+        await getBoundaryData(artcc_id)
+            .then(response => response.json())
+            .then(geo_data => {
+              //this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
+              //this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
+              this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+            });
+        this.changeBoundarySelectorShown(false)
+      }
     }
     else {
       artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sector_id = '37';
+      if (!(this.state.boundary_polygons.length > 0)) {
+        await getBoundaryData(artcc_id)
+            .then(response => response.json())
+            .then(geo_data => {
+              this.setState({boundary_ids: geo_data.map((boundary_id: { properties: { id: string; }; }) => boundary_id.properties.id)});
+              this.setState({all_boundaries: geo_data.map((sector_boundary: { properties: Array<any> }) => sector_boundary)});
+              //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+            });
+      }
     }
 
     // const now = new Date().getTime();
@@ -156,13 +184,15 @@ export default class App extends React.Component<{} | null, State> {
     //   this.setState(local_data ?? {});
     // }
     this.setState({artcc_id: artcc_id, sector_id: sector_id});
-    if (!(this.state.boundary_polygons.length > 0)) {
-      await getBoundaryData(artcc_id)
-        .then(response => response.json())
-        .then(geo_data => {
-          this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-        });
-    }
+    // if (!(this.state.boundary_polygons.length > 0)) {
+    //   await getBoundaryData(artcc_id)
+    //     .then(response => response.json())
+    //     .then(geo_data => {
+    //       this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
+    //       this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
+    //       //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+    //     });
+    // }
     // if we have no reference fixes for computing FRD, get some
     if (!(this.state.reference_fixes.length > 0)) {
       await getReferenceFixes(artcc_id)
@@ -759,6 +789,26 @@ export default class App extends React.Component<{} | null, State> {
     }
   };
 
+  changeBoundarySelectorShown = (bool: boolean) => {
+    this.setState({isOpen: bool})
+  }
+
+  updateSelectedBoundaries = (label: string) => {
+    if (this.state.selected_boundary_ids.has(label)) {
+      this.state.selected_boundary_ids.delete(label);
+    } else {
+      this.state.selected_boundary_ids.add(label);
+    }
+  }
+
+  updateBoundaryPolygons = () =>{
+    this.setState({
+      boundary_polygons: this.state.all_boundaries.filter(
+          id => this.state.selected_boundary_ids.has(id.properties.id))
+          .map(coordinates => polygon(coordinates.geometry.coordinates))})
+  }
+
+
   render() {
     const {
       edst_data,
@@ -783,7 +833,10 @@ export default class App extends React.Component<{} | null, State> {
       mra_msg,
       mca_command_string,
       tooltips_enabled,
-      show_all_tooltips
+      show_all_tooltips,
+      all_boundaries,
+      boundary_ids,
+      isOpen
     } = this.state;
 
     return (
@@ -806,10 +859,21 @@ export default class App extends React.Component<{} | null, State> {
                       not_num={not.length}
                       gi_num={gi.length}
           />
+
+
+
           <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
                ref={this.outlineRef}
                onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
           >
+
+
+            {isOpen && <BoundarySelector
+                boundaries={boundary_ids}
+                changer={this.changeBoundarySelectorShown}
+                updateSelected={this.updateSelectedBoundaries}
+                updatePolygon={this.updateBoundaryPolygons}
+            />}
             <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
                  onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
             >
