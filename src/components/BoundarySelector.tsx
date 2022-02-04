@@ -1,9 +1,9 @@
-import React, {useEffect, useRef} from 'react'
+import React from 'react'
 import '../css/boundary-selector.scss';
 
 // Create new boundary-selector css file and import it here.
 
-export function BoundarySelector(props){
+export function BoundarySelector(props: any){
     return(
         <div className="boundary-selector">
             <link
@@ -15,7 +15,7 @@ export function BoundarySelector(props){
                 <h1>Pick your sectors</h1>
                 <form>
                     <div className="checkbox-block">
-                        {props.boundaries.map((name, index) => {
+                        {props.boundaries.map((name:string, index:string) => {
                             return(
                                 [
                                     <input type="checkbox" className="checkbox-effect checkbox-effect-2" onChange={() => props.updateSelected(name)} id={index} value={name} name={name} />,

@@ -166,8 +166,8 @@ export default class App extends React.Component<{} | null, State> {
         await getBoundaryData(artcc_id)
             .then(response => response.json())
             .then(geo_data => {
-              this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
-              this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
+              this.setState({boundary_ids: geo_data.map((boundary_id: { properties: { id: string; }; }) => boundary_id.properties.id)});
+              this.setState({all_boundaries: geo_data.map((sector_boundary: { properties: Array<any> }) => sector_boundary)});
               //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
             });
       }
