@@ -127,7 +127,13 @@ export const AclRow: React.FC<AclRowProps> = (
         }
         break;
       default:
-        aircraftSelect(event, 'acl', entry.cid, 'fid');
+        if (event.detail === 1) {
+          setTimeout(handleFidClick, 200);
+          aircraftSelect(event, 'acl', entry.cid, 'fid');
+        }
+        else if (event.detail === 2) {
+          aircraftSelect(event, 'acl', entry.cid, 'fid-2');
+        }
         break;
 
     }
