@@ -23,7 +23,7 @@ export class ToastManager {
   }
 
   public show(options: ToastOptions): void {
-    const toastId = Math.random().toString(36).substr(2, 9);
+    const toastId = Math.random().toString(36).slice(2, 9);
     const toast: ToastProps = {
       id: toastId,
       ...options, // if id is passed within options, it will overwrite the auto-generated one
