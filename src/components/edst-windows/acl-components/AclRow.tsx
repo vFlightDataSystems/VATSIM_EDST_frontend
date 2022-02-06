@@ -188,7 +188,7 @@ export const AclRow: React.FC<AclRowProps> = (
                onContextMenu={(event) => event.preventDefault()}>
     <div
       className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <EdstTooltip title={Tooltips.acl_wifi_button}>
+      <EdstTooltip title={Tooltips.acl_N_and_VCI_button}>
         <div className={`body-col body-col-1 radio`}
              onMouseDown={() => props.updateVci(entry.cid)}>
           {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}

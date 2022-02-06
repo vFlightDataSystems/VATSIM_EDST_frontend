@@ -91,7 +91,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <EdstTooltip title={Tooltips.dep_checkmark_box}>
+      <EdstTooltip title={Tooltips.dep_checkmark_N_button}>
         <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
              onMouseDown={() => updateStatus(entry.cid)}
         >
