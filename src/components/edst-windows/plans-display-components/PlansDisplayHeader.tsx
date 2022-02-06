@@ -44,7 +44,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused, 
                                   amendEntry(asel.cid, interim_plan_data);
                                 }
                               }}
-                              title={Tooltips.plans_interim}
+                              // title={Tooltips.plans_interim}
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton

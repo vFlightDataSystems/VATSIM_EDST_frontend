@@ -165,7 +165,9 @@ export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) =
                         title={Tooltips.route_menu_trial_plan}
             />
           </div>
-          <EdstTooltip title={Tooltips.route_menu_skyvector}>
+          <EdstTooltip
+            // title={Tooltips.route_menu_skyvector}
+          >
             <a href={`https://skyvector.com/?fpl=${entry.dep} ${entry.flightplan.route} ${entry.dest}`}
                target="_blank" rel="noreferrer">
               SV
@@ -177,7 +179,9 @@ export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) =
                  onContextMenu={(event) => event.preventDefault()}
             />
           </EdstTooltip>
-          <EdstTooltip title={Tooltips.route_menu_flightaware}>
+          <EdstTooltip
+            // title={Tooltips.route_menu_flightaware}
+          >
             <a href={`https://flightaware.com/analysis/route.rvt?origin=${entry.dep}&destination=${entry.dest}`}
                target="_blank" rel="noreferrer">
               FA
