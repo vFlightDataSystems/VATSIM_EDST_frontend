@@ -7,7 +7,7 @@ import {
   polygonToLineString
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {EdstEntryProps, FixProps} from "./interfaces";
+import {EdstEntryProps, FixProps} from "./types";
 import {toast} from "./components/toast/ToastManager";
 
 export const REMOVAL_TIMEOUT = 120000;

@@ -83,11 +83,6 @@ export interface PlanDataProps {
   msg: string;
 }
 
-export interface SortDataProps {
-  acl: { name: string, sector: boolean },
-  dep: { name: string, sector?: boolean }
-}
-
 export interface EdstWindowProps {
   pos: {x: number, y: number, w?: number, h?: number};
   asel: AselProps;
