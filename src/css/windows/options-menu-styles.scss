@@ -116,6 +116,16 @@ $route-menu-alert-cyan: #00ADAD;
   .options-row {
     @include options-row;
 
+    *a {
+      height: auto;
+    }
+
+    img {
+      max-width: 24px;
+      max-height: 24px;
+      //transform: scale(0.2);
+    }
+
     &.present-headging-row {
       justify-content: center;
       margin-top: 8px;
@@ -331,6 +341,11 @@ $route-menu-alert-cyan: #00ADAD;
     white-space: nowrap;
     overflow: hidden;
 
+    &.img {
+        max-width: 24px;
+        max-height: 24px;
+    }
+
     &.display-route {
       border: 2px solid $options-menu-dark-grey;
       margin: 2px 8px 8px 8px;
@@ -527,12 +542,6 @@ $route-menu-alert-cyan: #00ADAD;
       }
     }
 
-    &.center {
-      max-width: 24px;
-      max-height: 24px;
-      //transform: scale(0.2);
-    }
-
     &.right {
       justify-content: right;
       display: flex;
@@ -618,4 +627,12 @@ $route-menu-alert-cyan: #00ADAD;
 
 .vatsim-logo {
   background-image: url(../images/VATSIM-social_icon.svg);
+}
+
+.skyvector-logo {
+  background-image: url('../images/glob.png');
+}
+
+.flightaware-logo {
+  background-image: url('../images/FA_96h.png');
 }

@@ -5,6 +5,8 @@ import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
 import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
+import SKYVECTOR_LOGO from '../../css/images/glob.png';
+import FLIGHTAWARE_LOGO from '../../css/images/FA_96h.png';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
@@ -142,137 +144,137 @@ export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) =
   const route_data = dep ? entry.route_data : entry._route_data;
 
   return (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
-      className="options-menu route no-select"
-      ref={ref}
-      id="route-menu"
-      style={{left: pos.x, top: pos.y}}
+    onMouseEnter={() => setFocused(true)}
+    onMouseLeave={() => setFocused(false)}
+    className="options-menu route no-select"
+    ref={ref}
+    id="route-menu"
+    style={{ left: pos.x, top: pos.y }}
+  >
+    <div className={`options-menu-header ${focused ? 'focused' : ''}`}
+      onMouseDown={(event) => startDrag(event, ref)}
+      onMouseUp={(event) => stopDrag(event)}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref)}
-           onMouseUp={(event) => stopDrag(event)}
-      >
-        Route Menu
+      Route Menu
+    </div>
+    <div className="options-body">
+      <div className="options-row fid">
+        {entry.callsign} {entry.type}/{entry.equipment}
       </div>
-      <div className="options-body">
-        <div className="options-row fid">
-          {entry.callsign} {entry.type}/{entry.equipment}
+      <div className="options-row route-row">
+        <div className="options-col">
+          <EdstButton content="Trial Plan" selected={trial_plan} onMouseDown={() => setTrialPlan(true)}
+            title={Tooltips.route_menu_trial_plan}
+          />
         </div>
-        <div className="options-row route-row">
-          <div className="options-col">
-            <EdstButton content="Trial Plan" selected={trial_plan} onMouseDown={() => setTrialPlan(true)}
-                        title={Tooltips.route_menu_trial_plan}
-            />
-          </div>
-          <EdstTooltip
-            // title={Tooltips.route_menu_skyvector}
-          >
-            <a href={`https://skyvector.com/?fpl=${entry.dep} ${entry.flightplan.route} ${entry.dest}`}
-               target="_blank" rel="noreferrer">
-              SV
-            </a>
-          </EdstTooltip>
-          <EdstTooltip className="options-col center" title={Tooltips.route_menu_vatsim_logo}>
-            <img src={VATSIM_LOGO} alt="vatsim-logo"
-                 onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
-                 onContextMenu={(event) => event.preventDefault()}
-            />
-          </EdstTooltip>
-          <EdstTooltip
-            // title={Tooltips.route_menu_flightaware}
-          >
-            <a href={`https://flightaware.com/analysis/route.rvt?origin=${entry.dep}&destination=${entry.dest}`}
-               target="_blank" rel="noreferrer">
-              FA
-            </a>
-          </EdstTooltip>
-          <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}>
-            <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}
-                        title={Tooltips.route_menu_amend}
-            />
-          </div>
+        <EdstTooltip className="options-col img"
+        // title={Tooltips.route_menu_skyvector}
+        >
+          <a href={`https://skyvector.com/?fpl=${entry.dep} ${entry.flightplan.route} ${entry.dest}`}
+            target="_blank" rel="noreferrer">
+            <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
+          </a>
+        </EdstTooltip>
+        <EdstTooltip className="options-col img" title={Tooltips.route_menu_vatsim_logo}>
+          <img src={VATSIM_LOGO} alt="vatsim-logo"
+            onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
+            onContextMenu={(event) => event.preventDefault()}
+          />
+        </EdstTooltip>
+        <EdstTooltip className="options-col img"
+        // title={Tooltips.route_menu_flightaware}
+        >
+          <a href={`https://flightaware.com/analysis/route.rvt?origin=${entry.dep}&destination=${entry.dest}`}
+            target="_blank" rel="noreferrer">
+            <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
+          </a>
+        </EdstTooltip>
+        <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}>
+          <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}
+            title={Tooltips.route_menu_amend}
+          />
         </div>
-        <div className="options-row route-row">
-          <div className="options-col">
-            <div className="input">
-              {!dep && <EdstTooltip className="ppos" title={Tooltips.route_menu_frd}
-                                    onContextMenu={(event) => {
-                                      event.preventDefault();
-                                      copy(frd);
-                                    }}>
-                {frd}..
-              </EdstTooltip>}
-              <EdstTooltip className="route-input" title={Tooltips.route_menu_route_input}>
-                <input
-                  onFocus={() => setInputFocused(true)}
-                  onBlur={() => setInputFocused(false)}
-                  value={display_raw_route ? entry.flightplan.route : route_input}
-                  onChange={(event) => !display_raw_route && handleInputChange(event)}
-                  onKeyDownCapture={(event) => !display_raw_route && handleInputKeyDown(event)}
-                />
-              </EdstTooltip>
-            </div>
+      </div>
+      <div className="options-row route-row">
+        <div className="options-col">
+          <div className="input">
+            {!dep && <EdstTooltip className="ppos" title={Tooltips.route_menu_frd}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                copy(frd);
+              }}>
+              {frd}..
+            </EdstTooltip>}
+            <EdstTooltip className="route-input" title={Tooltips.route_menu_route_input}>
+              <input
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
+                value={display_raw_route ? entry.flightplan.route : route_input}
+                onChange={(event) => !display_raw_route && handleInputChange(event)}
+                onKeyDownCapture={(event) => !display_raw_route && handleInputKeyDown(event)}
+              />
+            </EdstTooltip>
           </div>
         </div>
-        <div className="options-row route-row top-border">
-          <EdstTooltip className="options-col hover button" disabled={true} title={Tooltips.route_menu_par}>
-            <EdstButton disabled={true} className="tiny"/>
-            Include PAR
-          </EdstTooltip>
+      </div>
+      <div className="options-row route-row top-border">
+        <EdstTooltip className="options-col hover button" disabled={true} title={Tooltips.route_menu_par}>
+          <EdstButton disabled={true} className="tiny" />
+          Include PAR
+        </EdstTooltip>
+      </div>
+      <div className="options-row route-row bottom-border">
+        <EdstTooltip className="options-col hover button"
+          title={Tooltips.route_menu_append_star}
+          onMouseDown={() => setAppend({ append_star: !append_star, append_oplus: false })}
+        >
+          <EdstButton disabled={true} className="tiny" selected={append_star} />
+          Append *
+        </EdstTooltip>
+        <EdstTooltip className="options-col hover button"
+          title={Tooltips.route_menu_append_oplus}
+          onMouseDown={() => setAppend({ append_oplus: !append_oplus, append_star: false })}
+        >
+          <EdstButton disabled={true} className="tiny" selected={append_oplus} />
+          Append<span>&nbsp;⊕</span>
+        </EdstTooltip>
+      </div>
+      <EdstTooltip className="options-row route-row underline"
+        content="Direct-To-Fix"
+        title={Tooltips.route_menu_direct_fix}
+      />
+      <div className="options-row">
+        <div className="options-col display-route">
+          {dep ? entry.dep + route : `./.${route}`}
         </div>
-        <div className="options-row route-row bottom-border">
-          <EdstTooltip className="options-col hover button"
-                       title={Tooltips.route_menu_append_star}
-                       onMouseDown={() => setAppend({append_star: !append_star, append_oplus: false})}
-          >
-            <EdstButton disabled={true} className="tiny" selected={append_star}/>
-            Append *
-          </EdstTooltip>
-          <EdstTooltip className="options-col hover button"
-                       title={Tooltips.route_menu_append_oplus}
-                       onMouseDown={() => setAppend({append_oplus: !append_oplus, append_star: false})}
-          >
-            <EdstButton disabled={true} className="tiny" selected={append_oplus}/>
-            Append<span>&nbsp;⊕</span>
-          </EdstTooltip>
+      </div>
+      {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
+        key={`route-menu-row-${i}`}>
+        {[...Array(((route_data?.length ?? 0) / 10 | 0) + 1).keys()].map((j) => {
+          const fix_name = route_data?.[Number(i) + Number(j) * 10]?.name;
+          return (fix_name && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
+            content={fix_name}
+            onMouseDown={() => clearedToFix(fix_name)}
+            title={Tooltips.route_menu_direct_fix}
+          />);
+        })}
+      </div>)}
+      {routes?.length > 0 &&
+        <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute} />}
+      <div className="options-row bottom">
+        <div className="options-col left">
+          <EdstButton disabled={true} content="Flight Data" title={Tooltips.route_menu_flight_data} />
+          <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
+            onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
+            title={Tooltips.route_menu_prev_route}
+          />
+          <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.route_menu_tfm_reroute} />
         </div>
-        <EdstTooltip className="options-row route-row underline"
-                     content="Direct-To-Fix"
-                     title={Tooltips.route_menu_direct_fix}
-        />
-        <div className="options-row">
-          <div className="options-col display-route">
-            {dep ? entry.dep + route : `./.${route}`}
-          </div>
-        </div>
-        {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
-                                                                                  key={`route-menu-row-${i}`}>
-          {[...Array(((route_data?.length ?? 0) / 10 | 0) + 1).keys()].map((j) => {
-            const fix_name = route_data?.[Number(i) + Number(j) * 10]?.name;
-            return (fix_name && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
-                                             content={fix_name}
-                                             onMouseDown={() => clearedToFix(fix_name)}
-                                             title={Tooltips.route_menu_direct_fix}
-            />);
-          })}
-        </div>)}
-        {routes?.length > 0 &&
-        <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute}/>}
-        <div className="options-row bottom">
-          <div className="options-col left">
-            <EdstButton disabled={true} content="Flight Data" title={Tooltips.route_menu_flight_data}/>
-            <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
-                        onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
-                        title={Tooltips.route_menu_prev_route}
-            />
-            <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.route_menu_tfm_reroute}/>
-          </div>
-          <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={closeWindow}/>
-          </div>
+        <div className="options-col right">
+          <EdstButton content="Exit" onMouseDown={closeWindow} />
         </div>
       </div>
     </div>
+  </div>
   );
 };

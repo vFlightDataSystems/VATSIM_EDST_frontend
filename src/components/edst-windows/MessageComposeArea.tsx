@@ -4,11 +4,10 @@ import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
 import {EdstEntryProps} from "../../interfaces";
+import { useAppSelector } from '../../redux/hooks';
 
 interface MessageComposeAreaProps {
   pos: { x: number, y: number };
-  acl_cid_list: Set<string>;
-  dep_cid_list: Set<string>;
   mca_command_string: string;
   setMcaCommandString: (s: string) => void;
   aclCleanup: () => void;
@@ -21,13 +20,15 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   {
     mca_command_string,
     setMcaCommandString,
+    pos,
     ...props
   }) => {
   const [response, setResponse] = useState<string | null>(null);
   const [mca_focused, setMcaFocused] = useState(false);
   const ref = useRef(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const {pos, acl_cid_list, dep_cid_list} = props;
+  const acl_cid_list = useAppSelector(state => state.acl.cid_list);
+  const dep_cid_list = useAppSelector(state => state.dep.cid_list);
 
   const {
     startDrag,

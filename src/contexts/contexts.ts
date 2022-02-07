@@ -27,7 +27,6 @@ interface EdstContextProps {
 }
 
 interface AclContextProps {
-  cid_list: Set<string>;
   sort_data: { sector: boolean, name: string };
   asel: AselProps | null;
   manual_posting: boolean;
@@ -36,7 +35,6 @@ interface AclContextProps {
 }
 
 interface DepContextProps {
-  cid_list: Set<string>;
   sort_data: { name: string };
   asel: AselProps | null;
   manual_posting: boolean;
