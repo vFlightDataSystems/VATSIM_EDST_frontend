@@ -9,8 +9,8 @@ import {
 } from "../actionTypes";
 
 export type AclType = {
-  cid_list: Array<string>,
-  deleted_list: Array<string>,
+  cid_list: string[],
+  deleted_list: string[],
   asel: AselProps | null,
   sort_data: { name: string, sector: boolean },
   manual_posting: boolean

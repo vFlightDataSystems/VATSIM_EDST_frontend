@@ -17,7 +17,7 @@ export function AclTable() {
   const [any_holding, setAnyHolding] = useState(false);
   const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
   const [any_assigned_speed, setAnyAssignedSpeed] = useState(false);
-  const [hidden, setHidden] = useState<Array<string>>([]);
+  const [hidden, setHidden] = useState<string[]>([]);
   const [alt_mouse_down, setAltMouseDown] = useState(false);
   const {
     edst_data,

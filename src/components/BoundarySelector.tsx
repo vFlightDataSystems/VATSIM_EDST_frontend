@@ -4,7 +4,7 @@ import {EdstButton} from "./resources/EdstButton";
 
 // Create new boundary-selector css file and import it here.
 interface BoundarySelectorProps {
-  boundary_ids: Array<string>;
+  boundary_ids: string[];
   updateSelected: (name: string) => void;
   toggle: (bool: boolean) => void;
   updatePolygons: () => void;

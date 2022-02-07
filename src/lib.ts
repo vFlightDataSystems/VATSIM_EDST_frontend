@@ -36,7 +36,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
  * Check whether a given route will enter a controller's airspace based on sector boundary
  * @param {Array<any>} route_data - fixes on the route (order matters)
  * @param {Array<Polygon>} polygons - airspace defining boundaries
- * @param {Array<number>} pos - lon/lat pair, current position
+ * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {boolean}
  */
 export function routeWillEnterAirspace(route_data: Array<FixProps> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {

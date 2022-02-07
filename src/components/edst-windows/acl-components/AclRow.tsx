@@ -17,7 +17,7 @@ interface AclRowProps {
   entry: EdstEntryProps;
   index: number;
   any_holding: boolean;
-  hidden: Array<string>;
+  hidden: string[];
   alt_mouse_down: boolean;
   updateVci: (cid: string) => void;
 }
