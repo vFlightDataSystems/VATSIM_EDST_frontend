@@ -32,12 +32,12 @@ import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/co
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
-import {AselProps, EdstEntryProps, PlanDataProps, SectorDataProps, SortDataProps} from "./interfaces";
+import {AselProps, EdstEntryProps, PlanDataProps, SectorDataProps} from "./types";
 import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
-import { connect } from 'react-redux';
-import { RootState } from './redux/store';
-import { addAclCid, addDepCid, deleteAclCid, deleteDepCid, setAclCidList } from './redux/actions';
+import {connect} from 'react-redux';
+import {RootState} from './redux/store';
+import {addAclCid, addDepCid, deleteAclCid, deleteDepCid, setAclCidList} from './redux/actions';
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -61,9 +61,6 @@ const initial_state = {
   all_boundaries: [],
   menu: null,
   spa_list: [],
-  sig: [],
-  not: [],
-  gi: [],
   dragging: false,
   dragging_cursor_hide: null,
   draggingRef: null,
@@ -73,8 +70,6 @@ const initial_state = {
   asel: null, // {cid, field, ref}
   rel: null,
   plan_queue: [],
-  sort_data: {acl: {name: 'ACID', sector: false}, dep: {name: 'ACID'}},
-  manual_posting: {acl: true, dep: true},
   input_focused: false,
   open_windows: new Set<string>(),
   mra_msg: '',
@@ -95,9 +90,6 @@ export interface State {
   all_boundaries: Array<any>;
   menu: { name: string, ref_id: string | null } | null;
   spa_list: Array<string>;
-  sig: Array<string>;
-  not: Array<string>;
-  gi: Array<string>;
   dragging: boolean;
   dragging_cursor_hide: boolean | null;
   draggingRef: any | null;
@@ -107,8 +99,6 @@ export interface State {
   edst_data: { [cid: string]: EdstEntryProps }; // keys are cid, values are data from db
   asel: AselProps | null; // {cid, field, ref}
   plan_queue: Array<PlanDataProps>,
-  sort_data: SortDataProps;
-  manual_posting: { acl: boolean, dep: boolean };
   input_focused: boolean;
   open_windows: Set<string>;
   mra_msg: string;
@@ -125,6 +115,8 @@ interface Props {
   dep_cid_list: Array<string>,
   acl_deleted_list: Array<string>,
   dep_deleted_list: Array<string>,
+  manual_posting_acl: boolean,
+  manual_posting_dep: boolean,
   addAclCid: (cid: string) => void,
   addDepCid: (cid: string) => void,
   deleteAclCid: (cid: string) => void,
@@ -157,26 +149,25 @@ class App extends React.Component<Props, State> {
       sector_id = '37';
       if (!(this.state.boundary_polygons.length > 0)) {
         await getBoundaryData(artcc_id)
-            .then(response => response.json())
-            .then(geo_data => {
-              this.setState({boundary_ids: geo_data.map((boundary_id: any) => boundary_id.properties.id)});
-              this.setState({all_boundaries: geo_data.map((sector_boundary: any) => sector_boundary)});
-              this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-            });
+          .then(response => response.json())
+          .then(geo_data => {
+            this.setState({boundary_ids: geo_data.map((boundary_id: any) => boundary_id.properties.id)});
+            this.setState({all_boundaries: geo_data.map((sector_boundary: any) => sector_boundary)});
+            this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+          });
         // this.changeBoundarySelectorShown(false);
       }
-    }
-    else {
+    } else {
       artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sector_id = '37';
       if (!(this.state.boundary_polygons.length > 0)) {
         await getBoundaryData(artcc_id)
-            .then(response => response.json())
-            .then(geo_data => {
-              this.setState({boundary_ids: geo_data.map((boundary_id: { properties: { id: string; }; }) => boundary_id.properties.id)});
-              this.setState({all_boundaries: geo_data.map((sector_boundary: { properties: Array<any> }) => sector_boundary)});
-              //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-            });
+          .then(response => response.json())
+          .then(geo_data => {
+            this.setState({boundary_ids: geo_data.map((boundary_id: { properties: { id: string; }; }) => boundary_id.properties.id)});
+            this.setState({all_boundaries: geo_data.map((sector_boundary: { properties: Array<any> }) => sector_boundary)});
+            //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+          });
       }
     }
 
@@ -314,7 +305,7 @@ class App extends React.Component<Props, State> {
                     });
                 }
                 if (!dep_cid_list.includes(new_entry.cid)) {
-                    this.props.addDepCid(new_entry.cid);
+                  this.props.addDepCid(new_entry.cid);
                 }
               } else {
                 if (this.entryFilter(edst_data[new_entry.cid])) {
@@ -328,8 +319,8 @@ class App extends React.Component<Props, State> {
                   }
                   if (!acl_cid_list.includes(new_entry.cid) && !acl_deleted_list.includes(new_entry.cid)) {
                     // remove cid from departure list if will populate the aircraft list
-                      this.props.addAclCid(new_entry.cid);
-                      this.props.deleteDepCid(new_entry.cid);
+                    this.props.addAclCid(new_entry.cid);
+                    this.props.deleteDepCid(new_entry.cid);
                   }
                   if (reference_fixes.length > 0) {
                     edst_data[new_entry.cid].reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
@@ -476,8 +467,7 @@ class App extends React.Component<Props, State> {
     } else if (entry && (window === 'acl' || window === 'dep')) {
       if (window === 'acl') {
         this.props.addAclCid(entry.cid);
-      }
-      else {
+      } else {
         this.props.addDepCid(entry.cid);
       }
       const asel = {cid: entry.cid, field: 'fid', window: window};
@@ -528,16 +518,16 @@ class App extends React.Component<Props, State> {
   };
 
   aircraftSelect = (event: any & Event, window: string | null, cid: string, field: string) => {
-    let {asel, edst_data, manual_posting} = this.state;
+    let {asel, edst_data} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({menu: null, asel: null});
     } else {
       const entry = edst_data[cid];
       asel = {cid: cid, field: field, window: window};
-      if (window === 'acl' && !manual_posting.acl && field === 'fid' && edst_data[cid]?.acl_status === -1) {
+      if (window === 'acl' && !this.props.manual_posting_acl && field === 'fid-2' && edst_data[cid]?.acl_status === -1) {
         this.updateEntry(cid, {acl_status: 0});
       }
-      if (window === 'dep' && !manual_posting.dep && field === 'fid' && edst_data[cid]?.dep_status === -1) {
+      if (window === 'dep' && !this.props.manual_posting_dep && field === 'fid-2' && edst_data[cid]?.dep_status === -1) {
         this.updateEntry(cid, {dep_status: 0});
       }
       this.setState({menu: null, asel: asel});
@@ -732,32 +722,20 @@ class App extends React.Component<Props, State> {
     }
   };
 
-  setSortData = (sort_data: SortDataProps) => {
-    this.setState({sort_data: sort_data});
-  };
-
   unmount = () => {
     this.setState({asel: null, menu: null, input_focused: false});
   };
 
   aclCleanup = () => {
     let {edst_data} = this.state;
-    const { acl_cid_list, acl_deleted_list } = this.props;
+    const {acl_cid_list, acl_deleted_list} = this.props;
     const now = new Date().getTime();
     let acl_cid_list_copy, acl_deleted_list_copy;
     const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
-    
-    acl_cid_list_copy = _.difference(acl_cid_list_copy, cid_pending_removal_list);
+
+    acl_cid_list_copy = _.difference(acl_cid_list, cid_pending_removal_list);
     acl_deleted_list_copy = acl_deleted_list.concat(cid_pending_removal_list);
     this.props.setAclCidList(acl_cid_list_copy, acl_deleted_list_copy);
-  };
-
-  togglePosting = (window: string) => {
-    let {manual_posting} = this.state;
-    if (window === 'acl' || window === 'dep') {
-      manual_posting[window] = !manual_posting[window];
-      this.setState({manual_posting: manual_posting});
-    }
   };
 
   setMraMessage = (msg: string) => {
@@ -780,8 +758,8 @@ class App extends React.Component<Props, State> {
   };
 
   setBoundarySelectorEnabled = (bool: boolean) => {
-    this.setState({show_boundary_selector: bool})
-  }
+    this.setState({show_boundary_selector: bool});
+  };
 
   updateSelectedBoundaries = (label: string) => {
     if (this.state.selected_boundary_ids.has(label)) {
@@ -789,14 +767,15 @@ class App extends React.Component<Props, State> {
     } else {
       this.state.selected_boundary_ids.add(label);
     }
-  }
+  };
 
-  updateBoundaryPolygons = () =>{
+  updateBoundaryPolygons = () => {
     this.setState({
       boundary_polygons: this.state.all_boundaries.filter(
-          id => this.state.selected_boundary_ids.has(id.properties.id))
-          .map(coordinates => polygon(coordinates.geometry.coordinates))})
-  }
+        id => this.state.selected_boundary_ids.has(id.properties.id))
+        .map(coordinates => polygon(coordinates.geometry.coordinates))
+    });
+  };
 
 
   render() {
@@ -807,16 +786,11 @@ class App extends React.Component<Props, State> {
       plan_queue,
       sector_id,
       menu,
-      sig,
-      not,
-      gi,
       pos,
       dragPreviewStyle,
       dragging,
       dragging_cursor_hide,
-      sort_data,
       input_focused,
-      manual_posting,
       open_windows,
       mra_msg,
       mca_command_string,
@@ -846,10 +820,10 @@ class App extends React.Component<Props, State> {
                onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
           >
             {show_boundary_selector && <BoundarySelector
-                boundary_ids={boundary_ids}
-                toggle={this.setBoundarySelectorEnabled}
-                updateSelected={this.updateSelectedBoundaries}
-                updatePolygons={this.updateBoundaryPolygons}
+              boundary_ids={boundary_ids}
+              toggle={this.setBoundarySelectorEnabled}
+              updateSelected={this.updateSelectedBoundaries}
+              updatePolygons={this.updateBoundaryPolygons}
             />}
             <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
                  onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
@@ -882,10 +856,7 @@ class App extends React.Component<Props, State> {
             }}>
               <AclContext.Provider value={{
                 addEntry: (fid: string) => this.addEntry('acl', fid),
-                sort_data: sort_data.acl,
-                asel: asel?.window === 'acl' ? asel : null,
-                manual_posting: manual_posting.acl,
-                togglePosting: () => this.togglePosting('acl')
+                asel: asel?.window === 'acl' ? asel : null
               }}>
                 {open_windows.has('acl') && <Acl
                   cleanup={this.aclCleanup}
@@ -895,11 +866,8 @@ class App extends React.Component<Props, State> {
                 />}
               </AclContext.Provider>
               <DepContext.Provider value={{
-                sort_data: sort_data.dep,
                 asel: asel?.window === 'dep' ? asel : null,
-                manual_posting: manual_posting.dep,
-                addEntry: (fid) => this.addEntry('dep', fid),
-                togglePosting: () => this.togglePosting('dep')
+                addEntry: (fid) => this.addEntry('dep', fid)
               }}>
                 {open_windows.has('dep') && <Dep
                   unmount={this.unmount}
@@ -934,8 +902,6 @@ class App extends React.Component<Props, State> {
               />}
               {menu?.name === 'sort-menu' && pos['sort-menu'] && <SortMenu
                 ref_id={menu?.ref_id}
-                sort_data={sort_data}
-                setSortData={this.setSortData}
                 pos={pos['sort-menu']}
                 // z_index={open_windows.indexOf('route-menu')}
                 closeWindow={() => this.closeMenu('sort-menu')}
@@ -984,7 +950,6 @@ class App extends React.Component<Props, State> {
                 mca_command_string={mca_command_string}
                 setMcaCommandString={(s: string) => this.setState({mca_command_string: s})}
                 aclCleanup={this.aclCleanup}
-                togglePosting={this.togglePosting}
                 closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
               />}
               {open_windows.has('mra') && pos['edst-mra'] && <MessageResponseArea
@@ -1004,14 +969,16 @@ const mapStateToProps = (state: RootState) => ({
   acl_deleted_list: state.acl.deleted_list,
   dep_cid_list: state.dep.cid_list,
   dep_deleted_list: state.dep.deleted_list,
+  manual_posting_acl: state.acl.manual_posting,
+  manual_posting_dep: state.dep.manual_posting,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-    addAclCid: (cid: string) => dispatch(addAclCid(cid)),
-    deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
-    addDepCid: (cid: string) => dispatch(addDepCid(cid)),
-    deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
-    setAclCidList: (cid_list: Array<string>, deleted_list: Array<string>) => dispatch(setAclCidList(cid_list, deleted_list))
-})
+  addAclCid: (cid: string) => dispatch(addAclCid(cid)),
+  deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
+  addDepCid: (cid: string) => dispatch(addDepCid(cid)),
+  deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
+  setAclCidList: (cid_list: Array<string>, deleted_list: Array<string>) => dispatch(setAclCidList(cid_list, deleted_list))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

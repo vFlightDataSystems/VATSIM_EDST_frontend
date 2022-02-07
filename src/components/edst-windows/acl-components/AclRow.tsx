@@ -6,8 +6,9 @@ import {AclContext, EdstContext} from "../../../contexts/contexts";
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../interfaces";
+import {EdstEntryProps} from "../../../types";
 import _ from "lodash";
+import {useAppSelector} from "../../../redux/hooks";
 
 const SPA_INDICATOR = '^';
 
@@ -37,7 +38,9 @@ export const AclRow: React.FC<AclRowProps> = (
     deleteEntry,
     setInputFocused
   } = useContext(EdstContext);
-  const {asel, manual_posting} = useContext(AclContext);
+  const {asel} = useContext(AclContext);
+  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+
   const hold_data = entry.hold_data;
   const now = new Date().getTime();
   let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
@@ -128,7 +131,6 @@ export const AclRow: React.FC<AclRowProps> = (
         break;
       default:
         if (event.detail === 1) {
-          setTimeout(handleFidClick, 200);
           aircraftSelect(event, 'acl', entry.cid, 'fid');
         }
         else if (event.detail === 2) {
@@ -202,10 +204,8 @@ export const AclRow: React.FC<AclRowProps> = (
            ref={ref}
            style={{minWidth: entry.free_text ? '1200px' : 0}}
       >
-        <EdstTooltip title={Tooltips.acl_flight_id}>
-          <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
-               onMouseDown={handleFidClick}
-          >
+        <EdstTooltip title={Tooltips.acl_flight_id} onMouseDown={handleFidClick}>
+          <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}>
             {entry.cid} {entry.callsign}
             <span className="voice-type">
               {entry.voice_type === 'r' ? '/R' : entry.voice_type === 't' ? '/T' : ''}

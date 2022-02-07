@@ -4,7 +4,7 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
-import {EdstEntryProps} from "../../interfaces";
+import {EdstEntryProps} from "../../types";
 
 interface TemplateMenuProps {
   pos: {x: number, y: number};

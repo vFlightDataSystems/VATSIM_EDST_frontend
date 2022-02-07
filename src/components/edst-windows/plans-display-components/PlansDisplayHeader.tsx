@@ -4,7 +4,7 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import React, {useContext} from "react";
-import {AselProps} from "../../../interfaces";
+import {AselProps} from "../../../types";
 import {EdstContext} from "../../../contexts/contexts";
 
 interface PlansDisplayHeaderProps {

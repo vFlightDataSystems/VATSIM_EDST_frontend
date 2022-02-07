@@ -3,6 +3,8 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {setAclPosting} from "../../../redux/actions";
 
 interface AclHeaderProps {
   focused: boolean;
@@ -11,8 +13,12 @@ interface AclHeaderProps {
 }
 
 export const AclHeader: React.FC<AclHeaderProps> = (props) => {
+  const sort_data = useAppSelector((state) => state.acl.sort_data);
+  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+  const dispatch = useAppDispatch();
+
   const {setInputFocused, asel, openMenu} = useContext(EdstContext);
-  const {manual_posting, togglePosting, sort_data, addEntry} = useContext(AclContext);
+  const {addEntry} = useContext(AclContext);
   const [search_str, setSearchString] = useState('');
   const {focused} = props;
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -53,7 +59,7 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={togglePosting}
+        onMouseDown={() => dispatch(setAclPosting(!manual_posting))}
         content="Posting Mode"
         title={Tooltips.posting_mode}
       />

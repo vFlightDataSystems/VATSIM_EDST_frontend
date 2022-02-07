@@ -3,7 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
-import {EdstPreferredRouteProps} from "../../interfaces";
+import {EdstPreferredRouteProps} from "../../types";
 
 export const PreferredRouteDisplay: React.FC<{routes: Array<any>, clearedReroute: (reroute_data: any) => void}> = ({routes, clearedReroute}) => {
   const [eligible_only, setEligibleOnly] = useState(false);

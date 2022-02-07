@@ -10,7 +10,7 @@ import FLIGHTAWARE_LOGO from '../../css/images/FA_96h.png';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
-import {EdstWindowProps} from "../../interfaces";
+import {EdstWindowProps} from "../../types";
 
 export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
   const {

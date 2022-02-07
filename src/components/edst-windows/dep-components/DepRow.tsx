@@ -5,7 +5,7 @@ import {REMOVAL_TIMEOUT} from "../../../lib";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../interfaces";
+import {EdstEntryProps} from "../../../types";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';

@@ -2,7 +2,7 @@ import React, {useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {AselProps} from "../../interfaces";
+import {AselProps} from "../../types";
 import {EdstContext} from "../../contexts/contexts";
 
 interface PlanOptionsProps {
