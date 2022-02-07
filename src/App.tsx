@@ -35,6 +35,9 @@ import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 import {AselProps, EdstEntryProps, PlanDataProps, SectorDataProps, SortDataProps} from "./interfaces";
 import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
+import { connect } from 'react-redux';
+import { RootState } from './redux/store';
+import { addAclCid, addDepCid, deleteAclCid, deleteDepCid, setAclCidList } from './redux/actions';
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -51,10 +54,6 @@ const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb',
 
 const initial_state = {
   reference_fixes: [],
-  acl_cid_list: new Set<string>(),
-  acl_deleted_list: new Set<string>(),
-  dep_cid_list: new Set<string>(),
-  dep_deleted_list: new Set<string>(),
   disabled_windows: DISABLED_WINDOWS,
   artcc_id: '',
   sector_id: '',
@@ -89,10 +88,6 @@ const initial_state = {
 
 export interface State {
   reference_fixes: Array<any>;
-  acl_cid_list: Set<string>;
-  acl_deleted_list: Set<string>;
-  dep_cid_list: Set<string>;
-  dep_deleted_list: Set<string>;
   disabled_windows: Array<string>;
   artcc_id: string;
   sector_id: string;
@@ -125,12 +120,24 @@ export interface State {
   show_boundary_selector: boolean;
 }
 
-export default class App extends React.Component<{} | null, State> {
+interface Props {
+  acl_cid_list: Array<string>,
+  dep_cid_list: Array<string>,
+  acl_deleted_list: Array<string>,
+  dep_deleted_list: Array<string>,
+  addAclCid: (cid: string) => void,
+  addDepCid: (cid: string) => void,
+  deleteAclCid: (cid: string) => void,
+  deleteDepCid: (cid: string) => void,
+  setAclCidList: (cid_list: Array<string>, deleted_list: Array<string>) => void
+}
+
+class App extends React.Component<Props, State> {
   private mcaInputRef: React.RefObject<any> | null;
   private readonly outlineRef: React.RefObject<any>;
   private update_interval_id: any | null;
 
-  constructor(props: {}) {
+  constructor(props: Props) {
     super(props);
     this.state = initial_state;
     this.mcaInputRef = null;
@@ -228,10 +235,11 @@ export default class App extends React.Component<{} | null, State> {
   };
 
   entryFilter = (entry: EdstEntryProps) => {
-    const {acl_cid_list, boundary_polygons} = this.state;
+    const {boundary_polygons} = this.state;
+    const {acl_cid_list} = this.props;
     const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
     const will_enter_airspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos) : false;
-    return ((entry.boundary_time < 30 || acl_cid_list.has(entry.cid))
+    return ((entry.boundary_time < 30 || acl_cid_list.includes(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
   };
@@ -295,8 +303,8 @@ export default class App extends React.Component<{} | null, State> {
             for (let new_entry of new_data) {
               // yes, this is ugly... gotta find something better
               edst_data[new_entry.cid] = _.assign(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
-              let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
-              if (this.depFilter(edst_data[new_entry.cid]) && !dep_deleted_list.has(new_entry.cid)) {
+              let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.props;
+              if (this.depFilter(edst_data[new_entry.cid]) && !dep_deleted_list.includes(new_entry.cid)) {
                 if (edst_data[new_entry.cid].aar_list === undefined) {
                   await getAarData(artcc_id, new_entry.cid)
                     .then(response => response.json())
@@ -305,9 +313,8 @@ export default class App extends React.Component<{} | null, State> {
                       edst_data[new_entry.cid]._aar_list = this.processAar(edst_data[new_entry.cid], aar_list);
                     });
                 }
-                if (!dep_cid_list.has(new_entry.cid)) {
-                  dep_cid_list.add(new_entry.cid);
-                  this.setState({dep_cid_list: dep_cid_list});
+                if (!dep_cid_list.includes(new_entry.cid)) {
+                    this.props.addDepCid(new_entry.cid);
                 }
               } else {
                 if (this.entryFilter(edst_data[new_entry.cid])) {
@@ -319,11 +326,10 @@ export default class App extends React.Component<{} | null, State> {
                         edst_data[new_entry.cid]._aar_list = this.processAar(edst_data[new_entry.cid], aar_list);
                       });
                   }
-                  if (!acl_cid_list.has(new_entry.cid) && !acl_deleted_list.has(new_entry.cid)) {
+                  if (!acl_cid_list.includes(new_entry.cid) && !acl_deleted_list.includes(new_entry.cid)) {
                     // remove cid from departure list if will populate the aircraft list
-                    acl_cid_list.add(new_entry.cid);
-                    dep_cid_list.delete(new_entry.cid);
-                    this.setState({acl_cid_list: acl_cid_list, dep_cid_list: dep_cid_list});
+                      this.props.addAclCid(new_entry.cid);
+                      this.props.deleteDepCid(new_entry.cid);
                   }
                   if (reference_fixes.length > 0) {
                     edst_data[new_entry.cid].reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
@@ -395,17 +401,12 @@ export default class App extends React.Component<{} | null, State> {
   };
 
   deleteEntry = (window: string, cid: string) => {
-    let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
     switch (window) {
       case 'acl':
-        acl_cid_list.delete(cid);
-        acl_deleted_list.add(cid);
-        this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
+        this.props.deleteAclCid(cid);
         break;
       case 'dep':
-        dep_cid_list.delete(cid);
-        dep_deleted_list.add(cid);
-        this.setState({dep_cid_list: dep_cid_list, dep_deleted_list: dep_deleted_list});
+        this.props.deleteDepCid(cid);
         break;
       default:
         break;
@@ -464,7 +465,7 @@ export default class App extends React.Component<{} | null, State> {
   };
 
   addEntry = (window: string | null, fid: string) => {
-    let {edst_data, acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.state;
+    let {edst_data} = this.state;
     let entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
       if (this.depFilter(entry)) {
@@ -473,23 +474,14 @@ export default class App extends React.Component<{} | null, State> {
         this.addEntry('acl', fid);
       }
     } else if (entry && (window === 'acl' || window === 'dep')) {
-      let cid_list = window === 'acl' ? acl_cid_list : dep_cid_list;
-      let deleted_list = window === 'acl' ? acl_deleted_list : dep_deleted_list;
-      cid_list.add(entry.cid);
-      deleted_list.delete(entry.cid);
       if (window === 'acl') {
-        acl_cid_list = cid_list;
-        acl_deleted_list = deleted_list;
-      } else {
-        dep_cid_list = cid_list;
-        dep_deleted_list = deleted_list;
+        this.props.addAclCid(entry.cid);
+      }
+      else {
+        this.props.addDepCid(entry.cid);
       }
       const asel = {cid: entry.cid, field: 'fid', window: window};
       this.setState({
-        acl_cid_list: acl_cid_list,
-        acl_deleted_list: acl_deleted_list,
-        dep_cid_list: dep_cid_list,
-        dep_deleted_list: dep_deleted_list,
         asel: asel
       });
       // this.updateEntry(entry.cid, window === 'acl' ? {acl_highlighted: true} : {dep_highlighted: true});
@@ -497,7 +489,8 @@ export default class App extends React.Component<{} | null, State> {
   };
 
   amendEntry = async (cid: string, plan_data: any) => {
-    let {edst_data, artcc_id, dep_cid_list} = this.state;
+    let {edst_data, artcc_id} = this.state;
+    const {dep_cid_list} = this.props;
     let current_entry = edst_data[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
@@ -507,8 +500,8 @@ export default class App extends React.Component<{} | null, State> {
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = dep_cid_list.has(cid) ? current_entry?.route : current_entry?._route;
-      plan_data.previous_route_data = dep_cid_list.has(cid) ? current_entry?.route_data : current_entry?._route_data;
+      plan_data.previous_route = dep_cid_list.includes(cid) ? current_entry?.route : current_entry?._route;
+      plan_data.previous_route_data = dep_cid_list.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
     if (plan_data.scratch_hdg !== undefined) current_entry.scratch_hdg = plan_data.scratch_hdg;
@@ -748,14 +741,15 @@ export default class App extends React.Component<{} | null, State> {
   };
 
   aclCleanup = () => {
-    let {edst_data, acl_cid_list, acl_deleted_list} = this.state;
+    let {edst_data} = this.state;
+    const { acl_cid_list, acl_deleted_list } = this.props;
     const now = new Date().getTime();
-    let acl_cid_list_copy = [...acl_cid_list];
-    let acl_deleted_list_copy = [...acl_deleted_list];
-    const cid_pending_removal_list = acl_cid_list_copy.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
-    acl_cid_list = new Set(_.difference(acl_cid_list_copy, cid_pending_removal_list));
-    acl_deleted_list = new Set(acl_deleted_list_copy.concat(cid_pending_removal_list));
-    this.setState({acl_cid_list: acl_cid_list, acl_deleted_list: acl_deleted_list});
+    let acl_cid_list_copy, acl_deleted_list_copy;
+    const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
+    
+    acl_cid_list_copy = _.difference(acl_cid_list_copy, cid_pending_removal_list);
+    acl_deleted_list_copy = acl_deleted_list.concat(cid_pending_removal_list);
+    this.props.setAclCidList(acl_cid_list_copy, acl_deleted_list_copy);
   };
 
   togglePosting = (window: string) => {
@@ -813,8 +807,6 @@ export default class App extends React.Component<{} | null, State> {
       plan_queue,
       sector_id,
       menu,
-      acl_cid_list,
-      dep_cid_list,
       sig,
       not,
       gi,
@@ -848,11 +840,6 @@ export default class App extends React.Component<{} | null, State> {
                       toggleWindow={this.toggleWindow}
                       plan_disabled={plan_queue.length === 0}
                       sector_id={sector_id}
-                      acl_num={acl_cid_list.size}
-                      dep_num={dep_cid_list.size}
-                      sig_num={sig.length}
-                      not_num={not.length}
-                      gi_num={gi.length}
           />
           <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
                ref={this.outlineRef}
@@ -896,7 +883,6 @@ export default class App extends React.Component<{} | null, State> {
               <AclContext.Provider value={{
                 addEntry: (fid: string) => this.addEntry('acl', fid),
                 sort_data: sort_data.acl,
-                cid_list: acl_cid_list,
                 asel: asel?.window === 'acl' ? asel : null,
                 manual_posting: manual_posting.acl,
                 togglePosting: () => this.togglePosting('acl')
@@ -909,7 +895,6 @@ export default class App extends React.Component<{} | null, State> {
                 />}
               </AclContext.Provider>
               <DepContext.Provider value={{
-                cid_list: dep_cid_list,
                 sort_data: sort_data.dep,
                 asel: asel?.window === 'dep' ? asel : null,
                 manual_posting: manual_posting.dep,
@@ -1000,8 +985,6 @@ export default class App extends React.Component<{} | null, State> {
                 setMcaCommandString={(s: string) => this.setState({mca_command_string: s})}
                 aclCleanup={this.aclCleanup}
                 togglePosting={this.togglePosting}
-                acl_cid_list={acl_cid_list}
-                dep_cid_list={dep_cid_list}
                 closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
               />}
               {open_windows.has('mra') && pos['edst-mra'] && <MessageResponseArea
@@ -1015,3 +998,20 @@ export default class App extends React.Component<{} | null, State> {
     );
   }
 }
+
+const mapStateToProps = (state: RootState) => ({
+  acl_cid_list: state.acl.cid_list,
+  acl_deleted_list: state.acl.deleted_list,
+  dep_cid_list: state.dep.cid_list,
+  dep_deleted_list: state.dep.deleted_list,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+    addAclCid: (cid: string) => dispatch(addAclCid(cid)),
+    deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
+    addDepCid: (cid: string) => dispatch(addDepCid(cid)),
+    deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
+    setAclCidList: (cid_list: Array<string>, deleted_list: Array<string>) => dispatch(setAclCidList(cid_list, deleted_list))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

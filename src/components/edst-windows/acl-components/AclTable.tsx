@@ -7,6 +7,7 @@ import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryProps} from "../../../interfaces";
+import { useAppSelector } from '../../../redux/hooks';
 
 
 export function AclTable() {
@@ -19,7 +20,8 @@ export function AclTable() {
     edst_data,
     updateEntry,
   } = useContext(EdstContext);
-  const {cid_list, sort_data, manual_posting} = useContext(AclContext);
+  const {sort_data, manual_posting} = useContext(AclContext);
+  const cid_list = useAppSelector(state => state.acl.cid_list);
 
   // check whether any aircraft in the list is holding
   const checkHolding = () => {
@@ -109,7 +111,7 @@ export function AclTable() {
     }
   };
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.has(entry.cid));
+  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.includes(entry.cid));
   const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryProps) => (typeof (entry.spa) === 'number'))
     ?.sort((u: any, v: any) => u.spa - v.spa));
 
@@ -205,7 +207,7 @@ export function AclTable() {
           updateVci={updateVci}
         />)}
       {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && cid_list.has(entry.cid) && entry.acl_status === -1)))
+      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && cid_list.includes(entry.cid) && entry.acl_status === -1)))
         ?.map(([i, entry]: [string, EdstEntryProps]) =>
           <AclRow
             key={`acl-table-row-no-ack-${entry.cid}-${i}`}

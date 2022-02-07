@@ -1,0 +1,9 @@
+export type ActionType = {type: string, payload?: any};
+export const ADD_ACL_CID = 'ADD_ACL_CID';
+export const DELETE_ACL_CID = 'DELETE_ACL_CID';
+export const SET_ACL_CID_LIST = "SET_ACL_CID_LIST";
+export const SET_DEP_CID_LIST = "SET_DEP_CID_LIST";
+export const ADD_DEP_CID = 'ADD_DEP_CID';
+export const DELETE_DEP_CID = 'DELETE_DEP_CID';
+export const SET_ACL_SORT = 'SET_ACL_SORT';
+export const SET_DEP_SORT = 'SET_DEP_SORT';

@@ -5,6 +5,7 @@ import {DepRow} from "./DepRow";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstEntryProps} from "../../../interfaces";
 import _ from "lodash";
+import { useAppSelector } from '../../../redux/hooks';
 
 const COMPLETED_SYMBOL = '✓';
 
@@ -14,7 +15,8 @@ export function DepTable() {
     edst_data,
     updateEntry
   } = useContext(EdstContext);
-  const {cid_list, sort_data, manual_posting} = useContext(DepContext);
+  const {sort_data, manual_posting} = useContext(DepContext);
+  const cid_list = useAppSelector(state => state.dep.cid_list);
 
   const toggleHideColumn = (name: string) => {
     let hidden_copy = hidden.slice(0);
@@ -53,7 +55,7 @@ export function DepTable() {
     }
   };
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.has(entry.cid));
+  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.includes(entry.cid));
 
   const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryProps) => (_.isNumber(entry.spa))) // @ts-ignore
     ?.sort((u: EdstEntryProps, v: EdstEntryProps) => u.spa - v.spa));
