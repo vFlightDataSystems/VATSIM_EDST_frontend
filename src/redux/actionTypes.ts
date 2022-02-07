@@ -7,3 +7,5 @@ export const ADD_DEP_CID = 'ADD_DEP_CID';
 export const DELETE_DEP_CID = 'DELETE_DEP_CID';
 export const SET_ACL_SORT = 'SET_ACL_SORT';
 export const SET_DEP_SORT = 'SET_DEP_SORT';
+export const SET_ACL_MANUAL_POSTING = 'SET_ACL_MANUAL_POSTING';
+export const SET_DEP_MANUAL_POSTING = 'SET_DEP_MANUAL_POSTING';
