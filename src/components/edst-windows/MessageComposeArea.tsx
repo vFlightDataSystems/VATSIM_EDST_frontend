@@ -88,64 +88,65 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   const parseCommand = () => {
     const [command, ...args] = mca_command_string.split(/\s+/);
     // console.log(command, args)
-    switch (command) {
-      case '//': // should turn wifi on/off for a CID
-        if (args.length === 1 && acl_cid_list.has(args[0])) {
+    if (command.match(/\/\/\w+/)) {
+      toggleVci(command.slice(2));
+      setResponse(`ACCEPT\nD POS KEYBD`);
+    } else {
+      switch (command) {
+        case '//': // should turn wifi on/off for a CID
           toggleVci(args[0]);
           setResponse(`ACCEPT\nD POS KEYBD`);
-        } else {
-          setResponse(`REJECT\n${mca_command_string}`);
-        }
-        break;
-      case 'UU':
-        switch (args.length) {
-          case 0:
-            openWindow('acl');
-            setResponse(`ACCEPT\nD POS KEYBD`);
-            break;
-          case 1:
-            switch (args[0]) {
-              case 'C':
-                props.aclCleanup();
-                break;
-              case 'D':
-                openWindow('dep');
-                break;
-              case 'P':
-                openWindow('acl');
-                dispatch(setAclPosting(!manual_posting))
-                break;
-              case 'X':
-                props.closeAllWindows();
-                break;
-              default:
-                addEntry(null, args[0]);
-                break;
-            }
-            setResponse(`ACCEPT\nD POS KEYBD`);
-            break;
-          case 2:
-            if (args[0] === 'H') {
-              toggleHighlightEntry(args[1]);
+          break;
+        case 'UU':
+          switch (args.length) {
+            case 0:
+              openWindow('acl');
               setResponse(`ACCEPT\nD POS KEYBD`);
-            } else {
+              break;
+            case 1:
+              switch (args[0]) {
+                case 'C':
+                  props.aclCleanup();
+                  break;
+                case 'D':
+                  openWindow('dep');
+                  break;
+                case 'P':
+                  openWindow('acl');
+                  dispatch(setAclPosting(!manual_posting));
+                  break;
+                case 'X':
+                  props.closeAllWindows();
+                  break;
+                default:
+                  addEntry(null, args[0]);
+                  break;
+              }
+              setResponse(`ACCEPT\nD POS KEYBD`);
+              break;
+            case 2:
+              if (args[0] === 'H') {
+                toggleHighlightEntry(args[1]);
+                setResponse(`ACCEPT\nD POS KEYBD`);
+              } else {
+                setResponse(`REJECT\n${mca_command_string}`);
+              }
+              break;
+            default: // TODO: give error msg
               setResponse(`REJECT\n${mca_command_string}`);
-            }
-            break;
-          default: // TODO: give error msg
-            setResponse(`REJECT\n${mca_command_string}`);
-        }
-        break;
-      case 'FR':
-        if (args.length === 1) {
-          flightplanReadout(args[0]);
-          setResponse(`ACCEPT\nREADOUT\n${mca_command_string}`);
-        } else {
-          setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mca_command_string}`);
-        }
-        break;
-      default: // better error msg
-        setResponse(`REJECT\n\n${mca_command_string}`);
+          }
+          break;
+        case 'FR':
+          if (args.length === 1) {
+            flightplanReadout(args[0]);
+            setResponse(`ACCEPT\nREADOUT\n${mca_command_string}`);
+          } else {
+            setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mca_command_string}`);
+          }
+          break;
+        default: // better error msg
+          setResponse(`REJECT\n\n${mca_command_string}`);
+      }
     }
     setMcaCommandString('');
   };
