@@ -1,5 +1,5 @@
 import React, {createContext} from "react";
-import {AselProps, EdstEntryProps, PlanDataProps} from "../interfaces";
+import {AselProps, EdstEntryProps, PlanDataProps} from "../types";
 
 interface EdstContextProps {
   edst_data: { [cid: string]: EdstEntryProps };
@@ -27,18 +27,12 @@ interface EdstContextProps {
 }
 
 interface AclContextProps {
-  sort_data: { sector: boolean, name: string };
   asel: AselProps | null;
-  manual_posting: boolean;
-  togglePosting: () => void;
   addEntry: (fid: string) => void;
 }
 
 interface DepContextProps {
-  sort_data: { name: string };
   asel: AselProps | null;
-  manual_posting: boolean;
-  togglePosting: () => void;
   addEntry: (fid: string) => void;
 }
 
