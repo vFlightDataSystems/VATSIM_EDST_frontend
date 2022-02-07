@@ -28,7 +28,7 @@ const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = (props) => {
 interface EdstHeaderProps {
   open_windows: Set<string>;
   plan_disabled: boolean;
-  disabled_windows: Array<string>;
+  disabled_windows: string[];
   sector_id: string;
   openWindow: Function;
   toggleWindow: Function;

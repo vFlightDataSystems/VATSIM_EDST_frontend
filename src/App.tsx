@@ -83,13 +83,13 @@ const initial_state = {
 
 export interface State {
   reference_fixes: Array<any>;
-  disabled_windows: Array<string>;
+  disabled_windows: string[];
   artcc_id: string;
   sector_id: string;
   boundary_polygons: Array<Feature<Polygon>>;
   all_boundaries: Array<any>;
   menu: { name: string, ref_id: string | null } | null;
-  spa_list: Array<string>;
+  spa_list: string[];
   dragging: boolean;
   dragging_cursor_hide: boolean | null;
   draggingRef: any | null;
@@ -105,23 +105,23 @@ export interface State {
   mca_command_string: string;
   tooltips_enabled: boolean;
   show_all_tooltips: boolean;
-  boundary_ids: Array<string>;
+  boundary_ids: string[];
   selected_boundary_ids: Set<string>;
   show_boundary_selector: boolean;
 }
 
 interface Props {
-  acl_cid_list: Array<string>,
-  dep_cid_list: Array<string>,
-  acl_deleted_list: Array<string>,
-  dep_deleted_list: Array<string>,
+  acl_cid_list: string[],
+  dep_cid_list: string[],
+  acl_deleted_list: string[],
+  dep_deleted_list: string[],
   manual_posting_acl: boolean,
   manual_posting_dep: boolean,
   addAclCid: (cid: string) => void,
   addDepCid: (cid: string) => void,
   deleteAclCid: (cid: string) => void,
   deleteDepCid: (cid: string) => void,
-  setAclCidList: (cid_list: Array<string>, deleted_list: Array<string>) => void
+  setAclCidList: (cid_list: string[], deleted_list: string[]) => void
 }
 
 class App extends React.Component<Props, State> {
@@ -978,7 +978,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
   addDepCid: (cid: string) => dispatch(addDepCid(cid)),
   deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
-  setAclCidList: (cid_list: Array<string>, deleted_list: Array<string>) => dispatch(setAclCidList(cid_list, deleted_list))
+  setAclCidList: (cid_list: string[], deleted_list: string[]) => dispatch(setAclCidList(cid_list, deleted_list))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

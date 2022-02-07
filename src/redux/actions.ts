@@ -18,7 +18,7 @@ export const deleteAclCid = (cid: string) => ({
   payload: {cid: cid}
 });
 
-export const setAclCidList = (cid_list: Array<string>, deleted_list: Array<string>) => ({
+export const setAclCidList = (cid_list: string[], deleted_list: string[]) => ({
   type: SET_ACL_CID_LIST,
   payload: {cid_list: cid_list, deleted_list: deleted_list}
 });
@@ -33,7 +33,7 @@ export const deleteDepCid = (cid: string) => ({
   payload: {cid: cid}
 });
 
-export const setDepCidList = (cid_list: Array<string>, deleted_list: Array<string>) => ({
+export const setDepCidList = (cid_list: string[], deleted_list: string[]) => ({
   type: SET_DEP_CID_LIST,
   payload: { cid_list: cid_list, deleted_list: deleted_list }
 });

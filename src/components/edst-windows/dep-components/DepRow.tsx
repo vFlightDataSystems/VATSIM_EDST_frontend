@@ -12,7 +12,7 @@ const COMPLETED_SYMBOL = '✓';
 
 interface DepRowProps {
   entry: EdstEntryProps;
-  hidden: Array<string>;
+  hidden: string[];
   index: number;
   updateStatus: Function;
 }

@@ -13,7 +13,7 @@ export function DepTable() {
   const sort_data = useAppSelector((state) => state.dep.sort_data);
   const manual_posting = useAppSelector((state) => state.dep.manual_posting);
 
-  const [hidden, setHidden] = useState<Array<string>>([]);
+  const [hidden, setHidden] = useState<string[]>([]);
   const {
     edst_data,
     updateEntry
