@@ -4,26 +4,25 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {SortDataProps} from "../../interfaces";
 import {EdstContext} from "../../contexts/contexts";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {setAclSort, setDepSort} from "../../redux/actions";
 
 interface SortMenuProps {
   ref_id: string | null;
-  sort_data: SortDataProps;
-  setSortData: (sort_data: SortDataProps) => void;
   pos: { x: number, y: number };
   closeWindow: () => void;
 }
 
 export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
+  const window = ref_id === 'acl-sort-button' ? 'acl' : 'dep';
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
-  const [sort_data, setSortData] = useState(props.sort_data);
+  const sort_data: {name: string, sector: boolean} = useAppSelector((state) => state[window].sort_data);
+  const dispatch = useAppDispatch();
+  const [sort_state, setSortState] = useState(Object.assign({}, sort_data));
   const ref = useRef(null);
-
-  const window = ref_id === 'acl-sort-button' ? 'acl' : 'dep';
-  const selected = sort_data[window];
-  let sort_data_copy = Object.assign({}, sort_data);
+  let sort_state_copy = Object.assign({}, sort_state);
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -43,122 +42,122 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
         {window === 'acl' && <div className="options-row sector">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.acl.sector = !selected.sector;
-                         setSortData(sort_data_copy);
+                         sort_state_copy.sector = !sort_state.sector;
+                         setSortState(sort_state_copy);
                        }}
                        title={Tooltips.sort_acl_sector_non_sector}
           >
-            <div className={`box ${selected.sector === true ? 'selected' : ''}`}/>
+            <div className={`box ${sort_state.sector ? 'selected' : ''}`}/>
             Sector/Non-Sector
           </EdstTooltip>
         </div>}
         <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy[window].name = 'ACID';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'ACID';
+                         setSortState(sort_state_copy);
                        }}
                        title={Tooltips.sort_acid}
           >
-            <div className={`box diamond ${selected?.name === 'ACID' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'ACID' ? 'selected' : ''}`}/>
             ACID
           </EdstTooltip>
         </div>
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.acl.name = 'Boundary Time';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'Boundary Time';
+                         setSortState(sort_state_copy);
                        }} // @ts-ignore
                        title={Tooltips.sort_boundary_time}
           >
-            <div className={`box diamond ${selected?.name === 'Boundary Time' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state_copy?.name === 'Boundary Time' ? 'selected' : ''}`}/>
             Boundary Time
           </EdstTooltip>
         </div>}
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.acl.name = 'Conflict Status';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'Conflict Status';
+                         setSortState(sort_state_copy);
                        }} // @ts-ignore
                        disabled={true}
                        title={Tooltips.sort_conflict_status}
           >
-            <div className={`box diamond ${selected?.name === 'Conflict Status' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'Conflict Status' ? 'selected' : ''}`}/>
             Conflict Status
           </EdstTooltip>
         </div>}
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.acl.name = 'Conflict Time';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'Conflict Time';
+                         setSortState(sort_state_copy);
                        }}
             // @ts-ignore
                        disabled={true}
                        title={Tooltips.sort_conflict_time}
           >
-            <div className={`box diamond ${selected?.name === 'Conflict Time' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'Conflict Time' ? 'selected' : ''}`}/>
             Conflict Time
           </EdstTooltip>
         </div>}
         <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy[window].name = 'Destination';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'Destination';
+                         setSortState(sort_state_copy);
                        }}
                        title={Tooltips.sort_destination}
           >
-            <div className={`box diamond ${selected?.name === 'Destination' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'Destination' ? 'selected' : ''}`}/>
             Destination
           </EdstTooltip>
         </div>
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.acl.name = 'Sector-by-Sector';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'Sector-by-Sector';
+                         setSortState(sort_state_copy);
                        }}
             // @ts-ignore
                        disabled={true}
                        title={Tooltips.sort_sector_by_sector}
           >
-            <div className={`box diamond ${selected?.name === 'Sector-by-Sector' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'Sector-by-Sector' ? 'selected' : ''}`}/>
             Sector-by-Sector
           </EdstTooltip>
         </div>}
         {window === 'dep' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.dep.name = 'Origin';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'Origin';
+                         setSortState(sort_state_copy);
                        }}
                        title={Tooltips.sort_origin}
           >
-            <div className={`box diamond ${selected?.name === 'Origin' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'Origin' ? 'selected' : ''}`}/>
             Origin
           </EdstTooltip>
         </div>}
         {window === 'dep' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sort_data_copy.dep.name = 'P-Time';
-                         setSortData(sort_data_copy);
+                         sort_state_copy.name = 'P-Time';
+                         setSortState(sort_state_copy);
                        }}
             // @ts-ignore
                        disabled={true}
                        title={Tooltips.sort_p_time}
           >
-            <div className={`box diamond ${selected?.name === 'P-Time' ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sort_state?.name === 'P-Time' ? 'selected' : ''}`}/>
             P-Time
           </EdstTooltip>
         </div>}
         <div className="options-row bottom sort">
           <div className="options-col left">
             <EdstButton content="OK" onMouseDown={() => {
-              props.setSortData(sort_data);
+              dispatch(window === 'acl' ? setAclSort(sort_state.name, sort_state.sector) : setDepSort(sort_state.name));
               props.closeWindow();
             }}/>
           </div>

@@ -4,6 +4,8 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {setDepPosting} from "../../../redux/actions";
 
 interface DepHeaderProps {
   focused: boolean;
@@ -11,8 +13,12 @@ interface DepHeaderProps {
 }
 
 export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
+  const sort_data = useAppSelector((state) => state.dep.sort_data);
+  const manual_posting = useAppSelector((state) => state.dep.manual_posting);
+  const dispatch = useAppDispatch();
+
   const {setInputFocused, openMenu} = useContext(EdstContext);
-  const {manual_posting, togglePosting, sort_data, addEntry, asel} = useContext(DepContext);
+  const {addEntry, asel} = useContext(DepContext);
   const [search_str, setSearchString] = useState('');
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -41,7 +47,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
         title={Tooltips.sort}
       />
       <EdstWindowHeaderButton
-        onMouseDown={togglePosting}
+        onMouseDown={() => dispatch(setDepPosting(!manual_posting))}
         content="Posting Mode"
         title={Tooltips.posting_mode}
       />

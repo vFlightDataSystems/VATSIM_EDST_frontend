@@ -7,7 +7,7 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
-import {EdstWindowProps} from "../../interfaces";
+import {EdstWindowProps} from "../../types";
 
 
 

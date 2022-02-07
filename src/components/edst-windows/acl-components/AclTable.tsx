@@ -3,14 +3,17 @@ import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
 import VCI from '../../../css/images/VCI_v4.png';
-import {AclContext, EdstContext} from "../../../contexts/contexts";
+import {EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../interfaces";
+import {EdstEntryProps} from "../../../types";
 import { useAppSelector } from '../../../redux/hooks';
 
 
 export function AclTable() {
+  const sort_data = useAppSelector((state) => state.acl.sort_data);
+  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+
   const [any_holding, setAnyHolding] = useState(false);
   const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
   const [any_assigned_speed, setAnyAssignedSpeed] = useState(false);
@@ -20,7 +23,6 @@ export function AclTable() {
     edst_data,
     updateEntry,
   } = useContext(EdstContext);
-  const {sort_data, manual_posting} = useContext(AclContext);
   const cid_list = useAppSelector(state => state.acl.cid_list);
 
   // check whether any aircraft in the list is holding

@@ -3,7 +3,7 @@ import {EdstContext} from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {EdstWindowProps} from "../../interfaces";
+import {EdstWindowProps} from "../../types";
 import {copy} from "../../lib";
 
 export const PreviousRouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {

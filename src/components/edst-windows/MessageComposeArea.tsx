@@ -3,15 +3,15 @@ import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
-import {EdstEntryProps} from "../../interfaces";
-import { useAppSelector } from '../../redux/hooks';
+import {EdstEntryProps} from "../../types";
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {setAclPosting} from "../../redux/actions";
 
 interface MessageComposeAreaProps {
   pos: { x: number, y: number };
   mca_command_string: string;
   setMcaCommandString: (s: string) => void;
   aclCleanup: () => void;
-  togglePosting: (window: string) => void;
   closeAllWindows: () => void;
 }
 
@@ -29,6 +29,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   const inputRef = useRef<HTMLInputElement | null>(null);
   const acl_cid_list = useAppSelector(state => state.acl.cid_list);
   const dep_cid_list = useAppSelector(state => state.dep.cid_list);
+  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+  const dispatch = useAppDispatch();
 
   const {
     startDrag,
@@ -111,7 +113,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
                 break;
               case 'P':
                 openWindow('acl');
-                props.togglePosting('acl');
+                dispatch(setAclPosting(!manual_posting))
                 break;
               case 'X':
                 props.closeAllWindows();

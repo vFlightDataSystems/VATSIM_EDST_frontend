@@ -2,20 +2,22 @@ import {useState, useContext} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
-import {DepContext, EdstContext} from "../../../contexts/contexts";
-import {EdstEntryProps} from "../../../interfaces";
+import {EdstContext} from "../../../contexts/contexts";
+import {EdstEntryProps} from "../../../types";
 import _ from "lodash";
 import { useAppSelector } from '../../../redux/hooks';
 
 const COMPLETED_SYMBOL = '✓';
 
 export function DepTable() {
+  const sort_data = useAppSelector((state) => state.dep.sort_data);
+  const manual_posting = useAppSelector((state) => state.dep.manual_posting);
+
   const [hidden, setHidden] = useState<Array<string>>([]);
   const {
     edst_data,
     updateEntry
   } = useContext(EdstContext);
-  const {sort_data, manual_posting} = useContext(DepContext);
   const cid_list = useAppSelector(state => state.dep.cid_list);
 
   const toggleHideColumn = (name: string) => {

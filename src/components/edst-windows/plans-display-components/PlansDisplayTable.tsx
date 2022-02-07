@@ -1,7 +1,7 @@
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/plans-display-styles.scss';
 import React, {useContext} from "react";
-import {AselProps} from "../../../interfaces";
+import {AselProps} from "../../../types";
 import {EdstContext} from "../../../contexts/contexts";
 
 interface plan {
