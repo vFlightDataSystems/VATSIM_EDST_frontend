@@ -3,7 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
-import {EdstEntryProps} from "../../types";
+import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclPosting} from "../../redux/actions";
 
@@ -50,18 +50,21 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     // eslint-disable-next-line
   }, []);
 
-  const toggleVci = (cid: string) => {
-    const entry = edst_data[cid];
-    if (entry.acl_status < 1) {
-      updateEntry(cid, {acl_status: 1});
-    } else {
-      updateEntry(cid, {acl_status: 0});
+  const toggleVci = (fid: string) => {
+    const entry: EdstEntryType | any = Object.values(edst_data ?? {})
+      ?.find((e: EdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    if (entry) {
+      if (entry.acl_status < 1) {
+        updateEntry(entry.cid, {acl_status: 1});
+      } else {
+        updateEntry(entry.cid, {acl_status: 0});
+      }
     }
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: EdstEntryProps | any = Object.values(edst_data ?? {})
-      ?.find((entry: EdstEntryProps) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: EdstEntryType | any = Object.values(edst_data ?? {})
+      ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       if (acl_cid_list.has(entry.cid)) {
         updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
@@ -75,8 +78,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   const flightplanReadout = (fid: string) => {
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry: EdstEntryProps | any = Object.values(edst_data ?? {})
-      ?.find((entry: EdstEntryProps) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: EdstEntryType | any = Object.values(edst_data ?? {})
+      ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       let msg = formatUtcMinutes(utc_minutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
