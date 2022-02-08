@@ -1,21 +1,21 @@
 import React, {createContext} from "react";
-import {AselProps, EdstEntryProps, PlanDataProps} from "../types";
+import {AselType, EdstEntryType, PlanDataType} from "../types";
 
 interface EdstContextProps {
-  edst_data: { [cid: string]: EdstEntryProps };
-  asel: AselProps | null;
+  edst_data: { [cid: string]: EdstEntryType };
+  asel: AselType | null;
   plan_queue: Array<any>;
   sector_id: string;
   menu: any;
   dragging: boolean;
   unmount: () => void;
-  openMenu: (ref: EventTarget | any, name: string, plan?: boolean, asel?: AselProps) => void;
+  openMenu: (ref: EventTarget | any, name: string, plan?: boolean, asel?: AselType) => void;
   closeMenu: (name: string) => void;
   updateEntry: (cid: string, data: any) => void;
   amendEntry: (cid: string, plan_data: any) => void;
   addEntry: (window: string | null, fid: string) => void;
   deleteEntry: (window: string, cid: string) => void;
-  trialPlan: (p: PlanDataProps) => void;
+  trialPlan: (p: PlanDataType) => void;
   aircraftSelect: (event: any & Event, window: string | null, cid: string, field: string) => void;
   openWindow: (name: string) => void;
   closeWindow: (name: string) => void;
@@ -27,12 +27,12 @@ interface EdstContextProps {
 }
 
 interface AclContextProps {
-  asel: AselProps | null;
+  asel: AselType | null;
   addEntry: (fid: string) => void;
 }
 
 interface DepContextProps {
-  asel: AselProps | null;
+  asel: AselType | null;
   addEntry: (fid: string) => void;
 }
 

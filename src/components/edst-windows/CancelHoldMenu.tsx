@@ -3,9 +3,9 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
-import {EdstWindowProps} from "../../types";
+import {EdstWindowType} from "../../types";
 
-export const CancelHoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const CancelHoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     startDrag,

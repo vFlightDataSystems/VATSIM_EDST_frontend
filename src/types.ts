@@ -1,6 +1,6 @@
 
 // interface for a single EDST entry
-export interface EdstEntryProps {
+export interface EdstEntryType {
   previous_route_data?: Array<any>; // fixes for latest previous route
   cid: string; // 3 character unique identifier within EDST
   callsign: string; // aircraft callsign
@@ -61,13 +61,13 @@ export interface EdstPreferredRouteProps {
   dest?: string;
 }
 
-export interface AselProps {
+export interface AselType {
   cid: string;
   field: string;
   window: string | null;
 }
 
-export interface SectorDataProps {
+export interface SectorDataType {
   geometry: { coordinates: Array<[any, any]>, type: string };
   properties: {
     alt_low?: string;
@@ -76,15 +76,15 @@ export interface SectorDataProps {
   };
 }
 
-export interface PlanDataProps {
+export interface PlanDataType {
   cid: string;
   callsign: string;
   plan_data: any;
   msg: string;
 }
 
-export interface EdstWindowProps {
+export interface EdstWindowType {
   pos: {x: number, y: number, w?: number, h?: number};
-  asel: AselProps;
+  asel: AselType;
   closeWindow: () => void;
 }

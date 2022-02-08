@@ -1,7 +1,7 @@
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/plans-display-styles.scss';
 import React, {useContext} from "react";
-import {AselProps} from "../../../types";
+import {AselType} from "../../../types";
 import {EdstContext} from "../../../contexts/contexts";
 
 interface plan {
@@ -14,7 +14,7 @@ interface PlansDisplayTableProps {
   messageSelect: (i: string) => void;
   selected_msg: string | null;
   plan_queue: Array<any>;
-  asel: AselProps | null;
+  asel: AselType | null;
 }
 
 export const PlansDisplayTable: React.FC<PlansDisplayTableProps> = ({plan_queue, selected_msg, asel, messageSelect}) => {

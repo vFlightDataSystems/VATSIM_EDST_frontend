@@ -7,11 +7,11 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
-import {EdstWindowProps} from "../../types";
+import {EdstWindowType} from "../../types";
 
 
 
-export const SpeedMenu: React.FC<EdstWindowProps> = ({asel, pos, ...props}) => {
+export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
   const {
     edst_data,
     startDrag,

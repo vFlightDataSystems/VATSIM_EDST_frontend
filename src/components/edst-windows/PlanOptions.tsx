@@ -2,11 +2,11 @@ import React, {useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {AselProps} from "../../types";
+import {AselType} from "../../types";
 import {EdstContext} from "../../contexts/contexts";
 
 interface PlanOptionsProps {
-  asel: AselProps;
+  asel: AselType;
   pos: { x: number, y: number };
   clearAsel: () => void;
   closeWindow: () => void;

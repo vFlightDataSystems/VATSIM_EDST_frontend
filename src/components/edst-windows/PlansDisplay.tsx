@@ -4,11 +4,11 @@ import '../../css/header-styles.scss';
 import '../../css/windows/plans-display-styles.scss';
 import {PlansDisplayHeader} from "./plans-display-components/PlansDisplayHeader";
 import {PlansDisplayTable} from "./plans-display-components/PlansDisplayTable";
-import {AselProps} from "../../types";
+import {AselType} from "../../types";
 
 interface PlansDisplayProps {
   plan_queue: Array<any>;
-  asel: AselProps | null;
+  asel: AselType | null;
   unmount: () => void;
   cleanup: () => void;
   closeWindow: () => void;

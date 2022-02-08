@@ -6,7 +6,7 @@ import {AclContext, EdstContext} from "../../../contexts/contexts";
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../types";
+import {EdstEntryType} from "../../../types";
 import _ from "lodash";
 import {useAppSelector} from "../../../redux/hooks";
 
@@ -14,7 +14,7 @@ const SPA_INDICATOR = '^';
 
 interface AclRowProps {
   key: string;
-  entry: EdstEntryProps;
+  entry: EdstEntryType;
   index: number;
   any_holding: boolean;
   hidden: string[];
@@ -71,7 +71,7 @@ export const AclRow: React.FC<AclRowProps> = (
   };
   const pending_aar = checkAarReroutePending();
 
-  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryProps) => {
+  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryType) => {
     event.preventDefault();
     if (event.button === 0) {
       amendEntry(entry.cid, {scratchpad: scratchpad});

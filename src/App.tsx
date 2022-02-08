@@ -32,7 +32,7 @@ import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/co
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
-import {AselProps, EdstEntryProps, PlanDataProps, SectorDataProps} from "./types";
+import {AselType, EdstEntryType, PlanDataType, SectorDataType} from "./types";
 import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
 import {connect} from 'react-redux';
@@ -96,9 +96,9 @@ export interface State {
   dragPreviewStyle: any | null;
   rel: { x: number, y: number } | null;
   pos: { [window_name: string]: { x: number, y: number, w?: number, h?: number } | null };
-  edst_data: { [cid: string]: EdstEntryProps }; // keys are cid, values are data from db
-  asel: AselProps | null; // {cid, field, ref}
-  plan_queue: Array<PlanDataProps>,
+  edst_data: { [cid: string]: EdstEntryType }; // keys are cid, values are data from db
+  asel: AselType | null; // {cid, field, ref}
+  plan_queue: Array<PlanDataType>,
   input_focused: boolean;
   open_windows: Set<string>;
   mra_msg: string;
@@ -153,7 +153,7 @@ class App extends React.Component<Props, State> {
           .then(geo_data => {
             this.setState({boundary_ids: geo_data.map((boundary_id: any) => boundary_id.properties.id)});
             this.setState({all_boundaries: geo_data.map((sector_boundary: any) => sector_boundary)});
-            this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+            this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataType) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
           });
         // this.changeBoundarySelectorShown(false);
       }
@@ -212,7 +212,7 @@ class App extends React.Component<Props, State> {
     }
   }
 
-  depFilter = (entry: EdstEntryProps) => {
+  depFilter = (entry: EdstEntryType) => {
     let dep_airport_distance = 0;
     if (entry.dep_info) {
       const pos = [entry.flightplan.lon, entry.flightplan.lat];
@@ -225,7 +225,7 @@ class App extends React.Component<Props, State> {
       && dep_airport_distance < 10;
   };
 
-  entryFilter = (entry: EdstEntryProps) => {
+  entryFilter = (entry: EdstEntryType) => {
     const {boundary_polygons} = this.state;
     const {acl_cid_list} = this.props;
     const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
@@ -235,9 +235,9 @@ class App extends React.Component<Props, State> {
       && Number(entry.flightplan.ground_speed) > 30);
   };
 
-  refreshEntry = (new_entry: EdstEntryProps) => {
+  refreshEntry = (new_entry: EdstEntryType) => {
     const pos: [number, number] = [new_entry.flightplan.lon, new_entry.flightplan.lat];
-    let current_entry: EdstEntryProps | any = this.state.edst_data[new_entry.cid] ?? {
+    let current_entry: EdstEntryType | any = this.state.edst_data[new_entry.cid] ?? {
       acl_status: -1,
       dep_status: -1
     };
@@ -337,7 +337,7 @@ class App extends React.Component<Props, State> {
       );
   };
 
-  processAar = (entry: EdstEntryProps, aar_list: Array<any>) => {
+  processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
     const {_route_data: current_route_data, _route: current_route} = entry;
     if (!current_route_data || !current_route) {
       return null;
@@ -404,7 +404,7 @@ class App extends React.Component<Props, State> {
     }
   };
 
-  trialPlan = (p: PlanDataProps) => {
+  trialPlan = (p: PlanDataType) => {
     let {plan_queue, open_windows} = this.state;
     plan_queue.unshift(p);
     open_windows.add('plans');
@@ -582,7 +582,7 @@ class App extends React.Component<Props, State> {
     this.setState({open_windows: open_windows});
   };
 
-  openMenu = (ref: EventTarget | any, name: string, plan: boolean = false, asel?: AselProps) => {
+  openMenu = (ref: EventTarget | any, name: string, plan: boolean = false, asel?: AselType) => {
     const {x, y, height, width} = ref.getBoundingClientRect();
     let {pos} = this.state;
     switch (name) {

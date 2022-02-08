@@ -4,13 +4,13 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import React, {useContext} from "react";
-import {AselProps} from "../../../types";
+import {AselType} from "../../../types";
 import {EdstContext} from "../../../contexts/contexts";
 
 interface PlansDisplayHeaderProps {
   cleanup: () => void;
   plan_data: any;
-  asel: AselProps | null;
+  asel: AselType | null;
   focused: boolean;
   closeWindow: () => void;
 }

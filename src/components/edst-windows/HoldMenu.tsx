@@ -7,9 +7,9 @@ import {formatUtcMinutes} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {EdstWindowProps} from "../../types";
+import {EdstWindowType} from "../../types";
 
-export const HoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
     startDrag,
     stopDrag,

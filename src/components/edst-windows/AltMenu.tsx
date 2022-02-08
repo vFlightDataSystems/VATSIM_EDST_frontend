@@ -5,9 +5,9 @@ import '../../css/windows/alt-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {EdstWindowProps} from '../../types';
+import {EdstWindowType} from '../../types';
 
-export const AltMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     trialPlan,

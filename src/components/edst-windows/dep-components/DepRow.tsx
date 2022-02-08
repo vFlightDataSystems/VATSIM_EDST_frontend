@@ -5,13 +5,13 @@ import {REMOVAL_TIMEOUT} from "../../../lib";
 import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../types";
+import {EdstEntryType} from "../../../types";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
 
 interface DepRowProps {
-  entry: EdstEntryProps;
+  entry: EdstEntryType;
   hidden: string[];
   index: number;
   updateStatus: Function;
@@ -54,7 +54,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
   }
   const pending_aar = checkAarReroutePending();
 
-  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryProps) => {
+  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryType) => {
     event.preventDefault();
     if (event.button === 0) {
       amendEntry(entry.cid, {scratchpad: scratchpad});
@@ -110,7 +110,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
                onMouseDown={handleFidClick}
                onContextMenu={(event) => event.preventDefault()}
           >
-            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '(R)' : entry.voice_type === 't' ? '(T)' : ''}
+            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '/R' : entry.voice_type === 't' ? '/T' : ''}
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
