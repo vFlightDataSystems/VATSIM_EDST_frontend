@@ -5,14 +5,14 @@ import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
 import {computeFrd, copy} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
-import SKYVECTOR_LOGO from '../../css/images/glob.png';
-import FLIGHTAWARE_LOGO from '../../css/images/FA_96h.png';
+import SKYVECTOR_LOGO from '../../css/images/glob_bright.png';
+import FLIGHTAWARE_LOGO from '../../css/images/FA_1.png';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
-import {EdstWindowProps} from "../../types";
+import {EdstWindowType} from "../../types";
 
-export const RouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
     edst_data,
     openMenu,
