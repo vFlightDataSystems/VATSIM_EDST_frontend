@@ -33,7 +33,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
     route = route.slice(0, -dest.length);
   }
 
-  const [scratchpad, setScratchpad] = useState(entry.free_text_content ?? '');
+  const [free_text, setFreeText] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
   const current_fix_names = entry.route_data.map(fix => fix.name);
@@ -54,14 +54,14 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
   }
   const pending_aar = checkAarReroutePending();
 
-  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryType) => {
+  const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
+    amendEntry(entry.cid, {free_text_content: free_text});
     if (event.button === 0) {
-      amendEntry(entry.cid, {scratchpad: scratchpad});
       updateEntry(entry.cid, {free_text: !entry.free_text});
     }
     if (event.button === 1) {
-      updateEntry(entry.cid, {spa: !(typeof (entry.spa) === 'number')});
+      updateEntry(entry.cid, {spa: !(typeof (entry.spa) === 'number'), free_text_content: free_text});
     }
     if (event.button === 2) {
       updateEntry(entry.cid, {dep_highlighted: !entry.dep_highlighted});
@@ -120,9 +120,9 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
         <EdstTooltip title={Tooltips.dep_hotbox}>
           <div className="body-col special hotbox"
                onContextMenu={event => event.preventDefault()}
-               onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
+               onMouseDown={handleHotboxMouseDown}
           >
-            {scratchpad && '*'}
+            {free_text && '*'}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.dep_type}>
@@ -180,8 +180,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
           <input
             onFocus={() => setInputFocused(true)}
             onBlur={() => setInputFocused(false)}
-            value={scratchpad}
-            onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
+            value={free_text}
+            onChange={(event) => setFreeText(event.target.value.toUpperCase())}/>
         </div>
       </div>
     </div>}
