@@ -4,6 +4,8 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {AselType} from "../../types";
 import {EdstContext} from "../../contexts/contexts";
+import {EdstTooltip} from "../resources/EdstTooltip";
+import {Tooltips} from "../../tooltips";
 
 interface PlanOptionsProps {
   asel: AselType;
@@ -38,69 +40,79 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           {entry.cid} {entry.callsign}
         </div>
         <div className="options-row">
-          <div className="options-col hover"
-               onMouseDown={() => openMenu(ref.current, 'alt-menu', true)}
-          >
-            Altitude...
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Altitude..."
+            title={Tooltips.plan_options_alt}
+            onMouseDown={() => openMenu(ref.current, 'alt-menu', true)}
+          />
         </div>
         {!dep && <div className="options-row">
-          <div className="options-col hover"
-            // @ts-ignore
-               disabled={true}>
-            Speed...
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Speed..."
+            title={Tooltips.plan_options_speed} // @ts-ignore
+            disabled={true}
+          />
         </div>}
         <div className="options-row">
-          <div className="options-col hover"
-               onMouseDown={() => openMenu(ref.current, 'route-menu', true)}
-          >
-            Route...
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Route..."
+            title={Tooltips.plan_options_route}
+            onMouseDown={() => openMenu(ref.current, 'route-menu', true)}
+          />
         </div>
         <div className="options-row">
-          <div className="options-col hover"
-            // @ts-ignore
-               disabled={entry?.previous_route === undefined}
-               onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
-          >
-            Previous Route
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Previous Route"
+            title={Tooltips.plan_options_prev_route} // @ts-ignore
+            disabled={entry?.previous_route === undefined}
+            onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
+          />
         </div>
         {!dep && <div className="options-row">
-          <div className="options-col hover"
-            // @ts-ignore
-               disabled={true}>
-            Stop Probe...
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Stop Probe..."
+            title={Tooltips.plan_options_stop_probe} // @ts-ignore
+            disabled={true}
+          />
         </div>}
         <div className="options-row">
-          <div className="options-col hover"
-            // @ts-ignore
-               disabled={true}>
-            Trial {dep ? 'Departure' : 'Restrictions'}...
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content={`Trial ${dep ? 'Departure' : 'Restrictions'}...`}
+            title={Tooltips.plan_options_trial_restr} // @ts-ignore
+            disabled={true}
+          />
         </div>
         {!dep && <div className="options-row">
-          <div className="options-col hover">
-            Plans
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Plans"
+            title={Tooltips.plan_options_plans}
+          />
         </div>}
         <div className="options-row">
-          <div className="options-col hover">
-            Keep
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Keep"
+            title={Tooltips.plan_options_keep}
+          />
         </div>
         <div className="options-row">
-          <div className="options-col hover"
-               onMouseDown={() => {
-                 deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
-                 props.clearAsel();
-                 props.closeWindow();
-               }}
-          >
-            Delete
-          </div>
+          <EdstTooltip
+            className="options-col hover"
+            content="Delete"
+            title={Tooltips.plan_options_delete}
+            onMouseDown={() => {
+              deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
+              props.clearAsel();
+              props.closeWindow();
+            }}
+          />
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
