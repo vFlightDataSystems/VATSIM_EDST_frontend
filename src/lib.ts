@@ -7,7 +7,7 @@ import {
   polygonToLineString
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {EdstEntryProps, FixProps} from "./types";
+import {EdstEntryType, FixProps} from "./types";
 import {toast} from "./components/toast/ToastManager";
 
 export const REMOVAL_TIMEOUT = 120000;
@@ -127,11 +127,11 @@ export function getClosestReferenceFix(reference_fixes: Array<any>, pos_point: F
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
- * @param {EdstEntryProps} entry - an EDST entry
+ * @param {EdstEntryType} entry - an EDST entry
  * @param {Array<Polygon>} polygons - airspace boundaries
  * @returns {number} - minutes until the aircraft enters the airspace
  */
-export function computeBoundaryTime(entry: EdstEntryProps, polygons: Array<Feature<Polygon>>): number {
+export function computeBoundaryTime(entry: EdstEntryType, polygons: Array<Feature<Polygon>>): number {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
   const pos_point = point(pos);
   // @ts-ignore

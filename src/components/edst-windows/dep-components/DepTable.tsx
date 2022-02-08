@@ -3,7 +3,7 @@ import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
 import {EdstContext} from "../../../contexts/contexts";
-import {EdstEntryProps} from "../../../types";
+import {EdstEntryType} from "../../../types";
 import _ from "lodash";
 import { useAppSelector } from '../../../redux/hooks';
 
@@ -44,7 +44,7 @@ export function DepTable() {
     }
   };
 
-  const sortFunc = (u: EdstEntryProps, v: EdstEntryProps) => {
+  const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
     switch (sort_data.name) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
@@ -57,10 +57,10 @@ export function DepTable() {
     }
   };
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.includes(entry.cid));
+  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryType) => cid_list.includes(entry.cid));
 
-  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryProps) => (_.isNumber(entry.spa))) // @ts-ignore
-    ?.sort((u: EdstEntryProps, v: EdstEntryProps) => u.spa - v.spa));
+  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryType) => (_.isNumber(entry.spa))) // @ts-ignore
+    ?.sort((u: EdstEntryType, v: EdstEntryType) => u.spa - v.spa));
 
   return (<div className="dep-body no-select">
     <div className="body-row header" key="dep-table-header">
@@ -93,7 +93,7 @@ export function DepTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spa_entry_list?.map(([i, entry]: [string, EdstEntryProps]) =>
+      {spa_entry_list?.map(([i, entry]: [string, EdstEntryType]) =>
         <DepRow
           key={`dep-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
@@ -102,8 +102,8 @@ export function DepTable() {
           hidden={hidden}
         />)}
       {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && ((entry.dep_status > -1) || !manual_posting)))
-        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryProps]) =>
+      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.dep_status > -1) || !manual_posting)))
+        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <DepRow
           key={`dep-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
@@ -113,8 +113,8 @@ export function DepTable() {
           hidden={hidden}
         />)}
       {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && entry.dep_status === -1)))
-        ?.map(([i, entry]: [string, EdstEntryProps]) =>
+      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && entry.dep_status === -1)))
+        ?.map(([i, entry]: [string, EdstEntryType]) =>
           <DepRow
             key={`dep-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}

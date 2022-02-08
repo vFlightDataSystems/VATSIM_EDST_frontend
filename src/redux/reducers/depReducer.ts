@@ -1,4 +1,4 @@
-import {AselProps} from "../../types";
+import {AselType} from "../../types";
 import {
   ActionType,
   ADD_DEP_CID,
@@ -11,7 +11,7 @@ import {
 export type DepType = {
   cid_list: string[],
   deleted_list: string[],
-  asel: AselProps | null,
+  asel: AselType | null,
   sort_data: { name: string, sector: boolean },
   manual_posting: boolean
 };

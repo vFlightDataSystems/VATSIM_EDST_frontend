@@ -7,9 +7,9 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
-import {EdstWindowProps} from "../../types";
+import {EdstWindowType} from "../../types";
 
-export const HeadingMenu: React.FC<EdstWindowProps> = ({asel, pos, ...props} ) => {
+export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) => {
   const {
     edst_data,
     startDrag,

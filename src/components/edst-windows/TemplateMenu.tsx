@@ -4,7 +4,7 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
-import {EdstEntryProps} from "../../types";
+import {EdstEntryType} from "../../types";
 
 interface TemplateMenuProps {
   pos: {x: number, y: number};
@@ -20,7 +20,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
     setInputFocused
   } = useContext(EdstContext);
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState<EdstEntryProps | null>(asel?.cid ? edst_data[asel.cid] : null);
+  const [entry, setEntry] = useState<EdstEntryType | null>(asel?.cid ? edst_data[asel.cid] : null);
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState((dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');

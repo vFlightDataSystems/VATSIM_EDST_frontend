@@ -3,10 +3,10 @@ import {EdstContext} from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {EdstWindowProps} from "../../types";
+import {EdstWindowType} from "../../types";
 import {copy} from "../../lib";
 
-export const PreviousRouteMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const PreviousRouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {amendEntry, edst_data, startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const entry = edst_data[asel.cid];
