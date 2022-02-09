@@ -18,7 +18,7 @@ interface EdstTooltipProps {
 }
 
 export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...props}) => {
-  const {global_tooltips_enabled, show_all_tooltips} = React.useContext(TooltipContext);
+  const {globalTooltipsEnabled, showAllTooltips} = React.useContext(TooltipContext);
   const [tooltip_enabled, setTooltipEnabled] = React.useState(false);
 
   return (<span
@@ -27,7 +27,7 @@ export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...prop
     // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
     onMouseLeave={() => setTooltipEnabled(false)}
   >
-        {global_tooltips_enabled && (tooltip_enabled || show_all_tooltips) && title &&
+        {globalTooltipsEnabled && (tooltip_enabled || showAllTooltips) && title &&
         <TooltipContent content={title}/>}
     {content ?? props.children}
     </span>);

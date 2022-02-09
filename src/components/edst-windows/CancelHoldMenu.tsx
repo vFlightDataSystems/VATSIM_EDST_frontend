@@ -7,7 +7,7 @@ import {EdstWindowType} from "../../types";
 
 export const CancelHoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
-    edst_data,
+    entries,
     startDrag,
     stopDrag,
     amendEntry,
@@ -16,7 +16,7 @@ export const CancelHoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
 
-  const entry = edst_data[asel.cid];
+  const entry = entries[asel.cid];
 
   return (<div
       onMouseEnter={() => setFocused(true)}

@@ -7,9 +7,9 @@ import {EdstWindowType} from "../../types";
 import {copy} from "../../lib";
 
 export const PreviousRouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
-  const {amendEntry, edst_data, startDrag, stopDrag} = useContext(EdstContext);
+  const {amendEntry, entries, startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
-  const entry = edst_data[asel.cid];
+  const entry = entries[asel.cid];
   useEffect(() => {
     setFocused(false);
   }, [entry]);

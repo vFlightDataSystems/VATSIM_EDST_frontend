@@ -52,86 +52,86 @@ const defaultPos = {
 const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mra'];
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'fel', 'cpdlc-hist', 'cpdlc-msg-out'];
 
-const initial_state = {
-  reference_fixes: [],
-  disabled_windows: DISABLED_WINDOWS,
-  artcc_id: '',
-  sector_id: '',
-  boundary_polygons: [],
-  all_boundaries: [],
+const initialState = {
+  referenceFixes: [],
+  disabledWindows: DISABLED_WINDOWS,
+  artccId: '',
+  sectorId: '',
+  boundaryPolygons: [],
+  allBoundaries: [],
   menu: null,
-  spa_list: [],
+  spaList: [],
   dragging: false,
-  dragging_cursor_hide: null,
+  draggingCursorHide: null,
   draggingRef: null,
   dragPreviewStyle: null,
   pos: defaultPos,
-  edst_data: {}, // keys are cid, values are data from db
+  entries: {}, // keys are cid, values are data from db
   asel: null, // {cid, field, ref}
   rel: null,
-  plan_queue: [],
-  input_focused: false,
-  open_windows: new Set<string>(),
-  mra_msg: '',
-  mca_command_string: '',
-  tooltips_enabled: true,
-  show_all_tooltips: false,
-  boundary_ids: [],
-  show_boundary_selector: true,
-  selected_boundary_ids: new Set<string>()
+  planQueue: [],
+  inputFocused: false,
+  openWindows: new Set<string>(),
+  mraMsg: '',
+  mcaCommandString: '',
+  tooltipsEnabled: true,
+  showAllTooltips: false,
+  boundaryIds: [],
+  showBoundarySelector: true,
+  selectedBoundaryIds: new Set<string>()
 };
 
 export interface State {
-  reference_fixes: Array<any>;
-  disabled_windows: string[];
-  artcc_id: string;
-  sector_id: string;
-  boundary_polygons: Array<Feature<Polygon>>;
-  all_boundaries: Array<any>;
-  menu: { name: string, ref_id: string | null } | null;
-  spa_list: string[];
+  referenceFixes: Array<any>;
+  disabledWindows: string[];
+  artccId: string;
+  sectorId: string;
+  boundaryPolygons: Array<Feature<Polygon>>;
+  allBoundaries: Array<any>;
+  menu: { name: string, refId: string | null } | null;
+  spaList: string[];
   dragging: boolean;
-  dragging_cursor_hide: boolean | null;
+  draggingCursorHide: boolean | null;
   draggingRef: any | null;
   dragPreviewStyle: any | null;
   rel: { x: number, y: number } | null;
-  pos: { [window_name: string]: { x: number, y: number, w?: number, h?: number } | null };
-  edst_data: { [cid: string]: EdstEntryType }; // keys are cid, values are data from db
+  pos: { [windowName: string]: { x: number, y: number, w?: number, h?: number } | null };
+  entries: { [cid: string]: EdstEntryType }; // keys are cid, values are data from db
   asel: AselType | null; // {cid, field, ref}
-  plan_queue: Array<PlanDataType>,
-  input_focused: boolean;
-  open_windows: Set<string>;
-  mra_msg: string;
-  mca_command_string: string;
-  tooltips_enabled: boolean;
-  show_all_tooltips: boolean;
-  boundary_ids: string[];
-  selected_boundary_ids: Set<string>;
-  show_boundary_selector: boolean;
+  planQueue: Array<PlanDataType>,
+  inputFocused: boolean;
+  openWindows: Set<string>;
+  mraMsg: string;
+  mcaCommandString: string;
+  tooltipsEnabled: boolean;
+  showAllTooltips: boolean;
+  boundaryIds: string[];
+  selectedBoundaryIds: Set<string>;
+  showBoundarySelector: boolean;
 }
 
 interface Props {
-  acl_cid_list: string[],
-  dep_cid_list: string[],
-  acl_deleted_list: string[],
-  dep_deleted_list: string[],
-  manual_posting_acl: boolean,
-  manual_posting_dep: boolean,
+  aclCidList: string[],
+  depCidList: string[],
+  aclDeletedList: string[],
+  depDeletedList: string[],
+  manualPostingAcl: boolean,
+  manualPostingDep: boolean,
   addAclCid: (cid: string) => void,
   addDepCid: (cid: string) => void,
   deleteAclCid: (cid: string) => void,
   deleteDepCid: (cid: string) => void,
-  setAclCidList: (cid_list: string[], deleted_list: string[]) => void
+  setAclCidList: (cidList: string[], deletedList: string[]) => void
 }
 
 class App extends React.Component<Props, State> {
   private mcaInputRef: React.RefObject<any> | null;
   private readonly outlineRef: React.RefObject<any>;
-  private update_interval_id: any | null;
+  private updateIntervalId: any | null;
 
   constructor(props: Props) {
     super(props);
-    this.state = initial_state;
+    this.state = initialState;
     this.mcaInputRef = null;
     this.outlineRef = React.createRef();
   }
@@ -141,49 +141,49 @@ class App extends React.Component<Props, State> {
   // }
 
   async componentDidMount() {
-    let artcc_id: string;
-    let sector_id: string;
+    let artccId: string;
+    let sectorId: string;
     if (process.env.NODE_ENV === 'development') {
-      artcc_id = 'zbw';
-      // artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
-      sector_id = '37';
-      if (!(this.state.boundary_polygons.length > 0)) {
-        await getBoundaryData(artcc_id)
+      artccId = 'zbw';
+      // artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+      sectorId = '37';
+      if (!(this.state.boundaryPolygons.length > 0)) {
+        await getBoundaryData(artccId)
           .then(response => response.json())
           .then(geo_data => {
-            this.setState({boundary_ids: geo_data.map((boundary_id: any) => boundary_id.properties.id)});
-            this.setState({all_boundaries: geo_data.map((sector_boundary: any) => sector_boundary)});
-            this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataType) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+            this.setState({boundaryIds: geo_data.map((boundary_id: any) => boundary_id.properties.id)});
+            this.setState({allBoundaries: geo_data.map((sector_boundary: any) => sector_boundary)});
+            this.setState({boundaryPolygons: geo_data.map((sector_data: SectorDataType) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
           });
         // this.changeBoundarySelectorShown(false);
       }
     } else {
-      artcc_id = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
-      sector_id = '37';
-      if (!(this.state.boundary_polygons.length > 0)) {
-        await getBoundaryData(artcc_id)
+      artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+      sectorId = '37';
+      if (!(this.state.boundaryPolygons.length > 0)) {
+        await getBoundaryData(artccId)
           .then(response => response.json())
-          .then(geo_data => {
-            this.setState({boundary_ids: geo_data.map((boundary_id: { properties: { id: string; }; }) => boundary_id.properties.id)});
-            this.setState({all_boundaries: geo_data.map((sector_boundary: { properties: Array<any> }) => sector_boundary)});
-            //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
+          .then(geoData => {
+            this.setState({boundaryIds: geoData.map((boundaryId: { properties: { id: string } }) => boundaryId.properties.id)});
+            this.setState({allBoundaries: geoData.map((sectorBoundary: { properties: Array<any> }) => sectorBoundary)});
+            //this.setState({boundary_polygons: geoData.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
           });
       }
     }
 
     // const now = new Date().getTime();
-    // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artcc_id}_${sector_id}`));
+    // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artccId}_${sectorId}`));
     // if (now - local_data?.timestamp < CACHE_TIMEOUT) {
     //   local_data.open_windows = new Set(local_data.open_windows[Symbol.iterator] ?? []);
-    //   local_data.acl_cid_list = new Set(local_data.acl_cid_list[Symbol.iterator] ?? []);
-    //   local_data.dep_cid_list = new Set(local_data.dep_cid_list[Symbol.iterator] ?? []);
-    //   local_data.acl_deleted_list = new Set(local_data.acl_deleted_list[Symbol.iterator] ?? []);
-    //   local_data.dep_deleted_list = new Set(local_data.dep_deleted_list[Symbol.iterator] ?? []);
+    //   local_data.aclCidList = new Set(local_data.aclCidList[Symbol.iterator] ?? []);
+    //   local_data.depCidList = new Set(local_data.depCidList[Symbol.iterator] ?? []);
+    //   local_data.acl_deletedList = new Set(local_data.acl_deletedList[Symbol.iterator] ?? []);
+    //   local_data.dep_deletedList = new Set(local_data.dep_deletedList[Symbol.iterator] ?? []);
     //   this.setState(local_data ?? {});
     // }
-    this.setState({artcc_id: artcc_id, sector_id: sector_id});
+    this.setState({artccId: artccId, sectorId: sectorId});
     // if (!(this.state.boundary_polygons.length > 0)) {
-    //   await getBoundaryData(artcc_id)
+    //   await getBoundaryData(artccId)
     //     .then(response => response.json())
     //     .then(geo_data => {
     //       this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
@@ -192,56 +192,56 @@ class App extends React.Component<Props, State> {
     //     });
     // }
     // if we have no reference fixes for computing FRD, get some
-    if (!(this.state.reference_fixes.length > 0)) {
-      await getReferenceFixes(artcc_id)
+    if (!(this.state.referenceFixes.length > 0)) {
+      await getReferenceFixes(artccId)
         .then(response => response.json())
         .then(reference_fixes => {
           if (reference_fixes) {
-            this.setState({reference_fixes: reference_fixes});
+            this.setState({referenceFixes: reference_fixes});
           }
         });
     }
     await this.refresh();
-    this.update_interval_id = setInterval(this.refresh, 20000); // update loop will run every 20 seconds
+    this.updateIntervalId = setInterval(this.refresh, 20000); // update loop will run every 20 seconds
   }
 
   componentWillUnmount() {
-    // localStorage.setItem(`vEDST_${this.state.artcc_id}_${this.state.sector_id}`, JSON.stringify({...this.state, timestamp: new Date().getTime()}));
-    if (this.update_interval_id) {
-      clearInterval(this.update_interval_id);
+    // localStorage.setItem(`vEDST_${this.state.artccId}_${this.state.sectorId}`, JSON.stringify({...this.state, timestamp: new Date().getTime()}));
+    if (this.updateIntervalId) {
+      clearInterval(this.updateIntervalId);
     }
   }
 
   depFilter = (entry: EdstEntryType) => {
-    let dep_airport_distance = 0;
+    let depAirportDistance = 0;
     if (entry.dep_info) {
       const pos = [entry.flightplan.lon, entry.flightplan.lat];
       const dep_pos = [entry.dep_info.lon, entry.dep_info.lat];
-      dep_airport_distance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
+      depAirportDistance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
     }
-    const {artcc_id} = this.state;
+    const {artccId} = this.state;
     return Number(entry.flightplan.ground_speed) < 40
-      && entry.dep_info?.artcc?.toLowerCase() === artcc_id
-      && dep_airport_distance < 10;
+      && entry.dep_info?.artcc?.toLowerCase() === artccId
+      && depAirportDistance < 10;
   };
 
   entryFilter = (entry: EdstEntryType) => {
-    const {boundary_polygons} = this.state;
-    const {acl_cid_list} = this.props;
+    const {boundaryPolygons} = this.state;
+    const {aclCidList} = this.props;
     const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
-    const will_enter_airspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), boundary_polygons, pos) : false;
-    return ((entry.boundary_time < 30 || acl_cid_list.includes(entry.cid))
+    const will_enter_airspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), boundaryPolygons, pos) : false;
+    return ((entry.boundary_time < 30 || aclCidList.includes(entry.cid))
       && will_enter_airspace
       && Number(entry.flightplan.ground_speed) > 30);
   };
 
   refreshEntry = (new_entry: EdstEntryType) => {
     const pos: [number, number] = [new_entry.flightplan.lon, new_entry.flightplan.lat];
-    let current_entry: EdstEntryType | any = this.state.edst_data[new_entry.cid] ?? {
-      acl_status: -1,
-      dep_status: -1
+    let current_entry: EdstEntryType | any = this.state.entries[new_entry.cid] ?? {
+      vciStatus: -1,
+      depStatus: -1
     };
-    new_entry.boundary_time = computeBoundaryTime(new_entry, this.state.boundary_polygons);
+    new_entry.boundary_time = computeBoundaryTime(new_entry, this.state.boundaryPolygons);
     const route_fix_names = new_entry.route_data.map(fix => fix.name);
     const dest = new_entry.dest;
     // add departure airport to route_data if we know the coords to compute the distance
@@ -286,50 +286,50 @@ class App extends React.Component<Props, State> {
   };
 
   refresh = async () => {
-    let {artcc_id, reference_fixes, edst_data} = this.state;
+    let {artccId, referenceFixes, entries} = this.state;
     getEdstData()
       .then(response => response.json())
       .then(async new_data => {
           if (new_data) {
             for (let new_entry of new_data) {
               // yes, this is ugly... gotta find something better
-              edst_data[new_entry.cid] = _.assign(edst_data[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
-              let {acl_cid_list, acl_deleted_list, dep_cid_list, dep_deleted_list} = this.props;
-              if (this.depFilter(edst_data[new_entry.cid]) && !dep_deleted_list.includes(new_entry.cid)) {
-                if (edst_data[new_entry.cid].aar_list === undefined) {
-                  await getAarData(artcc_id, new_entry.cid)
+              entries[new_entry.cid] = _.assign(entries[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
+              let {aclCidList, aclDeletedList, depCidList, depDeletedList} = this.props;
+              if (this.depFilter(entries[new_entry.cid]) && !depDeletedList.includes(new_entry.cid)) {
+                if (entries[new_entry.cid].aar_list === undefined) {
+                  await getAarData(artccId, new_entry.cid)
                     .then(response => response.json())
                     .then(aar_list => {
-                      edst_data[new_entry.cid].aar_list = aar_list;
-                      edst_data[new_entry.cid]._aar_list = this.processAar(edst_data[new_entry.cid], aar_list);
+                      entries[new_entry.cid].aar_list = aar_list;
+                      entries[new_entry.cid]._aar_list = this.processAar(entries[new_entry.cid], aar_list);
                     });
                 }
-                if (!dep_cid_list.includes(new_entry.cid)) {
+                if (!depCidList.includes(new_entry.cid)) {
                   this.props.addDepCid(new_entry.cid);
                 }
               } else {
-                if (this.entryFilter(edst_data[new_entry.cid])) {
-                  if (edst_data[new_entry.cid]?.aar_list === undefined) {
-                    await getAarData(artcc_id, new_entry.cid)
+                if (this.entryFilter(entries[new_entry.cid])) {
+                  if (entries[new_entry.cid]?.aar_list === undefined) {
+                    await getAarData(artccId, new_entry.cid)
                       .then(response => response.json())
                       .then(aar_list => {
-                        edst_data[new_entry.cid].aar_list = aar_list;
-                        edst_data[new_entry.cid]._aar_list = this.processAar(edst_data[new_entry.cid], aar_list);
+                        entries[new_entry.cid].aar_list = aar_list;
+                        entries[new_entry.cid]._aar_list = this.processAar(entries[new_entry.cid], aar_list);
                       });
                   }
-                  if (!acl_cid_list.includes(new_entry.cid) && !acl_deleted_list.includes(new_entry.cid)) {
+                  if (!aclCidList.includes(new_entry.cid) && !aclDeletedList.includes(new_entry.cid)) {
                     // remove cid from departure list if will populate the aircraft list
                     this.props.addAclCid(new_entry.cid);
                     this.props.deleteDepCid(new_entry.cid);
                   }
-                  if (reference_fixes.length > 0) {
-                    edst_data[new_entry.cid].reference_fix = getClosestReferenceFix(reference_fixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
+                  if (referenceFixes.length > 0) {
+                    entries[new_entry.cid].reference_fix = getClosestReferenceFix(referenceFixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
                   }
                 }
               }
-              // this.state.edst_data[new_entry.cid] = entry;
+              // this.state.entries[new_entry.cid] = entry;
               // this.setState((prevState) => {
-              //   return {edst_data: {...prevState.edst_data, [new_entry.cid]: entry}}
+              //   return {entries: {...prevState.entries, [new_entry.cid]: entry}}
               // });
             }
           }
@@ -385,7 +385,7 @@ class App extends React.Component<Props, State> {
         tfix: tfix,
         tfix_info: tfix_info,
         eligible: amendment.eligible,
-        on_eligible_aar: amendment.eligible && current_route.includes(aar_amendment_route_string),
+        on_eligibleAar: amendment.eligible && current_route.includes(aar_amendment_route_string),
         aar_data: aar_data
       };
     }).filter(aar_data => aar_data);
@@ -405,10 +405,10 @@ class App extends React.Component<Props, State> {
   };
 
   trialPlan = (p: PlanDataType) => {
-    let {plan_queue, open_windows} = this.state;
-    plan_queue.unshift(p);
-    open_windows.add('plans');
-    this.setState({open_windows: open_windows, plan_queue: plan_queue});
+    let {planQueue, openWindows} = this.state;
+    planQueue.unshift(p);
+    openWindows.add('plans');
+    this.setState({openWindows: openWindows, planQueue: planQueue});
   };
 
   // removeTrialPlan = (index) => {
@@ -418,46 +418,46 @@ class App extends React.Component<Props, State> {
   // }
 
   // swapSpaEntries = (cid_1, cid_2) => {
-  //   let {spa_list, edst_data} = this.state;
+  //   let {spa_list, entries} = this.state;
   //   const index_1 = spa_list.indexOf(cid_1)
   //   const index_2 = spa_list.indexOf(cid_2)
   //   if (index_1 > 0 && index_2 > 0) {
   //     spa_list[index_1] = cid_2;
   //     spa_list[index_2] = cid_1;
-  //     edst_data[cid_1].spa = index_2;
-  //     edst_data[cid_2].spa = index_1;
+  //     entries[cid_1].spa = index_2;
+  //     entries[cid_2].spa = index_1;
   //   }
   //   this.setState((prevState: any) => {
   //     return {
-  //       edst_data: {...prevState.edst_data}, [cid_1]: edst_data[cid_1], [cid_2]: edst_data[cid_2],
+  //       entries: {...prevState.entries}, [cid_1]: entries[cid_1], [cid_2]: entries[cid_2],
   //       spa_list: spa_list
   //     };
   //   });
   // }
 
   updateEntry = (cid: string, data: any) => {
-    let {spa_list, edst_data} = this.state;
-    let entry = edst_data[cid];
+    let {spaList, entries} = this.state;
+    let entry = entries[cid];
     if (data?.spa === true) {
-      if (!spa_list.includes(cid)) {
-        spa_list.push(cid);
+      if (!spaList.includes(cid)) {
+        spaList.push(cid);
       }
-      data.spa = spa_list.indexOf(cid);
+      data.spa = spaList.indexOf(cid);
     }
     if (data?.spa === false) {
-      const index = spa_list.indexOf(cid);
+      const index = spaList.indexOf(cid);
       if (index > -1) {
-        spa_list.splice(index, 1);
+        spaList.splice(index, 1);
       }
     }
-    this.setState(({edst_data}) => {
-      return {edst_data: {...edst_data, [cid]: _.assign(entry, data)}};
+    this.setState(({entries}) => {
+      return {entries: {...entries, [cid]: _.assign(entry, data)}};
     });
   };
 
   addEntry = (window: string | null, fid: string) => {
-    let {edst_data} = this.state;
-    let entry = Object.values(edst_data ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    let {entries} = this.state;
+    let entry = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
       if (this.depFilter(entry)) {
         this.addEntry('dep', fid);
@@ -474,14 +474,14 @@ class App extends React.Component<Props, State> {
       this.setState({
         asel: asel
       });
-      // this.updateEntry(entry.cid, window === 'acl' ? {acl_highlighted: true} : {dep_highlighted: true});
+      // this.updateEntry(entry.cid, window === 'acl' ? {aclHighlighted: true} : {depHighlighted: true});
     }
   };
 
   amendEntry = async (cid: string, plan_data: any) => {
-    let {edst_data, artcc_id} = this.state;
-    const {dep_cid_list} = this.props;
-    let current_entry = edst_data[cid];
+    let {entries, artccId} = this.state;
+    const {depCidList} = this.props;
+    let current_entry = entries[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
     }
@@ -490,8 +490,8 @@ class App extends React.Component<Props, State> {
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = dep_cid_list.includes(cid) ? current_entry?.route : current_entry?._route;
-      plan_data.previous_route_data = dep_cid_list.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
+      plan_data.previous_route = depCidList.includes(cid) ? current_entry?.route : current_entry?._route;
+      plan_data.previous_route_data = depCidList.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
     }
     plan_data.callsign = current_entry.callsign;
     if (plan_data.scratch_hdg !== undefined) current_entry.scratch_hdg = plan_data.scratch_hdg;
@@ -502,15 +502,15 @@ class App extends React.Component<Props, State> {
         if (updated_entry) {
           _.assign(current_entry, this.refreshEntry(updated_entry));
           current_entry.pending_removal = null;
-          await getAarData(artcc_id, current_entry.cid)
+          await getAarData(artccId, current_entry.cid)
             .then(response => response.json())
             .then(aar_list => {
               current_entry.aar_list = aar_list;
               current_entry._aar_list = this.processAar(current_entry, aar_list);
             });
-          this.setState(({edst_data}) => {
+          this.setState(({entries}) => {
             return {
-              edst_data: {...edst_data, [cid]: current_entry}
+              entries: {...entries, [cid]: current_entry}
             };
           });
         }
@@ -518,17 +518,17 @@ class App extends React.Component<Props, State> {
   };
 
   aircraftSelect = (event: any & Event, window: string | null, cid: string, field: string) => {
-    let {asel, edst_data} = this.state;
+    let {asel, entries} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({menu: null, asel: null});
     } else {
-      const entry = edst_data[cid];
+      const entry = entries[cid];
       asel = {cid: cid, field: field, window: window};
-      if (window === 'acl' && !this.props.manual_posting_acl && field === 'fid-2' && edst_data[cid]?.acl_status === -1) {
-        this.updateEntry(cid, {acl_status: 0});
+      if (window === 'acl' && !this.props.manualPostingAcl && field === 'fid-2' && entries[cid]?.vciStatus === -1) {
+        this.updateEntry(cid, {vciStatus: 0});
       }
-      if (window === 'dep' && !this.props.manual_posting_dep && field === 'fid-2' && edst_data[cid]?.dep_status === -1) {
-        this.updateEntry(cid, {dep_status: 0});
+      if (window === 'dep' && !this.props.manualPostingDep && field === 'fid-2' && entries[cid]?.depStatus === -1) {
+        this.updateEntry(cid, {depStatus: 0});
       }
       this.setState({menu: null, asel: asel});
       switch (field) {
@@ -536,7 +536,7 @@ class App extends React.Component<Props, State> {
           this.openMenu(event.target, 'alt-menu', false, asel);
           break;
         case 'route':
-          if (entry.acl_route_display === 'hold_data') {
+          if (entry.aclRouteDisplay === 'hold_data') {
             this.openMenu(event.target, 'hold-menu', false, asel);
           } else {
             this.openMenu(event.target, 'route-menu', false, asel);
@@ -561,25 +561,25 @@ class App extends React.Component<Props, State> {
   };
 
   toggleWindow = (name: string) => {
-    let {open_windows} = this.state;
-    if (open_windows.has(name)) {
-      open_windows.delete(name);
+    let {openWindows} = this.state;
+    if (openWindows.has(name)) {
+      openWindows.delete(name);
     } else {
-      open_windows.add(name);
+      openWindows.add(name);
     }
-    this.setState({open_windows: open_windows});
+    this.setState({openWindows: openWindows});
   };
 
   openWindow = (name: string) => {
-    let {open_windows} = this.state;
-    open_windows.add(name);
-    this.setState({open_windows: open_windows});
+    let {openWindows} = this.state;
+    openWindows.add(name);
+    this.setState({openWindows: openWindows});
   };
 
   closeWindow = (name: string) => {
-    let {open_windows} = this.state;
-    open_windows.delete(name);
-    this.setState({open_windows: open_windows});
+    let {openWindows} = this.state;
+    openWindows.delete(name);
+    this.setState({openWindows: openWindows});
   };
 
   openMenu = (ref: EventTarget | any, name: string, plan: boolean = false, asel?: AselType) => {
@@ -637,7 +637,7 @@ class App extends React.Component<Props, State> {
           y: ref.offsetTop + ref.offsetHeight
         };
     }
-    this.setState({pos: pos, menu: {name: name, ref_id: ref?.id}});
+    this.setState({pos: pos, menu: {name: name, refId: ref?.id}});
   };
 
   closeMenu = (name: string) => {
@@ -669,7 +669,7 @@ class App extends React.Component<Props, State> {
       dragging: true,
       rel: rel,
       dragPreviewStyle: style,
-      dragging_cursor_hide: DRAGGING_HIDE_CURSOR.includes(ref.current.id)
+      draggingCursorHide: DRAGGING_HIDE_CURSOR.includes(ref.current.id)
     });
   };
 
@@ -716,39 +716,39 @@ class App extends React.Component<Props, State> {
         dragging: false,
         rel: null,
         dragPreviewStyle: null,
-        dragging_cursor_hide: false,
+        draggingCursorHide: false,
         pos: pos
       });
     }
   };
 
   unmount = () => {
-    this.setState({asel: null, menu: null, input_focused: false});
+    this.setState({asel: null, menu: null, inputFocused: false});
   };
 
   aclCleanup = () => {
-    let {edst_data} = this.state;
-    const {acl_cid_list, acl_deleted_list} = this.props;
+    let {entries} = this.state;
+    const {aclCidList, aclDeletedList} = this.props;
     const now = new Date().getTime();
-    let acl_cid_list_copy, acl_deleted_list_copy;
-    const cid_pending_removal_list = acl_cid_list.filter(cid => (now - (edst_data[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
+    let aclCidList_copy, acl_deletedList_copy;
+    const cid_pending_removal_list = aclCidList.filter(cid => (now - (entries[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
 
-    acl_cid_list_copy = _.difference(acl_cid_list, cid_pending_removal_list);
-    acl_deleted_list_copy = acl_deleted_list.concat(cid_pending_removal_list);
-    this.props.setAclCidList(acl_cid_list_copy, acl_deleted_list_copy);
+    aclCidList_copy = _.difference(aclCidList, cid_pending_removal_list);
+    acl_deletedList_copy = aclDeletedList.concat(cid_pending_removal_list);
+    this.props.setAclCidList(aclCidList_copy, acl_deletedList_copy);
   };
 
   setMraMessage = (msg: string) => {
-    let {open_windows} = this.state;
-    open_windows.add('mra');
-    this.setState({mra_msg: msg, open_windows: open_windows});
+    let {openWindows} = this.state;
+    openWindows.add('mra');
+    this.setState({mraMsg: msg, openWindows: openWindows});
   };
 
 
   handleKeyDownCapture = (event: React.KeyboardEvent) => {
     event.preventDefault();
     if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
-      this.setState({mca_command_string: this.state.mca_command_string + event.key.toUpperCase()});
+      this.setState({mcaCommandString: this.state.mcaCommandString + event.key.toUpperCase()});
     }
     if (this.mcaInputRef === null) {
       this.openWindow('mca');
@@ -758,21 +758,21 @@ class App extends React.Component<Props, State> {
   };
 
   setBoundarySelectorEnabled = (bool: boolean) => {
-    this.setState({show_boundary_selector: bool});
+    this.setState({showBoundarySelector: bool});
   };
 
   updateSelectedBoundaries = (label: string) => {
-    if (this.state.selected_boundary_ids.has(label)) {
-      this.state.selected_boundary_ids.delete(label);
+    if (this.state.selectedBoundaryIds.has(label)) {
+      this.state.selectedBoundaryIds.delete(label);
     } else {
-      this.state.selected_boundary_ids.add(label);
+      this.state.selectedBoundaryIds.add(label);
     }
   };
 
   updateBoundaryPolygons = () => {
     this.setState({
-      boundary_polygons: this.state.all_boundaries.filter(
-        id => this.state.selected_boundary_ids.has(id.properties.id))
+      boundaryPolygons: this.state.allBoundaries.filter(
+        id => this.state.selectedBoundaryIds.has(id.properties.id))
         .map(coordinates => polygon(coordinates.geometry.coordinates))
     });
   };
@@ -780,61 +780,61 @@ class App extends React.Component<Props, State> {
 
   render() {
     const {
-      edst_data,
+      entries,
       asel,
-      disabled_windows,
-      plan_queue,
-      sector_id,
+      disabledWindows,
+      planQueue,
+      sectorId,
       menu,
       pos,
       dragPreviewStyle,
       dragging,
-      dragging_cursor_hide,
-      input_focused,
-      open_windows,
-      mra_msg,
-      mca_command_string,
-      tooltips_enabled,
-      show_all_tooltips,
-      boundary_ids,
-      show_boundary_selector
+      draggingCursorHide,
+      inputFocused,
+      openWindows,
+      mraMsg,
+      mcaCommandString,
+      tooltipsEnabled,
+      showAllTooltips,
+      boundaryIds,
+      showBoundarySelector
     } = this.state;
 
     return (
       <div className="edst"
            onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
-           tabIndex={!(input_focused || menu?.name === 'alt-menu') ? -1 : 0}
-           onKeyDownCapture={(e) => !input_focused && this.handleKeyDownCapture(e)}
+           tabIndex={!(inputFocused || menu?.name === 'alt-menu') ? -1 : 0}
+           onKeyDownCapture={(e) => !inputFocused && this.handleKeyDownCapture(e)}
       >
         <TooltipContext.Provider
-          value={{global_tooltips_enabled: tooltips_enabled, show_all_tooltips: show_all_tooltips}}>
-          <EdstHeader open_windows={open_windows}
-                      disabled_windows={disabled_windows}
+          value={{globalTooltipsEnabled: tooltipsEnabled, showAllTooltips: showAllTooltips}}>
+          <EdstHeader open_windows={openWindows}
+                      disabled_windows={disabledWindows}
                       openWindow={this.openWindow}
                       toggleWindow={this.toggleWindow}
-                      plan_disabled={plan_queue.length === 0}
-                      sector_id={sector_id}
+                      plan_disabled={planQueue.length === 0}
+                      sectorId={sectorId}
           />
-          <div className={`edst-body ${dragging_cursor_hide ? 'hide-cursor' : ''}`}
+          <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
                ref={this.outlineRef}
                onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
           >
-            {show_boundary_selector && <BoundarySelector
-              boundary_ids={boundary_ids}
+            {showBoundarySelector && <BoundarySelector
+              boundary_ids={boundaryIds}
               toggle={this.setBoundarySelectorEnabled}
               updateSelected={this.updateSelectedBoundaries}
               updatePolygons={this.updateBoundaryPolygons}
             />}
             <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
-                 onMouseUp={(e) => !dragging_cursor_hide && this.stopDrag(e)}
+                 onMouseUp={(e) => !draggingCursorHide && this.stopDrag(e)}
             >
-              {dragging_cursor_hide && <div className="cursor"/>}
+              {draggingCursorHide && <div className="cursor"/>}
             </div>
             <EdstContext.Provider value={{
-              edst_data: edst_data,
+              entries: entries,
               asel: asel,
-              plan_queue: plan_queue,
-              sector_id: sector_id,
+              planQueue: planQueue,
+              sectorId: sectorId,
               menu: menu,
               unmount: this.unmount,
               openMenu: this.openMenu,
@@ -851,14 +851,14 @@ class App extends React.Component<Props, State> {
               stopDrag: this.stopDrag,
               dragging: dragging,
               setMcaInputRef: (ref: React.RefObject<any> | null) => this.mcaInputRef = ref,
-              setInputFocused: (v: boolean) => this.setState({input_focused: v}),
+              setInputFocused: (v: boolean) => this.setState({inputFocused: v}),
               setMraMessage: this.setMraMessage
             }}>
               <AclContext.Provider value={{
                 addEntry: (fid: string) => this.addEntry('acl', fid),
                 asel: asel?.window === 'acl' ? asel : null
               }}>
-                {open_windows.has('acl') && <Acl
+                {openWindows.has('acl') && <Acl
                   cleanup={this.aclCleanup}
                   unmount={this.unmount}
                   // z_index={open_windows.indexOf('acl')}
@@ -869,26 +869,26 @@ class App extends React.Component<Props, State> {
                 asel: asel?.window === 'dep' ? asel : null,
                 addEntry: (fid) => this.addEntry('dep', fid)
               }}>
-                {open_windows.has('dep') && <Dep
+                {openWindows.has('dep') && <Dep
                   unmount={this.unmount}
                   // z_index={open_windows.indexOf('dep')}
                   closeWindow={() => this.closeWindow('dep')}
                 />}
               </DepContext.Provider>
-              {open_windows.has('plans') && plan_queue.length > 0 && <PlansDisplay
+              {openWindows.has('plans') && planQueue.length > 0 && <PlansDisplay
                 unmount={this.unmount}
                 asel={asel?.window === 'plans' ? asel : null}
-                cleanup={() => this.setState({plan_queue: []})}
-                plan_queue={plan_queue}
+                cleanup={() => this.setState({planQueue: []})}
+                plan_queue={planQueue}
                 // z_index={open_windows.indexOf('dep')}
                 closeWindow={() => this.closeWindow('plans')}
               />}
-              {open_windows.has('status') && pos['edst-status'] && <Status
+              {openWindows.has('status') && pos['edst-status'] && <Status
                 pos={pos['edst-status']}
                 // z_index={open_windows.indexOf('status')}
                 closeWindow={() => this.closeWindow('status')}
               />}
-              {open_windows.has('outage') && pos['edst-outage'] && <Outage
+              {openWindows.has('outage') && pos['edst-outage'] && <Outage
                 pos={pos['edst-outage']}
                 // z_index={open_windows.indexOf('status')}
                 closeWindow={() => this.closeWindow('outage')}
@@ -901,7 +901,7 @@ class App extends React.Component<Props, State> {
                 closeWindow={() => this.closeMenu('plan-menu')}
               />}
               {menu?.name === 'sort-menu' && pos['sort-menu'] && <SortMenu
-                ref_id={menu?.ref_id}
+                ref_id={menu?.refId}
                 pos={pos['sort-menu']}
                 // z_index={open_windows.indexOf('route-menu')}
                 closeWindow={() => this.closeMenu('sort-menu')}
@@ -945,16 +945,16 @@ class App extends React.Component<Props, State> {
                 pos={pos['heading-menu']}
                 closeWindow={() => this.closeMenu('heading-menu')}
               />}
-              {open_windows.has('mca') && pos['edst-mca'] && <MessageComposeArea
+              {openWindows.has('mca') && pos['edst-mca'] && <MessageComposeArea
                 pos={pos['edst-mca']}
-                mca_command_string={mca_command_string}
-                setMcaCommandString={(s: string) => this.setState({mca_command_string: s})}
+                mca_command_string={mcaCommandString}
+                setMcaCommandString={(s: string) => this.setState({mcaCommandString: s})}
                 aclCleanup={this.aclCleanup}
-                closeAllWindows={() => this.setState({open_windows: new Set(['mca'])})}
+                closeAllWindows={() => this.setState({openWindows: new Set(['mca'])})}
               />}
-              {open_windows.has('mra') && pos['edst-mra'] && <MessageResponseArea
+              {openWindows.has('mra') && pos['edst-mra'] && <MessageResponseArea
                 pos={pos['edst-mra']}
-                msg={mra_msg}
+                msg={mraMsg}
               />}
             </EdstContext.Provider>
           </div>
@@ -965,12 +965,12 @@ class App extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  acl_cid_list: state.acl.cid_list,
-  acl_deleted_list: state.acl.deleted_list,
-  dep_cid_list: state.dep.cid_list,
-  dep_deleted_list: state.dep.deleted_list,
-  manual_posting_acl: state.acl.manual_posting,
-  manual_posting_dep: state.dep.manual_posting,
+  aclCidList: state.acl.cidList,
+  aclDeletedList: state.acl.deletedList,
+  depCidList: state.dep.cidList,
+  depDeletedList: state.dep.deletedList,
+  manualPostingAcl: state.acl.manualPosting,
+  manualPostingDep: state.dep.manualPosting,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -978,7 +978,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
   addDepCid: (cid: string) => dispatch(addDepCid(cid)),
   deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
-  setAclCidList: (cid_list: string[], deleted_list: string[]) => dispatch(setAclCidList(cid_list, deleted_list))
+  setAclCidList: (cidList: string[], deletedList: string[]) => dispatch(setAclCidList(cidList, deletedList))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

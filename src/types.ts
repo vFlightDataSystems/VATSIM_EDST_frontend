@@ -21,11 +21,11 @@ export interface EdstEntryType {
   dest: string; // destination airport ICAO code
   dep_info?: any; // additional data about departure airport like local code, lon/lat, ARTCC of jurisdiction (if available)
   dest_info?: any; // additional data about destination airport like local code, lon/lat, ARTCC of jurisdiction (if available)
-  acl_status: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
-  dep_status: number; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
-  acl_highlighted?: boolean;
-  dep_highlighted?: boolean;
-  acl_route_display?: string; // for toggling remarks
+  vciStatus: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
+  depStatus: number; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
+  aclHighlighted?: boolean;
+  depHighlighted?: boolean;
+  aclRouteDisplay?: string; // for toggling remarks
   adr: Array<any>; // adapted departure routes proposed by EDST
   adar: Array<any>; // adapted departure-arrival routes proposed by EDST
   beacon: string; // assigned beacon code
@@ -41,7 +41,7 @@ export interface EdstEntryType {
   scratch_hdg?: string; // speed assigned in the scratchpad
   scratch_spd?: string; // heading assigned in the scratchpad
   free_text_content?: string; // free text content
-  free_text?: boolean; // boolean whether to display the free text row or not
+  showFreeText?: boolean; // boolean whether to display the free text row or not
   remarks_checked?: boolean; // whether remarks have been checked or not
   voice_type?: string; // voice type in VATSIM flightplan, /v/ by default
   cleared_direct?: { frd: string, fix: string }; // if cleared direct to somewhere, this will contain the FRD and the fix the aircraft was cleared to

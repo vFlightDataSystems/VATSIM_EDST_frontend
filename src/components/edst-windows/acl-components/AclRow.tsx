@@ -16,9 +16,9 @@ interface AclRowProps {
   key: string;
   entry: EdstEntryType;
   index: number;
-  any_holding: boolean;
+  anyHolding: boolean;
   hidden: string[];
-  alt_mouse_down: boolean;
+  altMouseDown: boolean;
   updateVci: (cid: string) => void;
 }
 
@@ -26,9 +26,9 @@ export const AclRow: React.FC<AclRowProps> = (
   {
     entry,
     hidden,
-    alt_mouse_down,
+    altMouseDown,
     index,
-    any_holding,
+    anyHolding,
     ...props
   }) => {
   const {
@@ -39,7 +39,7 @@ export const AclRow: React.FC<AclRowProps> = (
     setInputFocused
   } = useContext(EdstContext);
   const {asel} = useContext(AclContext);
-  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
 
   const hold_data = entry.hold_data;
   const now = new Date().getTime();
@@ -55,33 +55,33 @@ export const AclRow: React.FC<AclRowProps> = (
   const ref = useRef<HTMLDivElement | null>(null);
 
   const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.on_eligible_aar)));
-  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligible_aar);
+  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.on_eligibleAar)));
+  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligibleAar);
 
   const checkAarReroutePending = () => {
     const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-    const eligible_aar = entry?._aar_list?.filter((aar) => aar.eligible);
-    if (eligible_aar?.length === 1) {
-      const aar = eligible_aar[0];
+    const eligibleAar = entry?._aar_list?.filter((aar) => aar.eligible);
+    if (eligibleAar?.length === 1) {
+      const aar = eligibleAar[0];
       if (current_fix_names.includes(aar.tfix)) {
         return aar.aar_amendment_route_string;
       }
     }
     return null;
   };
-  const pending_aar = checkAarReroutePending();
+  const pendingAar = checkAarReroutePending();
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     if (event.button === 0) {
       amendEntry(entry.cid, {free_text_content: free_text});
-      updateEntry(entry.cid, {free_text: !entry.free_text});
+      updateEntry(entry.cid, {showFreeText: !entry.showFreeText});
     }
     if (event.button === 1) {
       updateEntry(entry.cid, {spa: !_.isNumber(entry.spa), free_text_content: free_text});
     }
     if (event.button === 2) {
-      updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
+      updateEntry(entry.cid, {aclHighlighted: !entry.aclHighlighted});
     }
   };
 
@@ -93,7 +93,7 @@ export const AclRow: React.FC<AclRowProps> = (
         if (!entry.hold_data) {
           aircraftSelect(event, 'acl', entry.cid, 'hold');
         } else {
-          updateEntry(entry.cid, {acl_route_display: !entry.acl_route_display ? 'hold_data' : null});
+          updateEntry(entry.cid, {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : null});
         }
         break;
       case 1:
@@ -105,18 +105,18 @@ export const AclRow: React.FC<AclRowProps> = (
   };
 
   const handleRemarksClick = (event: React.MouseEvent) => {
-    if (entry.acl_status === -1 && !manual_posting) {
-      updateEntry(entry.cid, {acl_status: 0});
+    if (entry.vciStatus === -1 && !manualPosting) {
+      updateEntry(entry.cid, {vciStatus: 0});
     }
     switch (event.button) {
       case 0:
         updateEntry(entry.cid, {
-          acl_route_display: !(entry.acl_route_display === 'remarks') ? 'remarks' : null,
+          aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') ? 'remarks' : null,
           remarks_checked: true
         });
         break;
       case 2:
-        updateEntry(entry.cid, {acl_route_display: !(entry.acl_route_display === 'raw_route') ? 'raw_route' : null});
+        updateEntry(entry.cid, {aclRouteDisplay: !(entry.aclRouteDisplay === 'raw_route') ? 'raw_route' : null});
         break;
       default:
         break;
@@ -192,21 +192,21 @@ export const AclRow: React.FC<AclRowProps> = (
                onContextMenu={(event) => event.preventDefault()}>
     <div
       className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <EdstTooltip title={Tooltips.acl_N_and_VCI_button}>
+      <EdstTooltip title={Tooltips.aclNAndVciBtn}>
         <div className={`body-col body-col-1 radio`}
              onMouseDown={() => props.updateVci(entry.cid)}>
-          {entry.acl_status === -1 && 'N'}{entry.acl_status === 1 && <img src={VCI} alt="wifi-symbol"/>}
+          {entry.vciStatus === -1 && 'N'}{entry.vciStatus === 1 && <img src={VCI} alt="wifi-symbol"/>}
         </div>
       </EdstTooltip>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1"/>
-      <div className={`inner-row ${entry.acl_highlighted ? 'highlighted' : ''}`}
+      <div className={`inner-row ${entry.aclHighlighted ? 'highlighted' : ''}`}
            ref={ref}
-           style={{minWidth: entry.free_text ? '1200px' : 0}}
+           style={{minWidth: entry.showFreeText ? '1200px' : 0}}
       >
-        <EdstTooltip title={Tooltips.acl_flight_id} onMouseDown={handleFidClick}>
+        <EdstTooltip title={Tooltips.aclFlightId} onMouseDown={handleFidClick}>
           <div className={`body-col fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}>
             {entry.cid} {entry.callsign}
             <span className="voice-type">
@@ -218,7 +218,7 @@ export const AclRow: React.FC<AclRowProps> = (
         <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
           {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
         </div>
-        <EdstTooltip title={Tooltips.acl_hotbox}>
+        <EdstTooltip title={Tooltips.aclHotbox}>
           <div className="body-col special hotbox"
                onContextMenu={event => event.preventDefault()}
                onMouseDown={handleHotboxMouseDown}
@@ -226,7 +226,7 @@ export const AclRow: React.FC<AclRowProps> = (
             {free_text && '*'}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_type}>
+        <EdstTooltip title={Tooltips.aclType}>
           <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
         ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'type')}
@@ -234,9 +234,9 @@ export const AclRow: React.FC<AclRowProps> = (
             {`${entry.type}/${entry.equipment}`}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_alt}>
+        <EdstTooltip title={Tooltips.aclAlt}>
           <div className={`body-col alt`}>
-            <div className={`${alt_mouse_down ? 'md' : ''} ${entry.interim ? 'interim' : ''}
+            <div className={`${altMouseDown ? 'md' : ''} ${entry.interim ? 'interim' : ''}
           ${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
                  onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'alt')}
             >
@@ -244,7 +244,7 @@ export const AclRow: React.FC<AclRowProps> = (
             </div>
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_code}>
+        <EdstTooltip title={Tooltips.aclCode}>
           <div
             className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
           ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
@@ -259,7 +259,7 @@ export const AclRow: React.FC<AclRowProps> = (
              disabled={!(entry.hdg && entry.scratch_hdg)}>
           {entry.hdg && entry.scratch_hdg && '*'}
         </div>
-        <EdstTooltip title={Tooltips.acl_hdg}>
+        <EdstTooltip title={Tooltips.aclHdg}>
           <div className={`body-col hs spd hover ${hidden.includes('hdg') ? 'content hidden' : ''}
               ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${(entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) ? 'yellow' : ''}`}
                onMouseDown={handleHeadingClick}
@@ -270,7 +270,7 @@ export const AclRow: React.FC<AclRowProps> = (
         <div className="body-col hs-slash">
           /
         </div>
-        <EdstTooltip title={Tooltips.acl_spd}>
+        <EdstTooltip title={Tooltips.aclSpd}>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
 ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (display_scratch_spd || entry.spd === null)) ? 'yellow' : ''}`}
                onMouseDown={handleSpeedClick}
@@ -296,11 +296,11 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
                }
              }}
           // @ts-ignore
-             disabled={!any_holding}
+             disabled={!anyHolding}
         >
           {entry.hold_data ? 'H' : ''}
         </div>
-        <EdstTooltip title={Tooltips.acl_remark_btn}>
+        <EdstTooltip title={Tooltips.aclRemarksBtn}>
           <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
             // @ts-ignore
                disabled={!(entry.flightplan.remarks?.length > 0)}
@@ -309,15 +309,15 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
             *
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_route}>
+        <EdstTooltip title={Tooltips.aclRoute}>
           <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
           >
-            {entry.acl_route_display === 'hold_data' && hold_data &&
+            {entry.aclRouteDisplay === 'hold_data' && hold_data &&
             `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
-            {entry.acl_route_display === 'remarks' && <span>{entry.flightplan.remarks}</span>}
-            {entry.acl_route_display === 'raw_route' && <span>{entry.flightplan.route}</span>}
-            {!entry.acl_route_display && <span className="no-pad">
+            {entry.aclRouteDisplay === 'remarks' && <span>{entry.flightplan.remarks}</span>}
+            {entry.aclRouteDisplay === 'raw_route' && <span>{entry.flightplan.route}</span>}
+            {!entry.aclRouteDisplay && <span className="no-pad">
             <span
               className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {entry.dep}
@@ -326,9 +326,9 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
               {entry.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
               {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
               {route}{!route.endsWith('.') && route.length > 0 && `.`}
-              {pending_aar && !on_aar &&
+              {pendingAar && !on_aar &&
               <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
-              {`[${pending_aar}]`}
+              {`[${pendingAar}]`}
               </span>}
               {entry.dest}
           </span>}
@@ -336,13 +336,13 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
         </EdstTooltip>
       </div>
     </div>
-    {entry.free_text && <div className="body-row">
+    {entry.showFreeText && <div className="body-row">
       <div className={`body-col body-col-1 radio`}/>
       <div className="body-col body-col-1"/>
       <div className="body-col body-col-1"/>
       <div className="body-col body-col-1"/>
       <div className="body-col body-col-1"/>
-      <div className={`inner-row-2 ${entry.acl_highlighted ? 'highlighted' : ''}`}
+      <div className={`inner-row-2 ${entry.aclHighlighted ? 'highlighted' : ''}`}
            style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
       >
         <div className="free-text-row">

@@ -24,11 +24,11 @@ export const PreferredRouteDisplay: React.FC<{routes: Array<any>, clearedReroute
         >
           <EdstButton content="ELIGIBLE" selected={eligible_only}
                       onMouseDown={() => setEligibleOnly(true)}
-                      title={Tooltips.route_menu_preferred_eligible}
+                      title={Tooltips.routeMenuPreferredEligible}
           />
           <EdstButton content="ALL" selected={!eligible_only}
                       onMouseDown={() => setEligibleOnly(false)}
-                      title={Tooltips.route_menu_preferred_all}
+                      title={Tooltips.routeMenuPreferredAll}
           />
         </div>
       </div>

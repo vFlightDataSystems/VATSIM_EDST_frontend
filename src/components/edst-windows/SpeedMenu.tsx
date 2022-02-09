@@ -13,7 +13,7 @@ import {EdstWindowType} from "../../types";
 
 export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
   const {
-    edst_data,
+    entries,
     startDrag,
     stopDrag,
     amendEntry
@@ -31,27 +31,27 @@ export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
     setSign('');
     setAmend(true);
   }, [asel]);
-  const entry = edst_data[asel.cid];
+  const entry = entries[asel.cid];
 
   const handleScroll = (e: React.WheelEvent) => {
-    const new_deltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);
-    setDeltaY(new_deltaY);
+    const newDeltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);
+    setDeltaY(newDeltaY);
   }
 
   const handleMouseDown = (event: any, value: number, mach = false) => {
     event.preventDefault();
-    const value_str = !mach ? `${(amend && sign === '') ? 'S' : ''}${value}${sign}`
+    const valueStr = !mach ? `${(amend && sign === '') ? 'S' : ''}${value}${sign}`
       : `M${Number(value * 100) | 0}${sign}`;
     switch (event.button) {
       case 0:
         amendEntry(entry.cid, {
-          [amend ? 'spd' : 'scratch_spd']: value_str,
+          [amend ? 'spd' : 'scratch_spd']: valueStr,
           [!amend ? 'spd' : 'scratch_spd']: null
         });
         break;
       case 1:
         amendEntry(entry.cid, {
-          [amend ? 'spd' : 'scratch_spd']: value_str
+          [amend ? 'spd' : 'scratch_spd']: valueStr
         });
         break;
       default:
@@ -86,7 +86,7 @@ export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
           >
             <EdstButton content="Amend" selected={amend}
                         onMouseDown={() => setAmend(true)}
-                        title={Tooltips.acl_spd_amend}
+                        title={Tooltips.aclSpdAmend}
             />
           </div>
           <div className={`options-col right ${!amend ? 'selected' : ''}`}
@@ -94,7 +94,7 @@ export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
           >
             <EdstButton content="Scratchpad" selected={!amend}
                         onMouseDown={() => setAmend(false)}
-                        title={Tooltips.acl_spd_scratchpad}
+                        title={Tooltips.aclSpdScratchpad}
             />
           </div>
         </div>
@@ -110,14 +110,14 @@ export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
         </div>
         <div className="spd-hdg-menu-row top-border"/>
         <div className="spd-hdg-menu-row bottom-border">
-          <EdstTooltip content="KNOTS" title={Tooltips.acl_spd_knots}/>
+          <EdstTooltip content="KNOTS" title={Tooltips.aclSpdKnots}/>
           <EdstButton content="+" className="button-1" selected={sign === '+'}
                       onMouseDown={() => setSign(sign === '+' ? '' : '+')}
           />
           <EdstButton content="-" className="button-2" selected={sign === '-'}
                       onMouseDown={() => setSign(sign === '-' ? '' : '-')}
           />
-          <EdstTooltip content="MACH" title={Tooltips.acl_spd_mach}/>
+          <EdstTooltip content="MACH" title={Tooltips.aclSpdMach}/>
         </div>
         <div className="spd-hdg-menu-select-container"
              onWheel={handleScroll}
