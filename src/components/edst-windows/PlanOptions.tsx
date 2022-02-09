@@ -15,10 +15,10 @@ interface PlanOptionsProps {
 }
 
 export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) => {
-  const {startDrag, stopDrag, deleteEntry, openMenu, edst_data} = useContext(EdstContext);
+  const {startDrag, stopDrag, deleteEntry, openMenu, entries} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const entry = edst_data[asel.cid];
+  const entry = entries[asel.cid];
   const dep = asel.window === 'dep';
 
   return (<div
@@ -43,7 +43,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content="Altitude..."
-            title={Tooltips.plan_options_alt}
+            title={Tooltips.planOptionsAlt}
             onMouseDown={() => openMenu(ref.current, 'alt-menu', true)}
           />
         </div>
@@ -51,7 +51,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content="Speed..."
-            title={Tooltips.plan_options_speed} // @ts-ignore
+            title={Tooltips.planOptionsSpeed} // @ts-ignore
             disabled={true}
           />
         </div>}
@@ -59,7 +59,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content="Route..."
-            title={Tooltips.plan_options_route}
+            title={Tooltips.planOptionsRoute}
             onMouseDown={() => openMenu(ref.current, 'route-menu', true)}
           />
         </div>
@@ -67,7 +67,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content="Previous Route"
-            title={Tooltips.plan_options_prev_route} // @ts-ignore
+            title={Tooltips.planOptionsPrevRoute} // @ts-ignore
             disabled={entry?.previous_route === undefined}
             onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
           />
@@ -76,7 +76,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content="Stop Probe..."
-            title={Tooltips.plan_options_stop_probe} // @ts-ignore
+            title={Tooltips.planOptionsStopProbe} // @ts-ignore
             disabled={true}
           />
         </div>}
@@ -84,7 +84,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content={`Trial ${dep ? 'Departure' : 'Restrictions'}...`}
-            title={Tooltips.plan_options_trial_restr} // @ts-ignore
+            title={Tooltips.planOptionsTrialRestr} // @ts-ignore
             disabled={true}
           />
         </div>
@@ -92,21 +92,21 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
           <EdstTooltip
             className="options-col hover"
             content="Plans"
-            title={Tooltips.plan_options_plans}
+            title={Tooltips.planOptionsPlans}
           />
         </div>}
         <div className="options-row">
           <EdstTooltip
             className="options-col hover"
             content="Keep"
-            title={Tooltips.plan_options_keep}
+            title={Tooltips.planOptionsKeep}
           />
         </div>
         <div className="options-row">
           <EdstTooltip
             className="options-col hover"
             content="Delete"
-            title={Tooltips.plan_options_delete}
+            title={Tooltips.planOptionsDelete}
             onMouseDown={() => {
               deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
               props.clearAsel();

@@ -14,7 +14,7 @@ import {EdstWindowType} from "../../types";
 
 export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
-    edst_data,
+    entries,
     openMenu,
     trialPlan,
     amendEntry,
@@ -23,13 +23,13 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     setInputFocused
   } = useContext(EdstContext);
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState(edst_data[asel.cid]);
+  const [entry, setEntry] = useState(entries[asel.cid]);
   const current_route_fixes: Array<any> = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [display_raw_route, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
   const [route_input, setRouteInput] = useState(dep ? entry.dep + route : route);
-  const [trial_plan, setTrialPlan] = useState(!dep);
+  const [planData, setTrialPlan] = useState(!dep);
   const routes = (dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({append_oplus: false, append_star: false});
   const [frd, setFrd] = useState(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
@@ -39,7 +39,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
 
 
   useEffect(() => {
-    const entry = edst_data?.[asel?.cid];
+    const entry = entries?.[asel?.cid];
     const dep = asel?.window === 'dep';
     const route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
     setDep(dep);
@@ -48,7 +48,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     setRoute(route);
     setRouteInput(dep ? entry.dep + route : route);
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  }, [asel, edst_data]);
+  }, [asel, entries]);
 
   const clearedReroute = (reroute_data: any) => {
     let plan_data;
@@ -63,7 +63,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     }
     // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or localhost
     copy(`${!dep ? frd : ''}${plan_data.route}`);
-    if (trial_plan) {
+    if (planData) {
       const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`;
       trialPlan({
         cid: entry.cid,
@@ -104,7 +104,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
         route_data: _route_data.slice(index),
         cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}
       };
-      if (trial_plan) {
+      if (planData) {
         trialPlan({
           cid: entry.cid,
           callsign: entry.callsign,
@@ -127,7 +127,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     if (event.key === 'Enter') {
       copy(`${!dep ? frd : ''}${route}`.replace(/\.+$/, ''));
       const plan_data = {route: route};
-      if (trial_plan) {
+      if (planData) {
         trialPlan({
           cid: entry.cid,
           callsign: entry.callsign,
@@ -163,8 +163,8 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
       </div>
       <div className="options-row route-row">
         <div className="options-col">
-          <EdstButton content="Trial Plan" selected={trial_plan} onMouseDown={() => setTrialPlan(true)}
-            title={Tooltips.route_menu_trial_plan}
+          <EdstButton content="Trial Plan" selected={planData} onMouseDown={() => setTrialPlan(true)}
+            title={Tooltips.routeMenuPlanData}
           />
         </div>
         <EdstTooltip className="options-col img"
@@ -175,7 +175,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
             <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
           </a>
         </EdstTooltip>
-        <EdstTooltip className="options-col img" title={Tooltips.route_menu_vatsim_logo}>
+        <EdstTooltip className="options-col img" title={Tooltips.routeMenuVatsimLogo}>
           <img src={VATSIM_LOGO} alt="vatsim-logo"
             onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
             onContextMenu={(event) => event.preventDefault()}
@@ -189,23 +189,23 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
             <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
           </a>
         </EdstTooltip>
-        <div className={`options-col right ${!trial_plan ? 'selected' : ''}`}>
-          <EdstButton content="Amend" selected={!trial_plan} onMouseDown={() => setTrialPlan(false)}
-            title={Tooltips.route_menu_amend}
+        <div className={`options-col right ${!planData ? 'selected' : ''}`}>
+          <EdstButton content="Amend" selected={!planData} onMouseDown={() => setTrialPlan(false)}
+            title={Tooltips.routeMenuAmend}
           />
         </div>
       </div>
       <div className="options-row route-row">
         <div className="options-col">
           <div className="input">
-            {!dep && <EdstTooltip className="ppos" title={Tooltips.route_menu_frd}
+            {!dep && <EdstTooltip className="ppos" title={Tooltips.routeMenuFrd}
               onContextMenu={(event) => {
                 event.preventDefault();
                 copy(frd);
               }}>
               {frd}..
             </EdstTooltip>}
-            <EdstTooltip className="route-input" title={Tooltips.route_menu_route_input}>
+            <EdstTooltip className="route-input" title={Tooltips.routeMenuRouteInput}>
               <input
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -218,21 +218,21 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
         </div>
       </div>
       <div className="options-row route-row top-border">
-        <EdstTooltip className="options-col hover button" disabled={true} title={Tooltips.route_menu_par}>
+        <EdstTooltip className="options-col hover button" disabled={true} title={Tooltips.routeMenuPar}>
           <EdstButton disabled={true} className="tiny" />
           Include PAR
         </EdstTooltip>
       </div>
       <div className="options-row route-row bottom-border">
         <EdstTooltip className="options-col hover button"
-          title={Tooltips.route_menu_append_star}
+          title={Tooltips.routeMenuAppendStar}
           onMouseDown={() => setAppend({ append_star: !append_star, append_oplus: false })}
         >
           <EdstButton disabled={true} className="tiny" selected={append_star} />
           Append *
         </EdstTooltip>
         <EdstTooltip className="options-col hover button"
-          title={Tooltips.route_menu_append_oplus}
+          title={Tooltips.routeMenuAppendOplus}
           onMouseDown={() => setAppend({ append_oplus: !append_oplus, append_star: false })}
         >
           <EdstButton disabled={true} className="tiny" selected={append_oplus} />
@@ -241,7 +241,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
       </div>
       <EdstTooltip className="options-row route-row underline"
         content="Direct-To-Fix"
-        title={Tooltips.route_menu_direct_fix}
+        title={Tooltips.routeMenuDirectFix}
       />
       <div className="options-row">
         <div className="options-col display-route">
@@ -255,7 +255,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
           return (fix_name && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
             content={fix_name}
             onMouseDown={() => clearedToFix(fix_name)}
-            title={Tooltips.route_menu_direct_fix}
+            title={Tooltips.routeMenuDirectFix}
           />);
         })}
       </div>)}
@@ -263,12 +263,12 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
         <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute} />}
       <div className="options-row bottom">
         <div className="options-col left">
-          <EdstButton disabled={true} content="Flight Data" title={Tooltips.route_menu_flight_data} />
+          <EdstButton disabled={true} content="Flight Data" title={Tooltips.routeMenuFlightData} />
           <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
             onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
-            title={Tooltips.route_menu_prev_route}
+            title={Tooltips.routeMenuPrevRoute}
           />
-          <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.route_menu_tfm_reroute} />
+          <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
         </div>
         <div className="options-col right">
           <EdstButton content="Exit" onMouseDown={closeWindow} />

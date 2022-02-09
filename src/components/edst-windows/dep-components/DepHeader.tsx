@@ -13,16 +13,16 @@ interface DepHeaderProps {
 }
 
 export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
-  const sort_data = useAppSelector((state) => state.dep.sort_data);
-  const manual_posting = useAppSelector((state) => state.dep.manual_posting);
+  const sortData = useAppSelector((state) => state.dep.sortData);
+  const manualPosting = useAppSelector((state) => state.dep.manualPosting);
   const dispatch = useAppDispatch();
 
   const {setInputFocused, openMenu} = useContext(EdstContext);
   const {addEntry, asel} = useContext(DepContext);
-  const [search_str, setSearchString] = useState('');
+  const [searchStr, setSearchString] = useState('');
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      addEntry(search_str);
+      addEntry(searchStr);
       setSearchString('');
     }
   };
@@ -31,14 +31,14 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
     <WindowTitleBar
       focused={focused}
       closeWindow={closeWindow}
-      text={['Departure List', `${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
+      text={['Departure List', `${sortData.name}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
     <div>
       <EdstWindowHeaderButton
         disabled={asel === null}
         onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'plan-menu')}
         content="Plan Options..."
-        title={Tooltips.plan_options}
+        title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton
         id="dep-sort-button"
@@ -47,9 +47,9 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
         title={Tooltips.sort}
       />
       <EdstWindowHeaderButton
-        onMouseDown={() => dispatch(setDepPosting(!manual_posting))}
+        onMouseDown={() => dispatch(setDepPosting(!manualPosting))}
         content="Posting Mode"
-        title={Tooltips.posting_mode}
+        title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
         onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'template-menu')}
@@ -63,7 +63,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
         <input
           onFocus={() => setInputFocused(true)}
           onBlur={() => setInputFocused(false)}
-          value={search_str}
+          value={searchStr}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
         />

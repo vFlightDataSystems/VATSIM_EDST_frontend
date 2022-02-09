@@ -11,12 +11,12 @@ import {EdstWindowType} from "../../types";
 
 export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) => {
   const {
-    edst_data,
+    entries,
     startDrag,
     stopDrag,
     amendEntry
   } = useContext(EdstContext);
-  let entry = edst_data[asel.cid];
+  let entry = entries[asel.cid];
 
   const [focused, setFocused] = useState(false);
   const [heading, setHeading] = useState(280);
@@ -78,7 +78,7 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
         >
           <EdstButton content="Amend" selected={amend}
                       onMouseDown={() => setAmend(true)}
-                      title={Tooltips.acl_hdg_amend}
+                      title={Tooltips.aclHdgAmend}
           />
         </div>
         <div className={`options-col right ${!amend ? 'selected' : ''}`}
@@ -86,7 +86,7 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
         >
           <EdstButton content="Scratchpad" selected={!amend}
                       onMouseDown={() => setAmend(false)}
-                      title={Tooltips.acl_hdg_scratchpad}
+                      title={Tooltips.aclHdgScratchpad}
           />
         </div>
       </div>
@@ -99,8 +99,8 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
         </div>
       </div>
       <div className="spd-hdg-menu-row top-border">
-        <EdstTooltip className="hdg-col-1" content="Heading" title={Tooltips.acl_hdg_hdg}/>
-        <EdstTooltip className="hdg-col-1" content="Turn" title={Tooltips.acl_hdg_turn}/>
+        <EdstTooltip className="hdg-col-1" content="Heading" title={Tooltips.aclHdgHdg}/>
+        <EdstTooltip className="hdg-col-1" content="Turn" title={Tooltips.aclHdgTurn}/>
       </div>
       <div className="spd-hdg-menu-row bottom-border">
         <div className="hdg-col-2">

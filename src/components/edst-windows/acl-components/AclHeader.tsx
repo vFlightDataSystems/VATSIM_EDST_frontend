@@ -13,17 +13,17 @@ interface AclHeaderProps {
 }
 
 export const AclHeader: React.FC<AclHeaderProps> = (props) => {
-  const sort_data = useAppSelector((state) => state.acl.sort_data);
-  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+  const sortData = useAppSelector((state) => state.acl.sortData);
+  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const dispatch = useAppDispatch();
 
   const {setInputFocused, asel, openMenu} = useContext(EdstContext);
   const {addEntry} = useContext(AclContext);
-  const [search_str, setSearchString] = useState('');
+  const [searchStr, setSearchString] = useState('');
   const {focused} = props;
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      addEntry(search_str);
+      addEntry(searchStr);
       setSearchString('');
     }
   };
@@ -32,14 +32,14 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
     <WindowTitleBar
       focused={focused}
       closeWindow={props.closeWindow}
-      text={['Aircraft List', `${sort_data.sector ? 'Sector/' : ''}${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
+      text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.name}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
       <EdstWindowHeaderButton
         disabled={asel === null}
         onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'plan-menu')}
         content="Plan Options..."
-        title={Tooltips.plan_options}
+        title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
@@ -59,9 +59,9 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={() => dispatch(setAclPosting(!manual_posting))}
+        onMouseDown={() => dispatch(setAclPosting(!manualPosting))}
         content="Posting Mode"
-        title={Tooltips.posting_mode}
+        title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
         onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'template-menu')}
@@ -71,7 +71,7 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
       <EdstWindowHeaderButton
         onMouseDown={props.cleanup}
         content="Clean Up"
-        title={Tooltips.acl_clean_up}
+        title={Tooltips.aclCleanUp}
       />
     </div>
     <div className="edst-window-header-bottom-row no-select">
@@ -80,7 +80,7 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
         <input
           onFocus={() => setInputFocused(true)}
           onBlur={() => setInputFocused(false)}
-          value={search_str}
+          value={searchStr}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
         />

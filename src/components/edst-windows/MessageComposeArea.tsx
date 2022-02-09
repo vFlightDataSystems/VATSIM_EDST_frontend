@@ -24,12 +24,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     ...props
   }) => {
   const [response, setResponse] = useState<string | null>(null);
-  const [mca_focused, setMcaFocused] = useState(false);
+  const [mcaFocused, setMcaFocused] = useState(false);
   const ref = useRef(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const acl_cid_list = useAppSelector(state => state.acl.cid_list);
-  const dep_cid_list = useAppSelector(state => state.dep.cid_list);
-  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+  const aclCidList = useAppSelector(state => state.acl.cidList);
+  const depCidList = useAppSelector(state => state.dep.cidList);
+  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const dispatch = useAppDispatch();
 
   const {
@@ -39,7 +39,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     openWindow,
     updateEntry,
     addEntry,
-    edst_data,
+    entries,
     setMraMessage
   } = useContext(EdstContext);
 
@@ -51,26 +51,26 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   }, []);
 
   const toggleVci = (fid: string) => {
-    const entry: EdstEntryType | any = Object.values(edst_data ?? {})
+    const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((e: EdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
-      if (entry.acl_status < 1) {
-        updateEntry(entry.cid, {acl_status: 1});
+      if (entry.vciStatus < 1) {
+        updateEntry(entry.cid, {vciStatus: 1});
       } else {
-        updateEntry(entry.cid, {acl_status: 0});
+        updateEntry(entry.cid, {vciStatus: 0});
       }
     }
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: EdstEntryType | any = Object.values(edst_data ?? {})
+    const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      if (acl_cid_list.has(entry.cid)) {
-        updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
+      if (aclCidList.has(entry.cid)) {
+        updateEntry(entry.cid, {aclHighlighted: !entry.aclHighlighted});
       }
-      if (dep_cid_list.has(entry.cid)) {
-        updateEntry(entry.cid, {dep_highlighted: !entry.dep_highlighted});
+      if (depCidList.has(entry.cid)) {
+        updateEntry(entry.cid, {depHighlighted: !entry.depHighlighted});
       }
     }
   };
@@ -78,7 +78,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   const flightplanReadout = (fid: string) => {
     const now = new Date();
     const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry: EdstEntryType | any = Object.values(edst_data ?? {})
+    const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       let msg = formatUtcMinutes(utc_minutes) + '\n'
@@ -116,7 +116,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
                   break;
                 case 'P':
                   openWindow('acl');
-                  dispatch(setAclPosting(!manual_posting));
+                  dispatch(setAclPosting(!manualPosting));
                   break;
                 case 'X':
                   props.closeAllWindows();
@@ -197,7 +197,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
             setInputFocused(false);
             setMcaFocused(false);
           }}
-          tabIndex={mca_focused ? -1 : undefined}
+          tabIndex={mcaFocused ? -1 : undefined}
           value={mca_command_string}
           onChange={handleChange}
           onKeyDownCapture={handleKeyDown}

@@ -11,8 +11,8 @@ import { useAppSelector } from '../../../redux/hooks';
 
 
 export function AclTable() {
-  const sort_data = useAppSelector((state) => state.acl.sort_data);
-  const manual_posting = useAppSelector((state) => state.acl.manual_posting);
+  const sortData = useAppSelector((state) => state.acl.sortData);
+  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
 
   const [any_holding, setAnyHolding] = useState(false);
   const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
@@ -20,15 +20,15 @@ export function AclTable() {
   const [hidden, setHidden] = useState<string[]>([]);
   const [alt_mouse_down, setAltMouseDown] = useState(false);
   const {
-    edst_data,
+    entries,
     updateEntry,
   } = useContext(EdstContext);
-  const cid_list = useAppSelector(state => state.acl.cid_list);
+  const cidList = useAppSelector(state => state.acl.cidList);
 
   // check whether any aircraft in the list is holding
   const checkHolding = () => {
-    for (let cid of cid_list) {
-      if (edst_data[cid]?.hold_data) {
+    for (let cid of cidList) {
+      if (entries[cid]?.hold_data) {
         setAnyHolding(true);
         return;
       }
@@ -40,11 +40,11 @@ export function AclTable() {
   const checkAssignedHdgSpd = () => {
     let any_hdg = false;
     let any_spd = false;
-    for (let cid of cid_list) {
-      if (edst_data[cid]?.hdg || edst_data[cid]?.scratch_hdg) {
+    for (let cid of cidList) {
+      if (entries[cid]?.hdg || entries[cid]?.scratch_hdg) {
         any_hdg = true;
       }
-      if (edst_data[cid]?.spd || edst_data[cid]?.scratch_spd) {
+      if (entries[cid]?.spd || entries[cid]?.scratch_spd) {
         any_spd = true;
       }
       if (any_spd && any_hdg) break;
@@ -86,20 +86,20 @@ export function AclTable() {
   };
 
   const updateVci = (cid: string) => {
-    const entry = edst_data[cid];
-    if (entry?.acl_status === -1 && manual_posting) {
-      updateEntry(cid, {acl_status: 0});
+    const entry = entries[cid];
+    if (entry?.vciStatus === -1 && manualPosting) {
+      updateEntry(cid, {vciStatus: 0});
     } else {
-      if (entry.acl_status < 1) {
-        updateEntry(cid, {acl_status: 1});
+      if (entry.vciStatus < 1) {
+        updateEntry(cid, {vciStatus: 1});
       } else {
-        updateEntry(cid, {acl_status: 0});
+        updateEntry(cid, {vciStatus: 0});
       }
     }
   };
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
-    switch (sort_data.name) {
+    switch (sortData.name) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
       case 'Destination':
@@ -113,7 +113,7 @@ export function AclTable() {
     }
   };
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryType) => cid_list.includes(entry.cid));
+  const entry_list = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
   const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryType) => (typeof (entry.spa) === 'number'))
     ?.sort((u: any, v: any) => u.spa - v.spa));
 
@@ -136,7 +136,7 @@ export function AclTable() {
         <div className="body-col fid">
           Flight ID
         </div>
-        <EdstTooltip className="body-col pa header" title={Tooltips.acl_header_pa} content="PA"/>
+        <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
         <div className="body-col special special-hidden"/>
         <div className="body-col special special-hidden"/>
         <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
@@ -155,18 +155,18 @@ export function AclTable() {
           C{!hidden.includes('code') && 'ode'}
         </div>
         <div className={`body-col special special-header`}/>
-        <EdstTooltip title={Tooltips.acl_header_hdg}>
+        <EdstTooltip title={Tooltips.aclHeaderHdg}>
           <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('hdg')}>
             {hidden.includes('hdg') && any_assigned_heading && '*'}H{!hidden.includes('hdg') && 'dg'}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_header_slash}>
+        <EdstTooltip title={Tooltips.aclHeaderSlash}>
           <div className="body-col hs-slash hover" onMouseDown={handleClickSlash}>
             /
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_header_spd}>
+        <EdstTooltip title={Tooltips.aclHeaderSpd}>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('spd')}>
             S{!hidden.includes('spd') && 'pd'}{hidden.includes('spd') && any_assigned_speed && '*'}
@@ -191,33 +191,33 @@ export function AclTable() {
           key={`acl-table-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          any_holding={any_holding}
+          anyHolding={any_holding}
           hidden={hidden}
-          alt_mouse_down={alt_mouse_down}
+          altMouseDown={alt_mouse_down}
           updateVci={updateVci}
         />)}
       {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.acl_status > -1) || !manual_posting)))
+      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.vciStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <AclRow
           key={`acl-table-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          any_holding={any_holding}
+          anyHolding={any_holding}
           hidden={hidden}
-          alt_mouse_down={alt_mouse_down}
+          altMouseDown={alt_mouse_down}
           updateVci={updateVci}
         />)}
-      {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && cid_list.includes(entry.cid) && entry.acl_status === -1)))
+      {manualPosting && <div className="body-row separator"/>}
+      {manualPosting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && cidList.includes(entry.cid) && entry.vciStatus === -1)))
         ?.map(([i, entry]: [string, EdstEntryType]) =>
           <AclRow
             key={`acl-table-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}
             entry={entry}
-            any_holding={any_holding}
+            anyHolding={any_holding}
             hidden={hidden}
-            alt_mouse_down={alt_mouse_down}
+            altMouseDown={alt_mouse_down}
             updateVci={updateVci}
           />)}
     </div>

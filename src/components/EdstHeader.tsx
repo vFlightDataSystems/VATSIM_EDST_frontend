@@ -29,7 +29,7 @@ interface EdstHeaderProps {
   open_windows: Set<string>;
   plan_disabled: boolean;
   disabled_windows: string[];
-  sector_id: string;
+  sectorId: string;
   openWindow: Function;
   toggleWindow: Function;
 }
@@ -39,10 +39,10 @@ export const EdstHeader: React.FC<EdstHeaderProps> = (props) => {
     open_windows,
     plan_disabled,
     disabled_windows,
-    sector_id,
+    sectorId,
   } = props;
-  const acl_num = useAppSelector(state => state.acl.cid_list.length);
-  const dep_num = useAppSelector(state => state.dep.cid_list.length);
+  const acl_num = useAppSelector(state => state.acl.cidList.length);
+  const dep_num = useAppSelector(state => state.dep.cidList.length);
     const sig_num = 0, not_num = 0, gi_num = 0;
 
   return (
@@ -123,13 +123,13 @@ export const EdstHeader: React.FC<EdstHeaderProps> = (props) => {
           <EdstHeaderButton open={open_windows.has('status')}
             content="STATUS ACTIVE"
             disabled={disabled_windows.includes('status')}
-            title={Tooltips.status_active}
+            title={Tooltips.statusActive}
             onMouseDown={() => props.toggleWindow('status')}
           />
           <EdstHeaderButton open={open_windows.has('outage')}
-            content={`OUTAGE ${sector_id}`}
+            content={`OUTAGE ${sectorId}`}
             disabled={disabled_windows.includes('outage')}
-            title={Tooltips.status_outage}
+            title={Tooltips.statusOutage}
             onMouseDown={() => props.toggleWindow('outage')}
           />
           <Time />

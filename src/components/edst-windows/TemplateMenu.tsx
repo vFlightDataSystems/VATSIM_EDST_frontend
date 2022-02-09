@@ -13,66 +13,66 @@ interface TemplateMenuProps {
 
 export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) => {
   const {
-    edst_data,
+    entries,
     asel,
     startDrag,
     stopDrag,
     setInputFocused
   } = useContext(EdstContext);
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState<EdstEntryType | null>(asel?.cid ? edst_data[asel.cid] : null);
+  const [entry, setEntry] = useState<EdstEntryType | null>(asel?.cid ? entries[asel.cid] : null);
   const [focused, setFocused] = useState(false);
-  const [display_raw_route, setDisplayRawRoute] = useState(false);
+  const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState((dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
   const [frd, setFrd] = useState(entry?.reference_fix ? computeFrd(entry.reference_fix) : '');
 
-  const [aid_input, setAidInput] = useState(entry?.callsign ?? '');
-  const [num_input, setNumInput] = useState(entry ? 1 : '');
-  const [sai_input, setSaiInput] = useState('');
-  const [type_input, setTypeInput] = useState(entry?.type ?? '');
-  const [equip_input, setEquipInput] = useState(entry?.equipment ?? '');
-  const [beacon_input, setBeaconInput] = useState(entry?.beacon ?? '');
-  const [speed_input, setSpeedInput] = useState(entry?.flightplan?.ground_speed ?? '');
-  const [frd_input, setFrdInput] = useState(frd);
-  const [time_input, setTimeInput] = useState('EXX00');
-  const [alt_input, setAltInput] = useState(entry?.altitude ?? '');
-  const [route_input, setRouteInput] = useState((dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '');
-  const [rmk_input, setRmkInput] = useState(entry?.remarks ?? '');
+  const [aidInput, setAidInput] = useState(entry?.callsign ?? '');
+  const [numInput, setNumInput] = useState(entry ? 1 : '');
+  const [saiInput, setSaiInput] = useState('');
+  const [typeInput, setTypeInput] = useState(entry?.type ?? '');
+  const [equipInput, setEquipInput] = useState(entry?.equipment ?? '');
+  const [beaconInput, setBeaconInput] = useState(entry?.beacon ?? '');
+  const [speedInput, setSpeedInput] = useState(entry?.flightplan?.ground_speed ?? '');
+  const [frdInput, setFrdInput] = useState(frd);
+  const [timeInput, setTimeInput] = useState('EXX00');
+  const [altInput, setAltInput] = useState(entry?.altitude ?? '');
+  const [routeInput, setRouteInput] = useState((dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '');
+  const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
 
   useEffect(() => {
     const dep = asel?.window === 'dep';
-    const entry = asel?.cid ? edst_data[asel.cid] : null;
+    const entry = asel?.cid ? entries[asel.cid] : null;
     const route = (dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
     const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
-    const aid_input = entry?.callsign ?? '';
-    const type_input = entry?.type ?? '';
-    const equip_input = entry?.equipment ?? '';
-    const beacon_input = entry?.beacon ?? '';
-    const speed_input = entry?.flightplan?.ground_speed ?? '';
-    const time_input = 'EXX00';
-    const alt_input = entry?.altitude ?? '';
-    const route_input = (dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
-    const rmk_input = entry?.remarks ?? '';
+    const aidInput = entry?.callsign ?? '';
+    const typeInput = entry?.type ?? '';
+    const equipInput = entry?.equipment ?? '';
+    const beaconInput = entry?.beacon ?? '';
+    const speedInput = entry?.flightplan?.ground_speed ?? '';
+    const timeInput = 'EXX00';
+    const altInput = entry?.altitude ?? '';
+    const routeInput = (dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
+    const rmkInput = entry?.remarks ?? '';
     setDep(dep);
     setEntry(entry);
     setDisplayRawRoute(false);
     setRoute(route);
     setFrd(frd);
     setFrdInput(frd);
-    setAidInput(aid_input);
+    setAidInput(aidInput);
     setNumInput(entry ? 1 : '');
     setSaiInput('');
-    setTypeInput(type_input);
-    setEquipInput(equip_input);
-    setBeaconInput(beacon_input);
-    setSpeedInput(speed_input);
-    setTimeInput(time_input);
-    setAltInput(alt_input);
-    setRouteInput(route_input);
-    setRmkInput(rmk_input);
-  }, [asel, edst_data]);
+    setTypeInput(typeInput);
+    setEquipInput(equipInput);
+    setBeaconInput(beaconInput);
+    setSpeedInput(speedInput);
+    setTimeInput(timeInput);
+    setAltInput(altInput);
+    setRouteInput(routeInput);
+    setRmkInput(rmkInput);
+  }, [asel, entries]);
 
 
   return (<div
@@ -129,7 +129,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-6 input-col">
             <div className="input-container">
               <input
-                value={aid_input}
+                value={aidInput}
                 onChange={(event) => setAidInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -139,7 +139,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col input-col">
             <div className="input-container">
               <input
-                value={num_input}
+                value={numInput}
                 onChange={(event) => setNumInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -149,7 +149,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col input-col">
             <div className="input-container">
               <input
-                value={sai_input}
+                value={saiInput}
                 onChange={(event) => setSaiInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -159,7 +159,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-5 input-col">
             <div className="input-container">
               <input
-                value={type_input}
+                value={typeInput}
                 onChange={(event) => setTypeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -169,7 +169,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-6 input-col">
             <div className="input-container">
               <input
-                value={equip_input}
+                value={equipInput}
                 onChange={(event) => setEquipInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -179,7 +179,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-5 input-col">
             <div className="input-container">
               <input
-                value={beacon_input}
+                value={beaconInput}
                 onChange={(event) => setBeaconInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -189,7 +189,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-1 input-col">
             <div className="input-container">
               <input
-                value={speed_input}
+                value={speedInput}
                 onChange={(event) => setSpeedInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -199,7 +199,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-8 input-col">
             <div className="input-container">
               <input
-                value={frd_input}
+                value={frdInput}
                 onChange={(event) => setFrdInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -209,7 +209,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col col-2 input-col">
             <div className="input-container">
               <input
-                value={time_input}
+                value={timeInput}
                 onChange={(event) => setTimeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -219,7 +219,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
           <div className="template-col input-col col-7">
             <div className="input-container">
               <input
-                value={alt_input}
+                value={altInput}
                 onChange={(event) => setAltInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -235,7 +235,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
         <div className="template-row">
           <div className="input-container">
             <textarea
-              value={route_input}
+              value={routeInput}
               onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
               onFocus={() => setInputFocused(true)}
               onBlur={() => setInputFocused(false)}
@@ -254,7 +254,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
         <div className="template-row">
           <div className="input-container">
             <textarea
-              value={rmk_input}
+              value={rmkInput}
               onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
               onFocus={() => setInputFocused(true)}
               onBlur={() => setInputFocused(false)}

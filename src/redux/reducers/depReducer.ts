@@ -9,49 +9,49 @@ import {
 } from "../actionTypes";
 
 export type DepType = {
-  cid_list: string[],
-  deleted_list: string[],
+  cidList: string[],
+  deletedList: string[],
   asel: AselType | null,
-  sort_data: { name: string, sector: boolean },
-  manual_posting: boolean
+  sortData: { name: string, sector: boolean },
+  manualPosting: boolean
 };
 
-const initial_acl_state = {
-  cid_list: [],
-  deleted_list: [],
+const initialState = {
+  cidList: [],
+  deletedList: [],
   asel: null,
-  sort_data: {name: 'ACID', sector: false},
-  manual_posting: true
+  sortData: {name: 'ACID', sector: false},
+  manualPosting: true
 };
 
-export function depReducer(state: DepType = initial_acl_state, action: ActionType) {
+export function depReducer(state: DepType = initialState, action: ActionType) {
   const cid = action.payload?.cid;
-  let cid_list_copy, deleted_list_copy;
+  let cidListCopy, deletedListCopy;
   switch (action.type) {
     case ADD_DEP_CID:
       if (cid) {
-        cid_list_copy = new Set(state.cid_list);
-        deleted_list_copy = new Set(state.deleted_list);
-        cid_list_copy.add(cid);
-        deleted_list_copy.delete(cid);
-        return {...state, cid_list: [...cid_list_copy], deleted_list: [...deleted_list_copy]};
+        cidListCopy = new Set(state.cidList);
+        deletedListCopy = new Set(state.deletedList);
+        cidListCopy.add(cid);
+        deletedListCopy.delete(cid);
+        return {...state, cidList: [...cidListCopy], deletedList: [...deletedListCopy]};
       }
       return state;
     case DELETE_DEP_CID:
       if (cid) {
-        cid_list_copy = new Set(state.cid_list);
-        deleted_list_copy = new Set(state.deleted_list);
-        deleted_list_copy.add(cid);
-        cid_list_copy.delete(cid);
-        return {...state, cid_list: [...cid_list_copy], deleted_list: [...deleted_list_copy]};
+        cidListCopy = new Set(state.cidList);
+        deletedListCopy = new Set(state.deletedList);
+        deletedListCopy.add(cid);
+        cidListCopy.delete(cid);
+        return {...state, cidList: [...cidListCopy], deletedList: [...deletedListCopy]};
       }
       return state;
     case SET_DEP_CID_LIST:
-      return {...state, cid_list: action.payload.cid_list, deleted_list: action.payload.deleted_list};
+      return {...state, cidList: action.payload.cidList, deletedList: action.payload.deletedList};
     case SET_DEP_SORT:
-      return {...state, sort_data: action.payload};
+      return {...state, sortData: action.payload};
     case SET_DEP_MANUAL_POSTING:
-      return {...state, manual_posting: action.payload.manual_posting};
+      return {...state, manualPosting: action.payload.manualPosting};
     default:
       return state;
   }

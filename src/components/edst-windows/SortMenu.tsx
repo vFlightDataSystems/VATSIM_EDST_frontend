@@ -18,9 +18,9 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
   const window = ref_id === 'acl-sort-button' ? 'acl' : 'dep';
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
-  const sort_data: {name: string, sector: boolean} = useAppSelector((state) => state[window].sort_data);
+  const sortData: {name: string, sector: boolean} = useAppSelector((state) => state[window].sortData);
   const dispatch = useAppDispatch();
-  const [sort_state, setSortState] = useState(Object.assign({}, sort_data));
+  const [sort_state, setSortState] = useState(Object.assign({}, sortData));
   const ref = useRef(null);
   let sort_state_copy = Object.assign({}, sort_state);
 
@@ -45,7 +45,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                          sort_state_copy.sector = !sort_state.sector;
                          setSortState(sort_state_copy);
                        }}
-                       title={Tooltips.sort_acl_sector_non_sector}
+                       title={Tooltips.sortAclSectorNonSector}
           >
             <div className={`box ${sort_state.sector ? 'selected' : ''}`}/>
             Sector/Non-Sector
@@ -57,7 +57,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                          sort_state_copy.name = 'ACID';
                          setSortState(sort_state_copy);
                        }}
-                       title={Tooltips.sort_acid}
+                       title={Tooltips.sortAcid}
           >
             <div className={`box diamond ${sort_state?.name === 'ACID' ? 'selected' : ''}`}/>
             ACID
@@ -69,7 +69,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                          sort_state_copy.name = 'Boundary Time';
                          setSortState(sort_state_copy);
                        }} // @ts-ignore
-                       title={Tooltips.sort_boundary_time}
+                       title={Tooltips.sortBoundaryTime}
           >
             <div className={`box diamond ${sort_state_copy?.name === 'Boundary Time' ? 'selected' : ''}`}/>
             Boundary Time
@@ -82,7 +82,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                          setSortState(sort_state_copy);
                        }} // @ts-ignore
                        disabled={true}
-                       title={Tooltips.sort_conflict_status}
+                       title={Tooltips.sortConflictStatus}
           >
             <div className={`box diamond ${sort_state?.name === 'Conflict Status' ? 'selected' : ''}`}/>
             Conflict Status
@@ -96,7 +96,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                        }}
             // @ts-ignore
                        disabled={true}
-                       title={Tooltips.sort_conflict_time}
+                       title={Tooltips.sortConflictTime}
           >
             <div className={`box diamond ${sort_state?.name === 'Conflict Time' ? 'selected' : ''}`}/>
             Conflict Time
@@ -108,7 +108,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                          sort_state_copy.name = 'Destination';
                          setSortState(sort_state_copy);
                        }}
-                       title={Tooltips.sort_destination}
+                       title={Tooltips.sortDestination}
           >
             <div className={`box diamond ${sort_state?.name === 'Destination' ? 'selected' : ''}`}/>
             Destination
@@ -122,7 +122,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                        }}
             // @ts-ignore
                        disabled={true}
-                       title={Tooltips.sort_sector_by_sector}
+                       title={Tooltips.sortSectorBySector}
           >
             <div className={`box diamond ${sort_state?.name === 'Sector-by-Sector' ? 'selected' : ''}`}/>
             Sector-by-Sector
@@ -134,7 +134,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                          sort_state_copy.name = 'Origin';
                          setSortState(sort_state_copy);
                        }}
-                       title={Tooltips.sort_origin}
+                       title={Tooltips.sortOrigin}
           >
             <div className={`box diamond ${sort_state?.name === 'Origin' ? 'selected' : ''}`}/>
             Origin
@@ -148,7 +148,7 @@ export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
                        }}
             // @ts-ignore
                        disabled={true}
-                       title={Tooltips.sort_p_time}
+                       title={Tooltips.sortPTime}
           >
             <div className={`box diamond ${sort_state?.name === 'P-Time' ? 'selected' : ''}`}/>
             P-Time

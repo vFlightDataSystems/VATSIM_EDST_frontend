@@ -15,9 +15,9 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
     stopDrag,
     amendEntry,
     updateEntry,
-    edst_data
+    entries
   } = useContext(EdstContext);
-  const entry = edst_data[asel.cid];
+  const entry = entries[asel.cid];
 
   const now = new Date();
   const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -90,7 +90,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         </div>
         <div className="options-row">
           <EdstTooltip className="options-col hold-menu-left-col"
-                       title={Tooltips.hold_direction}
+                       title={Tooltips.holdDirection}
                        content="Location"
           />
         </div>
@@ -132,15 +132,15 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         <div className="options-row hold-row-1">
           <EdstTooltip className="options-col hold-col-2"
                        content="Direction"
-                       title={Tooltips.hold_direction}
+                       title={Tooltips.holdDirection}
           />
           <EdstTooltip className="options-col hold-col-2"
                        content="Turns"
-                       title={Tooltips.hold_turns}
+                       title={Tooltips.holdTurns}
           />
           <EdstTooltip className="options-col hold-col-2"
                        content="Leg Lengths"
-                       title={Tooltips.hold_leg_length}
+                       title={Tooltips.holdLegLength}
           />
         </div>
         <div className="options-row hold-row-1">
@@ -229,12 +229,12 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
                 updateEntry(entry.cid, {show_hold_info: false});
                 closeWindow();
               }}
-              title={Tooltips.hold_delete_hold_instr}
+              title={Tooltips.holdDeleteHoldInstr}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
-          <EdstTooltip className="options-col hold-col-2" title={Tooltips.hold_efc}>
+          <EdstTooltip className="options-col hold-col-2" title={Tooltips.holdEfc}>
             EFC
           </EdstTooltip>
         </div>
@@ -254,7 +254,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         </div>
         <div className="options-row hold-row-2 bottom-border">
           <div className="options-col hold-col-5">
-            <EdstButton content="Delete EFC" onMouseDown={() => setEfc(0)} title={Tooltips.hold_del_efc}/>
+            <EdstButton content="Delete EFC" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc}/>
           </div>
         </div>
         <div className="options-row bottom">
@@ -264,10 +264,10 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
                           updateEntry(entry.cid, {spa: true});
                           clearedHold();
                         }}
-                        title={Tooltips.hold_hold_spa_btn}
+                        title={Tooltips.holdHoldSpaBtn}
             />
             <EdstButton content="Hold" onMouseDown={clearedHold} disabled={entry?.hold_data}
-                        title={Tooltips.hold_hold_btn}/>
+                        title={Tooltips.holdHoldBtn}/>
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
                           amendEntry(entry?.cid, {hold_data: null});

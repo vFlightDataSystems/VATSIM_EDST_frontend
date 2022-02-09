@@ -10,15 +10,15 @@ import { useAppSelector } from '../../../redux/hooks';
 const COMPLETED_SYMBOL = '✓';
 
 export function DepTable() {
-  const sort_data = useAppSelector((state) => state.dep.sort_data);
-  const manual_posting = useAppSelector((state) => state.dep.manual_posting);
+  const sortData = useAppSelector((state) => state.dep.sortData);
+  const manualPosting = useAppSelector((state) => state.dep.manualPosting);
 
   const [hidden, setHidden] = useState<string[]>([]);
   const {
-    edst_data,
+    entries,
     updateEntry
   } = useContext(EdstContext);
-  const cid_list = useAppSelector(state => state.dep.cid_list);
+  const cidList = useAppSelector(state => state.dep.cidList);
 
   const toggleHideColumn = (name: string) => {
     let hidden_copy = hidden.slice(0);
@@ -32,20 +32,20 @@ export function DepTable() {
   };
 
   const updateStatus = (cid: string) => {
-    const entry = edst_data[cid];
-    if (entry?.dep_status === -1) {
-      updateEntry(cid, {dep_status: 0});
+    const entry = entries[cid];
+    if (entry?.depStatus === -1) {
+      updateEntry(cid, {depStatus: 0});
     } else {
-      if (entry?.dep_status < 1) {
-        updateEntry(cid, {dep_status: 1});
+      if (entry?.depStatus < 1) {
+        updateEntry(cid, {depStatus: 1});
       } else {
-        updateEntry(cid, {dep_status: 0});
+        updateEntry(cid, {depStatus: 0});
       }
     }
   };
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
-    switch (sort_data.name) {
+    switch (sortData.name) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
       case 'Destination':
@@ -57,7 +57,7 @@ export function DepTable() {
     }
   };
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryType) => cid_list.includes(entry.cid));
+  const entry_list = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
 
   const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryType) => (_.isNumber(entry.spa))) // @ts-ignore
     ?.sort((u: EdstEntryType, v: EdstEntryType) => u.spa - v.spa));
@@ -102,7 +102,7 @@ export function DepTable() {
           hidden={hidden}
         />)}
       {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.dep_status > -1) || !manual_posting)))
+      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.depStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <DepRow
           key={`dep-row-ack-${entry.cid}-${i}`}
@@ -112,8 +112,8 @@ export function DepTable() {
           updateStatus={updateStatus}
           hidden={hidden}
         />)}
-      {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && entry.dep_status === -1)))
+      {manualPosting && <div className="body-row separator"/>}
+      {manualPosting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && entry.depStatus === -1)))
         ?.map(([i, entry]: [string, EdstEntryType]) =>
           <DepRow
             key={`dep-row-no-ack-${entry.cid}-${i}`}

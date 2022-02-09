@@ -29,13 +29,13 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused, 
       <EdstWindowHeaderButton disabled={asel === null}
                               onMouseDown={(e: React.MouseEvent) => openMenu(e.target, 'plan-menu')}
                               content="Plan Options..."
-                              title={Tooltips.plan_options}
+                              title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton disabled={true} content="Show"/>
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton disabled={asel === null} content="Amend"
                               onMouseDown={() => asel && amendEntry(asel.cid, plan_data.plan_data)}
-                              title={Tooltips.plans_amend}
+                              title={Tooltips.plansAmend}
       />
       <EdstWindowHeaderButton disabled={interim_disabled} content="Interim"
                               onMouseDown={() => {
@@ -59,7 +59,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused, 
           props.closeWindow();
         }}
         content="Clean Up"
-        title={Tooltips.plans_clean_up}
+        title={Tooltips.plansCleanUp}
       />
     </div>
   </div>);

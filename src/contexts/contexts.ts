@@ -2,10 +2,10 @@ import React, {createContext} from "react";
 import {AselType, EdstEntryType, PlanDataType} from "../types";
 
 interface EdstContextProps {
-  edst_data: { [cid: string]: EdstEntryType };
+  entries: { [cid: string]: EdstEntryType };
   asel: AselType | null;
-  plan_queue: Array<any>;
-  sector_id: string;
+  planQueue: Array<any>;
+  sectorId: string;
   menu: any;
   dragging: boolean;
   unmount: () => void;
@@ -37,8 +37,8 @@ interface DepContextProps {
 }
 
 interface TooltipContextProps {
-  global_tooltips_enabled: boolean;
-  show_all_tooltips: boolean;
+  globalTooltipsEnabled: boolean;
+  showAllTooltips: boolean;
 }
 
 // @ts-ignore
