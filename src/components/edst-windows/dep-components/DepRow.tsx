@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
@@ -56,8 +56,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
-    amendEntry(entry.cid, {free_text_content: free_text});
     if (event.button === 0) {
+      amendEntry(entry.cid, {free_text_content: free_text});
       updateEntry(entry.cid, {free_text: !entry.free_text});
     }
     if (event.button === 1) {
@@ -67,6 +67,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
       updateEntry(entry.cid, {dep_highlighted: !entry.dep_highlighted});
     }
   }
+
+  useEffect(() => (() => amendEntry(entry.cid, {free_text_content: free_text})));
 
   const handleFidClick = (event: React.MouseEvent) => {
     const now = new Date().getTime();

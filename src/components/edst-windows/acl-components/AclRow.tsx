@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useContext, useRef, useState} from 'react';
+import React, {MouseEventHandler, useContext, useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
@@ -73,7 +73,6 @@ export const AclRow: React.FC<AclRowProps> = (
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
-    amendEntry(entry.cid, {free_text_content: free_text});
     if (event.button === 0) {
       amendEntry(entry.cid, {free_text_content: free_text});
       updateEntry(entry.cid, {free_text: !entry.free_text});
@@ -85,6 +84,8 @@ export const AclRow: React.FC<AclRowProps> = (
       updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
     }
   };
+
+  useEffect(() => (() => amendEntry(entry.cid, {free_text_content: free_text})));
 
   const handleHoldClick = (event: React.MouseEvent) => {
     switch (event.button) {
