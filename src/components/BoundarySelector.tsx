@@ -2,7 +2,7 @@ import React from 'react';
 import '../css/boundary-selector.scss';
 import {EdstButton} from "./resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {toggleSector} from "../redux/actions";
+import {toggleSector} from "../redux/reducers/sectorReducer";
 
 export const BoundarySelector: React.FC<{ toggle: (v: boolean) => void }> = ({toggle}) => {
   const dispatch = useAppDispatch();

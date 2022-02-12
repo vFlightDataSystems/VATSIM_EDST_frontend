@@ -71,7 +71,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
   useEffect(() => (() => {
     if (freeTextContent !== entry.free_text_content) {
       amendEntry(entry.cid, {free_text_content: freeTextContent});
-    } // @ts-ignore
+    } // eslint-disable-next-line
   }), []);
 
   const handleFidClick = (event: React.MouseEvent) => {

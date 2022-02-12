@@ -4,7 +4,7 @@ import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {setAclPosting} from "../../../redux/actions";
+import {setAclManualPosting} from "../../../redux/reducers/aclReducer";
 
 interface AclHeaderProps {
   focused: boolean;
@@ -59,7 +59,7 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={() => dispatch(setAclPosting(!manualPosting))}
+        onMouseDown={() => dispatch(setAclManualPosting(!manualPosting))}
         content="Posting Mode"
         title={Tooltips.postingMode}
       />

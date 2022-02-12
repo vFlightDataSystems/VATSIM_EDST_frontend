@@ -5,7 +5,7 @@ import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {setDepPosting} from "../../../redux/actions";
+import {setDepManualPosting} from "../../../redux/reducers/depReducer";
 
 interface DepHeaderProps {
   focused: boolean;
@@ -47,7 +47,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
         title={Tooltips.sort}
       />
       <EdstWindowHeaderButton
-        onMouseDown={() => dispatch(setDepPosting(!manualPosting))}
+        onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))}
         content="Posting Mode"
         title={Tooltips.postingMode}
       />

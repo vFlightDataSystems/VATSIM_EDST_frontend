@@ -1,7 +1,5 @@
-import {
-  ActionType, SET_ARTCC_ID, SET_REFERENCE_FIXES, SET_SECTOR_DATA, SET_SECTOR_ID, SET_SELECTED_SECTORS, TOGGLE_SECTOR
-} from "../actionTypes";
 import {Feature, Polygon} from "@turf/turf";
+import {createSlice} from "@reduxjs/toolkit";
 
 export type SectorDataStateType = {
   sectors: {[id: string]: Feature<Polygon>},
@@ -19,34 +17,37 @@ const initialState = {
   artccId: ''
 };
 
-export function sectorReducer(state: SectorDataStateType = initialState, action: ActionType) {
-  let selectedSectorsSet;
-  switch (action.type) {
-    case SET_SECTOR_DATA:
-      return {...state, sectors: action.payload};
-    case SET_SELECTED_SECTORS:
-      return {...state, selectedSectors: action.payload};
-    case TOGGLE_SECTOR:
-      if (Object.keys(state.sectors).includes(action.payload)) {
-        if (state.selectedSectors.includes(action.payload)) {
-          selectedSectorsSet = new Set(state.selectedSectors);
-          selectedSectorsSet.delete(action.payload);
-          return {...state, selectedSectors: [...selectedSectorsSet]};
-        }
-        else {
-          return {...state, selectedSectors: [...state.selectedSectors, action.payload]};
-        }
+const sectorSlice = createSlice({
+  name: 'sectorData',
+  initialState: initialState as SectorDataStateType,
+  reducers: {
+    setSectors(state: SectorDataStateType, action) {
+      state.sectors = action.payload;
+    },
+    setSelectedSectors(state: SectorDataStateType, action) {
+      state.selectedSectors=  action.payload;
+    },
+    toggleSector(state: SectorDataStateType, action) {
+      if (state.selectedSectors.includes(action.payload)) {
+        const selectedSectorsSet = new Set(state.selectedSectors);
+        selectedSectorsSet.delete(action.payload);
+        state.selectedSectors = [...selectedSectorsSet]
       }
       else {
-        return state;
+        state.selectedSectors = [...state.selectedSectors, action.payload];
       }
-    case SET_ARTCC_ID:
-      return {...state, artccId: action.payload};
-    case SET_SECTOR_ID:
-      return {...state, sectorId: action.payload};
-    case SET_REFERENCE_FIXES:
-      return {...state, referenceFixes: action.payload};
-    default:
-      return state;
+    },
+    setArtccId(state: SectorDataStateType, action) {
+      state.artccId = action.payload;
+    },
+    setSectorId(state: SectorDataStateType, action) {
+      state.sectorId = action.payload;
+    },
+    setReferenceFixes(state: SectorDataStateType, action) {
+      state.referenceFixes = action.payload;
+    }
   }
-}
+});
+
+export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes} = sectorSlice.actions
+export default sectorSlice.reducer;

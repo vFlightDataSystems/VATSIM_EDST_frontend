@@ -37,17 +37,10 @@ import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
 import {connect} from 'react-redux';
 import {RootState} from './redux/store';
-import {
-  addAclCid,
-  addDepCid,
-  deleteAclCid,
-  deleteDepCid,
-  setAclCidList, setArtccId, setSectorId,
-} from './redux/actions';
 import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
-import {AclStateType} from "./redux/reducers/aclReducer";
-import {DepStateType} from "./redux/reducers/depReducer";
-import {SectorDataStateType} from "./redux/reducers/sectorReducer";
+import {AclStateType, addAclCid, deleteAclCid, setAclCidList} from "./redux/reducers/aclReducer";
+import {addDepCid, deleteDepCid, DepStateType} from "./redux/reducers/depReducer";
+import {SectorDataStateType, setArtccId, setSectorId} from "./redux/reducers/sectorReducer";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -910,7 +903,7 @@ const mapDispatchToProps = (dispatch: any) => ({
   deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
   addDepCid: (cid: string) => dispatch(addDepCid(cid)),
   deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
-  setAclCidList: (cidList: string[], deletedList: string[]) => dispatch(setAclCidList(cidList, deletedList)),
+  setAclCidList: (cidList: string[], deletedList: string[]) => dispatch(setAclCidList({cidList: cidList, deletedList: deletedList})),
   setArtccId: (id: string) => dispatch(setArtccId(id)),
   setSectorId: (id: string) => dispatch(setSectorId(id)),
   fetchSectorData: () => dispatch(fetchSectorData),
