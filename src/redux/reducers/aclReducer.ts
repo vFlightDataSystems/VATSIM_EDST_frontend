@@ -8,7 +8,7 @@ import {
   SET_ACL_SORT
 } from "../actionTypes";
 
-export type AclType = {
+export type AclStateType = {
   cidList: string[],
   deletedList: string[],
   asel: AselType | null,
@@ -24,7 +24,7 @@ const initialState = {
   manualPosting: true
 };
 
-export function aclReducer(state: AclType = initialState, action: ActionType) {
+export function aclReducer(state: AclStateType = initialState, action: ActionType) {
   const cid = action.payload?.cid;
   let cidListCopy, deletedListCopy;
   switch (action.type) {

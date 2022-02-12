@@ -45,8 +45,8 @@ import {
   setAclCidList, setArtccId, setSectorId,
 } from './redux/actions';
 import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
-import {AclType} from "./redux/reducers/aclReducer";
-import {DepType} from "./redux/reducers/depReducer";
+import {AclStateType} from "./redux/reducers/aclReducer";
+import {DepStateType} from "./redux/reducers/depReducer";
 import {SectorDataStateType} from "./redux/reducers/sectorReducer";
 
 const defaultPos = {
@@ -107,8 +107,8 @@ export interface State {
 }
 
 interface Props {
-  acl: AclType,
-  dep: DepType,
+  acl: AclStateType,
+  dep: DepStateType,
   sectorData: SectorDataStateType,
   addAclCid: (cid: string) => void,
   addDepCid: (cid: string) => void,
@@ -144,9 +144,6 @@ class App extends React.Component<Props, State> {
       artccId = 'zbw';
       // artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
-      if (Object.keys(this.props.sectorData.sectors).length === 0) {
-        this.props.fetchSectorData();
-      }
     } else {
       artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
