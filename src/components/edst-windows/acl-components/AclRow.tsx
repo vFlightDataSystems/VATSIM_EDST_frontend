@@ -88,7 +88,7 @@ export const AclRow: React.FC<AclRowProps> = (
   useEffect(() => (() => {
     if (freeTextContent !== entry.free_text_content) {
       amendEntry(entry.cid, {free_text_content: freeTextContent});
-    }
+    } // eslint-disable-next-line
   }), []);
 
   const handleHoldClick = (event: React.MouseEvent) => {

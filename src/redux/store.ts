@@ -1,8 +1,8 @@
-import {aclReducer} from './reducers/aclReducer';
-import {depReducer} from './reducers/depReducer';
-import {sectorReducer} from "./reducers/sectorReducer";
 import {configureStore} from "@reduxjs/toolkit";
-import {entriesReducer} from "./reducers/entriesReducer";
+import aclReducer from './reducers/aclReducer';
+import depReducer from './reducers/depReducer';
+import sectorReducer from "./reducers/sectorReducer";
+import entriesReducer from "./reducers/entriesReducer";
 
 
 const store = configureStore({

@@ -1,5 +1,6 @@
 import {EdstEntryType} from "../../types";
-import {ActionType} from "../actionTypes";
+import {createSlice} from "@reduxjs/toolkit";
+import _ from "lodash";
 
 export type EntriesStateType = {
   [cid: string]: EdstEntryType
@@ -7,9 +8,17 @@ export type EntriesStateType = {
 
 const initialState = {};
 
-export function entriesReducer(state: EntriesStateType = initialState, action: ActionType) {
-  switch (action.type) {
-    default:
-      return state;
+const entriesSlice = createSlice({
+  name: 'entries',
+  initialState: initialState as EntriesStateType,
+  reducers: {
+    updateEntry(state: EntriesStateType, action) {
+      _.assign(state[action.payload.cid], action.payload);
+    },
+    setEntry(state: EntriesStateType, action) {
+      state[action.payload.cid] = action.payload;
+    }
   }
-}
+});
+
+export default entriesSlice.reducer;

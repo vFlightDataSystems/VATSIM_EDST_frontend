@@ -20,27 +20,27 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
   const entry = entries[asel.cid];
 
   const now = new Date();
-  const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
 
-  const [hold_fix, setHoldFix] = useState<string | null>(null);
-  const [leg_length, setLegLength] = useState<string | number | null>(null);
-  const [hold_direction, setHoldDirection] = useState<string | null>(null);
+  const [holdFix, setHoldFix] = useState<string | null>(null);
+  const [legLength, setLegLength] = useState<string | number | null>(null);
+  const [holdDirection, setHoldDirection] = useState<string | null>(null);
   const [turns, setTurns] = useState<string | null>(null);
-  const [efc, setEfc] = useState(utc_minutes);
-  const [route_data, setRouteData] = useState<Array<any> | null>(null);
+  const [efc, setEfc] = useState(utcMinutes);
+  const [routeData, setRouteData] = useState<Array<any> | null>(null);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
 
   const clearedHold = () => {
     if (entry) {
-      const hold_data = {
-        hold_fix: hold_fix,
-        leg_length: leg_length,
-        hold_direction: hold_direction,
+      const holdData = {
+        hold_fix: holdFix,
+        leg_length: legLength,
+        hold_direction: holdDirection,
         turns: turns,
         efc: efc
       };
-      amendEntry(entry.cid, {hold_data: hold_data});
+      amendEntry(entry.cid, {hold_data: holdData});
     }
     closeWindow();
   };
@@ -48,26 +48,26 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
   useEffect(() => {
     const computeCrossingTimes = (route_data?: Array<any>) => {
       const now = new Date();
-      const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
       const groundspeed = Number(entry?.flightplan?.ground_speed);
       if (route_data && groundspeed > 0) {
-        let line_data = [[entry?.flightplan?.lon, entry?.flightplan?.lat]];
+        let lineData = [[entry?.flightplan?.lon, entry?.flightplan?.lat]];
         for (let e of route_data) {
-          line_data.push(e.pos);
-          e.minutes_at_fix = utc_minutes + 60 * length(lineString(line_data), {units: 'nauticalmiles'}) / groundspeed;
+          lineData.push(e.pos);
+          e.minutes_at_fix = utcMinutes + 60 * length(lineString(lineData), {units: 'nauticalmiles'}) / groundspeed;
         }
       }
       return route_data;
     };
-    const route_data = computeCrossingTimes(entry?._route_data);
+    const routeData = computeCrossingTimes(entry?._route_data);
     const now = new Date();
-    const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     setHoldFix(entry?.hold_data?.hold_fix ?? 'PP');
     setLegLength(entry?.hold_data?.leg_length ?? 'STD');
     setHoldDirection(entry?.hold_data?.hold_direction ?? 'N');
     setTurns(entry?.hold_data?.turns ?? 'RT');
-    setEfc(entry?.hold_data?.efc ?? utc_minutes + 30);
-    setRouteData(route_data ?? null);
+    setEfc(entry?.hold_data?.efc ?? utcMinutes + 30);
+    setRouteData(routeData ?? null);
   }, [entry]);
 
   return (entry && <div
@@ -96,34 +96,34 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         </div>
         <div className="options-row">
           <div className="options-col">
-            <EdstButton content="Present Position" selected={(!hold_fix || hold_fix === 'PP')}
+            <EdstButton content="Present Position" selected={(!holdFix || holdFix === 'PP')}
                         onMouseDown={() => {
                           const now = new Date();
-                          const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+                          const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
                           setHoldFix('PP');
-                          setEfc(utc_minutes + 30);
+                          setEfc(utcMinutes + 30);
                         }}>
               Present Position
             </EdstButton>
           </div>
         </div>
         <div className="hold-fix-container">
-          {Object.keys(Array(Math.min(route_data?.length || 0, 10))).map(i =>
+          {Object.keys(Array(Math.min(routeData?.length || 0, 10))).map(i =>
             <div className="options-row" key={`hold-menu-row-${i}`}>
-              {Object.keys(Array(((route_data?.length || 0) / 10 | 0) + 1)).map(j => {
-                const fix_name = route_data?.[Number(i) + Number(j) * 10]?.name;
-                const minutes_at_fix = route_data?.[Number(i) + Number(j) * 10]?.minutes_at_fix;
-                return (fix_name &&
-                  <div className={`options-col hold-col-1 hover ${(hold_fix === fix_name) ? 'selected' : ''}`}
+              {Object.keys(Array(((routeData?.length || 0) / 10 | 0) + 1)).map(j => {
+                const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
+                const minutesAtFix = routeData?.[Number(i) + Number(j) * 10]?.minutes_at_fix;
+                return (fixName &&
+                  <div className={`options-col hold-col-1 hover ${(holdFix === fixName) ? 'selected' : ''}`}
                        key={`hold-menu-col-${i}-${j}`}
                        onMouseDown={() => {
-                         setHoldFix(fix_name);
-                         setEfc(minutes_at_fix + 30);
+                         setHoldFix(fixName);
+                         setEfc(minutesAtFix + 30);
                        }}
                   >
-                    {fix_name}
+                    {fixName}
                     <div className="align-right">
-                      {("0" + ((minutes_at_fix / 60 | 0) % 24)).slice(-2) + ("0" + (minutes_at_fix % 60 | 0)).slice(-2)}
+                      {("0" + ((minutesAtFix / 60 | 0) % 24)).slice(-2) + ("0" + (minutesAtFix % 60 | 0)).slice(-2)}
                     </div>
                   </div>);
               })}
@@ -145,13 +145,13 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="NW" className="button-1" selected={hold_direction === 'NW'}
+            <EdstButton content="NW" className="button-1" selected={holdDirection === 'NW'}
                         onMouseDown={() => setHoldDirection('NW')}
             />
-            <EdstButton content="N" className="button-1" selected={hold_direction === 'N'}
+            <EdstButton content="N" className="button-1" selected={holdDirection === 'N'}
                         onMouseDown={() => setHoldDirection('N')}
             />
-            <EdstButton content="NE" className="button-1" selected={hold_direction === 'NE'}
+            <EdstButton content="NE" className="button-1" selected={holdDirection === 'NE'}
                         onMouseDown={() => setHoldDirection('NE')}
             />
           </div>
@@ -164,21 +164,21 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
             />
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="STD" className="button-2" selected={!leg_length || leg_length === 'STD'}
+            <EdstButton content="STD" className="button-2" selected={!legLength || legLength === 'STD'}
                         onMouseDown={() => setLegLength('STD')}
             />
-            <EdstButton content="15 NM" className="button-2" selected={!leg_length || leg_length === 15}
+            <EdstButton content="15 NM" className="button-2" selected={!legLength || legLength === 15}
                         onMouseDown={() => setLegLength(15)}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="W" className="button-1" selected={hold_direction === 'W'}
+            <EdstButton content="W" className="button-1" selected={holdDirection === 'W'}
                         onMouseDown={() => setHoldDirection('W')}
             />
             <EdstButton className="button-1" disabled={true}/>
-            <EdstButton content="E" className="button-1" selected={hold_direction === 'E'}
+            <EdstButton content="E" className="button-1" selected={holdDirection === 'E'}
                         onMouseDown={() => setHoldDirection('E')}
             />
           </div>
@@ -187,23 +187,23 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
             <EdstButton className="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="5 NM" className="button-2" selected={!leg_length || leg_length === 5}
+            <EdstButton content="5 NM" className="button-2" selected={!legLength || legLength === 5}
                         onMouseDown={() => setLegLength(5)}
             />
-            <EdstButton content="20 NM" className="button-2" selected={!leg_length || leg_length === 20}
+            <EdstButton content="20 NM" className="button-2" selected={!legLength || legLength === 20}
                         onMouseDown={() => setLegLength(20)}
             />
           </div>
         </div>
         <div className="options-row hold-row-1">
           <div className="options-col hold-col-3">
-            <EdstButton content="SW" className="button-1" selected={hold_direction === 'SW'}
+            <EdstButton content="SW" className="button-1" selected={holdDirection === 'SW'}
                         onMouseDown={() => setHoldDirection('SW')}
             />
-            <EdstButton content="S" className="button-1" selected={hold_direction === 'S'}
+            <EdstButton content="S" className="button-1" selected={holdDirection === 'S'}
                         onMouseDown={() => setHoldDirection('S')}
             />
-            <EdstButton content="SE" className="button-1" selected={hold_direction === 'SE'}
+            <EdstButton content="SE" className="button-1" selected={holdDirection === 'SE'}
                         onMouseDown={() => setHoldDirection('SE')}
             />
           </div>
@@ -212,10 +212,10 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
             <EdstButton className="button-1" disabled={true}/>
           </div>
           <div className="options-col hold-col-3">
-            <EdstButton content="10 NM" className="button-2" selected={!leg_length || leg_length === 10}
+            <EdstButton content="10 NM" className="button-2" selected={!legLength || legLength === 10}
                         onMouseDown={() => setLegLength(10)}
             />
-            <EdstButton content="25 NM" className="button-2" selected={!leg_length || leg_length === 25}
+            <EdstButton content="25 NM" className="button-2" selected={!legLength || legLength === 25}
                         onMouseDown={() => setLegLength(25)}
             />
           </div>

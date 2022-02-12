@@ -1,12 +1,5 @@
 import {AselType} from "../../types";
-import {
-  ActionType,
-  ADD_ACL_CID,
-  DELETE_ACL_CID,
-  SET_ACL_CID_LIST,
-  SET_ACL_MANUAL_POSTING,
-  SET_ACL_SORT
-} from "../actionTypes";
+import {createSlice} from "@reduxjs/toolkit";
 
 export type AclStateType = {
   cidList: string[],
@@ -24,35 +17,31 @@ const initialState = {
   manualPosting: true
 };
 
-export function aclReducer(state: AclStateType = initialState, action: ActionType) {
-  const cid = action.payload?.cid;
-  let cidListCopy, deletedListCopy;
-  switch (action.type) {
-    case ADD_ACL_CID:
-      if (cid) {
-        cidListCopy = new Set(state.cidList);
-        deletedListCopy = new Set(state.deletedList);
-        cidListCopy.add(cid);
-        deletedListCopy.delete(cid);
-        return {...state, cidList: [...cidListCopy], deletedList: [...deletedListCopy]};
-      }
-      return state;
-    case DELETE_ACL_CID:
-      if (cid) {
-        cidListCopy = new Set(state.cidList);
-        deletedListCopy = new Set(state.deletedList);
-        deletedListCopy.add(cid);
-        cidListCopy.delete(cid);
-        return {...state, cidList: [...cidListCopy], deletedList: [...deletedListCopy]};
-      }
-      return state;
-    case SET_ACL_CID_LIST:
-      return {...state, cidList: action.payload.cidList, deletedList: action.payload.deletedList};
-    case SET_ACL_SORT:
-      return {...state, sortData: action.payload};
-    case SET_ACL_MANUAL_POSTING:
-      return {...state, manualPosting: action.payload.manualPosting};
-    default:
-      return state;
+const aclSlice = createSlice({
+  name: 'acl',
+  initialState: initialState as AclStateType,
+  reducers: {
+    addAclCid(state: AclStateType, action) {
+      state.cidList = [...new Set([...state.cidList, action.payload])];
+    },
+    deleteAclCid(state: AclStateType, action) {
+      const cidListSet = new Set(state.cidList);
+      cidListSet.delete(action.payload);
+      state.cidList = [...cidListSet];
+      state.deletedList = [...new Set([...state.deletedList, action.payload])];
+    },
+    setAclCidList(state: AclStateType, action) {
+      state.cidList = action.payload.cidList;
+      state.deletedList = action.payload.deletedList
+    },
+    setAclSort(state: AclStateType, action) {
+      state.sortData = action.payload;
+    },
+    setAclManualPosting(state: AclStateType, action) {
+      state.manualPosting = action.payload;
+    }
   }
-}
+});
+
+export const {addAclCid, deleteAclCid, setAclCidList, setAclSort, setAclManualPosting} = aclSlice.actions;
+export default aclSlice.reducer;

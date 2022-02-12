@@ -5,7 +5,7 @@ import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
 import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {setAclPosting} from "../../redux/actions";
+import {setAclManualPosting} from "../../redux/reducers/aclReducer";
 
 interface MessageComposeAreaProps {
   pos: { x: number, y: number };
@@ -66,10 +66,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      if (aclCidList.has(entry.cid)) {
+      if (aclCidList.includes(entry.cid)) {
         updateEntry(entry.cid, {aclHighlighted: !entry.aclHighlighted});
       }
-      if (depCidList.has(entry.cid)) {
+      if (depCidList.includes(entry.cid)) {
         updateEntry(entry.cid, {depHighlighted: !entry.depHighlighted});
       }
     }
@@ -116,7 +116,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
                   break;
                 case 'P':
                   openWindow('acl');
-                  dispatch(setAclPosting(!manualPosting));
+                  dispatch(setAclManualPosting(!manualPosting));
                   break;
                 case 'X':
                   props.closeAllWindows();
