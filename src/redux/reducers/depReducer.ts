@@ -8,7 +8,7 @@ import {
   SET_DEP_SORT
 } from "../actionTypes";
 
-export type DepType = {
+export type DepStateType = {
   cidList: string[],
   deletedList: string[],
   asel: AselType | null,
@@ -24,7 +24,7 @@ const initialState = {
   manualPosting: true
 };
 
-export function depReducer(state: DepType = initialState, action: ActionType) {
+export function depReducer(state: DepStateType = initialState, action: ActionType) {
   const cid = action.payload?.cid;
   let cidListCopy, deletedListCopy;
   switch (action.type) {
