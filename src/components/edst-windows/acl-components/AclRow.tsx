@@ -41,7 +41,7 @@ export const AclRow: React.FC<AclRowProps> = (
   const {asel} = useContext(AclContext);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
 
-  const hold_data = entry.hold_data;
+  const holdData = entry.hold_data;
   const now = new Date().getTime();
   let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
   const dest = entry.dest;
@@ -49,21 +49,21 @@ export const AclRow: React.FC<AclRowProps> = (
     route = route.slice(0, -dest.length);
   }
 
-  const [display_scratch_hdg, setDisplayScratchHdg] = useState(false);
-  const [display_scratch_spd, setDisplayScratchSpd] = useState(false);
-  const [free_text, setFreeText] = useState(entry.free_text_content ?? '');
+  const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
+  const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
+  const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.on_eligibleAar)));
-  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligibleAar);
+  const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
+  const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.onEligibleAar)));
+  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar);
 
   const checkAarReroutePending = () => {
-    const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
+    const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
     const eligibleAar = entry?._aar_list?.filter((aar) => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
-      if (current_fix_names.includes(aar.tfix)) {
+      if (currentFixNames.includes(aar.tfix)) {
         return aar.aar_amendment_route_string;
       }
     }
@@ -74,18 +74,22 @@ export const AclRow: React.FC<AclRowProps> = (
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     if (event.button === 0) {
-      amendEntry(entry.cid, {free_text_content: free_text});
+      amendEntry(entry.cid, {free_text_content: freeTextContent});
       updateEntry(entry.cid, {showFreeText: !entry.showFreeText});
     }
     if (event.button === 1) {
-      updateEntry(entry.cid, {spa: !_.isNumber(entry.spa), free_text_content: free_text});
+      updateEntry(entry.cid, {spa: !_.isNumber(entry.spa), free_text_content: freeTextContent});
     }
     if (event.button === 2) {
       updateEntry(entry.cid, {aclHighlighted: !entry.aclHighlighted});
     }
   };
 
-  useEffect(() => (() => amendEntry(entry.cid, {free_text_content: free_text})));
+  useEffect(() => (() => {
+    if (freeTextContent !== entry.free_text_content) {
+      amendEntry(entry.cid, {free_text_content: freeTextContent});
+    }
+  }), []);
 
   const handleHoldClick = (event: React.MouseEvent) => {
     switch (event.button) {
@@ -134,8 +138,7 @@ export const AclRow: React.FC<AclRowProps> = (
       default:
         if (event.detail === 1) {
           aircraftSelect(event, 'acl', entry.cid, 'fid');
-        }
-        else if (event.detail === 2) {
+        } else if (event.detail === 2) {
           aircraftSelect(event, 'acl', entry.cid, 'fid-2');
         }
         break;
@@ -150,13 +153,13 @@ export const AclRow: React.FC<AclRowProps> = (
         aircraftSelect(event, 'acl', entry.cid, 'hdg');
         break;
       case 1:
-        if (entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) {
-          let promoted_hdg = 'LRH'.includes(entry.scratch_hdg.slice(-1)) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
-          amendEntry(entry.cid, {hdg: promoted_hdg, scratch_hdg: null});
+        if (entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) {
+          let promotedHdg = 'LRH'.includes(entry.scratch_hdg.slice(-1)) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
+          amendEntry(entry.cid, {hdg: promotedHdg, scratch_hdg: null});
         }
         break;
       case 2:
-        amendEntry(entry.cid, {[(display_scratch_hdg || !entry.hdg) && entry.scratch_hdg ? 'scratch_hdg' : 'hdg']: null});
+        amendEntry(entry.cid, {[(displayScratchHdg || !entry.hdg) && entry.scratch_hdg ? 'scratch_hdg' : 'hdg']: null});
         break;
       default:
         break;
@@ -170,13 +173,13 @@ export const AclRow: React.FC<AclRowProps> = (
         aircraftSelect(event, 'acl', entry.cid, 'spd');
         break;
       case 1:
-        if (entry.scratch_spd && (display_scratch_spd || entry.spd === null)) {
-          let promoted_spd = entry.scratch_spd.slice(0, 1) === 'M' ? entry.scratch_spd : `S${entry.scratch_spd}`;
-          amendEntry(entry.cid, {spd: promoted_spd, scratch_spd: null});
+        if (entry.scratch_spd && (displayScratchSpd || entry.spd === null)) {
+          let promotedSpd = entry.scratch_spd.slice(0, 1) === 'M' ? entry.scratch_spd : `S${entry.scratch_spd}`;
+          amendEntry(entry.cid, {spd: promotedSpd, scratch_spd: null});
         }
         break;
       case 2:
-        amendEntry(entry.cid, {[(display_scratch_spd || !entry.spd) && entry.scratch_spd ? 'scratch_spd' : 'spd']: null});
+        amendEntry(entry.cid, {[(displayScratchSpd || !entry.spd) && entry.scratch_spd ? 'scratch_spd' : 'spd']: null});
         break;
       default:
         break;
@@ -187,7 +190,7 @@ export const AclRow: React.FC<AclRowProps> = (
     return asel?.cid === cid && asel?.field === field;
   };
 
-  return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
+  return (<div className={`body-row-container ${index%3 === 2 ? 'row-sep-border' : ''}`}
                key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div
@@ -223,7 +226,7 @@ export const AclRow: React.FC<AclRowProps> = (
                onContextMenu={event => event.preventDefault()}
                onMouseDown={handleHotboxMouseDown}
           >
-            {free_text && '*'}
+            {freeTextContent && '*'}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclType}>
@@ -254,17 +257,17 @@ export const AclRow: React.FC<AclRowProps> = (
           </div>
         </EdstTooltip>
         <div className={`body-col hover special`}
-             onMouseDown={() => setDisplayScratchHdg(!display_scratch_hdg)}
+             onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)}
           // @ts-ignore
              disabled={!(entry.hdg && entry.scratch_hdg)}>
           {entry.hdg && entry.scratch_hdg && '*'}
         </div>
         <EdstTooltip title={Tooltips.aclHdg}>
           <div className={`body-col hs spd hover ${hidden.includes('hdg') ? 'content hidden' : ''}
-              ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${(entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) ? 'yellow' : ''}`}
+              ${isSelected(entry.cid, 'hdg') ? 'selected' : ''} ${(entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) ? 'yellow' : ''}`}
                onMouseDown={handleHeadingClick}
           >
-            {(entry.scratch_hdg && (display_scratch_hdg || entry.hdg === null)) ? entry.scratch_hdg : entry.hdg}
+            {(entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) ? entry.scratch_hdg : entry.hdg}
           </div>
         </EdstTooltip>
         <div className="body-col hs-slash">
@@ -272,14 +275,14 @@ export const AclRow: React.FC<AclRowProps> = (
         </div>
         <EdstTooltip title={Tooltips.aclSpd}>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
-${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (display_scratch_spd || entry.spd === null)) ? 'yellow' : ''}`}
+${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displayScratchSpd || entry.spd === null)) ? 'yellow' : ''}`}
                onMouseDown={handleSpeedClick}
           >
-            {(entry.scratch_spd && (display_scratch_spd || entry.spd === null)) ? entry.scratch_spd : entry.spd}
+            {(entry.scratch_spd && (displayScratchSpd || entry.spd === null)) ? entry.scratch_spd : entry.spd}
           </div>
         </EdstTooltip>
         <div className={`body-col hover special`}
-             onMouseDown={() => setDisplayScratchSpd(!display_scratch_spd)}
+             onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)}
           // @ts-ignore
              disabled={!(entry.spd && entry.scratch_spd)}>
           {entry.spd && entry.scratch_spd && '*'}
@@ -313,20 +316,20 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
           <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
                onMouseDown={(event) => aircraftSelect(event, 'acl', entry.cid, 'route')}
           >
-            {entry.aclRouteDisplay === 'hold_data' && hold_data &&
-            `${hold_data.hold_fix} ${hold_data.hold_direction} ${hold_data.turns} ${hold_data.leg_length} EFC ${formatUtcMinutes(hold_data.efc)}`}
+            {entry.aclRouteDisplay === 'hold_data' && holdData &&
+            `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}
             {entry.aclRouteDisplay === 'remarks' && <span>{entry.flightplan.remarks}</span>}
             {entry.aclRouteDisplay === 'raw_route' && <span>{entry.flightplan.route}</span>}
             {!entry.aclRouteDisplay && <span className="no-pad">
             <span
-              className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+              className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {entry.dep}
             </span>
             ./.
               {entry.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}
               {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
               {route}{!route.endsWith('.') && route.length > 0 && `.`}
-              {pendingAar && !on_aar &&
+              {pendingAar && !onAar &&
               <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pendingAar}]`}
               </span>}
@@ -349,8 +352,8 @@ ${isSelected(entry.cid, 'spd') ? 'selected' : ''} ${(entry.scratch_spd && (displ
           <input
             onFocus={() => setInputFocused(true)}
             onBlur={() => setInputFocused(false)}
-            value={free_text}
-            onChange={(event) => setFreeText(event.target.value.toUpperCase())}/>
+            value={freeTextContent}
+            onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
         </div>
       </div>
     </div>}

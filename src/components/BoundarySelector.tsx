@@ -1,16 +1,13 @@
 import React from 'react';
 import '../css/boundary-selector.scss';
 import {EdstButton} from "./resources/EdstButton";
+import {useAppDispatch, useAppSelector} from "../redux/hooks";
+import {toggleSector} from "../redux/actions";
 
-// Create new boundary-selector css file and import it here.
-interface BoundarySelectorProps {
-  boundary_ids: string[];
-  updateSelected: (name: string) => void;
-  toggle: (bool: boolean) => void;
-  updatePolygons: () => void;
-}
+export const BoundarySelector: React.FC<{ toggle: (v: boolean) => void }> = ({toggle}) => {
+  const dispatch = useAppDispatch();
+  const sectors = useAppSelector((state) => state.sectorData.sectors);
 
-export const BoundarySelector: React.FC<BoundarySelectorProps> = (props) => {
   return (
     <div className="boundary-selector">
       <link
@@ -21,22 +18,15 @@ export const BoundarySelector: React.FC<BoundarySelectorProps> = (props) => {
         <hr style={{color: '#000000', padding: 20, border: 'none'}}/>
         <h1>Pick your sectors</h1>
         <form>
-          <div className="checkbox-block">
-            {Object.entries(props.boundary_ids).map(([index, name]) => {
-              return (
-                [
-                  <input type="checkbox" className="checkbox-effect checkbox-effect-2"
-                         onChange={() => props.updateSelected(name)} id={index} value={name} name={name}/>,
-                  <label htmlFor={index}>{name}</label>
-                ]
-              );
-            })}
-          </div>
+          {Object.keys(sectors).map((id) => <div key={`boundary-selector-${id}`} className="checkbox-block">
+            <input type="checkbox" className="checkbox-effect checkbox-effect-2"
+                   onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id}/>
+            <label htmlFor={id}>{id}</label>
+          </div>)}
         </form>
         {/*<button className="close-btn" onClick={() => props.changer(false)}>Close</button>*/}
         <EdstButton className="no-select" content="Save" onMouseDown={() => {
-          props.updatePolygons();
-          props.toggle(false);
+          toggle(false);
         }}/>
       </div>
     </div>

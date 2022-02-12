@@ -36,10 +36,10 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
   const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const current_fix_names = entry.route_data.map(fix => fix.name);
-  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))
-    && !(entry?._aar_list?.filter((aar) => aar.on_eligibleAar)));
-  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligibleAar);
+  const currentFixNames = entry.route_data.map(fix => fix.name);
+  const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix))
+    && !(entry?._aar_list?.filter((aar) => aar.onEligibleAar)));
+  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar);
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
@@ -68,7 +68,11 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
     }
   }
 
-  useEffect(() => (() => amendEntry(entry.cid, {free_text_content: freeTextContent})));
+  useEffect(() => (() => {
+    if (freeTextContent !== entry.free_text_content) {
+      amendEntry(entry.cid, {free_text_content: freeTextContent});
+    } // @ts-ignore
+  }), []);
 
   const handleFidClick = (event: React.MouseEvent) => {
     const now = new Date().getTime();
@@ -158,11 +162,11 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
           >
           <span>
               <span
-                className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+                className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
                 {entry.dep}
               </span>
             {route}
-            {pendingAar && !on_aar &&
+            {pendingAar && !onAar &&
             <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
               {`[${pendingAar}]`}
               </span>}

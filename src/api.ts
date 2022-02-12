@@ -10,13 +10,13 @@ export async function getEdstEntry(callsign: string): Promise<any> {
   return await fetch(`${baseurl}/edst/entry/${callsign}`);
 }
 
-export async function updateEdstEntry(plan_data: any): Promise<any> {
+export async function updateEdstEntry(planData: any): Promise<any> {
   return await fetch(`${baseurl}/edst/entry/update`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(plan_data)
+    body: JSON.stringify(planData)
   });
 }
 
