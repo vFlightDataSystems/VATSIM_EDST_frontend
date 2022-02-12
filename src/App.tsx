@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {distance, Feature, point, Polygon, polygon} from '@turf/turf';
+import {distance, point} from '@turf/turf';
 
-import {getAarData, getBoundaryData, getEdstData, getReferenceFixes, updateEdstEntry} from "./api";
+import {getAarData, getEdstData, updateEdstEntry} from "./api";
 import './css/styles.scss';
 import './css/header-styles.scss';
 import {EdstHeader} from "./components/EdstHeader";
@@ -32,12 +32,22 @@ import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/co
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
-import {AselType, EdstEntryType, PlanDataType, SectorDataType} from "./types";
+import {AselType, EdstEntryType, PlanDataType} from "./types";
 import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
 import {connect} from 'react-redux';
 import {RootState} from './redux/store';
-import {addAclCid, addDepCid, deleteAclCid, deleteDepCid, setAclCidList} from './redux/actions';
+import {
+  addAclCid,
+  addDepCid,
+  deleteAclCid,
+  deleteDepCid,
+  setAclCidList, setArtccId, setSectorId,
+} from './redux/actions';
+import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
+import {AclType} from "./redux/reducers/aclReducer";
+import {DepType} from "./redux/reducers/depReducer";
+import {SectorDataStateType} from "./redux/reducers/sectorReducer";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -53,12 +63,7 @@ const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mr
 const DISABLED_WINDOWS = ['gpd', 'wx', 'sig', 'not', 'gi', 'ua', 'keep', 'adsb', 'sat', 'msg', 'wind', 'alt', 'fel', 'cpdlc-hist', 'cpdlc-msg-out'];
 
 const initialState = {
-  referenceFixes: [],
   disabledWindows: DISABLED_WINDOWS,
-  artccId: '',
-  sectorId: '',
-  boundaryPolygons: [],
-  allBoundaries: [],
   menu: null,
   spaList: [],
   dragging: false,
@@ -76,18 +81,11 @@ const initialState = {
   mcaCommandString: '',
   tooltipsEnabled: true,
   showAllTooltips: false,
-  boundaryIds: [],
   showBoundarySelector: true,
-  selectedBoundaryIds: new Set<string>()
 };
 
 export interface State {
-  referenceFixes: Array<any>;
   disabledWindows: string[];
-  artccId: string;
-  sectorId: string;
-  boundaryPolygons: Array<Feature<Polygon>>;
-  allBoundaries: Array<any>;
   menu: { name: string, refId: string | null } | null;
   spaList: string[];
   dragging: boolean;
@@ -105,23 +103,22 @@ export interface State {
   mcaCommandString: string;
   tooltipsEnabled: boolean;
   showAllTooltips: boolean;
-  boundaryIds: string[];
-  selectedBoundaryIds: Set<string>;
   showBoundarySelector: boolean;
 }
 
 interface Props {
-  aclCidList: string[],
-  depCidList: string[],
-  aclDeletedList: string[],
-  depDeletedList: string[],
-  manualPostingAcl: boolean,
-  manualPostingDep: boolean,
+  acl: AclType,
+  dep: DepType,
+  sectorData: SectorDataStateType,
   addAclCid: (cid: string) => void,
   addDepCid: (cid: string) => void,
   deleteAclCid: (cid: string) => void,
   deleteDepCid: (cid: string) => void,
-  setAclCidList: (cidList: string[], deletedList: string[]) => void
+  setAclCidList: (cidList: string[], deletedList: string[]) => void,
+  setArtccId: (artccId: string) => void,
+  setSectorId: (artccId: string) => void,
+  fetchSectorData: () => void,
+  fetchReferenceFixes: () => void
 }
 
 class App extends React.Component<Props, State> {
@@ -147,66 +144,29 @@ class App extends React.Component<Props, State> {
       artccId = 'zbw';
       // artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
-      if (!(this.state.boundaryPolygons.length > 0)) {
-        await getBoundaryData(artccId)
-          .then(response => response.json())
-          .then(geo_data => {
-            this.setState({boundaryIds: geo_data.map((boundary_id: any) => boundary_id.properties.id)});
-            this.setState({allBoundaries: geo_data.map((sector_boundary: any) => sector_boundary)});
-            this.setState({boundaryPolygons: geo_data.map((sector_data: SectorDataType) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-          });
-        // this.changeBoundarySelectorShown(false);
+      if (Object.keys(this.props.sectorData.sectors).length === 0) {
+        this.props.fetchSectorData();
       }
     } else {
       artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
-      if (!(this.state.boundaryPolygons.length > 0)) {
-        await getBoundaryData(artccId)
-          .then(response => response.json())
-          .then(geoData => {
-            this.setState({boundaryIds: geoData.map((boundaryId: { properties: { id: string } }) => boundaryId.properties.id)});
-            this.setState({allBoundaries: geoData.map((sectorBoundary: { properties: Array<any> }) => sectorBoundary)});
-            //this.setState({boundary_polygons: geoData.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-          });
-      }
     }
-
-    // const now = new Date().getTime();
-    // let local_data = JSON.parse(localStorage.getItem(`vEDST_${artccId}_${sectorId}`));
-    // if (now - local_data?.timestamp < CACHE_TIMEOUT) {
-    //   local_data.open_windows = new Set(local_data.open_windows[Symbol.iterator] ?? []);
-    //   local_data.aclCidList = new Set(local_data.aclCidList[Symbol.iterator] ?? []);
-    //   local_data.depCidList = new Set(local_data.depCidList[Symbol.iterator] ?? []);
-    //   local_data.acl_deletedList = new Set(local_data.acl_deletedList[Symbol.iterator] ?? []);
-    //   local_data.dep_deletedList = new Set(local_data.dep_deletedList[Symbol.iterator] ?? []);
-    //   this.setState(local_data ?? {});
-    // }
-    this.setState({artccId: artccId, sectorId: sectorId});
-    // if (!(this.state.boundary_polygons.length > 0)) {
-    //   await getBoundaryData(artccId)
-    //     .then(response => response.json())
-    //     .then(geo_data => {
-    //       this.setState({boundary_ids: geo_data.map(boundary_id => boundary_id.properties.id)});
-    //       this.setState({all_boundaries: geo_data.map(sector_boundary => sector_boundary)});
-    //       //this.setState({boundary_polygons: geo_data.map((sector_data: SectorDataProps) => polygon(sector_data.geometry.coordinates, sector_data.properties))});
-    //     });
-    // }
+    this.props.setArtccId(artccId);
+    this.props.setSectorId(sectorId);
+    if (Object.keys(this.props.sectorData.sectors).length === 0) {
+      this.props.fetchSectorData();
+    }
     // if we have no reference fixes for computing FRD, get some
-    if (!(this.state.referenceFixes.length > 0)) {
-      await getReferenceFixes(artccId)
-        .then(response => response.json())
-        .then(reference_fixes => {
-          if (reference_fixes) {
-            this.setState({referenceFixes: reference_fixes});
-          }
-        });
+    if (!(this.props.sectorData.referenceFixes.length > 0)) {
+      this.props.fetchReferenceFixes();
     }
     await this.refresh();
     this.updateIntervalId = setInterval(this.refresh, 20000); // update loop will run every 20 seconds
   }
 
   componentWillUnmount() {
-    // localStorage.setItem(`vEDST_${this.state.artccId}_${this.state.sectorId}`, JSON.stringify({...this.state, timestamp: new Date().getTime()}));
+    // localStorage.setItem(`vEDST_${this.state.artccId}_${this.state.sectorId}`, JSON.stringify({...this.state,
+    // timestamp: new Date().getTime()}));
     if (this.updateIntervalId) {
       clearInterval(this.updateIntervalId);
     }
@@ -216,36 +176,39 @@ class App extends React.Component<Props, State> {
     let depAirportDistance = 0;
     if (entry.dep_info) {
       const pos = [entry.flightplan.lon, entry.flightplan.lat];
-      const dep_pos = [entry.dep_info.lon, entry.dep_info.lat];
-      depAirportDistance = distance(point(dep_pos), point(pos), {units: 'nauticalmiles'});
+      const depPos = [entry.dep_info.lon, entry.dep_info.lat];
+      depAirportDistance = distance(point(depPos), point(pos), {units: 'nauticalmiles'});
     }
-    const {artccId} = this.state;
+    const {artccId} = this.props.sectorData;
     return Number(entry.flightplan.ground_speed) < 40
       && entry.dep_info?.artcc?.toLowerCase() === artccId
       && depAirportDistance < 10;
   };
 
   entryFilter = (entry: EdstEntryType) => {
-    const {boundaryPolygons} = this.state;
-    const {aclCidList} = this.props;
+    const {sectors, selectedSectors} = this.props.sectorData;
+    const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
+    const {cidList: aclCidList} = this.props.acl;
     const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
-    const will_enter_airspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), boundaryPolygons, pos) : false;
+    const willEnterAirspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), polygons, pos) : false;
     return ((entry.boundary_time < 30 || aclCidList.includes(entry.cid))
-      && will_enter_airspace
+      && willEnterAirspace
       && Number(entry.flightplan.ground_speed) > 30);
   };
 
   refreshEntry = (new_entry: EdstEntryType) => {
+    const {sectors, selectedSectors} = this.props.sectorData;
+    const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
     const pos: [number, number] = [new_entry.flightplan.lon, new_entry.flightplan.lat];
-    let current_entry: EdstEntryType | any = this.state.entries[new_entry.cid] ?? {
+    let currentEntry: EdstEntryType | any = this.state.entries[new_entry.cid] ?? {
       vciStatus: -1,
       depStatus: -1
     };
-    new_entry.boundary_time = computeBoundaryTime(new_entry, this.state.boundaryPolygons);
-    const route_fix_names = new_entry.route_data.map(fix => fix.name);
+    new_entry.boundary_time = computeBoundaryTime(new_entry, polygons);
+    const routeFixNames = new_entry.route_data.map(fix => fix.name);
     const dest = new_entry.dest;
     // add departure airport to route_data if we know the coords to compute the distance
-    if (new_entry.dest_info && !route_fix_names.includes(dest)) {
+    if (new_entry.dest_info && !routeFixNames.includes(dest)) {
       new_entry.route_data.push({
         name: new_entry.dest_info.icao,
         pos: [Number(new_entry.dest_info.lon), Number(new_entry.dest_info.lat)]
@@ -254,82 +217,84 @@ class App extends React.Component<Props, State> {
     if (!(new_entry.route.slice(-dest.length) === dest)) {
       new_entry.route += new_entry.dest;
     }
-    if (current_entry.route_data === new_entry.route_data) { // if route_data has not changed
-      new_entry._route_data = getRouteDataDistance(current_entry._route_data, pos);
+    if (currentEntry.route_data === new_entry.route_data) { // if route_data has not changed
+      new_entry._route_data = getRouteDataDistance(currentEntry._route_data, pos);
       // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-      if (current_entry.aar_list.length) {
-        new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
+      if (currentEntry.aar_list.length) {
+        new_entry._aar_list = this.processAar(currentEntry, currentEntry.aar_list);
       }
     } else {
       if (new_entry.route_data) {
         new_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
       }
       // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-      if (current_entry.aar_list) {
-        new_entry._aar_list = this.processAar(current_entry, current_entry.aar_list);
+      if (currentEntry.aar_list) {
+        new_entry._aar_list = this.processAar(currentEntry, currentEntry.aar_list);
       }
     }
     if (new_entry._route_data) {
       _.assign(new_entry, getRemainingRouteData(new_entry.route, new_entry._route_data.slice(0), pos));
     }
-    if (new_entry.update_time === current_entry.update_time
-      || (current_entry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
+    if (new_entry.update_time === currentEntry.update_time
+      || (currentEntry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
       || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
-      new_entry.pending_removal = current_entry.pending_removal ?? new Date().getTime();
+      new_entry.pending_removal = currentEntry.pending_removal ?? new Date().getTime();
     } else {
       new_entry.pending_removal = null;
     }
     if (new_entry.remarks.match(/\/v\//gi)) new_entry.voice_type = 'v';
     if (new_entry.remarks.match(/\/r\//gi)) new_entry.voice_type = 'r';
     if (new_entry.remarks.match(/\/t\//gi)) new_entry.voice_type = 't';
-    return _.assign(current_entry, new_entry);
+    return _.assign(currentEntry, new_entry);
   };
 
   refresh = async () => {
-    let {artccId, referenceFixes, entries} = this.state;
+    let {entries} = this.state;
+    const {artccId, referenceFixes} = this.props.sectorData;
     getEdstData()
       .then(response => response.json())
       .then(async new_data => {
           if (new_data) {
-            for (let new_entry of new_data) {
+            for (let newEntry of new_data) {
               // yes, this is ugly... gotta find something better
-              entries[new_entry.cid] = _.assign(entries[new_entry.cid] ?? {}, this.refreshEntry(new_entry));
-              let {aclCidList, aclDeletedList, depCidList, depDeletedList} = this.props;
-              if (this.depFilter(entries[new_entry.cid]) && !depDeletedList.includes(new_entry.cid)) {
-                if (entries[new_entry.cid].aar_list === undefined) {
-                  await getAarData(artccId, new_entry.cid)
+              entries[newEntry.cid] = _.assign(entries[newEntry.cid] ?? {}, this.refreshEntry(newEntry));
+              const {cidList: aclCidList, deletedList: aclDeletedList} = this.props.acl;
+              const {cidList: depCidList, deletedList: depDeletedList} = this.props.dep;
+              if (this.depFilter(entries[newEntry.cid]) && !depDeletedList.includes(newEntry.cid)) {
+                if (entries[newEntry.cid].aar_list === undefined) {
+                  await getAarData(artccId, newEntry.cid)
                     .then(response => response.json())
                     .then(aar_list => {
-                      entries[new_entry.cid].aar_list = aar_list;
-                      entries[new_entry.cid]._aar_list = this.processAar(entries[new_entry.cid], aar_list);
+                      entries[newEntry.cid].aar_list = aar_list;
+                      entries[newEntry.cid]._aar_list = this.processAar(entries[newEntry.cid], aar_list);
                     });
                 }
-                if (!depCidList.includes(new_entry.cid)) {
-                  this.props.addDepCid(new_entry.cid);
+                if (!depCidList.includes(newEntry.cid)) {
+                  this.props.addDepCid(newEntry.cid);
                 }
               } else {
-                if (this.entryFilter(entries[new_entry.cid])) {
-                  if (entries[new_entry.cid]?.aar_list === undefined) {
-                    await getAarData(artccId, new_entry.cid)
+                if (this.entryFilter(entries[newEntry.cid])) {
+                  if (entries[newEntry.cid]?.aar_list === undefined) {
+                    await getAarData(artccId, newEntry.cid)
                       .then(response => response.json())
                       .then(aar_list => {
-                        entries[new_entry.cid].aar_list = aar_list;
-                        entries[new_entry.cid]._aar_list = this.processAar(entries[new_entry.cid], aar_list);
+                        entries[newEntry.cid].aar_list = aar_list;
+                        entries[newEntry.cid]._aar_list = this.processAar(entries[newEntry.cid], aar_list);
                       });
                   }
-                  if (!aclCidList.includes(new_entry.cid) && !aclDeletedList.includes(new_entry.cid)) {
+                  if (!aclCidList.includes(newEntry.cid) && !aclDeletedList.includes(newEntry.cid)) {
                     // remove cid from departure list if will populate the aircraft list
-                    this.props.addAclCid(new_entry.cid);
-                    this.props.deleteDepCid(new_entry.cid);
+                    this.props.addAclCid(newEntry.cid);
+                    this.props.deleteDepCid(newEntry.cid);
                   }
                   if (referenceFixes.length > 0) {
-                    entries[new_entry.cid].reference_fix = getClosestReferenceFix(referenceFixes, point([new_entry.flightplan.lon, new_entry.flightplan.lat]));
+                    entries[newEntry.cid].reference_fix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
                   }
                 }
               }
-              // this.state.entries[new_entry.cid] = entry;
+              // this.state.entries[newEntry.cid] = entry;
               // this.setState((prevState) => {
-              //   return {entries: {...prevState.entries, [new_entry.cid]: entry}}
+              //   return {entries: {...prevState.entries, [newEntry.cid]: entry}}
               // });
             }
           }
@@ -338,54 +303,54 @@ class App extends React.Component<Props, State> {
   };
 
   processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
-    const {_route_data: current_route_data, _route: current_route} = entry;
-    if (!current_route_data || !current_route) {
+    const {_route_data: currentRouteData, _route: currentRoute} = entry;
+    if (!currentRouteData || !currentRoute) {
       return null;
     }
     return aar_list?.map(aar_data => {
-      const {route_fixes, amendment} = aar_data;
-      const {fix: tfix, info: tfix_info} = amendment.tfix_details;
-      const current_route_data_fix_names = current_route_data.map(fix => fix.name);
+      const {route_fixes: routeFixes, amendment} = aar_data;
+      const {fix: tfix, info: tfixInfo} = amendment.tfix_details;
+      const currentRouteDataFixNames = currentRouteData.map(fix => fix.name);
       // if the current route data does not contain the tfix, this aar will not apply
-      if (!current_route_data_fix_names.includes(tfix)) {
+      if (!currentRouteDataFixNames.includes(tfix)) {
         return null;
       }
-      let {route: aar_leading_route_string, aar_amendment: aar_amendment_route_string} = amendment;
-      let amended_route_string = aar_amendment_route_string;
-      const current_route_data_tfix_index = current_route_data_fix_names.indexOf(tfix);
-      const remaining_fix_names = current_route_data_fix_names.slice(0, current_route_data_tfix_index)
-        .concat(route_fixes.slice(route_fixes.indexOf(tfix)));
-      if (tfix_info === 'Prepend') {
-        aar_amendment_route_string = tfix + aar_amendment_route_string;
+      let {route: aarLeadingRouteString, aar_amendment: aarAmendmentRouteString} = amendment;
+      let amendedRouteString = aarAmendmentRouteString;
+      const currentRouteDataTfixIndex = currentRouteDataFixNames.indexOf(tfix);
+      const remainingFixNames = currentRouteDataFixNames.slice(0, currentRouteDataTfixIndex)
+        .concat(routeFixes.slice(routeFixes.indexOf(tfix)));
+      if (tfixInfo === 'Prepend') {
+        aarAmendmentRouteString = tfix + aarAmendmentRouteString;
       }
       // if current route contains the tfix, append the aar amendment after the tfix
-      if (current_route.includes(tfix)) {
-        amended_route_string = current_route.slice(0, current_route.indexOf(tfix)) + aar_amendment_route_string;
+      if (currentRoute.includes(tfix)) {
+        amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(tfix)) + aarAmendmentRouteString;
       } else {
         // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
-        const first_common_segment = current_route.split(/\.+/).filter(segment => amended_route_string?.includes(segment))?.[0];
-        if (!first_common_segment) {
+        const firstCommonSegment = currentRoute.split(/\.+/).filter(segment => amendedRouteString?.includes(segment))?.[0];
+        if (!firstCommonSegment) {
           return null;
         }
-        amended_route_string = current_route.slice(0, current_route.indexOf(first_common_segment) + first_common_segment.length)
-          + aar_leading_route_string.slice(aar_leading_route_string.indexOf(first_common_segment) + first_common_segment.length);
-        if (!amended_route_string.includes(first_common_segment)) {
-          amended_route_string = first_common_segment + amended_route_string;
+        amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(firstCommonSegment) + firstCommonSegment.length)
+          + aarLeadingRouteString.slice(aarLeadingRouteString.indexOf(firstCommonSegment) + firstCommonSegment.length);
+        if (!amendedRouteString.includes(firstCommonSegment)) {
+          amendedRouteString = firstCommonSegment + amendedRouteString;
         }
       }
-      if (!amended_route_string) {
+      if (!amendedRouteString) {
         return null;
       }
       return {
         aar: true,
-        aar_amendment_route_string: aar_amendment_route_string,
-        amended_route: amended_route_string,
-        amended_route_fix_names: remaining_fix_names,
+        aar_amendment_route_string: aarAmendmentRouteString,
+        amended_route: amendedRouteString,
+        amended_route_fix_names: remainingFixNames,
         dest: entry.dest,
         tfix: tfix,
-        tfix_info: tfix_info,
+        tfix_info: tfixInfo,
         eligible: amendment.eligible,
-        on_eligibleAar: amendment.eligible && current_route.includes(aar_amendment_route_string),
+        onEligibleAar: amendment.eligible && currentRoute.includes(aarAmendmentRouteString),
         aar_data: aar_data
       };
     }).filter(aar_data => aar_data);
@@ -479,38 +444,39 @@ class App extends React.Component<Props, State> {
   };
 
   amendEntry = async (cid: string, plan_data: any) => {
-    let {entries, artccId} = this.state;
-    const {depCidList} = this.props;
-    let current_entry = entries[cid];
+    let {entries} = this.state;
+    const {artccId} = this.props.sectorData;
+    const {cidList: depCidList} = this.props.dep;
+    let currentEntry = entries[cid];
     if (Object.keys(plan_data).includes('altitude')) {
       plan_data.interim = null;
     }
     if (Object.keys(plan_data).includes('route')) {
-      const dest = current_entry.dest;
+      const dest = currentEntry.dest;
       if (plan_data.route.slice(-dest.length) === dest) {
         plan_data.route = plan_data.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = depCidList.includes(cid) ? current_entry?.route : current_entry?._route;
-      plan_data.previous_route_data = depCidList.includes(cid) ? current_entry?.route_data : current_entry?._route_data;
+      plan_data.previous_route = depCidList.includes(cid) ? currentEntry?.route : currentEntry?._route;
+      plan_data.previous_route_data = depCidList.includes(cid) ? currentEntry?.route_data : currentEntry?._route_data;
     }
-    plan_data.callsign = current_entry.callsign;
-    if (plan_data.scratch_hdg !== undefined) current_entry.scratch_hdg = plan_data.scratch_hdg;
-    if (plan_data.scratch_spd !== undefined) current_entry.scratch_spd = plan_data.scratch_spd;
+    plan_data.callsign = currentEntry.callsign;
+    if (plan_data.scratch_hdg !== undefined) currentEntry.scratch_hdg = plan_data.scratch_hdg;
+    if (plan_data.scratch_spd !== undefined) currentEntry.scratch_spd = plan_data.scratch_spd;
     await updateEdstEntry(plan_data)
       .then(response => response.json())
       .then(async updated_entry => {
         if (updated_entry) {
-          _.assign(current_entry, this.refreshEntry(updated_entry));
-          current_entry.pending_removal = null;
-          await getAarData(artccId, current_entry.cid)
+          _.assign(currentEntry, this.refreshEntry(updated_entry));
+          currentEntry.pending_removal = null;
+          await getAarData(artccId, currentEntry.cid)
             .then(response => response.json())
             .then(aar_list => {
-              current_entry.aar_list = aar_list;
-              current_entry._aar_list = this.processAar(current_entry, aar_list);
+              currentEntry.aar_list = aar_list;
+              currentEntry._aar_list = this.processAar(currentEntry, aar_list);
             });
           this.setState(({entries}) => {
             return {
-              entries: {...entries, [cid]: current_entry}
+              entries: {...entries, [cid]: currentEntry}
             };
           });
         }
@@ -524,10 +490,10 @@ class App extends React.Component<Props, State> {
     } else {
       const entry = entries[cid];
       asel = {cid: cid, field: field, window: window};
-      if (window === 'acl' && !this.props.manualPostingAcl && field === 'fid-2' && entries[cid]?.vciStatus === -1) {
+      if (window === 'acl' && !this.props.acl.manualPosting && field === 'fid-2' && entries[cid]?.vciStatus === -1) {
         this.updateEntry(cid, {vciStatus: 0});
       }
-      if (window === 'dep' && !this.props.manualPostingDep && field === 'fid-2' && entries[cid]?.depStatus === -1) {
+      if (window === 'dep' && !this.props.dep.manualPosting && field === 'fid-2' && entries[cid]?.depStatus === -1) {
         this.updateEntry(cid, {depStatus: 0});
       }
       this.setState({menu: null, asel: asel});
@@ -597,7 +563,7 @@ class App extends React.Component<Props, State> {
       case 'route-menu':
         pos[name] = (asel?.window !== 'dep') ? {
           x: x - (plan ? 0 : 569),
-          y: plan ? ref.offsetTop : y - 3 * height,
+          y: plan ? ref.offsetTop : y - 3*height,
           w: width,
           h: height
         } : {
@@ -610,7 +576,7 @@ class App extends React.Component<Props, State> {
       case 'prev-route-menu':
         pos[name] = {
           x: x,
-          y: plan ? ref.offsetTop : y - 2 * height,
+          y: plan ? ref.offsetTop : y - 2*height,
           w: width,
           h: height
         };
@@ -728,14 +694,14 @@ class App extends React.Component<Props, State> {
 
   aclCleanup = () => {
     let {entries} = this.state;
-    const {aclCidList, aclDeletedList} = this.props;
+    const {cidList, deletedList} = this.props.acl;
     const now = new Date().getTime();
-    let aclCidList_copy, acl_deletedList_copy;
-    const cid_pending_removal_list = aclCidList.filter(cid => (now - (entries[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
+    let aclCidListCopy, aclDeletedListCopy;
+    const pendingRemovalCidList = cidList.filter(cid => (now - (entries[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
 
-    aclCidList_copy = _.difference(aclCidList, cid_pending_removal_list);
-    acl_deletedList_copy = aclDeletedList.concat(cid_pending_removal_list);
-    this.props.setAclCidList(aclCidList_copy, acl_deletedList_copy);
+    aclCidListCopy = _.difference(cidList, pendingRemovalCidList);
+    aclDeletedListCopy = deletedList.concat(pendingRemovalCidList);
+    this.props.setAclCidList(aclCidListCopy, aclDeletedListCopy);
   };
 
   setMraMessage = (msg: string) => {
@@ -761,30 +727,12 @@ class App extends React.Component<Props, State> {
     this.setState({showBoundarySelector: bool});
   };
 
-  updateSelectedBoundaries = (label: string) => {
-    if (this.state.selectedBoundaryIds.has(label)) {
-      this.state.selectedBoundaryIds.delete(label);
-    } else {
-      this.state.selectedBoundaryIds.add(label);
-    }
-  };
-
-  updateBoundaryPolygons = () => {
-    this.setState({
-      boundaryPolygons: this.state.allBoundaries.filter(
-        id => this.state.selectedBoundaryIds.has(id.properties.id))
-        .map(coordinates => polygon(coordinates.geometry.coordinates))
-    });
-  };
-
-
   render() {
     const {
       entries,
       asel,
       disabledWindows,
       planQueue,
-      sectorId,
       menu,
       pos,
       dragPreviewStyle,
@@ -796,7 +744,6 @@ class App extends React.Component<Props, State> {
       mcaCommandString,
       tooltipsEnabled,
       showAllTooltips,
-      boundaryIds,
       showBoundarySelector
     } = this.state;
 
@@ -808,22 +755,18 @@ class App extends React.Component<Props, State> {
       >
         <TooltipContext.Provider
           value={{globalTooltipsEnabled: tooltipsEnabled, showAllTooltips: showAllTooltips}}>
-          <EdstHeader open_windows={openWindows}
-                      disabled_windows={disabledWindows}
+          <EdstHeader openWindows={openWindows}
+                      disabledWindows={disabledWindows}
                       openWindow={this.openWindow}
                       toggleWindow={this.toggleWindow}
-                      plan_disabled={planQueue.length === 0}
-                      sectorId={sectorId}
+                      planDisabled={planQueue.length === 0}
           />
           <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
                ref={this.outlineRef}
                onMouseDown={(e) => (dragging && e.button === 0 && this.stopDrag(e))}
           >
             {showBoundarySelector && <BoundarySelector
-              boundary_ids={boundaryIds}
               toggle={this.setBoundarySelectorEnabled}
-              updateSelected={this.updateSelectedBoundaries}
-              updatePolygons={this.updateBoundaryPolygons}
             />}
             <div className="edst-dragging-outline" style={dragPreviewStyle ?? {display: 'none'}}
                  onMouseUp={(e) => !draggingCursorHide && this.stopDrag(e)}
@@ -834,7 +777,6 @@ class App extends React.Component<Props, State> {
               entries: entries,
               asel: asel,
               planQueue: planQueue,
-              sectorId: sectorId,
               menu: menu,
               unmount: this.unmount,
               openMenu: this.openMenu,
@@ -964,21 +906,18 @@ class App extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: RootState) => ({
-  aclCidList: state.acl.cidList,
-  aclDeletedList: state.acl.deletedList,
-  depCidList: state.dep.cidList,
-  depDeletedList: state.dep.deletedList,
-  manualPostingAcl: state.acl.manualPosting,
-  manualPostingDep: state.dep.manualPosting,
-});
+const mapStateToProps = (state: RootState) => ({...state});
 
 const mapDispatchToProps = (dispatch: any) => ({
   addAclCid: (cid: string) => dispatch(addAclCid(cid)),
   deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
   addDepCid: (cid: string) => dispatch(addDepCid(cid)),
   deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
-  setAclCidList: (cidList: string[], deletedList: string[]) => dispatch(setAclCidList(cidList, deletedList))
+  setAclCidList: (cidList: string[], deletedList: string[]) => dispatch(setAclCidList(cidList, deletedList)),
+  setArtccId: (id: string) => dispatch(setArtccId(id)),
+  setSectorId: (id: string) => dispatch(setSectorId(id)),
+  fetchSectorData: () => dispatch(fetchSectorData),
+  fetchReferenceFixes: () => dispatch(fetchReferenceFixes)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

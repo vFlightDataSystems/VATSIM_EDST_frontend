@@ -77,11 +77,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
 
   const flightplanReadout = (fid: string) => {
     const now = new Date();
-    const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      let msg = formatUtcMinutes(utc_minutes) + '\n'
+      let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
         + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route.replace(/^\.+/, '')}`;
       setMraMessage(msg);

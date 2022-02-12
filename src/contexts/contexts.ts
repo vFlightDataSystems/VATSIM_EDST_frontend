@@ -5,7 +5,6 @@ interface EdstContextProps {
   entries: { [cid: string]: EdstEntryType };
   asel: AselType | null;
   planQueue: Array<any>;
-  sectorId: string;
   menu: any;
   dragging: boolean;
   unmount: () => void;
