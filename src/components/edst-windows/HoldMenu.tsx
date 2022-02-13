@@ -8,16 +8,19 @@ import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {EdstWindowType} from "../../types";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import _ from "lodash";
+import {updateEntry} from "../../redux/reducers/entriesReducer";
+import {toggleAclSpa} from "../../redux/reducers/aclReducer";
 
 export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
     startDrag,
     stopDrag,
     amendEntry,
-    updateEntry,
-    entries
   } = useContext(EdstContext);
-  const entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
+  const dispatch = useAppDispatch();
 
   const now = new Date();
   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -46,27 +49,28 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
   };
 
   useEffect(() => {
-    const computeCrossingTimes = (route_data?: Array<any>) => {
+    const computeCrossingTimes = (routeData: Array<any> = []) => {
+      let newRouteData = [];
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      const groundspeed = Number(entry?.flightplan?.ground_speed);
-      if (route_data && groundspeed > 0) {
-        let lineData = [[entry?.flightplan?.lon, entry?.flightplan?.lat]];
-        for (let e of route_data) {
+      const groundspeed = Number(entry.flightplan?.ground_speed);
+      if (routeData.length > 0 && groundspeed > 0) {
+        let lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
+        for (let e of routeData) {
           lineData.push(e.pos);
-          e.minutes_at_fix = utcMinutes + 60 * length(lineString(lineData), {units: 'nauticalmiles'}) / groundspeed;
+          newRouteData.push({...e, minutesAtFix: utcMinutes + 60 * length(lineString(lineData), {units: 'nauticalmiles'}) / groundspeed});
         }
       }
-      return route_data;
+      return newRouteData;
     };
-    const routeData = computeCrossingTimes(entry?._route_data);
+    const routeData = computeCrossingTimes(entry._route_data);
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    setHoldFix(entry?.hold_data?.hold_fix ?? 'PP');
-    setLegLength(entry?.hold_data?.leg_length ?? 'STD');
-    setHoldDirection(entry?.hold_data?.hold_direction ?? 'N');
-    setTurns(entry?.hold_data?.turns ?? 'RT');
-    setEfc(entry?.hold_data?.efc ?? utcMinutes + 30);
+    setHoldFix(entry.hold_data?.hold_fix ?? 'PP');
+    setLegLength(entry.hold_data?.leg_length ?? 'STD');
+    setHoldDirection(entry.hold_data?.hold_direction ?? 'N');
+    setTurns(entry.hold_data?.turns ?? 'RT');
+    setEfc(entry.hold_data?.efc ?? utcMinutes + 30);
     setRouteData(routeData ?? null);
   }, [entry]);
 
@@ -108,11 +112,11 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
           </div>
         </div>
         <div className="hold-fix-container">
-          {Object.keys(Array(Math.min(routeData?.length || 0, 10))).map(i =>
+          {_.range(0, Math.min(routeData?.length || 0, 10)).map(i =>
             <div className="options-row" key={`hold-menu-row-${i}`}>
-              {Object.keys(Array(((routeData?.length || 0) / 10 | 0) + 1)).map(j => {
+              {_.range(0,((routeData?.length || 0) / 10 | 0) + 1).map(j => {
                 const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
-                const minutesAtFix = routeData?.[Number(i) + Number(j) * 10]?.minutes_at_fix;
+                const minutesAtFix = routeData?.[Number(i) + Number(j) * 10]?.minutesAtFix;
                 return (fixName &&
                   <div className={`options-col hold-col-1 hover ${(holdFix === fixName) ? 'selected' : ''}`}
                        key={`hold-menu-col-${i}-${j}`}
@@ -226,7 +230,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
               content="Delete Hold Instructions"
               onMouseDown={() => {
                 amendEntry(entry.cid, {hold_data: null});
-                updateEntry(entry.cid, {show_hold_info: false});
+                dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
                 closeWindow();
               }}
               title={Tooltips.holdDeleteHoldInstr}
@@ -261,7 +265,9 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
           <div className="options-col left">
             <EdstButton content="Hold/SPA" disabled={entry?.hold_data}
                         onMouseDown={() => {
-                          updateEntry(entry.cid, {spa: true});
+                          if (!_.isNumber(entry.spa)) {
+                            dispatch(toggleAclSpa(entry.cid));
+                          }
                           clearedHold();
                         }}
                         title={Tooltips.holdHoldSpaBtn}
@@ -270,8 +276,8 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
                         title={Tooltips.holdHoldBtn}/>
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
-                          amendEntry(entry?.cid, {hold_data: null});
-                          updateEntry(entry?.cid, {show_hold_info: false});
+                          amendEntry(entry.cid, {hold_data: null});
+                          dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
                           closeWindow();
                         }}
             />

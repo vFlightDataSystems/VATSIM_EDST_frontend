@@ -20,32 +20,32 @@ export const REMOVAL_TIMEOUT = 120000;
  * @returns {number}
  */
 export function getSignedDistancePointToPolygons(point: Point, polygons: Array<Polygon>): number {
-  let min_distance = Infinity;
+  let minDistance = Infinity;
   for (const poly of polygons) {
     // @ts-ignore
     let dist = pointToLineDistance(point, polygonToLineString(poly), {units: 'nauticalmiles'});
     if (booleanPointInPolygon(point, poly)) {
       dist = dist * -1;
     }
-    min_distance = Math.min(min_distance, dist);
+    minDistance = Math.min(minDistance, dist);
   }
-  return min_distance;
+  return minDistance;
 }
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
- * @param {Array<any>} route_data - fixes on the route (order matters)
+ * @param {Array<any>} routeData - fixes on the route (order matters)
  * @param {Array<Polygon>} polygons - airspace defining boundaries
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(route_data: Array<FixProps> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
-  if (route_data === null) {
+export function routeWillEnterAirspace(routeData: Array<FixProps> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
+  if (routeData === null) {
     return false;
   }
-  route_data.unshift({pos: pos, name: 'ppos'});
-  if (route_data.length > 1) {
-    const lines = lineString(route_data.map(e => e.pos));
+  routeData.unshift({pos: pos, name: 'ppos'});
+  if (routeData.length > 1) {
+    const lines = lineString(routeData.map(e => e.pos));
     for (const poly of polygons) {
       if (booleanIntersects(lines, poly)) {
         return true;
@@ -57,73 +57,127 @@ export function routeWillEnterAirspace(route_data: Array<FixProps> | null, polyg
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
- * @param {Array<any>} route_data - fixes on the route (order matters)
+ * @param {Array<any>} routeData - fixes on the route (order matters)
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {Array<any>} - original route_data, but each item will have a `distance` attribute
  */
-export function getRouteDataDistance(route_data: Array<any>, pos: [number, number]): Array<any> {
-  for (let fix of route_data) {
+export function getRouteDataDistance(routeData: Array<any>, pos: [number, number]): Array<any> {
+  for (let fix of routeData) {
     fix.dist = distance(point(fix.pos), point(pos), {units: 'nauticalmiles'});
   }
-  return route_data;
+  return routeData;
 }
 
 /**
  * compute the remaining route and its route data, based on current position
  * @param {string} route - parsed route string
- * @param {Array<any>} route_data - fixes on the route
+ * @param {Array<any>} routeData - fixes on the route
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {{_route: string, _route_data: Array<any>}}
  */
-export function getRemainingRouteData(route: string, route_data: Array<any>, pos: [number, number]): { _route: string, _route_data: Array<any> } {
-  if (route_data.length > 1) {
-    const fix_names = route_data.map(e => e.name);
-    const sorted_route_data = route_data.slice(0).sort((u, v) => u.dist - v.dist);
-    const closest_fix = sorted_route_data[0];
-    const index = route_data.indexOf(closest_fix);
-    if (index === route_data.length - 1) {
-      return {_route: `.${closest_fix.name}`, _route_data: [closest_fix]};
+export function getRemainingRouteData(route: string, routeData: Array<any>, pos: [number, number]): { _route: string, _route_data: Array<any> } {
+  if (routeData.length > 1) {
+    const fixNames = routeData.map(e => e.name);
+    const sortedRouteData = routeData.slice(0).sort((u, v) => u.dist - v.dist);
+    const closestFix = sortedRouteData[0];
+    const index = routeData.indexOf(closestFix);
+    if (index === routeData.length - 1) {
+      return {_route: `.${closestFix.name}`, _route_data: [closestFix]};
     }
-    const following_fix = route_data[index + 1];
-    const pos_point = point(pos);
-    const line = lineString([closest_fix.pos, following_fix.pos]);
-    const line_distance = pointToLineDistance(pos_point, line, {units: 'nauticalmiles'});
-    const next_fix = (line_distance >= closest_fix.dist) ? closest_fix : following_fix;
-    for (let name of fix_names.slice(0, fix_names.indexOf(next_fix.name) + 1).reverse()) {
+    const followingFix = routeData[index + 1];
+    const posPoint = point(pos);
+    const line = lineString([closestFix.pos, followingFix.pos]);
+    const lineDistance = pointToLineDistance(posPoint, line, {units: 'nauticalmiles'});
+    const nextFix = (lineDistance >= closestFix.dist) ? closestFix : followingFix;
+    for (let name of fixNames.slice(0, fixNames.indexOf(nextFix.name) + 1).reverse()) {
       let index = route.lastIndexOf(name);
       if (index > -1) {
         route = route.slice(index + name.length);
         if (!Number(route[0])) {
-          route = `..${next_fix.name}` + route;
+          route = `..${nextFix.name}` + route;
         } else {
-          route = `..${next_fix.name}.${name}${route}`;
+          route = `..${nextFix.name}.${name}${route}`;
         }
         break;
       }
     }
-    route_data = route_data.slice(route_data.indexOf(next_fix));
+    routeData = routeData.slice(routeData.indexOf(nextFix));
   }
-  return {_route: route, _route_data: route_data};
+  return {_route: route, _route_data: routeData};
 }
 
 /**
  * compute frd to the closest reference fix
- * @param {Array<any>} reference_fixes - list of reference fixes
- * @param {Feature<Point>} pos_point - present position
+ * @param {Array<any>} referenceFixes - list of reference fixes
+ * @param {Feature<Point>} posPoint - present position
  * @returns {any} - closest reference fix
  */
-export function getClosestReferenceFix(reference_fixes: Array<any>, pos_point: Feature<Point>): any {
-  const fixes_distance = reference_fixes.map(fix => {
-    const fix_point = point([fix.lon, fix.lat]);
+export function getClosestReferenceFix(referenceFixes: Array<any>, posPoint: Feature<Point>): any {
+  const fixesDistance = referenceFixes.map(fix => {
+    const fixPoint = point([fix.lon, fix.lat]);
     return Object.assign({
-      point: fix_point,
-      distance: distance(fix_point, pos_point, {units: 'nauticalmiles'})
+      point: fixPoint,
+      distance: distance(fixPoint, posPoint, {units: 'nauticalmiles'})
     }, fix);
   });
-  let closest_fix = fixes_distance.sort((u, v) => u.distance - v.distance)[0];
-  closest_fix.bearing = (bearing(closest_fix.point, pos_point) + 360) % 360;
-  return closest_fix;
+  let closestFix = fixesDistance.sort((u, v) => u.distance - v.distance)[0];
+  closestFix.bearing = (bearing(closestFix.point, posPoint) + 360) % 360;
+  return closestFix;
 }
+
+export const processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
+  const {_route_data: currentRouteData, _route: currentRoute} = entry;
+  if (!currentRouteData || !currentRoute) {
+    return null;
+  }
+  return aar_list?.map(aar_data => {
+    const {route_fixes: routeFixes, amendment} = aar_data;
+    const {fix: tfix, info: tfixInfo} = amendment.tfix_details;
+    const currentRouteDataFixNames = currentRouteData.map(fix => fix.name);
+    // if the current route data does not contain the tfix, this aar will not apply
+    if (!currentRouteDataFixNames.includes(tfix)) {
+      return null;
+    }
+    let {route: aarLeadingRouteString, aar_amendment: aarAmendmentRouteString} = amendment;
+    let amendedRouteString = aarAmendmentRouteString;
+    const currentRouteDataTfixIndex = currentRouteDataFixNames.indexOf(tfix);
+    const remainingFixNames = currentRouteDataFixNames.slice(0, currentRouteDataTfixIndex)
+      .concat(routeFixes.slice(routeFixes.indexOf(tfix)));
+    if (tfixInfo === 'Prepend') {
+      aarAmendmentRouteString = tfix + aarAmendmentRouteString;
+    }
+    // if current route contains the tfix, append the aar amendment after the tfix
+    if (currentRoute.includes(tfix)) {
+      amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(tfix)) + aarAmendmentRouteString;
+    } else {
+      // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
+      const firstCommonSegment = currentRoute.split(/\.+/).filter(segment => amendedRouteString?.includes(segment))?.[0];
+      if (!firstCommonSegment) {
+        return null;
+      }
+      amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(firstCommonSegment) + firstCommonSegment.length)
+        + aarLeadingRouteString.slice(aarLeadingRouteString.indexOf(firstCommonSegment) + firstCommonSegment.length);
+      if (!amendedRouteString.includes(firstCommonSegment)) {
+        amendedRouteString = firstCommonSegment + amendedRouteString;
+      }
+    }
+    if (!amendedRouteString) {
+      return null;
+    }
+    return {
+      aar: true,
+      aar_amendment_route_string: aarAmendmentRouteString,
+      amended_route: amendedRouteString,
+      amended_route_fix_names: remainingFixNames,
+      dest: entry.dest,
+      tfix: tfix,
+      tfix_info: tfixInfo,
+      eligible: amendment.eligible,
+      onEligibleAar: amendment.eligible && currentRoute.includes(aarAmendmentRouteString),
+      aar_data: aar_data
+    };
+  }).filter(aar_data => aar_data);
+};
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
@@ -133,20 +187,20 @@ export function getClosestReferenceFix(reference_fixes: Array<any>, pos_point: F
  */
 export function computeBoundaryTime(entry: EdstEntryType, polygons: Array<Feature<Polygon>>): number {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
-  const pos_point = point(pos);
+  const posPoint = point(pos);
   // @ts-ignore
-  const sdist = getSignedDistancePointToPolygons(pos_point, polygons);
+  const sdist = getSignedDistancePointToPolygons(posPoint, polygons);
   return sdist * 60 / entry.flightplan.ground_speed;
 }
 
 /**
  * compute the FRD string from reference fix data
- * @param {{waypoint_id: string, bearing: number, distance: number}} reference_fix
+ * @param {{waypoint_id: string, bearing: number, distance: number}} referenceFix
  * @returns {string} - fix/radial/distance in standard format: ABC123456
  */
-export function computeFrd(reference_fix: { waypoint_id: string, bearing: number, distance: number }): string {
-  return reference_fix.waypoint_id + Math.round(reference_fix.bearing).toString().padStart(3, '0')
-    + Math.round(reference_fix.distance).toString().padStart(3, '0');
+export function computeFrd(referenceFix: { waypoint_id: string, bearing: number, distance: number }): string {
+  return referenceFix.waypoint_id + Math.round(referenceFix.bearing).toString().padStart(3, '0')
+    + Math.round(referenceFix.distance).toString().padStart(3, '0');
 }
 
 /**

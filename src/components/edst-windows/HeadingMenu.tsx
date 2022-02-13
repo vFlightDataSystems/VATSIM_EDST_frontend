@@ -8,15 +8,15 @@ import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstWindowType} from "../../types";
+import {useAppSelector} from "../../redux/hooks";
 
 export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) => {
   const {
-    entries,
     startDrag,
     stopDrag,
     amendEntry
   } = useContext(EdstContext);
-  let entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
 
   const [focused, setFocused] = useState(false);
   const [heading, setHeading] = useState(280);
@@ -31,19 +31,19 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
   const ref = useRef(null);
 
   const handleMouseDown = (event: React.MouseEvent, value: number, direction: string | null = null) => {
-    const value_str = direction === null ? `${amend ? 'H' : ''}${value}`
+    const valueStr = direction === null ? `${amend ? 'H' : ''}${value}`
       : `${value}${direction}`;
 
     switch (event.button) {
       case 0:
         amendEntry(entry.cid, {
-          [amend ? 'hdg' : 'scratch_hdg']: value_str,
+          [amend ? 'hdg' : 'scratch_hdg']: valueStr,
           [!amend ? 'hdg' : 'scratch_hdg']: null
         });
         break;
       case 1:
         amendEntry(entry.cid, {
-          [amend ? 'hdg' : 'scratch_hdg']: value_str
+          [amend ? 'hdg' : 'scratch_hdg']: valueStr
         });
         break;
       default:
@@ -112,7 +112,7 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
       >
         {_.range(50, -70, -10).map(i => {
           const hdg = ((heading - (deltaY / 100 | 0) * 10 + i) % 360 + 360) % 360;
-          const rel_hdg = 35 + i / 2;
+          const relHdg = 35 + i / 2;
           return <div className="spd-hdg-menu-container-row" key={`heading-menu-${i}`}>
             <div className="spd-hdg-menu-container-col"
                  onMouseDown={(e) => handleMouseDown(e, hdg)}
@@ -125,14 +125,14 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
               {String(hdg + 5).padStart(3, '0')}
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
-                 onMouseDown={(e) => handleMouseDown(e, rel_hdg, 'L')}
+                 onMouseDown={(e) => handleMouseDown(e, relHdg, 'L')}
             >
-              {rel_hdg}
+              {relHdg}
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
-                 onMouseDown={(e) => handleMouseDown(e, rel_hdg, 'R')}
+                 onMouseDown={(e) => handleMouseDown(e, relHdg, 'R')}
             >
-              {rel_hdg}
+              {relHdg}
             </div>
           </div>;
         })}

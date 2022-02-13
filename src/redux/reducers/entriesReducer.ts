@@ -13,7 +13,7 @@ const entriesSlice = createSlice({
   initialState: initialState as EntriesStateType,
   reducers: {
     updateEntry(state: EntriesStateType, action) {
-      _.assign(state[action.payload.cid], action.payload);
+      _.assign(state[action.payload.cid], action.payload.data);
     },
     setEntry(state: EntriesStateType, action) {
       state[action.payload.cid] = action.payload;
@@ -21,4 +21,5 @@ const entriesSlice = createSlice({
   }
 });
 
+export const {setEntry, updateEntry} = entriesSlice.actions;
 export default entriesSlice.reducer;

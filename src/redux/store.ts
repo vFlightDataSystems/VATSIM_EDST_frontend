@@ -1,9 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit";
+// import createSagaMiddleware from 'redux-saga';
 import aclReducer from './reducers/aclReducer';
 import depReducer from './reducers/depReducer';
 import sectorReducer from "./reducers/sectorReducer";
 import entriesReducer from "./reducers/entriesReducer";
 
+// const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: {
@@ -11,7 +13,8 @@ const store = configureStore({
     dep: depReducer,
     sectorData: sectorReducer,
     entries: entriesReducer
-  }
+  },
+  middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}))
 });
 
 export default store;

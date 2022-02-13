@@ -1,9 +1,8 @@
-import {useContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
 import VCI from '../../../css/images/VCI_v4.png';
-import {EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
@@ -14,16 +13,14 @@ export function AclTable() {
   const sortData = useAppSelector((state) => state.acl.sortData);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
 
-  const [any_holding, setAnyHolding] = useState(false);
-  const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
-  const [any_assigned_speed, setAnyAssignedSpeed] = useState(false);
+  const [anyHolding, setAnyHolding] = useState(false);
+  const [anyAssignedHeading, setAnyAssignedHeading] = useState(false);
+  const [anyAssignedSpeed, setAnyAssignedSpeed] = useState(false);
   const [hidden, setHidden] = useState<string[]>([]);
-  const [alt_mouse_down, setAltMouseDown] = useState(false);
-  const {
-    entries,
-    updateEntry,
-  } = useContext(EdstContext);
+  const [altMouseDown, setAltMouseDown] = useState(false);
   const cidList = useAppSelector(state => state.acl.cidList);
+  const spaList = useAppSelector(state => state.acl.spaList);
+  const entries = useAppSelector(state => state.entries);
 
   // check whether any aircraft in the list is holding
   const checkHolding = () => {
@@ -38,19 +35,19 @@ export function AclTable() {
   // check whether any aircraft in the list has an assigned heading or a speed
   // will display a * next to Hdg or Spd if the column is hidden, respectively
   const checkAssignedHdgSpd = () => {
-    let any_hdg = false;
-    let any_spd = false;
+    let anyHdg = false;
+    let anySpd = false;
     for (let cid of cidList) {
       if (entries[cid]?.hdg || entries[cid]?.scratch_hdg) {
-        any_hdg = true;
+        anyHdg = true;
       }
       if (entries[cid]?.spd || entries[cid]?.scratch_spd) {
-        any_spd = true;
+        anySpd = true;
       }
-      if (any_spd && any_hdg) break;
+      if (anySpd && anyHdg) break;
     }
-    setAnyAssignedHeading(any_hdg);
-    setAnyAssignedSpeed(any_spd);
+    setAnyAssignedHeading(anyHdg);
+    setAnyAssignedSpeed(anySpd);
   };
 
   useEffect(() => {
@@ -59,43 +56,30 @@ export function AclTable() {
   });
 
   const toggleHideColumn = (name: string) => {
-    let hidden_copy = hidden.slice(0);
-    const index = hidden_copy.indexOf(name);
+    let hiddenCopy = hidden.slice(0);
+    const index = hiddenCopy.indexOf(name);
     if (index > -1) {
-      hidden_copy.splice(index, 1);
+      hiddenCopy.splice(index, 1);
     } else {
-      hidden_copy.push(name);
+      hiddenCopy.push(name);
     }
-    setHidden(hidden_copy);
+    setHidden(hiddenCopy);
   };
 
   const handleClickSlash = () => {
-    let hidden_copy = hidden.slice(0);
-    if (hidden_copy.includes('spd') && hidden_copy.includes('hdg')) {
-      hidden_copy.splice(hidden_copy.indexOf('spd'), 1);
-      hidden_copy.splice(hidden_copy.indexOf('hdg'), 1);
+    let hiddenCopy = hidden.slice(0);
+    if (hiddenCopy.includes('spd') && hiddenCopy.includes('hdg')) {
+      hiddenCopy.splice(hiddenCopy.indexOf('spd'), 1);
+      hiddenCopy.splice(hiddenCopy.indexOf('hdg'), 1);
     } else {
-      if (!hidden_copy.includes('hdg')) {
-        hidden_copy.push('hdg');
+      if (!hiddenCopy.includes('hdg')) {
+        hiddenCopy.push('hdg');
       }
-      if (!hidden_copy.includes('spd')) {
-        hidden_copy.push('spd');
+      if (!hiddenCopy.includes('spd')) {
+        hiddenCopy.push('spd');
       }
     }
-    setHidden(hidden_copy);
-  };
-
-  const updateVci = (cid: string) => {
-    const entry = entries[cid];
-    if (entry?.vciStatus === -1 && manualPosting) {
-      updateEntry(cid, {vciStatus: 0});
-    } else {
-      if (entry.vciStatus < 1) {
-        updateEntry(cid, {vciStatus: 1});
-      } else {
-        updateEntry(cid, {vciStatus: 0});
-      }
-    }
+    setHidden(hiddenCopy);
   };
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
@@ -113,9 +97,8 @@ export function AclTable() {
     }
   };
 
-  const entry_list = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
-  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryType) => (typeof (entry.spa) === 'number'))
-    ?.sort((u: any, v: any) => u.spa - v.spa));
+  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
+  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => spaList.includes(entry.cid)));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -158,7 +141,7 @@ export function AclTable() {
         <EdstTooltip title={Tooltips.aclHeaderHdg}>
           <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('hdg')}>
-            {hidden.includes('hdg') && any_assigned_heading && '*'}H{!hidden.includes('hdg') && 'dg'}
+            {hidden.includes('hdg') && anyAssignedHeading && '*'}H{!hidden.includes('hdg') && 'dg'}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSlash}>
@@ -169,13 +152,13 @@ export function AclTable() {
         <EdstTooltip title={Tooltips.aclHeaderSpd}>
           <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('spd')}>
-            S{!hidden.includes('spd') && 'pd'}{hidden.includes('spd') && any_assigned_speed && '*'}
+            S{!hidden.includes('spd') && 'pd'}{hidden.includes('spd') && anyAssignedSpeed && '*'}
           </div>
         </EdstTooltip>
         <div className={`body-col special special-header`}/>
         <div className={`body-col special special-header`}/>
         <div className={`body-col special special-header`} // @ts-ignore
-             disabled={!any_holding}>
+             disabled={!anyHolding}>
           H
         </div>
         <div className={`body-col special special-header`}/>
@@ -186,39 +169,36 @@ export function AclTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spa_entry_list?.map(([i, entry]: [string, EdstEntryType]) =>
+      {spaEntryList?.map(([i, entry]: [string, EdstEntryType]) =>
         <AclRow
           key={`acl-table-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          anyHolding={any_holding}
+          anyHolding={anyHolding}
           hidden={hidden}
-          altMouseDown={alt_mouse_down}
-          updateVci={updateVci}
+          altMouseDown={altMouseDown}
         />)}
-      {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.vciStatus > -1) || !manualPosting)))
+      {spaEntryList.length > 0 && <div className="body-row separator"/>}
+      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && ((entry.vciStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <AclRow
           key={`acl-table-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          anyHolding={any_holding}
+          anyHolding={anyHolding}
           hidden={hidden}
-          altMouseDown={alt_mouse_down}
-          updateVci={updateVci}
+          altMouseDown={altMouseDown}
         />)}
       {manualPosting && <div className="body-row separator"/>}
-      {manualPosting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && cidList.includes(entry.cid) && entry.vciStatus === -1)))
+      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && cidList.includes(entry.cid) && entry.vciStatus === -1)))
         ?.map(([i, entry]: [string, EdstEntryType]) =>
           <AclRow
             key={`acl-table-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}
             entry={entry}
-            anyHolding={any_holding}
+            anyHolding={anyHolding}
             hidden={hidden}
-            altMouseDown={alt_mouse_down}
-            updateVci={updateVci}
+            altMouseDown={altMouseDown}
           />)}
     </div>
   </div>);

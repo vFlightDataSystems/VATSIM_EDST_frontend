@@ -11,10 +11,10 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstWindowType} from "../../types";
+import {useAppSelector} from "../../redux/hooks";
 
 export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
-    entries,
     openMenu,
     trialPlan,
     amendEntry,
@@ -22,97 +22,95 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     stopDrag,
     setInputFocused
   } = useContext(EdstContext);
+  const entry = useAppSelector(state => state.entries[asel.cid]);
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState(entries[asel.cid]);
-  const current_route_fixes: Array<any> = entry?._route_data?.map(fix => fix.name) ?? [];
+  const currentRouteFixes: Array<any> = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
-  const [display_raw_route, setDisplayRawRoute] = useState(false);
+  const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
-  const [route_input, setRouteInput] = useState(dep ? entry.dep + route : route);
+  const [routeInput, setRouteInput] = useState(dep ? entry.dep + route : route);
   const [planData, setTrialPlan] = useState(!dep);
-  const routes = (dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => current_route_fixes.includes(aar_data.tfix)));
-  const [append, setAppend] = useState({append_oplus: false, append_star: false});
+  const routes = (dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)));
+  const [append, setAppend] = useState({appendOplus: false, appendStar: false});
   const [frd, setFrd] = useState(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  const {append_oplus, append_star} = append;
+  const {appendOplus, appendStar} = append;
 
   const ref = useRef(null);
 
 
   useEffect(() => {
-    const entry = entries?.[asel?.cid];
-    const dep = asel?.window === 'dep';
+    const dep = asel.window === 'dep';
     const route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
     setDep(dep);
     setTrialPlan(!dep);
-    setEntry(entry);
     setRoute(route);
     setRouteInput(dep ? entry.dep + route : route);
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  }, [asel, entries]);
+  }, [asel.window, entry._route, entry.dep, entry.reference_fix, entry.route]);
 
   const clearedReroute = (reroute_data: any) => {
-    let plan_data;
+    let planData;
     const dest = entry.dest;
     if (!reroute_data.aar) {
-      plan_data = {route: reroute_data.route, route_data: reroute_data.route_data};
+      planData = {route: reroute_data.route, route_data: reroute_data.route_data};
     } else {
-      plan_data = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
+      planData = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
     }
-    if (plan_data.route.slice(-dest.length) === dest) {
-      plan_data.route = plan_data.route.slice(0, -dest.length);
+    if (planData.route.slice(-dest.length) === dest) {
+      planData.route = planData.route.slice(0, -dest.length);
     }
     // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or localhost
-    copy(`${!dep ? frd : ''}${plan_data.route}`);
+    copy(`${!dep ? frd : ''}${planData.route}`);
     if (planData) {
-      const msg = `AM ${entry.cid} RTE ${plan_data.route}${entry.dest}`;
+      const msg = `AM ${entry.cid} RTE ${planData.route}${entry.dest}`;
       trialPlan({
         cid: entry.cid,
         callsign: entry.callsign,
-        plan_data: plan_data,
+        plan_data: planData,
         msg: msg
       });
     } else {
-      amendEntry(entry.cid, plan_data);
+      amendEntry(entry.cid, planData);
     }
     closeWindow();
   };
 
   const clearedToFix = (cleared_fix_name: string) => {
-    let {_route: new_route, _route_data, dest} = entry;
-    if (new_route && _route_data) {
-      let fix_names = _route_data.map(e => e.name);
-      const index = fix_names?.indexOf(cleared_fix_name);
-      for (let name of fix_names.slice(0, index + 1).reverse()) {
-        if (new_route.includes(name)) {
-          new_route = new_route.slice(new_route.indexOf(name) + name.length);
-          if (!Number(new_route[0])) {
-            new_route = `..${cleared_fix_name}` + new_route;
+    let {_route: newRoute, _route_data: routeData, dest} = entry;
+    if (newRoute && routeData) {
+      let fixNames = routeData.map((e: { name: string }) => e.name);
+      const index = fixNames?.indexOf(cleared_fix_name);
+      for (let name of fixNames.slice(0, index + 1).reverse()) {
+        if (newRoute.includes(name)) {
+          newRoute = newRoute.slice(newRoute.indexOf(name) + name.length);
+          if (!Number(newRoute[0])) {
+            newRoute = `..${cleared_fix_name}` + newRoute;
           } else {
-            new_route = `..${cleared_fix_name}.${name}${new_route}`;
+            newRoute = `..${cleared_fix_name}.${name}${newRoute}`;
           }
           break;
         }
       }
       // new_route = `..${fix}` + new_route;
-      if (new_route.slice(-dest.length) === dest) {
-        new_route = new_route.slice(0, -dest.length);
+      if (newRoute.slice(-dest.length) === dest) {
+        newRoute = newRoute.slice(0, -dest.length);
       }
       // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
-      copy(`${!dep ? frd : ''}${new_route}`.replace(/\.+$/, ''));
-      const plan_data = {
-        route: new_route,
-        route_data: _route_data.slice(index),
+      copy(`${!dep ? frd : ''}${newRoute}`.replace(/\.+$/, ''));
+      const planData = {
+        route: newRoute,
+        route_data: routeData.slice(index),
         cleared_direct: {frd: (!dep ? frd : null), fix: cleared_fix_name}
       };
       if (planData) {
         trialPlan({
           cid: entry.cid,
           callsign: entry.callsign,
-          plan_data: plan_data,
-          msg: `AM ${entry.cid} RTE ${!dep && plan_data.cleared_direct.frd}${new_route}${dest}`
+          plan_data: planData,
+          msg: `AM ${entry.cid} RTE ${!dep && planData.cleared_direct.frd}${newRoute}${dest}`
         });
       } else {
-        amendEntry(entry.cid, plan_data);
+        amendEntry(entry.cid, planData);
       }
     }
     closeWindow();
@@ -126,22 +124,22 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       copy(`${!dep ? frd : ''}${route}`.replace(/\.+$/, ''));
-      const plan_data = {route: route};
+      const planData = {route: route};
       if (planData) {
         trialPlan({
           cid: entry.cid,
           callsign: entry.callsign,
-          plan_data: plan_data,
+          plan_data: planData,
           msg: `AM ${entry.cid} RTE ${route}`
         });
       } else {
-        amendEntry(entry.cid, plan_data);
+        amendEntry(entry.cid, planData);
       }
       closeWindow();
     }
   };
 
-  const route_data = dep ? entry.route_data : entry._route_data;
+  const routeData = dep ? entry.route_data : entry._route_data;
 
   return (<div
     onMouseEnter={() => setFocused(true)}
@@ -177,7 +175,7 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
         </EdstTooltip>
         <EdstTooltip className="options-col img" title={Tooltips.routeMenuVatsimLogo}>
           <img src={VATSIM_LOGO} alt="vatsim-logo"
-            onMouseDown={() => setDisplayRawRoute(!display_raw_route)}
+            onMouseDown={() => setDisplayRawRoute(!displayRawRoute)}
             onContextMenu={(event) => event.preventDefault()}
           />
         </EdstTooltip>
@@ -209,9 +207,9 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
               <input
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
-                value={display_raw_route ? entry.flightplan.route : route_input}
-                onChange={(event) => !display_raw_route && handleInputChange(event)}
-                onKeyDownCapture={(event) => !display_raw_route && handleInputKeyDown(event)}
+                value={displayRawRoute ? entry.flightplan.route : routeInput}
+                onChange={(event) => !displayRawRoute && handleInputChange(event)}
+                onKeyDownCapture={(event) => !displayRawRoute && handleInputKeyDown(event)}
               />
             </EdstTooltip>
           </div>
@@ -226,16 +224,16 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
       <div className="options-row route-row bottom-border">
         <EdstTooltip className="options-col hover button"
           title={Tooltips.routeMenuAppendStar}
-          onMouseDown={() => setAppend({ append_star: !append_star, append_oplus: false })}
+          onMouseDown={() => setAppend({ appendStar: !appendStar, appendOplus: false })}
         >
-          <EdstButton disabled={true} className="tiny" selected={append_star} />
+          <EdstButton disabled={true} className="tiny" selected={appendStar} />
           Append *
         </EdstTooltip>
         <EdstTooltip className="options-col hover button"
           title={Tooltips.routeMenuAppendOplus}
-          onMouseDown={() => setAppend({ append_oplus: !append_oplus, append_star: false })}
+          onMouseDown={() => setAppend({ appendOplus: !appendOplus, appendStar: false })}
         >
-          <EdstButton disabled={true} className="tiny" selected={append_oplus} />
+          <EdstButton disabled={true} className="tiny" selected={appendOplus} />
           Append<span>&nbsp;⊕</span>
         </EdstTooltip>
       </div>
@@ -248,13 +246,13 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
           {dep ? entry.dep + route : `./.${route}`}
         </div>
       </div>
-      {[...Array(Math.min(route_data?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
+      {[...Array(Math.min(routeData?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
         key={`route-menu-row-${i}`}>
-        {[...Array(((route_data?.length ?? 0) / 10 | 0) + 1).keys()].map((j) => {
-          const fix_name = route_data?.[Number(i) + Number(j) * 10]?.name;
-          return (fix_name && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
-            content={fix_name}
-            onMouseDown={() => clearedToFix(fix_name)}
+        {[...Array(((routeData?.length ?? 0) / 10 | 0) + 1).keys()].map((j) => {
+          const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
+          return (fixName && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
+            content={fixName}
+            onMouseDown={() => clearedToFix(fixName)}
             title={Tooltips.routeMenuDirectFix}
           />);
         })}

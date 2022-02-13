@@ -4,19 +4,19 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowType} from "../../types";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {updateEntry} from "../../redux/reducers/entriesReducer";
 
 export const CancelHoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
-    entries,
     startDrag,
     stopDrag,
-    amendEntry,
-    updateEntry
+    amendEntry
   } = useContext(EdstContext);
+  const dispatch = useAppDispatch();
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-
-  const entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
 
   return (<div
       onMouseEnter={() => setFocused(true)}
@@ -40,7 +40,7 @@ export const CancelHoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow
           <div className="options-col left">
             <EdstButton content="Cancel Hold" onMouseDown={() => {
               amendEntry(entry.cid, {hold_data: null});
-              updateEntry(entry.cid, {show_hold_info: false});
+              dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
               closeWindow();
             }}/>
           </div>

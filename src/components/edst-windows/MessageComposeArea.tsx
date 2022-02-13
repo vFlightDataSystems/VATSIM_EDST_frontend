@@ -6,6 +6,7 @@ import {computeFrd, formatUtcMinutes} from "../../lib";
 import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/reducers/aclReducer";
+import {updateEntry} from "../../redux/reducers/entriesReducer";
 
 interface MessageComposeAreaProps {
   pos: { x: number, y: number };
@@ -37,11 +38,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     setMcaInputRef,
     setInputFocused,
     openWindow,
-    updateEntry,
     addEntry,
-    entries,
     setMraMessage
   } = useContext(EdstContext);
+
+  const entries = useAppSelector(state => state.entries);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -55,9 +56,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
       ?.find((e: EdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
       if (entry.vciStatus < 1) {
-        updateEntry(entry.cid, {vciStatus: 1});
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 1}}));
       } else {
-        updateEntry(entry.cid, {vciStatus: 0});
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
       }
     }
   };
@@ -67,10 +68,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       if (aclCidList.includes(entry.cid)) {
-        updateEntry(entry.cid, {aclHighlighted: !entry.aclHighlighted});
+        dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
       }
       if (depCidList.includes(entry.cid)) {
-        updateEntry(entry.cid, {depHighlighted: !entry.depHighlighted});
+        dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
       }
     }
   };
