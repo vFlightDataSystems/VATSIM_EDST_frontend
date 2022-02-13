@@ -34,9 +34,10 @@ import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
 import {addAclCid, deleteAclCid, setAclLists} from "./redux/slices/aclSlice";
 import {addDepCid, deleteDepCid} from "./redux/slices/depSlice";
 import {setArtccId, setSectorId} from "./redux/slices/sectorSlice";
-import {refresh, refreshEntry} from "./redux/refreshAction";
+import {fetchRefresh, refreshEntry} from "./redux/fetchRefresh";
 import {updateEntry} from "./redux/slices/entriesSlice";
 import {depFilter} from "./filters";
+import {refreshStart} from "./redux/slices/actionSlice";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -133,8 +134,8 @@ class App extends React.Component<Props, State> {
     if (!(this.props.sectorData.referenceFixes.length > 0)) {
       this.props.dispatch(fetchReferenceFixes);
     }
-    this.props.dispatch(refresh());
-    this.updateIntervalId = setInterval(() => this.props.dispatch(refresh()), 20000); // update loop will run every 20
+    this.props.dispatch(refreshStart());
+    this.updateIntervalId = setInterval(() => this.props.dispatch(refreshStart()), 20000); // update loop will run every 20
                                                                                     // seconds
   }
 
