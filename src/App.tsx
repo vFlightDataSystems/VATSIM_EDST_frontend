@@ -31,11 +31,11 @@ import {BoundarySelector} from "./components/BoundarySelector";
 import {connect} from 'react-redux';
 import {RootState} from './redux/store';
 import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
-import {addAclCid, deleteAclCid, setAclLists} from "./redux/reducers/aclReducer";
-import {addDepCid, deleteDepCid} from "./redux/reducers/depReducer";
-import {setArtccId, setSectorId} from "./redux/reducers/sectorReducer";
+import {addAclCid, deleteAclCid, setAclLists} from "./redux/slices/aclSlice";
+import {addDepCid, deleteDepCid} from "./redux/slices/depSlice";
+import {setArtccId, setSectorId} from "./redux/slices/sectorSlice";
 import {refresh, refreshEntry} from "./redux/refreshAction";
-import {updateEntry} from "./redux/reducers/entriesReducer";
+import {updateEntry} from "./redux/slices/entriesSlice";
 import {depFilter} from "./filters";
 
 const defaultPos = {

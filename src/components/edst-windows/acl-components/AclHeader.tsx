@@ -4,7 +4,7 @@ import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {setAclManualPosting} from "../../../redux/reducers/aclReducer";
+import {setAclManualPosting} from "../../../redux/slices/aclSlice";
 
 interface AclHeaderProps {
   focused: boolean;

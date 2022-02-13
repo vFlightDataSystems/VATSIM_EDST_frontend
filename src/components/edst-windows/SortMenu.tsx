@@ -6,8 +6,8 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {EdstContext} from "../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {setAclSort} from "../../redux/reducers/aclReducer";
-import {setDepSort} from "../../redux/reducers/depReducer";
+import {setAclSort} from "../../redux/slices/aclSlice";
+import {setDepSort} from "../../redux/slices/depSlice";
 
 interface SortMenuProps {
   ref_id: string | null;

@@ -9,9 +9,9 @@ import {
 } from "../lib";
 import _ from "lodash";
 import {getAarData, getEdstData} from "../api";
-import {addAclCid} from "./reducers/aclReducer";
-import {addDepCid, deleteDepCid} from "./reducers/depReducer";
-import {setEntry, updateEntry} from "./reducers/entriesReducer";
+import {addAclCid} from "./slices/aclSlice";
+import {addDepCid, deleteDepCid} from "./slices/depSlice";
+import {setEntry, updateEntry} from "./slices/entriesSlice";
 import {depFilter, entryFilter} from "../filters";
 
 export const refreshEntry = (new_entry: EdstEntryType, state: RootState) => {

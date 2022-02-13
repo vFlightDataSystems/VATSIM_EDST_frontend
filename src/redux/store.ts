@@ -1,11 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit";
-// import createSagaMiddleware from 'redux-saga';
-import aclReducer from './reducers/aclReducer';
-import depReducer from './reducers/depReducer';
-import sectorReducer from "./reducers/sectorReducer";
-import entriesReducer from "./reducers/entriesReducer";
+import createSagaMiddleware from 'redux-saga';
+import aclReducer from './slices/aclSlice';
+import depReducer from './slices/depSlice';
+import sectorReducer from "./slices/sectorSlice";
+import entriesReducer from "./slices/entriesSlice";
 
-// const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: {
@@ -14,7 +14,7 @@ const store = configureStore({
     sectorData: sectorReducer,
     entries: entriesReducer
   },
-  middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}))
+  middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}).concat(sagaMiddleware))
 });
 
 export default store;
