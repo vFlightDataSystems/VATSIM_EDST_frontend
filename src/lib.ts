@@ -157,9 +157,6 @@ export const processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
       }
       amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(firstCommonSegment) + firstCommonSegment.length)
         + aarLeadingRouteString.slice(aarLeadingRouteString.indexOf(firstCommonSegment) + firstCommonSegment.length);
-      if (!amendedRouteString.includes(firstCommonSegment)) {
-        amendedRouteString = firstCommonSegment + amendedRouteString;
-      }
     }
     if (!amendedRouteString) {
       return null;
