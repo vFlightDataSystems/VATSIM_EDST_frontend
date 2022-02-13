@@ -19,7 +19,6 @@ const initialState = {};
 export const entriesRefresh: any = createAsyncThunk(
   'entries/entriesRefresh',
   async (_args: void, thunkAPI) => {
-    console.log('refreshing');
     let newEntries: EntriesStateType = {};
     let newEntryList: any[] = [];
     const state = thunkAPI.getState() as RootState;
@@ -38,7 +37,6 @@ export const entriesRefresh: any = createAsyncThunk(
             await fetchAarList(state.sectorData.artccId, currentEntry.cid)
               .then(response => response.json())
               .then(aarList => {
-                console.log(aarList)
                 currentEntry.aar_list = aarList;
                 currentEntry._aar_list = processAar(currentEntry, aarList);
               });
@@ -50,12 +48,10 @@ export const entriesRefresh: any = createAsyncThunk(
             // remove cid from departure list if will populate the aircraft list
             thunkAPI.dispatch(addAclCid(newEntry.cid));
             thunkAPI.dispatch(deleteDepCid(newEntry.cid));
-            console.log(currentEntry.aar_list)
             if (currentEntry.aar_list === undefined) {
               await fetchAarList(state.sectorData.artccId, currentEntry.cid)
                 .then(response => response.json())
                 .then(aarList => {
-                  console.log(aarList)
                   currentEntry.aar_list = aarList;
                   currentEntry._aar_list = processAar(currentEntry, aarList);
                 });
