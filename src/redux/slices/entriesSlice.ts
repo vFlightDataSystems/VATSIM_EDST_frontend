@@ -35,13 +35,12 @@ export const entriesRefresh: any = createAsyncThunk(
         if (!depCidList.includes(newEntry.cid)) {
           thunkAPI.dispatch(addDepCid(newEntry.cid));
           if (currentEntry.aar_list === undefined) {
-            await fetchAarList(currentEntry.cid, state.sectorData.artccId)
+            await fetchAarList(state.sectorData.artccId, currentEntry.cid)
               .then(response => response.json())
               .then(aarList => {
-                _.assign(currentEntry, {
-                  aar_list: aarList,
-                  _aar_list: processAar(currentEntry, aarList)
-                });
+                console.log(aarList)
+                currentEntry.aar_list = aarList;
+                currentEntry._aar_list = processAar(currentEntry, aarList);
               });
           }
         }
@@ -51,14 +50,14 @@ export const entriesRefresh: any = createAsyncThunk(
             // remove cid from departure list if will populate the aircraft list
             thunkAPI.dispatch(addAclCid(newEntry.cid));
             thunkAPI.dispatch(deleteDepCid(newEntry.cid));
+            console.log(currentEntry.aar_list)
             if (currentEntry.aar_list === undefined) {
-              await fetchAarList(currentEntry.cid, state.sectorData.artccId)
+              await fetchAarList(state.sectorData.artccId, currentEntry.cid)
                 .then(response => response.json())
                 .then(aarList => {
-                  _.assign(currentEntry, {
-                    aar_list: aarList,
-                    _aar_list: processAar(currentEntry, aarList)
-                  });
+                  console.log(aarList)
+                  currentEntry.aar_list = aarList;
+                  currentEntry._aar_list = processAar(currentEntry, aarList);
                 });
             }
           }
@@ -88,7 +87,6 @@ const entriesSlice = createSlice({
   },
   extraReducers: {
     [entriesRefresh.fulfilled]: (state: any, action: any) => {
-      console.log(action);
       return {...state, ...action.payload};
     }
   }
