@@ -4,6 +4,8 @@ import aclReducer from './slices/aclSlice';
 import depReducer from './slices/depSlice';
 import sectorReducer from "./slices/sectorSlice";
 import entriesReducer from "./slices/entriesSlice";
+import actionReducer from "./slices/actionSlice";
+import {rootSaga} from "./sagas";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -12,10 +14,13 @@ const store = configureStore({
     acl: aclReducer,
     dep: depReducer,
     sectorData: sectorReducer,
-    entries: entriesReducer
+    entries: entriesReducer,
+    action: actionReducer
   },
   middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}).concat(sagaMiddleware))
 });
+
+sagaMiddleware.run(rootSaga);
 
 export default store;
 

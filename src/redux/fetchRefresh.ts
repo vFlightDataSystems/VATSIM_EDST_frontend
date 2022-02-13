@@ -1,6 +1,6 @@
 import {EdstEntryType} from "../types";
 import {point} from "@turf/turf";
-import {RootState} from "./store";
+import store, {RootState} from "./store";
 import {
   computeBoundaryTime,
   getClosestReferenceFix,
@@ -66,45 +66,42 @@ export const refreshEntry = (new_entry: EdstEntryType, state: RootState) => {
   return _.assign(currentEntry, new_entry);
 };
 
-export function refresh() {
-  return async (dispatch: any, getState: () => RootState) => {
-    const {referenceFixes} = getState().sectorData;
-    getEdstData()
-      .then(response => response.json())
-      .then(newData => {
-          if (newData) {
-            for (let newEntry of newData) {
-              let state = getState();
-              let currentEntry: EdstEntryType = _.assign({reference_fix: null}, {...state.entries[newEntry.cid]}, refreshEntry(newEntry, state));
-              dispatch(setEntry(currentEntry));
-              const {cidList: aclCidList, deletedList: aclDeletedList} = state.acl;
-              const {cidList: depCidList, deletedList: depDeletedList} = state.dep;
-              if (depFilter(currentEntry, state) && !depDeletedList.includes(newEntry.cid)) {
-                if (!depCidList.includes(newEntry.cid)) {
-                  dispatch(addDepCid(newEntry.cid));
-                }
-                // dispatch(fetchAarData(currentEntry.cid));
-              } else {
-                if (entryFilter(currentEntry, state)) {
-                  if (!aclCidList.includes(newEntry.cid) && !aclDeletedList.includes(newEntry.cid)) {
-                    // remove cid from departure list if will populate the aircraft list
-                    dispatch(addAclCid(newEntry.cid));
-                    dispatch(deleteDepCid(newEntry.cid));
-                  }
-                  if (referenceFixes.length > 0) {
-                    dispatch(updateEntry({
-                      cid: newEntry.cid,
-                      data: {reference_fix: getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]))}
-                    }));
-                  }
-                  // dispatch(fetchAarData(currentEntry.cid));
-                }
+export function fetchRefresh(state: RootState) {
+  const dispatch = store.dispatch;
+  const {referenceFixes} = state.sectorData;
+  getEdstData()
+    .then(response => response.json())
+    .then(newData => {
+      if (newData) {
+        for (let newEntry of newData) {
+          let currentEntry: EdstEntryType = _.assign({reference_fix: null}, {...state.entries[newEntry.cid]}, refreshEntry(newEntry, state));
+          dispatch(setEntry(currentEntry));
+          const {cidList: aclCidList, deletedList: aclDeletedList} = state.acl;
+          const {cidList: depCidList, deletedList: depDeletedList} = state.dep;
+          if (depFilter(currentEntry, state) && !depDeletedList.includes(newEntry.cid)) {
+            if (!depCidList.includes(newEntry.cid)) {
+              dispatch(addDepCid(newEntry.cid));
+            }
+            fetchAarData(currentEntry.cid);
+          } else {
+            if (entryFilter(currentEntry, state)) {
+              if (!aclCidList.includes(newEntry.cid) && !aclDeletedList.includes(newEntry.cid)) {
+                // remove cid from departure list if will populate the aircraft list
+                dispatch(addAclCid(newEntry.cid));
+                dispatch(deleteDepCid(newEntry.cid));
               }
+              if (referenceFixes.length > 0) {
+                dispatch(updateEntry({
+                  cid: newEntry.cid,
+                  data: {reference_fix: getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]))}
+                }));
+              }
+              fetchAarData(currentEntry.cid);
             }
           }
         }
-      );
-  };
+      }
+    });
 }
 
 export function fetchAarData(cid: string) {
