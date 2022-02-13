@@ -23,8 +23,8 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     setInputFocused
   } = useContext(EdstContext);
   const entry = useAppSelector(state => state.entries[asel.cid]);
-  const [dep, setDep] = useState(asel?.window === 'dep');
-  const currentRouteFixes: Array<any> = entry?._route_data?.map(fix => fix.name) ?? [];
+  const [dep, setDep] = useState(asel.window === 'dep');
+  const currentRouteFixes: Array<any> = entry._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(dep ? entry.route : entry._route?.replace(/^\.*/, ''));
@@ -42,7 +42,9 @@ export const RouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) =>
     const dep = asel.window === 'dep';
     const route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
     setDep(dep);
-    setTrialPlan(!dep);
+    if (dep) {
+      setTrialPlan(false);
+    }
     setRoute(route);
     setRouteInput(dep ? entry.dep + route : route);
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
