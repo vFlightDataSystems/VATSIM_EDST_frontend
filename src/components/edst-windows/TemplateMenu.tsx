@@ -4,7 +4,7 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
-import {EdstEntryType} from "../../types";
+import {useAppSelector} from "../../redux/hooks";
 
 interface TemplateMenuProps {
   pos: {x: number, y: number};
@@ -13,14 +13,14 @@ interface TemplateMenuProps {
 
 export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) => {
   const {
-    entries,
     asel,
     startDrag,
     stopDrag,
     setInputFocused
   } = useContext(EdstContext);
+  const entry = useAppSelector(state => asel ? state.entries[asel.cid] : null);
+
   const [dep, setDep] = useState(asel?.window === 'dep');
-  const [entry, setEntry] = useState<EdstEntryType | null>(asel?.cid ? entries[asel.cid] : null);
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState((dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
@@ -43,7 +43,6 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
 
   useEffect(() => {
     const dep = asel?.window === 'dep';
-    const entry = asel?.cid ? entries[asel.cid] : null;
     const route = (dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
     const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
     const aidInput = entry?.callsign ?? '';
@@ -56,7 +55,6 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
     const routeInput = (dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
     const rmkInput = entry?.remarks ?? '';
     setDep(dep);
-    setEntry(entry);
     setDisplayRawRoute(false);
     setRoute(route);
     setFrd(frd);
@@ -72,7 +70,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
     setAltInput(altInput);
     setRouteInput(routeInput);
     setRmkInput(rmkInput);
-  }, [asel, entries]);
+  }, [asel, entry]);
 
 
   return (<div

@@ -4,6 +4,7 @@ import {createSlice} from "@reduxjs/toolkit";
 export type DepStateType = {
   cidList: string[],
   deletedList: string[],
+  spaList: string[],
   asel: AselType | null,
   sortData: { name: string, sector: boolean },
   manualPosting: boolean
@@ -12,6 +13,7 @@ export type DepStateType = {
 const initialState = {
   cidList: [],
   deletedList: [],
+  spaList: [],
   asel: null,
   sortData: {name: 'ACID', sector: false},
   manualPosting: true
@@ -39,9 +41,19 @@ const depSlice = createSlice({
     },
     setDepManualPosting(state: DepStateType, action) {
       state.manualPosting = action.payload;
+    },
+    toggleDepSpa(state: DepStateType, action) {
+      if (!state.spaList.includes(action.payload)) {
+        state.spaList.push(action.payload);
+      }
+      else {
+        const spaListSet = new Set(state.spaList);
+        spaListSet.delete(action.payload);
+        state.spaList = [...spaListSet];
+      }
     }
   }
 });
 
-export const {addDepCid, deleteDepCid, setDepCidList, setDepSort, setDepManualPosting} = depSlice.actions;
+export const {addDepCid, deleteDepCid, setDepCidList, setDepSort, setDepManualPosting, toggleDepSpa} = depSlice.actions;
 export default depSlice.reducer;

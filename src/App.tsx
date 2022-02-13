@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {distance, point} from '@turf/turf';
-
-import {getAarData, getEdstData, updateEdstEntry} from "./api";
+import {updateEdstEntry} from "./api";
 import './css/styles.scss';
 import './css/header-styles.scss';
 import {EdstHeader} from "./components/EdstHeader";
@@ -18,11 +16,6 @@ import {PlansDisplay} from "./components/edst-windows/PlansDisplay";
 import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
 import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
 import {
-  computeBoundaryTime,
-  getClosestReferenceFix,
-  getRemainingRouteData,
-  getRouteDataDistance,
-  routeWillEnterAirspace,
   REMOVAL_TIMEOUT
 } from "./lib";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
@@ -32,15 +25,18 @@ import {AclContext, DepContext, EdstContext, TooltipContext} from "./contexts/co
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
-import {AselType, EdstEntryType, PlanDataType} from "./types";
+import {AselType, PlanDataType} from "./types";
 import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
 import {connect} from 'react-redux';
 import {RootState} from './redux/store';
 import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
-import {AclStateType, addAclCid, deleteAclCid, setAclCidList} from "./redux/reducers/aclReducer";
-import {addDepCid, deleteDepCid, DepStateType} from "./redux/reducers/depReducer";
-import {SectorDataStateType, setArtccId, setSectorId} from "./redux/reducers/sectorReducer";
+import {addAclCid, deleteAclCid, setAclLists} from "./redux/reducers/aclReducer";
+import {addDepCid, deleteDepCid} from "./redux/reducers/depReducer";
+import {setArtccId, setSectorId} from "./redux/reducers/sectorReducer";
+import {refresh, refreshEntry} from "./redux/refreshAction";
+import {updateEntry} from "./redux/reducers/entriesReducer";
+import {depFilter} from "./filters";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -64,7 +60,6 @@ const initialState = {
   draggingRef: null,
   dragPreviewStyle: null,
   pos: defaultPos,
-  entries: {}, // keys are cid, values are data from db
   asel: null, // {cid, field, ref}
   rel: null,
   planQueue: [],
@@ -87,7 +82,6 @@ export interface State {
   dragPreviewStyle: any | null;
   rel: { x: number, y: number } | null;
   pos: { [windowName: string]: { x: number, y: number, w?: number, h?: number } | null };
-  entries: { [cid: string]: EdstEntryType }; // keys are cid, values are data from db
   asel: AselType | null; // {cid, field, ref}
   planQueue: Array<PlanDataType>,
   inputFocused: boolean;
@@ -99,19 +93,8 @@ export interface State {
   showBoundarySelector: boolean;
 }
 
-interface Props {
-  acl: AclStateType,
-  dep: DepStateType,
-  sectorData: SectorDataStateType,
-  addAclCid: (cid: string) => void,
-  addDepCid: (cid: string) => void,
-  deleteAclCid: (cid: string) => void,
-  deleteDepCid: (cid: string) => void,
-  setAclCidList: (cidList: string[], deletedList: string[]) => void,
-  setArtccId: (artccId: string) => void,
-  setSectorId: (artccId: string) => void,
-  fetchSectorData: () => void,
-  fetchReferenceFixes: () => void
+type Props = RootState & {
+  dispatch: (action: any) => void
 }
 
 class App extends React.Component<Props, State> {
@@ -126,9 +109,9 @@ class App extends React.Component<Props, State> {
     this.outlineRef = React.createRef();
   }
 
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   return !Object.is(this.state, nextState);
-  // }
+  shouldComponentUpdate(nextProps: Props, nextState: State, nextContext: any) {
+    return !Object.is(this.state, nextState);
+  }
 
   async componentDidMount() {
     let artccId: string;
@@ -141,17 +124,18 @@ class App extends React.Component<Props, State> {
       artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
     }
-    this.props.setArtccId(artccId);
-    this.props.setSectorId(sectorId);
+    this.props.dispatch(setArtccId(artccId));
+    this.props.dispatch(setSectorId(sectorId));
     if (Object.keys(this.props.sectorData.sectors).length === 0) {
-      this.props.fetchSectorData();
+      this.props.dispatch(fetchSectorData);
     }
     // if we have no reference fixes for computing FRD, get some
     if (!(this.props.sectorData.referenceFixes.length > 0)) {
-      this.props.fetchReferenceFixes();
+      this.props.dispatch(fetchReferenceFixes);
     }
-    await this.refresh();
-    this.updateIntervalId = setInterval(this.refresh, 20000); // update loop will run every 20 seconds
+    this.props.dispatch(refresh());
+    this.updateIntervalId = setInterval(() => this.props.dispatch(refresh()), 20000); // update loop will run every 20
+                                                                                    // seconds
   }
 
   componentWillUnmount() {
@@ -162,197 +146,13 @@ class App extends React.Component<Props, State> {
     }
   }
 
-  depFilter = (entry: EdstEntryType) => {
-    let depAirportDistance = 0;
-    if (entry.dep_info) {
-      const pos = [entry.flightplan.lon, entry.flightplan.lat];
-      const depPos = [entry.dep_info.lon, entry.dep_info.lat];
-      depAirportDistance = distance(point(depPos), point(pos), {units: 'nauticalmiles'});
-    }
-    const {artccId} = this.props.sectorData;
-    return Number(entry.flightplan.ground_speed) < 40
-      && entry.dep_info?.artcc?.toLowerCase() === artccId
-      && depAirportDistance < 10;
-  };
-
-  entryFilter = (entry: EdstEntryType) => {
-    const {sectors, selectedSectors} = this.props.sectorData;
-    const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
-    const {cidList: aclCidList} = this.props.acl;
-    const pos: [number, number] = [entry.flightplan.lon, entry.flightplan.lat];
-    const willEnterAirspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), polygons, pos) : false;
-    return ((entry.boundary_time < 30 || aclCidList.includes(entry.cid))
-      && willEnterAirspace
-      && Number(entry.flightplan.ground_speed) > 30);
-  };
-
-  refreshEntry = (new_entry: EdstEntryType) => {
-    const {sectors, selectedSectors} = this.props.sectorData;
-    const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
-    const pos: [number, number] = [new_entry.flightplan.lon, new_entry.flightplan.lat];
-    let currentEntry: EdstEntryType | any = this.state.entries[new_entry.cid] ?? {
-      vciStatus: -1,
-      depStatus: -1
-    };
-    new_entry.boundary_time = computeBoundaryTime(new_entry, polygons);
-    const routeFixNames = new_entry.route_data.map(fix => fix.name);
-    const dest = new_entry.dest;
-    // add departure airport to route_data if we know the coords to compute the distance
-    if (new_entry.dest_info && !routeFixNames.includes(dest)) {
-      new_entry.route_data.push({
-        name: new_entry.dest_info.icao,
-        pos: [Number(new_entry.dest_info.lon), Number(new_entry.dest_info.lat)]
-      });
-    }
-    if (!(new_entry.route.slice(-dest.length) === dest)) {
-      new_entry.route += new_entry.dest;
-    }
-    if (currentEntry.route_data === new_entry.route_data) { // if route_data has not changed
-      new_entry._route_data = getRouteDataDistance(currentEntry._route_data, pos);
-      // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-      if (currentEntry.aar_list.length) {
-        new_entry._aar_list = this.processAar(currentEntry, currentEntry.aar_list);
-      }
-    } else {
-      if (new_entry.route_data) {
-        new_entry._route_data = getRouteDataDistance(new_entry.route_data, pos);
-      }
-      // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-      if (currentEntry.aar_list) {
-        new_entry._aar_list = this.processAar(currentEntry, currentEntry.aar_list);
-      }
-    }
-    if (new_entry._route_data) {
-      _.assign(new_entry, getRemainingRouteData(new_entry.route, new_entry._route_data.slice(0), pos));
-    }
-    if (new_entry.update_time === currentEntry.update_time
-      || (currentEntry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
-      || !(this.entryFilter(new_entry) || this.depFilter(new_entry))) {
-      new_entry.pending_removal = currentEntry.pending_removal ?? new Date().getTime();
-    } else {
-      new_entry.pending_removal = null;
-    }
-    if (new_entry.remarks.match(/\/v\//gi)) new_entry.voice_type = 'v';
-    if (new_entry.remarks.match(/\/r\//gi)) new_entry.voice_type = 'r';
-    if (new_entry.remarks.match(/\/t\//gi)) new_entry.voice_type = 't';
-    return _.assign(currentEntry, new_entry);
-  };
-
-  refresh = async () => {
-    let {entries} = this.state;
-    const {artccId, referenceFixes} = this.props.sectorData;
-    getEdstData()
-      .then(response => response.json())
-      .then(async new_data => {
-          if (new_data) {
-            for (let newEntry of new_data) {
-              // yes, this is ugly... gotta find something better
-              entries[newEntry.cid] = _.assign(entries[newEntry.cid] ?? {}, this.refreshEntry(newEntry));
-              const {cidList: aclCidList, deletedList: aclDeletedList} = this.props.acl;
-              const {cidList: depCidList, deletedList: depDeletedList} = this.props.dep;
-              if (this.depFilter(entries[newEntry.cid]) && !depDeletedList.includes(newEntry.cid)) {
-                if (entries[newEntry.cid].aar_list === undefined) {
-                  await getAarData(artccId, newEntry.cid)
-                    .then(response => response.json())
-                    .then(aar_list => {
-                      entries[newEntry.cid].aar_list = aar_list;
-                      entries[newEntry.cid]._aar_list = this.processAar(entries[newEntry.cid], aar_list);
-                    });
-                }
-                if (!depCidList.includes(newEntry.cid)) {
-                  this.props.addDepCid(newEntry.cid);
-                }
-              } else {
-                if (this.entryFilter(entries[newEntry.cid])) {
-                  if (entries[newEntry.cid]?.aar_list === undefined) {
-                    await getAarData(artccId, newEntry.cid)
-                      .then(response => response.json())
-                      .then(aar_list => {
-                        entries[newEntry.cid].aar_list = aar_list;
-                        entries[newEntry.cid]._aar_list = this.processAar(entries[newEntry.cid], aar_list);
-                      });
-                  }
-                  if (!aclCidList.includes(newEntry.cid) && !aclDeletedList.includes(newEntry.cid)) {
-                    // remove cid from departure list if will populate the aircraft list
-                    this.props.addAclCid(newEntry.cid);
-                    this.props.deleteDepCid(newEntry.cid);
-                  }
-                  if (referenceFixes.length > 0) {
-                    entries[newEntry.cid].reference_fix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
-                  }
-                }
-              }
-              // this.state.entries[newEntry.cid] = entry;
-              // this.setState((prevState) => {
-              //   return {entries: {...prevState.entries, [newEntry.cid]: entry}}
-              // });
-            }
-          }
-        }
-      );
-  };
-
-  processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
-    const {_route_data: currentRouteData, _route: currentRoute} = entry;
-    if (!currentRouteData || !currentRoute) {
-      return null;
-    }
-    return aar_list?.map(aar_data => {
-      const {route_fixes: routeFixes, amendment} = aar_data;
-      const {fix: tfix, info: tfixInfo} = amendment.tfix_details;
-      const currentRouteDataFixNames = currentRouteData.map(fix => fix.name);
-      // if the current route data does not contain the tfix, this aar will not apply
-      if (!currentRouteDataFixNames.includes(tfix)) {
-        return null;
-      }
-      let {route: aarLeadingRouteString, aar_amendment: aarAmendmentRouteString} = amendment;
-      let amendedRouteString = aarAmendmentRouteString;
-      const currentRouteDataTfixIndex = currentRouteDataFixNames.indexOf(tfix);
-      const remainingFixNames = currentRouteDataFixNames.slice(0, currentRouteDataTfixIndex)
-        .concat(routeFixes.slice(routeFixes.indexOf(tfix)));
-      if (tfixInfo === 'Prepend') {
-        aarAmendmentRouteString = tfix + aarAmendmentRouteString;
-      }
-      // if current route contains the tfix, append the aar amendment after the tfix
-      if (currentRoute.includes(tfix)) {
-        amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(tfix)) + aarAmendmentRouteString;
-      } else {
-        // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
-        const firstCommonSegment = currentRoute.split(/\.+/).filter(segment => amendedRouteString?.includes(segment))?.[0];
-        if (!firstCommonSegment) {
-          return null;
-        }
-        amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(firstCommonSegment) + firstCommonSegment.length)
-          + aarLeadingRouteString.slice(aarLeadingRouteString.indexOf(firstCommonSegment) + firstCommonSegment.length);
-        if (!amendedRouteString.includes(firstCommonSegment)) {
-          amendedRouteString = firstCommonSegment + amendedRouteString;
-        }
-      }
-      if (!amendedRouteString) {
-        return null;
-      }
-      return {
-        aar: true,
-        aar_amendment_route_string: aarAmendmentRouteString,
-        amended_route: amendedRouteString,
-        amended_route_fix_names: remainingFixNames,
-        dest: entry.dest,
-        tfix: tfix,
-        tfix_info: tfixInfo,
-        eligible: amendment.eligible,
-        onEligibleAar: amendment.eligible && currentRoute.includes(aarAmendmentRouteString),
-        aar_data: aar_data
-      };
-    }).filter(aar_data => aar_data);
-  };
-
   deleteEntry = (window: string, cid: string) => {
     switch (window) {
       case 'acl':
-        this.props.deleteAclCid(cid);
+        this.props.dispatch(deleteAclCid(cid));
         break;
       case 'dep':
-        this.props.deleteDepCid(cid);
+        this.props.dispatch(deleteDepCid(cid));
         break;
       default:
         break;
@@ -390,40 +190,20 @@ class App extends React.Component<Props, State> {
   //   });
   // }
 
-  updateEntry = (cid: string, data: any) => {
-    let {spaList, entries} = this.state;
-    let entry = entries[cid];
-    if (data?.spa === true) {
-      if (!spaList.includes(cid)) {
-        spaList.push(cid);
-      }
-      data.spa = spaList.indexOf(cid);
-    }
-    if (data?.spa === false) {
-      const index = spaList.indexOf(cid);
-      if (index > -1) {
-        spaList.splice(index, 1);
-      }
-    }
-    this.setState(({entries}) => {
-      return {entries: {...entries, [cid]: _.assign(entry, data)}};
-    });
-  };
-
   addEntry = (window: string | null, fid: string) => {
-    let {entries} = this.state;
+    let {entries} = this.props;
     let entry = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
-      if (this.depFilter(entry)) {
+      if (depFilter(entry, this.props)) {
         this.addEntry('dep', fid);
       } else {
         this.addEntry('acl', fid);
       }
     } else if (entry && (window === 'acl' || window === 'dep')) {
       if (window === 'acl') {
-        this.props.addAclCid(entry.cid);
+        this.props.dispatch(addAclCid(entry.cid));
       } else {
-        this.props.addDepCid(entry.cid);
+        this.props.dispatch(addDepCid(entry.cid));
       }
       const asel = {cid: entry.cid, field: 'fid', window: window};
       this.setState({
@@ -433,58 +213,46 @@ class App extends React.Component<Props, State> {
     }
   };
 
-  amendEntry = async (cid: string, plan_data: any) => {
-    let {entries} = this.state;
-    const {artccId} = this.props.sectorData;
+  amendEntry = async (cid: string, planData: any) => {
     const {cidList: depCidList} = this.props.dep;
-    let currentEntry = entries[cid];
-    if (Object.keys(plan_data).includes('altitude')) {
-      plan_data.interim = null;
+    let currentEntry = {...this.props.entries[cid]};
+    if (Object.keys(planData).includes('altitude')) {
+      planData.interim = null;
     }
-    if (Object.keys(plan_data).includes('route')) {
+    if (Object.keys(planData).includes('route')) {
       const dest = currentEntry.dest;
-      if (plan_data.route.slice(-dest.length) === dest) {
-        plan_data.route = plan_data.route.slice(0, -dest.length);
+      if (planData.route.slice(-dest.length) === dest) {
+        planData.route = planData.route.slice(0, -dest.length);
       }
-      plan_data.previous_route = depCidList.includes(cid) ? currentEntry?.route : currentEntry?._route;
-      plan_data.previous_route_data = depCidList.includes(cid) ? currentEntry?.route_data : currentEntry?._route_data;
+      planData.previous_route = depCidList.includes(cid) ? currentEntry?.route : currentEntry?._route;
+      planData.previous_route_data = depCidList.includes(cid) ? currentEntry?.route_data : currentEntry?._route_data;
     }
-    plan_data.callsign = currentEntry.callsign;
-    if (plan_data.scratch_hdg !== undefined) currentEntry.scratch_hdg = plan_data.scratch_hdg;
-    if (plan_data.scratch_spd !== undefined) currentEntry.scratch_spd = plan_data.scratch_spd;
-    await updateEdstEntry(plan_data)
+    planData.callsign = currentEntry.callsign;
+    updateEdstEntry(planData)
       .then(response => response.json())
       .then(async updated_entry => {
         if (updated_entry) {
-          _.assign(currentEntry, this.refreshEntry(updated_entry));
-          currentEntry.pending_removal = null;
-          await getAarData(artccId, currentEntry.cid)
-            .then(response => response.json())
-            .then(aar_list => {
-              currentEntry.aar_list = aar_list;
-              currentEntry._aar_list = this.processAar(currentEntry, aar_list);
-            });
-          this.setState(({entries}) => {
-            return {
-              entries: {...entries, [cid]: currentEntry}
-            };
-          });
+          updated_entry = refreshEntry(updated_entry, this.props);
+          updated_entry.pending_removal = null;
+          if (planData.scratch_hdg !== undefined) updated_entry.scratch_hdg = planData.scratch_hdg;
+          if (planData.scratch_spd !== undefined) updated_entry.scratch_spd = planData.scratch_spd;
+          this.props.dispatch(updateEntry({cid: cid, data: updated_entry}));
         }
       });
   };
 
   aircraftSelect = (event: any & Event, window: string | null, cid: string, field: string) => {
-    let {asel, entries} = this.state;
+    let {asel} = this.state;
     if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
       this.setState({menu: null, asel: null});
     } else {
-      const entry = entries[cid];
+      const entry = this.props.entries[cid];
       asel = {cid: cid, field: field, window: window};
-      if (window === 'acl' && !this.props.acl.manualPosting && field === 'fid-2' && entries[cid]?.vciStatus === -1) {
-        this.updateEntry(cid, {vciStatus: 0});
+      if (window === 'acl' && !this.props.acl.manualPosting && field === 'fid-2' && entry?.vciStatus === -1) {
+        this.props.dispatch(updateEntry({cid: cid, data: {vciStatus: 0}}));
       }
-      if (window === 'dep' && !this.props.dep.manualPosting && field === 'fid-2' && entries[cid]?.depStatus === -1) {
-        this.updateEntry(cid, {depStatus: 0});
+      if (window === 'dep' && !this.props.dep.manualPosting && field === 'fid-2' && entry?.depStatus === -1) {
+        this.props.dispatch(updateEntry({cid: cid, data: {depStatus: 0}}));
       }
       this.setState({menu: null, asel: asel});
       switch (field) {
@@ -683,7 +451,7 @@ class App extends React.Component<Props, State> {
   };
 
   aclCleanup = () => {
-    let {entries} = this.state;
+    let {entries} = this.props;
     const {cidList, deletedList} = this.props.acl;
     const now = new Date().getTime();
     let aclCidListCopy, aclDeletedListCopy;
@@ -691,7 +459,7 @@ class App extends React.Component<Props, State> {
 
     aclCidListCopy = _.difference(cidList, pendingRemovalCidList);
     aclDeletedListCopy = deletedList.concat(pendingRemovalCidList);
-    this.props.setAclCidList(aclCidListCopy, aclDeletedListCopy);
+    this.props.dispatch(setAclLists({cidList: [...aclCidListCopy], deletedList: [...new Set(aclDeletedListCopy)]}));
   };
 
   setMraMessage = (msg: string) => {
@@ -719,7 +487,6 @@ class App extends React.Component<Props, State> {
 
   render() {
     const {
-      entries,
       asel,
       disabledWindows,
       planQueue,
@@ -764,14 +531,12 @@ class App extends React.Component<Props, State> {
               {draggingCursorHide && <div className="cursor"/>}
             </div>
             <EdstContext.Provider value={{
-              entries: entries,
               asel: asel,
               planQueue: planQueue,
               menu: menu,
               unmount: this.unmount,
               openMenu: this.openMenu,
               closeMenu: this.closeMenu,
-              updateEntry: this.updateEntry,
               amendEntry: this.amendEntry,
               addEntry: this.addEntry,
               deleteEntry: this.deleteEntry,
@@ -897,17 +662,6 @@ class App extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({...state});
-
-const mapDispatchToProps = (dispatch: any) => ({
-  addAclCid: (cid: string) => dispatch(addAclCid(cid)),
-  deleteAclCid: (cid: string) => dispatch(deleteAclCid(cid)),
-  addDepCid: (cid: string) => dispatch(addDepCid(cid)),
-  deleteDepCid: (cid: string) => dispatch(deleteDepCid(cid)),
-  setAclCidList: (cidList: string[], deletedList: string[]) => dispatch(setAclCidList({cidList: cidList, deletedList: deletedList})),
-  setArtccId: (id: string) => dispatch(setArtccId(id)),
-  setSectorId: (id: string) => dispatch(setSectorId(id)),
-  fetchSectorData: () => dispatch(fetchSectorData),
-  fetchReferenceFixes: () => dispatch(fetchReferenceFixes)
-});
+const mapDispatchToProps = (dispatch: any) => ({dispatch: dispatch});
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

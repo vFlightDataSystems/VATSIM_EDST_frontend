@@ -6,10 +6,10 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {EdstWindowType} from '../../types';
+import {useAppSelector} from "../../redux/hooks";
 
 export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {
-    entries,
     trialPlan,
     amendEntry,
     setInputFocused
@@ -20,7 +20,7 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const [deltaY, setDeltaY] = useState(0);
   const [manualInput, setManualInput] = useState<string | null>(null);
   const [showInvalid, setShowInvalid] = useState(false);
-  const entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
 
   useEffect(() => {
     setDep(asel?.window === 'dep');

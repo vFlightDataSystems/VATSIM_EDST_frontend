@@ -6,6 +6,9 @@ import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
+import {updateEntry} from "../../../redux/reducers/entriesReducer";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {toggleDepSpa} from "../../../redux/reducers/depReducer";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
@@ -14,17 +17,18 @@ interface DepRowProps {
   entry: EdstEntryType;
   hidden: string[];
   index: number;
-  updateStatus: Function;
 }
 
-export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatus}) => {
+export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
   const {
     aircraftSelect,
-    updateEntry,
     amendEntry,
     deleteEntry,
     setInputFocused
   } = useContext(EdstContext);
+  const dispatch = useAppDispatch();
+  const spaList = useAppSelector(state => state.dep.spaList);
+
   const {asel} = useContext(DepContext);
   const now = new Date().getTime();
   let route = entry.route;
@@ -57,14 +61,26 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     if (event.button === 0) {
+      dispatch(updateEntry({cid: entry.cid, data: {showFreeText: !entry.showFreeText}}));
       amendEntry(entry.cid, {free_text_content: freeTextContent});
-      updateEntry(entry.cid, {showFreeText: !entry.showFreeText});
     }
     if (event.button === 1) {
-      updateEntry(entry.cid, {spa: !(typeof (entry.spa) === 'number'), free_text_content: freeTextContent});
+      dispatch(toggleDepSpa(entry.cid));
     }
     if (event.button === 2) {
-      updateEntry(entry.cid, {depHighlighted: !entry.depHighlighted});
+      dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
+    }
+  }
+
+  const updateStatus = () => {
+    if (entry.depStatus === -1) {
+      dispatch(updateEntry({cid: entry.cid, data: {depStatus: 0}}));
+    } else {
+      if (entry.depStatus < 1) {
+        dispatch(updateEntry({cid: entry.cid, data: {depStatus: 1}}));
+      } else {
+        dispatch(updateEntry({cid: entry.cid, data: {depStatus: 0}}));
+      }
     }
   }
 
@@ -99,7 +115,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
         <div className={`body-col body-col-1 radio dep-radio ${entry.depStatus === 1 ? 'checkmark' : ''}`}
-             onMouseDown={() => updateStatus(entry.cid)}
+             onMouseDown={updateStatus}
         >
           {entry.depStatus === -1 && 'N'}{entry.depStatus === 1 && COMPLETED_SYMBOL}
         </div>
@@ -120,8 +136,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
-          {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
+        <div className={`body-col special ${!spaList.includes(entry.cid) ? 'special-hidden' : ''}`}>
+          {spaList.includes(entry.cid) && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.depHotbox}>
           <div className="body-col special hotbox"

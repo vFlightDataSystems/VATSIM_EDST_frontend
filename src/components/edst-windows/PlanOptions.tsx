@@ -6,6 +6,7 @@ import {AselType} from "../../types";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
+import {useAppSelector} from "../../redux/hooks";
 
 interface PlanOptionsProps {
   asel: AselType;
@@ -15,10 +16,10 @@ interface PlanOptionsProps {
 }
 
 export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) => {
-  const {startDrag, stopDrag, deleteEntry, openMenu, entries} = useContext(EdstContext);
+  const {startDrag, stopDrag, deleteEntry, openMenu} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
-  const entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
   const dep = asel.window === 'dep';
 
   return (<div

@@ -1,5 +1,6 @@
-import {Feature, Polygon} from "@turf/turf";
+import {Feature, polygon, Polygon} from "@turf/turf";
 import {createSlice} from "@reduxjs/toolkit";
+import {SectorDataType} from "../../types";
 
 export type SectorDataStateType = {
   sectors: {[id: string]: Feature<Polygon>},
@@ -22,7 +23,7 @@ const sectorSlice = createSlice({
   initialState: initialState as SectorDataStateType,
   reducers: {
     setSectors(state: SectorDataStateType, action) {
-      state.sectors = action.payload;
+      state.sectors = Object.fromEntries(action.payload.map((sector: SectorDataType) => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)]));
     },
     setSelectedSectors(state: SectorDataStateType, action) {
       state.selectedSectors=  action.payload;

@@ -7,8 +7,9 @@ import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
-import _ from "lodash";
-import {useAppSelector} from "../../../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {updateEntry} from "../../../redux/reducers/entriesReducer";
+import {toggleAclSpa} from "../../../redux/reducers/aclReducer";
 
 const SPA_INDICATOR = '^';
 
@@ -19,7 +20,6 @@ interface AclRowProps {
   anyHolding: boolean;
   hidden: string[];
   altMouseDown: boolean;
-  updateVci: (cid: string) => void;
 }
 
 export const AclRow: React.FC<AclRowProps> = (
@@ -28,18 +28,21 @@ export const AclRow: React.FC<AclRowProps> = (
     hidden,
     altMouseDown,
     index,
-    anyHolding,
-    ...props
+    anyHolding
   }) => {
   const {
     aircraftSelect,
-    updateEntry,
     amendEntry,
     deleteEntry,
     setInputFocused
   } = useContext(EdstContext);
   const {asel} = useContext(AclContext);
+  const dispatch = useAppDispatch();
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const spaList = useAppSelector(state => state.acl.spaList);
+  // if (entry.aar_list === undefined) {
+  //   dispatch(fetchAarData(entry.cid));
+  // }
 
   const holdData = entry.hold_data;
   const now = new Date().getTime();
@@ -74,14 +77,26 @@ export const AclRow: React.FC<AclRowProps> = (
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     if (event.button === 0) {
+      dispatch(updateEntry({cid: entry.cid, data: {showFreeText: !entry.showFreeText}}));
       amendEntry(entry.cid, {free_text_content: freeTextContent});
-      updateEntry(entry.cid, {showFreeText: !entry.showFreeText});
     }
     if (event.button === 1) {
-      updateEntry(entry.cid, {spa: !_.isNumber(entry.spa), free_text_content: freeTextContent});
+      dispatch(toggleAclSpa(entry.cid));
     }
     if (event.button === 2) {
-      updateEntry(entry.cid, {aclHighlighted: !entry.aclHighlighted});
+      dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
+    }
+  };
+
+  const updateVci = () => {
+    if (entry.vciStatus === -1 && manualPosting) {
+      dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
+    } else {
+      if (entry.vciStatus < 1) {
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 1}}));
+      } else {
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
+      }
     }
   };
 
@@ -97,7 +112,7 @@ export const AclRow: React.FC<AclRowProps> = (
         if (!entry.hold_data) {
           aircraftSelect(event, 'acl', entry.cid, 'hold');
         } else {
-          updateEntry(entry.cid, {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : null});
+          dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : null}}));
         }
         break;
       case 1:
@@ -110,17 +125,18 @@ export const AclRow: React.FC<AclRowProps> = (
 
   const handleRemarksClick = (event: React.MouseEvent) => {
     if (entry.vciStatus === -1 && !manualPosting) {
-      updateEntry(entry.cid, {vciStatus: 0});
+      dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
     }
     switch (event.button) {
       case 0:
-        updateEntry(entry.cid, {
+        dispatch(updateEntry({cid: entry.cid, data: {
+          vciStatus: entry.vciStatus < 0 ? 0 : entry.vciStatus,
           aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') ? 'remarks' : null,
           remarks_checked: true
-        });
+        }}));
         break;
       case 2:
-        updateEntry(entry.cid, {aclRouteDisplay: !(entry.aclRouteDisplay === 'raw_route') ? 'raw_route' : null});
+        dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !(entry.aclRouteDisplay === 'raw_route') ? 'raw_route' : null}}));
         break;
       default:
         break;
@@ -197,7 +213,7 @@ export const AclRow: React.FC<AclRowProps> = (
       className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <EdstTooltip title={Tooltips.aclNAndVciBtn}>
         <div className={`body-col body-col-1 radio`}
-             onMouseDown={() => props.updateVci(entry.cid)}>
+             onMouseDown={updateVci}>
           {entry.vciStatus === -1 && 'N'}{entry.vciStatus === 1 && <img src={VCI} alt="wifi-symbol"/>}
         </div>
       </EdstTooltip>
@@ -218,8 +234,8 @@ export const AclRow: React.FC<AclRowProps> = (
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
-          {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
+        <div className={`body-col special ${!spaList.includes(entry.cid) ? 'special-hidden' : ''}`}>
+          {spaList.includes(entry.cid) && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.aclHotbox}>
           <div className="body-col special hotbox"

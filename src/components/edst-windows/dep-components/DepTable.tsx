@@ -1,11 +1,9 @@
-import {useState, useContext} from 'react';
+import {useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
-import {EdstContext} from "../../../contexts/contexts";
 import {EdstEntryType} from "../../../types";
-import _ from "lodash";
-import { useAppSelector } from '../../../redux/hooks';
+import {useAppSelector} from '../../../redux/hooks';
 
 const COMPLETED_SYMBOL = '✓';
 
@@ -14,34 +12,19 @@ export function DepTable() {
   const manualPosting = useAppSelector((state) => state.dep.manualPosting);
 
   const [hidden, setHidden] = useState<string[]>([]);
-  const {
-    entries,
-    updateEntry
-  } = useContext(EdstContext);
   const cidList = useAppSelector(state => state.dep.cidList);
+  const spaList = useAppSelector(state => state.dep.spaList);
+  const entries = useAppSelector(state => state.entries);
 
   const toggleHideColumn = (name: string) => {
-    let hidden_copy = hidden.slice(0);
-    const index = hidden_copy.indexOf(name);
+    let hiddenCopy = hidden.slice(0);
+    const index = hiddenCopy.indexOf(name);
     if (index > -1) {
-      hidden_copy.splice(index, 1);
+      hiddenCopy.splice(index, 1);
     } else {
-      hidden_copy.push(name);
+      hiddenCopy.push(name);
     }
-    setHidden(hidden_copy);
-  };
-
-  const updateStatus = (cid: string) => {
-    const entry = entries[cid];
-    if (entry?.depStatus === -1) {
-      updateEntry(cid, {depStatus: 0});
-    } else {
-      if (entry?.depStatus < 1) {
-        updateEntry(cid, {depStatus: 1});
-      } else {
-        updateEntry(cid, {depStatus: 0});
-      }
-    }
+    setHidden(hiddenCopy);
   };
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
@@ -57,10 +40,8 @@ export function DepTable() {
     }
   };
 
-  const entry_list = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
-
-  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryType) => (_.isNumber(entry.spa))) // @ts-ignore
-    ?.sort((u: EdstEntryType, v: EdstEntryType) => u.spa - v.spa));
+  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
+  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => spaList.includes(entry.cid)));
 
   return (<div className="dep-body no-select">
     <div className="body-row header" key="dep-table-header">
@@ -93,33 +74,29 @@ export function DepTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spa_entry_list?.map(([i, entry]: [string, EdstEntryType]) =>
+      {spaEntryList?.map(([i, entry]: [string, EdstEntryType]) =>
         <DepRow
           key={`dep-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          updateStatus={updateStatus}
           hidden={hidden}
         />)}
-      {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && ((entry.depStatus > -1) || !manualPosting)))
+      {spaEntryList.length > 0 && <div className="body-row separator"/>}
+      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && ((entry.depStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <DepRow
           key={`dep-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-
-          updateStatus={updateStatus}
           hidden={hidden}
         />)}
       {manualPosting && <div className="body-row separator"/>}
-      {manualPosting && Object.entries(entry_list?.filter((entry: EdstEntryType) => (!(typeof (entry.spa) === 'number') && entry.depStatus === -1)))
+      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && entry.depStatus === -1)))
         ?.map(([i, entry]: [string, EdstEntryType]) =>
           <DepRow
             key={`dep-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}
             entry={entry}
-            updateStatus={updateStatus}
             hidden={hidden}
           />)}
     </div>

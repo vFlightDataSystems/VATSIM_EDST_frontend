@@ -5,11 +5,12 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowType} from "../../types";
 import {copy} from "../../lib";
+import {useAppSelector} from "../../redux/hooks";
 
 export const PreviousRouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
-  const {amendEntry, entries, startDrag, stopDrag} = useContext(EdstContext);
+  const {amendEntry, startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
-  const entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
   useEffect(() => {
     setFocused(false);
   }, [entry]);

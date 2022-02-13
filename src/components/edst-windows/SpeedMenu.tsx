@@ -8,12 +8,12 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstWindowType} from "../../types";
+import {useAppSelector} from "../../redux/hooks";
 
 
 
 export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
   const {
-    entries,
     startDrag,
     stopDrag,
     amendEntry
@@ -31,7 +31,7 @@ export const SpeedMenu: React.FC<EdstWindowType> = ({asel, pos, ...props}) => {
     setSign('');
     setAmend(true);
   }, [asel]);
-  const entry = entries[asel.cid];
+  const entry = useAppSelector(state => state.entries[asel.cid]);
 
   const handleScroll = (e: React.WheelEvent) => {
     const newDeltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);

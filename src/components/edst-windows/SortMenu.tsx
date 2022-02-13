@@ -16,11 +16,11 @@ interface SortMenuProps {
 }
 
 export const SortMenu: React.FC<SortMenuProps> = ({pos, ref_id, ...props}) => {
+  const dispatch = useAppDispatch();
   const window = ref_id === 'acl-sort-button' ? 'acl' : 'dep';
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const sortData: {name: string, sector: boolean} = useAppSelector((state) => state[window].sortData);
-  const dispatch = useAppDispatch();
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
   const ref = useRef(null);
   let sortStateCopy = Object.assign({}, sortState);

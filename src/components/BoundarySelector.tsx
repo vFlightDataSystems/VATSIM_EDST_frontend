@@ -18,11 +18,14 @@ export const BoundarySelector: React.FC<{ toggle: (v: boolean) => void }> = ({to
         <hr style={{color: '#000000', padding: 20, border: 'none'}}/>
         <h1>Pick your sectors</h1>
         <form>
-          {Object.keys(sectors).map((id) => <div key={`boundary-selector-${id}`} className="checkbox-block">
-            <input type="checkbox" className="checkbox-effect checkbox-effect-2"
-                   onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id}/>
-            <label htmlFor={id}>{id}</label>
-          </div>)}
+          <div className="checkbox-block">
+            {Object.keys(sectors).map((id) =>
+              [<input key={`boundary-selector-${id}-input`} type="checkbox" className="checkbox-effect checkbox-effect-2"
+                      onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id}
+              />,
+                <label key={`boundary-selector-${id}-label`} htmlFor={id}>{id}</label>
+              ])}
+          </div>
         </form>
         {/*<button className="close-btn" onClick={() => props.changer(false)}>Close</button>*/}
         <EdstButton className="no-select" content="Save" onMouseDown={() => {

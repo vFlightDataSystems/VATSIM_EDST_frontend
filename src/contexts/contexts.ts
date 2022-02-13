@@ -1,8 +1,7 @@
 import React, {createContext} from "react";
-import {AselType, EdstEntryType, PlanDataType} from "../types";
+import {AselType, PlanDataType} from "../types";
 
 interface EdstContextProps {
-  entries: { [cid: string]: EdstEntryType };
   asel: AselType | null;
   planQueue: Array<any>;
   menu: any;
@@ -10,7 +9,6 @@ interface EdstContextProps {
   unmount: () => void;
   openMenu: (ref: EventTarget | any, name: string, plan?: boolean, asel?: AselType) => void;
   closeMenu: (name: string) => void;
-  updateEntry: (cid: string, data: any) => void;
   amendEntry: (cid: string, plan_data: any) => void;
   addEntry: (window: string | null, fid: string) => void;
   deleteEntry: (window: string, cid: string) => void;
