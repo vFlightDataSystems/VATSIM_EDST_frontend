@@ -6,9 +6,9 @@ import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
-import {updateEntry} from "../../../redux/reducers/entriesReducer";
+import {updateEntry} from "../../../redux/slices/entriesSlice";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {toggleDepSpa} from "../../../redux/reducers/depReducer";
+import {toggleDepSpa} from "../../../redux/slices/depSlice";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';

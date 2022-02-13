@@ -5,7 +5,7 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstWindowType} from "../../types";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {updateEntry} from "../../redux/reducers/entriesReducer";
+import {updateEntry} from "../../redux/slices/entriesSlice";
 
 export const CancelHoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {

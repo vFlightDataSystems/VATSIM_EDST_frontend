@@ -5,8 +5,8 @@ import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
 import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {setAclManualPosting} from "../../redux/reducers/aclReducer";
-import {updateEntry} from "../../redux/reducers/entriesReducer";
+import {setAclManualPosting} from "../../redux/slices/aclSlice";
+import {updateEntry} from "../../redux/slices/entriesSlice";
 
 interface MessageComposeAreaProps {
   pos: { x: number, y: number };

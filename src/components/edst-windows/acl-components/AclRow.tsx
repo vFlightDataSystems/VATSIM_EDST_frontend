@@ -8,8 +8,8 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {updateEntry} from "../../../redux/reducers/entriesReducer";
-import {toggleAclSpa} from "../../../redux/reducers/aclReducer";
+import {updateEntry} from "../../../redux/slices/entriesSlice";
+import {toggleAclSpa} from "../../../redux/slices/aclSlice";
 
 const SPA_INDICATOR = '^';
 

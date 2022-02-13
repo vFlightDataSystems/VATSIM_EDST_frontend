@@ -10,8 +10,8 @@ import {Tooltips} from "../../tooltips";
 import {EdstWindowType} from "../../types";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import _ from "lodash";
-import {updateEntry} from "../../redux/reducers/entriesReducer";
-import {toggleAclSpa} from "../../redux/reducers/aclReducer";
+import {updateEntry} from "../../redux/slices/entriesSlice";
+import {toggleAclSpa} from "../../redux/slices/aclSlice";
 
 export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
   const {

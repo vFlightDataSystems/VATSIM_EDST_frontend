@@ -5,7 +5,7 @@ import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {setDepManualPosting} from "../../../redux/reducers/depReducer";
+import {setDepManualPosting} from "../../../redux/slices/depSlice";
 
 interface DepHeaderProps {
   focused: boolean;

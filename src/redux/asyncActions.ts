@@ -1,6 +1,6 @@
 import {getBoundaryData, getReferenceFixes} from "../api";
 import {RootState} from "./store";
-import {setReferenceFixes, setSectors} from "./reducers/sectorReducer";
+import {setReferenceFixes, setSectors} from "./slices/sectorSlice";
 
 export const fetchSectorData = (dispatch: any, getState: () => RootState) => {
   const state = getState();
