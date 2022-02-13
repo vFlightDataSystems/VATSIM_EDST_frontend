@@ -2,11 +2,11 @@
 // const baseurl: string = 'http://localhost:5000/backend';
 const baseurl: string = 'http://tdls.oakartcc.org/backend';
 
-export async function getEdstData(): Promise<any> {
+export async function fetchEdstEntries(): Promise<any> {
   return await fetch(`${baseurl}/edst/all`);
 }
 
-export async function getEdstEntry(callsign: string): Promise<any> {
+export async function fetchEdstEntry(callsign: string): Promise<any> {
   return await fetch(`${baseurl}/edst/entry/${callsign}`);
 }
 
@@ -20,14 +20,14 @@ export async function updateEdstEntry(planData: any): Promise<any> {
   });
 }
 
-export async function getAarData(artcc: string, cid: string): Promise<any> {
+export async function fetchAarList(artcc: string, cid: string): Promise<any> {
   return await fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
 }
 
-export async function getBoundaryData(artcc: string): Promise<any> {
+export async function fetchBoundaryData(artcc: string): Promise<any> {
   return await fetch(`${baseurl}/edst/boundary_data/${artcc}`);
 }
 
-export async function getReferenceFixes(artcc: string): Promise<any> {
+export async function fetchReferenceFixes(artcc: string): Promise<any> {
   return await fetch(`${baseurl}/edst/reference_fixes/${artcc}`);
 }

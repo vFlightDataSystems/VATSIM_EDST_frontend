@@ -1,17 +1,11 @@
 import {EdstEntryType} from "../types";
-import {point} from "@turf/turf";
-import store, {RootState} from "./store";
+import {RootState} from "./store";
 import {
   computeBoundaryTime,
-  getClosestReferenceFix,
   getRemainingRouteData,
   getRouteDataDistance, processAar,
 } from "../lib";
 import _ from "lodash";
-import {getAarData, getEdstData} from "../api";
-import {addAclCid} from "./slices/aclSlice";
-import {addDepCid, deleteDepCid} from "./slices/depSlice";
-import {setEntry, updateEntry} from "./slices/entriesSlice";
 import {depFilter, entryFilter} from "../filters";
 
 export const refreshEntry = (new_entry: EdstEntryType, state: RootState) => {
@@ -55,7 +49,7 @@ export const refreshEntry = (new_entry: EdstEntryType, state: RootState) => {
   }
   if (new_entry.update_time === currentEntry.update_time
     || (currentEntry._route_data?.[-1]?.dist < 15 && new_entry.dest_info)
-    || !(entryFilter(new_entry, state) || depFilter(new_entry, state))) {
+    || !(entryFilter(new_entry, state.sectorData, state.acl.cidList) || depFilter(new_entry, state.sectorData.artccId))) {
     new_entry.pending_removal = currentEntry.pending_removal ?? new Date().getTime();
   } else {
     new_entry.pending_removal = null;
@@ -65,56 +59,3 @@ export const refreshEntry = (new_entry: EdstEntryType, state: RootState) => {
   if (new_entry.remarks.match(/\/t\//gi)) new_entry.voice_type = 't';
   return _.assign(currentEntry, new_entry);
 };
-
-export function fetchRefresh(state: RootState) {
-  const dispatch = store.dispatch;
-  const {referenceFixes} = state.sectorData;
-  getEdstData()
-    .then(response => response.json())
-    .then(newData => {
-      if (newData) {
-        for (let newEntry of newData) {
-          let currentEntry: EdstEntryType = _.assign({reference_fix: null}, {...state.entries[newEntry.cid]}, refreshEntry(newEntry, state));
-          dispatch(setEntry(currentEntry));
-          const {cidList: aclCidList, deletedList: aclDeletedList} = state.acl;
-          const {cidList: depCidList, deletedList: depDeletedList} = state.dep;
-          if (depFilter(currentEntry, state) && !depDeletedList.includes(newEntry.cid)) {
-            if (!depCidList.includes(newEntry.cid)) {
-              dispatch(addDepCid(newEntry.cid));
-            }
-            fetchAarData(currentEntry.cid);
-          } else {
-            if (entryFilter(currentEntry, state)) {
-              if (!aclCidList.includes(newEntry.cid) && !aclDeletedList.includes(newEntry.cid)) {
-                // remove cid from departure list if will populate the aircraft list
-                dispatch(addAclCid(newEntry.cid));
-                dispatch(deleteDepCid(newEntry.cid));
-              }
-              if (referenceFixes.length > 0) {
-                dispatch(updateEntry({
-                  cid: newEntry.cid,
-                  data: {reference_fix: getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]))}
-                }));
-              }
-              fetchAarData(currentEntry.cid);
-            }
-          }
-        }
-      }
-    });
-}
-
-export function fetchAarData(cid: string) {
-  return (dispatch: any, getState: () => RootState) => {
-    const {entries, sectorData} = getState();
-    if (entries[cid]?.aar_list === undefined) {
-      let aarList: any[] = [];
-      getAarData(sectorData.artccId, cid)
-        .then(response => response.json())
-        .then(_aarList => {
-          aarList = _aarList;
-        });
-      dispatch(updateEntry({cid: cid, data: {aar_list: aarList, _aar_list: processAar(entries[cid], aarList)}}));
-    }
-  };
-}

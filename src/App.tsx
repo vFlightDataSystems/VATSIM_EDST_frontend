@@ -30,14 +30,13 @@ import _ from "lodash";
 import {BoundarySelector} from "./components/BoundarySelector";
 import {connect} from 'react-redux';
 import {RootState} from './redux/store';
-import {fetchReferenceFixes, fetchSectorData} from "./redux/asyncActions";
+import {getReferenceFixes, fetchSectorData} from "./redux/asyncActions";
 import {addAclCid, deleteAclCid, setAclLists} from "./redux/slices/aclSlice";
 import {addDepCid, deleteDepCid} from "./redux/slices/depSlice";
 import {setArtccId, setSectorId} from "./redux/slices/sectorSlice";
-import {fetchRefresh, refreshEntry} from "./redux/fetchRefresh";
-import {updateEntry} from "./redux/slices/entriesSlice";
+import {refreshEntry} from "./redux/refresh";
+import {entriesRefresh, updateEntry} from "./redux/slices/entriesSlice";
 import {depFilter} from "./filters";
-import {refreshStart} from "./redux/slices/actionSlice";
 
 const defaultPos = {
   'edst-status': {x: 400, y: 100},
@@ -132,10 +131,10 @@ class App extends React.Component<Props, State> {
     }
     // if we have no reference fixes for computing FRD, get some
     if (!(this.props.sectorData.referenceFixes.length > 0)) {
-      this.props.dispatch(fetchReferenceFixes);
+      this.props.dispatch(getReferenceFixes);
     }
-    this.props.dispatch(refreshStart());
-    this.updateIntervalId = setInterval(() => this.props.dispatch(refreshStart()), 20000); // update loop will run every 20
+    await this.props.dispatch(entriesRefresh());
+    this.updateIntervalId = setInterval(async () => await this.props.dispatch(entriesRefresh()), 20000); // update loop will run every 20
                                                                                     // seconds
   }
 
@@ -195,7 +194,7 @@ class App extends React.Component<Props, State> {
     let {entries} = this.props;
     let entry = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (window === null && entry) {
-      if (depFilter(entry, this.props)) {
+      if (depFilter(entry, this.props.sectorData.artccId)) {
         this.addEntry('dep', fid);
       } else {
         this.addEntry('acl', fid);
