@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useContext} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import '../../css/windows/spd-hdg-menu-styles.scss';
@@ -7,16 +7,22 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
-import {EdstWindowType} from "../../types";
-import {useAppSelector} from "../../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {windowEnum} from "../../enums";
+import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {aselEntrySelector} from "../../redux/slices/entriesSlice";
+import {EdstEntryType} from "../../types";
+import {amendEntryThunk} from "../../redux/asyncThunks";
 
-export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) => {
+export const HeadingMenu: React.FC = () => {
   const {
     startDrag,
-    stopDrag,
-    amendEntry
+    stopDrag
   } = useContext(EdstContext);
-  const entry = useAppSelector(state => state.entries[asel.cid]);
+  const asel = useAppSelector(aselSelector) as AselType;
+  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const pos = useAppSelector(windowPositionSelector(windowEnum.headingMenu));
+  const dispatch = useAppDispatch();
 
   const [focused, setFocused] = useState(false);
   const [heading, setHeading] = useState(280);
@@ -36,23 +42,23 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
 
     switch (event.button) {
       case 0:
-        amendEntry(entry.cid, {
+        dispatch(amendEntryThunk({cid: entry.cid, planData: {
           [amend ? 'hdg' : 'scratch_hdg']: valueStr,
           [!amend ? 'hdg' : 'scratch_hdg']: null
-        });
+        }}));
         break;
       case 1:
-        amendEntry(entry.cid, {
+        dispatch(amendEntryThunk({cid: entry.cid, planData: {
           [amend ? 'hdg' : 'scratch_hdg']: valueStr
-        });
+        }}));
         break;
       default:
         break;
     }
-    props.closeWindow();
+    dispatch(closeWindow(windowEnum.headingMenu));
   };
 
-  return (<div
+  return pos && entry && (<div
     onMouseEnter={() => setFocused(true)}
     onMouseLeave={() => setFocused(false)}
     className="options-menu heading no-select"
@@ -61,7 +67,7 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
     style={{left: pos.x, top: pos.y}}
   >
     <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-         onMouseDown={(event) => startDrag(event, ref)}
+         onMouseDown={(event) => startDrag(event, ref, windowEnum.headingMenu)}
          onMouseUp={(event) => stopDrag(event)}
     >
       Heading Information
@@ -140,25 +146,25 @@ export const HeadingMenu: React.FC<EdstWindowType> = ({asel, pos, ...props} ) =>
           <EdstButton content="Present Heading" onMouseDown={(event) => {
             switch (event.button) {
               case 0:
-                amendEntry(entry.cid, {
+                dispatch(amendEntryThunk({cid: entry.cid, planData: {
                   [amend ? 'hdg' : 'scratch_hdg']: 'PH',
                   [!amend ? 'hdg' : 'scratch_hdg']: null
-                });
+                }}));
                 break;
               case 1:
-                amendEntry(entry.cid, {
+                dispatch(amendEntryThunk({cid: entry.cid, planData: {
                   [amend ? 'hdg' : 'scratch_hdg']: 'PH'
-                });
+                }}));
                 break;
               default:
                 break;
             }
-            props.closeWindow();
+            dispatch(closeWindow(windowEnum.headingMenu));
           }}/>
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.headingMenu))}/>
           </div>
         </div>
       </div>

@@ -1,32 +1,21 @@
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/plans-display-styles.scss';
-import React, {useContext} from "react";
-import {AselType} from "../../../types";
-import {EdstContext} from "../../../contexts/contexts";
+import React from "react";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {planQueueSelector, selectedPlanIndexSelector, PlanType, setSelectedTrialPlanIndex} from "../../../redux/slices/planSlice";
 
-interface plan {
-  cid: string;
-  callsign: string;
-  msg: string;
-}
-
-interface PlansDisplayTableProps {
-  messageSelect: (i: string) => void;
-  selected_msg: string | null;
-  plan_queue: Array<any>;
-  asel: AselType | null;
-}
-
-export const PlansDisplayTable: React.FC<PlansDisplayTableProps> = ({plan_queue, selected_msg, asel, messageSelect}) => {
-  const {aircraftSelect} = useContext(EdstContext);
+export const PlansDisplayTable: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const planQueue = useAppSelector(planQueueSelector);
+  const selectedPlanIndex = useAppSelector(selectedPlanIndexSelector);
   return (<div className="plans-display-body no-select">
-    {Object.entries(plan_queue)?.map(([i, p]: [string, plan]) =>
+    {planQueue?.map((p: PlanType, i: number) =>
       <div className="body-row" key={`plans-display-body-${p.cid}-${p.msg}-${i}`}>
         <div
-          className={`body-col plans-display-col-1 green hover ${(selected_msg === i && asel?.cid === p.cid) ? 'selected' : ''}`}
-          onMouseDown={(event) => {
-            aircraftSelect(event, 'plans', p.cid, 'type');
-            messageSelect(i);
+          className={`body-col plans-display-col-1 green hover ${(selectedPlanIndex === i) ? 'selected' : ''}`}
+          onMouseDown={() => {
+            // dispatch(plansAircraftSelect(event, windowEnum.plansDisplay, p.cid, planRowFieldEnum.type);
+            dispatch(setSelectedTrialPlanIndex(selectedPlanIndex === i ? null : i));
           }}
         >
           {p.cid} {p.callsign}

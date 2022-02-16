@@ -1,79 +1,87 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import _ from 'lodash';
 import '../../css/header-styles.scss';
 import '../../css/windows/alt-menu-styles.scss';
-import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {EdstWindowType} from '../../types';
-import {useAppSelector} from "../../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {windowEnum} from "../../enums";
+import {aselEntrySelector} from "../../redux/slices/entriesSlice";
+import {
+  aselSelector,
+  AselType,
+  closeWindow,
+  setInputFocused,
+  windowPositionSelector
+} from "../../redux/slices/appSlice";
+import {EdstEntryType} from "../../types";
+import {amendEntryThunk} from "../../redux/asyncThunks";
+import {addTrialPlanThunk} from "../../redux/thunks";
 
-export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
-  const {
-    trialPlan,
-    amendEntry,
-    setInputFocused
-  } = useContext(EdstContext);
-  const [dep, setDep] = useState(asel?.window === 'dep');
-  const [selected, setSelected] = useState(asel?.window !== 'dep' ? 'trial' : 'amend');
+export const AltMenu: React.FC = () => {
+  const asel = useAppSelector(aselSelector) as AselType;
+  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const pos = useAppSelector(windowPositionSelector(windowEnum.altitudeMenu));
+  const dispatch = useAppDispatch();
+  const [selected, setSelected] = useState(asel.window !== windowEnum.dep ? 'trial' : 'amend');
   const [tempAltHover, setTempAltHover] = useState<number | null>(null);
   const [deltaY, setDeltaY] = useState(0);
   const [manualInput, setManualInput] = useState<string | null>(null);
   const [showInvalid, setShowInvalid] = useState(false);
-  const entry = useAppSelector(state => state.entries[asel.cid]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    setDep(asel?.window === 'dep');
-    setSelected(asel.window !== 'dep' ? 'trial' : 'amend');
+    setSelected(asel.window !== windowEnum.dep ? 'trial' : 'amend');
     setTempAltHover(null);
     setDeltaY(0);
   }, [asel]);
 
   const handleAltClick = (alt: string | number) => {
     if (selected === 'amend') {
-      amendEntry(entry.cid, {altitude: alt});
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {altitude: alt}}));
     } else {
       const planData = {
-        cid: entry.cid, callsign: entry.callsign, plan_data: {
+        cid: entry.cid, callsign: entry.callsign, planData: {
           altitude: alt,
           interim: null
         },
         msg: `AM ${entry.cid} ALT ${alt}`
       };
-      trialPlan(planData);
+      dispatch(addTrialPlanThunk(planData));
     }
-    closeWindow();
+    dispatch(closeWindow(windowEnum.altitudeMenu));
   };
 
   const handleTempAltClick = (alt: number) => {
     if (selected === 'amend') {
-      amendEntry(entry?.cid, {interim: alt});
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {interim: alt}}));
     } else {
       const planData = {
-        cid: entry.cid, callsign: entry.callsign, plan_data: {
+        cid: entry.cid, callsign: entry.callsign, planData: {
           interim: alt
         },
         msg: `QQ /TT ${alt} ${entry?.cid}`
       };
-      trialPlan(planData);
+      dispatch(addTrialPlanThunk(planData));
     }
-    closeWindow();
+    dispatch(closeWindow(windowEnum.altitudeMenu));
   };
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    const newDeltaY = Math.min(Math.max((Number(entry.altitude) - 560) * 10, deltaY + e.deltaY), (Number(entry.altitude) - 40) * 10);
+    const newDeltaY = Math.min(Math.max((Number(entry.altitude) - 560)*10, deltaY + e.deltaY), (Number(entry.altitude) - 40)*10);
     setDeltaY(newDeltaY);
   };
 
   const handleKeyDown = () => {
     if (manualInput === null) {
       setManualInput('');
-      setInputFocused(true);
+      dispatch(setInputFocused(true));
+
       // setSelected('trial');
     }
   };
 
-  return (<div
+  return pos && asel && (<div
       className={`alt-menu no-select ${manualInput !== null ? 'manual-input' : ''}`}
       id="alt-menu"
       tabIndex={0}
@@ -86,7 +94,7 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
           {entry?.callsign}
         </div>
         <div className="alt-menu-header-right"
-             onMouseDown={closeWindow}
+             onMouseDown={() => dispatch(closeWindow(windowEnum.altitudeMenu))}
         >
           X
         </div>
@@ -96,19 +104,22 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
         FP{entry.altitude}
       </div>
         <div className="alt-menu-row input-container">
-          <input value={manualInput}
-                 onChange={(event) => setManualInput(event.target.value.toUpperCase())}
-                 onKeyDown={(event) => {
-                   if (event.key === 'Enter') {
-                     // check if input is number and length matches valid input
-                     if (!_.isNumber(manualInput) && manualInput.length === 3) {
-                       handleAltClick(manualInput);
-                     } else {
-                       setShowInvalid(true);
-                     }
-                   }
-                 }}
-                 onFocus={() => setInputFocused(true)}
+          <input
+            tabIndex={0}
+            ref={inputRef}
+            value={manualInput}
+            onChange={(event) => setManualInput(event.target.value.toUpperCase())}
+            onKeyDownCapture={(event) => {
+              if (event.key === 'Enter') {
+                // check if input is number and length matches valid input
+                if (!_.isNumber(manualInput) && manualInput.length === 3) {
+                  handleAltClick(manualInput);
+                } else {
+                  setShowInvalid(true);
+                }
+              }
+            }}
+            onFocus={() => dispatch(setInputFocused(true))}
             // onBlur={() => setInputFocused(false)}
           />
         </div>
@@ -122,7 +133,7 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
             className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}
             onMouseDown={() => setSelected('trial')}
             // @ts-ignore
-            disabled={dep}
+            disabled={asel.window === windowEnum.dep}
           >
             TRIAL PLAN
           </div>
@@ -137,13 +148,13 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
       <div className={`alt-menu-row`}
         // @ts-ignore
            disabled={true}>
-        {!dep ? 'PROCEDURE' : 'NO ALT'}
+        {(asel.window !== windowEnum.dep) ? 'PROCEDURE' : 'NO ALT'}
       </div>
       <div className="alt-menu-select-container"
            onWheel={handleScroll}
       >
         {_.range(30, -40, -10).map(i => {
-          const alt = Number(entry.altitude) - (deltaY / 100 | 0) * 10 + i;
+          const alt = Number(entry.altitude) - (deltaY/100 | 0)*10 + i;
           return <div
             className={`alt-menu-container-row ${((selected === 'amend') && (tempAltHover === alt)) ? 'temp-alt-hover' : ''}`}
             key={`alt-${i}`}
@@ -153,7 +164,7 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
             >
               {String(alt).padStart(3, '0')}
             </div>
-            {!dep &&
+            {(asel.window !== windowEnum.dep) &&
             <EdstTooltip title={Tooltips.altMenuT}>
               <div className={`alt-menu-container-col-t`}
                 // @ts-ignore
@@ -170,4 +181,4 @@ export const AltMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
       </span>}
     </div>
   );
-}
+};

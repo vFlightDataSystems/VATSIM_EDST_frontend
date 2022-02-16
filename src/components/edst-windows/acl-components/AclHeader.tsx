@@ -1,29 +1,24 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
-import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {setAclManualPosting} from "../../../redux/slices/aclSlice";
+import {aclCleanup, addAclEntry, openWindowThunk} from "../../../redux/thunks";
+import {windowEnum} from "../../../enums";
+import {aclAselSelector, closeWindow, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
 
-interface AclHeaderProps {
-  focused: boolean;
-  cleanup: () => void;
-  closeWindow: () => void;
-}
 
-export const AclHeader: React.FC<AclHeaderProps> = (props) => {
+export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
+  const asel = useAppSelector(aclAselSelector);
   const sortData = useAppSelector((state) => state.acl.sortData);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const dispatch = useAppDispatch();
 
-  const {setInputFocused, asel, openMenu} = useContext(EdstContext);
-  const {addEntry} = useContext(AclContext);
   const [searchStr, setSearchString] = useState('');
-  const {focused} = props;
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      addEntry(searchStr);
+      dispatch(addAclEntry(searchStr));
       setSearchString('');
     }
   };
@@ -31,19 +26,22 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
   return (<div>
     <WindowTitleBar
       focused={focused}
-      closeWindow={props.closeWindow}
+      closeWindow={() => {
+        dispatch(setAsel(null));
+        dispatch(closeWindow(windowEnum.acl));
+      }}
       text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.name}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'plan-menu')}
+        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.planOptions, e.currentTarget))}
         content="Plan Options..."
         title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'hold-menu')}
+        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.holdMenu, e.currentTarget, windowEnum.acl))}
         content="Hold..."
         title={Tooltips.hold}
       />
@@ -52,7 +50,7 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
       <EdstWindowHeaderButton
         id="acl-sort-button"
         onMouseDown={(e: React.KeyboardEvent) => {
-          openMenu(e.currentTarget, 'sort-menu');
+          dispatch(openWindowThunk(windowEnum.sortMenu, e.currentTarget));
         }}
         content="Sort..."
         title={Tooltips.sort}
@@ -64,12 +62,12 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
         title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.KeyboardEvent) => openMenu(e.currentTarget, 'template-menu')}
+        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.currentTarget))}
         content="Template..."
         title={Tooltips.template}
       />
       <EdstWindowHeaderButton
-        onMouseDown={props.cleanup}
+        onMouseDown={() => dispatch(aclCleanup)}
         content="Clean Up"
         title={Tooltips.aclCleanUp}
       />
@@ -78,8 +76,8 @@ export const AclHeader: React.FC<AclHeaderProps> = (props) => {
       Add/Find
       <div className="input-container">
         <input
-          onFocus={() => setInputFocused(true)}
-          onBlur={() => setInputFocused(false)}
+          onFocus={() => dispatch(setInputFocused(true))}
+          onBlur={() => dispatch(setInputFocused(false))}
           value={searchStr}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}

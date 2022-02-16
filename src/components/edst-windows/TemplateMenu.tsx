@@ -4,26 +4,23 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
-import {useAppSelector} from "../../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {windowEnum} from "../../enums";
+import {aselEntrySelector} from "../../redux/slices/entriesSlice";
+import {aselSelector, closeWindow, setInputFocused, windowPositionSelector} from "../../redux/slices/appSlice";
 
-interface TemplateMenuProps {
-  pos: {x: number, y: number};
-  closeWindow: () => void;
-}
-
-export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) => {
+export const TemplateMenu: React.FC = () => {
   const {
-    asel,
     startDrag,
-    stopDrag,
-    setInputFocused
+    stopDrag
   } = useContext(EdstContext);
-  const entry = useAppSelector(state => asel ? state.entries[asel.cid] : null);
-
-  const [dep, setDep] = useState(asel?.window === 'dep');
+  const dispatch = useAppDispatch();
+  const asel = useAppSelector(aselSelector);
+  const entry = useAppSelector(aselEntrySelector);
+  const pos = useAppSelector(windowPositionSelector(windowEnum.templateMenu));
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
-  const [route, setRoute] = useState((dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
+  const [route, setRoute] = useState((asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
   const [frd, setFrd] = useState(entry?.reference_fix ? computeFrd(entry.reference_fix) : '');
 
   const [aidInput, setAidInput] = useState(entry?.callsign ?? '');
@@ -36,14 +33,13 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
   const [frdInput, setFrdInput] = useState(frd);
   const [timeInput, setTimeInput] = useState('EXX00');
   const [altInput, setAltInput] = useState(entry?.altitude ?? '');
-  const [routeInput, setRouteInput] = useState((dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '');
+  const [routeInput, setRouteInput] = useState((asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '');
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
 
   useEffect(() => {
-    const dep = asel?.window === 'dep';
-    const route = (dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
+    const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
     const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
     const aidInput = entry?.callsign ?? '';
     const typeInput = entry?.type ?? '';
@@ -52,9 +48,8 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
     const speedInput = entry?.flightplan?.ground_speed ?? '';
     const timeInput = 'EXX00';
     const altInput = entry?.altitude ?? '';
-    const routeInput = (dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
+    const routeInput = (asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
     const rmkInput = entry?.remarks ?? '';
-    setDep(dep);
     setDisplayRawRoute(false);
     setRoute(route);
     setFrd(frd);
@@ -73,7 +68,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
   }, [asel, entry]);
 
 
-  return (<div
+  return pos && (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className="options-menu template no-select"
@@ -82,7 +77,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseDown={(event) => startDrag(event, ref, windowEnum.templateMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         {asel ? 'Amendment' : 'Flight Plan'} Menu
@@ -129,8 +124,8 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
               <input
                 value={aidInput}
                 onChange={(event) => setAidInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
+                onFocus={() => dispatch(setInputFocused(true))}
+                onBlur={() => dispatch(setInputFocused(false))}
               />
             </div>
           </div>
@@ -139,8 +134,8 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
               <input
                 value={numInput}
                 onChange={(event) => setNumInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
+                onFocus={() => dispatch(setInputFocused(true))}
+                onBlur={() => dispatch(setInputFocused(false))}
               />
             </div>
           </div>
@@ -265,7 +260,7 @@ export const TemplateMenu: React.FC<TemplateMenuProps> = ({pos, closeWindow}) =>
             <EdstButton disabled={true} content="Send"/>
           </div>
           <div className="template-col bottom right">
-            <EdstButton content="Exit" onMouseDown={() => closeWindow()}/>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.templateMenu))}/>
           </div>
         </div>
       </div>

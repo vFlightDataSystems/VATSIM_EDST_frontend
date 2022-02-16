@@ -1,24 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/acl-styles.scss';
 import {AclHeader} from "./acl-components/AclHeader";
 import {AclTable} from "./acl-components/AclTable";
-import {EdstContext} from "../../contexts/contexts";
+import {useAppSelector} from "../../redux/hooks";
 
-interface AclProps {
-  closeWindow: () => void;
-  cleanup: () => void;
-  unmount: () => void;
-}
-
-export const Acl: React.FC<AclProps> = (props) => {
+export const Acl: React.FC = () => {
   const [focused, setFocused] = useState(false);
-  const {dragging} = useContext(EdstContext);
-  const unmount = () => props.unmount();
-  useEffect(() => {
-    return () => unmount();
-    // eslint-disable-next-line
-  }, []);
+  const dragging = useAppSelector((state) => state.app.dragging);
 
   return (<div
     className={`acl ${dragging ? 'dragging' : ''}`}
@@ -26,11 +15,7 @@ export const Acl: React.FC<AclProps> = (props) => {
     onMouseEnter={() => setFocused(true)}
     onMouseLeave={() => setFocused(false)}
   >
-    <AclHeader
-      focused={focused}
-      cleanup={props.cleanup}
-      closeWindow={props.closeWindow}
-    />
+    <AclHeader focused={focused}/>
     <AclTable/>
   </div>);
 }

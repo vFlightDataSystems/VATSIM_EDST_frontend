@@ -7,23 +7,26 @@ import {formatUtcMinutes} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {EdstWindowType} from "../../types";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import _ from "lodash";
-import {updateEntry} from "../../redux/slices/entriesSlice";
+import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
 import {toggleAclSpa} from "../../redux/slices/aclSlice";
+import {windowEnum} from "../../enums";
+import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {EdstEntryType} from "../../types";
+import {amendEntryThunk} from "../../redux/asyncThunks";
 
-export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
+export const HoldMenu: React.FC = () => {
   const {
     startDrag,
-    stopDrag,
-    amendEntry,
+    stopDrag
   } = useContext(EdstContext);
-  const entry = useAppSelector(state => state.entries[asel.cid]);
+  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const pos = useAppSelector(windowPositionSelector(windowEnum.holdMenu))
   const dispatch = useAppDispatch();
 
   const now = new Date();
-  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
 
   const [holdFix, setHoldFix] = useState<string | null>(null);
   const [legLength, setLegLength] = useState<string | number | null>(null);
@@ -43,29 +46,32 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         turns: turns,
         efc: efc
       };
-      amendEntry(entry.cid, {hold_data: holdData});
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: holdData}}));
     }
-    closeWindow();
+    dispatch(closeWindow(windowEnum.holdMenu));
   };
 
   useEffect(() => {
     const computeCrossingTimes = (routeData: Array<any> = []) => {
       let newRouteData = [];
       const now = new Date();
-      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
       const groundspeed = Number(entry.flightplan?.ground_speed);
       if (routeData.length > 0 && groundspeed > 0) {
         let lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
         for (let e of routeData) {
           lineData.push(e.pos);
-          newRouteData.push({...e, minutesAtFix: utcMinutes + 60 * length(lineString(lineData), {units: 'nauticalmiles'}) / groundspeed});
+          newRouteData.push({
+            ...e,
+            minutesAtFix: utcMinutes + 60*length(lineString(lineData), {units: 'nauticalmiles'})/groundspeed
+          });
         }
       }
       return newRouteData;
     };
     const routeData = computeCrossingTimes(entry._route_data);
     const now = new Date();
-    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
     setHoldFix(entry.hold_data?.hold_fix ?? 'PP');
     setLegLength(entry.hold_data?.leg_length ?? 'STD');
     setHoldDirection(entry.hold_data?.hold_direction ?? 'N');
@@ -74,7 +80,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
     setRouteData(routeData ?? null);
   }, [entry]);
 
-  return (entry && <div
+  return pos && entry && (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className="options-menu hold no-select"
@@ -83,7 +89,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseDown={(event) => startDrag(event, ref, windowEnum.holdMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Hold Data Menu
@@ -103,7 +109,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
             <EdstButton content="Present Position" selected={(!holdFix || holdFix === 'PP')}
                         onMouseDown={() => {
                           const now = new Date();
-                          const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+                          const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
                           setHoldFix('PP');
                           setEfc(utcMinutes + 30);
                         }}>
@@ -114,9 +120,9 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
         <div className="hold-fix-container">
           {_.range(0, Math.min(routeData?.length || 0, 10)).map(i =>
             <div className="options-row" key={`hold-menu-row-${i}`}>
-              {_.range(0,((routeData?.length || 0) / 10 | 0) + 1).map(j => {
-                const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
-                const minutesAtFix = routeData?.[Number(i) + Number(j) * 10]?.minutesAtFix;
+              {_.range(0, ((routeData?.length || 0)/10 | 0) + 1).map(j => {
+                const fixName = routeData?.[Number(i) + Number(j)*10]?.name;
+                const minutesAtFix = routeData?.[Number(i) + Number(j)*10]?.minutesAtFix;
                 return (fixName &&
                   <div className={`options-col hold-col-1 hover ${(holdFix === fixName) ? 'selected' : ''}`}
                        key={`hold-menu-col-${i}-${j}`}
@@ -127,7 +133,7 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
                   >
                     {fixName}
                     <div className="align-right">
-                      {("0" + ((minutesAtFix / 60 | 0) % 24)).slice(-2) + ("0" + (minutesAtFix % 60 | 0)).slice(-2)}
+                      {("0" + ((minutesAtFix/60 | 0)%24)).slice(-2) + ("0" + (minutesAtFix%60 | 0)).slice(-2)}
                     </div>
                   </div>);
               })}
@@ -229,9 +235,9 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
             <EdstButton
               content="Delete Hold Instructions"
               onMouseDown={() => {
-                amendEntry(entry.cid, {hold_data: null});
+                dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
                 dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
-                closeWindow();
+                dispatch(closeWindow(windowEnum.holdMenu));
               }}
               title={Tooltips.holdDeleteHoldInstr}
             />
@@ -276,17 +282,17 @@ export const HoldMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => 
                         title={Tooltips.holdHoldBtn}/>
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
-                          amendEntry(entry.cid, {hold_data: null});
+                          dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
                           dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
-                          closeWindow();
+                          dispatch(closeWindow(windowEnum.holdMenu));
                         }}
             />
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.holdMenu))}/>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};

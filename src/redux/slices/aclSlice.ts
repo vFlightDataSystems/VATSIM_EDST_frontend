@@ -1,11 +1,10 @@
-import {AselType} from "../../types";
 import {createSlice} from "@reduxjs/toolkit";
+import {RootState} from "../store";
 
 export type AclStateType = {
   cidList: string[],
   deletedList: string[],
   spaList: string[],
-  asel: AselType | null,
   sortData: { name: string, sector: boolean },
   manualPosting: boolean
 };
@@ -14,7 +13,6 @@ const initialState = {
   cidList: [],
   deletedList: [],
   spaList: [],
-  asel: null,
   sortData: {name: 'ACID', sector: false},
   manualPosting: true
 };
@@ -45,8 +43,7 @@ const aclSlice = createSlice({
     toggleAclSpa(state: AclStateType, action) {
       if (!state.spaList.includes(action.payload)) {
         state.spaList.push(action.payload);
-      }
-      else {
+      } else {
         const spaListSet = new Set(state.spaList);
         spaListSet.delete(action.payload);
         state.spaList = [...spaListSet];
@@ -55,5 +52,14 @@ const aclSlice = createSlice({
   }
 });
 
-export const {addAclCid, deleteAclCid, setAclLists, setAclSort, setAclManualPosting, toggleAclSpa} = aclSlice.actions;
+export const {
+  addAclCid,
+  deleteAclCid,
+  setAclLists,
+  setAclSort,
+  setAclManualPosting,
+  toggleAclSpa
+} = aclSlice.actions;
 export default aclSlice.reducer;
+
+export const aclCidListSelector = (state: RootState) => state.acl.cidList;

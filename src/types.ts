@@ -47,13 +47,13 @@ export interface EdstEntryType {
   cleared_direct?: { frd: string, fix: string }; // if cleared direct to somewhere, this will contain the FRD and the fix the aircraft was cleared to
 }
 
-export interface FixProps {
+export interface FixType {
   name: string;
   pos: [number, number];
   dist?: number;
 }
 
-export interface EdstPreferredRouteProps {
+export interface EdstPreferredRouteType {
   eligible?: boolean;
   route: string;
   route_data?: Array<any>;
@@ -61,11 +61,8 @@ export interface EdstPreferredRouteProps {
   dest?: string;
 }
 
-export interface AselType {
-  cid: string;
-  field: string;
-  window: string | null;
-}
+export interface WindowPositionType { x: number, y: number, w?: number, h?: number }
+
 
 export interface SectorDataType {
   geometry: { coordinates: Array<[any, any]>, type: string };
@@ -81,10 +78,4 @@ export interface PlanDataType {
   callsign: string;
   plan_data: any;
   msg: string;
-}
-
-export interface EdstWindowType {
-  pos: {x: number, y: number, w?: number, h?: number};
-  asel: AselType;
-  closeWindow: () => void;
 }

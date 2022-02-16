@@ -1,16 +1,23 @@
-import React, { useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {EdstWindowType} from "../../types";
 import {copy} from "../../lib";
-import {useAppSelector} from "../../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {windowEnum} from "../../enums";
+import {aselEntrySelector} from "../../redux/slices/entriesSlice";
+import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {EdstEntryType} from "../../types";
+import {amendEntryThunk} from "../../redux/asyncThunks";
 
-export const PreviousRouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWindow}) => {
-  const {amendEntry, startDrag, stopDrag} = useContext(EdstContext);
+export const PreviousRouteMenu: React.FC = () => {
+  const {startDrag, stopDrag} = useContext(EdstContext);
+  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const pos = useAppSelector(windowPositionSelector(windowEnum.prevRouteMenu))
+  const dispatch = useAppDispatch();
+
   const [focused, setFocused] = useState(false);
-  const entry = useAppSelector(state => state.entries[asel.cid]);
   useEffect(() => {
     setFocused(false);
   }, [entry]);
@@ -22,16 +29,16 @@ export const PreviousRouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWin
     route = route.slice(0, -dest.length);
   }
 
-  return (<div
+  return pos && entry && (<div
       ref={ref}
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className="options-menu prev-route no-select"
-      id="route-menu"
+      id="prev-route-menu"
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseDown={(event) => startDrag(event, ref, windowEnum.prevRouteMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Previous Route Menu
@@ -50,16 +57,16 @@ export const PreviousRouteMenu: React.FC<EdstWindowType> = ({pos, asel, closeWin
             <EdstButton content="Apply Previous Route"
                         onMouseDown={() => {
                           copy(route.replace(/\.+$/, ''));
-                          amendEntry(entry.cid, {
+                          dispatch(amendEntryThunk({cid: entry.cid, planData: {
                             route: entry.previous_route,
                             route_data: entry.previous_route_data
-                          });
-                          closeWindow();
+                          }}));
+                          dispatch(closeWindow(windowEnum.prevRouteMenu))
                         }}
             />
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.prevRouteMenu))}/>
           </div>
         </div>
       </div>

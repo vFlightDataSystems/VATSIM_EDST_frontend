@@ -1,14 +1,17 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT} from "../../../lib";
-import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
 import {updateEntry} from "../../../redux/slices/entriesSlice";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {toggleDepSpa} from "../../../redux/slices/depSlice";
+import {deleteDepCid, depSpaListSelector, toggleDepSpa} from "../../../redux/slices/depSlice";
+import {depRowFieldEnum, windowEnum} from "../../../enums";
+import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
+import {depAircraftSelect} from "../../../redux/thunks";
+import {amendEntryThunk} from "../../../redux/asyncThunks";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
@@ -20,16 +23,10 @@ interface DepRowProps {
 }
 
 export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
-  const {
-    aircraftSelect,
-    amendEntry,
-    deleteEntry,
-    setInputFocused
-  } = useContext(EdstContext);
   const dispatch = useAppDispatch();
-  const spaList = useAppSelector(state => state.dep.spaList);
+  const spaList = useAppSelector(depSpaListSelector);
+  const asel = useAppSelector(aselSelector);
 
-  const {asel} = useContext(DepContext);
   const now = new Date().getTime();
   let route = entry.route;
   const dest = entry.dest;
@@ -62,7 +59,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     event.preventDefault();
     if (event.button === 0) {
       dispatch(updateEntry({cid: entry.cid, data: {showFreeText: !entry.showFreeText}}));
-      amendEntry(entry.cid, {free_text_content: freeTextContent});
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     }
     if (event.button === 1) {
       dispatch(toggleDepSpa(entry.cid));
@@ -86,7 +83,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
 
   useEffect(() => (() => {
     if (freeTextContent !== entry.free_text_content) {
-      amendEntry(entry.cid, {free_text_content: freeTextContent});
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     } // eslint-disable-next-line
   }), []);
 
@@ -95,18 +92,18 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
-          deleteEntry('dep', entry.cid);
+          dispatch(deleteDepCid(entry.cid));
         }
         break;
       default:
-        aircraftSelect(event, 'dep', entry.cid, 'fid');
+        dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.fid));
         break;
 
     }
   }
 
-  const isSelected = (cid: string, field: string) => {
-    return asel?.cid === cid && asel?.field === field;
+  const isSelected = (cid: string, field: depRowFieldEnum): boolean => {
+    return asel?.window === windowEnum.dep && asel?.cid === cid && asel?.field === field;
   }
 
   return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
@@ -128,7 +125,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
            style={{minWidth: entry.showFreeText ? '1200px' : 0}}
       >
         <EdstTooltip title={Tooltips.depFlightId}>
-          <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
+          <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, depRowFieldEnum.fid) ? 'selected' : ''}`}
                onMouseDown={handleFidClick}
                onContextMenu={(event) => event.preventDefault()}
           >
@@ -149,16 +146,16 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depType}>
           <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'type')}
+        ${isSelected(entry.cid, depRowFieldEnum.type) ? 'selected' : ''}`}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.type))}
           >
             {`${entry.type}/${entry.equipment}`}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depAlt}>
           <div className={`body-col alt`}>
-            <div className={`${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
-                 onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'alt')}
+            <div className={`${isSelected(entry.cid, depRowFieldEnum.alt) ? 'selected' : ''}`}
+                 onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.alt, null, windowEnum.altitudeMenu))}
             >
               {entry.altitude}
             </div>
@@ -166,24 +163,24 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depCode}>
           <div className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'code')}
+          ${isSelected(entry.cid, depRowFieldEnum.code) ? 'selected' : ''}`}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.code))}
           >
             {entry.beacon}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depRoute}>
-          <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
+          <div className={`body-col route hover ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, windowEnum.routeMenu))}
           >
           <span>
               <span
-                className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+                className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
                 {entry.dep}
               </span>
             {route}
             {pendingAar && !onAar &&
-            <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+            <span className={`amendment-2 ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
               {`[${pendingAar}]`}
               </span>}
             {route?.slice(-1) !== '.' && '..'}{entry.dest}
@@ -200,8 +197,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
       >
         <div className="free-text-row dep-free-text-row">
           <input
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
+            onFocus={() => dispatch(setInputFocused(true))}
+            onBlur={() => dispatch(setInputFocused(false))}
             value={freeTextContent}
             onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
         </div>
