@@ -61,7 +61,6 @@ export const amendEntryThunk = createAsyncThunk(
       planData.previous_route_data = depCidList.includes(cid) ? currentEntry?.route_data : currentEntry?._route_data;
     }
     planData.callsign = currentEntry.callsign;
-    console.log(planData);
     return updateEdstEntry(planData)
       .then(response => response.json())
       .then(updatedEntry => {
