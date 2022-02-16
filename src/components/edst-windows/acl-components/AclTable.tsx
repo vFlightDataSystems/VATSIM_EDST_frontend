@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
@@ -7,53 +7,20 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
 import { useAppSelector } from '../../../redux/hooks';
-
+import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
 
 export function AclTable() {
   const sortData = useAppSelector((state) => state.acl.sortData);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
 
-  const [anyHolding, setAnyHolding] = useState(false);
-  const [anyAssignedHeading, setAnyAssignedHeading] = useState(false);
-  const [anyAssignedSpeed, setAnyAssignedSpeed] = useState(false);
+  const anyHolding = useAppSelector(anyHoldingSelector);
+  const anyAssignedHeading = useAppSelector(anyAssignedHdgSelector);
+  const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
   const [hidden, setHidden] = useState<string[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
   const cidList = useAppSelector(state => state.acl.cidList);
   const spaList = useAppSelector(state => state.acl.spaList);
   const entries = useAppSelector(state => state.entries);
-
-  // check whether any aircraft in the list is holding
-  const checkHolding = () => {
-    for (let cid of cidList) {
-      if (entries[cid]?.hold_data) {
-        setAnyHolding(true);
-        return;
-      }
-    }
-    setAnyHolding(false);
-  };
-  // check whether any aircraft in the list has an assigned heading or a speed
-  // will display a * next to Hdg or Spd if the column is hidden, respectively
-  const checkAssignedHdgSpd = () => {
-    let anyHdg = false;
-    let anySpd = false;
-    for (let cid of cidList) {
-      if (entries[cid]?.hdg || entries[cid]?.scratch_hdg) {
-        anyHdg = true;
-      }
-      if (entries[cid]?.spd || entries[cid]?.scratch_spd) {
-        anySpd = true;
-      }
-      if (anySpd && anyHdg) break;
-    }
-    setAnyAssignedHeading(anyHdg);
-    setAnyAssignedSpeed(anySpd);
-  };
-
-  useEffect(() => {
-    checkHolding();
-    checkAssignedHdgSpd();
-  });
 
   const toggleHideColumn = (name: string) => {
     let hiddenCopy = hidden.slice(0);

@@ -3,8 +3,10 @@ import '../css/boundary-selector.scss';
 import {EdstButton} from "./resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {toggleSector} from "../redux/slices/sectorSlice";
+import {setShowSectorSelector} from "../redux/slices/appSlice";
+import {refreshEntriesThunk} from "../redux/slices/entriesSlice";
 
-export const BoundarySelector: React.FC<{ toggle: (v: boolean) => void }> = ({toggle}) => {
+export const SectorSelector: React.FC = () => {
   const dispatch = useAppDispatch();
   const sectors = useAppSelector((state) => state.sectorData.sectors);
 
@@ -29,7 +31,8 @@ export const BoundarySelector: React.FC<{ toggle: (v: boolean) => void }> = ({to
         </form>
         {/*<button className="close-btn" onClick={() => props.changer(false)}>Close</button>*/}
         <EdstButton className="no-select" content="Save" onMouseDown={() => {
-          toggle(false);
+          dispatch(refreshEntriesThunk());
+          dispatch(setShowSectorSelector(false));
         }}/>
       </div>
     </div>

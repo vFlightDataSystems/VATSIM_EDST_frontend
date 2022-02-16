@@ -16,7 +16,7 @@ export type EntriesStateType = {
 
 const initialState = {};
 
-export const entriesRefresh: any = createAsyncThunk(
+export const refreshEntriesThunk: any = createAsyncThunk(
   'entries/entriesRefresh',
   async (_args: void, thunkAPI) => {
     let newEntries: EntriesStateType = {};
@@ -64,7 +64,7 @@ export const entriesRefresh: any = createAsyncThunk(
       }
       newEntries[newEntry.cid] = currentEntry;
     }
-    return new Promise<EntriesStateType>(function (resolve, reject) {
+    return new Promise<EntriesStateType>(function (resolve) {
       resolve(newEntries);
     });
   }
@@ -77,12 +77,12 @@ const entriesSlice = createSlice({
     updateEntry(state: EntriesStateType, action) {
       _.assign(state[action.payload.cid], action.payload.data);
     },
-    setEntry(state: EntriesStateType, action) {
+    setEntry(state: EntriesStateType, action: { payload: EdstEntryType }) {
       state[action.payload.cid] = action.payload;
     }
   },
   extraReducers: {
-    [entriesRefresh.fulfilled]: (state: any, action: any) => {
+    [refreshEntriesThunk.fulfilled]: (state: any, action: { payload: EntriesStateType }) => {
       return {...state, ...action.payload};
     }
   }
@@ -90,3 +90,7 @@ const entriesSlice = createSlice({
 
 export const {setEntry, updateEntry} = entriesSlice.actions;
 export default entriesSlice.reducer;
+
+export const entriesSelector = (state: RootState) => state.entries;
+export const entrySelector = (cid: string) => (state: RootState) => state.entries[cid];
+export const aselEntrySelector = (state: RootState) => state.app.asel ? state.entries[state.app.asel.cid] : null;

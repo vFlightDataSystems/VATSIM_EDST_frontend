@@ -7,7 +7,7 @@ import {
   polygonToLineString
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {EdstEntryType, FixProps} from "./types";
+import {EdstEntryType, FixType} from "./types";
 import {toast} from "./components/toast/ToastManager";
 
 export const REMOVAL_TIMEOUT = 120000;
@@ -39,7 +39,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(routeData: Array<FixProps> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
+export function routeWillEnterAirspace(routeData: Array<FixType> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
   if (routeData === null) {
     return false;
   }

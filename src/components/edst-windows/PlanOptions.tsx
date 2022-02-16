@@ -2,27 +2,27 @@ import React, {useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
-import {AselType} from "../../types";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {useAppSelector} from "../../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {windowEnum} from "../../enums";
+import {deleteAclCid} from "../../redux/slices/aclSlice";
+import {deleteDepCid} from "../../redux/slices/depSlice";
+import {openWindowThunk} from "../../redux/thunks";
+import {aselSelector, AselType, closeWindow, setAsel, windowPositionSelector} from "../../redux/slices/appSlice";
 
-interface PlanOptionsProps {
-  asel: AselType;
-  pos: { x: number, y: number };
-  clearAsel: () => void;
-  closeWindow: () => void;
-}
-
-export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) => {
-  const {startDrag, stopDrag, deleteEntry, openMenu} = useContext(EdstContext);
+export const PlanOptions: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const asel = useAppSelector(aselSelector) as AselType;
+  const pos = useAppSelector(windowPositionSelector(windowEnum.planOptions));
+  const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
   const entry = useAppSelector(state => state.entries[asel.cid]);
-  const dep = asel.window === 'dep';
+  const dep = asel.window === windowEnum.dep;
 
-  return (<div
+  return pos && (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className="options-menu plan no-select"
@@ -31,7 +31,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseDown={(event) => startDrag(event, ref, windowEnum.planOptions)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Plan Options Menu
@@ -45,7 +45,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
             className="options-col hover"
             content="Altitude..."
             title={Tooltips.planOptionsAlt}
-            onMouseDown={() => openMenu(ref.current, 'alt-menu', true)}
+            onMouseDown={() => dispatch(openWindowThunk(windowEnum.altitudeMenu, ref.current, windowEnum.planOptions, true))}
           />
         </div>
         {!dep && <div className="options-row">
@@ -61,7 +61,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
             className="options-col hover"
             content="Route..."
             title={Tooltips.planOptionsRoute}
-            onMouseDown={() => openMenu(ref.current, 'route-menu', true)}
+            onMouseDown={() => dispatch(openWindowThunk(windowEnum.routeMenu, ref.current, windowEnum.planOptions, true))}
           />
         </div>
         <div className="options-row">
@@ -70,7 +70,7 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
             content="Previous Route"
             title={Tooltips.planOptionsPrevRoute} // @ts-ignore
             disabled={entry?.previous_route === undefined}
-            onMouseDown={() => openMenu(ref.current, 'prev-route-menu', true)}
+            onMouseDown={() => dispatch(openWindowThunk(windowEnum.prevRouteMenu, ref.current, windowEnum.planOptions, true))}
           />
         </div>
         {!dep && <div className="options-row">
@@ -109,15 +109,16 @@ export const PlanOptions: React.FC<PlanOptionsProps> = ({asel, pos, ...props}) =
             content="Delete"
             title={Tooltips.planOptionsDelete}
             onMouseDown={() => {
-              deleteEntry(dep ? 'dep' : 'acl', asel?.cid);
-              props.clearAsel();
-              props.closeWindow();
+
+              dispatch(asel.window === windowEnum.acl ? deleteAclCid(asel.cid) : deleteDepCid(asel.cid));
+              dispatch(setAsel(null));
+              dispatch(closeWindow(windowEnum.planOptions));
             }}
           />
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={props.closeWindow}/>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.planOptions))}/>
           </div>
         </div>
       </div>

@@ -7,25 +7,27 @@ import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/slices/aclSlice";
 import {updateEntry} from "../../redux/slices/entriesSlice";
+import {aclCleanup, addAclEntry, openWindowThunk} from "../../redux/thunks";
+import {windowEnum} from "../../enums";
+import {
+  closeAllWindows,
+  mcaCommandStringSelector,
+  setInputFocused,
+  setMcaCommandString,
+  setMraMessage,
+  windowPositionSelector
+} from "../../redux/slices/appSlice";
 
 interface MessageComposeAreaProps {
-  pos: { x: number, y: number };
-  mca_command_string: string;
-  setMcaCommandString: (s: string) => void;
-  aclCleanup: () => void;
-  closeAllWindows: () => void;
+  setMcaInputRef: (ref: React.RefObject<any> | null) => void;
 }
 
 
-export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
-  {
-    mca_command_string,
-    setMcaCommandString,
-    pos,
-    ...props
-  }) => {
+export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
   const [response, setResponse] = useState<string | null>(null);
   const [mcaFocused, setMcaFocused] = useState(false);
+  const mcaCommandString = useAppSelector(mcaCommandStringSelector);
+  const pos = useAppSelector(windowPositionSelector(windowEnum.edstMca));
   const ref = useRef(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const aclCidList = useAppSelector(state => state.acl.cidList);
@@ -34,12 +36,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
   const dispatch = useAppDispatch();
 
   const {
-    startDrag,
-    setMcaInputRef,
-    setInputFocused,
-    openWindow,
-    addEntry,
-    setMraMessage
+    startDrag
   } = useContext(EdstContext);
 
   const entries = useAppSelector(state => state.entries);
@@ -78,19 +75,19 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
 
   const flightplanReadout = (fid: string) => {
     const now = new Date();
-    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
     const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
         + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route.replace(/^\.+/, '')}`;
-      setMraMessage(msg);
+      dispatch(setMraMessage(msg));
     }
   };
 
   const parseCommand = () => {
-    const [command, ...args] = mca_command_string.split(/\s+/);
+    const [command, ...args] = mcaCommandString.split(/\s+/);
     // console.log(command, args)
     if (command.match(/\/\/\w+/)) {
       toggleVci(command.slice(2));
@@ -104,26 +101,26 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
         case 'UU':
           switch (args.length) {
             case 0:
-              openWindow('acl');
+              dispatch(openWindowThunk(windowEnum.acl));
               setResponse(`ACCEPT\nD POS KEYBD`);
               break;
             case 1:
               switch (args[0]) {
                 case 'C':
-                  props.aclCleanup();
+                  dispatch(aclCleanup);
                   break;
                 case 'D':
-                  openWindow('dep');
+                  dispatch(openWindowThunk(windowEnum.dep));
                   break;
                 case 'P':
-                  openWindow('acl');
+                  dispatch(openWindowThunk(windowEnum.acl));
                   dispatch(setAclManualPosting(!manualPosting));
                   break;
                 case 'X':
-                  props.closeAllWindows();
+                  dispatch(closeAllWindows());
                   break;
                 default:
-                  addEntry(null, args[0]);
+                  dispatch(addAclEntry(args[0]));
                   break;
               }
               setResponse(`ACCEPT\nD POS KEYBD`);
@@ -133,31 +130,31 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
                 toggleHighlightEntry(args[1]);
                 setResponse(`ACCEPT\nD POS KEYBD`);
               } else {
-                setResponse(`REJECT\n${mca_command_string}`);
+                setResponse(`REJECT\n${mcaCommandString}`);
               }
               break;
             default: // TODO: give error msg
-              setResponse(`REJECT\n${mca_command_string}`);
+              setResponse(`REJECT\n${mcaCommandString}`);
           }
           break;
         case 'FR':
           if (args.length === 1) {
             flightplanReadout(args[0]);
-            setResponse(`ACCEPT\nREADOUT\n${mca_command_string}`);
+            setResponse(`ACCEPT\nREADOUT\n${mcaCommandString}`);
           } else {
-            setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mca_command_string}`);
+            setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
           break;
         default: // better error msg
-          setResponse(`REJECT\n\n${mca_command_string}`);
+          setResponse(`REJECT\n\n${mcaCommandString}`);
       }
     }
-    setMcaCommandString('');
+    dispatch(setMcaCommandString(''));
   };
 
   const handleChange = (event: React.ChangeEvent<any>) => {
     event.preventDefault();
-    setMcaCommandString(event.target.value.toUpperCase());
+    dispatch(setMcaCommandString(event.target.value.toUpperCase()));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
@@ -166,7 +163,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     }
     switch (event.key) {
       case "Enter":
-        if (mca_command_string.length > 0) {
+        if (mcaCommandString.length > 0) {
           parseCommand();
         } else {
           setResponse('');
@@ -180,26 +177,26 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     }
   };
 
-  return (<div className="floating-window mca"
-               ref={ref}
-               id="edst-mca"
-               style={{left: pos.x + "px", top: pos.y + "px"}}
-               onMouseDown={(event) => startDrag(event, ref)}
+  return pos && (<div className="floating-window mca"
+                      ref={ref}
+                      id="edst-mca"
+                      style={{left: pos.x + "px", top: pos.y + "px"}}
+                      onMouseDown={(event) => startDrag(event, ref, windowEnum.edstMca)}
       // onMouseEnter={() => setInputFocus()}
     >
       <div className="mca-input-area">
         <input
           ref={inputRef}
           onFocus={() => {
-            setInputFocused(true);
+            dispatch(setInputFocused(true));
             setMcaFocused(true);
           }}
           onBlur={() => {
-            setInputFocused(false);
+            dispatch(setInputFocused(false));
             setMcaFocused(false);
           }}
           tabIndex={mcaFocused ? -1 : undefined}
-          value={mca_command_string}
+          value={mcaCommandString}
           onChange={handleChange}
           onKeyDownCapture={handleKeyDown}
         />

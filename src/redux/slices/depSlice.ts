@@ -1,11 +1,10 @@
-import {AselType} from "../../types";
 import {createSlice} from "@reduxjs/toolkit";
+import {RootState} from "../store";
 
 export type DepStateType = {
   cidList: string[],
   deletedList: string[],
-  spaList: string[],
-  asel: AselType | null,
+  spaList: string[]
   sortData: { name: string, sector: boolean },
   manualPosting: boolean
 };
@@ -14,7 +13,6 @@ const initialState = {
   cidList: [],
   deletedList: [],
   spaList: [],
-  asel: null,
   sortData: {name: 'ACID', sector: false},
   manualPosting: true
 };
@@ -34,7 +32,7 @@ const depSlice = createSlice({
     },
     setDepCidList(state: DepStateType, action) {
       state.cidList = action.payload.cidList;
-      state.deletedList = action.payload.deletedList
+      state.deletedList = action.payload.deletedList;
     },
     setDepSort(state: DepStateType, action) {
       state.sortData = action.payload;
@@ -45,8 +43,7 @@ const depSlice = createSlice({
     toggleDepSpa(state: DepStateType, action) {
       if (!state.spaList.includes(action.payload)) {
         state.spaList.push(action.payload);
-      }
-      else {
+      } else {
         const spaListSet = new Set(state.spaList);
         spaListSet.delete(action.payload);
         state.spaList = [...spaListSet];
@@ -55,5 +52,14 @@ const depSlice = createSlice({
   }
 });
 
-export const {addDepCid, deleteDepCid, setDepCidList, setDepSort, setDepManualPosting, toggleDepSpa} = depSlice.actions;
+export const {
+  addDepCid,
+  deleteDepCid,
+  setDepCidList,
+  setDepSort,
+  setDepManualPosting,
+  toggleDepSpa
+} = depSlice.actions;
 export default depSlice.reducer;
+
+export const depSpaListSelector = (state: RootState) => state.dep.spaList;

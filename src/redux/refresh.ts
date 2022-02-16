@@ -8,7 +8,7 @@ import {
 import _ from "lodash";
 import {depFilter, entryFilter} from "../filters";
 
-export const refreshEntry = (new_entry: EdstEntryType, state: RootState) => {
+export const refreshEntry = (new_entry: EdstEntryType, state: RootState): EdstEntryType => {
   const {sectors, selectedSectors} = state.sectorData;
   const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
   const pos: [number, number] = [new_entry.flightplan.lon, new_entry.flightplan.lat];
