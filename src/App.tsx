@@ -290,7 +290,7 @@ class App extends React.Component<Props, State> {
             startDrag: this.startDrag,
             stopDrag: this.stopDrag
           }}>
-            {windows[windowEnum.acl].open ? <Acl/> : null}
+            {windows[windowEnum.acl].open && <Acl/>}
             {windows[windowEnum.dep].open && <Dep/>}
             {windows[windowEnum.plansDisplay].open && <PlansDisplay/>}
             {windows[windowEnum.edstStatus].open && <Status/>}
