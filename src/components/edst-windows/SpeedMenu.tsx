@@ -8,7 +8,7 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {aclRowFieldEnum, windowEnum} from "../../enums";
 import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {EdstEntryType} from "../../types";
@@ -30,6 +30,7 @@ export const SpeedMenu: React.FC = () => {
   const [sign, setSign] = useState('');
   const [amend, setAmend] = useState(true);
   const ref = useRef(null);
+
   useEffect(() => {
     setFocused(false);
     setSpeed(280);
@@ -37,6 +38,12 @@ export const SpeedMenu: React.FC = () => {
     setSign('');
     setAmend(true);
   }, [asel.cid]);
+
+  useEffect(() => {
+    if (asel.field !== aclRowFieldEnum.spd) {
+      dispatch(closeWindow(windowEnum.headingMenu));
+    }
+  }, [asel?.field]);
 
   const handleScroll = (e: React.WheelEvent) => {
     const newDeltaY = Math.min(Math.max((speed - 400)*10, deltaY + e.deltaY), (speed - 160)*10);

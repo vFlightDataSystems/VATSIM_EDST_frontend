@@ -8,7 +8,7 @@ import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
 import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {EdstEntryType} from "../../types";
@@ -28,13 +28,21 @@ export const HeadingMenu: React.FC = () => {
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [amend, setAmend] = useState(true);
+  const ref = useRef(null);
+
   useEffect(() => {
     setFocused(false);
     setHeading(280);
     setDeltaY(0);
     setAmend(true);
   }, [asel]);
-  const ref = useRef(null);
+
+  useEffect(() => {
+    if (asel.field !== aclRowFieldEnum.hdg) {
+      dispatch(closeWindow(windowEnum.headingMenu));
+    }
+  }, [asel?.field]);
+
 
   const handleMouseDown = (event: React.MouseEvent, value: number, direction: string | null = null) => {
     const valueStr = direction === null ? `${amend ? 'H' : ''}${value}`
