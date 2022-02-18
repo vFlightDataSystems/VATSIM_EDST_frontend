@@ -41,7 +41,7 @@ export const SpeedMenu: React.FC = () => {
 
   useEffect(() => {
     if (asel.field !== aclRowFieldEnum.spd) {
-      dispatch(closeWindow(windowEnum.headingMenu));
+      dispatch(closeWindow(windowEnum.speedMenu));
     }
   }, [asel?.field]);
 
