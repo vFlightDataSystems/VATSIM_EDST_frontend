@@ -44,10 +44,10 @@ export const AppFunction: React.FC = () => {
   const inputFocused = useAppSelector((state) => state.app.inputFocused);
   const dragging = useAppSelector((state) => state.app.dragging);
 
+  const [draggingWindowName, setDraggingWindowName] = useState<windowEnum | null>(null);
   const [relativePos, setRelativePos] = useState<{ x: number, y: number } | null>(null);
   const [updateIntervalId, setUpdateIntervalId] = useState<NodeJS.Timer | null>(null);
   const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
-  const [draggingRef, setDraggingRef] = useState<(React.RefObject<HTMLDivElement> & { current: { windowName: windowEnum } }) | null>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
   const outlineRef = React.useRef<HTMLDivElement>(null);
@@ -79,53 +79,51 @@ export const AppFunction: React.FC = () => {
       width: ref.current.clientWidth
     };
     if (outlineRef.current) {
-      ref.current.windowName = window;
-      outlineRef.current.addEventListener('mousemove', draggingHandler);
-      setDraggingRef({...ref});
+      const draggingHandler = (event: MouseEvent) => {
+        console.log(draggingWindowName, dragging)
+        if (ref && relativePos && draggingWindowName && dragging) {
+          const relX = event.pageX - relativePos.x;
+          const relY = event.pageY - relativePos.y;
+          const ppos = windows[draggingWindowName].position;
+          console.log(ppos);
+          if (!ppos) {
+            return;
+          }
+          setDragPreviewStyle({
+            left: ppos.x + relX,
+            top: ppos.y + relY,
+            position: "absolute",
+            zIndex: 999,
+            height: ref.current.clientHeight,
+            width: ref.current.clientWidth
+          });
+        }
+      };
+      // we need to remove the eventListener, but we are not...
+      // function components suck for dynamic refs...
+      setDraggingWindowName(window);
       setRelativePos(relativePos);
       setDragPreviewStyle(style);
       setDraggingCursorHide(DRAGGING_HIDE_CURSOR.includes(ref.current.id));
       dispatch(setDragging(true));
-    }
-  };
-
-  const draggingHandler = (event: MouseEvent) => {
-    if (relativePos && draggingRef?.current?.windowName) {
-      const relX = event.pageX - relativePos.x;
-      const relY = event.pageY - relativePos.y;
-      const ppos = windows[draggingRef.current.windowName as windowEnum].position;
-      console.log(ppos);
-      if (!ppos) {
-        return;
-      }
-      setDragPreviewStyle({
-        left: ppos.x + relX,
-        top: ppos.y + relY,
-        position: "absolute",
-        zIndex: 999,
-        height: draggingRef.current.clientHeight,
-        width: draggingRef.current.clientWidth
-      });
+      outlineRef.current.addEventListener('mousemove',  draggingHandler);
     }
   };
 
   const stopDrag = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (dragging && relativePos && draggingRef) {
+    if (dragging && relativePos && draggingWindowName) {
       const relX = event.pageX - relativePos.x;
       const relY = event.pageY - relativePos.y;
-      const ppos = windows[draggingRef.current.windowName as windowEnum].position;
+      const ppos = windows[draggingWindowName].position;
       if (!ppos) {
         return;
       }
       dispatch(setWindowPosition({
-        window: draggingRef.current.windowName as windowEnum,
+        window: draggingWindowName,
         pos: {x: ppos.x + relX, y: ppos.y + relY}
       }));
-      if (outlineRef.current) {
-        outlineRef.current.removeEventListener("mousemove", draggingHandler);
-      }
       dispatch(setDragging(false));
-      setDraggingRef(null);
+      setDraggingWindowName(null);
       setDragPreviewStyle(null);
       setDraggingCursorHide(false);
     }
@@ -191,14 +189,14 @@ const initialState = {
   draggingCursorHide: null,
   draggingRef: null,
   dragPreviewStyle: null,
-  rel: null,
+  relativePos: null,
 };
 
 export interface State {
   draggingCursorHide: boolean | null;
   draggingRef: React.RefObject<HTMLDivElement> & { current: { windowName?: windowEnum } } | null;
   dragPreviewStyle: any | null;
-  rel: { x: number, y: number } | null;
+  relativePos: { x: number, y: number } | null;
 }
 
 type Props = AppStateType & {
@@ -256,18 +254,18 @@ class App extends React.Component<Props, State> {
     this.props.dispatch(setDragging(true));
     this.setState({
       draggingRef: ref,
-      rel: rel,
+      relativePos: rel,
       dragPreviewStyle: style,
       draggingCursorHide: DRAGGING_HIDE_CURSOR.includes(ref.current.id)
     });
   };
 
   draggingHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-    const {rel, draggingRef} = this.state;
+    const {relativePos, draggingRef} = this.state;
     const {windows, dragging} = this.props;
-    if (dragging && rel && draggingRef?.current) {
-      const relX = event.pageX - rel.x;
-      const relY = event.pageY - rel.y;
+    if (dragging && relativePos && draggingRef?.current) {
+      const relX = event.pageX - relativePos.x;
+      const relY = event.pageY - relativePos.y;
       const ppos = windows[draggingRef.current.windowName as windowEnum].position;
       if (!ppos) {
         return;
@@ -286,11 +284,11 @@ class App extends React.Component<Props, State> {
   };
 
   stopDrag = (event: React.MouseEvent<HTMLDivElement>) => {
-    const {rel, draggingRef} = this.state;
+    const {relativePos, draggingRef} = this.state;
     const {windows, dragging} = this.props;
-    if (dragging && rel && draggingRef?.current) {
-      const relX = event.pageX - rel.x;
-      const relY = event.pageY - rel.y;
+    if (dragging && relativePos && draggingRef?.current) {
+      const relX = event.pageX - relativePos.x;
+      const relY = event.pageY - relativePos.y;
       const ppos = windows[draggingRef.current.windowName as windowEnum].position;
       if (!ppos) {
         return;
@@ -299,10 +297,13 @@ class App extends React.Component<Props, State> {
         window: draggingRef.current.windowName as windowEnum,
         pos: {x: ppos.x + relX, y: ppos.y + relY}
       }));
+      if (this.outlineRef?.current) {
+        this.outlineRef.current.removeEventListener('mousemove', this.draggingHandler);
+      }
       this.props.dispatch(setDragging(false));
       this.setState({
         draggingRef: null,
-        rel: null,
+        relativePos: null,
         dragPreviewStyle: null,
         draggingCursorHide: false,
       });
