@@ -11,7 +11,7 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
@@ -56,6 +56,12 @@ export const RouteMenu: React.FC = () => {
     setRouteInput(dep ? entry.dep + route : route);
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
   }, [asel.window, entry._route, entry.dep, entry.reference_fix, entry.route]);
+
+  useEffect(() => {
+    if (asel.field !== aclRowFieldEnum.route && asel.field !== depRowFieldEnum.route) {
+      dispatch(closeWindow(windowEnum.routeMenu));
+    }
+  }, [asel?.field]);
 
 
   const clearedReroute = (reroute_data: any) => {

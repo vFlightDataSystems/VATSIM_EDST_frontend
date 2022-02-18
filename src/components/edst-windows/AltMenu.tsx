@@ -5,7 +5,7 @@ import '../../css/windows/alt-menu-styles.scss';
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
@@ -51,6 +51,12 @@ export const AltMenu: React.FC = () => {
     }
     dispatch(closeWindow(windowEnum.altitudeMenu));
   };
+
+  useEffect(() => {
+    if (asel.field !== aclRowFieldEnum.alt && asel.field !== depRowFieldEnum.alt) {
+      dispatch(closeWindow(windowEnum.altitudeMenu));
+    }
+  }, [asel?.field]);
 
   const handleTempAltClick = (alt: number) => {
     if (selected === 'amend') {
