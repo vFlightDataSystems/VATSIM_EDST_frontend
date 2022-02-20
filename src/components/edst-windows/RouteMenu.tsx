@@ -33,7 +33,7 @@ export const RouteMenu: React.FC = () => {
   const pos = useAppSelector(windowPositionSelector(windowEnum.routeMenu));
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
-  const currentRouteFixes: Array<any> = entry?._route_data?.map(fix => fix.name) ?? [];
+  const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState(asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, ''));
@@ -184,6 +184,7 @@ export const RouteMenu: React.FC = () => {
           <div className="options-col">
             <EdstButton content="Trial Plan" selected={trialPlan} onMouseDown={() => setTrialPlan(true)}
                         title={Tooltips.routeMenuPlanData}
+                        disabled={asel.window === windowEnum.dep}
             />
           </div>
           <EdstTooltip className="options-col img"

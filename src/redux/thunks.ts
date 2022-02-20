@@ -1,6 +1,4 @@
 import {RootState} from "./store";
-import {addAclCid, setAclLists} from "./slices/aclSlice";
-import {addDepCid} from "./slices/depSlice";
 import {
   aclAselActionTriggerEnum,
   aclRowFieldEnum,
@@ -9,8 +7,7 @@ import {
   windowEnum
 } from "../enums";
 import {REMOVAL_TIMEOUT} from "../lib";
-import _ from "lodash";
-import {updateEntry} from "./slices/entriesSlice";
+import {deleteAclEntry, updateEntry} from "./slices/entriesSlice";
 import {WindowPositionType} from "../types";
 import {closeWindow, openWindow, setAsel, setWindowPosition} from "./slices/appSlice";
 import {addTrialPlan, planCleanup, PlanType} from "./slices/planSlice";
@@ -23,11 +20,11 @@ function addEntryThunk(fid: string, window: windowEnum) {
     if (cid) {
       switch (window) {
         case windowEnum.acl:
-          dispatch(addAclCid(cid));
+          dispatch(addAclEntry(cid));
           dispatch(setAsel({cid: cid, field: aclRowFieldEnum.fid, window: windowEnum.acl}));
           break;
         case windowEnum.dep:
-          dispatch(addDepCid(cid));
+          dispatch(addDepEntry(cid));
           dispatch(setAsel({cid: cid, field: depRowFieldEnum.fid, window: windowEnum.dep}));
           break;
         default:
@@ -48,14 +45,12 @@ export function addDepEntry(fid: string) {
 export function aclCleanup(dispatch: any, getState: () => RootState) {
   const state = getState();
   let {entries} = state;
-  const {cidList, deletedList} = state.acl;
   const now = new Date().getTime();
-  let aclCidListCopy, aclDeletedListCopy;
-  const pendingRemovalCidList = cidList.filter(cid => (now - (entries[cid]?.pending_removal ?? now) > REMOVAL_TIMEOUT));
-
-  aclCidListCopy = _.difference(cidList, pendingRemovalCidList);
-  aclDeletedListCopy = deletedList.concat(pendingRemovalCidList);
-  dispatch(setAclLists({cidList: [...aclCidListCopy], deletedList: [...new Set(aclDeletedListCopy)]}));
+  const pendingRemovalEntryList = Object.values(entries).filter(entry => entry.aclDisplay
+    && (now - (entry?.pending_removal ?? now) > REMOVAL_TIMEOUT));
+  for (let entry of pendingRemovalEntryList) {
+    dispatch(deleteAclEntry(entry.cid));
+  }
 }
 
 const aircraftSelect = (event: any & Event,
@@ -163,13 +158,13 @@ export function depAircraftSelect(event: any & Event, cid: string, field: depRow
 }
 
 export function planCleanupThunk() {
-  return (dispatch: any, getState: () => RootState) => {
+  return (dispatch: any) => {
     dispatch(planCleanup());
   };
 }
 
 export function openWindowThunk(window: windowEnum, ref?: EventTarget | any, triggeredFromWindow?: windowEnum, plan: boolean = false) {
-  return (dispatch: any, getState: () => RootState) => {
+  return (dispatch: any) => {
     if (ref) {
       let windowPos: WindowPositionType;
       const {x, y, height, width} = ref.getBoundingClientRect();
@@ -232,8 +227,8 @@ export function openWindowThunk(window: windowEnum, ref?: EventTarget | any, tri
 }
 
 export function addTrialPlanThunk(plan: PlanType) {
-  return (dispatch: any, getState: () => RootState) => {
+  return (dispatch: any) => {
     dispatch(addTrialPlan(plan));
     dispatch(openWindow({window: windowEnum.plansDisplay}));
-  }
+  };
 }

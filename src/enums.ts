@@ -23,6 +23,17 @@ export enum planRowFieldEnum {
   fid
 }
 
+export enum sortOptionsEnum {
+  acid = "ACID",
+  boundary_time = "Boundary Time",
+  conflict_status = "Conflict Status",
+  conflict_time = "Conflict Time",
+  destination = "Destination",
+  sector_by_sector = "Sector-by-Sector",
+  origin = "Origin",
+  p_time = "P Time"
+}
+
 export enum aclAselActionTriggerEnum {
   setVciNeutral,
   toggleHoldInfo

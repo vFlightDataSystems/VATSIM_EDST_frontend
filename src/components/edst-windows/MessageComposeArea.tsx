@@ -30,8 +30,6 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const pos = useAppSelector(windowPositionSelector(windowEnum.edstMca));
   const ref = useRef(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const aclCidList = useAppSelector(state => state.acl.cidList);
-  const depCidList = useAppSelector(state => state.dep.cidList);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const dispatch = useAppDispatch();
 
@@ -64,10 +62,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      if (aclCidList.includes(entry.cid)) {
+      if (entry.aclData.display) {
         dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
       }
-      if (depCidList.includes(entry.cid)) {
+      if (entry.depData.display) {
         dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
       }
     }

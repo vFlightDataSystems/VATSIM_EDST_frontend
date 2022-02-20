@@ -7,10 +7,9 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {windowEnum} from "../../enums";
-import {deleteAclCid} from "../../redux/slices/aclSlice";
-import {deleteDepCid} from "../../redux/slices/depSlice";
 import {openWindowThunk} from "../../redux/thunks";
 import {aselSelector, AselType, closeWindow, setAsel, windowPositionSelector} from "../../redux/slices/appSlice";
+import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
 
 export const PlanOptions: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -110,7 +109,7 @@ export const PlanOptions: React.FC = () => {
             title={Tooltips.planOptionsDelete}
             onMouseDown={() => {
 
-              dispatch(asel.window === windowEnum.acl ? deleteAclCid(asel.cid) : deleteDepCid(asel.cid));
+              dispatch(asel.window === windowEnum.acl ? deleteAclEntry(asel.cid) : deleteDepEntry(asel.cid));
               dispatch(setAsel(null));
               dispatch(closeWindow(windowEnum.planOptions));
             }}

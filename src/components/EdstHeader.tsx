@@ -36,9 +36,10 @@ export const EdstHeader: React.FC = () => {
   const disabledHeaderButtons = useAppSelector((state) => state.app.disabledHeaderButtons);
 
   const sectorId = useAppSelector((state) => state.sectorData.sectorId);
-  const aclNum = useAppSelector(state => state.acl.cidList.length);
-  const depNum = useAppSelector(state => state.dep.cidList.length);
-  const sigNum = 0, notNum = 0, giNum = 0;
+  const entries = useAppSelector(state => state.entries);
+  const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
+  const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
+  const sigLen = 0, notLen = 0, giLen = 0;
 
   return (
     <div className="edst-header">
@@ -54,13 +55,13 @@ export const EdstHeader: React.FC = () => {
             MORE
           </button>
           <EdstHeaderButton open={windows[windowEnum.acl].open}
-                            content={`ACL ${aclNum.toString().padStart(2, '0')}`}
+                            content={`ACL ${aclLen.toString().padStart(2, '0')}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.acl)}
                             title={Tooltips.acl}
                             onMouseDown={() => dispatch(openWindow({window: windowEnum.acl}))}
           />
           <EdstHeaderButton open={windows[windowEnum.dep].open}
-                            content={`DEP ${depNum.toString().padStart(2, '0')}`}
+                            content={`DEP ${depLen.toString().padStart(2, '0')}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.dep)}
                             title={Tooltips.dep}
                             onMouseDown={() => dispatch(openWindow({window: windowEnum.dep}))}
@@ -84,19 +85,19 @@ export const EdstHeader: React.FC = () => {
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.wx))}
           />
           <EdstHeaderButton open={windows[windowEnum.sigmets].open}
-                            content={`SIG ${sigNum > 0 ? sigNum.toString().padStart(2, '0') : ''}`}
+                            content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : ''}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sig)}
             // title={Tooltips.sig}
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.sigmets))}
           />
           <EdstHeaderButton open={windows[windowEnum.notams].open}
-                            content={`NOT ${notNum > 0 ? notNum.toString().padStart(2, '0') : ''}`}
+                            content={`NOT ${notLen > 0 ? notLen.toString().padStart(2, '0') : ''}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.not)}
             // title={Tooltips.not}
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.notams))}
           />
           <EdstHeaderButton open={windows[windowEnum.gi].open}
-                            content={`GI ${giNum > 0 ? giNum.toString().padStart(2, '0') : ''}`}
+                            content={`GI ${giLen > 0 ? giLen.toString().padStart(2, '0') : ''}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.gi)}
             // title={Tooltips.gi}
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.gi))}

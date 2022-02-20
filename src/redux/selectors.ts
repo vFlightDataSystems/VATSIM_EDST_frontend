@@ -1,10 +1,9 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {entriesSelector} from "./slices/entriesSlice";
-import {aclCidListSelector} from "./slices/aclSlice";
 
-export const anyHoldingSelector = createSelector([entriesSelector, aclCidListSelector], (entries, cidList) => {
-  for (let cid of cidList) {
-    if (entries[cid]?.hold_data) {
+export const anyHoldingSelector = createSelector([entriesSelector], (entries) => {
+  for (let entry of Object.values(entries)) {
+    if (entry?.hold_data && entry?.aclDisplay) {
       return true
     }
   }
@@ -14,18 +13,18 @@ export const anyHoldingSelector = createSelector([entriesSelector, aclCidListSel
 // check whether any aircraft in the list has an assigned heading or a speed
 // will display a * next to Hdg or Spd if the column is hidden, respectively
 
-export const anyAssignedHdgSelector = createSelector([entriesSelector, aclCidListSelector], (entries, cidList) => {
-  for (let cid of cidList) {
-    if (entries[cid]?.hdg || entries[cid]?.scratch_hdg) {
+export const anyAssignedHdgSelector = createSelector([entriesSelector], (entries) => {
+  for (let entry of Object.values(entries)) {
+    if ((entry?.hdg || entry?.scratch_hdg) && entry.aclDisplay) {
       return true;
     }
   }
   return false;
 });
 
-export const anyAssignedSpdSelector = createSelector([entriesSelector, aclCidListSelector], (entries, cidList) => {
-  for (let cid of cidList) {
-    if (entries[cid]?.spd || entries[cid]?.scratch_spd) {
+export const anyAssignedSpdSelector = createSelector([entriesSelector], (entries) => {
+  for (let entry of Object.values(entries)) {
+    if ((entry?.spd || entry?.scratch_spd) && entry.aclDisplay) {
       return true;
     }
   }

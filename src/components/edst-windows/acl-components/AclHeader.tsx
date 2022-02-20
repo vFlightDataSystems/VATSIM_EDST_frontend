@@ -30,7 +30,7 @@ export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
         dispatch(setAsel(null));
         dispatch(closeWindow(windowEnum.acl));
       }}
-      text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.name}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
+      text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
     <div className="no-select">
       <EdstWindowHeaderButton

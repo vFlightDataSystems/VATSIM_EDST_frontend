@@ -5,9 +5,8 @@ import {REMOVAL_TIMEOUT} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
-import {updateEntry} from "../../../redux/slices/entriesSlice";
+import {deleteDepEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {deleteDepCid, depSpaListSelector, toggleDepSpa} from "../../../redux/slices/depSlice";
 import {depRowFieldEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {depAircraftSelect} from "../../../redux/thunks";
@@ -24,7 +23,6 @@ interface DepRowProps {
 
 export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
   const dispatch = useAppDispatch();
-  const spaList = useAppSelector(depSpaListSelector);
   const asel = useAppSelector(aselSelector);
 
   const now = new Date().getTime();
@@ -62,7 +60,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
       dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     }
     if (event.button === 1) {
-      dispatch(toggleDepSpa(entry.cid));
+      dispatch(toggleSpa(entry.cid));
     }
     if (event.button === 2) {
       dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
@@ -92,7 +90,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(deleteDepCid(entry.cid));
+          dispatch(deleteDepEntry(entry.cid));
         }
         break;
       default:
@@ -133,8 +131,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!spaList.includes(entry.cid) ? 'special-hidden' : ''}`}>
-          {spaList.includes(entry.cid) && SPA_INDICATOR}
+        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+          {entry.spa && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.depHotbox}>
           <div className="body-col special hotbox"

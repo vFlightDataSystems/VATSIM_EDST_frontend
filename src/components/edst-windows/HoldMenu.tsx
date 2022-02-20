@@ -9,8 +9,7 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import _ from "lodash";
-import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
-import {toggleAclSpa} from "../../redux/slices/aclSlice";
+import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
 import {windowEnum} from "../../enums";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {EdstEntryType} from "../../types";
@@ -22,7 +21,7 @@ export const HoldMenu: React.FC = () => {
     stopDrag
   } = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.holdMenu))
+  const pos = useAppSelector(windowPositionSelector(windowEnum.holdMenu));
   const dispatch = useAppDispatch();
 
   const now = new Date();
@@ -271,9 +270,7 @@ export const HoldMenu: React.FC = () => {
           <div className="options-col left">
             <EdstButton content="Hold/SPA" disabled={entry?.hold_data}
                         onMouseDown={() => {
-                          if (!_.isNumber(entry.spa)) {
-                            dispatch(toggleAclSpa(entry.cid));
-                          }
+                          dispatch(toggleSpa(entry.cid));
                           clearedHold();
                         }}
                         title={Tooltips.holdHoldSpaBtn}

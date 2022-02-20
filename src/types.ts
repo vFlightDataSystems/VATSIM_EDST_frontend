@@ -1,4 +1,3 @@
-
 // interface for a single EDST entry
 export interface EdstEntryType {
   previous_route_data?: Array<any>; // fixes for latest previous route
@@ -19,8 +18,10 @@ export interface EdstEntryType {
   flightplan: any; // VATSIM flightplan data plus ground speed and position (lon/lat)
   dep: string; // departure airport ICAO code
   dest: string; // destination airport ICAO code
-  dep_info?: any; // additional data about departure airport like local code, lon/lat, ARTCC of jurisdiction (if available)
-  dest_info?: any; // additional data about destination airport like local code, lon/lat, ARTCC of jurisdiction (if available)
+  dep_info?: any; // additional data about departure airport like local code, lon/lat, ARTCC of jurisdiction (if
+                  // available)
+  dest_info?: any; // additional data about destination airport like local code, lon/lat, ARTCC of jurisdiction (if
+                   // available)
   vciStatus: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
   depStatus: number; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
   aclHighlighted?: boolean;
@@ -32,7 +33,7 @@ export interface EdstEntryType {
   remarks: string; // remarks string
   spd?: string; // assigned speed
   hdg?: string; // assigned heading
-  spa?: number | null; // SPA indicator (number indicates position in the list)
+  spa: boolean; // SPA indicator
   boundary_time: number; // minutes until entering the sector's airspace (will be negative if already inside)
   reference_fix?: any; // current FRD
   update_time: number; // last time the entry was updated in EDST
@@ -44,7 +45,12 @@ export interface EdstEntryType {
   showFreeText?: boolean; // boolean whether to display the free text row or not
   remarks_checked?: boolean; // whether remarks have been checked or not
   voice_type?: string; // voice type in VATSIM flightplan, /v/ by default
-  cleared_direct?: { frd: string, fix: string }; // if cleared direct to somewhere, this will contain the FRD and the fix the aircraft was cleared to
+  cleared_direct?: { frd: string, fix: string }; // if cleared direct to somewhere, this will contain the FRD and the
+                                                 // fix the aircraft was cleared to
+  aclDisplay: boolean;
+  aclDeleted: boolean;
+  depDisplay: boolean;
+  depDeleted: boolean;
 }
 
 export interface FixType {
@@ -61,7 +67,12 @@ export interface EdstPreferredRouteType {
   dest?: string;
 }
 
-export interface WindowPositionType { x: number, y: number, w?: number, h?: number }
+export interface WindowPositionType {
+  x: number,
+  y: number,
+  w?: number,
+  h?: number
+}
 
 
 export interface SectorDataType {

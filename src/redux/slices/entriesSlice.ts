@@ -5,9 +5,7 @@ import {fetchEdstEntries, fetchAarList} from "../../api";
 import {refreshEntry} from "../refresh";
 import {RootState} from "../store";
 import {depFilter, entryFilter} from "../../filters";
-import {addDepCid, deleteDepCid} from "./depSlice";
 import {getClosestReferenceFix, processAar} from "../../lib";
-import {addAclCid} from "./aclSlice";
 import {point} from "@turf/turf";
 
 export type EntriesStateType = {
@@ -21,18 +19,16 @@ export const refreshEntriesThunk: any = createAsyncThunk(
   async (_args: void, thunkAPI) => {
     let newEntries: EntriesStateType = {};
     let newEntryList: any[] = [];
-    const state = thunkAPI.getState() as RootState;
-    const {referenceFixes} = state.sectorData;
+    const {referenceFixes} = (thunkAPI.getState() as RootState).sectorData;
     await fetchEdstEntries()
       .then(response => response.json())
       .then((data: any[]) => newEntryList = data);
     for (let newEntry of newEntryList) {
+      const state = thunkAPI.getState() as RootState;
       let currentEntry = _.assign({...state.entries[newEntry.cid]}, refreshEntry(newEntry, state));
-      const {cidList: aclCidList, deletedList: aclDeletedList} = state.acl;
-      const {cidList: depCidList, deletedList: depDeletedList} = state.dep;
-      if (depFilter(currentEntry, state.sectorData.artccId) && !depDeletedList.includes(newEntry.cid)) {
-        if (!depCidList.includes(newEntry.cid)) {
-          thunkAPI.dispatch(addDepCid(newEntry.cid));
+      if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
+        if (!currentEntry.depDisplay) {
+          currentEntry.depDisplay = true;
           if (currentEntry.aar_list === undefined) {
             await fetchAarList(state.sectorData.artccId, currentEntry.cid)
               .then(response => response.json())
@@ -43,11 +39,12 @@ export const refreshEntriesThunk: any = createAsyncThunk(
           }
         }
       } else {
-        if (entryFilter(currentEntry, state.sectorData, state.acl.cidList)) {
-          if (!aclCidList.includes(newEntry.cid) && !aclDeletedList.includes(newEntry.cid)) {
+        if (entryFilter(currentEntry, state.sectorData)) {
+          if (!currentEntry.aclDisplay && !currentEntry.aclDeleted) {
             // remove cid from departure list if will populate the aircraft list
-            thunkAPI.dispatch(addAclCid(newEntry.cid));
-            thunkAPI.dispatch(deleteDepCid(newEntry.cid));
+            currentEntry.aclDisplay = true;
+            currentEntry.depDeleted = true;
+            currentEntry.depDisplay = false;
             if (currentEntry.aar_list === undefined) {
               await fetchAarList(state.sectorData.artccId, currentEntry.cid)
                 .then(response => response.json())
@@ -62,6 +59,7 @@ export const refreshEntriesThunk: any = createAsyncThunk(
           }
         }
       }
+      // thunkAPI.dispatch(setEntry(currentEntry));
       newEntries[newEntry.cid] = currentEntry;
     }
     return new Promise<EntriesStateType>(function (resolve) {
@@ -74,21 +72,32 @@ const entriesSlice = createSlice({
   name: 'entries',
   initialState: initialState as EntriesStateType,
   reducers: {
-    updateEntry(state: EntriesStateType, action) {
+    updateEntry(state, action) {
       _.assign(state[action.payload.cid], action.payload.data);
     },
-    setEntry(state: EntriesStateType, action: { payload: EdstEntryType }) {
+    setEntry(state, action: { payload: EdstEntryType }) {
       state[action.payload.cid] = action.payload;
+    },
+    toggleSpa(state, action: { payload: string }) {
+      state[action.payload].spa = !state[action.payload].spa;
+    },
+    deleteAclEntry(state, action: { payload: string }) {
+      state[action.payload].aclDisplay = false;
+      state[action.payload].aclDeleted = true;
+    },
+    deleteDepEntry(state, action: { payload: string }) {
+      state[action.payload].depDisplay = false;
+      state[action.payload].depDeleted = true;
     }
   },
   extraReducers: {
-    [refreshEntriesThunk.fulfilled]: (state: any, action: { payload: EntriesStateType }) => {
+    [refreshEntriesThunk.fulfilled]: (state, action: { payload: EntriesStateType }) => {
       return {...state, ...action.payload};
     }
   }
 });
 
-export const {setEntry, updateEntry} = entriesSlice.actions;
+export const {setEntry, updateEntry, toggleSpa, deleteAclEntry, deleteDepEntry} = entriesSlice.actions;
 export default entriesSlice.reducer;
 
 export const entriesSelector = (state: RootState) => state.entries;

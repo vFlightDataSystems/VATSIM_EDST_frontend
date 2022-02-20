@@ -12,8 +12,6 @@ export function DepTable() {
   const manualPosting = useAppSelector((state) => state.dep.manualPosting);
 
   const [hidden, setHidden] = useState<string[]>([]);
-  const cidList = useAppSelector(state => state.dep.cidList);
-  const spaList = useAppSelector(state => state.dep.spaList);
   const entries = useAppSelector(state => state.entries);
 
   const toggleHideColumn = (name: string) => {
@@ -28,7 +26,7 @@ export function DepTable() {
   };
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
-    switch (sortData.name) {
+    switch (sortData.selectedOption) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
       case 'Destination':
@@ -40,8 +38,8 @@ export function DepTable() {
     }
   };
 
-  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
-  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => spaList.includes(entry.cid)));
+  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => entry.depDisplay);
+  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => entry.spa));
 
   return (<div className="dep-body no-select">
     <div className="body-row header" key="dep-table-header">
@@ -82,7 +80,7 @@ export function DepTable() {
           hidden={hidden}
         />)}
       {spaEntryList.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && ((entry.depStatus > -1) || !manualPosting)))
+      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && ((entry.depStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <DepRow
           key={`dep-row-ack-${entry.cid}-${i}`}
@@ -91,7 +89,7 @@ export function DepTable() {
           hidden={hidden}
         />)}
       {manualPosting && <div className="body-row separator"/>}
-      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && entry.depStatus === -1)))
+      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && entry.depStatus === -1)))
         ?.map(([i, entry]: [string, EdstEntryType]) =>
           <DepRow
             key={`dep-row-no-ack-${entry.cid}-${i}`}
