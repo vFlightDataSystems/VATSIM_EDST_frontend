@@ -36,7 +36,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
         }
         dispatch(closeWindow(windowEnum.dep));
       }}
-      text={['Departure List', `${sortData.name}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
+      text={['Departure List', `${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
     <div>
       <EdstWindowHeaderButton

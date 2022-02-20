@@ -16,25 +16,23 @@ export function AclTable() {
   const anyHolding = useAppSelector(anyHoldingSelector);
   const anyAssignedHeading = useAppSelector(anyAssignedHdgSelector);
   const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
-  const [hidden, setHidden] = useState<string[]>([]);
+  const [hiddenList, setHiddenList] = useState<string[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
-  const cidList = useAppSelector(state => state.acl.cidList);
-  const spaList = useAppSelector(state => state.acl.spaList);
   const entries = useAppSelector(state => state.entries);
 
   const toggleHideColumn = (name: string) => {
-    let hiddenCopy = hidden.slice(0);
+    let hiddenCopy = hiddenList.slice(0);
     const index = hiddenCopy.indexOf(name);
     if (index > -1) {
       hiddenCopy.splice(index, 1);
     } else {
       hiddenCopy.push(name);
     }
-    setHidden(hiddenCopy);
+    setHiddenList(hiddenCopy);
   };
 
   const handleClickSlash = () => {
-    let hiddenCopy = hidden.slice(0);
+    let hiddenCopy = hiddenList.slice(0);
     if (hiddenCopy.includes('spd') && hiddenCopy.includes('hdg')) {
       hiddenCopy.splice(hiddenCopy.indexOf('spd'), 1);
       hiddenCopy.splice(hiddenCopy.indexOf('hdg'), 1);
@@ -46,11 +44,11 @@ export function AclTable() {
         hiddenCopy.push('spd');
       }
     }
-    setHidden(hiddenCopy);
+    setHiddenList(hiddenCopy);
   };
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
-    switch (sortData.name) {
+    switch (sortData.selectedOption) {
       case 'ACID':
         return u.callsign.localeCompare(v.callsign);
       case 'Destination':
@@ -64,8 +62,8 @@ export function AclTable() {
     }
   };
 
-  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => cidList.includes(entry.cid));
-  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => spaList.includes(entry.cid)));
+  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => entry.aclDisplay);
+  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => entry.spa));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -89,9 +87,9 @@ export function AclTable() {
         <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
         <div className="body-col special special-hidden"/>
         <div className="body-col special special-hidden"/>
-        <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
+        <div className={`body-col type ${hiddenList.includes('type') ? 'hidden' : ''}`}>
           <div className="hover" onMouseDown={() => toggleHideColumn('type')}>
-            T{!hidden.includes('type') && 'ype'}
+            T{!hiddenList.includes('type') && 'ype'}
           </div>
         </div>
         <div className="body-col alt header hover"
@@ -100,15 +98,15 @@ export function AclTable() {
         >
           Alt.
         </div>
-        <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
+        <div className={`body-col code hover ${hiddenList.includes('code') ? 'hidden' : ''}`}
              onMouseDown={() => toggleHideColumn('code')}>
-          C{!hidden.includes('code') && 'ode'}
+          C{!hiddenList.includes('code') && 'ode'}
         </div>
         <div className={`body-col special special-header`}/>
         <EdstTooltip title={Tooltips.aclHeaderHdg}>
-          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
+          <div className={`body-col hs hdg hover ${hiddenList.includes('hdg') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('hdg')}>
-            {hidden.includes('hdg') && anyAssignedHeading && '*'}H{!hidden.includes('hdg') && 'dg'}
+            {hiddenList.includes('hdg') && anyAssignedHeading && '*'}H{!hiddenList.includes('hdg') && 'dg'}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSlash}>
@@ -117,9 +115,9 @@ export function AclTable() {
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSpd}>
-          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
+          <div className={`body-col hs spd hover ${hiddenList.includes('spd') ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn('spd')}>
-            S{!hidden.includes('spd') && 'pd'}{hidden.includes('spd') && anyAssignedSpeed && '*'}
+            S{!hiddenList.includes('spd') && 'pd'}{hiddenList.includes('spd') && anyAssignedSpeed && '*'}
           </div>
         </EdstTooltip>
         <div className={`body-col special special-header`}/>
@@ -142,29 +140,29 @@ export function AclTable() {
           index={Number(i)}
           entry={entry}
           anyHolding={anyHolding}
-          hidden={hidden}
+          hidden={hiddenList}
           altMouseDown={altMouseDown}
         />)}
       {spaEntryList.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && ((entry.vciStatus > -1) || !manualPosting)))
+      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && ((entry.vciStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <AclRow
           key={`acl-table-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
           anyHolding={anyHolding}
-          hidden={hidden}
+          hidden={hiddenList}
           altMouseDown={altMouseDown}
         />)}
       {manualPosting && <div className="body-row separator"/>}
-      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!spaList.includes(entry.cid) && cidList.includes(entry.cid) && entry.vciStatus === -1)))
+      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && entry.vciStatus === -1)))
         ?.map(([i, entry]: [string, EdstEntryType]) =>
           <AclRow
             key={`acl-table-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}
             entry={entry}
             anyHolding={anyHolding}
-            hidden={hidden}
+            hidden={hiddenList}
             altMouseDown={altMouseDown}
           />)}
     </div>

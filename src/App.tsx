@@ -46,7 +46,7 @@ export const App: React.FC = () => {
   const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
-  const outlineRef = React.useRef<HTMLDivElement & any>(null);
+  const bodyRef = React.useRef<HTMLDivElement & any>(null);
 
   useEffect(() => {
     dispatch(initThunk());
@@ -59,10 +59,10 @@ export const App: React.FC = () => {
   }, []);
 
   const draggingHandler = useCallback((event: MouseEvent) => {
-    if (event && outlineRef?.current?.draggingRef?.current) {
-      const relX = event.pageX - outlineRef?.current.relativePos.x;
-      const relY = event.pageY - outlineRef?.current.relativePos.y;
-      const ppos = windows[outlineRef.current.draggingWindowName as windowEnum].position;
+    if (event && bodyRef?.current?.windowRef?.current) {
+      const relX = event.pageX - bodyRef?.current.relativePos.x;
+      const relY = event.pageY - bodyRef?.current.relativePos.y;
+      const ppos = windows[bodyRef.current.draggingWindowName as windowEnum].position;
       if (!ppos) {
         return;
       }
@@ -71,54 +71,50 @@ export const App: React.FC = () => {
         top: ppos.y + relY,
         position: "absolute",
         zIndex: 999,
-        height: outlineRef.current.draggingRef.current.clientHeight,
-        width: outlineRef.current.draggingRef.current.clientWidth
+        height: bodyRef.current.windowRef.current.clientHeight,
+        width: bodyRef.current.windowRef.current.clientWidth
       });
     }
   }, [windows]);
 
   const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum) => {
     const relativePos = {x: event.pageX, y: event.pageY};
-    const relX = event.pageX - relativePos.x;
-    const relY = event.pageY - relativePos.y;
     const ppos = windows[window].position;
     if (!ppos) {
       return;
     }
     const style = {
-      left: ppos.x + relX,
-      top: ppos.y + relY,
+      left: ppos.x,
+      top: ppos.y,
       position: "absolute",
       zIndex: 999,
       height: ref.current.clientHeight,
       width: ref.current.clientWidth
     };
-    if (outlineRef.current) {
-      outlineRef.current.draggingRef = ref;
-      outlineRef.current.draggingWindowName = window;
-      outlineRef.current.relativePos = relativePos;
+    if (bodyRef.current) {
+      bodyRef.current.windowRef = ref;
+      bodyRef.current.draggingWindowName = window;
+      bodyRef.current.relativePos = relativePos;
       setDragPreviewStyle(style);
       setDraggingCursorHide(DRAGGING_HIDE_CURSOR.includes(ref.current.id));
       dispatch(setDragging(true));
-      // we need to remove the eventListener, but we are not...
-      // function components suck for dynamic refs...
-      outlineRef.current.addEventListener('mousemove', draggingHandler);
+      bodyRef.current.addEventListener('mousemove', draggingHandler);
     }
   };
 
   const stopDrag = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (dragging && outlineRef?.current) {
-      const relX = event.pageX - outlineRef.current.relativePos.x;
-      const relY = event.pageY - outlineRef.current.relativePos.y;
-      const ppos = windows[outlineRef.current.draggingWindowName as windowEnum].position;
+    if (dragging && bodyRef?.current) {
+      const relX = event.pageX - bodyRef.current.relativePos.x;
+      const relY = event.pageY - bodyRef.current.relativePos.y;
+      const ppos = windows[bodyRef.current.draggingWindowName as windowEnum].position;
       if (!ppos) {
         return;
       }
-      if (outlineRef?.current) {
-        outlineRef.current.removeEventListener('mousemove', draggingHandler);
+      if (bodyRef?.current) {
+        bodyRef.current.removeEventListener('mousemove', draggingHandler);
       }
       dispatch(setWindowPosition({
-        window: outlineRef.current.draggingWindowName as windowEnum,
+        window: bodyRef.current.draggingWindowName as windowEnum,
         pos: {x: ppos.x + relX, y: ppos.y + relY}
       }));
       dispatch(setDragging(false));
@@ -127,7 +123,7 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleKeyDownCapture = (event: React.KeyboardEvent) => {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
     event.preventDefault();
     if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
       dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
@@ -142,17 +138,16 @@ export const App: React.FC = () => {
   return <div className="edst"
               onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
               tabIndex={!(inputFocused || windows[windowEnum.altitudeMenu].open) ? -1 : 0}
-              onKeyDown={(e) => !inputFocused && handleKeyDownCapture(e)}
+              onKeyDown={(e) => !inputFocused && handleKeyDown(e)}
   >
     <EdstHeader/>
     <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
-         ref={outlineRef}
+         ref={bodyRef}
          onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
     >
       {showSectorSelector && <SectorSelector/>}
       <div className="edst-dragging-outline" style={dragging ? dragPreviewStyle : {display: 'none'}}
            onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
-           draggable={true}
       >
         {draggingCursorHide && <div className="cursor"/>}
       </div>

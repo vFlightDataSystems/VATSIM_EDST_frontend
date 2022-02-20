@@ -7,8 +7,7 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {updateEntry} from "../../../redux/slices/entriesSlice";
-import {deleteAclCid, toggleAclSpa} from "../../../redux/slices/aclSlice";
+import {deleteAclEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {aclAselActionTriggerEnum, aclRowFieldEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {aclAircraftSelect} from "../../../redux/thunks";
@@ -36,7 +35,6 @@ export const AclRow: React.FC<AclRowProps> = (
   const asel = useAppSelector(aselSelector);
   const dispatch = useAppDispatch();
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
-  const spaList = useAppSelector(state => state.acl.spaList);
   // if (entry.aar_list === undefined) {
   //   dispatch(fetchAarData(entry.cid));
   // }
@@ -78,7 +76,7 @@ export const AclRow: React.FC<AclRowProps> = (
       dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     }
     if (event.button === 1) {
-      dispatch(toggleAclSpa(entry.cid));
+      dispatch(toggleSpa(entry.cid));
     }
     if (event.button === 2) {
       dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
@@ -126,13 +124,18 @@ export const AclRow: React.FC<AclRowProps> = (
     }
     switch (event.button) {
       case 0:
-        dispatch(updateEntry({cid: entry.cid, data: {
-          aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') ? 'remarks' : null,
-          remarks_checked: true
-        }}));
+        dispatch(updateEntry({
+          cid: entry.cid, data: {
+            aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') ? 'remarks' : null,
+            remarks_checked: true
+          }
+        }));
         break;
       case 2:
-        dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !(entry.aclRouteDisplay === 'raw_route') ? 'raw_route' : null}}));
+        dispatch(updateEntry({
+          cid: entry.cid,
+          data: {aclRouteDisplay: !(entry.aclRouteDisplay === 'raw_route') ? 'raw_route' : null}
+        }));
         break;
       default:
         break;
@@ -144,7 +147,7 @@ export const AclRow: React.FC<AclRowProps> = (
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(deleteAclCid(entry.cid));
+          dispatch(deleteAclEntry(entry.cid));
         }
         break;
       default:
@@ -171,7 +174,10 @@ export const AclRow: React.FC<AclRowProps> = (
         }
         break;
       case 2:
-        dispatch(amendEntryThunk({cid: entry.cid, planData: {[(displayScratchHdg || !entry.hdg) && entry.scratch_hdg ? 'scratch_hdg' : 'hdg']: null}}));
+        dispatch(amendEntryThunk({
+          cid: entry.cid,
+          planData: {[(displayScratchHdg || !entry.hdg) && entry.scratch_hdg ? 'scratch_hdg' : 'hdg']: null}
+        }));
         break;
       default:
         break;
@@ -191,7 +197,10 @@ export const AclRow: React.FC<AclRowProps> = (
         }
         break;
       case 2:
-        dispatch(amendEntryThunk({cid: entry.cid, planData: {[(displayScratchSpd || !entry.spd) && entry.scratch_spd ? 'scratch_spd' : 'spd']: null}}));
+        dispatch(amendEntryThunk({
+          cid: entry.cid,
+          planData: {[(displayScratchSpd || !entry.spd) && entry.scratch_spd ? 'scratch_spd' : 'spd']: null}
+        }));
         break;
       default:
         break;
@@ -230,8 +239,8 @@ export const AclRow: React.FC<AclRowProps> = (
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!spaList.includes(entry.cid) ? 'special-hidden' : ''}`}>
-          {spaList.includes(entry.cid) && SPA_INDICATOR}
+        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+          {entry.spa && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.aclHotbox}>
           <div className="body-col special hotbox"
@@ -307,7 +316,7 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
              onContextMenu={(event) => {
                event.preventDefault();
                if (entry?.hold_data) {
-                 dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null,  windowEnum.cancelHoldMenu));
+                 dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, windowEnum.cancelHoldMenu));
                }
              }}
           // @ts-ignore

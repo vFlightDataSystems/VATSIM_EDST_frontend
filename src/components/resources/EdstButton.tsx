@@ -17,8 +17,7 @@ export const EdstButton: React.FC<EdstButtonProps> = ({onMouseDown, className, i
   return (<div className={`edst-outer-button ${className ?? ''}`} disabled={props.disabled}
                id={id}
                onMouseDownCapture={onMouseDown}>
-    <div className={`edst-inner-button ${props.selected ? 'selected' : ''}`}
-      // @ts-ignore
+    <div className={`edst-inner-button ${props.selected ? 'selected' : ''}`} // @ts-ignore
          disabled={props.disabled}
     >
       <EdstTooltip {...props}/>
