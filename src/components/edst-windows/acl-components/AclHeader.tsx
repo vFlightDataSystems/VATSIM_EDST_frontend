@@ -4,12 +4,12 @@ import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {setAclManualPosting} from "../../../redux/slices/aclSlice";
-import {aclCleanup, addAclEntry, openWindowThunk} from "../../../redux/thunks";
+import {aclCleanup, addAclEntryByFid, openWindowThunk} from "../../../redux/thunks";
 import {windowEnum} from "../../../enums";
-import {aclAselSelector, closeWindow, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
+import {aclAselSelector, AselType, closeWindow, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
 
 
-export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
+export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
   const asel = useAppSelector(aclAselSelector);
   const sortData = useAppSelector((state) => state.acl.sortData);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
@@ -18,7 +18,7 @@ export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
   const [searchStr, setSearchString] = useState('');
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      dispatch(addAclEntry(searchStr));
+      dispatch(addAclEntryByFid(searchStr));
       setSearchString('');
     }
   };
@@ -27,7 +27,20 @@ export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
     <WindowTitleBar
       focused={focused}
       closeWindow={() => {
-        dispatch(setAsel(null));
+        if (asel?.window === windowEnum.acl) {
+          dispatch(closeWindow([
+            windowEnum.altitudeMenu,
+            windowEnum.routeMenu,
+            windowEnum.prevRouteMenu,
+            windowEnum.holdMenu,
+            windowEnum.cancelHoldMenu,
+            windowEnum.speedMenu,
+            windowEnum.headingMenu,
+            windowEnum.planOptions,
+            windowEnum.sortMenu]
+          ));
+          dispatch(setAsel(null));
+        }
         dispatch(closeWindow(windowEnum.acl));
       }}
       text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
@@ -41,7 +54,7 @@ export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.holdMenu, e.currentTarget, windowEnum.acl))}
+        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.holdMenu, e.currentTarget, windowEnum.acl, false, (asel as AselType).cid))}
         content="Hold..."
         title={Tooltips.hold}
       />
@@ -50,7 +63,7 @@ export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
       <EdstWindowHeaderButton
         id="acl-sort-button"
         onMouseDown={(e: React.KeyboardEvent) => {
-          dispatch(openWindowThunk(windowEnum.sortMenu, e.currentTarget));
+          dispatch(openWindowThunk(windowEnum.sortMenu, e.currentTarget, windowEnum.acl));
         }}
         content="Sort..."
         title={Tooltips.sort}
@@ -62,7 +75,7 @@ export const AclHeader: React.FC<{focused: boolean}> = ({focused}) => {
         title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.currentTarget))}
+        onMouseDown={(e: React.KeyboardEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.currentTarget, windowEnum.acl, false, asel?.cid ?? null))}
         content="Template..."
         title={Tooltips.template}
       />

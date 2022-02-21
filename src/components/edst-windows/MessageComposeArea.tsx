@@ -7,7 +7,7 @@ import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/slices/aclSlice";
 import {updateEntry} from "../../redux/slices/entriesSlice";
-import {aclCleanup, addAclEntry, openWindowThunk} from "../../redux/thunks";
+import {aclCleanup, addAclEntryByFid, openWindowThunk} from "../../redux/thunks";
 import {windowEnum} from "../../enums";
 import {
   closeAllWindows,
@@ -28,20 +28,16 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const [mcaFocused, setMcaFocused] = useState(false);
   const mcaCommandString = useAppSelector(mcaCommandStringSelector);
   const pos = useAppSelector(windowPositionSelector(windowEnum.edstMca));
-  const ref = useRef(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
-  const dispatch = useAppDispatch();
-
-  const {
-    startDrag
-  } = useContext(EdstContext);
-
   const entries = useAppSelector(state => state.entries);
+  const dispatch = useAppDispatch();
+  const ref = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const {startDrag} = useContext(EdstContext);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
-    inputRef?.current?.focus();
     return () => setMcaInputRef(null);
     // eslint-disable-next-line
   }, []);
@@ -62,10 +58,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     const entry: EdstEntryType | any = Object.values(entries ?? {})
       ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      if (entry.aclData.display) {
+      if (entry.aclDisplay) {
         dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
       }
-      if (entry.depData.display) {
+      if (entry.depDisplay) {
         dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
       }
     }
@@ -85,14 +81,16 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   };
 
   const parseCommand = () => {
+    // TODO: rename command variable
     const [command, ...args] = mcaCommandString.split(/\s+/);
     // console.log(command, args)
     if (command.match(/\/\/\w+/)) {
       toggleVci(command.slice(2));
       setResponse(`ACCEPT\nD POS KEYBD`);
     } else {
+      // TODO: break down switch cases into functions (parseUU, parseFR, ...)
       switch (command) {
-        case '//': // should turn wifi on/off for a CID
+        case '//': // should turn vci on/off for a CID
           toggleVci(args[0]);
           setResponse(`ACCEPT\nD POS KEYBD`);
           break;
@@ -118,7 +116,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
                   dispatch(closeAllWindows());
                   break;
                 default:
-                  dispatch(addAclEntry(args[0]));
+                  dispatch(addAclEntryByFid(args[0]));
                   break;
               }
               setResponse(`ACCEPT\nD POS KEYBD`);
@@ -143,21 +141,21 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
             setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
           break;
-        default: // better error msg
+        default: // TODO: give better error msg
           setResponse(`REJECT\n\n${mcaCommandString}`);
       }
     }
     dispatch(setMcaCommandString(''));
   };
 
-  const handleChange = (event: React.ChangeEvent<any>) => {
+  const handleInputChange = (event: React.ChangeEvent<any>) => {
     event.preventDefault();
     dispatch(setMcaCommandString(event.target.value.toUpperCase()));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
-    if (event.shiftKey || event.ctrlKey) {
-      inputRef?.current?.blur();
+    if (event.shiftKey) {
+      (inputRef.current as HTMLInputElement).blur();
     }
     switch (event.key) {
       case "Enter":
@@ -195,7 +193,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
           }}
           tabIndex={mcaFocused ? -1 : undefined}
           value={mcaCommandString}
-          onChange={handleChange}
+          onChange={handleInputChange}
           onKeyDownCapture={handleKeyDown}
         />
       </div>

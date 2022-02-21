@@ -8,7 +8,7 @@ import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
+import {windowEnum} from "../../enums";
 import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {EdstEntryType} from "../../types";
@@ -36,13 +36,6 @@ export const HeadingMenu: React.FC = () => {
     setDeltaY(0);
     setAmend(true);
   }, [asel]);
-
-  useEffect(() => {
-    if (asel.field !== aclRowFieldEnum.hdg) {
-      dispatch(closeWindow(windowEnum.headingMenu));
-    }
-  }, [asel?.field]);
-
 
   const handleMouseDown = (event: React.MouseEvent, value: number, direction: string | null = null) => {
     const valueStr = direction === null ? `${amend ? 'H' : ''}${value}`
@@ -125,28 +118,28 @@ export const HeadingMenu: React.FC = () => {
            onWheel={(e) => setDeltaY(deltaY + e.deltaY)}
       >
         {_.range(50, -70, -10).map(i => {
-          const hdg = ((heading - (deltaY / 100 | 0) * 10 + i) % 360 + 360) % 360;
-          const relHdg = 35 + i / 2;
+          const centerHdg = ((heading - (deltaY / 100 | 0) * 10 + i) % 360 + 360) % 360;
+          const centerRelHdg = 35 + i / 2;
           return <div className="spd-hdg-menu-container-row" key={`heading-menu-${i}`}>
             <div className="spd-hdg-menu-container-col"
-                 onMouseDown={(e) => handleMouseDown(e, hdg)}
+                 onMouseDown={(e) => handleMouseDown(e, centerHdg)}
             >
-              {String(hdg).padStart(3, '0')}
+              {String(centerHdg).padStart(3, '0')}
             </div>
             <div className="spd-hdg-menu-container-col"
-                 onMouseDown={(e) => handleMouseDown(e, hdg + 5)}
+                 onMouseDown={(e) => handleMouseDown(e, centerHdg + 5)}
             >
-              {String(hdg + 5).padStart(3, '0')}
+              {String(centerHdg + 5).padStart(3, '0')}
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
-                 onMouseDown={(e) => handleMouseDown(e, relHdg, 'L')}
+                 onMouseDown={(e) => handleMouseDown(e, centerRelHdg, 'L')}
             >
-              {relHdg}
+              {centerRelHdg}
             </div>
             <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-3"
-                 onMouseDown={(e) => handleMouseDown(e, relHdg, 'R')}
+                 onMouseDown={(e) => handleMouseDown(e, centerRelHdg, 'R')}
             >
-              {relHdg}
+              {centerRelHdg}
             </div>
           </div>;
         })}

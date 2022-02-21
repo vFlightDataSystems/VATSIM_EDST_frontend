@@ -1,7 +1,7 @@
 import React, {MouseEventHandler, useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
-import {formatUtcMinutes, REMOVAL_TIMEOUT} from "../../../lib";
+import {formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
@@ -20,7 +20,7 @@ interface AclRowProps {
   entry: EdstEntryType;
   index: number;
   anyHolding: boolean;
-  hidden: string[];
+  hidden: aclRowFieldEnum[];
   altMouseDown: boolean;
 }
 
@@ -42,10 +42,7 @@ export const AclRow: React.FC<AclRowProps> = (
   const holdData = entry.hold_data;
   const now = new Date().getTime();
   let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
-  const dest = entry.dest;
-  if (route.slice(-dest.length) === dest) {
-    route = route.slice(0, -dest.length);
-  }
+  route = removeDestFromRouteString(route.slice(0), entry.dest);
 
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
@@ -142,7 +139,7 @@ export const AclRow: React.FC<AclRowProps> = (
     }
   };
 
-  const handleFidClick: MouseEventHandler = (event: React.MouseEvent & Event) => {
+  const handleFidClick: MouseEventHandler = (event: React.MouseEvent & MouseEvent) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -151,13 +148,11 @@ export const AclRow: React.FC<AclRowProps> = (
         }
         break;
       default:
-        if (event.detail === 1) {
-          dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.fid));
-        } else if (event.detail === 2) {
-          dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.fid, aclAselActionTriggerEnum.setVciNeutral));
+        if (event.detail === 2 && entry.vciStatus < 0) {
+          dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
         }
+        dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.fid));
         break;
-
     }
   };
 
@@ -251,7 +246,7 @@ export const AclRow: React.FC<AclRowProps> = (
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclType}>
-          <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
+          <div className={`body-col type hover ${hidden.includes(aclRowFieldEnum.type) ? 'content hidden' : ''}
         ${isSelected(entry.cid, aclRowFieldEnum.type) ? 'selected' : ''}`}
                onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.type))}
           >
@@ -270,7 +265,7 @@ export const AclRow: React.FC<AclRowProps> = (
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclCode}>
           <div
-            className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''}
+            className={`body-col code hover ${hidden.includes(aclRowFieldEnum.code) ? 'content hidden' : ''}
           ${isSelected(entry.cid, aclRowFieldEnum.code) ? 'selected' : ''}`}
             onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.code))}
           >
@@ -284,7 +279,7 @@ export const AclRow: React.FC<AclRowProps> = (
           {entry.hdg && entry.scratch_hdg && '*'}
         </div>
         <EdstTooltip title={Tooltips.aclHdg}>
-          <div className={`body-col hs spd hover ${hidden.includes('hdg') ? 'content hidden' : ''}
+          <div className={`body-col hs spd hover ${hidden.includes(aclRowFieldEnum.hdg) ? 'content hidden' : ''}
               ${isSelected(entry.cid, aclRowFieldEnum.hdg) ? 'selected' : ''} ${(entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) ? 'yellow' : ''}`}
                onMouseDown={handleHeadingClick}
           >
@@ -295,7 +290,7 @@ export const AclRow: React.FC<AclRowProps> = (
           /
         </div>
         <EdstTooltip title={Tooltips.aclSpd}>
-          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'content hidden' : ''}
+          <div className={`body-col hs spd hover ${hidden.includes(aclRowFieldEnum.spd) ? 'content hidden' : ''}
 ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch_spd && (displayScratchSpd || entry.spd === null)) ? 'yellow' : ''}`}
                onMouseDown={handleSpeedClick}
           >

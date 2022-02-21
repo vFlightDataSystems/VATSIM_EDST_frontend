@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
-import {REMOVAL_TIMEOUT} from "../../../lib";
+import {REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
@@ -26,11 +26,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
   const asel = useAppSelector(aselSelector);
 
   const now = new Date().getTime();
-  let route = entry.route;
-  const dest = entry.dest;
-  if (route.slice(-dest.length) === dest) {
-    route = route.slice(0, -dest.length);
-  }
+  const route = removeDestFromRouteString(entry.route.slice(0), entry.dest);
 
   const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);

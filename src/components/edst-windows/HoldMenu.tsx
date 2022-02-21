@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
-import {length, lineString} from '@turf/turf';
 import {EdstContext} from "../../contexts/contexts";
-import {formatUtcMinutes} from "../../lib";
+import {computeCrossingTimes, formatUtcMinutes} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
@@ -12,7 +11,7 @@ import _ from "lodash";
 import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
 import {windowEnum} from "../../enums";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {EdstEntryType} from "../../types";
+import {EdstEntryType, FixType} from "../../types";
 import {amendEntryThunk} from "../../redux/asyncThunks";
 
 export const HoldMenu: React.FC = () => {
@@ -32,9 +31,26 @@ export const HoldMenu: React.FC = () => {
   const [holdDirection, setHoldDirection] = useState<string | null>(null);
   const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utcMinutes);
-  const [routeData, setRouteData] = useState<Array<any> | null>(null);
+  const [routeData, setRouteData] = useState<(FixType & { minutesAtFix: number })[] | null>(null);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
+
+  useEffect(() => {
+    if (!entry) {
+      dispatch(closeWindow(windowEnum.holdMenu));
+    }
+    else {
+      const routeData = computeCrossingTimes(entry);
+      const now = new Date();
+      const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+      setHoldFix(entry.hold_data?.hold_fix ?? 'PP');
+      setLegLength(entry.hold_data?.leg_length ?? 'STD');
+      setHoldDirection(entry.hold_data?.hold_direction ?? 'N');
+      setTurns(entry.hold_data?.turns ?? 'RT');
+      setEfc(entry.hold_data?.efc ?? utcMinutes + 30);
+      setRouteData(routeData ?? null);
+    } // eslint-disable-next-line
+  }, [entry]);
 
   const clearedHold = () => {
     if (entry) {
@@ -49,35 +65,6 @@ export const HoldMenu: React.FC = () => {
     }
     dispatch(closeWindow(windowEnum.holdMenu));
   };
-
-  useEffect(() => {
-    const computeCrossingTimes = (routeData: Array<any> = []) => {
-      let newRouteData = [];
-      const now = new Date();
-      const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
-      const groundspeed = Number(entry.flightplan?.ground_speed);
-      if (routeData.length > 0 && groundspeed > 0) {
-        let lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
-        for (let e of routeData) {
-          lineData.push(e.pos);
-          newRouteData.push({
-            ...e,
-            minutesAtFix: utcMinutes + 60*length(lineString(lineData), {units: 'nauticalmiles'})/groundspeed
-          });
-        }
-      }
-      return newRouteData;
-    };
-    const routeData = computeCrossingTimes(entry._route_data);
-    const now = new Date();
-    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
-    setHoldFix(entry.hold_data?.hold_fix ?? 'PP');
-    setLegLength(entry.hold_data?.leg_length ?? 'STD');
-    setHoldDirection(entry.hold_data?.hold_direction ?? 'N');
-    setTurns(entry.hold_data?.turns ?? 'RT');
-    setEfc(entry.hold_data?.efc ?? utcMinutes + 30);
-    setRouteData(routeData ?? null);
-  }, [entry]);
 
   return pos && entry && (<div
       onMouseEnter={() => setFocused(true)}
@@ -117,9 +104,9 @@ export const HoldMenu: React.FC = () => {
           </div>
         </div>
         <div className="hold-fix-container">
-          {_.range(0, Math.min(routeData?.length || 0, 10)).map(i =>
+          {routeData && _.range(0, Math.min(routeData.length || 0, 10)).map(i =>
             <div className="options-row" key={`hold-menu-row-${i}`}>
-              {_.range(0, ((routeData?.length || 0)/10 | 0) + 1).map(j => {
+              {_.range(0, ((routeData.length || 0)/10 | 0) + 1).map(j => {
                 const fixName = routeData?.[Number(i) + Number(j)*10]?.name;
                 const minutesAtFix = routeData?.[Number(i) + Number(j)*10]?.minutesAtFix;
                 return (fixName &&
@@ -270,7 +257,9 @@ export const HoldMenu: React.FC = () => {
           <div className="options-col left">
             <EdstButton content="Hold/SPA" disabled={entry?.hold_data}
                         onMouseDown={() => {
-                          dispatch(toggleSpa(entry.cid));
+                          if (!entry.spa) {
+                            dispatch(toggleSpa(entry.cid));
+                          }
                           clearedHold();
                         }}
                         title={Tooltips.holdHoldSpaBtn}

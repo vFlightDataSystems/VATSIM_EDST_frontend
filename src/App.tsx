@@ -27,7 +27,12 @@ import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
 import {
   windowEnum
 } from "./enums";
-import {openWindow, setDragging, setMcaCommandString, setWindowPosition} from "./redux/slices/appSlice";
+import {
+  openWindow,
+  setDragging,
+  setMcaCommandString,
+  setWindowPosition
+} from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
 
 // const CACHE_TIMEOUT = 300000; // ms
@@ -46,6 +51,7 @@ export const App: React.FC = () => {
   const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
+  const altMenuRef = React.useRef<{showInput: boolean, inputRef: React.RefObject<HTMLInputElement> | null}>({showInput: false, inputRef: null});
   const bodyRef = React.useRef<HTMLDivElement & any>(null);
 
   useEffect(() => {
@@ -56,7 +62,17 @@ export const App: React.FC = () => {
         clearInterval(updateIntervalId);
       }
     };
+    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (altMenuRef.current.inputRef === null) {
+      altMenuRef.current.showInput = false;
+    }
+    else if (altMenuRef.current.inputRef?.current) {
+        altMenuRef.current?.inputRef.current.focus();
+    }
+  }, [altMenuRef.current.inputRef])
 
   const draggingHandler = useCallback((event: MouseEvent) => {
     if (event && bodyRef?.current?.windowRef?.current) {
@@ -125,20 +141,28 @@ export const App: React.FC = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     event.preventDefault();
-    if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
-      dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
+    if (windows[windowEnum.altitudeMenu].open) {
+      altMenuRef.current.showInput = true;
+      if (altMenuRef.current.inputRef?.current) {
+        altMenuRef.current?.inputRef.current.focus();
+      }
     }
-    if (!mcaInputRef?.current) {
-      dispatch(openWindow({window: windowEnum.edstMca}));
-    } else {
-      mcaInputRef.current.focus();
+    else {
+      if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
+        dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
+      }
+      if (!mcaInputRef?.current) {
+        dispatch(openWindow({window: windowEnum.edstMca}));
+      } else {
+        mcaInputRef.current.focus();
+      }
     }
   };
 
   return <div className="edst"
               onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
-              tabIndex={!(inputFocused || windows[windowEnum.altitudeMenu].open) ? -1 : 0}
-              onKeyDown={(e) => !inputFocused && handleKeyDown(e)}
+              tabIndex={!(inputFocused) ? -1 : 0}
+              onKeyDown={(e) => (!(inputFocused) || (windows[windowEnum.altitudeMenu].open && !altMenuRef.current.showInput)) && handleKeyDown(e)}
   >
     <EdstHeader/>
     <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
@@ -167,7 +191,10 @@ export const App: React.FC = () => {
         {windows[windowEnum.holdMenu].open && <HoldMenu/>}
         {windows[windowEnum.cancelHoldMenu].open && <CancelHoldMenu/>}
         {windows[windowEnum.prevRouteMenu].open && <PreviousRouteMenu/>}
-        {windows[windowEnum.altitudeMenu].open && <AltMenu/>}
+        {windows[windowEnum.altitudeMenu].open && <AltMenu
+          setAltMenuInputRef={(ref: React.RefObject<HTMLInputElement> | null) => altMenuRef.current.inputRef = ref}
+          showInput={altMenuRef.current.showInput}
+        />}
         {windows[windowEnum.speedMenu].open && <SpeedMenu/>}
         {windows[windowEnum.headingMenu].open && <HeadingMenu/>}
         {windows[windowEnum.edstMca].open && <MessageComposeArea

@@ -4,6 +4,7 @@ import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
 import {EdstEntryType} from "../../../types";
 import {useAppSelector} from '../../../redux/hooks';
+import {sortOptionsEnum} from "../../../enums";
 
 const COMPLETED_SYMBOL = '✓';
 
@@ -27,11 +28,11 @@ export function DepTable() {
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
     switch (sortData.selectedOption) {
-      case 'ACID':
+      case sortOptionsEnum.acid:
         return u.callsign.localeCompare(v.callsign);
-      case 'Destination':
+      case sortOptionsEnum.destination:
         return u.dest.localeCompare(v.dest);
-      case 'Origin':
+      case sortOptionsEnum.origin:
         return u.dep?.localeCompare(v.dep);
       default:
         return u.callsign.localeCompare(v.callsign);

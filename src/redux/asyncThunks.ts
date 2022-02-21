@@ -4,6 +4,7 @@ import {setArtccId, setReferenceFixes, setSectorId, setSectors} from "./slices/s
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk, setEntry} from "./slices/entriesSlice";
 import {refreshEntry} from "./refresh";
+import {removeDestFromRouteString} from "../lib";
 
 export const initThunk = createAsyncThunk(
   'app/init',
@@ -45,7 +46,7 @@ export const initThunk = createAsyncThunk(
 
 export const amendEntryThunk = createAsyncThunk(
   'entries/amend',
-  async ({cid, planData}: { cid: string, planData: any }, thunkAPI) => {
+  async ({cid, planData}: { cid: string, planData: any}, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     let currentEntry = state.entries[cid];
     if (Object.keys(planData).includes('altitude')) {
@@ -53,11 +54,9 @@ export const amendEntryThunk = createAsyncThunk(
     }
     if (Object.keys(planData).includes('route')) {
       const dest = currentEntry.dest;
-      if (planData.route.slice(-dest.length) === dest) {
-        planData.route = planData.route.slice(0, -dest.length);
-      }
-      planData.previous_route = currentEntry.depDisplay ? currentEntry?.route : currentEntry?._route;
-      planData.previous_route_data = currentEntry.depDisplay ? currentEntry?.route_data : currentEntry?._route_data;
+      planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
+      planData.previous_route = currentEntry.depDisplay ? currentEntry.route : currentEntry._route;
+      planData.previous_route_data = currentEntry.depDisplay ? currentEntry.route_data : currentEntry._route_data;
     }
     planData.callsign = currentEntry.callsign;
     return updateEdstEntry(planData)

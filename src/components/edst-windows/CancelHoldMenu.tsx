@@ -8,13 +8,14 @@ import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
 import {windowEnum} from "../../enums";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {amendEntryThunk} from "../../redux/asyncThunks";
+import {EdstEntryType} from "../../types";
 
 export const CancelHoldMenu: React.FC = () => {
   const {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const entry = useAppSelector(aselEntrySelector);
+  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
   const pos = useAppSelector(windowPositionSelector(windowEnum.cancelHoldMenu))
   const dispatch = useAppDispatch();
 
@@ -42,8 +43,8 @@ export const CancelHoldMenu: React.FC = () => {
         <div className="options-row">
           <div className="options-col left">
             <EdstButton content="Cancel Hold" onMouseDown={() => {
-              dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
               dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
+              dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
               dispatch(closeWindow(windowEnum.cancelHoldMenu))
             }}/>
           </div>

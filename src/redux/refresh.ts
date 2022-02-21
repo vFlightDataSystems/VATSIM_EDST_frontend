@@ -3,7 +3,7 @@ import {RootState} from "./store";
 import {
   computeBoundaryTime,
   getRemainingRouteData,
-  getRouteDataDistance, processAar,
+  getRouteDataDistance, processAar, removeDestFromRouteString,
 } from "../lib";
 import _ from "lodash";
 import {depFilter, entryFilter} from "../filters";
@@ -30,9 +30,7 @@ export const refreshEntry = (newEntry: EdstEntryType, state: RootState): EdstEnt
       pos: [Number(newEntry.dest_info.lon), Number(newEntry.dest_info.lat)]
     });
   }
-  if (!(newEntry.route.slice(-dest.length) === dest)) {
-    newEntry.route += newEntry.dest;
-  }
+  newEntry.route = removeDestFromRouteString(newEntry.route.slice(0), newEntry.dest);
   if (currentEntry.route_data === newEntry.route_data) { // if route_data has not changed
     newEntry._route_data = getRouteDataDistance(currentEntry._route_data, pos);
     // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
