@@ -6,42 +6,65 @@ import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {EdstEntryType} from "../../../types";
-import { useAppSelector } from '../../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
 import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
+import {aclRowFieldEnum, sortOptionsEnum, windowEnum} from "../../../enums";
+import {aselSelector, closeWindow, setAsel} from "../../../redux/slices/appSlice";
 
 export function AclTable() {
   const sortData = useAppSelector((state) => state.acl.sortData);
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const dispatch = useAppDispatch();
 
+  const asel = useAppSelector(aselSelector);
   const anyHolding = useAppSelector(anyHoldingSelector);
   const anyAssignedHeading = useAppSelector(anyAssignedHdgSelector);
   const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
-  const [hiddenList, setHiddenList] = useState<string[]>([]);
+  const [hiddenList, setHiddenList] = useState<aclRowFieldEnum[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
   const entries = useAppSelector(state => state.entries);
 
-  const toggleHideColumn = (name: string) => {
+  const toggleHideColumn = (field: aclRowFieldEnum) => {
     let hiddenCopy = hiddenList.slice(0);
-    const index = hiddenCopy.indexOf(name);
+    const index = hiddenCopy.indexOf(field);
     if (index > -1) {
       hiddenCopy.splice(index, 1);
     } else {
-      hiddenCopy.push(name);
+      hiddenCopy.push(field);
+      if (asel?.field === field) {
+        dispatch(setAsel(null));
+      }
     }
     setHiddenList(hiddenCopy);
   };
 
   const handleClickSlash = () => {
     let hiddenCopy = hiddenList.slice(0);
-    if (hiddenCopy.includes('spd') && hiddenCopy.includes('hdg')) {
-      hiddenCopy.splice(hiddenCopy.indexOf('spd'), 1);
-      hiddenCopy.splice(hiddenCopy.indexOf('hdg'), 1);
-    } else {
-      if (!hiddenCopy.includes('hdg')) {
-        hiddenCopy.push('hdg');
+    if (hiddenCopy.includes(aclRowFieldEnum.spd) && hiddenCopy.includes(aclRowFieldEnum.hdg)) {
+      hiddenCopy.splice(hiddenCopy.indexOf(aclRowFieldEnum.spd), 1);
+      hiddenCopy.splice(hiddenCopy.indexOf(aclRowFieldEnum.hdg), 1);
+      if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.spd) {
+        dispatch(closeWindow(windowEnum.speedMenu));
+        dispatch(setAsel(null));
       }
-      if (!hiddenCopy.includes('spd')) {
-        hiddenCopy.push('spd');
+      if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.hdg) {
+        dispatch(closeWindow(windowEnum.headingMenu));
+        dispatch(setAsel(null));
+      }
+    } else {
+      if (!hiddenCopy.includes(aclRowFieldEnum.hdg)) {
+        hiddenCopy.push(aclRowFieldEnum.hdg);
+        if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.hdg) {
+          dispatch(closeWindow(windowEnum.headingMenu));
+          dispatch(setAsel(null));
+        }
+      }
+      if (!hiddenCopy.includes(aclRowFieldEnum.spd)) {
+        if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.spd) {
+          dispatch(closeWindow(windowEnum.speedMenu));
+          dispatch(setAsel(null));
+        }
+        hiddenCopy.push(aclRowFieldEnum.spd);
       }
     }
     setHiddenList(hiddenCopy);
@@ -49,13 +72,13 @@ export function AclTable() {
 
   const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
     switch (sortData.selectedOption) {
-      case 'ACID':
+      case sortOptionsEnum.acid:
         return u.callsign.localeCompare(v.callsign);
-      case 'Destination':
+      case sortOptionsEnum.destination:
         return u.dest.localeCompare(v.dest);
-      case 'Origin':
+      case sortOptionsEnum.origin:
         return u.dep.localeCompare(v.dep);
-      case 'Boundary Time':
+      case sortOptionsEnum.boundary_time:
         return u.boundary_time - v.boundary_time;
       default:
         return u.callsign.localeCompare(v.callsign);
@@ -87,9 +110,9 @@ export function AclTable() {
         <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
         <div className="body-col special special-hidden"/>
         <div className="body-col special special-hidden"/>
-        <div className={`body-col type ${hiddenList.includes('type') ? 'hidden' : ''}`}>
-          <div className="hover" onMouseDown={() => toggleHideColumn('type')}>
-            T{!hiddenList.includes('type') && 'ype'}
+        <div className={`body-col type ${hiddenList.includes(aclRowFieldEnum.type) ? 'hidden' : ''}`}>
+          <div className="hover" onMouseDown={() => toggleHideColumn(aclRowFieldEnum.type)}>
+            T{!hiddenList.includes(aclRowFieldEnum.type) && 'ype'}
           </div>
         </div>
         <div className="body-col alt header hover"
@@ -98,15 +121,15 @@ export function AclTable() {
         >
           Alt.
         </div>
-        <div className={`body-col code hover ${hiddenList.includes('code') ? 'hidden' : ''}`}
-             onMouseDown={() => toggleHideColumn('code')}>
-          C{!hiddenList.includes('code') && 'ode'}
+        <div className={`body-col code hover ${hiddenList.includes(aclRowFieldEnum.code) ? 'hidden' : ''}`}
+             onMouseDown={() => toggleHideColumn(aclRowFieldEnum.code)}>
+          C{!hiddenList.includes(aclRowFieldEnum.code) && 'ode'}
         </div>
         <div className={`body-col special special-header`}/>
         <EdstTooltip title={Tooltips.aclHeaderHdg}>
-          <div className={`body-col hs hdg hover ${hiddenList.includes('hdg') ? 'hidden' : ''}`}
-               onMouseDown={() => toggleHideColumn('hdg')}>
-            {hiddenList.includes('hdg') && anyAssignedHeading && '*'}H{!hiddenList.includes('hdg') && 'dg'}
+          <div className={`body-col hs hdg hover ${hiddenList.includes(aclRowFieldEnum.hdg) ? 'hidden' : ''}`}
+               onMouseDown={() => toggleHideColumn(aclRowFieldEnum.hdg)}>
+            {hiddenList.includes(aclRowFieldEnum.hdg) && anyAssignedHeading && '*'}H{!hiddenList.includes(aclRowFieldEnum.hdg) && 'dg'}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSlash}>
@@ -115,9 +138,9 @@ export function AclTable() {
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSpd}>
-          <div className={`body-col hs spd hover ${hiddenList.includes('spd') ? 'hidden' : ''}`}
-               onMouseDown={() => toggleHideColumn('spd')}>
-            S{!hiddenList.includes('spd') && 'pd'}{hiddenList.includes('spd') && anyAssignedSpeed && '*'}
+          <div className={`body-col hs spd hover ${hiddenList.includes(aclRowFieldEnum.spd) ? 'hidden' : ''}`}
+               onMouseDown={() => toggleHideColumn(aclRowFieldEnum.spd)}>
+            S{!hiddenList.includes(aclRowFieldEnum.spd) && 'pd'}{hiddenList.includes(aclRowFieldEnum.spd) && anyAssignedSpeed && '*'}
           </div>
         </EdstTooltip>
         <div className={`body-col special special-header`}/>

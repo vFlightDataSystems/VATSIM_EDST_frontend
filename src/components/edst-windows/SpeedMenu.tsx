@@ -8,12 +8,17 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {aclRowFieldEnum, windowEnum} from "../../enums";
+import {windowEnum} from "../../enums";
 import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {EdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/asyncThunks";
 
+enum signEnum {
+  more = '+',
+  less = '-',
+  none = ''
+}
 
 export const SpeedMenu: React.FC = () => {
   const {
@@ -27,7 +32,7 @@ export const SpeedMenu: React.FC = () => {
   const [focused, setFocused] = useState(false);
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
-  const [sign, setSign] = useState('');
+  const [sign, setSign] = useState<signEnum>(signEnum.none);
   const [amend, setAmend] = useState(true);
   const ref = useRef(null);
 
@@ -35,15 +40,9 @@ export const SpeedMenu: React.FC = () => {
     setFocused(false);
     setSpeed(280);
     setDeltaY(0);
-    setSign('');
+    setSign(signEnum.none);
     setAmend(true);
   }, [asel.cid]);
-
-  useEffect(() => {
-    if (asel.field !== aclRowFieldEnum.spd) {
-      dispatch(closeWindow(windowEnum.speedMenu));
-    }
-  }, [asel?.field]);
 
   const handleScroll = (e: React.WheelEvent) => {
     const newDeltaY = Math.min(Math.max((speed - 400)*10, deltaY + e.deltaY), (speed - 160)*10);
@@ -52,7 +51,7 @@ export const SpeedMenu: React.FC = () => {
 
   const handleMouseDown = (event: any, value: number, mach = false) => {
     event.preventDefault();
-    const valueStr = !mach ? `${(amend && sign === '') ? 'S' : ''}${value}${sign}`
+    const valueStr = !mach ? `${(amend && sign === signEnum.none) ? 'S' : ''}${value}${sign}`
       : `M${Number(value*100) | 0}${sign}`;
     switch (event.button) {
       case 0:
@@ -127,11 +126,11 @@ export const SpeedMenu: React.FC = () => {
         <div className="spd-hdg-menu-row top-border"/>
         <div className="spd-hdg-menu-row bottom-border">
           <EdstTooltip content="KNOTS" title={Tooltips.aclSpdKnots}/>
-          <EdstButton content="+" className="button-1" selected={sign === '+'}
-                      onMouseDown={() => setSign(sign === '+' ? '' : '+')}
+          <EdstButton content="+" className="button-1" selected={sign === signEnum.more}
+                      onMouseDown={() => setSign(sign === signEnum.more ? signEnum.none : signEnum.more)}
           />
-          <EdstButton content="-" className="button-2" selected={sign === '-'}
-                      onMouseDown={() => setSign(sign === '-' ? '' : '-')}
+          <EdstButton content="-" className="button-2" selected={sign === signEnum.less}
+                      onMouseDown={() => setSign(sign === signEnum.less ? signEnum.none : signEnum.less)}
           />
           <EdstTooltip content="MACH" title={Tooltips.aclSpdMach}/>
         </div>
@@ -139,22 +138,22 @@ export const SpeedMenu: React.FC = () => {
              onWheel={handleScroll}
         >
           {_.range(5, -6, -1).map(i => {
-            const spd = speed - (deltaY/100 | 0)*10 + i*10;
-            const mach = 0.79 - (deltaY/100 | 0)/100 + i/100;
+            const centerSpd = speed - (deltaY/100 | 0)*10 + i*10;
+            const centerMach = 0.79 - (deltaY/100 | 0)/100 + i/100;
             return <div className="spd-hdg-menu-container-row" key={`speed-menu-${i}`}>
               <div className="spd-hdg-menu-container-col"
-                   onMouseDown={(e) => handleMouseDown(e, spd)}
+                   onMouseDown={(e) => handleMouseDown(e, centerSpd)}
               >
-                {String(spd).padStart(3, '0')}{sign}
+                {String(centerSpd).padStart(3, '0')}{sign}
               </div>
               <div className="spd-hdg-menu-container-col"
-                   onMouseDown={(e) => handleMouseDown(e, spd + 5)}
+                   onMouseDown={(e) => handleMouseDown(e, centerSpd + 5)}
               >
-                {String(spd + 5).padStart(3, '0')}{sign}
+                {String(centerSpd + 5).padStart(3, '0')}{sign}
               </div>
               <div className="spd-hdg-menu-container-col spd-hdg-menu-container-col-2"
-                   onMouseDown={(e) => handleMouseDown(e, mach, true)}>
-                {String(mach.toFixed(2)).slice(1)}{sign}
+                   onMouseDown={(e) => handleMouseDown(e, centerMach, true)}>
+                {String(centerMach.toFixed(2)).slice(1)}{sign}
               </div>
             </div>;
           })}

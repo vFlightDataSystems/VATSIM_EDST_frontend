@@ -72,7 +72,7 @@ const entriesSlice = createSlice({
   name: 'entries',
   initialState: initialState as EntriesStateType,
   reducers: {
-    updateEntry(state, action) {
+    updateEntry(state, action: { payload: { cid: string, data: any } }) {
       _.assign(state[action.payload.cid], action.payload.data);
     },
     setEntry(state, action: { payload: EdstEntryType }) {
@@ -85,10 +85,18 @@ const entriesSlice = createSlice({
       state[action.payload].aclDisplay = false;
       state[action.payload].aclDeleted = true;
     },
+    addAclEntry(state, action: { payload: string }) {
+      state[action.payload].aclDisplay = true;
+      state[action.payload].aclDeleted = false;
+    },
     deleteDepEntry(state, action: { payload: string }) {
       state[action.payload].depDisplay = false;
       state[action.payload].depDeleted = true;
-    }
+    },
+    addDepEntry(state, action: { payload: string }) {
+      state[action.payload].depDisplay = true;
+      state[action.payload].depDeleted = false;
+    },
   },
   extraReducers: {
     [refreshEntriesThunk.fulfilled]: (state, action: { payload: EntriesStateType }) => {
@@ -97,7 +105,15 @@ const entriesSlice = createSlice({
   }
 });
 
-export const {setEntry, updateEntry, toggleSpa, deleteAclEntry, deleteDepEntry} = entriesSlice.actions;
+export const {
+  setEntry,
+  updateEntry,
+  toggleSpa,
+  deleteAclEntry,
+  deleteDepEntry,
+  addAclEntry,
+  addDepEntry
+} = entriesSlice.actions;
 export default entriesSlice.reducer;
 
 export const entriesSelector = (state: RootState) => state.entries;

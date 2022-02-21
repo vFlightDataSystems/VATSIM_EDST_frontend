@@ -5,16 +5,16 @@ export interface EdstEntryType {
   callsign: string; // aircraft callsign
   route: string; // route string parsed by EDST
   _route?: string; // shortened route string, starting at the next inbound fix
-  routes?: Array<any>;
-  route_data: Array<any>;
-  _route_data?: Array<any>;
+  routes?: any[];
+  route_data: FixType[];
+  _route_data?: (FixType & {dist: number})[];
   previous_route?: any;
   altitude: string;
   interim?: number;
   type: string;
   equipment: string;
-  aar_list?: Array<any>; // preferred arrival routes
-  _aar_list?: Array<any> | null; // preferred arrival routes processed by the frontend
+  aar_list?: any[]; // preferred arrival routes
+  _aar_list?: any[] | null; // preferred arrival routes processed by the frontend
   flightplan: any; // VATSIM flightplan data plus ground speed and position (lon/lat)
   dep: string; // departure airport ICAO code
   dest: string; // destination airport ICAO code
@@ -57,12 +57,13 @@ export interface FixType {
   name: string;
   pos: [number, number];
   dist?: number;
+  minutesAtFix?: number;
 }
 
 export interface EdstPreferredRouteType {
   eligible?: boolean;
   route: string;
-  route_data?: Array<any>;
+  route_data?: FixType[];
   aar_amendment_route_string?: string;
   dest?: string;
 }

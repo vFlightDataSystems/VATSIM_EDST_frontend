@@ -1,6 +1,6 @@
 import {
   bearing,
-  booleanPointInPolygon, distance, Feature,
+  booleanPointInPolygon, distance, Feature, length,
   lineString, Point,
   point,
   pointToLineDistance, Polygon,
@@ -25,7 +25,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
     // @ts-ignore
     let dist = pointToLineDistance(point, polygonToLineString(poly), {units: 'nauticalmiles'});
     if (booleanPointInPolygon(point, poly)) {
-      dist = dist * -1;
+      dist = dist* -1;
     }
     minDistance = Math.min(minDistance, dist);
   }
@@ -39,7 +39,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(routeData: Array<FixType> | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
+export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
   if (routeData === null) {
     return false;
   }
@@ -57,11 +57,11 @@ export function routeWillEnterAirspace(routeData: Array<FixType> | null, polygon
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
- * @param {Array<any>} routeData - fixes on the route (order matters)
+ * @param {FixType[]} routeData - fixes on the route (order matters)
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {Array<any>} - original route_data, but each item will have a `distance` attribute
  */
-export function getRouteDataDistance(routeData: Array<any>, pos: [number, number]): Array<any> {
+export function getRouteDataDistance(routeData: FixType[], pos: [number, number]): Array<any> {
   for (let fix of routeData) {
     fix.dist = distance(point(fix.pos), point(pos), {units: 'nauticalmiles'});
   }
@@ -75,7 +75,7 @@ export function getRouteDataDistance(routeData: Array<any>, pos: [number, number
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {{_route: string, _route_data: Array<any>}}
  */
-export function getRemainingRouteData(route: string, routeData: Array<any>, pos: [number, number]): { _route: string, _route_data: Array<any> } {
+export function getRemainingRouteData(route: string, routeData: (FixType & {dist: number})[], pos: [number, number]): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
     const fixNames = routeData.map(e => e.name);
     const sortedRouteData = routeData.slice(0).sort((u, v) => u.dist - v.dist);
@@ -121,11 +121,12 @@ export function getClosestReferenceFix(referenceFixes: Array<any>, posPoint: Fea
     }, fix);
   });
   let closestFix = fixesDistance.sort((u, v) => u.distance - v.distance)[0];
-  closestFix.bearing = (bearing(closestFix.point, posPoint) + 360) % 360;
+  closestFix.bearing = (bearing(closestFix.point, posPoint) + 360)%360;
   return closestFix;
 }
 
-export const processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
+
+export function processAar(entry: EdstEntryType, aar_list: Array<any>) {
   const {_route_data: currentRouteData, _route: currentRoute} = entry;
   if (!currentRouteData || !currentRoute) {
     return null;
@@ -174,7 +175,7 @@ export const processAar = (entry: EdstEntryType, aar_list: Array<any>) => {
       aar_data: aar_data
     };
   }).filter(aar_data => aar_data);
-};
+}
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
@@ -187,7 +188,32 @@ export function computeBoundaryTime(entry: EdstEntryType, polygons: Array<Featur
   const posPoint = point(pos);
   // @ts-ignore
   const sdist = getSignedDistancePointToPolygons(posPoint, polygons);
-  return sdist * 60 / entry.flightplan.ground_speed;
+  return sdist*60/entry.flightplan.ground_speed;
+}
+
+/**
+ *
+ * @param {EdstEntryType} entry
+ * @returns {FixType[]}
+ */
+export function computeCrossingTimes(entry: EdstEntryType): (FixType & {minutesAtFix: number})[] {
+  let newRouteData = [];
+  if (entry._route_data) {
+    const now = new Date();
+    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+    const groundspeed = Number(entry.flightplan?.ground_speed);
+    if (entry._route_data.length > 0 && groundspeed > 0) {
+      let lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
+      for (let fix of entry._route_data) {
+        lineData.push(fix.pos);
+        newRouteData.push({
+          ...fix,
+          minutesAtFix: utcMinutes + 60*length(lineString(lineData), {units: 'nauticalmiles'})/groundspeed
+        });
+      }
+    }
+  }
+  return newRouteData;
 }
 
 /**
@@ -206,7 +232,7 @@ export function computeFrd(referenceFix: { waypoint_id: string, bearing: number,
  * @returns {string} - UTC time string in HHMM format
  */
 export function formatUtcMinutes(minutes: number): string {
-  return (((minutes % 1440 + 1440) / 60 | 0) % 24).toString().padStart(2, "0") + ((minutes + 60) % 60 | 0).toString().padStart(2, "0");
+  return (((minutes%1440 + 1440)/60 | 0)%24).toString().padStart(2, "0") + ((minutes + 60)%60 | 0).toString().padStart(2, "0");
 }
 
 export function copy(text: string) {
@@ -220,6 +246,19 @@ export function copy(text: string) {
     title: "copied to clipboard",
     content: text,
     duration: 3000,
-  })
+  });
   return result;
+}
+
+/**
+ *
+ * @param {string} route
+ * @param {string} dest
+ * @returns {string}
+ */
+export function removeDestFromRouteString(route: string, dest: string): string {
+  if (route.slice(-dest.length) === dest) {
+    route = route.slice(0, -dest.length);
+  }
+  return route;
 }

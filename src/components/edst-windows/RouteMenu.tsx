@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
-import {computeFrd, copy} from "../../lib";
+import {computeFrd, copy, removeDestFromRouteString} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../css/images/glob_bright.png';
@@ -11,7 +11,7 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
+import {windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
@@ -33,11 +33,12 @@ export const RouteMenu: React.FC = () => {
   const pos = useAppSelector(windowPositionSelector(windowEnum.routeMenu));
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+
   const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
-  const [route, setRoute] = useState(asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, ''));
-  const [routeInput, setRouteInput] = useState(asel.window === windowEnum.dep ? entry.dep + route : route);
+  const [route, setRoute] = useState(asel?.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, ''));
+  const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
   const routes = (asel.window === windowEnum.dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
@@ -53,28 +54,19 @@ export const RouteMenu: React.FC = () => {
       setTrialPlan(false);
     }
     setRoute(route);
-    setRouteInput(dep ? entry.dep + route : route);
+    setRouteInput(dep ? entry.dep + route + entry.dest : route + entry.dest);
     setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  }, [asel.window, entry._route, entry.dep, entry.reference_fix, entry.route]);
+  }, [asel.window, entry._route, entry.dep, entry.dest, entry.reference_fix, entry.route]);
 
-  useEffect(() => {
-    if (asel.field !== aclRowFieldEnum.route && asel.field !== depRowFieldEnum.route) {
-      dispatch(closeWindow(windowEnum.routeMenu));
-    }
-  }, [asel?.field]);
-
-
-  const clearedReroute = (reroute_data: any) => {
+  const clearedReroute = (rerouteData: any) => {
     let planData;
     const dest = entry.dest;
-    if (!reroute_data.aar) {
-      planData = {route: reroute_data.route, route_data: reroute_data.route_data};
+    if (!rerouteData.aar) {
+      planData = {route: rerouteData.route, route_data: rerouteData.route_data};
     } else {
-      planData = {route: reroute_data.amended_route, route_fixes: reroute_data.amended_route_fixes};
+      planData = {route: rerouteData.amended_route, route_fixes: rerouteData.amended_route_fixes};
     }
-    if (planData.route.slice(-dest.length) === dest) {
-      planData.route = planData.route.slice(0, -dest.length);
-    }
+    planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
     // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or
     // localhost
     copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${planData.route}`);
@@ -111,9 +103,7 @@ export const RouteMenu: React.FC = () => {
         }
       }
       // new_route = `..${fix}` + new_route;
-      if (newRoute.slice(-dest.length) === dest) {
-        newRoute = newRoute.slice(0, -dest.length);
-      }
+      newRoute = removeDestFromRouteString(newRoute.slice(0), dest);
       // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
       copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${newRoute}`.replace(/\.+$/, ''));
       const planData = {
@@ -265,7 +255,7 @@ export const RouteMenu: React.FC = () => {
         />
         <div className="options-row">
           <div className="options-col display-route">
-            {(asel.window === windowEnum.dep) ? entry.dep + route : `./.${route}`}
+            {(asel.window === windowEnum.dep) ? entry.dep + route + entry.dest : `./.${route}${entry.dest}`}
           </div>
         </div>
         {[...Array(Math.min(routeData?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"

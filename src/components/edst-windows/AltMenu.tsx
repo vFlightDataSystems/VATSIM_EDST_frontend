@@ -5,7 +5,7 @@ import '../../css/windows/alt-menu-styles.scss';
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
+import {windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
@@ -18,7 +18,12 @@ import {EdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/asyncThunks";
 import {addTrialPlanThunk} from "../../redux/thunks";
 
-export const AltMenu: React.FC = () => {
+type AltMenuProps = {
+  setAltMenuInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void,
+  showInput: boolean
+}
+
+export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput}) => {
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
   const pos = useAppSelector(windowPositionSelector(windowEnum.altitudeMenu));
@@ -28,47 +33,50 @@ export const AltMenu: React.FC = () => {
   const [deltaY, setDeltaY] = useState(0);
   const [manualInput, setManualInput] = useState<string | null>(null);
   const [showInvalid, setShowInvalid] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setSelected(asel.window !== windowEnum.dep ? 'trial' : 'amend');
-    setTempAltHover(null);
-    setDeltaY(0);
-  }, [asel]);
+    setAltMenuInputRef(inputRef);
+    return () => {
+      dispatch(setInputFocused(false));
+      setAltMenuInputRef(null);
+    } // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    if (manualInput === null && showInput) {
+      setManualInput('');
+      dispatch(setInputFocused(true));
+    } // eslint-disable-next-line
+  }, [showInput]);
 
   const handleAltClick = (alt: string | number) => {
     if (selected === 'amend') {
       dispatch(amendEntryThunk({cid: entry.cid, planData: {altitude: alt}}));
     } else {
-      const planData = {
+      const trialPlanData = {
         cid: entry.cid, callsign: entry.callsign, planData: {
           altitude: alt,
           interim: null
         },
         msg: `AM ${entry.cid} ALT ${alt}`
       };
-      dispatch(addTrialPlanThunk(planData));
+      dispatch(addTrialPlanThunk(trialPlanData));
     }
     dispatch(closeWindow(windowEnum.altitudeMenu));
   };
-
-  useEffect(() => {
-    if (asel.field !== aclRowFieldEnum.alt && asel.field !== depRowFieldEnum.alt) {
-      dispatch(closeWindow(windowEnum.altitudeMenu));
-    }
-  }, [asel?.field]);
 
   const handleTempAltClick = (alt: number) => {
     if (selected === 'amend') {
       dispatch(amendEntryThunk({cid: entry.cid, planData: {interim: alt}}));
     } else {
-      const planData = {
+      const trialPlanData = {
         cid: entry.cid, callsign: entry.callsign, planData: {
           interim: alt
         },
         msg: `QQ /TT ${alt} ${entry?.cid}`
       };
-      dispatch(addTrialPlanThunk(planData));
+      dispatch(addTrialPlanThunk(trialPlanData));
     }
     dispatch(closeWindow(windowEnum.altitudeMenu));
   };
@@ -78,21 +86,10 @@ export const AltMenu: React.FC = () => {
     setDeltaY(newDeltaY);
   };
 
-  const handleKeyDown = () => {
-    if (manualInput === null) {
-      setManualInput('');
-      dispatch(setInputFocused(true));
-
-      // setSelected('trial');
-    }
-  };
-
   return pos && asel && (<div
       className={`alt-menu no-select ${manualInput !== null ? 'manual-input' : ''}`}
       id="alt-menu"
-      tabIndex={0}
       style={{left: pos.x, top: pos.y}}
-      onKeyDown={handleKeyDown}
     >
       <div className={`alt-menu-header no-select`}
       >
@@ -117,8 +114,11 @@ export const AltMenu: React.FC = () => {
             onChange={(event) => setManualInput(event.target.value.toUpperCase())}
             onKeyDownCapture={(event) => {
               if (event.key === 'Enter') {
-                // check if input is number and length matches valid input
-                if (!_.isNumber(manualInput) && manualInput.length === 3) {
+                // check if input is a number and length matches valid input
+                // +"string" will convert the string to a number or NaN
+                // it is called the unary plus operator
+                const numberInput = +manualInput;
+                if (_.isFinite(numberInput) && 10 < numberInput && numberInput < 590 && manualInput.length === 3) {
                   handleAltClick(manualInput);
                 } else {
                   setShowInvalid(true);
@@ -126,7 +126,7 @@ export const AltMenu: React.FC = () => {
               }
             }}
             onFocus={() => dispatch(setInputFocused(true))}
-            // onBlur={() => setInputFocused(false)}
+            onBlur={() => dispatch(setInputFocused(false))}
           />
         </div>
           {showInvalid && <div className="alt-menu-row invalid-input">
@@ -160,24 +160,23 @@ export const AltMenu: React.FC = () => {
            onWheel={handleScroll}
       >
         {_.range(30, -40, -10).map(i => {
-          const alt = Number(entry.altitude) - (deltaY/100 | 0)*10 + i;
+          const centerAlt = Number(entry.altitude) - (deltaY/100 | 0)*10 + i;
           return <div
-            className={`alt-menu-container-row ${((selected === 'amend') && (tempAltHover === alt)) ? 'temp-alt-hover' : ''}`}
+            className={`alt-menu-container-row ${((selected === 'amend') && (tempAltHover === centerAlt)) ? 'temp-alt-hover' : ''}`}
             key={`alt-${i}`}
           >
-            <div className={`alt-menu-container-col ${alt === Number(entry.altitude) ? 'selected' : ''}`}
-                 onMouseDown={() => handleAltClick(alt)}
+            <div className={`alt-menu-container-col ${centerAlt === Number(entry.altitude) ? 'selected' : ''}`}
+                 onMouseDown={() => handleAltClick(centerAlt)}
             >
-              {String(alt).padStart(3, '0')}
+              {String(centerAlt).padStart(3, '0')}
             </div>
             {(asel.window !== windowEnum.dep) &&
             <EdstTooltip title={Tooltips.altMenuT}>
-              <div className={`alt-menu-container-col-t`}
-                // @ts-ignore
+              <div className={`alt-menu-container-col-t`} // @ts-ignore
                    disabled={!(selected === 'amend')}
-                   onMouseEnter={() => (selected === 'amend') && setTempAltHover(alt)}
+                   onMouseEnter={() => (selected === 'amend') && setTempAltHover(centerAlt)}
                    onMouseLeave={() => (selected === 'amend') && setTempAltHover(null)}
-                   onMouseDown={() => handleTempAltClick(alt)}>
+                   onMouseDown={() => handleTempAltClick(centerAlt)}>
                 T
               </div>
             </EdstTooltip>}

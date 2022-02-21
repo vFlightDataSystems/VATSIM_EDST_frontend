@@ -7,7 +7,7 @@ import {
   windowEnum
 } from "../enums";
 import {REMOVAL_TIMEOUT} from "../lib";
-import {deleteAclEntry, updateEntry} from "./slices/entriesSlice";
+import {addAclEntry, addDepEntry, deleteAclEntry, updateEntry} from "./slices/entriesSlice";
 import {WindowPositionType} from "../types";
 import {closeWindow, openWindow, setAsel, setWindowPosition} from "./slices/appSlice";
 import {addTrialPlan, planCleanup, PlanType} from "./slices/planSlice";
@@ -34,11 +34,11 @@ function addEntryThunk(fid: string, window: windowEnum) {
   };
 }
 
-export function addAclEntry(fid: string) {
+export function addAclEntryByFid(fid: string) {
   return addEntryThunk(fid, windowEnum.acl);
 }
 
-export function addDepEntry(fid: string) {
+export function addDepEntryByFid(fid: string) {
   return addEntryThunk(fid, windowEnum.dep);
 }
 
@@ -53,103 +53,56 @@ export function aclCleanup(dispatch: any, getState: () => RootState) {
   }
 }
 
-const aircraftSelect = (event: any & Event,
-                        window: windowEnum | null,
-                        cid: string,
-                        field: aclRowFieldEnum | depRowFieldEnum,
-                        aselAction: aclAselActionTriggerEnum | depAselActionTriggerEnum | null = null,
-                        triggerOpenWindow?: windowEnum | null
-  ) => {
-    return (dispatch: any, getState: () => RootState) => {
-      const state = getState();
-      let asel = state.app.asel;
-      if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
-        dispatch(closeWindow(windowEnum.routeMenu));
-        dispatch(closeWindow(windowEnum.altitudeMenu));
-        dispatch(closeWindow(windowEnum.planOptions));
-        dispatch(closeWindow(windowEnum.holdMenu));
-        dispatch(closeWindow(windowEnum.prevRouteMenu));
-        dispatch(closeWindow(windowEnum.speedMenu));
-        dispatch(closeWindow(windowEnum.headingMenu));
-        dispatch(setAsel(null));
-      } else {
-        let entry = state.entries[cid];
-        switch (window) {
-          case windowEnum.dep:
-            if (!state.dep.manualPosting && field === depRowFieldEnum.fid && aselAction === depAselActionTriggerEnum.setDepStatusNeutral && entry.depStatus === -1) {
-              dispatch(updateEntry({cid: cid, data: {vciStatus: 0}}));
-            }
-            dispatch(setAsel({cid: cid, field: field as depRowFieldEnum, window: windowEnum.dep}));
-            if (triggerOpenWindow) {
-              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, windowEnum.dep));
-            }
-            break;
-          default:
-            if (!state.acl.manualPosting && field === aclRowFieldEnum.fid && aselAction === aclAselActionTriggerEnum.setVciNeutral && entry?.vciStatus === -1) {
-              dispatch(updateEntry({cid: cid, data: {vciStatus: 0}}));
-            }
-            dispatch(setAsel({cid: cid, field: field as aclRowFieldEnum, window: windowEnum.acl}));
-            if (triggerOpenWindow) {
-              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, windowEnum.acl));
-            }
-            break;
-        }
+function aircraftSelect(
+  event: Event & any,
+  window: windowEnum | null,
+  cid: string,
+  field: aclRowFieldEnum | depRowFieldEnum,
+  aselAction: aclAselActionTriggerEnum | depAselActionTriggerEnum | null = null,
+  triggerOpenWindow?: windowEnum | null
+) {
+  return (dispatch: any, getState: () => RootState) => {
+    const state = getState();
+    let asel = state.app.asel;
+
+    dispatch(closeWindow(windowEnum.routeMenu));
+    dispatch(closeWindow(windowEnum.prevRouteMenu));
+    dispatch(closeWindow(windowEnum.altitudeMenu));
+    dispatch(closeWindow(windowEnum.planOptions));
+    dispatch(closeWindow(windowEnum.holdMenu));
+    dispatch(closeWindow(windowEnum.cancelHoldMenu));
+    dispatch(closeWindow(windowEnum.speedMenu));
+    dispatch(closeWindow(windowEnum.headingMenu));
+    dispatch(closeWindow(windowEnum.templateMenu));
+
+    if (asel?.cid === cid && asel?.field === field && asel?.window === window) {
+      dispatch(setAsel(null));
+    } else {
+      let entry = state.entries[cid];
+      switch (window) {
+        case windowEnum.dep:
+          if (!state.dep.manualPosting && field === depRowFieldEnum.fid && aselAction === depAselActionTriggerEnum.setDepStatusNeutral && entry.depStatus === -1) {
+            dispatch(updateEntry({cid: cid, data: {vciStatus: 0}}));
+          }
+          dispatch(setAsel({cid: cid, field: field as depRowFieldEnum, window: windowEnum.dep}));
+          if (triggerOpenWindow) {
+            dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, windowEnum.dep, false, cid));
+          }
+          break;
+        default:
+          if (!state.acl.manualPosting && field === aclRowFieldEnum.fid && aselAction === aclAselActionTriggerEnum.setVciNeutral && entry?.vciStatus === -1) {
+            dispatch(updateEntry({cid: cid, data: {vciStatus: 0}}));
+          }
+          dispatch(setAsel({cid: cid, field: field as aclRowFieldEnum, window: windowEnum.acl}));
+          if (triggerOpenWindow) {
+            dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, windowEnum.acl, false, cid));
+          }
+          break;
       }
-
-
-      // let needOpenMenu: boolean = true;
-      // if (window === windowEnum.dep) {
-      //   if (asel?.cid === cid && asel?.field === field) {
-      //     needOpenMenu = false;
-      //   }
-      //   dispatch(setAsel({cid: cid, window: window, field: depRowFieldEnum.fid}));
-      // }
-      // if (window === windowEnum.acl) {
-      //   if (asel?.cid === cid && asel?.field === field) {
-      //     needOpenMenu = false;
-      //   }
-      //   dispatch(setAsel(cid, field as aclRowFieldEnum, aselAction as aclAselActionTriggerEnum));
-      // }
-      // if (needOpenMenu && triggerOpenWindow) {
-      //   const entry = state.entries[cid];
-      //   if (window === windowEnum.acl && !state.acl.manualPosting && aselAction ===
-      // aclAselActionTriggerEnum.setVciNeutral && entry?.vciStatus === -1) { dispatch(updateEntry({cid: cid, data:
-      // {vciStatus: 0}})); } if (window === windowEnum.dep && !state.dep.manualPosting && aselAction ===
-      // depAselActionTriggerEnum.setDepStatusNeutral && entry?.depStatus === -1) { dispatch(updateEntry({cid: cid,
-      // data: {depStatus: 0}})); } dispatch(openWindowThunk(window as windowEnum, event.target, triggerOpenWindow,
-      // false)); }
-
-      // switch (field) {
-      //   case 'alt':
-      //     this.openMenu(event.target, 'alt-menu', false, asel);
-      //     break;
-      //   case 'route':
-      //     if (entry.aclRouteDisplay === 'hold_data') {
-      //       this.openMenu(event.target, 'hold-menu', false, asel);
-      //     } else {
-      //       this.openMenu(event.target, 'route-menu', false, asel);
-      //     }
-      //     break;
-      //   case 'spd':
-      //     this.openMenu(event.target, 'speed-menu', false, asel);
-      //     break;
-      //   case 'hdg':
-      //     this.openMenu(event.target, 'heading-menu', false, asel);
-      //     break;
-      //   case 'hold':
-      //     this.openMenu(event.target, 'hold-menu', false, asel);
-      //     break;
-      //   case 'cancel-hold':
-      //     this.openMenu(event.target, 'cancel-hold-menu', false, asel);
-      //     break;
-      //   default:
-      //     break;
-      // }
-    };
-  }
-;
-
-export function aclAircraftSelect(event: any & Event, cid: string, field: aclRowFieldEnum, aselAction?: aclAselActionTriggerEnum | null, triggerOpenWindow?: windowEnum | null) {
+    }
+  };
+}
+export function aclAircraftSelect(event: Event & any, cid: string, field: aclRowFieldEnum, aselAction?: aclAselActionTriggerEnum | null, triggerOpenWindow?: windowEnum | null) {
   return aircraftSelect(event, windowEnum.acl, cid, field, aselAction, triggerOpenWindow);
 }
 
@@ -163,7 +116,7 @@ export function planCleanupThunk() {
   };
 }
 
-export function openWindowThunk(window: windowEnum, ref?: EventTarget | any, triggeredFromWindow?: windowEnum, plan: boolean = false) {
+export function openWindowThunk(window: windowEnum, ref?: (EventTarget & any), triggeredFromWindow?: windowEnum, plan: boolean = false, openedWithCid?: string | null) {
   return (dispatch: any) => {
     if (ref) {
       let windowPos: WindowPositionType;
@@ -222,7 +175,7 @@ export function openWindowThunk(window: windowEnum, ref?: EventTarget | any, tri
       }
       dispatch(setWindowPosition({window: window, pos: windowPos}));
     }
-    dispatch(openWindow({window: window, openedBy: triggeredFromWindow}));
+    dispatch(openWindow({window: window, openedBy: triggeredFromWindow, openedWithCid: openedWithCid}));
   };
 }
 

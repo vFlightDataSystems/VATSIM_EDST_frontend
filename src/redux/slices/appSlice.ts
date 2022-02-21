@@ -7,11 +7,11 @@ type AppWindowType = {
   open: boolean,
   window: windowEnum,
   position: WindowPositionType | null,
-  openedBy?: windowEnum
+  openedBy?: windowEnum,
+  openedWithCid?: string | null
 };
 
 export type AselType = { cid: string, window: windowEnum, field: aclRowFieldEnum | depRowFieldEnum | planRowFieldEnum };
-
 
 export type AppStateType = {
   disabledHeaderButtons: edstHeaderButtonEnum[];
@@ -79,13 +79,23 @@ const appSlice = createSlice({
     toggleWindow(state, action: { payload: windowEnum }) {
       state.windows[action.payload].open = !state.windows[action.payload].open;
     },
-    closeWindow(state, action: { payload: windowEnum }) {
-      state.windows[action.payload].open = false;
+    closeWindow(state, action: { payload: windowEnum | windowEnum[] }) {
+      if (action.payload instanceof Array) {
+        for (const window of action.payload) {
+          state.windows[window].open = false;
+        }
+      }
+      else {
+        state.windows[action.payload].open = false;
+      }
     },
-    openWindow(state, action: { payload: { window: windowEnum, openedBy?: windowEnum } }) {
+    openWindow(state, action: { payload: { window: windowEnum, openedBy?: windowEnum, openedWithCid?: string | null } }) {
       state.windows[action.payload.window].open = true;
       if (action.payload.openedBy) {
         state.windows[action.payload.window].openedBy = action.payload.openedBy;
+      }
+      if (action.payload.openedWithCid) {
+        state.windows[action.payload.window].openedWithCid = action.payload.openedWithCid;
       }
     },
     setTooltipsEnabled(state, action: { payload: boolean }) {
