@@ -47,7 +47,7 @@ export const AltimeterWindow: React.FC = () => {
       </div>
       {Object.values(altimeterList).length > 0 && <div className="floating-window-body">
         {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) =>
-          <span className="floating-window-outer-row">
+          <span className="floating-window-outer-row" key={`altimeter-list-key-${airport}`}>
             <div className={`floating-window-row margin no-select ${selected === airport ? 'selected' : ''}`}
                  onMouseDown={(event) => handleMouseDown(event, airport)}
             >
