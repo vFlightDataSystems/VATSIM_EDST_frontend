@@ -37,7 +37,7 @@ export const RouteMenu: React.FC = () => {
   const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
-  const [route, setRoute] = useState(asel?.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, ''));
+  const [route, setRoute] = useState<string>(removeDestFromRouteString((asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, '') ?? ''), entry.dest));
   const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
   const routes = (asel.window === windowEnum.dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)));
@@ -49,7 +49,8 @@ export const RouteMenu: React.FC = () => {
 
   useEffect(() => {
     const dep = asel.window === windowEnum.dep;
-    const route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
+    let route = dep ? entry.route : entry._route?.replace(/^\.*/, '');
+    route = removeDestFromRouteString(route ?? '', entry.dest);
     if (dep) {
       setTrialPlan(false);
     }
@@ -281,7 +282,7 @@ export const RouteMenu: React.FC = () => {
             <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute}/>
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.routeMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.routeMenu))}/>
           </div>
         </div>
       </div>

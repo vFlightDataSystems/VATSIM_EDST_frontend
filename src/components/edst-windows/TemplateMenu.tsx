@@ -260,7 +260,7 @@ export const TemplateMenu: React.FC = () => {
             <EdstButton disabled={true} content="Send"/>
           </div>
           <div className="template-col bottom right">
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.templateMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.templateMenu))}/>
           </div>
         </div>
       </div>

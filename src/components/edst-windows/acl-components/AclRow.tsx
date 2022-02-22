@@ -15,13 +15,13 @@ import {amendEntryThunk} from "../../../redux/asyncThunks";
 
 const SPA_INDICATOR = '^';
 
-interface AclRowProps {
-  key: string;
-  entry: EdstEntryType;
-  index: number;
-  anyHolding: boolean;
-  hidden: aclRowFieldEnum[];
-  altMouseDown: boolean;
+type AclRowProps = {
+  key: string,
+  entry: EdstEntryType,
+  index: number,
+  anyHolding: boolean,
+  hidden: aclRowFieldEnum[],
+  altMouseDown: boolean,
 }
 
 export const AclRow: React.FC<AclRowProps> = (
@@ -148,7 +148,7 @@ export const AclRow: React.FC<AclRowProps> = (
         }
         break;
       default:
-        if (event.detail === 2 && entry.vciStatus < 0) {
+        if (!manualPosting && event.detail === 2 && entry.vciStatus < 0) {
           dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
         }
         dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.fid));
@@ -229,7 +229,7 @@ export const AclRow: React.FC<AclRowProps> = (
           <div className={`body-col fid hover ${isSelected(entry.cid, aclRowFieldEnum.fid) ? 'selected' : ''}`}>
             {entry.cid} {entry.callsign}
             <span className="voice-type">
-              {entry.voice_type === 'r' ? '/R' : entry.voice_type === 't' ? '/T' : ''}
+              {entry.voiceType === 'r' ? '/R' : entry.voiceType === 't' ? '/T' : ''}
             </span>
           </div>
         </EdstTooltip>
@@ -320,7 +320,7 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
           {entry.hold_data ? 'H' : ''}
         </div>
         <EdstTooltip title={Tooltips.aclRemarksBtn}>
-          <div className={`body-col special ${!entry.remarks_checked ? 'remarks-unchecked' : ''}`}
+          <div className={`body-col special ${!entry.remarksChecked ? 'remarks-unchecked' : ''}`}
             // @ts-ignore
                disabled={!(entry.flightplan.remarks?.length > 0)}
                onMouseDown={handleRemarksClick}

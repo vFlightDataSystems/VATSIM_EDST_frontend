@@ -26,7 +26,7 @@ const sectorSlice = createSlice({
       state.sectors = Object.fromEntries(action.payload.map((sector: SectorDataType) => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)]));
     },
     setSelectedSectors(state: SectorDataStateType, action) {
-      state.selectedSectors=  action.payload;
+      state.selectedSectors = action.payload;
     },
     toggleSector(state: SectorDataStateType, action) {
       if (state.selectedSectors.includes(action.payload)) {

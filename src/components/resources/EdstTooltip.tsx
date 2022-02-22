@@ -8,18 +8,18 @@ const TooltipContent: React.FC<{content: any}> = (props) => {
   </div>);
 }
 
-interface EdstTooltipProps {
-    title?: string;
-    className?: string;
-    content?: string;
-    onMouseDown?: React.EventHandler<any>;
-    onContextMenu?: React.EventHandler<any>;
-    disabled?: boolean;
+type EdstTooltipProps = {
+    title?: string,
+    className?: string,
+    content?: string,
+    onMouseDown?: React.EventHandler<React.MouseEvent>,
+    onContextMenu?: React.EventHandler<React.MouseEvent>,
+    disabled?: boolean
 }
 
 export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...props}) => {
   const globalTooltipsEnabled = useAppSelector((state) => state.app.tooltipsEnabled);
-  const [tooltip_enabled, setTooltipEnabled] = React.useState(false);
+  const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
   return (<span
     {...props}
@@ -27,7 +27,7 @@ export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...prop
     // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
     onMouseLeave={() => setTooltipEnabled(false)}
   >
-        {globalTooltipsEnabled && (tooltip_enabled) && title &&
+        {globalTooltipsEnabled && (tooltipEnabled) && title &&
         <TooltipContent content={title}/>}
     {content ?? props.children}
     </span>);

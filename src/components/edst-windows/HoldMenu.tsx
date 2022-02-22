@@ -275,7 +275,7 @@ export const HoldMenu: React.FC = () => {
             />
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.holdMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.holdMenu))}/>
           </div>
         </div>
       </div>

@@ -24,8 +24,8 @@ export async function fetchAarList(artcc: string, cid: string): Promise<any> {
   return await fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
 }
 
-export async function fetchBoundaryData(artcc: string): Promise<any> {
-  return await fetch(`${baseurl}/edst/boundary_data/${artcc}`);
+export async function fetchFavData(artcc: string): Promise<any> {
+  return await fetch(`${baseurl}/edst/fav/${artcc}`);
 }
 
 export async function fetchReferenceFixes(artcc: string): Promise<any> {

@@ -152,7 +152,7 @@ export const SortMenu: React.FC = () => {
             P-Time
           </EdstTooltip>
         </div>}
-        <div className="options-row bottom sort">
+        <div className="options-row bottom margin-top">
           <div className="options-col left">
             <EdstButton content="OK" onMouseDown={() => {
               dispatch(window === 'acl' ? setAclSort({selectedOption: sortState.selectedOption, sector: sortState.sector}) : setDepSort(sortState.selectedOption));
@@ -160,7 +160,7 @@ export const SortMenu: React.FC = () => {
             }}/>
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.sortMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.sortMenu))}/>
           </div>
         </div>
       </div>

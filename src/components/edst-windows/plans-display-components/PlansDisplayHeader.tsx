@@ -11,8 +11,8 @@ import {planRowFieldEnum, windowEnum} from "../../../enums";
 import {amendEntryThunk} from "../../../redux/asyncThunks";
 import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
 
-interface PlansDisplayHeaderProps {
-  focused: boolean;
+type PlansDisplayHeaderProps = {
+  focused: boolean
 }
 
 export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused}) => {

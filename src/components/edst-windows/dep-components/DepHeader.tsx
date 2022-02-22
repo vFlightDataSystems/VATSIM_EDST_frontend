@@ -9,8 +9,8 @@ import {windowEnum} from "../../../enums";
 import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
 import {addDepEntryByFid, openWindowThunk} from "../../../redux/thunks";
 
-interface DepHeaderProps {
-  focused: boolean;
+type DepHeaderProps = {
+  focused: boolean
 }
 
 export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {

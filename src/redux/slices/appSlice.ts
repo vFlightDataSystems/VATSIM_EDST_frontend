@@ -45,10 +45,10 @@ export const DISABLED_HEADER_BUTTONS = [
 ];
 
 const defaultWindowPositions: { [key in windowEnum]?: { x: number, y: number } | null } = {
-  [windowEnum.edstStatus]: {x: 400, y: 100},
-  [windowEnum.edstOutage]: {x: 400, y: 100},
-  [windowEnum.edstMca]: {x: 100, y: 600},
-  [windowEnum.edstMra]: {x: 100, y: 100},
+  [windowEnum.status]: {x: 400, y: 100},
+  [windowEnum.outage]: {x: 400, y: 100},
+  [windowEnum.messageComposeArea]: {x: 100, y: 600},
+  [windowEnum.messageResponseArea]: {x: 100, y: 100},
   [windowEnum.templateMenu]: {x: 100, y: 100}
 };
 
@@ -108,7 +108,7 @@ const appSlice = createSlice({
       state.windows[action.payload.window].position = action.payload.pos;
     },
     setMraMessage(state, action: { payload: string }) {
-      state.windows[windowEnum.edstMra].open = true;
+      state.windows[windowEnum.messageResponseArea].open = true;
       state.mraMsg = action.payload;
     },
     setMcaCommandString(state, action: { payload: string }) {

@@ -2,14 +2,14 @@ import '../../css/resources/button.scss';
 import {EdstTooltip} from './EdstTooltip';
 import React from "react";
 
-interface EdstButtonProps {
-  disabled?: boolean;
-  selected?: boolean;
-  className?: string;
-  content?: string;
-  id?: string;
-  title?: string;
-  onMouseDown?: (event: React.MouseEvent) => void;
+type EdstButtonProps = {
+  disabled?: boolean,
+  selected?: boolean,
+  className?: string,
+  content?: string,
+  id?: string,
+  title?: string,
+  onMouseDown?: (event: React.MouseEvent) => void
 }
 
 export const EdstButton: React.FC<EdstButtonProps> = ({onMouseDown, className, id, ...props}) => {

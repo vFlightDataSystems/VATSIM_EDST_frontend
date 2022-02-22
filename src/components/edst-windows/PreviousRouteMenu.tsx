@@ -41,7 +41,7 @@ export const PreviousRouteMenu: React.FC = () => {
         </div>
         <div className="options-row prev-route-row">
           <div className="options-col">
-            RTE {entry.previous_route.startsWith(entry.cleared_direct?.fix) && entry.cleared_direct?.frd + '..'}{entry.previous_route}
+            RTE {(entry.previous_route as string).startsWith(entry.cleared_direct?.fix ?? '') && entry.cleared_direct?.frd + '..'}{entry.previous_route}
           </div>
         </div>
         <div className="options-row bottom">
@@ -62,7 +62,7 @@ export const PreviousRouteMenu: React.FC = () => {
             />
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.prevRouteMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.prevRouteMenu))}/>
           </div>
         </div>
       </div>

@@ -117,7 +117,7 @@ export const PlanOptions: React.FC = () => {
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.planOptions))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.planOptions))}/>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ import {REMOVAL_TIMEOUT} from "../lib";
 import {addAclEntry, addDepEntry, deleteAclEntry, updateEntry} from "./slices/entriesSlice";
 import {WindowPositionType} from "../types";
 import {closeWindow, openWindow, setAsel, setWindowPosition} from "./slices/appSlice";
-import {addTrialPlan, planCleanup, PlanType} from "./slices/planSlice";
+import {addTrialPlan, planCleanup, PlanType, removeTrialPlan} from "./slices/planSlice";
 
 
 function addEntryThunk(fid: string, window: windowEnum) {
@@ -183,5 +183,14 @@ export function addTrialPlanThunk(plan: PlanType) {
   return (dispatch: any) => {
     dispatch(addTrialPlan(plan));
     dispatch(openWindow({window: windowEnum.plansDisplay}));
+  };
+}
+
+export function removeTrialPlanThunk(index: number) {
+  return (dispatch: any, getState: () => RootState) => {
+    dispatch(removeTrialPlan(index));
+    if (getState().plan.planQueue.length === 0) {
+      dispatch(closeWindow(windowEnum.plansDisplay));
+    }
   };
 }

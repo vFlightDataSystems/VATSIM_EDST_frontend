@@ -17,15 +17,18 @@ const initialState = {};
 export const refreshEntriesThunk: any = createAsyncThunk(
   'entries/entriesRefresh',
   async (_args: void, thunkAPI) => {
+    const {sectors, selectedSectors, artccId, referenceFixes} = (thunkAPI.getState() as RootState).sectorData;
+    const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
+
     let newEntries: EntriesStateType = {};
     let newEntryList: any[] = [];
-    const {referenceFixes} = (thunkAPI.getState() as RootState).sectorData;
     await fetchEdstEntries()
       .then(response => response.json())
       .then((data: any[]) => newEntryList = data);
     for (let newEntry of newEntryList) {
       const state = thunkAPI.getState() as RootState;
-      let currentEntry = _.assign({...state.entries[newEntry.cid]}, refreshEntry(newEntry, state));
+      let currentEntry = _.cloneDeep(state.entries[newEntry.cid])
+      currentEntry = _.assign(currentEntry, refreshEntry(newEntry, polygons, artccId, currentEntry));
       if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
         if (!currentEntry.depDisplay) {
           currentEntry.depDisplay = true;
@@ -39,7 +42,7 @@ export const refreshEntriesThunk: any = createAsyncThunk(
           }
         }
       } else {
-        if (entryFilter(currentEntry, state.sectorData)) {
+        if (entryFilter(currentEntry, polygons)) {
           if (!currentEntry.aclDisplay && !currentEntry.aclDeleted) {
             // remove cid from departure list if will populate the aircraft list
             currentEntry.aclDisplay = true;
