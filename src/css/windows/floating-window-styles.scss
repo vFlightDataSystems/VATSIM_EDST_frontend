@@ -8,6 +8,39 @@ $floating-window-light-grey: #ADADAD;
   position: absolute;
   color: $floating-window-light-grey;
 
+  .floating-window-body {
+    background-color: #000000;
+    padding: 2px 10px;
+    border-left: 1px solid $floating-window-light-grey;
+    border-bottom: 1px solid $floating-window-light-grey;
+    border-right: 1px solid $floating-window-light-grey;
+    display: flex;
+    flex-flow: column;
+
+    .floating-window-row {
+      //height: 22px;
+      justify-content: center;
+      padding: 0 10px;
+      border: 1px solid transparent;
+
+      &.margin {
+        margin: 4px 0;
+      }
+
+      &:hover {
+        border: 1px solid #FFFFFF;
+      }
+    }
+  }
+
+  &.altimeter-window {
+    width: 250px;
+  }
+
+  &.metar-window {
+    width: 400px;
+  }
+
   &.status-window {
     width: 360px;
   }
@@ -20,7 +53,7 @@ $floating-window-light-grey: #ADADAD;
     background-color: $floating-window-background-dark-grey;
     justify-content: space-between;
     display: flex;
-    height: 24px;
+    height: 20px;
 
     div {
       background-color: $floating-window-background-dark-grey;
@@ -35,7 +68,7 @@ $floating-window-light-grey: #ADADAD;
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      width: 24px;
+      width: 20px;
     }
 
     .floating-window-header-middle {
@@ -49,7 +82,7 @@ $floating-window-light-grey: #ADADAD;
       justify-content: center;
       align-items: center;
       display: inline-flex;
-      width: 24px;
+      width: 20px;
     }
   }
 }
@@ -58,15 +91,6 @@ $floating-window-light-grey: #ADADAD;
   width: 8px;
   height: 0;
   background-color: $floating-window-light-grey;
-}
-
-.floating-window .floating-window-body {
-  background-color: #000000;
-  height: 40px;
-  padding: 2px 10px;
-  border-left: 1px solid $floating-window-light-grey;
-  border-bottom: 1px solid $floating-window-light-grey;
-  border-right: 1px solid $floating-window-light-grey;
 }
 
 .mca {

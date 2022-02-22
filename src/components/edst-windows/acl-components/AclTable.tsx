@@ -78,7 +78,7 @@ export function AclTable() {
         return u.dest.localeCompare(v.dest);
       case sortOptionsEnum.origin:
         return u.dep.localeCompare(v.dep);
-      case sortOptionsEnum.boundary_time:
+      case sortOptionsEnum.boundaryTime:
         return u.boundaryTime - v.boundaryTime;
       default:
         return u.callsign.localeCompare(v.callsign);

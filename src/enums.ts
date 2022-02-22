@@ -25,13 +25,13 @@ export enum planRowFieldEnum {
 
 export enum sortOptionsEnum {
   acid = "ACID",
-  boundary_time = "Boundary Time",
-  conflict_status = "Conflict Status",
-  conflict_time = "Conflict Time",
+  boundaryTime = "Boundary Time",
+  conflictStatus = "Conflict Status",
+  conflictTime = "Conflict Time",
   destination = "Destination",
-  sector_by_sector = "Sector-by-Sector",
+  sectorBySector = "Sector-by-Sector",
   origin = "Origin",
-  p_time = "P Time"
+  pTime = "P Time"
 }
 
 export enum aclAselActionTriggerEnum {
@@ -64,8 +64,8 @@ export enum edstHeaderButtonEnum {
   mca,
   mra,
   fel,
-  cpdlc_hist,
-  cpdlc_msg_out
+  cpdlcHist,
+  cpdlcMsgOut
 }
 
 export enum windowEnum {
@@ -89,7 +89,7 @@ export enum windowEnum {
   status,
   outage,
   graphicPlanDispay,
-  weather,
+  metar,
   ua,
   sigmets,
   notams,
