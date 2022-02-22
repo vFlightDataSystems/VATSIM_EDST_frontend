@@ -8,7 +8,6 @@ export type PlanType = {
   msg: string
 }
 
-
 export type PlanStateType = {
   planQueue: PlanType[],
   selectedPlanIndex: number | null

@@ -27,7 +27,7 @@ export const Outage: React.FC = () => {
           OUTAGE
         </div>
         <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.outage))}>
-          <div className="floating-window-header-block-8-2"/>
+          <div className="floating-window-header-block-6-2"/>
         </div>
       </div>
       <div className="floating-window-body">

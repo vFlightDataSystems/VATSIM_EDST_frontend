@@ -70,8 +70,8 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         title={Tooltips.sort}
       />
       <EdstWindowHeaderButton
-        onMouseDown={async (e: React.KeyboardEvent) => {
-          await dispatch(closeWindow(windowEnum.toolsMenu));
+        onMouseDown={(e: React.KeyboardEvent) => {
+          dispatch(closeWindow(windowEnum.toolsMenu));
           dispatch(openWindowThunk(windowEnum.toolsMenu, e.currentTarget, windowEnum.acl));
         }}
         content="Tools..."
