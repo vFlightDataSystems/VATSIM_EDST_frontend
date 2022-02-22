@@ -47,7 +47,7 @@ export const MetarWindow: React.FC = () => {
       </div>
       {Object.values(metarList).length > 0 && <div className="floating-window-body">
         {Object.entries(metarList).map(([airport, airportMetarEntry]) =>
-          <span className="floating-window-outer-row">
+          <span className="floating-window-outer-row" key={`metar-list-key-${airport}`}>
             <div className={`floating-window-row no-select margin ${selected === airport ? 'selected' : ''}`}
                  onMouseDown={(event) => handleMouseDown(event, airport)}
             >
@@ -55,7 +55,11 @@ export const MetarWindow: React.FC = () => {
             </div>
             {selected === airport && selectedPos &&
             <div className="delete-button no-select"
-                 onMouseDown={() => dispatch(removeAirportMetar(airport))}
+                 onMouseDown={() => {
+                   dispatch(removeAirportMetar(airport));
+                   setSelected(null);
+                   setSelectedPos(null);
+                 }}
                  style={{left: (selectedPos.x + selectedPos.w) + "px", top: selectedPos.y + "px"}}
             >
               DELETE {airport}

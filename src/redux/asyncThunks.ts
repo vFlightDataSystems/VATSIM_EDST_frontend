@@ -93,7 +93,15 @@ export const addMetarThunk = createAsyncThunk(
             .then(response => response.json())
             .then(metarData => {
               if (metarData) {
-                thunkAPI.dispatch(setAirportMetar({airport: airport.slice(1), metar: metarData[0]}));
+                // remove remarks and leading "K" for US airports
+                let metar: string = metarData[0].split('RMK')[0].trim();
+                metar = metar.replace(airport, airport.slice(1));
+                // substitute time to display HHMM only
+                const time = metar.match(/\d\d(\d{4})Z/)?.[1];
+                if (time) {
+                  metar = metar.replace(/\d\d(\d{4})Z/, time);
+                }
+                thunkAPI.dispatch(setAirportMetar({airport: airport.slice(1), metar: metar}));
               }
             });
         }
@@ -110,7 +118,14 @@ export const addMetarThunk = createAsyncThunk(
           .then(response => response.json())
           .then(metarData => {
             if (metarData) {
-              thunkAPI.dispatch(setAirportMetar({airport: airport.slice(1), metar: metarData[0]}));
+              // remove remarks
+              let metar: string = metarData[0].split('RMK')[0].trim();
+              // substitute time to display HHMM only
+              const time = metar.match(/\d\d(\d{4})Z/)?.[1];
+              if (time) {
+                metar = metar.replace(/\d\d(\d{4})Z/, time);
+              }
+              thunkAPI.dispatch(setAirportMetar({airport: airport.slice(1), metar: metar}));
             }
           });
       }
