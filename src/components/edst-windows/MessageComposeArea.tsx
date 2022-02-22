@@ -23,6 +23,9 @@ type MessageComposeAreaProps = {
   setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
 }
 
+const ACCEPT_CHECKMARK = '✓';
+const REJECT_CROSS = 'X'; // apparently this is literally just the character X (xray)
+
 export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
   const [response, setResponse] = useState<string | null>(null);
   const [mcaFocused, setMcaFocused] = useState(false);
@@ -135,9 +138,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
           break;//end case UU
         case 'QD':
           dispatch(addAltimeterThunk(args));
+          setResponse(`ACCEPT\nALTIMETER REQ`);
           break;
         case 'WR':
           dispatch(addMetarThunk(args));
+          setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
           break;
         case 'FR':
           if (args.length === 1) {
@@ -204,6 +209,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
         />
       </div>
       <div className="mca-response-area">
+        {response?.startsWith('ACCEPT') && <span className="green">{ACCEPT_CHECKMARK}</span>}
+        {response?.startsWith('REJECT') && <span className="red">{REJECT_CROSS}</span>}
         {response}
       </div>
     </div>

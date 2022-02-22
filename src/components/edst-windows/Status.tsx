@@ -27,7 +27,7 @@ export const Status: React.FC = () => {
           STATUS
         </div>
         <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
-          <div className="floating-window-header-block-8-2"/>
+          <div className="floating-window-header-block-6-2"/>
         </div>
       </div>
       <div className="floating-window-body">

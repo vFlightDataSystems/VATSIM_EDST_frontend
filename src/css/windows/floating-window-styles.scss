@@ -10,25 +10,33 @@ $floating-window-light-grey: #ADADAD;
 
   .floating-window-body {
     background-color: #000000;
-    padding: 2px 10px;
+    padding: 0 0 4px 6px;
     border-left: 1px solid $floating-window-light-grey;
     border-bottom: 1px solid $floating-window-light-grey;
     border-right: 1px solid $floating-window-light-grey;
     display: flex;
     flex-flow: column;
 
-    .floating-window-row {
-      //height: 22px;
-      justify-content: center;
-      padding: 0 10px;
-      border: 1px solid transparent;
+    .floating-window-outer-row {
 
-      &.margin {
-        margin: 4px 0;
-      }
+      .floating-window-row {
+        //height: 22px;
+        justify-content: center;
+        padding: 0 30px 0 10px;
+        border: 1px solid transparent;
 
-      &:hover {
-        border: 1px solid #FFFFFF;
+        &.margin {
+          margin: 4px 21px 0 0;
+        }
+
+        &.selected {
+          background-color: $floating-window-light-grey;
+          color: #000000;
+        }
+
+        &:hover {
+          border: 1px solid #FFFFFF;
+        }
       }
     }
   }
@@ -87,8 +95,23 @@ $floating-window-light-grey: #ADADAD;
   }
 }
 
-.floating-window-header-block-8-2 {
-  width: 8px;
+.delete-button {
+  position: absolute;
+  display: block;
+  height: 18px;
+  padding: 0 2px;
+  width: 100px;
+
+  background-color: $floating-window-background-dark-grey;
+  border: 1px solid $floating-window-light-grey;
+
+  &:hover {
+    border: 1px solid #FFFFFF;
+  }
+}
+
+.floating-window-header-block-6-2 {
+  width: 6px;
   height: 0;
   background-color: $floating-window-light-grey;
 }
@@ -112,10 +135,18 @@ $floating-window-light-grey: #ADADAD;
 
   .mca-response-area {
     line-height: 1;
-    padding: 0 2px;
+    padding: 2px;
     display: flex;
     flex-grow: 1;
     white-space: pre-line;
+
+    .green {
+      color: $edst-font-green;
+    }
+
+    .red {
+      color: $edst-font-red;
+    }
   }
 }
 
