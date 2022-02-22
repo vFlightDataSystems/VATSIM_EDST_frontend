@@ -64,39 +64,39 @@ export const SortMenu: React.FC = () => {
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.boundary_time;
+                         sortStateCopy.selectedOption = sortOptionsEnum.boundaryTime;
                          setSortState(sortStateCopy);
                        }} // @ts-ignore
                        title={Tooltips.sortBoundaryTime}
           >
-            <div className={`box diamond ${sortStateCopy?.selectedOption === sortOptionsEnum.boundary_time ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sortStateCopy?.selectedOption === sortOptionsEnum.boundaryTime ? 'selected' : ''}`}/>
             Boundary Time
           </EdstTooltip>
         </div>}
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.conflict_status;
+                         sortStateCopy.selectedOption = sortOptionsEnum.conflictStatus;
                          setSortState(sortStateCopy);
                        }} // @ts-ignore
                        disabled={true}
                        title={Tooltips.sortConflictStatus}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.conflict_status ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.conflictStatus ? 'selected' : ''}`}/>
             Conflict Status
           </EdstTooltip>
         </div>}
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.conflict_time;
+                         sortStateCopy.selectedOption = sortOptionsEnum.conflictTime;
                          setSortState(sortStateCopy);
                        }}
             // @ts-ignore
                        disabled={true}
                        title={Tooltips.sortConflictTime}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.conflict_time ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.conflictTime ? 'selected' : ''}`}/>
             Conflict Time
           </EdstTooltip>
         </div>}
@@ -115,14 +115,14 @@ export const SortMenu: React.FC = () => {
         {window === 'acl' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.sector_by_sector;
+                         sortStateCopy.selectedOption = sortOptionsEnum.sectorBySector;
                          setSortState(sortStateCopy);
                        }}
             // @ts-ignore
                        disabled={true}
                        title={Tooltips.sortSectorBySector}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.sector_by_sector ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.sectorBySector ? 'selected' : ''}`}/>
             Sector-by-Sector
           </EdstTooltip>
         </div>}
@@ -141,14 +141,14 @@ export const SortMenu: React.FC = () => {
         {window === 'dep' && <div className="options-row">
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.p_time;
+                         sortStateCopy.selectedOption = sortOptionsEnum.pTime;
                          setSortState(sortStateCopy);
                        }}
             // @ts-ignore
                        disabled={true}
                        title={Tooltips.sortPTime}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.p_time ? 'selected' : ''}`}/>
+            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.pTime ? 'selected' : ''}`}/>
             P-Time
           </EdstTooltip>
         </div>}
