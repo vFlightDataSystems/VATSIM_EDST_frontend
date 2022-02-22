@@ -78,11 +78,11 @@ export const EdstHeader: React.FC = () => {
                             title={Tooltips.plans}
                             onMouseDown={() =>dispatch(openWindow({window: windowEnum.plansDisplay}))}
           />
-          <EdstHeaderButton open={windows[windowEnum.weather].open}
+          <EdstHeaderButton open={windows[windowEnum.metar].open}
                             content="WX REPORT"
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.wx)}
             // title={Tooltips.wx}
-                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.weather))}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.metar))}
           />
           <EdstHeaderButton open={windows[windowEnum.sigmets].open}
                             content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : ''}`}
@@ -187,14 +187,14 @@ export const EdstHeader: React.FC = () => {
           <EdstHeaderButton open={windows[windowEnum.cpdlcHist].open}
                             className="yellow-border yellow-background"
                             content="CPDLC HIST"
-                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlc_hist)}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlcHist)}
             // title={Tooltips.cpdlc_hist}
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.cpdlcHist))}
           />
           <EdstHeaderButton open={windows[windowEnum.cpdlcMsgOut].open}
                             className="yellow-border yellow-background"
                             content="CPDLC MSGOUT"
-                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlc_msg_out)}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlcMsgOut)}
             // title={Tooltips.cpdlc_msg_out}
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.cpdlcMsgOut))}
           />

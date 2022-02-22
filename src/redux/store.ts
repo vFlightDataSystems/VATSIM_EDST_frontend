@@ -5,6 +5,7 @@ import sectorReducer from "./slices/sectorSlice";
 import entriesReducer from "./slices/entriesSlice";
 import planReducer from './slices/planSlice';
 import appReducer from './slices/appSlice';
+import weatherReducer from './slices/weatherSlice';
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     dep: depReducer,
     plan: planReducer,
     sectorData: sectorReducer,
-    entries: entriesReducer
+    entries: entriesReducer,
+    weather: weatherReducer
   },
   middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}))
 });

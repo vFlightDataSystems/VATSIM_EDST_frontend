@@ -17,6 +17,7 @@ import {
   setMraMessage,
   windowPositionSelector
 } from "../../redux/slices/appSlice";
+import {addAltimeterThunk, addMetarThunk} from "../../redux/asyncThunks";
 
 type MessageComposeAreaProps = {
   setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
@@ -92,7 +93,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
         case '//': // should turn vci on/off for a CID
           toggleVci(args[0]);
           setResponse(`ACCEPT\nD POS KEYBD`);
-          break;
+          break;//end case //
         case 'UU':
           switch (args.length) {
             case 0:
@@ -131,6 +132,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
             default: // TODO: give error msg
               setResponse(`REJECT\n${mcaCommandString}`);
           }
+          break;//end case UU
+        case 'QD':
+          dispatch(addAltimeterThunk(args));
+          break;
+        case 'WR':
+          dispatch(addMetarThunk(args));
           break;
         case 'FR':
           if (args.length === 1) {
@@ -139,7 +146,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
           } else {
             setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
-          break;
+          break;//end case FR
         default: // TODO: give better error msg
           setResponse(`REJECT\n\n${mcaCommandString}`);
       }
