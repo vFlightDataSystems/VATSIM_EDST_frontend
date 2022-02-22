@@ -24,21 +24,23 @@ import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 import {SectorSelector} from "./components/SectorSelector";
 import {initThunk} from "./redux/asyncThunks";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
-import {
-  windowEnum
-} from "./enums";
-import {
-  openWindow,
-  setDragging,
-  setMcaCommandString,
-  setWindowPosition
-} from "./redux/slices/appSlice";
+import {windowEnum} from "./enums";
+import {openWindow, setDragging, setMcaCommandString, setWindowPosition} from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/ToolsMenu";
+import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
+import {MetarWindow} from "./components/edst-windows/MetarWindow";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
-const DRAGGING_HIDE_CURSOR = ['edst-status', 'edst-outage', 'edst-mca', 'edst-mra'];
+const DRAGGING_HIDE_CURSOR = [
+  windowEnum.status,
+  windowEnum.outage,
+  windowEnum.messageComposeArea,
+  windowEnum.messageResponseArea,
+  windowEnum.altimeter,
+  windowEnum.metar
+];
 
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -52,7 +54,10 @@ export const App: React.FC = () => {
   const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
-  const altMenuRef = React.useRef<{showInput: boolean, inputRef: React.RefObject<HTMLInputElement> | null}>({showInput: false, inputRef: null});
+  const altMenuRef = React.useRef<{ showInput: boolean, inputRef: React.RefObject<HTMLInputElement> | null }>({
+    showInput: false,
+    inputRef: null
+  });
   const bodyRef = React.useRef<HTMLDivElement & any>(null);
 
   useEffect(() => {
@@ -69,11 +74,10 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (altMenuRef.current.inputRef === null) {
       altMenuRef.current.showInput = false;
+    } else if (altMenuRef.current.inputRef?.current) {
+      altMenuRef.current?.inputRef.current.focus();
     }
-    else if (altMenuRef.current.inputRef?.current) {
-        altMenuRef.current?.inputRef.current.focus();
-    }
-  }, [altMenuRef.current.inputRef])
+  }, [altMenuRef.current.inputRef]);
 
   const draggingHandler = useCallback((event: MouseEvent) => {
     if (event && bodyRef?.current?.windowRef?.current) {
@@ -113,7 +117,7 @@ export const App: React.FC = () => {
       bodyRef.current.draggingWindowName = window;
       bodyRef.current.relativePos = relativePos;
       setDragPreviewStyle(style);
-      setDraggingCursorHide(DRAGGING_HIDE_CURSOR.includes(ref.current.id));
+      setDraggingCursorHide(DRAGGING_HIDE_CURSOR.includes(window));
       dispatch(setDragging(true));
       bodyRef.current.addEventListener('mousemove', draggingHandler);
     }
@@ -147,8 +151,7 @@ export const App: React.FC = () => {
       if (altMenuRef.current.inputRef?.current) {
         altMenuRef.current?.inputRef.current.focus();
       }
-    }
-    else {
+    } else {
       if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
         dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
       }
@@ -199,6 +202,8 @@ export const App: React.FC = () => {
         />}
         {windows[windowEnum.speedMenu].open && <SpeedMenu/>}
         {windows[windowEnum.headingMenu].open && <HeadingMenu/>}
+        {windows[windowEnum.altimeter].open && <AltimeterWindow/>}
+        {windows[windowEnum.metar].open && <MetarWindow/>}
         {windows[windowEnum.messageComposeArea].open && <MessageComposeArea
           setMcaInputRef={setMcaInputRef}
         />}

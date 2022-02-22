@@ -1,4 +1,4 @@
-import {fetchFavData, fetchReferenceFixes, updateEdstEntry} from "../api";
+import {fetchAirportMetar, fetchFavData, fetchReferenceFixes, updateEdstEntry} from "../api";
 import {RootState} from "./store";
 import {setArtccId, setReferenceFixes, setSectorId, setSectors} from "./slices/sectorSlice";
 import {createAsyncThunk} from "@reduxjs/toolkit";
@@ -6,6 +6,7 @@ import {refreshEntriesThunk, setEntry} from "./slices/entriesSlice";
 import {refreshEntry} from "./refresh";
 import {removeDestFromRouteString} from "../lib";
 import _ from "lodash";
+import {removeAirportAltimeter, removeAirportMetar, setAirportAltimeter, setAirportMetar} from "./slices/weatherSlice";
 
 export const initThunk = createAsyncThunk(
   'app/init',
@@ -47,7 +48,7 @@ export const initThunk = createAsyncThunk(
 
 export const amendEntryThunk = createAsyncThunk(
   'entries/amend',
-  async ({cid, planData}: { cid: string, planData: any}, thunkAPI) => {
+  async ({cid, planData}: { cid: string, planData: any }, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     const {sectors, selectedSectors, artccId} = state.sectorData;
     const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
@@ -73,5 +74,95 @@ export const amendEntryThunk = createAsyncThunk(
           thunkAPI.dispatch(setEntry(updatedEntry));
         }
       });
+  }
+);
+
+export const addMetarThunk = createAsyncThunk(
+  'weather/addMetar',
+  async (airports: string | string[], thunkAPI) => {
+    const metarList = (thunkAPI.getState() as RootState).weather.metarList;
+    if (airports instanceof Array) {
+      for (let airport of airports) {
+        if (airport.length === 3) {
+          airport = 'K' + airport;
+        }
+        if (Object.keys(metarList).includes(airport.slice(1))) {
+          thunkAPI.dispatch(removeAirportMetar(airport.slice(1)));
+        } else {
+          await fetchAirportMetar(airport)
+            .then(response => response.json())
+            .then(metarData => {
+              if (metarData) {
+                thunkAPI.dispatch(setAirportMetar({airport: airport.slice(1), metar: metarData[0]}));
+              }
+            });
+        }
+      }
+    } else {
+      let airport = airports;
+      if (airport.length === 3) {
+        airport = 'K' + airport;
+      }
+      if (Object.keys(metarList).includes(airport.slice(1))) {
+        thunkAPI.dispatch(removeAirportMetar(airport.slice(1)));
+      } else {
+        await fetchAirportMetar(airport)
+          .then(response => response.json())
+          .then(metarData => {
+            if (metarData) {
+              thunkAPI.dispatch(setAirportMetar({airport: airport.slice(1), metar: metarData[0]}));
+            }
+          });
+      }
+
+    }
+  }
+);
+
+export const addAltimeterThunk = createAsyncThunk(
+  'weather/addMetar',
+  async (airports: string | string[], thunkAPI) => {
+    const altimeterList = (thunkAPI.getState() as RootState).weather.altimeterList;
+    if (airports instanceof Array) {
+      for (let airport of airports) {
+        if (airport.length === 3) {
+          airport = 'K' + airport;
+        }
+        if (Object.keys(altimeterList).includes(airport.slice(1))) {
+          thunkAPI.dispatch(removeAirportAltimeter(airport.slice(1)));
+        }
+        else {
+          await fetchAirportMetar(airport)
+            .then(response => response.json())
+            .then(metarData => {
+              const metarString: string = metarData[0];
+              const time = metarString.match(/\d\d(\d{4})Z/)?.[1];
+              const altimeter = metarString.match(/A\d(\d{3})/)?.[1];
+              if (time && altimeter) {
+                thunkAPI.dispatch(setAirportAltimeter({airport: airport.slice(1), time: time, altimeter: altimeter}));
+              }
+            });
+        }
+      }
+    } else {
+      let airport = airports;
+      if (airport.length === 3) {
+        airport = 'K' + airport;
+      }
+      if (Object.keys(altimeterList).includes(airport.slice(1))) {
+        thunkAPI.dispatch(removeAirportAltimeter(airport.slice(1)));
+      } else {
+        await fetchAirportMetar(airport)
+          .then(response => response.json())
+          .then(metarData => {
+            const metarString: string = metarData[0];
+            const time = metarString.match(/\d\d(\d{4})Z/)?.[1];
+            const altimeter = metarString.match(/A\d(\d{3})/)?.[1];
+            if (time && altimeter) {
+              thunkAPI.dispatch(setAirportAltimeter({airport: airport.slice(1), time: time, altimeter: altimeter}));
+            }
+          });
+      }
+    }
   }
 );

@@ -28,7 +28,6 @@ export type AppStateType = {
 
 export const DISABLED_HEADER_BUTTONS = [
   edstHeaderButtonEnum.gpd,
-  edstHeaderButtonEnum.wx,
   edstHeaderButtonEnum.sig,
   edstHeaderButtonEnum.not,
   edstHeaderButtonEnum.gi,
@@ -38,10 +37,9 @@ export const DISABLED_HEADER_BUTTONS = [
   edstHeaderButtonEnum.sat,
   edstHeaderButtonEnum.msg,
   edstHeaderButtonEnum.wind,
-  edstHeaderButtonEnum.altim,
   edstHeaderButtonEnum.fel,
-  edstHeaderButtonEnum.cpdlc_hist,
-  edstHeaderButtonEnum.cpdlc_msg_out
+  edstHeaderButtonEnum.cpdlcHist,
+  edstHeaderButtonEnum.cpdlcMsgOut
 ];
 
 const defaultWindowPositions: { [key in windowEnum]?: { x: number, y: number } | null } = {
@@ -49,7 +47,9 @@ const defaultWindowPositions: { [key in windowEnum]?: { x: number, y: number } |
   [windowEnum.outage]: {x: 400, y: 100},
   [windowEnum.messageComposeArea]: {x: 100, y: 600},
   [windowEnum.messageResponseArea]: {x: 100, y: 100},
-  [windowEnum.templateMenu]: {x: 100, y: 100}
+  [windowEnum.templateMenu]: {x: 100, y: 100},
+  [windowEnum.altimeter]: {x: 100, y: 100},
+  [windowEnum.metar]: {x: 100, y: 100}
 };
 
 const initialWindowState: { [key in windowEnum]: AppWindowType } = Object.fromEntries(Object.values(windowEnum)
