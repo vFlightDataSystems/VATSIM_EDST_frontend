@@ -1,12 +1,12 @@
 import React, {useEffect} from "react";
 import '../../css/toast.scss';
 
-export interface ToastProps {
-  id: string;
-  destroy: () => void;
-  title: string;
-  content: string;
-  duration?: number;
+export type ToastProps = {
+  id: string,
+  destroy: () => void,
+  title: string,
+  content: string,
+  duration?: number
 }
 
 const Toast: React.FC<ToastProps> = (props) => {

@@ -8,7 +8,7 @@ import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 
 export const Status: React.FC = () => {
   const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.edstStatus));
+  const pos = useAppSelector(windowPositionSelector(windowEnum.status));
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 
@@ -22,11 +22,11 @@ export const Status: React.FC = () => {
           M
         </div>
         <div className="floating-window-header-middle"
-             onMouseDown={(event) => startDrag(event, ref, windowEnum.edstStatus)}
+             onMouseDown={(event) => startDrag(event, ref, windowEnum.status)}
         >
           STATUS
         </div>
-        <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.edstStatus))}>
+        <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
           <div className="floating-window-header-block-8-2"/>
         </div>
       </div>

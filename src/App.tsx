@@ -34,6 +34,7 @@ import {
   setWindowPosition
 } from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
+import {ToolsMenu} from "./components/edst-windows/ToolsMenu";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -152,7 +153,7 @@ export const App: React.FC = () => {
         dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
       }
       if (!mcaInputRef?.current) {
-        dispatch(openWindow({window: windowEnum.edstMca}));
+        dispatch(openWindow({window: windowEnum.messageComposeArea}));
       } else {
         mcaInputRef.current.focus();
       }
@@ -162,7 +163,7 @@ export const App: React.FC = () => {
   return <div className="edst"
               onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
               tabIndex={!(inputFocused) ? -1 : 0}
-              onKeyDown={(e) => (!(inputFocused) || (windows[windowEnum.altitudeMenu].open && !altMenuRef.current.showInput)) && handleKeyDown(e)}
+              onKeyDownCapture={(e) => (!(inputFocused) || (windows[windowEnum.altitudeMenu].open && !altMenuRef.current.showInput)) && handleKeyDown(e)}
   >
     <EdstHeader/>
     <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
@@ -182,10 +183,11 @@ export const App: React.FC = () => {
         {windows[windowEnum.acl].open && <Acl/>}
         {windows[windowEnum.dep].open && <Dep/>}
         {windows[windowEnum.plansDisplay].open && <PlansDisplay/>}
-        {windows[windowEnum.edstStatus].open && <Status/>}
-        {windows[windowEnum.edstOutage].open && <Outage/>}
+        {windows[windowEnum.status].open && <Status/>}
+        {windows[windowEnum.outage].open && <Outage/>}
         {windows[windowEnum.planOptions].open && <PlanOptions/>}
         {windows[windowEnum.sortMenu].open && <SortMenu/>}
+        {windows[windowEnum.toolsMenu].open && <ToolsMenu/>}
         {windows[windowEnum.routeMenu].open && <RouteMenu/>}
         {windows[windowEnum.templateMenu].open && <TemplateMenu/>}
         {windows[windowEnum.holdMenu].open && <HoldMenu/>}
@@ -197,10 +199,10 @@ export const App: React.FC = () => {
         />}
         {windows[windowEnum.speedMenu].open && <SpeedMenu/>}
         {windows[windowEnum.headingMenu].open && <HeadingMenu/>}
-        {windows[windowEnum.edstMca].open && <MessageComposeArea
+        {windows[windowEnum.messageComposeArea].open && <MessageComposeArea
           setMcaInputRef={setMcaInputRef}
         />}
-        {windows[windowEnum.edstMra].open && <MessageResponseArea/>}
+        {windows[windowEnum.messageResponseArea].open && <MessageResponseArea/>}
       </EdstContext.Provider>
     </div>
   </div>;

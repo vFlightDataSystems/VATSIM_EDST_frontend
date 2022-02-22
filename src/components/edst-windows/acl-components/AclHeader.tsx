@@ -37,7 +37,8 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
             windowEnum.speedMenu,
             windowEnum.headingMenu,
             windowEnum.planOptions,
-            windowEnum.sortMenu]
+            windowEnum.sortMenu,
+            windowEnum.toolsMenu]
           ));
           dispatch(setAsel(null));
         }
@@ -68,7 +69,13 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         content="Sort..."
         title={Tooltips.sort}
       />
-      <EdstWindowHeaderButton disabled={true} content="Tools..."/>
+      <EdstWindowHeaderButton
+        onMouseDown={async (e: React.KeyboardEvent) => {
+          await dispatch(closeWindow(windowEnum.toolsMenu));
+          dispatch(openWindowThunk(windowEnum.toolsMenu, e.currentTarget, windowEnum.acl));
+        }}
+        content="Tools..."
+      />
       <EdstWindowHeaderButton
         onMouseDown={() => dispatch(setAclManualPosting(!manualPosting))}
         content="Posting Mode"

@@ -15,10 +15,10 @@ import {amendEntryThunk} from "../../../redux/asyncThunks";
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
 
-interface DepRowProps {
-  entry: EdstEntryType;
-  hidden: string[];
-  index: number;
+type DepRowProps = {
+  entry: EdstEntryType,
+  hidden: string[],
+  index: number,
 }
 
 export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
@@ -123,7 +123,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
                onMouseDown={handleFidClick}
                onContextMenu={(event) => event.preventDefault()}
           >
-            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '/R' : entry.voice_type === 't' ? '/T' : ''}
+            {entry.cid} {entry.callsign}{entry.voiceType === 'r' ? '/R' : entry.voiceType === 't' ? '/T' : ''}
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>

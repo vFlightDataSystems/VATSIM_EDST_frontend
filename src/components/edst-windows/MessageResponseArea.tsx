@@ -7,7 +7,7 @@ import {useAppSelector} from "../../redux/hooks";
 import {mraMsgSelector, windowPositionSelector} from "../../redux/slices/appSlice";
 
 export const MessageResponseArea: React.FC = () => {
-  const pos = useAppSelector(windowPositionSelector(windowEnum.edstMra));
+  const pos = useAppSelector(windowPositionSelector(windowEnum.messageResponseArea));
   const msg = useAppSelector(mraMsgSelector);
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
@@ -16,7 +16,7 @@ export const MessageResponseArea: React.FC = () => {
                ref={ref}
                id="edst-mra"
                style={{left: pos.x + "px", top: pos.y + "px"}}
-               onMouseDown={(event) => startDrag(event, ref, windowEnum.edstMra)}
+               onMouseDown={(event) => startDrag(event, ref, windowEnum.messageResponseArea)}
     >
       {msg}
     </div>

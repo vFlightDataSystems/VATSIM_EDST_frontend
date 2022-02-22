@@ -40,7 +40,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
     return () => {
       dispatch(setInputFocused(false));
       setAltMenuInputRef(null);
-    } // eslint-disable-next-line
+    }; // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -55,7 +55,9 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
       dispatch(amendEntryThunk({cid: entry.cid, planData: {altitude: alt}}));
     } else {
       const trialPlanData = {
-        cid: entry.cid, callsign: entry.callsign, planData: {
+        cid: entry.cid,
+        callsign: entry.callsign,
+        planData: {
           altitude: alt,
           interim: null
         },
@@ -102,7 +104,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
           X
         </div>
       </div>
-      {manualInput !== null ? <span>
+      {manualInput !== null && <span>
         <div className="alt-menu-row">
         FP{entry.altitude}
       </div>
@@ -129,11 +131,11 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
             onBlur={() => dispatch(setInputFocused(false))}
           />
         </div>
-          {showInvalid && <div className="alt-menu-row invalid-input">
-            INVALID
-          </div>}
-      </span> :
-        <span>
+        {showInvalid && <div className="alt-menu-row invalid-input">
+          INVALID
+        </div>}
+      </span>}
+      {manualInput === null && <span>
         <EdstTooltip title={Tooltips.altMenuPlanData}>
           <div
             className={`alt-menu-row hover ${selected === 'trial' ? 'selected' : ''}`}

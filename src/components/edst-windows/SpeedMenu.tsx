@@ -159,7 +159,7 @@ export const SpeedMenu: React.FC = () => {
           })}
           <div className="options-row bottom">
             <div className="options-col right">
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.speedMenu))}/>
+              <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.speedMenu))}/>
             </div>
           </div>
         </div>

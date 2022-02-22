@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/boundary-selector.scss';
+import '../css/sector-selector.scss';
 import {EdstButton} from "./resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {toggleSector} from "../redux/slices/sectorSlice";
@@ -11,10 +11,10 @@ export const SectorSelector: React.FC = () => {
   const sectors = useAppSelector((state) => state.sectorData.sectors);
 
   return (
-    <div className="boundary-selector">
+    <div className="sector-selector">
       <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        href={"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"}
       />
       <div className="boundary-selector-innner">
         <hr style={{color: '#000000', padding: 20, border: 'none'}}/>

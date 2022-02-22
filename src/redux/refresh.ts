@@ -1,5 +1,4 @@
 import {EdstEntryType} from "../types";
-import {RootState} from "./store";
 import {
   computeBoundaryTime,
   getRemainingRouteData,
@@ -7,20 +6,23 @@ import {
 } from "../lib";
 import _ from "lodash";
 import {depFilter, entryFilter} from "../filters";
+import {Feature, Polygon} from "@turf/turf";
 
-export const refreshEntry = (newEntry: EdstEntryType, state: RootState): EdstEntryType => {
-  const {sectors, selectedSectors} = state.sectorData;
-  const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
+const currentEntryFallbackValue = {
+  vciStatus: -1,
+  depStatus: -1,
+  aclDisplay: false,
+  aclDeleted: false,
+  depDisplay: false,
+  depDeleted: false
+};
+
+export function refreshEntry(newEntry: EdstEntryType, polygons: Feature<Polygon>[], artccId: string, currentEntry: EdstEntryType | any): EdstEntryType {
+  if (!currentEntry) {
+    currentEntry = currentEntryFallbackValue;
+  }
   const pos: [number, number] = [newEntry.flightplan.lon, newEntry.flightplan.lat];
-  let currentEntry: EdstEntryType | any = _.cloneDeep(state.entries[newEntry.cid]) ?? {
-    vciStatus: -1,
-    depStatus: -1,
-    aclDisplay: false,
-    aclDeleted: false,
-    depDisplay: false,
-    depDeleted: false
-  };
-  newEntry.boundary_time = computeBoundaryTime(newEntry, polygons);
+  newEntry.boundaryTime = computeBoundaryTime(newEntry, polygons);
   const routeFixNames = newEntry.route_data.map(fix => fix.name);
   const dest = newEntry.dest;
   // add departure airport to route_data if we know the coords to compute the distance
@@ -51,13 +53,13 @@ export const refreshEntry = (newEntry: EdstEntryType, state: RootState): EdstEnt
   }
   if (newEntry.update_time === currentEntry.update_time
     || (currentEntry._route_data?.[-1]?.dist < 15 && newEntry.dest_info)
-    || !(entryFilter(newEntry, state.sectorData) || depFilter(newEntry, state.sectorData.artccId))) {
+    || !(entryFilter(newEntry, polygons) || depFilter(newEntry, artccId))) {
     newEntry.pending_removal = currentEntry.pending_removal ?? new Date().getTime();
   } else {
     newEntry.pending_removal = null;
   }
-  if (newEntry.remarks.match(/\/v\//gi)) newEntry.voice_type = 'v';
-  if (newEntry.remarks.match(/\/r\//gi)) newEntry.voice_type = 'r';
-  if (newEntry.remarks.match(/\/t\//gi)) newEntry.voice_type = 't';
+  if (newEntry.remarks.match(/\/v\//gi)) newEntry.voiceType = 'v';
+  if (newEntry.remarks.match(/\/r\//gi)) newEntry.voiceType = 'r';
+  if (newEntry.remarks.match(/\/t\//gi)) newEntry.voiceType = 't';
   return _.assign(currentEntry, newEntry);
-};
+}

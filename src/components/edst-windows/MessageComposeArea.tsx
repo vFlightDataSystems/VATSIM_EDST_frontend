@@ -18,16 +18,15 @@ import {
   windowPositionSelector
 } from "../../redux/slices/appSlice";
 
-interface MessageComposeAreaProps {
-  setMcaInputRef: (ref: React.RefObject<any> | null) => void;
+type MessageComposeAreaProps = {
+  setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
 }
-
 
 export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
   const [response, setResponse] = useState<string | null>(null);
   const [mcaFocused, setMcaFocused] = useState(false);
   const mcaCommandString = useAppSelector(mcaCommandStringSelector);
-  const pos = useAppSelector(windowPositionSelector(windowEnum.edstMca));
+  const pos = useAppSelector(windowPositionSelector(windowEnum.messageComposeArea));
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const entries = useAppSelector(state => state.entries);
   const dispatch = useAppDispatch();
@@ -177,7 +176,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
                       ref={ref}
                       id="edst-mca"
                       style={{left: pos.x + "px", top: pos.y + "px"}}
-                      onMouseDown={(event) => startDrag(event, ref, windowEnum.edstMca)}
+                      onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
       // onMouseEnter={() => setInputFocus()}
     >
       <div className="mca-input-area">

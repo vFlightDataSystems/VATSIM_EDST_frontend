@@ -8,7 +8,7 @@ import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 
 export const Outage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.edstOutage));
+  const pos = useAppSelector(windowPositionSelector(windowEnum.outage));
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 
@@ -22,11 +22,11 @@ export const Outage: React.FC = () => {
           M
         </div>
         <div className="floating-window-header-middle"
-             onMouseDown={(event) => startDrag(event, ref, windowEnum.edstOutage)}
+             onMouseDown={(event) => startDrag(event, ref, windowEnum.outage)}
         >
           OUTAGE
         </div>
-        <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.edstOutage))}>
+        <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.outage))}>
           <div className="floating-window-header-block-8-2"/>
         </div>
       </div>
