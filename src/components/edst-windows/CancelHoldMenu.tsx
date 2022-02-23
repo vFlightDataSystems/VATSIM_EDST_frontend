@@ -3,22 +3,26 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
-import {EdstWindowProps} from "../../interfaces";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
+import {windowEnum} from "../../enums";
+import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {EdstEntryType} from "../../types";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
-export const CancelHoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindow}) => {
+export const CancelHoldMenu: React.FC = () => {
   const {
-    edst_data,
     startDrag,
-    stopDrag,
-    amendEntry,
-    updateEntry
+    stopDrag
   } = useContext(EdstContext);
+  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const pos = useAppSelector(windowPositionSelector(windowEnum.cancelHoldMenu))
+  const dispatch = useAppDispatch();
+
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
 
-  const entry = edst_data[asel.cid];
-
-  return (<div
+  return pos && entry && (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className="options-menu cancel-hold no-select"
@@ -27,7 +31,7 @@ export const CancelHoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindo
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref)}
+           onMouseDown={(event) => startDrag(event, ref, windowEnum.cancelHoldMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Cancel Hold Confirmation
@@ -39,13 +43,13 @@ export const CancelHoldMenu: React.FC<EdstWindowProps> = ({pos, asel, closeWindo
         <div className="options-row">
           <div className="options-col left">
             <EdstButton content="Cancel Hold" onMouseDown={() => {
-              amendEntry(entry.cid, {hold_data: null});
-              updateEntry(entry.cid, {show_hold_info: false});
-              closeWindow();
+              dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
+              dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
+              dispatch(closeWindow(windowEnum.cancelHoldMenu))
             }}/>
           </div>
           <div className="options-col right">
-            <EdstButton content="Exit" onMouseDown={closeWindow}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.cancelHoldMenu))}/>
           </div>
         </div>
       </div>

@@ -1,22 +1,29 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
-import {DepContext, EdstContext} from "../../../contexts/contexts";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {setDepManualPosting} from "../../../redux/slices/depSlice";
+import {windowEnum} from "../../../enums";
+import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
+import {openWindowThunk} from "../../../redux/thunks/thunks";
+import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
 
-interface DepHeaderProps {
-  focused: boolean;
-  closeWindow: () => void;
+type DepHeaderProps = {
+  focused: boolean
 }
 
-export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
-  const {setInputFocused, openMenu} = useContext(EdstContext);
-  const {manual_posting, togglePosting, sort_data, addEntry, asel} = useContext(DepContext);
-  const [search_str, setSearchString] = useState('');
+export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
+  const asel = useAppSelector(depAselSelector);
+  const sortData = useAppSelector((state) => state.dep.sortData);
+  const manualPosting = useAppSelector((state) => state.dep.manualPosting);
+  const dispatch = useAppDispatch();
+
+  const [searchStr, setSearchString] = useState('');
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      addEntry(search_str);
+      dispatch(addDepEntryByFid(searchStr));
       setSearchString('');
     }
   };
@@ -24,29 +31,35 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
   return (<div className="no-select">
     <WindowTitleBar
       focused={focused}
-      closeWindow={closeWindow}
-      text={['Departure List', `${sort_data.name}`, `${manual_posting ? 'Manual' : 'Automatic'}`]}
+      closeWindow={() => {
+        if (asel?.window === windowEnum.dep) {
+          dispatch(closeWindow([windowEnum.altitudeMenu, windowEnum.routeMenu, windowEnum.prevRouteMenu, windowEnum.planOptions, windowEnum.sortMenu]));
+          dispatch(setAsel(null));
+        }
+        dispatch(closeWindow(windowEnum.dep))
+      }}
+      text={['Departure List', `${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
     <div>
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'plan-menu')}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.planOptions, e.currentTarget, windowEnum.dep))}
         content="Plan Options..."
-        title={Tooltips.plan_options}
+        title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton
         id="dep-sort-button"
-        onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'sort-menu')}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.sortMenu, e.currentTarget, windowEnum.dep))}
         content="Sort..."
         title={Tooltips.sort}
       />
       <EdstWindowHeaderButton
-        onMouseDown={togglePosting}
+        onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))}
         content="Posting Mode"
-        title={Tooltips.posting_mode}
+        title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'template-menu')}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.currentTarget, windowEnum.dep))}
         content="Template..."
         title={Tooltips.template}
       />
@@ -55,9 +68,9 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused, closeWindow}) => {
       Add/Find
       <div className="input-container">
         <input
-          onFocus={() => setInputFocused(true)}
-          onBlur={() => setInputFocused(false)}
-          value={search_str}
+          onFocus={() => dispatch(setInputFocused(true))}
+          onBlur={() => dispatch(setInputFocused(false))}
+          value={searchStr}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
         />

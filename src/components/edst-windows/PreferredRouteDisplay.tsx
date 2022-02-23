@@ -3,7 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
-import {EdstPreferredRouteProps} from "../../interfaces";
+import {EdstPreferredRouteType} from "../../types";
 
 export const PreferredRouteDisplay: React.FC<{routes: Array<any>, clearedReroute: (reroute_data: any) => void}> = ({routes, clearedReroute}) => {
   const [eligible_only, setEligibleOnly] = useState(false);
@@ -24,17 +24,17 @@ export const PreferredRouteDisplay: React.FC<{routes: Array<any>, clearedReroute
         >
           <EdstButton content="ELIGIBLE" selected={eligible_only}
                       onMouseDown={() => setEligibleOnly(true)}
-                      title={Tooltips.route_menu_preferred_eligible}
+                      title={Tooltips.routeMenuPreferredEligible}
           />
           <EdstButton content="ALL" selected={!eligible_only}
                       onMouseDown={() => setEligibleOnly(false)}
-                      title={Tooltips.route_menu_preferred_all}
+                      title={Tooltips.routeMenuPreferredAll}
           />
         </div>
       </div>
       <div className="prefroute-container"
            onWheel={(e) => setDeltaY(Math.max(Math.min(((deltaY + e.deltaY) / 100 | 0), routes.length - 5), 0))}>
-        {Object.entries(routes.slice(deltaY, deltaY + 5) ?? {}).map(([i, r]: [string, EdstPreferredRouteProps]) => {
+        {Object.entries(routes.slice(deltaY, deltaY + 5) ?? {}).map(([i, r]: [string, EdstPreferredRouteType]) => {
           return r && (!eligible_only || r?.eligible) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
               <div className="options-col prefroute-col small hover"

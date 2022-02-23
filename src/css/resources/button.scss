@@ -11,6 +11,12 @@ $edst-button-disabled-grey: #707070;
   border: 1px solid #000000;
   font-size: 16px;
 
+  &.exit-button {
+    .edst-inner-button {
+      padding: 0 5px;
+    }
+  }
+
   &:hover {
     border: 1px solid #FFFFFF;
   }

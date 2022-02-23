@@ -1,117 +1,92 @@
-import {useContext, useEffect, useState} from 'react';
+import {useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
 import VCI from '../../../css/images/VCI_v4.png';
-import {AclContext, EdstContext} from "../../../contexts/contexts";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../interfaces";
-
+import {EdstEntryType} from "../../../types";
+import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
+import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
+import {aclRowFieldEnum, sortOptionsEnum, windowEnum} from "../../../enums";
+import {aselSelector, closeWindow, setAsel} from "../../../redux/slices/appSlice";
 
 export function AclTable() {
-  const [any_holding, setAnyHolding] = useState(false);
-  const [any_assigned_heading, setAnyAssignedHeading] = useState(false);
-  const [any_assigned_speed, setAnyAssignedSpeed] = useState(false);
-  const [hidden, setHidden] = useState<Array<string>>([]);
-  const [alt_mouse_down, setAltMouseDown] = useState(false);
-  const {
-    edst_data,
-    updateEntry,
-  } = useContext(EdstContext);
-  const {cid_list, sort_data, manual_posting} = useContext(AclContext);
+  const sortData = useAppSelector((state) => state.acl.sortData);
+  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const dispatch = useAppDispatch();
 
-  // check whether any aircraft in the list is holding
-  const checkHolding = () => {
-    for (let cid of cid_list) {
-      if (edst_data[cid]?.hold_data) {
-        setAnyHolding(true);
-        return;
-      }
-    }
-    setAnyHolding(false);
-  };
-  // check whether any aircraft in the list has an assigned heading or a speed
-  // will display a * next to Hdg or Spd if the column is hidden, respectively
-  const checkAssignedHdgSpd = () => {
-    let any_hdg = false;
-    let any_spd = false;
-    for (let cid of cid_list) {
-      if (edst_data[cid]?.hdg || edst_data[cid]?.scratch_hdg) {
-        any_hdg = true;
-      }
-      if (edst_data[cid]?.spd || edst_data[cid]?.scratch_spd) {
-        any_spd = true;
-      }
-      if (any_spd && any_hdg) break;
-    }
-    setAnyAssignedHeading(any_hdg);
-    setAnyAssignedSpeed(any_spd);
-  };
+  const asel = useAppSelector(aselSelector);
+  const anyHolding = useAppSelector(anyHoldingSelector);
+  const anyAssignedHeading = useAppSelector(anyAssignedHdgSelector);
+  const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
+  const [hiddenList, setHiddenList] = useState<aclRowFieldEnum[]>([]);
+  const [altMouseDown, setAltMouseDown] = useState(false);
+  const entries = useAppSelector(state => state.entries);
 
-  useEffect(() => {
-    checkHolding();
-    checkAssignedHdgSpd();
-  });
-
-  const toggleHideColumn = (name: string) => {
-    let hidden_copy = hidden.slice(0);
-    const index = hidden_copy.indexOf(name);
+  const toggleHideColumn = (field: aclRowFieldEnum) => {
+    let hiddenCopy = hiddenList.slice(0);
+    const index = hiddenCopy.indexOf(field);
     if (index > -1) {
-      hidden_copy.splice(index, 1);
+      hiddenCopy.splice(index, 1);
     } else {
-      hidden_copy.push(name);
+      hiddenCopy.push(field);
+      if (asel?.field === field) {
+        dispatch(setAsel(null));
+      }
     }
-    setHidden(hidden_copy);
+    setHiddenList(hiddenCopy);
   };
 
   const handleClickSlash = () => {
-    let hidden_copy = hidden.slice(0);
-    if (hidden_copy.includes('spd') && hidden_copy.includes('hdg')) {
-      hidden_copy.splice(hidden_copy.indexOf('spd'), 1);
-      hidden_copy.splice(hidden_copy.indexOf('hdg'), 1);
-    } else {
-      if (!hidden_copy.includes('hdg')) {
-        hidden_copy.push('hdg');
+    let hiddenCopy = hiddenList.slice(0);
+    if (hiddenCopy.includes(aclRowFieldEnum.spd) && hiddenCopy.includes(aclRowFieldEnum.hdg)) {
+      hiddenCopy.splice(hiddenCopy.indexOf(aclRowFieldEnum.spd), 1);
+      hiddenCopy.splice(hiddenCopy.indexOf(aclRowFieldEnum.hdg), 1);
+      if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.spd) {
+        dispatch(closeWindow(windowEnum.speedMenu));
+        dispatch(setAsel(null));
       }
-      if (!hidden_copy.includes('spd')) {
-        hidden_copy.push('spd');
+      if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.hdg) {
+        dispatch(closeWindow(windowEnum.headingMenu));
+        dispatch(setAsel(null));
+      }
+    } else {
+      if (!hiddenCopy.includes(aclRowFieldEnum.hdg)) {
+        hiddenCopy.push(aclRowFieldEnum.hdg);
+        if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.hdg) {
+          dispatch(closeWindow(windowEnum.headingMenu));
+          dispatch(setAsel(null));
+        }
+      }
+      if (!hiddenCopy.includes(aclRowFieldEnum.spd)) {
+        if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.spd) {
+          dispatch(closeWindow(windowEnum.speedMenu));
+          dispatch(setAsel(null));
+        }
+        hiddenCopy.push(aclRowFieldEnum.spd);
       }
     }
-    setHidden(hidden_copy);
+    setHiddenList(hiddenCopy);
   };
 
-  const updateVci = (cid: string) => {
-    const entry = edst_data[cid];
-    if (entry?.acl_status === -1 && manual_posting) {
-      updateEntry(cid, {acl_status: 0});
-    } else {
-      if (entry.acl_status < 1) {
-        updateEntry(cid, {acl_status: 1});
-      } else {
-        updateEntry(cid, {acl_status: 0});
-      }
-    }
-  };
-
-  const sortFunc = (u: EdstEntryProps, v: EdstEntryProps) => {
-    switch (sort_data.name) {
-      case 'ACID':
+  const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
+    switch (sortData.selectedOption) {
+      case sortOptionsEnum.acid:
         return u.callsign.localeCompare(v.callsign);
-      case 'Destination':
+      case sortOptionsEnum.destination:
         return u.dest.localeCompare(v.dest);
-      case 'Origin':
+      case sortOptionsEnum.origin:
         return u.dep.localeCompare(v.dep);
-      case 'Boundary Time':
-        return u.boundary_time - v.boundary_time;
+      case sortOptionsEnum.boundaryTime:
+        return u.boundaryTime - v.boundaryTime;
       default:
         return u.callsign.localeCompare(v.callsign);
     }
   };
 
-  const entry_list = Object.values(edst_data)?.filter((entry: EdstEntryProps) => cid_list.has(entry.cid));
-  const spa_entry_list = Object.entries(entry_list.filter((entry: EdstEntryProps) => (typeof (entry.spa) === 'number'))
-    ?.sort((u: any, v: any) => u.spa - v.spa));
+  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => entry.aclDisplay);
+  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => entry.spa));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -132,12 +107,12 @@ export function AclTable() {
         <div className="body-col fid">
           Flight ID
         </div>
-        <EdstTooltip className="body-col pa header" title={Tooltips.acl_header_pa} content="PA"/>
+        <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
         <div className="body-col special special-hidden"/>
         <div className="body-col special special-hidden"/>
-        <div className={`body-col type ${hidden.includes('type') ? 'hidden' : ''}`}>
-          <div className="hover" onMouseDown={() => toggleHideColumn('type')}>
-            T{!hidden.includes('type') && 'ype'}
+        <div className={`body-col type ${hiddenList.includes(aclRowFieldEnum.type) ? 'hidden' : ''}`}>
+          <div className="hover" onMouseDown={() => toggleHideColumn(aclRowFieldEnum.type)}>
+            T{!hiddenList.includes(aclRowFieldEnum.type) && 'ype'}
           </div>
         </div>
         <div className="body-col alt header hover"
@@ -146,32 +121,32 @@ export function AclTable() {
         >
           Alt.
         </div>
-        <div className={`body-col code hover ${hidden.includes('code') ? 'hidden' : ''}`}
-             onMouseDown={() => toggleHideColumn('code')}>
-          C{!hidden.includes('code') && 'ode'}
+        <div className={`body-col code hover ${hiddenList.includes(aclRowFieldEnum.code) ? 'hidden' : ''}`}
+             onMouseDown={() => toggleHideColumn(aclRowFieldEnum.code)}>
+          C{!hiddenList.includes(aclRowFieldEnum.code) && 'ode'}
         </div>
         <div className={`body-col special special-header`}/>
-        <EdstTooltip title={Tooltips.acl_header_hdg}>
-          <div className={`body-col hs hdg hover ${hidden.includes('hdg') ? 'hidden' : ''}`}
-               onMouseDown={() => toggleHideColumn('hdg')}>
-            {hidden.includes('hdg') && any_assigned_heading && '*'}H{!hidden.includes('hdg') && 'dg'}
+        <EdstTooltip title={Tooltips.aclHeaderHdg}>
+          <div className={`body-col hs hdg hover ${hiddenList.includes(aclRowFieldEnum.hdg) ? 'hidden' : ''}`}
+               onMouseDown={() => toggleHideColumn(aclRowFieldEnum.hdg)}>
+            {hiddenList.includes(aclRowFieldEnum.hdg) && anyAssignedHeading && '*'}H{!hiddenList.includes(aclRowFieldEnum.hdg) && 'dg'}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_header_slash}>
+        <EdstTooltip title={Tooltips.aclHeaderSlash}>
           <div className="body-col hs-slash hover" onMouseDown={handleClickSlash}>
             /
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.acl_header_spd}>
-          <div className={`body-col hs spd hover ${hidden.includes('spd') ? 'hidden' : ''}`}
-               onMouseDown={() => toggleHideColumn('spd')}>
-            S{!hidden.includes('spd') && 'pd'}{hidden.includes('spd') && any_assigned_speed && '*'}
+        <EdstTooltip title={Tooltips.aclHeaderSpd}>
+          <div className={`body-col hs spd hover ${hiddenList.includes(aclRowFieldEnum.spd) ? 'hidden' : ''}`}
+               onMouseDown={() => toggleHideColumn(aclRowFieldEnum.spd)}>
+            S{!hiddenList.includes(aclRowFieldEnum.spd) && 'pd'}{hiddenList.includes(aclRowFieldEnum.spd) && anyAssignedSpeed && '*'}
           </div>
         </EdstTooltip>
         <div className={`body-col special special-header`}/>
         <div className={`body-col special special-header`}/>
         <div className={`body-col special special-header`} // @ts-ignore
-             disabled={!any_holding}>
+             disabled={!anyHolding}>
           H
         </div>
         <div className={`body-col special special-header`}/>
@@ -182,39 +157,36 @@ export function AclTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spa_entry_list?.map(([i, entry]: [string, EdstEntryProps]) =>
+      {spaEntryList?.map(([i, entry]: [string, EdstEntryType]) =>
         <AclRow
           key={`acl-table-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          any_holding={any_holding}
-          hidden={hidden}
-          alt_mouse_down={alt_mouse_down}
-          updateVci={updateVci}
+          anyHolding={anyHolding}
+          hidden={hiddenList}
+          altMouseDown={altMouseDown}
         />)}
-      {spa_entry_list.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && ((entry.acl_status > -1) || !manual_posting)))
-        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryProps]) =>
+      {spaEntryList.length > 0 && <div className="body-row separator"/>}
+      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && ((entry.vciStatus > -1) || !manualPosting)))
+        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
         <AclRow
           key={`acl-table-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
           entry={entry}
-          any_holding={any_holding}
-          hidden={hidden}
-          alt_mouse_down={alt_mouse_down}
-          updateVci={updateVci}
+          anyHolding={anyHolding}
+          hidden={hiddenList}
+          altMouseDown={altMouseDown}
         />)}
-      {manual_posting && <div className="body-row separator"/>}
-      {manual_posting && Object.entries(entry_list?.filter((entry: EdstEntryProps) => (!(typeof (entry.spa) === 'number') && cid_list.has(entry.cid) && entry.acl_status === -1)))
-        ?.map(([i, entry]: [string, EdstEntryProps]) =>
+      {manualPosting && <div className="body-row separator"/>}
+      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && entry.vciStatus === -1)))
+        ?.map(([i, entry]: [string, EdstEntryType]) =>
           <AclRow
             key={`acl-table-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}
             entry={entry}
-            any_holding={any_holding}
-            hidden={hidden}
-            alt_mouse_down={alt_mouse_down}
-            updateVci={updateVci}
+            anyHolding={anyHolding}
+            hidden={hiddenList}
+            altMouseDown={altMouseDown}
           />)}
     </div>
   </div>);

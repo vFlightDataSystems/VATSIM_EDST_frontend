@@ -3,14 +3,19 @@ import {Time} from "./Time";
 import {Tooltips} from "../tooltips";
 import {EdstTooltip} from "./resources/EdstTooltip";
 import React from "react";
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import {edstHeaderButtonEnum, windowEnum} from "../enums";
+import {openWindow, toggleWindow} from "../redux/slices/appSlice";
+import {planQueueSelector} from "../redux/slices/planSlice";
 
-interface EdstHeaderButtonProps {
-  title?: string;
-  className?: string;
-  open: boolean;
-  disabled?: boolean;
-  content?: string;
-  onMouseDown?: () => void;
+
+type EdstHeaderButtonProps = {
+  title?: string,
+  className?: string,
+  open: boolean,
+  disabled?: boolean,
+  content?: string,
+  onMouseDown?: () => void
 }
 
 const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = (props) => {
@@ -22,34 +27,19 @@ const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = (props) => {
       {props.content}
     </button>
   </EdstTooltip>);
-}
+};
 
-interface EdstHeaderProps {
-  open_windows: Set<string>;
-  plan_disabled: boolean;
-  disabled_windows: Array<string>;
-  sector_id: string;
-  acl_num: number;
-  dep_num: number;
-  sig_num: number;
-  not_num: number;
-  gi_num: number;
-  openWindow: Function;
-  toggleWindow: Function;
-}
+export const EdstHeader: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const planQueue = useAppSelector(planQueueSelector);
+  const windows = useAppSelector((state) => state.app.windows);
+  const disabledHeaderButtons = useAppSelector((state) =>state.app.disabledHeaderButtons);
 
-export const EdstHeader: React.FC<EdstHeaderProps> = (props) => {
-  const {
-    open_windows,
-    plan_disabled,
-    disabled_windows,
-    sector_id,
-    acl_num,
-    dep_num,
-    sig_num,
-    not_num,
-    gi_num
-  } = props;
+  const sectorId = useAppSelector((state) => state.sectorData.sectorId);
+  const entries = useAppSelector(state => state.entries);
+  const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
+  const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
+  const sigLen = 0, notLen = 0, giLen = 0;
 
   return (
     <div className="edst-header">
@@ -58,158 +48,158 @@ export const EdstHeader: React.FC<EdstHeaderProps> = (props) => {
           <button className="tiny" disabled={true}>
             🡳
           </button>
-          <button className={`small ${open_windows.has('more') ? 'open' : ''}`}
-                  disabled={disabled_windows.includes('more')}
-                  onMouseDown={() => props.toggleWindow('more')}
+          <button className={`small ${windows[windowEnum.more].open ? 'open' : ''}`}
+                  disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.more)}
+                  onMouseDown={() => dispatch(toggleWindow(windowEnum.more))}
           >
             MORE
           </button>
-          <EdstHeaderButton open={open_windows.has('acl')}
-                            content={`ACL ${acl_num.toString().padStart(2, '0')}`}
-                            disabled={disabled_windows.includes('acl')}
+          <EdstHeaderButton open={windows[windowEnum.acl].open}
+                            content={`ACL ${aclLen.toString().padStart(2, '0')}`}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.acl)}
                             title={Tooltips.acl}
-                            onMouseDown={() => props.openWindow('acl')}
+                            onMouseDown={() => dispatch(openWindow({window: windowEnum.acl}))}
           />
-          <EdstHeaderButton open={open_windows.has('dep')}
-                            content={`DEP ${dep_num.toString().padStart(2, '0')}`}
-                            disabled={disabled_windows.includes('dep')}
+          <EdstHeaderButton open={windows[windowEnum.dep].open}
+                            content={`DEP ${depLen.toString().padStart(2, '0')}`}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.dep)}
                             title={Tooltips.dep}
-                            onMouseDown={() => props.openWindow('dep')}
+                            onMouseDown={() => dispatch(openWindow({window: windowEnum.dep}))}
           />
-          <EdstHeaderButton open={open_windows.has('gpd')}
+          <EdstHeaderButton open={windows[windowEnum.graphicPlanDispay].open}
                             content="GPD"
-                            disabled={disabled_windows.includes('gpd')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.gpd)}
             // title={Tooltips.gpd}
-                            onMouseDown={() => props.openWindow('gpd')}
+                            onMouseDown={() => dispatch(openWindow({window: windowEnum.graphicPlanDispay}))}
           />
-          <EdstHeaderButton open={open_windows.has('plans')}
+          <EdstHeaderButton open={windows[windowEnum.plansDisplay].open}
                             content="PLANS"
-                            disabled={plan_disabled}
+                            disabled={planQueue.length === 0}
                             title={Tooltips.plans}
-                            onMouseDown={() => props.openWindow('plans')}
+                            onMouseDown={() =>dispatch(openWindow({window: windowEnum.plansDisplay}))}
           />
-          <EdstHeaderButton open={open_windows.has('wx')}
+          <EdstHeaderButton open={windows[windowEnum.metar].open}
                             content="WX REPORT"
-                            disabled={plan_disabled}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.wx)}
             // title={Tooltips.wx}
-                            onMouseDown={() => props.toggleWindow('wx')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.metar))}
           />
-          <EdstHeaderButton open={open_windows.has('sig')}
-                            content={`SIG ${sig_num > 0 ? sig_num.toString().padStart(2, '0') : ''}`}
-                            disabled={disabled_windows.includes('sig')}
+          <EdstHeaderButton open={windows[windowEnum.sigmets].open}
+                            content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : ''}`}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sig)}
             // title={Tooltips.sig}
-                            onMouseDown={() => props.toggleWindow('sig')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.sigmets))}
           />
-          <EdstHeaderButton open={open_windows.has('not')}
-                            content={`NOT ${not_num > 0 ? not_num.toString().padStart(2, '0') : ''}`}
-                            disabled={disabled_windows.includes('not')}
+          <EdstHeaderButton open={windows[windowEnum.notams].open}
+                            content={`NOT ${notLen > 0 ? notLen.toString().padStart(2, '0') : ''}`}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.not)}
             // title={Tooltips.not}
-                            onMouseDown={() => props.toggleWindow('not')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.notams))}
           />
-          <EdstHeaderButton open={open_windows.has('gi')}
-                            content={`GI ${gi_num > 0 ? gi_num.toString().padStart(2, '0') : ''}`}
-                            disabled={disabled_windows.includes('gi')}
+          <EdstHeaderButton open={windows[windowEnum.generalInfo].open}
+                            content={`GI ${giLen > 0 ? giLen.toString().padStart(2, '0') : ''}`}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.gi)}
             // title={Tooltips.gi}
-                            onMouseDown={() => props.toggleWindow('gi')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.generalInfo))}
           />
-          <EdstHeaderButton open={open_windows.has('ua')}
+          <EdstHeaderButton open={windows[windowEnum.ua].open}
                             content="UA"
-                            disabled={disabled_windows.includes('ua')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.ua)}
             // title={Tooltips.ua}
-                            onMouseDown={() => props.toggleWindow('ua')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.ua))}
           />
-          <EdstHeaderButton open={open_windows.has('keep')}
+          <EdstHeaderButton open={false}
                             content="KEEP ALL"
-                            disabled={disabled_windows.includes('keep')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.keep)}
             // title={Tooltips.keep}
             // onMouseDown={() => props.toggleWindow('keep')}
           />
         </div>
         <div className="edst-header-row-right">
-          <EdstHeaderButton open={open_windows.has('status')}
+          <EdstHeaderButton open={windows[windowEnum.status].open}
                             content="STATUS ACTIVE"
-                            disabled={disabled_windows.includes('status')}
-                            title={Tooltips.status_active}
-                            onMouseDown={() => props.toggleWindow('status')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.status)}
+                            title={Tooltips.statusActive}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.status))}
           />
-          <EdstHeaderButton open={open_windows.has('outage')}
-                            content={`OUTAGE ${sector_id}`}
-                            disabled={disabled_windows.includes('outage')}
-                            title={Tooltips.status_outage}
-                            onMouseDown={() => props.toggleWindow('outage')}
+          <EdstHeaderButton open={windows[windowEnum.outage].open}
+                            content={`OUTAGE ${sectorId}`}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.outage)}
+                            title={Tooltips.statusOutage}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.outage))}
           />
           <Time/>
-          <EdstHeaderButton open={open_windows.has('adsb')}
+          <EdstHeaderButton open={windows[windowEnum.adsb].open}
                             className="small"
                             content="NON-ADSB"
-                            disabled={disabled_windows.includes('adsb')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.adsb)}
             // title={Tooltips.adsb}
-                            onMouseDown={() => props.toggleWindow('adsb')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.adsb))}
           />
-          <EdstHeaderButton open={open_windows.has('sat')}
+          <EdstHeaderButton open={windows[windowEnum.sat].open}
                             className="small"
                             content="SAT COMM"
-                            disabled={disabled_windows.includes('sat')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sat)}
             // title={Tooltips.sat}
-                            onMouseDown={() => props.toggleWindow('sat')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.sat))}
           />
-          <EdstHeaderButton open={open_windows.has('msg')}
+          <EdstHeaderButton open={windows[windowEnum.msg].open}
                             className="small yellow-border"
                             content="MSG WAIT"
-                            disabled={disabled_windows.includes('msg')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.msg)}
             // title={Tooltips.msg}
-                            onMouseDown={() => props.openWindow('msg')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.msg))}
           />
         </div>
       </div>
-      {open_windows.has('more') && <div className="edst-header-row">
+      {windows[windowEnum.more].open && <div className="edst-header-row">
         <div className="edst-header-row-left-2">
-          <EdstHeaderButton open={open_windows.has('wind')}
+          <EdstHeaderButton open={windows[windowEnum.wind].open}
                             content="WIND"
-                            disabled={disabled_windows.includes('wind')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.wind)}
             // title={Tooltips.wind}
-                            onMouseDown={() => props.toggleWindow('wind')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.wind))}
           />
-          <EdstHeaderButton open={open_windows.has('alt')}
+          <EdstHeaderButton open={windows[windowEnum.altimeter].open}
                             content="ALTIM SET"
-                            disabled={disabled_windows.includes('alt')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.altim)}
             // title={Tooltips.alt}
-                            onMouseDown={() => props.toggleWindow('alt')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.altimeter))}
           />
-          <EdstHeaderButton open={open_windows.has('mca')}
+          <EdstHeaderButton open={windows[windowEnum.messageComposeArea].open}
                             content="MCA"
-                            disabled={disabled_windows.includes('mca')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.mca)}
                             title={Tooltips.mca}
-                            onMouseDown={() => props.toggleWindow('mca')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.messageComposeArea))}
           />
-          <EdstHeaderButton open={open_windows.has('mra')}
+          <EdstHeaderButton open={windows[windowEnum.messageResponseArea].open}
                             content="RA"
-                            disabled={disabled_windows.includes('mra')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.mra)}
                             title={Tooltips.ra}
-                            onMouseDown={() => props.toggleWindow('mra')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.messageResponseArea))}
           />
-          <EdstHeaderButton open={open_windows.has('fel')}
+          <EdstHeaderButton open={windows[windowEnum.fel].open}
                             content="FEL"
-                            disabled={disabled_windows.includes('fel')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.fel)}
             // title={Tooltips.fel}
-                            onMouseDown={() => props.toggleWindow('fel')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.fel))}
           />
-          <EdstHeaderButton open={open_windows.has('cpdlc-hist')}
+          <EdstHeaderButton open={windows[windowEnum.cpdlcHist].open}
                             className="yellow-border yellow-background"
                             content="CPDLC HIST"
-                            disabled={disabled_windows.includes('cpdlc-hist')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlcHist)}
             // title={Tooltips.cpdlc_hist}
-                            onMouseDown={() => props.toggleWindow('cpdlc-hist')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.cpdlcHist))}
           />
-          <EdstHeaderButton open={open_windows.has('cpdlc-msg-out')}
+          <EdstHeaderButton open={windows[windowEnum.cpdlcMsgOut].open}
                             className="yellow-border yellow-background"
                             content="CPDLC MSGOUT"
-                            disabled={disabled_windows.includes('cpdlc-msg-out')}
+                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlcMsgOut)}
             // title={Tooltips.cpdlc_msg_out}
-                            onMouseDown={() => props.toggleWindow('cpdlc-msg-out')}
+                            onMouseDown={() =>dispatch(toggleWindow(windowEnum.cpdlcMsgOut))}
           />
         </div>
       </div>}
     </div>
   );
-}
+};

@@ -7,11 +7,6 @@ $body-dark-grey: #414141;
 $body-medium-grey: #575757;
 $body-button-disabled-font-grey: #707070;
 $body-button-disabled-border-grey: #707070;
-$body-font-yellow: #ADAD00;
-$body-font-red: #AD0000;
-$body-font-orange: #AD5700;
-$body-font-green: #00AD00;
-$body-font-blue: #00ADAD;
 $body-alt-outline-red: #AD3636;
 $body-window-open-light-grey: #595959;
 $body-window-closed-black: #000000;
@@ -145,6 +140,7 @@ $body-voice-type-font-color: #989898;
 .body-col {
   //margin: 0 2px;
   display: flex;
+  flex-shrink: 0;
   justify-content: center;
   align-items: center;
   height: 18px;
@@ -179,10 +175,10 @@ $body-voice-type-font-color: #989898;
     padding-left: 4px;
 
     &.green {
-      color: $body-font-green;
+      color: $edst-font-green;
 
       &.selected {
-        background-color: $body-font-green;
+        background-color: $edst-font-green;
         color: #000000;
       }
     }
@@ -218,8 +214,8 @@ $body-voice-type-font-color: #989898;
         border: 1px solid $body-hover-white;
 
         &.green {
-          border: 1px solid $body-font-green;
-          color: $body-font-green;
+          border: 1px solid $edst-font-green;
+          color: $edst-font-green;
         }
       }
     }
@@ -246,19 +242,19 @@ $body-voice-type-font-color: #989898;
   }
 
   &.green {
-    color: $body-font-green;
+    color: $edst-font-green;
   }
 
   &.red {
-    color: $body-font-red;
+    color: $edst-font-red;
   }
 
   &.yellow {
-    color: $body-font-yellow;
+    color: $edst-font-yellow;
   }
 
   &.orange {
-    color: $body-font-orange;
+    color: $edst-font-orange;
   }
 
   &.fid {
@@ -298,8 +294,8 @@ $body-voice-type-font-color: #989898;
     //font-family: Verdana, sans-serif;
 
     &.remarks-unchecked {
-      color: $body-font-yellow;
-      border: 1px solid $body-font-yellow;
+      color: $edst-font-yellow;
+      border: 1px solid $edst-font-yellow;
     }
 
     &.hotbox {
@@ -418,7 +414,7 @@ $body-voice-type-font-color: #989898;
 
     &.yellow {
       &.selected {
-        background-color: $body-font-yellow;
+        background-color: $edst-font-yellow;
       }
     }
 
@@ -461,19 +457,19 @@ $body-voice-type-font-color: #989898;
 
       .amendment-1 {
         padding: 0;
-        color: $body-font-blue;
+        color: $edst-font-blue;
 
         &.selected {
-          background-color: $body-font-blue;
+          background-color: $edst-font-blue;
           color: #000000;
         }
       }
 
       .amendment-2 {
-        color: $body-font-blue;
+        color: $edst-font-blue;
 
         &.selected {
-          background-color: $body-font-blue;
+          background-color: $edst-font-blue;
           color: #000000;
         }
       }

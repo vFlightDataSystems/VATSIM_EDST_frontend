@@ -3,63 +3,79 @@ import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
-import React, {useContext} from "react";
-import {AselProps} from "../../../interfaces";
-import {EdstContext} from "../../../contexts/contexts";
+import React from "react";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {planCleanup, planQueueSelector, selectedPlanIndexSelector} from "../../../redux/slices/planSlice";
+import {openWindowThunk} from "../../../redux/thunks/thunks";
+import {planRowFieldEnum, windowEnum} from "../../../enums";
+import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
+import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
-interface PlansDisplayHeaderProps {
-  cleanup: () => void;
-  plan_data: any;
-  asel: AselProps | null;
-  focused: boolean;
-  closeWindow: () => void;
+type PlansDisplayHeaderProps = {
+  focused: boolean
 }
 
-export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused, asel, plan_data, ...props}) => {
-  const {openMenu, amendEntry} = useContext(EdstContext);
-  const interim_disabled = asel ? !Object.keys(plan_data.plan_data ?? {}).includes('altitude') : true;
-
+export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused}) => {
+  const dispatch = useAppDispatch();
+  const planQueue = useAppSelector(planQueueSelector);
+  const selectedPlanIndex = useAppSelector(selectedPlanIndexSelector);
+  const interim_disabled = selectedPlanIndex !== null ? !Object.keys(planQueue[selectedPlanIndex].planData ?? {}).includes('altitude') : true;
   return (<div>
     <WindowTitleBar
       focused={focused}
-      closeWindow={props.closeWindow}
+      closeWindow={() => dispatch(closeWindow(windowEnum.plansDisplay))}
       text={['Plans Display']}
     />
     <div className="no-select">
-      <EdstWindowHeaderButton disabled={asel === null}
-                              onMouseDown={(e: React.MouseEvent) => openMenu(e.target, 'plan-menu')}
+      <EdstWindowHeaderButton disabled={selectedPlanIndex === null}
+                              onMouseDown={(e: React.MouseEvent) => {
+                                if (selectedPlanIndex !== null) {
+                                  dispatch(setAsel({
+                                    cid: planQueue[selectedPlanIndex].cid,
+                                    window: windowEnum.plansDisplay,
+                                    field: planRowFieldEnum.fid
+                                  }));
+                                  dispatch(openWindowThunk(windowEnum.planOptions, e.currentTarget, windowEnum.plansDisplay));
+                                }
+                              }}
                               content="Plan Options..."
-                              title={Tooltips.plan_options}
+                              title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton disabled={true} content="Show"/>
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
-      <EdstWindowHeaderButton disabled={asel === null} content="Amend"
-                              onMouseDown={() => asel && amendEntry(asel.cid, plan_data.plan_data)}
-                              title={Tooltips.plans_amend}
+      <EdstWindowHeaderButton disabled={selectedPlanIndex === null} content="Amend"
+                              onMouseDown={() => selectedPlanIndex !== null && dispatch(amendEntryThunk({
+                                cid: planQueue[selectedPlanIndex].cid,
+                                planData: {...planQueue[selectedPlanIndex].planData}
+                              }))}
+                              title={Tooltips.plansAmend}
       />
       <EdstWindowHeaderButton disabled={interim_disabled} content="Interim"
                               onMouseDown={() => {
-                                if (asel) {
-                                  const interim_plan_data = {interim: plan_data.plan_data.altitude};
-                                  amendEntry(asel.cid, interim_plan_data);
+                                if (selectedPlanIndex !== null) {
+                                  const interimPlanData = {interim: planQueue[selectedPlanIndex].planData.altitude};
+                                  dispatch(amendEntryThunk({
+                                    cid: planQueue[selectedPlanIndex].cid,
+                                    planData: interimPlanData
+                                  }));
                                 }
                               }}
-                              // title={Tooltips.plans_interim}
+        // title={Tooltips.plans_interim}
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.MouseEvent) => openMenu(e.currentTarget, 'template-menu')}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.target, windowEnum.plansDisplay))}
         content="Template..."
         title={Tooltips.template}
       />
       <EdstWindowHeaderButton disabled={true} content="ICAO"/>
       <EdstWindowHeaderButton
         onMouseDown={() => {
-          props.cleanup();
-          props.closeWindow();
+          dispatch(planCleanup());
+          dispatch(closeWindow(windowEnum.plansDisplay));
         }}
         content="Clean Up"
-        title={Tooltips.plans_clean_up}
+        title={Tooltips.plansCleanUp}
       />
     </div>
   </div>);

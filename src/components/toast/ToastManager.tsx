@@ -3,11 +3,11 @@ import ReactDOM from "react-dom";
 import Toast, {ToastProps} from "./Toast";
 import '../../css/toast.scss';
 
-interface ToastOptions {
-  id?: string;
-  title: string;
-  content: string;
-  duration?: number;
+type ToastOptions = {
+  id?: string,
+  title: string,
+  content: string,
+  duration?: number
 }
 
 export class ToastManager {

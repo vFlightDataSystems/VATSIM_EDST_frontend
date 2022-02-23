@@ -1,32 +1,19 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState} from 'react';
 import '../../css/windows/dep-styles.scss';
 import {DepHeader} from "./dep-components/DepHeader";
 import {DepTable} from "./dep-components/DepTable";
-import {EdstContext} from "../../contexts/contexts";
+import {useAppSelector} from "../../redux/hooks";
 
-interface DepProps {
-  unmount: () => void;
-  closeWindow: () => void;
-}
-
-export const Dep: React.FC<DepProps> = (props) => {
-  const {dragging} = useContext(EdstContext);
+export const Dep: React.FC = () => {
+  const dragging = useAppSelector((state) => state.app.dragging);
   const [focused, setFocused] = useState(false);
-
-  useEffect(() => {
-    return () => props.unmount();
-    // eslint-disable-next-line
-  }, []);
 
   return (<div
     className={`dep ${dragging ? 'dragging' : ''}`}
     onMouseEnter={() => setFocused(true)}
     onMouseLeave={() => setFocused(false)}
   >
-    <DepHeader
-      focused={focused}
-      closeWindow={props.closeWindow}
-    />
+    <DepHeader focused={focused}/>
     <DepTable/>
   </div>);
-}
+};
