@@ -3,162 +3,176 @@ import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
-import {EdstEntryProps} from "../../interfaces";
+import {EdstEntryType} from "../../types";
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {setAclManualPosting} from "../../redux/slices/aclSlice";
+import {updateEntry} from "../../redux/slices/entriesSlice";
+import {aclCleanup, openWindowThunk} from "../../redux/thunks/thunks";
+import {windowEnum} from "../../enums";
+import {
+  closeAllWindows,
+  mcaCommandStringSelector,
+  setInputFocused,
+  setMcaCommandString,
+  setMraMessage,
+  windowPositionSelector
+} from "../../redux/slices/appSlice";
+import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
+import {addAclEntryByFid} from "../../redux/thunks/entriesThunks";
 
-interface MessageComposeAreaProps {
-  pos: { x: number, y: number };
-  acl_cid_list: Set<string>;
-  dep_cid_list: Set<string>;
-  mca_command_string: string;
-  setMcaCommandString: (s: string) => void;
-  aclCleanup: () => void;
-  togglePosting: (window: string) => void;
-  closeAllWindows: () => void;
+type MessageComposeAreaProps = {
+  setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
 }
 
+const ACCEPT_CHECKMARK = '✓';
+const REJECT_CROSS = 'X'; // apparently this is literally just the character X (xray)
 
-export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
-  {
-    mca_command_string,
-    setMcaCommandString,
-    ...props
-  }) => {
+export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
   const [response, setResponse] = useState<string | null>(null);
-  const [mca_focused, setMcaFocused] = useState(false);
-  const ref = useRef(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const {pos, acl_cid_list, dep_cid_list} = props;
+  const [mcaFocused, setMcaFocused] = useState(false);
+  const mcaCommandString = useAppSelector(mcaCommandStringSelector);
+  const pos = useAppSelector(windowPositionSelector(windowEnum.messageComposeArea));
+  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const entries = useAppSelector(state => state.entries);
+  const dispatch = useAppDispatch();
+  const ref = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    startDrag,
-    setMcaInputRef,
-    setInputFocused,
-    openWindow,
-    updateEntry,
-    addEntry,
-    edst_data,
-    setMraMessage
-  } = useContext(EdstContext);
+  const {startDrag} = useContext(EdstContext);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
-    inputRef?.current?.focus();
     return () => setMcaInputRef(null);
     // eslint-disable-next-line
   }, []);
 
-  const toggleVci = (cid: string) => {
-    const entry = edst_data[cid];
-    if (entry.acl_status < 1) {
-      updateEntry(cid, {acl_status: 1});
-    } else {
-      updateEntry(cid, {acl_status: 0});
+  const toggleVci = (fid: string) => {
+    const entry: EdstEntryType | any = Object.values(entries ?? {})
+      ?.find((e: EdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    if (entry) {
+      if (entry.vciStatus < 1) {
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 1}}));
+      } else {
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
+      }
     }
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: EdstEntryProps | any = Object.values(edst_data ?? {})
-      ?.find((entry: EdstEntryProps) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: EdstEntryType | any = Object.values(entries ?? {})
+      ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      if (acl_cid_list.has(entry.cid)) {
-        updateEntry(entry.cid, {acl_highlighted: !entry.acl_highlighted});
+      if (entry.aclDisplay) {
+        dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
       }
-      if (dep_cid_list.has(entry.cid)) {
-        updateEntry(entry.cid, {dep_highlighted: !entry.dep_highlighted});
+      if (entry.depDisplay) {
+        dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
       }
     }
   };
 
   const flightplanReadout = (fid: string) => {
     const now = new Date();
-    const utc_minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry: EdstEntryProps | any = Object.values(edst_data ?? {})
-      ?.find((entry: EdstEntryProps) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+    const entry: EdstEntryType | any = Object.values(entries ?? {})
+      ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
-      let msg = formatUtcMinutes(utc_minutes) + '\n'
+      let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
         + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route.replace(/^\.+/, '')}`;
-      setMraMessage(msg);
+      dispatch(setMraMessage(msg));
     }
   };
 
   const parseCommand = () => {
-    const [command, ...args] = mca_command_string.split(/\s+/);
+    // TODO: rename command variable
+    const [command, ...args] = mcaCommandString.split(/\s+/);
     // console.log(command, args)
-    switch (command) {
-      case '//': // should turn wifi on/off for a CID
-        if (args.length === 1 && acl_cid_list.has(args[0])) {
+    if (command.match(/\/\/\w+/)) {
+      toggleVci(command.slice(2));
+      setResponse(`ACCEPT\nD POS KEYBD`);
+    } else {
+      // TODO: break down switch cases into functions (parseUU, parseFR, ...)
+      switch (command) {
+        case '//': // should turn vci on/off for a CID
           toggleVci(args[0]);
           setResponse(`ACCEPT\nD POS KEYBD`);
-        } else {
-          setResponse(`REJECT\n${mca_command_string}`);
-        }
-        break;
-      case 'UU':
-        switch (args.length) {
-          case 0:
-            openWindow('acl');
-            setResponse(`ACCEPT\nD POS KEYBD`);
-            break;
-          case 1:
-            switch (args[0]) {
-              case 'C':
-                props.aclCleanup();
-                break;
-              case 'D':
-                openWindow('dep');
-                break;
-              case 'P':
-                openWindow('acl');
-                props.togglePosting('acl');
-                break;
-              case 'X':
-                props.closeAllWindows();
-                break;
-              default:
-                addEntry(null, args[0]);
-                break;
-            }
-            setResponse(`ACCEPT\nD POS KEYBD`);
-            break;
-          case 2:
-            if (args[0] === 'H') {
-              toggleHighlightEntry(args[1]);
+          break;//end case //
+        case 'UU':
+          switch (args.length) {
+            case 0:
+              dispatch(openWindowThunk(windowEnum.acl));
               setResponse(`ACCEPT\nD POS KEYBD`);
-            } else {
-              setResponse(`REJECT\n${mca_command_string}`);
-            }
-            break;
-          default: // TODO: give error msg
-            setResponse(`REJECT\n${mca_command_string}`);
-        }
-        break;
-      case 'FR':
-        if (args.length === 1) {
-          flightplanReadout(args[0]);
-          setResponse(`ACCEPT\nREADOUT\n${mca_command_string}`);
-        } else {
-          setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mca_command_string}`);
-        }
-        break;
-      default: // better error msg
-        setResponse(`REJECT\n\n${mca_command_string}`);
+              break;
+            case 1:
+              switch (args[0]) {
+                case 'C':
+                  dispatch(aclCleanup);
+                  break;
+                case 'D':
+                  dispatch(openWindowThunk(windowEnum.dep));
+                  break;
+                case 'P':
+                  dispatch(openWindowThunk(windowEnum.acl));
+                  dispatch(setAclManualPosting(!manualPosting));
+                  break;
+                case 'X':
+                  dispatch(setInputFocused(false));
+                  dispatch(closeAllWindows());
+                  break;
+                default:
+                  dispatch(addAclEntryByFid(args[0]));
+                  break;
+              }
+              setResponse(`ACCEPT\nD POS KEYBD`);
+              break;
+            case 2:
+              if (args[0] === 'H') {
+                toggleHighlightEntry(args[1]);
+                setResponse(`ACCEPT\nD POS KEYBD`);
+              } else {
+                setResponse(`REJECT\n${mcaCommandString}`);
+              }
+              break;
+            default: // TODO: give error msg
+              setResponse(`REJECT\n${mcaCommandString}`);
+          }
+          break;//end case UU
+        case 'QD':
+          dispatch(toggleAltimeterThunk(args));
+          setResponse(`ACCEPT\nALTIMETER REQ`);
+          break;
+        case 'WR':
+          dispatch(toggleMetarThunk(args));
+          setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
+          break;
+        case 'FR':
+          if (args.length === 1) {
+            flightplanReadout(args[0]);
+            setResponse(`ACCEPT\nREADOUT\n${mcaCommandString}`);
+          } else {
+            setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
+          }
+          break;//end case FR
+        default: // TODO: give better error msg
+          setResponse(`REJECT\n\n${mcaCommandString}`);
+      }
     }
-    setMcaCommandString('');
+    dispatch(setMcaCommandString(''));
   };
 
-  const handleChange = (event: React.ChangeEvent<any>) => {
+  const handleInputChange = (event: React.ChangeEvent<any>) => {
     event.preventDefault();
-    setMcaCommandString(event.target.value.toUpperCase());
+    dispatch(setMcaCommandString(event.target.value.toUpperCase()));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
-    if (event.shiftKey || event.ctrlKey) {
-      inputRef?.current?.blur();
+    if (event.shiftKey) {
+      (inputRef.current as HTMLInputElement).blur();
     }
     switch (event.key) {
       case "Enter":
-        if (mca_command_string.length > 0) {
+        if (mcaCommandString.length > 0) {
           parseCommand();
         } else {
           setResponse('');
@@ -172,31 +186,33 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = (
     }
   };
 
-  return (<div className="floating-window mca"
-               ref={ref}
-               id="edst-mca"
-               style={{left: pos.x + "px", top: pos.y + "px"}}
-               onMouseDown={(event) => startDrag(event, ref)}
+  return pos && (<div className="floating-window mca"
+                      ref={ref}
+                      id="edst-mca"
+                      style={{left: pos.x + "px", top: pos.y + "px"}}
+                      onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
       // onMouseEnter={() => setInputFocus()}
     >
       <div className="mca-input-area">
         <input
           ref={inputRef}
           onFocus={() => {
-            setInputFocused(true);
+            dispatch(setInputFocused(true));
             setMcaFocused(true);
           }}
           onBlur={() => {
-            setInputFocused(false);
+            dispatch(setInputFocused(false));
             setMcaFocused(false);
           }}
-          tabIndex={mca_focused ? -1 : undefined}
-          value={mca_command_string}
-          onChange={handleChange}
+          tabIndex={mcaFocused ? -1 : undefined}
+          value={mcaCommandString}
+          onChange={handleInputChange}
           onKeyDownCapture={handleKeyDown}
         />
       </div>
       <div className="mca-response-area">
+        {response?.startsWith('ACCEPT') && <span className="green">{ACCEPT_CHECKMARK}</span>}
+        {response?.startsWith('REJECT') && <span className="red">{REJECT_CROSS}</span>}
         {response}
       </div>
     </div>

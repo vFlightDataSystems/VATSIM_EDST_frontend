@@ -1,6 +1,6 @@
 import React from 'react';
-import {TooltipContext} from "../../contexts/contexts";
 import '../../css/resources/tooltip.scss';
+import {useAppSelector} from "../../redux/hooks";
 
 const TooltipContent: React.FC<{content: any}> = (props) => {
   return (<div className="tooltip-content" tabIndex={999}>
@@ -8,18 +8,18 @@ const TooltipContent: React.FC<{content: any}> = (props) => {
   </div>);
 }
 
-interface EdstTooltipProps {
-    title?: string;
-    className?: string;
-    content?: string;
-    onMouseDown?: React.EventHandler<any>;
-    onContextMenu?: React.EventHandler<any>;
-    disabled?: boolean;
+type EdstTooltipProps = {
+    title?: string,
+    className?: string,
+    content?: string,
+    onMouseDown?: React.EventHandler<React.MouseEvent>,
+    onContextMenu?: React.EventHandler<React.MouseEvent>,
+    disabled?: boolean
 }
 
 export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...props}) => {
-  const {global_tooltips_enabled, show_all_tooltips} = React.useContext(TooltipContext);
-  const [tooltip_enabled, setTooltipEnabled] = React.useState(false);
+  const globalTooltipsEnabled = useAppSelector((state) => state.app.tooltipsEnabled);
+  const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
   return (<span
     {...props}
@@ -27,7 +27,7 @@ export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...prop
     // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
     onMouseLeave={() => setTooltipEnabled(false)}
   >
-        {global_tooltips_enabled && (tooltip_enabled || show_all_tooltips) && title &&
+        {globalTooltipsEnabled && (tooltipEnabled) && title &&
         <TooltipContent content={title}/>}
     {content ?? props.children}
     </span>);

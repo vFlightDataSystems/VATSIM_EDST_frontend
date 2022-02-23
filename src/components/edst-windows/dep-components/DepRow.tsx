@@ -1,168 +1,181 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
-import {REMOVAL_TIMEOUT} from "../../../lib";
-import {DepContext, EdstContext} from "../../../contexts/contexts";
+import {REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryProps} from "../../../interfaces";
+import {EdstEntryType} from "../../../types";
+import {deleteDepEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
+import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {depRowFieldEnum, windowEnum} from "../../../enums";
+import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
+import {depAircraftSelect} from "../../../redux/thunks/thunks";
+import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
 
-interface DepRowProps {
-  entry: EdstEntryProps;
-  hidden: Array<string>;
-  index: number;
-  updateStatus: Function;
+type DepRowProps = {
+  entry: EdstEntryType,
+  hidden: string[],
+  index: number,
 }
 
-export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatus}) => {
-  const {
-    aircraftSelect,
-    updateEntry,
-    amendEntry,
-    deleteEntry,
-    setInputFocused
-  } = useContext(EdstContext);
-  const {asel} = useContext(DepContext);
-  const now = new Date().getTime();
-  let route = entry.route;
-  const dest = entry.dest;
-  if (route.slice(-dest.length) === dest) {
-    route = route.slice(0, -dest.length);
-  }
+export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
+  const dispatch = useAppDispatch();
+  const asel = useAppSelector(aselSelector);
 
-  const [scratchpad, setScratchpad] = useState(entry.free_text_content ?? '');
+  const now = new Date().getTime();
+  const route = removeDestFromRouteString(entry.route.slice(0), entry.dest);
+
+  const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const current_fix_names = entry.route_data.map(fix => fix.name);
-  const aar_avail = (entry.aar_list?.filter((aar) => aar.eligible && current_fix_names.includes(aar.tfix))
-    && !(entry?._aar_list?.filter((aar) => aar.on_eligible_aar)));
-  const on_aar = !!entry._aar_list?.filter((aar) => aar.on_eligible_aar);
+  const currentFixNames = entry.route_data.map(fix => fix.name);
+  const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix))
+    && !(entry?._aar_list?.filter((aar) => aar.onEligibleAar)));
+  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar);
 
   const checkAarReroutePending = () => {
-    const current_fix_names = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-    const eligible_aar = entry?._aar_list?.filter((aar) => aar.eligible);
-    if (eligible_aar?.length === 1) {
-      const aar = eligible_aar[0];
-      if (current_fix_names.includes(aar.tfix)) {
+    const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
+    const eligibleAar = entry?._aar_list?.filter((aar) => aar.eligible);
+    if (eligibleAar?.length === 1) {
+      const aar = eligibleAar[0];
+      if (currentFixNames.includes(aar.tfix)) {
         return aar.aar_amendment_route_string;
       }
     }
     return null;
   }
-  const pending_aar = checkAarReroutePending();
+  const pendingAar = checkAarReroutePending();
 
-  const handleHotboxMouseDown = (event: React.MouseEvent, entry: EdstEntryProps) => {
+  const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     if (event.button === 0) {
-      amendEntry(entry.cid, {scratchpad: scratchpad});
-      updateEntry(entry.cid, {free_text: !entry.free_text});
+      dispatch(updateEntry({cid: entry.cid, data: {showFreeText: !entry.showFreeText}}));
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     }
     if (event.button === 1) {
-      updateEntry(entry.cid, {spa: !(typeof (entry.spa) === 'number')});
+      dispatch(toggleSpa(entry.cid));
     }
     if (event.button === 2) {
-      updateEntry(entry.cid, {dep_highlighted: !entry.dep_highlighted});
+      dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
     }
   }
+
+  const updateStatus = () => {
+    if (entry.depStatus === -1) {
+      dispatch(updateEntry({cid: entry.cid, data: {depStatus: 0}}));
+    } else {
+      if (entry.depStatus < 1) {
+        dispatch(updateEntry({cid: entry.cid, data: {depStatus: 1}}));
+      } else {
+        dispatch(updateEntry({cid: entry.cid, data: {depStatus: 0}}));
+      }
+    }
+  }
+
+  useEffect(() => (() => {
+    if (freeTextContent !== entry.free_text_content) {
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
+    } // eslint-disable-next-line
+  }), []);
 
   const handleFidClick = (event: React.MouseEvent) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
         if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
-          deleteEntry('dep', entry.cid);
+          dispatch(deleteDepEntry(entry.cid));
         }
         break;
       default:
-        aircraftSelect(event, 'dep', entry.cid, 'fid');
+        dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.fid));
         break;
 
     }
   }
 
-  const isSelected = (cid: string, field: string) => {
-    return asel?.cid === cid && asel?.field === field;
+  const isSelected = (cid: string, field: depRowFieldEnum): boolean => {
+    return asel?.window === windowEnum.dep && asel?.cid === cid && asel?.field === field;
   }
 
   return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
-      <EdstTooltip title={Tooltips.dep_checkmark_N_button}>
-        <div className={`body-col body-col-1 radio dep-radio ${entry.dep_status === 1 ? 'checkmark' : ''}`}
-             onMouseDown={() => updateStatus(entry.cid)}
+      <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
+        <div className={`body-col body-col-1 radio dep-radio ${entry.depStatus === 1 ? 'checkmark' : ''}`}
+             onMouseDown={updateStatus}
         >
-          {entry.dep_status === -1 && 'N'}{entry.dep_status === 1 && COMPLETED_SYMBOL}
+          {entry.depStatus === -1 && 'N'}{entry.depStatus === 1 && COMPLETED_SYMBOL}
         </div>
       </EdstTooltip>
       <div className="body-col body-col-2">
         0000
       </div>
-      <div className={`inner-row ${entry.dep_highlighted ? 'highlighted' : ''}`}
+      <div className={`inner-row ${entry.depHighlighted ? 'highlighted' : ''}`}
            ref={ref}
-           style={{minWidth: entry.free_text ? '1200px' : 0}}
+           style={{minWidth: entry.showFreeText ? '1200px' : 0}}
       >
-        <EdstTooltip title={Tooltips.dep_flight_id}>
-          <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, 'fid') ? 'selected' : ''}`}
+        <EdstTooltip title={Tooltips.depFlightId}>
+          <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, depRowFieldEnum.fid) ? 'selected' : ''}`}
                onMouseDown={handleFidClick}
                onContextMenu={(event) => event.preventDefault()}
           >
-            {entry.cid} {entry.callsign}{entry.voice_type === 'r' ? '(R)' : entry.voice_type === 't' ? '(T)' : ''}
+            {entry.cid} {entry.callsign}{entry.voiceType === 'r' ? '/R' : entry.voiceType === 't' ? '/T' : ''}
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!(typeof (entry.spa) === 'number') ? 'special-hidden' : ''}`}>
-          {(typeof (entry.spa) === 'number') && SPA_INDICATOR}
+        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+          {entry.spa && SPA_INDICATOR}
         </div>
-        <EdstTooltip title={Tooltips.dep_hotbox}>
+        <EdstTooltip title={Tooltips.depHotbox}>
           <div className="body-col special hotbox"
                onContextMenu={event => event.preventDefault()}
-               onMouseDown={(event) => handleHotboxMouseDown(event, entry)}
+               onMouseDown={handleHotboxMouseDown}
           >
-            {scratchpad && '*'}
+            {freeTextContent && '*'}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.dep_type}>
+        <EdstTooltip title={Tooltips.depType}>
           <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${isSelected(entry.cid, 'type') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'type')}
+        ${isSelected(entry.cid, depRowFieldEnum.type) ? 'selected' : ''}`}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.type))}
           >
             {`${entry.type}/${entry.equipment}`}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.dep_alt}>
+        <EdstTooltip title={Tooltips.depAlt}>
           <div className={`body-col alt`}>
-            <div className={`${isSelected(entry.cid, 'alt') ? 'selected' : ''}`}
-                 onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'alt')}
+            <div className={`${isSelected(entry.cid, depRowFieldEnum.alt) ? 'selected' : ''}`}
+                 onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.alt, null, windowEnum.altitudeMenu))}
             >
               {entry.altitude}
             </div>
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.dep_code}>
+        <EdstTooltip title={Tooltips.depCode}>
           <div className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${isSelected(entry.cid, 'code') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'code')}
+          ${isSelected(entry.cid, depRowFieldEnum.code) ? 'selected' : ''}`}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.code))}
           >
             {entry.beacon}
           </div>
         </EdstTooltip>
-        <EdstTooltip title={Tooltips.dep_route}>
-          <div className={`body-col route hover ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}
-               onMouseDown={(event) => aircraftSelect(event, 'dep', entry.cid, 'route')}
+        <EdstTooltip title={Tooltips.depRoute}>
+          <div className={`body-col route hover ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, windowEnum.routeMenu))}
           >
           <span>
               <span
-                className={`${aar_avail && !on_aar ? 'amendment-1' : ''} ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
+                className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
                 {entry.dep}
               </span>
             {route}
-            {pending_aar && !on_aar &&
-            <span className={`amendment-2 ${isSelected(entry.cid, 'route') ? 'selected' : ''}`}>
-              {`[${pending_aar}]`}
+            {pendingAar && !onAar &&
+            <span className={`amendment-2 ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
+              {`[${pendingAar}]`}
               </span>}
             {route?.slice(-1) !== '.' && '..'}{entry.dest}
           </span>
@@ -170,18 +183,18 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index, updateStatu
         </EdstTooltip>
       </div>
     </div>
-    {entry.free_text && <div className="body-row">
+    {entry.showFreeText && <div className="body-row">
       <div className={`body-col body-col-1 radio`}/>
       <div className="body-col body-col-2"/>
-      <div className={`inner-row-2 ${entry.dep_highlighted ? 'highlighted' : ''}`}
+      <div className={`inner-row-2 ${entry.depHighlighted ? 'highlighted' : ''}`}
            style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
       >
         <div className="free-text-row dep-free-text-row">
           <input
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
-            value={scratchpad}
-            onChange={(event) => setScratchpad(event.target.value.toUpperCase())}/>
+            onFocus={() => dispatch(setInputFocused(true))}
+            onBlur={() => dispatch(setInputFocused(false))}
+            value={freeTextContent}
+            onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
         </div>
       </div>
     </div>}

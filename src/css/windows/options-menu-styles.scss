@@ -88,6 +88,10 @@ $route-menu-alert-cyan: #00ADAD;
     padding: 4px 0;
   }
 
+  &.tools {
+    padding: 20px 0 4px 0;
+  }
+
   .hold-fix-container {
     padding: 4px 0;
     border-bottom: 1px solid $options-menu-light-grey;
@@ -115,6 +119,16 @@ $route-menu-alert-cyan: #00ADAD;
 
   .options-row {
     @include options-row;
+
+    * a {
+      height: auto;
+    }
+
+    img {
+      max-width: 24px;
+      max-height: 24px;
+      //transform: scale(0.2);
+    }
 
     &.present-headging-row {
       justify-content: center;
@@ -189,8 +203,8 @@ $route-menu-alert-cyan: #00ADAD;
         min-width: 47px;
       }
 
-      &.sort {
-        margin-top: 25px;
+      &.margin-top {
+        margin-top: 20px;
       }
     }
 
@@ -326,10 +340,15 @@ $route-menu-alert-cyan: #00ADAD;
     align-items: center;
     vertical-align: center;
     border: 1px solid transparent;
-    padding: 2px 2px;
+    //padding: 2px 2px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+
+    &.img {
+      max-width: 24px;
+      max-height: 24px;
+    }
 
     &.display-route {
       border: 2px solid $options-menu-dark-grey;
@@ -449,6 +468,41 @@ $route-menu-alert-cyan: #00ADAD;
       }
     }
 
+    .box {
+      border-bottom: 2px solid $options-menu-medium-grey;
+      border-right: 2px solid $options-menu-medium-grey;
+      border-top: 2px solid $options-menu-background-medium-grey;
+      border-left: 2px solid $options-menu-background-medium-grey;
+      width: 8px;
+      height: 8px;
+      margin-right: 6px;
+
+      &.selected {
+        background-color: $options-menu-light-grey;
+        border-bottom: 2px solid $options-menu-background-medium-grey;
+        border-right: 2px solid $options-menu-background-medium-grey;
+        border-top: 2px solid $options-menu-medium-grey;
+        border-left: 2px solid $options-menu-medium-grey;
+      }
+
+      &.diamond {
+        width: 6px;
+        height: 6px;
+        transform: rotate(45deg);
+      }
+    }
+
+    &.tools {
+      justify-content: left;
+      display: inline-flex;
+      height: 22px;
+      padding: 0 2px;
+
+      &:hover {
+        border: 1px solid $options-menu-light-grey;
+      }
+    }
+
     &.sort {
       justify-content: left;
       display: inline-flex;
@@ -457,30 +511,6 @@ $route-menu-alert-cyan: #00ADAD;
 
       &:hover {
         border: 1px solid $options-menu-light-grey;
-      }
-
-      .box {
-        border-bottom: 2px solid $options-menu-medium-grey;
-        border-right: 2px solid $options-menu-medium-grey;
-        border-top: 2px solid $options-menu-background-medium-grey;
-        border-left: 2px solid $options-menu-background-medium-grey;
-        width: 8px;
-        height: 8px;
-        margin-right: 6px;
-
-        &.selected {
-          background-color: $options-menu-light-grey;
-          border-bottom: 2px solid $options-menu-background-medium-grey;
-          border-right: 2px solid $options-menu-background-medium-grey;
-          border-top: 2px solid $options-menu-medium-grey;
-          border-left: 2px solid $options-menu-medium-grey;
-        }
-
-        &.diamond {
-          width: 6px;
-          height: 6px;
-          transform: rotate(45deg);
-        }
       }
     }
 
@@ -517,6 +547,7 @@ $route-menu-alert-cyan: #00ADAD;
         margin-right: 6px;
         justify-content: center;
         align-items: center;
+
         .edst-inner-button {
           width: 75px;
         }
@@ -525,12 +556,6 @@ $route-menu-alert-cyan: #00ADAD;
       &.small {
         height: 16px;
       }
-    }
-
-    &.center {
-      max-width: 24px;
-      max-height: 24px;
-      //transform: scale(0.2);
     }
 
     &.right {
@@ -552,6 +577,7 @@ $route-menu-alert-cyan: #00ADAD;
 
       .ppos {
         border: 2px solid transparent;
+        border-right: none;
         padding: 0 2px;
         width: 120px;
         font-size: 16px;
@@ -618,4 +644,12 @@ $route-menu-alert-cyan: #00ADAD;
 
 .vatsim-logo {
   background-image: url(../images/VATSIM-social_icon.svg);
+}
+
+.skyvector-logo {
+  background-image: url('../images/glob_bright.png');
+}
+
+.flightaware-logo {
+  background-image: url('../images/FA_1.png');
 }
