@@ -117,6 +117,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
                   dispatch(setAclManualPosting(!manualPosting));
                   break;
                 case 'X':
+                  dispatch(setInputFocused(false));
                   dispatch(closeAllWindows());
                   break;
                 default:
