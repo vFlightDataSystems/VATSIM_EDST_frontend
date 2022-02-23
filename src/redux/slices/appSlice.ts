@@ -88,6 +88,7 @@ const appSlice = createSlice({
       else {
         state.windows[action.payload].open = false;
       }
+      state.inputFocused = false; // this would cause bugs if I don't do it
     },
     openWindow(state, action: { payload: { window: windowEnum, openedBy?: windowEnum, openedWithCid?: string | null } }) {
       state.windows[action.payload.window].open = true;
