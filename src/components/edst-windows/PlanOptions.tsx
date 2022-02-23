@@ -7,7 +7,7 @@ import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {windowEnum} from "../../enums";
-import {openWindowThunk} from "../../redux/thunks";
+import {openWindowThunk} from "../../redux/thunks/thunks";
 import {aselSelector, AselType, closeWindow, setAsel, windowPositionSelector} from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
 

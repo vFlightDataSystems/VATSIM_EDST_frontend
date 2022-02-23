@@ -10,8 +10,8 @@ import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {deleteAclEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {aclAselActionTriggerEnum, aclRowFieldEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
-import {aclAircraftSelect} from "../../../redux/thunks";
-import {amendEntryThunk} from "../../../redux/asyncThunks";
+import {aclAircraftSelect} from "../../../redux/thunks/thunks";
+import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
 const SPA_INDICATOR = '^';
 

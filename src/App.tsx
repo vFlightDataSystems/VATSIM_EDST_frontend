@@ -22,7 +22,7 @@ import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 import {SectorSelector} from "./components/SectorSelector";
-import {initThunk} from "./redux/asyncThunks";
+import {initThunk} from "./redux/thunks/asyncThunks";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
 import {windowEnum} from "./enums";
 import {openWindow, setDragging, setMcaCommandString, setWindowPosition} from "./redux/slices/appSlice";
@@ -30,8 +30,12 @@ import {useAppDispatch, useAppSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/ToolsMenu";
 import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
 import {MetarWindow} from "./components/edst-windows/MetarWindow";
+import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
 
 // const CACHE_TIMEOUT = 300000; // ms
+
+const ENTRIES_REFRESH_RATE = 20000; // 20 seconds
+const WEATHER_REFRESH_RATE = 600000; // 10 minutes
 
 const DRAGGING_HIDE_CURSOR = [
   windowEnum.status,
@@ -49,8 +53,6 @@ export const App: React.FC = () => {
   const mcaCommandString = useAppSelector((state) => state.app.mcaCommandString);
   const inputFocused = useAppSelector((state) => state.app.inputFocused);
   const dragging = useAppSelector((state) => state.app.dragging);
-
-  const [updateIntervalId, setUpdateIntervalId] = useState<NodeJS.Timer | null>(null);
   const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
@@ -62,10 +64,14 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     dispatch(initThunk());
-    setUpdateIntervalId(setInterval(async () => await dispatch(refreshEntriesThunk()), 20000));
+    const entriesUpdateIntervalId = setInterval(async () => await dispatch(refreshEntriesThunk()), ENTRIES_REFRESH_RATE);
+    const weatherUpdateIntervalId = setInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
     return () => {
-      if (updateIntervalId) {
-        clearInterval(updateIntervalId);
+      if (entriesUpdateIntervalId) {
+        clearInterval(entriesUpdateIntervalId);
+      }
+      if (weatherUpdateIntervalId) {
+        clearInterval(weatherUpdateIntervalId);
       }
     };
     // eslint-disable-next-line

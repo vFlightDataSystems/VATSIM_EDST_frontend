@@ -12,7 +12,7 @@ import {windowEnum} from "../../enums";
 import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {EdstEntryType} from "../../types";
-import {amendEntryThunk} from "../../redux/asyncThunks";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 enum signEnum {
   more = '+',

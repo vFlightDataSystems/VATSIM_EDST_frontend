@@ -15,8 +15,8 @@ import {
   windowPositionSelector
 } from "../../redux/slices/appSlice";
 import {EdstEntryType} from "../../types";
-import {amendEntryThunk} from "../../redux/asyncThunks";
-import {addTrialPlanThunk} from "../../redux/thunks";
+import {addTrialPlanThunk} from "../../redux/thunks/thunks";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 type AltMenuProps = {
   setAltMenuInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void,

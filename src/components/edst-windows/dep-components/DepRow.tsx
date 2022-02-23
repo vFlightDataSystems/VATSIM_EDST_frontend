@@ -9,8 +9,8 @@ import {deleteDepEntry, toggleSpa, updateEntry} from "../../../redux/slices/entr
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {depRowFieldEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
-import {depAircraftSelect} from "../../../redux/thunks";
-import {amendEntryThunk} from "../../../redux/asyncThunks";
+import {depAircraftSelect} from "../../../redux/thunks/thunks";
+import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
 const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';

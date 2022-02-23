@@ -12,7 +12,7 @@ import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entr
 import {windowEnum} from "../../enums";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {EdstEntryType, FixType} from "../../types";
-import {amendEntryThunk} from "../../redux/asyncThunks";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const HoldMenu: React.FC = () => {
   const {
@@ -38,8 +38,7 @@ export const HoldMenu: React.FC = () => {
   useEffect(() => {
     if (!entry) {
       dispatch(closeWindow(windowEnum.holdMenu));
-    }
-    else {
+    } else {
       const routeData = computeCrossingTimes(entry);
       const now = new Date();
       const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
@@ -275,7 +274,8 @@ export const HoldMenu: React.FC = () => {
             />
           </div>
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.holdMenu))}/>
+            <EdstButton className="exit-button" content="Exit"
+                        onMouseDown={() => dispatch(closeWindow(windowEnum.holdMenu))}/>
           </div>
         </div>
       </div>

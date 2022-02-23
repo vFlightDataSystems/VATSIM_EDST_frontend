@@ -1,46 +1,16 @@
-import {RootState} from "./store";
+import {RootState} from "../store";
 import {
   aclAselActionTriggerEnum,
   aclRowFieldEnum,
   depAselActionTriggerEnum,
   depRowFieldEnum,
   windowEnum
-} from "../enums";
-import {REMOVAL_TIMEOUT} from "../lib";
-import {addAclEntry, addDepEntry, deleteAclEntry, updateEntry} from "./slices/entriesSlice";
-import {WindowPositionType} from "../types";
-import {closeWindow, openWindow, setAsel, setWindowPosition} from "./slices/appSlice";
-import {addTrialPlan, planCleanup, PlanType, removeTrialPlan} from "./slices/planSlice";
-
-
-function addEntryThunk(fid: string, window: windowEnum) {
-  return (dispatch: any, getState: () => RootState) => {
-    const entries = getState().entries;
-    let cid = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid)?.cid;
-    if (cid) {
-      switch (window) {
-        case windowEnum.acl:
-          dispatch(addAclEntry(cid));
-          dispatch(setAsel({cid: cid, field: aclRowFieldEnum.fid, window: windowEnum.acl}));
-          break;
-        case windowEnum.dep:
-          dispatch(addDepEntry(cid));
-          dispatch(setAsel({cid: cid, field: depRowFieldEnum.fid, window: windowEnum.dep}));
-          break;
-        default:
-          break;
-      }
-    }
-  };
-}
-
-export function addAclEntryByFid(fid: string) {
-  return addEntryThunk(fid, windowEnum.acl);
-}
-
-export function addDepEntryByFid(fid: string) {
-  return addEntryThunk(fid, windowEnum.dep);
-}
+} from "../../enums";
+import {REMOVAL_TIMEOUT} from "../../lib";
+import {deleteAclEntry, updateEntry} from "../slices/entriesSlice";
+import {WindowPositionType} from "../../types";
+import {closeWindow, openWindow, setAsel, setWindowPosition} from "../slices/appSlice";
+import {addTrialPlan, planCleanup, PlanType, removeTrialPlan} from "../slices/planSlice";
 
 export function aclCleanup(dispatch: any, getState: () => RootState) {
   const state = getState();

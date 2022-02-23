@@ -6,10 +6,10 @@ import {Tooltips} from "../../../tooltips";
 import React from "react";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {planCleanup, planQueueSelector, selectedPlanIndexSelector} from "../../../redux/slices/planSlice";
-import {openWindowThunk} from "../../../redux/thunks";
+import {openWindowThunk} from "../../../redux/thunks/thunks";
 import {planRowFieldEnum, windowEnum} from "../../../enums";
-import {amendEntryThunk} from "../../../redux/asyncThunks";
 import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
+import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
 type PlansDisplayHeaderProps = {
   focused: boolean
