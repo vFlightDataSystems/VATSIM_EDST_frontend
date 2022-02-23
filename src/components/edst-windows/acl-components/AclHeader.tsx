@@ -4,9 +4,10 @@ import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {setAclManualPosting} from "../../../redux/slices/aclSlice";
-import {aclCleanup, addAclEntryByFid, openWindowThunk} from "../../../redux/thunks";
+import {aclCleanup, openWindowThunk} from "../../../redux/thunks/thunks";
 import {windowEnum} from "../../../enums";
 import {aclAselSelector, AselType, closeWindow, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
+import {addAclEntryByFid} from "../../../redux/thunks/entriesThunks";
 
 
 export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {

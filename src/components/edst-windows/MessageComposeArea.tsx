@@ -7,7 +7,7 @@ import {EdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/slices/aclSlice";
 import {updateEntry} from "../../redux/slices/entriesSlice";
-import {aclCleanup, addAclEntryByFid, openWindowThunk} from "../../redux/thunks";
+import {aclCleanup, openWindowThunk} from "../../redux/thunks/thunks";
 import {windowEnum} from "../../enums";
 import {
   closeAllWindows,
@@ -17,7 +17,8 @@ import {
   setMraMessage,
   windowPositionSelector
 } from "../../redux/slices/appSlice";
-import {addAltimeterThunk, addMetarThunk} from "../../redux/asyncThunks";
+import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
+import {addAclEntryByFid} from "../../redux/thunks/entriesThunks";
 
 type MessageComposeAreaProps = {
   setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
@@ -34,7 +35,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const entries = useAppSelector(state => state.entries);
   const dispatch = useAppDispatch();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {startDrag} = useContext(EdstContext);
@@ -137,11 +138,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
           }
           break;//end case UU
         case 'QD':
-          dispatch(addAltimeterThunk(args));
+          dispatch(toggleAltimeterThunk(args));
           setResponse(`ACCEPT\nALTIMETER REQ`);
           break;
         case 'WR':
-          dispatch(addMetarThunk(args));
+          dispatch(toggleMetarThunk(args));
           setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
           break;
         case 'FR':

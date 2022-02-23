@@ -7,8 +7,8 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
 import {windowEnum} from "../../enums";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {amendEntryThunk} from "../../redux/asyncThunks";
 import {EdstEntryType} from "../../types";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const CancelHoldMenu: React.FC = () => {
   const {

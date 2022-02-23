@@ -9,7 +9,7 @@ import {windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {EdstEntryType} from "../../types";
-import {amendEntryThunk} from "../../redux/asyncThunks";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);

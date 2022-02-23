@@ -8,7 +8,7 @@ import {
   PlanType,
   setSelectedTrialPlanIndex
 } from "../../../redux/slices/planSlice";
-import {removeTrialPlanThunk} from "../../../redux/thunks";
+import {removeTrialPlanThunk} from "../../../redux/thunks/thunks";
 
 export const PlansDisplayTable: React.FC = () => {
   const dispatch = useAppDispatch();

@@ -20,9 +20,9 @@ import {
   setInputFocused,
   windowPositionSelector
 } from "../../redux/slices/appSlice";
-import {addTrialPlanThunk, openWindowThunk} from "../../redux/thunks";
+import {addTrialPlanThunk, openWindowThunk} from "../../redux/thunks/thunks";
 import {EdstEntryType} from "../../types";
-import {amendEntryThunk} from "../../redux/asyncThunks";
+import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const RouteMenu: React.FC = () => {
   const {

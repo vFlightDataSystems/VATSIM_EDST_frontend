@@ -7,7 +7,8 @@ import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {setDepManualPosting} from "../../../redux/slices/depSlice";
 import {windowEnum} from "../../../enums";
 import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
-import {addDepEntryByFid, openWindowThunk} from "../../../redux/thunks";
+import {openWindowThunk} from "../../../redux/thunks/thunks";
+import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
 
 type DepHeaderProps = {
   focused: boolean
