@@ -11,7 +11,7 @@ export const initThunk = createAsyncThunk(
     let artccId: string;
     let sectorId: string;
     if (process.env.NODE_ENV === 'development') {
-      artccId = 'zlc';
+      artccId = 'zbw';
       // artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
     } else {

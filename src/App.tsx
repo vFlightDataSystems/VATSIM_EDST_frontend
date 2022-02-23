@@ -31,6 +31,7 @@ import {ToolsMenu} from "./components/edst-windows/ToolsMenu";
 import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
 import {MetarWindow} from "./components/edst-windows/MetarWindow";
 import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
+import {useEventListener} from "usehooks-ts";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -150,29 +151,32 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    event.preventDefault();
-    if (windows[windowEnum.altitudeMenu].open) {
-      altMenuRef.current.showInput = true;
-      if (altMenuRef.current.inputRef?.current) {
-        altMenuRef.current?.inputRef.current.focus();
-      }
-    } else {
-      if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
-        dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
-      }
-      if (!mcaInputRef?.current) {
-        dispatch(openWindow({window: windowEnum.messageComposeArea}));
+  const handleKeyDown = (event: KeyboardEvent) => {
+    // event.preventDefault();
+    if (!inputFocused) {
+      if (windows[windowEnum.altitudeMenu].open) {
+        altMenuRef.current.showInput = true;
+        if (altMenuRef.current.inputRef?.current) {
+          altMenuRef.current?.inputRef.current.focus();
+        }
       } else {
-        mcaInputRef.current.focus();
+        if (!mcaInputRef?.current) {
+          dispatch(openWindow({window: windowEnum.messageComposeArea}));
+          if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
+            dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
+          }
+        } else {
+          mcaInputRef.current.focus();
+        }
       }
     }
   };
 
+  useEventListener('keydown', handleKeyDown);
+
   return <div className="edst"
               onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
               tabIndex={!(inputFocused) ? -1 : 0}
-              onKeyDownCapture={(e) => (!(inputFocused) || (windows[windowEnum.altitudeMenu].open && !altMenuRef.current.showInput)) && handleKeyDown(e)}
   >
     <EdstHeader/>
     <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
