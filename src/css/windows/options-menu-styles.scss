@@ -256,7 +256,10 @@ $route-menu-alert-cyan: #00ADAD;
       //width: 50px;
       display: flex;
       flex-shrink: 0;
-      text-indent: 6px;
+
+      &.header {
+        text-indent: 6px;
+      }
 
       &.col-1 {
         width: 90px;
