@@ -276,7 +276,10 @@ export const RouteMenu: React.FC = () => {
           <div className="options-col left">
             <EdstButton disabled={true} content="Flight Data" title={Tooltips.routeMenuFlightData}/>
             <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
-                        onMouseDown={() => dispatch(openWindowThunk(windowEnum.prevRouteMenu, ref.current, windowEnum.routeMenu, true))}
+                        onMouseDown={() => {
+                          dispatch(openWindowThunk(windowEnum.prevRouteMenu, ref.current, windowEnum.routeMenu, true));
+                          dispatch(closeWindow(windowEnum.routeMenu));
+                        }}
                         title={Tooltips.routeMenuPrevRoute}
             />
             <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute}/>

@@ -33,6 +33,7 @@ export type EdstEntryType = {
   adar: any[], // adapted departure-arrival routes proposed by EDST
   beacon: string, // assigned beacon code
   remarks: string, // remarks string
+  remarksChecked?: boolean, // whether remarks have been checked or not
   spd?: string, // assigned speed
   hdg?: string, // assigned heading
   spa: boolean, // SPA indicator
@@ -45,7 +46,6 @@ export type EdstEntryType = {
   scratch_spd?: string, // heading assigned in the scratchpad
   free_text_content?: string, // free text content
   showFreeText?: boolean, // boolean whether to display the free text row or not
-  remarksChecked?: boolean, // whether remarks have been checked or not
   voiceType?: string, // voice type in VATSIM flightplan, /v/ by default
   cleared_direct?: { frd: string, fix: string }, // if cleared direct to somewhere, this will contain the FRD and the
                                                  // fix the aircraft was cleared to

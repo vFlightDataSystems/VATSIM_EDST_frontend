@@ -1,32 +1,7 @@
-//@font-face {
-//    font-family: 'VRC Terminal', monospace;
-//    src: url('./fonts/VRC_Standard.ttf')
-//}
-
-/*@font-face {*/
-/*    font-family: 'ERAM-font-1';*/
-/*    src: url('./vERAM_Fonts/eram-text-1.bmp');*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: 'ERAM-font-2';*/
-/*    src: url('./vERAM_Fonts/eram-text-2.bmp');*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: 'ERAM-font-3';*/
-/*    src: url('./vERAM_Fonts/eram-text-3.bmp');*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: 'ERAM-font-4';*/
-/*    src: url('./vERAM_Fonts/eram-text-4.bmp');*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: 'ERAM-font-5';*/
-/*    src: url('./vERAM_Fonts/eram-text-5.bmp');*/
-/*}*/
+@font-face {
+    font-family: EDST, monospace;
+    src: url('./fonts/EDST.ttf')
+}
 
 $edst-background-black: #000000;
 $edst-font-grey: #ADADAD;
@@ -48,18 +23,18 @@ $edst-window-dark-grey: #575757;
   padding: 0;
   margin: 0;
   background-color: black;
-  //font-family: 'VRC Terminal';
-  font-family: Consolas, monospace;
+  font-family: EDST, monospace;
   caret-color: transparent;
 }
 
 button {
-  font-family: Consolas, monospace;
+  font-family: EDST, monospace;
+  font-weight: bold;
 }
 
 input, textarea {
   caret-color: $edst-font-grey;
-  font-family: Consolas, monospace;
+  font-family: EDST, monospace;
   cursor: default;
   font-size: 16px;
   outline: none;
@@ -118,10 +93,6 @@ input, textarea {
 @mixin input-container {
   border: 1px solid transparent;
 
-  &:hover {
-    border: 1px solid #FFFFFF;
-  }
-
   input, textarea {
     width: calc(100% - 7px);
     height: calc(100% - 9px);
@@ -137,5 +108,9 @@ input, textarea {
     border-right: 2px solid $edst-window-light-grey;
     background-color: #000000;
     resize: none;
+
+    &:hover {
+      outline: 1px solid #FFFFFF;
+    }
   }
 }

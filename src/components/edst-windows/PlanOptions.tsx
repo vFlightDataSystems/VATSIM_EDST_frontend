@@ -21,6 +21,11 @@ export const PlanOptions: React.FC = () => {
   const entry = useAppSelector(state => state.entries[asel.cid]);
   const dep = asel.window === windowEnum.dep;
 
+  function openWindow(window: windowEnum) {
+    dispatch(openWindowThunk(window, ref.current, windowEnum.planOptions, true));
+    dispatch(closeWindow(windowEnum.planOptions));
+  }
+
   return pos && (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
@@ -44,7 +49,7 @@ export const PlanOptions: React.FC = () => {
             className="options-col hover"
             content="Altitude..."
             title={Tooltips.planOptionsAlt}
-            onMouseDown={() => dispatch(openWindowThunk(windowEnum.altitudeMenu, ref.current, windowEnum.planOptions, true))}
+            onMouseDown={() => openWindow(windowEnum.altitudeMenu)}
           />
         </div>
         {!dep && <div className="options-row">
@@ -60,7 +65,7 @@ export const PlanOptions: React.FC = () => {
             className="options-col hover"
             content="Route..."
             title={Tooltips.planOptionsRoute}
-            onMouseDown={() => dispatch(openWindowThunk(windowEnum.routeMenu, ref.current, windowEnum.planOptions, true))}
+            onMouseDown={() => openWindow(windowEnum.routeMenu)}
           />
         </div>
         <div className="options-row">
@@ -69,7 +74,7 @@ export const PlanOptions: React.FC = () => {
             content="Previous Route"
             title={Tooltips.planOptionsPrevRoute} // @ts-ignore
             disabled={entry?.previous_route === undefined}
-            onMouseDown={() => dispatch(openWindowThunk(windowEnum.prevRouteMenu, ref.current, windowEnum.planOptions, true))}
+            onMouseDown={() => openWindow(windowEnum.prevRouteMenu)}
           />
         </div>
         {!dep && <div className="options-row">

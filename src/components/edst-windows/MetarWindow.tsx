@@ -5,7 +5,7 @@ import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {metarSelector, removeAirportAltimeter, removeAirportMetar} from "../../redux/slices/weatherSlice";
+import {metarSelector, removeAirportMetar} from "../../redux/slices/weatherSlice";
 
 export const MetarWindow: React.FC = () => {
   const dispatch = useAppDispatch();

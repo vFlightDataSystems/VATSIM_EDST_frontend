@@ -124,7 +124,7 @@ export const AclRow: React.FC<AclRowProps> = (
         dispatch(updateEntry({
           cid: entry.cid, data: {
             aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') ? 'remarks' : null,
-            remarks_checked: true
+            remarksChecked: true
           }
         }));
         break;
