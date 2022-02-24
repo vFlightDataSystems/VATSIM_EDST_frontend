@@ -22,7 +22,7 @@ import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 import {SectorSelector} from "./components/SectorSelector";
-import {initThunk} from "./redux/thunks/asyncThunks";
+import {initThunk} from "./redux/thunks/initThunk";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
 import {windowEnum} from "./enums";
 import {openWindow, setDragging, setMcaCommandString, setWindowPosition} from "./redux/slices/appSlice";

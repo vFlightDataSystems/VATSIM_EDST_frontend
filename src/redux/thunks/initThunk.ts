@@ -4,18 +4,28 @@ import {setArtccId, setReferenceFixes, setSectorId, setSectors} from "../slices/
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk} from "../slices/entriesSlice";
 
+const DISCLAIMER_MESSAGE = `
+!!! WARNING !!!\n
+This vEDST project is not considered “usable” by the developers at this time.\n
+Features may not always work as intended and at times will stop working completely.\n
+If you wish to contribute to this project, please checkout the GitHub Repo 
+https://github.com/CaptainTux/VATSIM_EDST_frontend.\n
+`;
+
 export const initThunk = createAsyncThunk(
   'app/init',
   async (_args, thunkAPI) => {
     let sectorData = (thunkAPI.getState() as RootState).sectorData;
     let artccId: string;
     let sectorId: string;
+
     if (process.env.NODE_ENV === 'development') {
       artccId = 'zbw';
-      // artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+      // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
     } else {
-      artccId = prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
+      await alert(DISCLAIMER_MESSAGE);
+      artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
     }
     thunkAPI.dispatch(setArtccId(artccId));
