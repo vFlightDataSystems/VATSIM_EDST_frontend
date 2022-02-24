@@ -84,34 +84,34 @@ export const TemplateMenu: React.FC = () => {
       </div>
       <div className="options-body template-body">
         <div className="template-row">
-          <div className="template-col col-1">
+          <div className="template-col col-1 header">
             AID
           </div>
-          <div className="template-col col-2">
+          <div className="template-col col-2 header">
             NUM
           </div>
-          <div className="template-col col-3">
+          <div className="template-col col-3 header">
             SAI
           </div>
-          <div className="template-col col-4">
+          <div className="template-col col-4 header">
             TYP
           </div>
           <div className="template-col col-5">
             <EdstButton disabled={true} content="EQP..."/>
           </div>
-          <div className="template-col col-6">
+          <div className="template-col col-6 header">
             BCN
           </div>
-          <div className="template-col col-7">
+          <div className="template-col col-7 header">
             SPD
           </div>
-          <div className="template-col col-8">
+          <div className="template-col col-8 header">
             FIX
           </div>
-          <div className="template-col col-9">
+          <div className="template-col col-9 header">
             TIM
           </div>
-          <div className="template-col col-10">
+          <div className="template-col col-10 header">
             ALT
           </div>
           <EdstButton disabled={true} content="MORE..."/>
