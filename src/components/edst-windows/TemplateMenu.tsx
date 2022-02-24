@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -19,7 +19,7 @@ export const TemplateMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
   const pos = useAppSelector(windowPositionSelector(windowEnum.templateMenu));
   const [focused, setFocused] = useState(false);
-  const [displayRawRoute, setDisplayRawRoute] = useState(false);
+  // const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState((asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
   const [frd, setFrd] = useState(entry?.reference_fix ? computeFrd(entry.reference_fix) : '');
 
@@ -38,34 +38,34 @@ export const TemplateMenu: React.FC = () => {
 
   const ref = useRef(null);
 
-  useEffect(() => {
-    const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
-    const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
-    const aidInput = entry?.callsign ?? '';
-    const typeInput = entry?.type ?? '';
-    const equipInput = entry?.equipment ?? '';
-    const beaconInput = entry?.beacon ?? '';
-    const speedInput = entry?.flightplan?.ground_speed ?? '';
-    const timeInput = 'EXX00';
-    const altInput = entry?.altitude ?? '';
-    const routeInput = (asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
-    const rmkInput = entry?.remarks ?? '';
-    setDisplayRawRoute(false);
-    setRoute(route);
-    setFrd(frd);
-    setFrdInput(frd);
-    setAidInput(aidInput);
-    setNumInput(entry ? 1 : '');
-    setSaiInput('');
-    setTypeInput(typeInput);
-    setEquipInput(equipInput);
-    setBeaconInput(beaconInput);
-    setSpeedInput(speedInput);
-    setTimeInput(timeInput);
-    setAltInput(altInput);
-    setRouteInput(routeInput);
-    setRmkInput(rmkInput);
-  }, [asel, entry]);
+  // useEffect(() => {
+  //   const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
+  //   const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
+  //   const aidInput = entry?.callsign ?? '';
+  //   const typeInput = entry?.type ?? '';
+  //   const equipInput = entry?.equipment ?? '';
+  //   const beaconInput = entry?.beacon ?? '';
+  //   const speedInput = entry?.flightplan?.ground_speed ?? '';
+  //   const timeInput = 'EXX00';
+  //   const altInput = entry?.altitude ?? '';
+  //   const routeInput = (asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
+  //   const rmkInput = entry?.remarks ?? '';
+  //   setDisplayRawRoute(false);
+  //   setRoute(route);
+  //   setFrd(frd);
+  //   setFrdInput(frd);
+  //   setAidInput(aidInput);
+  //   setNumInput(entry ? 1 : '');
+  //   setSaiInput('');
+  //   setTypeInput(typeInput);
+  //   setEquipInput(equipInput);
+  //   setBeaconInput(beaconInput);
+  //   setSpeedInput(speedInput);
+  //   setTimeInput(timeInput);
+  //   setAltInput(altInput);
+  //   setRouteInput(routeInput);
+  //   setRmkInput(rmkInput);
+  // }, [asel, entry]);
 
 
   return pos && (<div
@@ -84,42 +84,40 @@ export const TemplateMenu: React.FC = () => {
       </div>
       <div className="options-body template-body">
         <div className="template-row">
-          <div className="template-col col-6">
+          <div className="template-col col-1">
             AID
           </div>
-          <div className="template-col">
+          <div className="template-col col-2">
             NUM
           </div>
-          <div className="template-col">
+          <div className="template-col col-3">
             SAI
           </div>
-          <div className="template-col col-5">
+          <div className="template-col col-4">
             TYP
           </div>
-          <div className="template-col col-6">
+          <div className="template-col col-5">
             <EdstButton disabled={true} content="EQP..."/>
           </div>
-          <div className="template-col col-5">
+          <div className="template-col col-6">
             BCN
           </div>
-          <div className="template-col col-1">
+          <div className="template-col col-7">
             SPD
           </div>
           <div className="template-col col-8">
             FIX
           </div>
-          <div className="template-col col-2">
+          <div className="template-col col-9">
             TIM
           </div>
-          <div className="template-col">
+          <div className="template-col col-10">
             ALT
           </div>
-          <div className="template-col right">
-            <EdstButton disabled={true} content="MORE..."/>
-          </div>
+          <EdstButton disabled={true} content="MORE..."/>
         </div>
         <div className="template-row">
-          <div className="template-col col-6 input-col">
+          <div className="template-col col-1">
             <div className="input-container">
               <input
                 value={aidInput}
@@ -129,7 +127,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col input-col">
+          <div className="template-col col-2">
             <div className="input-container">
               <input
                 value={numInput}
@@ -139,7 +137,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col input-col">
+          <div className="template-col col-3">
             <div className="input-container">
               <input
                 value={saiInput}
@@ -149,7 +147,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col col-5 input-col">
+          <div className="template-col col-4">
             <div className="input-container">
               <input
                 value={typeInput}
@@ -159,7 +157,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col col-6 input-col">
+          <div className="template-col col-5">
             <div className="input-container">
               <input
                 value={equipInput}
@@ -169,7 +167,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col col-5 input-col">
+          <div className="template-col col-6">
             <div className="input-container">
               <input
                 value={beaconInput}
@@ -179,7 +177,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col col-1 input-col">
+          <div className="template-col col-7">
             <div className="input-container">
               <input
                 value={speedInput}
@@ -189,7 +187,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col col-8 input-col">
+          <div className="template-col col-8">
             <div className="input-container">
               <input
                 value={frdInput}
@@ -199,7 +197,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col col-2 input-col">
+          <div className="template-col col-9">
             <div className="input-container">
               <input
                 value={timeInput}
@@ -209,7 +207,7 @@ export const TemplateMenu: React.FC = () => {
               />
             </div>
           </div>
-          <div className="template-col input-col col-7">
+          <div className="template-col col-10">
             <div className="input-container">
               <input
                 value={altInput}
@@ -240,9 +238,8 @@ export const TemplateMenu: React.FC = () => {
           <div className="template-col">
             RMK
           </div>
-          <div className="template-col right">
-            <EdstButton disabled={true} content="Create FP..."/>
-          </div>
+          <div className="template-col right"/>
+          <EdstButton disabled={true} content="Create FP..."/>
         </div>
         <div className="template-row">
           <div className="input-container">

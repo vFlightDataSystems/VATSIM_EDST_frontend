@@ -21,7 +21,6 @@ $edst-header-window-closed-black: #000000;
   margin: 2px 0;
   justify-content: space-between;
   display: flex;
-  //font-family: 'VRC Terminal', monospace;
 
   .edst-header-row-left {
     margin: 1px 1px;
@@ -52,7 +51,6 @@ $edst-header-window-closed-black: #000000;
     border: 1px solid $edst-header-button-border-grey;
     background-color: $edst-background-black;
     color: $edst-font-grey;
-    //font-family: 'VRC Terminal', monospace;
     font-size: 13px;
     font-weight: bolder;
 
@@ -116,5 +114,4 @@ $edst-header-window-closed-black: #000000;
   margin: 0 1px;
   color: $edst-font-grey;
   font-size: 20px;
-  /*font-family: Consolas, sans-serif;*/
 }

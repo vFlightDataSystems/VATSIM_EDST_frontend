@@ -66,6 +66,7 @@ $route-menu-alert-cyan: #00ADAD;
   border-left: 1px solid $options-menu-light-grey;
   border-bottom: 1px solid $options-menu-medium-grey;
   border-right: 1px solid $options-menu-medium-grey;
+  font-weight: bolder;
 
   &.focused {
     background-color: $edst-window-light-cyan;
@@ -237,9 +238,9 @@ $route-menu-alert-cyan: #00ADAD;
 
   .template-row {
 
-    padding: 2px 16px;
+    padding: 2px 12px;
     display: flex;
-    //flex-grow: 1;
+    flex-grow: 1;
     border: none;
     overflow: hidden;
 
@@ -249,51 +250,54 @@ $route-menu-alert-cyan: #00ADAD;
       //flex-flow: row;
       align-items: center;
       vertical-align: center;
-      padding: 0 4px;
-      //overflow: hidden;
+      //margin: 0 2px;
+      padding: 0 2px;
       justify-content: left;
-      width: 40px;
-      //max-width: 80px;
+      //width: 50px;
       display: flex;
-
-      &.input-col {
-        padding: 0 4px 0 0;
-        margin: 0 1px;
-      }
+      flex-shrink: 0;
+      text-indent: 6px;
 
       &.col-1 {
-        width: 78px;
-      }
-
-      &.col-2 {
         width: 90px;
       }
 
+      &.col-2 {
+        width: 50px;
+      }
+
       &.col-3 {
-        width: auto;
-        margin-left: auto;
-        margin-right: 0;
-        //justify-content: right;
+        width: 50px;
+      }
+
+      &.col-4 {
+        width: 60px;
       }
 
       &.col-5 {
-        width: 66px;
+        width: 72px;
       }
 
       &.col-6 {
-        width: 72px;
-        padding: 0 1px;
-        margin: 0 1px;
+        width: 60px;
       }
 
       &.col-7 {
-        width: 130px;
-        padding: 0;
-        //margin: 0 auto 0 0;
+        width: 70px;
       }
 
       &.col-8 {
-        width: 110px;
+        width: 120px;
+      }
+
+      &.col-9 {
+        width: 70px;
+      }
+
+      &.col-10 {
+        flex-grow: 1;
+        flex-shrink: 1;
+        width: auto;
       }
 
       &.bottom {
@@ -303,14 +307,15 @@ $route-menu-alert-cyan: #00ADAD;
       &.right {
         width: auto;
         margin-left: auto;
-        padding: 0;
-        //margin-right: 10px;
+        //padding: 0 2px;
+        //margin-right: 2px;
       }
     }
 
     .input-container {
       @include input-container;
-      width: calc(100% - 2px);
+      flex-grow: 1;
+      width: auto;
     }
 
     &.left {
