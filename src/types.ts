@@ -28,7 +28,7 @@ export type EdstEntryType = {
   depStatus: number, // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
   aclHighlighted?: boolean,
   depHighlighted?: boolean,
-  aclRouteDisplay?: string, // for toggling remarks
+  aclRouteDisplay?: string | null, // for toggling remarks
   adr: any[], // adapted departure routes proposed by EDST
   adar: any[], // adapted departure-arrival routes proposed by EDST
   beacon: string, // assigned beacon code

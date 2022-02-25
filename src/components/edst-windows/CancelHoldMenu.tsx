@@ -43,7 +43,7 @@ export const CancelHoldMenu: React.FC = () => {
         <div className="options-row">
           <div className="options-col left">
             <EdstButton content="Cancel Hold" onMouseDown={() => {
-              dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
+              dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
               dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
               dispatch(closeWindow(windowEnum.cancelHoldMenu))
             }}/>
