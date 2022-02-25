@@ -221,7 +221,7 @@ export const HoldMenu: React.FC = () => {
               content="Delete Hold Instructions"
               onMouseDown={() => {
                 dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
-                dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
+                dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
                 dispatch(closeWindow(windowEnum.holdMenu));
               }}
               title={Tooltips.holdDeleteHoldInstr}
@@ -268,7 +268,7 @@ export const HoldMenu: React.FC = () => {
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
                           dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
-                          dispatch(updateEntry({cid: entry.cid, data: {show_hold_info: false}}));
+                          dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
                           dispatch(closeWindow(windowEnum.holdMenu));
                         }}
             />

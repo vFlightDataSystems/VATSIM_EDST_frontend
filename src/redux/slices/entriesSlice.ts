@@ -27,7 +27,7 @@ export const refreshEntriesThunk: any = createAsyncThunk(
       .then((data: any[]) => newEntryList = data);
     for (let newEntry of newEntryList) {
       const state = thunkAPI.getState() as RootState;
-      let currentEntry = _.cloneDeep(state.entries[newEntry.cid])
+      let currentEntry = _.cloneDeep(state.entries[newEntry.cid]);
       currentEntry = _.assign(currentEntry, refreshEntry(newEntry, polygons, artccId, currentEntry));
       if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
         if (!currentEntry.depDisplay) {
@@ -75,7 +75,7 @@ const entriesSlice = createSlice({
   name: 'entries',
   initialState: initialState as EntriesStateType,
   reducers: {
-    updateEntry(state, action: { payload: { cid: string, data: any } }) {
+    updateEntry(state, action: { payload: { cid: string, data: Partial<EdstEntryType> } }) {
       _.assign(state[action.payload.cid], action.payload.data);
     },
     setEntry(state, action: { payload: EdstEntryType }) {

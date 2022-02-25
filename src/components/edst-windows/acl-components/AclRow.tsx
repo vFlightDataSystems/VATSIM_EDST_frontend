@@ -104,7 +104,7 @@ export const AclRow: React.FC<AclRowProps> = (
         if (!entry.hold_data) {
           dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hold, null, windowEnum.holdMenu));
         } else {
-          dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : null}}));
+          dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : 'route'}}));
         }
         break;
       case 1:

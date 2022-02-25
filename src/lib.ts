@@ -59,21 +59,21 @@ export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Ar
  * Compute the distance to each fix on the route and save it in the route data
  * @param {FixType[]} routeData - fixes on the route (order matters)
  * @param {[number, number]} pos - lon/lat pair, current position
- * @returns {Array<any>} - original route_data, but each item will have a `distance` attribute
+ * @returns {FixType[]} - original routeData, but each item will have a `distance` attribute
  */
-export function getRouteDataDistance(routeData: FixType[], pos: [number, number]): Array<any> {
+export function getRouteDataDistance(routeData: FixType[], pos: [number, number]): (FixType & {dist: number})[] {
   for (let fix of routeData) {
     fix.dist = distance(point(fix.pos), point(pos), {units: 'nauticalmiles'});
   }
-  return routeData;
+  return routeData as (FixType & {dist: number})[];
 }
 
 /**
  * compute the remaining route and its route data, based on current position
  * @param {string} route - parsed route string
- * @param {Array<any>} routeData - fixes on the route
+ * @param {FixType[]} routeData - fixes on the route
  * @param {[number, number]} pos - lon/lat pair, current position
- * @returns {{_route: string, _route_data: Array<any>}}
+ * @returns {{_route: string, _route_data: FixType}}
  */
 export function getRemainingRouteData(route: string, routeData: (FixType & {dist: number})[], pos: [number, number]): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
