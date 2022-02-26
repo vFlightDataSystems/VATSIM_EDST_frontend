@@ -13,9 +13,9 @@ export const Status: React.FC = () => {
   const ref = useRef(null);
 
   return pos && (<div className="floating-window status-window"
-               ref={ref}
-               id="edst-status"
-               style={{left: pos.x + "px", top: pos.y + "px"}}
+                      ref={ref}
+                      id="edst-status"
+                      style={{left: pos.x + "px", top: pos.y + "px"}}
     >
       <div className="floating-window-header no-select">
         <div className="floating-window-header-left">
@@ -31,9 +31,14 @@ export const Status: React.FC = () => {
         </div>
       </div>
       <div className="floating-window-body">
-        Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a><br/>
-        <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank" rel="noreferrer">Roadmap</a>
+        <div className="floating-window-outer-row">
+          Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a>
+        </div>
+        <div className="floating-window-outer-row">
+          <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank"
+             rel="noreferrer">Roadmap</a>
+        </div>
       </div>
     </div>
   );
-}
+};
