@@ -1,4 +1,4 @@
-import {EdstEntryType} from "../../types";
+import {LocalEdstEntryType} from "../../types";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import _ from "lodash";
 import {fetchEdstEntries, fetchAarList} from "../../api";
@@ -9,10 +9,19 @@ import {getClosestReferenceFix, processAar} from "../../lib";
 import {point} from "@turf/turf";
 
 export type EntriesStateType = {
-  [cid: string]: EdstEntryType
+  [cid: string]: LocalEdstEntryType
 };
 
 const initialState = {};
+
+const currentEntryFallbackValue = {
+  vciStatus: -1,
+  depStatus: -1,
+  aclDisplay: false,
+  aclDeleted: false,
+  depDisplay: false,
+  depDeleted: false
+};
 
 export const refreshEntriesThunk: any = createAsyncThunk(
   'entries/entriesRefresh',
@@ -27,7 +36,7 @@ export const refreshEntriesThunk: any = createAsyncThunk(
       .then((data: any[]) => newEntryList = data);
     for (let newEntry of newEntryList) {
       const state = thunkAPI.getState() as RootState;
-      let currentEntry = _.cloneDeep(state.entries[newEntry.cid]);
+      let currentEntry = _.assign({}, state.entries[newEntry.cid] ?? currentEntryFallbackValue);
       currentEntry = _.assign(currentEntry, refreshEntry(newEntry, polygons, artccId, currentEntry));
       if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
         if (!currentEntry.depDisplay) {
@@ -58,12 +67,12 @@ export const refreshEntriesThunk: any = createAsyncThunk(
             }
           }
           if (referenceFixes.length > 0) {
-            currentEntry.reference_fix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
+            currentEntry.referenceFix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
           }
         }
       }
       // thunkAPI.dispatch(setEntry(currentEntry));
-      newEntries[newEntry.cid] = currentEntry;
+      newEntries[newEntry.cid] = _.assign({}, currentEntry);
     }
     return new Promise<EntriesStateType>(function (resolve) {
       resolve(newEntries);
@@ -75,10 +84,10 @@ const entriesSlice = createSlice({
   name: 'entries',
   initialState: initialState as EntriesStateType,
   reducers: {
-    updateEntry(state, action: { payload: { cid: string, data: Partial<EdstEntryType> } }) {
+    updateEntry(state, action: { payload: { cid: string, data: Partial<LocalEdstEntryType> } }) {
       _.assign(state[action.payload.cid], action.payload.data);
     },
-    setEntry(state, action: { payload: EdstEntryType }) {
+    setEntry(state, action: { payload: LocalEdstEntryType }) {
       state[action.payload.cid] = action.payload;
     },
     toggleSpa(state, action: { payload: string }) {

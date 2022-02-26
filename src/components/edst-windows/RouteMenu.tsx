@@ -21,7 +21,7 @@ import {
   windowPositionSelector
 } from "../../redux/slices/appSlice";
 import {addTrialPlanThunk, openWindowThunk} from "../../redux/thunks/thunks";
-import {EdstEntryType} from "../../types";
+import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const RouteMenu: React.FC = () => {
@@ -32,7 +32,7 @@ export const RouteMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(windowPositionSelector(windowEnum.routeMenu));
   const asel = useAppSelector(aselSelector) as AselType;
-  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
 
   const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
@@ -42,7 +42,7 @@ export const RouteMenu: React.FC = () => {
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
   const routes = (asel.window === windowEnum.dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)));
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
-  const [frd, setFrd] = useState(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
+  const [frd, setFrd] = useState(entry.referenceFix ? computeFrd(entry.referenceFix) : 'XXX000000');
   const {appendOplus, appendStar} = append;
 
   const ref = useRef(null);
@@ -56,8 +56,8 @@ export const RouteMenu: React.FC = () => {
     }
     setRoute(route);
     setRouteInput(dep ? entry.dep + route + entry.dest : route + entry.dest);
-    setFrd(entry.reference_fix ? computeFrd(entry.reference_fix) : 'XXX000000');
-  }, [asel.window, entry._route, entry.dep, entry.dest, entry.reference_fix, entry.route]);
+    setFrd(entry.referenceFix ? computeFrd(entry.referenceFix) : 'XXX000000');
+  }, [asel.window, entry._route, entry.dep, entry.dest, entry.referenceFix, entry.route]);
 
   const clearedReroute = (rerouteData: any) => {
     let planData;

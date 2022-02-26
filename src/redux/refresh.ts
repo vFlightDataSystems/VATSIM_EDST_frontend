@@ -1,4 +1,4 @@
-import {EdstEntryType} from "../types";
+import {EdstEntryType, LocalEdstEntryType, LocalEdstEntryVType} from "../types";
 import {
   computeBoundaryTime,
   getRemainingRouteData,
@@ -6,22 +6,11 @@ import {
 } from "../lib";
 import _ from "lodash";
 import {depFilter, entryFilter} from "../filters";
-import {Feature, Polygon} from "@turf/turf";
+import {Feature, Polygon, Position} from "@turf/turf";
 
-const currentEntryFallbackValue = {
-  vciStatus: -1,
-  depStatus: -1,
-  aclDisplay: false,
-  aclDeleted: false,
-  depDisplay: false,
-  depDeleted: false
-};
-
-export function refreshEntry(newEntry: EdstEntryType, polygons: Feature<Polygon>[], artccId: string, currentEntry: EdstEntryType | any): EdstEntryType {
-  if (!currentEntry) {
-    currentEntry = currentEntryFallbackValue;
-  }
-  const pos: [number, number] = [newEntry.flightplan.lon, newEntry.flightplan.lat];
+export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVType>, polygons: Feature<Polygon>[], artccId: string, currentEntry: Partial<LocalEdstEntryType>)
+  : LocalEdstEntryType {
+  const pos: Position = [newEntry.flightplan.lon, newEntry.flightplan.lat];
   newEntry.boundaryTime = computeBoundaryTime(newEntry, polygons);
   const routeFixNames = newEntry.route_data.map(fix => fix.name);
   const dest = newEntry.dest;
@@ -33,10 +22,10 @@ export function refreshEntry(newEntry: EdstEntryType, polygons: Feature<Polygon>
     });
   }
   newEntry.route = removeDestFromRouteString(newEntry.route.slice(0), newEntry.dest);
-  if (currentEntry.route_data === newEntry.route_data) { // if route_data has not changed
+  if (currentEntry.route_data === newEntry.route_data && currentEntry._route_data) { // if route_data has not changed
     newEntry._route_data = getRouteDataDistance(currentEntry._route_data, pos);
     // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-    if (currentEntry.aar_list.length) {
+    if (currentEntry.aar_list?.length) {
       newEntry._aar_list = processAar(currentEntry, currentEntry.aar_list);
     }
   } else {
@@ -52,14 +41,14 @@ export function refreshEntry(newEntry: EdstEntryType, polygons: Feature<Polygon>
     _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos));
   }
   if (newEntry.update_time === currentEntry.update_time
-    || (currentEntry._route_data?.[-1]?.dist < 15 && newEntry.dest_info)
+    || (((newEntry._route_data?.[-1]?.dist ?? Infinity) < 15) && newEntry.dest_info)
     || !(entryFilter(newEntry, polygons) || depFilter(newEntry, artccId))) {
-    newEntry.pending_removal = currentEntry.pending_removal ?? new Date().getTime();
+    newEntry.pendingRemoval = currentEntry.pendingRemoval ?? new Date().getTime();
   } else {
-    newEntry.pending_removal = null;
+    newEntry.pendingRemoval = null;
   }
   if (newEntry.remarks.match(/\/v\//gi)) newEntry.voiceType = 'v';
   if (newEntry.remarks.match(/\/r\//gi)) newEntry.voiceType = 'r';
   if (newEntry.remarks.match(/\/t\//gi)) newEntry.voiceType = 't';
-  return _.assign(currentEntry, newEntry);
+  return _.assign(currentEntry, newEntry) as LocalEdstEntryType;
 }

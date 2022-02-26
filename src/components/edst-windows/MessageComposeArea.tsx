@@ -3,7 +3,7 @@ import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, formatUtcMinutes} from "../../lib";
-import {EdstEntryType} from "../../types";
+import {LocalEdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/slices/aclSlice";
 import {updateEntry} from "../../redux/slices/entriesSlice";
@@ -47,8 +47,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   }, []);
 
   const toggleVci = (fid: string) => {
-    const entry: EdstEntryType | any = Object.values(entries ?? {})
-      ?.find((e: EdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    const entry: LocalEdstEntryType | any = Object.values(entries ?? {})
+      ?.find((e: LocalEdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
     if (entry) {
       if (entry.vciStatus < 1) {
         dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 1}}));
@@ -59,8 +59,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: EdstEntryType | any = Object.values(entries ?? {})
-      ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: LocalEdstEntryType | any = Object.values(entries ?? {})
+      ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       if (entry.aclDisplay) {
         dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
@@ -74,8 +74,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const flightplanReadout = (fid: string) => {
     const now = new Date();
     const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
-    const entry: EdstEntryType | any = Object.values(entries ?? {})
-      ?.find((entry: EdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: LocalEdstEntryType | any = Object.values(entries ?? {})
+      ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
     if (entry) {
       let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`

@@ -30,7 +30,7 @@ export const amendEntryThunk = createAsyncThunk(
       .then(updatedEntry => {
         if (updatedEntry) {
           updatedEntry = refreshEntry(updatedEntry, polygons, artccId, _.cloneDeep(currentEntry));
-          updatedEntry.pending_removal = null;
+          updatedEntry.pendingRemoval = null;
           if (planData.scratch_hdg !== undefined) updatedEntry.scratch_hdg = planData.scratch_hdg;
           if (planData.scratch_spd !== undefined) updatedEntry.scratch_spd = planData.scratch_spd;
           thunkAPI.dispatch(setEntry(updatedEntry));

@@ -5,7 +5,7 @@ import {formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString} from "../.
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryType} from "../../../types";
+import {LocalEdstEntryType} from "../../../types";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {deleteAclEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {aclAselActionTriggerEnum, aclRowFieldEnum, windowEnum} from "../../../enums";
@@ -17,7 +17,7 @@ const SPA_INDICATOR = '^';
 
 type AclRowProps = {
   key: string,
-  entry: EdstEntryType,
+  entry: LocalEdstEntryType,
   index: number,
   anyHolding: boolean,
   hidden: aclRowFieldEnum[],
@@ -143,7 +143,7 @@ export const AclRow: React.FC<AclRowProps> = (
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
-        if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
+        if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
           dispatch(deleteAclEntry(entry.cid));
         }
         break;
@@ -209,8 +209,7 @@ export const AclRow: React.FC<AclRowProps> = (
   return (<div className={`body-row-container ${index%3 === 2 ? 'row-sep-border' : ''}`}
                key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
-    <div
-      className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+    <div className={`body-row ${(now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <EdstTooltip title={Tooltips.aclNAndVciBtn}>
         <div className={`body-col body-col-1 radio`}
              onMouseDown={updateVci}>
