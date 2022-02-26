@@ -3,6 +3,7 @@ import {sortOptionsEnum} from "../../enums";
 
 export type AclStateType = {
   sortData: { selectedOption: sortOptionsEnum, sector: boolean },
+
   manualPosting: boolean
 };
 

@@ -174,7 +174,7 @@ export const App: React.FC = () => {
 
   useEventListener('keydown', handleKeyDown);
 
-  return <div className="edst"
+  return <div className="edst no-select"
               onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
               tabIndex={!(inputFocused) ? -1 : 0}
   >

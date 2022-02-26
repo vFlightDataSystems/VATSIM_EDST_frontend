@@ -79,7 +79,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     if (entry) {
       let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
-        + ` ${entry.altitude} ${entry.dep}./${'.' + computeFrd(entry?.reference_fix)}..${entry._route.replace(/^\.+/, '')}`;
+        + ` ${entry.altitude} ${entry.dep}./.${entry?.reference_fix ? computeFrd(entry?.reference_fix) + '..' : ''}${entry._route.replace(/^\.+/, '')}`;
       dispatch(setMraMessage(msg));
     }
   };

@@ -23,18 +23,18 @@ $edst-window-dark-grey: #575757;
   padding: 0;
   margin: 0;
   background-color: black;
-  font-family: EDST, monospace;
+  font-family: Consolas, monospace;
   caret-color: transparent;
 }
 
 button {
-  font-family: EDST, monospace;
+  font-family: Consolas, monospace;
   font-weight: bold;
 }
 
 input, textarea {
   caret-color: $edst-font-grey;
-  font-family: EDST, monospace;
+  font-family: Consolas, monospace;
   cursor: default;
   font-size: 16px;
   outline: none;
