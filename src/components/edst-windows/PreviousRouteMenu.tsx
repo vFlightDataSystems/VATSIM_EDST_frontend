@@ -8,12 +8,12 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {EdstEntryType} from "../../types";
+import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
-  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(windowPositionSelector(windowEnum.prevRouteMenu));
   const dispatch = useAppDispatch();
   const [focused, setFocused] = useState(false);
@@ -41,7 +41,7 @@ export const PreviousRouteMenu: React.FC = () => {
         </div>
         <div className="options-row prev-route-row">
           <div className="options-col">
-            RTE {(entry.previous_route as string).startsWith(entry.cleared_direct?.fix ?? '') && entry.cleared_direct?.frd + '..'}{entry.previous_route}
+            RTE {((entry.previous_route as string).startsWith(entry.cleared_direct?.fix ?? '') && entry.cleared_direct) ? entry.cleared_direct?.frd + '..' : ''}{entry.previous_route}
           </div>
         </div>
         <div className="options-row bottom">

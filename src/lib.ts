@@ -4,10 +4,10 @@ import {
   lineString, Point,
   point,
   pointToLineDistance, Polygon,
-  polygonToLineString
+  polygonToLineString, Position
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {EdstEntryType, FixType} from "./types";
+import {LocalEdstEntryType, FixType, ReferenceFixType, EdstEntryType} from "./types";
 import {toast} from "./components/toast/ToastManager";
 
 export const REMOVAL_TIMEOUT = 120000;
@@ -39,7 +39,7 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Array<Feature<Polygon>>, pos: [number, number]): boolean {
+export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
   if (routeData === null) {
     return false;
   }
@@ -61,11 +61,11 @@ export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Ar
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {FixType[]} - original routeData, but each item will have a `distance` attribute
  */
-export function getRouteDataDistance(routeData: FixType[], pos: [number, number]): (FixType & {dist: number})[] {
+export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixType & { dist: number })[] {
   for (let fix of routeData) {
     fix.dist = distance(point(fix.pos), point(pos), {units: 'nauticalmiles'});
   }
-  return routeData as (FixType & {dist: number})[];
+  return routeData as (FixType & { dist: number })[];
 }
 
 /**
@@ -75,7 +75,7 @@ export function getRouteDataDistance(routeData: FixType[], pos: [number, number]
  * @param {[number, number]} pos - lon/lat pair, current position
  * @returns {{_route: string, _route_data: FixType}}
  */
-export function getRemainingRouteData(route: string, routeData: (FixType & {dist: number})[], pos: [number, number]): { _route: string, _route_data: FixType[] } {
+export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
     const fixNames = routeData.map(e => e.name);
     const sortedRouteData = routeData.slice(0).sort((u, v) => u.dist - v.dist);
@@ -108,11 +108,11 @@ export function getRemainingRouteData(route: string, routeData: (FixType & {dist
 
 /**
  * compute frd to the closest reference fix
- * @param {Array<any>} referenceFixes - list of reference fixes
+ * @param {any[]} referenceFixes - list of reference fixes
  * @param {Feature<Point>} posPoint - present position
- * @returns {any} - closest reference fix
+ * @returns {ReferenceFixType} - closest reference fix
  */
-export function getClosestReferenceFix(referenceFixes: Array<any>, posPoint: Feature<Point>): any {
+export function getClosestReferenceFix(referenceFixes: any[], posPoint: Feature<Point>): ReferenceFixType {
   const fixesDistance = referenceFixes.map(fix => {
     const fixPoint = point([fix.lon, fix.lat]);
     return Object.assign({
@@ -126,7 +126,7 @@ export function getClosestReferenceFix(referenceFixes: Array<any>, posPoint: Fea
 }
 
 
-export function processAar(entry: EdstEntryType, aar_list: Array<any>) {
+export function processAar(entry: Partial<LocalEdstEntryType>, aar_list: Array<any>) {
   const {_route_data: currentRouteData, _route: currentRoute} = entry;
   if (!currentRouteData || !currentRoute) {
     return null;
@@ -179,11 +179,11 @@ export function processAar(entry: EdstEntryType, aar_list: Array<any>) {
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
- * @param {EdstEntryType} entry - an EDST entry
- * @param {Array<Polygon>} polygons - airspace boundaries
+ * @param {LocalEdstEntryType} entry - an EDST entry
+ * @param {Feature<Polygon>[]} polygons - airspace boundaries
  * @returns {number} - minutes until the aircraft enters the airspace
  */
-export function computeBoundaryTime(entry: EdstEntryType, polygons: Array<Feature<Polygon>>): number {
+export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Polygon>[]): number {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
   const posPoint = point(pos);
   // @ts-ignore
@@ -193,10 +193,10 @@ export function computeBoundaryTime(entry: EdstEntryType, polygons: Array<Featur
 
 /**
  *
- * @param {EdstEntryType} entry
+ * @param {LocalEdstEntryType} entry
  * @returns {FixType[]}
  */
-export function computeCrossingTimes(entry: EdstEntryType): (FixType & {minutesAtFix: number})[] {
+export function computeCrossingTimes(entry: LocalEdstEntryType): (FixType & { minutesAtFix: number })[] {
   let newRouteData = [];
   if (entry._route_data) {
     const now = new Date();
@@ -221,7 +221,7 @@ export function computeCrossingTimes(entry: EdstEntryType): (FixType & {minutesA
  * @param {{waypoint_id: string, bearing: number, distance: number}} referenceFix
  * @returns {string} - fix/radial/distance in standard format: ABC123456
  */
-export function computeFrd(referenceFix: { waypoint_id: string, bearing: number, distance: number }): string {
+export function computeFrd(referenceFix: ReferenceFixType): string {
   return referenceFix.waypoint_id + Math.round(referenceFix.bearing).toString().padStart(3, '0')
     + Math.round(referenceFix.distance).toString().padStart(3, '0');
 }

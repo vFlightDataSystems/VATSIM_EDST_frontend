@@ -4,7 +4,7 @@ import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryType} from "../../../types";
+import {LocalEdstEntryType} from "../../../types";
 import {deleteDepEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {depRowFieldEnum, windowEnum} from "../../../enums";
@@ -16,7 +16,7 @@ const SPA_INDICATOR = '^';
 const COMPLETED_SYMBOL = '✓';
 
 type DepRowProps = {
-  entry: EdstEntryType,
+  entry: LocalEdstEntryType,
   hidden: string[],
   index: number,
 }
@@ -85,7 +85,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
-        if (now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) {
+        if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
           dispatch(deleteDepEntry(entry.cid));
         }
         break;
@@ -103,7 +103,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
   return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
-    <div className={`body-row ${(now - (entry.pending_removal ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+    <div className={`body-row ${(now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
       <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
         <div className={`body-col body-col-1 radio dep-radio ${entry.depStatus === 1 ? 'checkmark' : ''}`}
              onMouseDown={updateStatus}

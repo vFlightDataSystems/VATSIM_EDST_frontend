@@ -11,7 +11,7 @@ import _ from "lodash";
 import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
 import {windowEnum} from "../../enums";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {EdstEntryType, FixType} from "../../types";
+import {LocalEdstEntryType, FixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const HoldMenu: React.FC = () => {
@@ -19,7 +19,7 @@ export const HoldMenu: React.FC = () => {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(windowPositionSelector(windowEnum.holdMenu));
   const dispatch = useAppDispatch();
 

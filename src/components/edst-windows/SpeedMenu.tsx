@@ -11,7 +11,7 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {windowEnum} from "../../enums";
 import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {EdstEntryType} from "../../types";
+import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 enum signEnum {
@@ -26,7 +26,7 @@ export const SpeedMenu: React.FC = () => {
     stopDrag
   } = useContext(EdstContext);
   const asel = useAppSelector(aselSelector) as AselType;
-  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(windowPositionSelector(windowEnum.speedMenu));
   const dispatch = useAppDispatch();
   const [focused, setFocused] = useState(false);

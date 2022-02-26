@@ -43,11 +43,11 @@ $route-menu-alert-cyan: #00ADAD;
   }
 
   &.speed {
-    width: 180px;
+    width: 190px;
   }
 
   &.heading {
-    width: 180px;
+    width: 190px;
   }
 
   &.template {
@@ -434,7 +434,7 @@ $route-menu-alert-cyan: #00ADAD;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 80px;
+      margin: 0 auto;
 
       * .edst-inner-button {
         padding: 0 20px;
@@ -445,7 +445,7 @@ $route-menu-alert-cyan: #00ADAD;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 140px;
+      margin: 0 auto;
 
       * .edst-inner-button {
         padding: 0 20px;

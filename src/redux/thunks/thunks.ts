@@ -17,7 +17,7 @@ export function aclCleanup(dispatch: any, getState: () => RootState) {
   let {entries} = state;
   const now = new Date().getTime();
   const pendingRemovalEntryList = Object.values(entries).filter(entry => entry.aclDisplay
-    && (now - (entry?.pending_removal ?? now) > REMOVAL_TIMEOUT));
+    && (now - (entry?.pendingRemoval ?? now) > REMOVAL_TIMEOUT));
   for (let entry of pendingRemovalEntryList) {
     dispatch(deleteAclEntry(entry.cid));
   }

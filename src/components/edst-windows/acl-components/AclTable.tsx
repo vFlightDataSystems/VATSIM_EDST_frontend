@@ -5,7 +5,7 @@ import {AclRow} from "./AclRow";
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
-import {EdstEntryType} from "../../../types";
+import {LocalEdstEntryType} from "../../../types";
 import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
 import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
 import {aclRowFieldEnum, sortOptionsEnum, windowEnum} from "../../../enums";
@@ -70,7 +70,7 @@ export function AclTable() {
     setHiddenList(hiddenCopy);
   };
 
-  const sortFunc = (u: EdstEntryType, v: EdstEntryType) => {
+  const sortFunc = (u: LocalEdstEntryType, v: LocalEdstEntryType) => {
     switch (sortData.selectedOption) {
       case sortOptionsEnum.acid:
         return u.callsign.localeCompare(v.callsign);
@@ -85,8 +85,8 @@ export function AclTable() {
     }
   };
 
-  const entryList = Object.values(entries)?.filter((entry: EdstEntryType) => entry.aclDisplay);
-  const spaEntryList = Object.entries(entryList.filter((entry: EdstEntryType) => entry.spa));
+  const entryList = Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay);
+  const spaEntryList = Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa));
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">
@@ -157,7 +157,7 @@ export function AclTable() {
       </div>
     </div>
     <div className="scroll-container">
-      {spaEntryList?.map(([i, entry]: [string, EdstEntryType]) =>
+      {spaEntryList?.map(([i, entry]: [string, LocalEdstEntryType]) =>
         <AclRow
           key={`acl-table-row-spa-${entry.cid}-${i}`}
           index={Number(i)}
@@ -167,8 +167,8 @@ export function AclTable() {
           altMouseDown={altMouseDown}
         />)}
       {spaEntryList.length > 0 && <div className="body-row separator"/>}
-      {Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && ((entry.vciStatus > -1) || !manualPosting)))
-        ?.sort(sortFunc))?.map(([i, entry]: [string, EdstEntryType]) =>
+      {Object.entries(entryList?.filter((entry: LocalEdstEntryType) => (!entry.spa && ((entry.vciStatus > -1) || !manualPosting)))
+        ?.sort(sortFunc))?.map(([i, entry]: [string, LocalEdstEntryType]) =>
         <AclRow
           key={`acl-table-row-ack-${entry.cid}-${i}`}
           index={Number(i)}
@@ -178,8 +178,8 @@ export function AclTable() {
           altMouseDown={altMouseDown}
         />)}
       {manualPosting && <div className="body-row separator"/>}
-      {manualPosting && Object.entries(entryList?.filter((entry: EdstEntryType) => (!entry.spa && entry.vciStatus === -1)))
-        ?.map(([i, entry]: [string, EdstEntryType]) =>
+      {manualPosting && Object.entries(entryList?.filter((entry: LocalEdstEntryType) => (!entry.spa && entry.vciStatus === -1)))
+        ?.map(([i, entry]: [string, LocalEdstEntryType]) =>
           <AclRow
             key={`acl-table-row-no-ack-${entry.cid}-${i}`}
             index={Number(i)}

@@ -14,7 +14,7 @@ import {
   setInputFocused,
   windowPositionSelector
 } from "../../redux/slices/appSlice";
-import {EdstEntryType} from "../../types";
+import {LocalEdstEntryType} from "../../types";
 import {addTrialPlanThunk} from "../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
@@ -25,7 +25,7 @@ type AltMenuProps = {
 
 export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput}) => {
   const asel = useAppSelector(aselSelector) as AselType;
-  const entry = useAppSelector(aselEntrySelector) as EdstEntryType;
+  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(windowPositionSelector(windowEnum.altitudeMenu));
   const dispatch = useAppDispatch();
   const [selected, setSelected] = useState(asel.window !== windowEnum.dep ? 'trial' : 'amend');
