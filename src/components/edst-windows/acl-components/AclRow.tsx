@@ -51,7 +51,7 @@ export const AclRow: React.FC<AclRowProps> = (
 
   const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
   const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.onEligibleAar)));
-  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar);
+  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar)?.length;
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
