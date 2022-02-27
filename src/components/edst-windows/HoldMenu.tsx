@@ -9,8 +9,8 @@ import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import _ from "lodash";
 import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
-import {windowEnum} from "../../enums";
-import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {menuEnum} from "../../enums";
+import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType, FixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
@@ -20,7 +20,7 @@ export const HoldMenu: React.FC = () => {
     stopDrag
   } = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.holdMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.holdMenu));
   const dispatch = useAppDispatch();
 
   const now = new Date();
@@ -37,7 +37,7 @@ export const HoldMenu: React.FC = () => {
 
   useEffect(() => {
     if (!entry) {
-      dispatch(closeWindow(windowEnum.holdMenu));
+      dispatch(closeMenu(menuEnum.holdMenu));
     } else {
       const routeData = computeCrossingTimes(entry);
       const now = new Date();
@@ -62,7 +62,7 @@ export const HoldMenu: React.FC = () => {
       };
       dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: holdData}}));
     }
-    dispatch(closeWindow(windowEnum.holdMenu));
+    dispatch(closeMenu(menuEnum.holdMenu));
   };
 
   return pos && entry && (<div
@@ -74,7 +74,7 @@ export const HoldMenu: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.holdMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.holdMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Hold Data Menu
@@ -222,7 +222,7 @@ export const HoldMenu: React.FC = () => {
               onMouseDown={() => {
                 dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
                 dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
-                dispatch(closeWindow(windowEnum.holdMenu));
+                dispatch(closeMenu(menuEnum.holdMenu));
               }}
               title={Tooltips.holdDeleteHoldInstr}
             />
@@ -269,13 +269,13 @@ export const HoldMenu: React.FC = () => {
                         onMouseDown={() => {
                           dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
                           dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
-                          dispatch(closeWindow(windowEnum.holdMenu));
+                          dispatch(closeMenu(menuEnum.holdMenu));
                         }}
             />
           </div>
           <div className="options-col right">
             <EdstButton className="exit-button" content="Exit"
-                        onMouseDown={() => dispatch(closeWindow(windowEnum.holdMenu))}/>
+                        onMouseDown={() => dispatch(closeMenu(menuEnum.holdMenu))}/>
           </div>
         </div>
       </div>

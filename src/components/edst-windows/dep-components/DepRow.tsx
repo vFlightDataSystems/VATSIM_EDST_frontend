@@ -7,7 +7,7 @@ import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
 import {deleteDepEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {depRowFieldEnum, windowEnum} from "../../../enums";
+import {depRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {depAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
@@ -149,7 +149,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
         <EdstTooltip title={Tooltips.depAlt}>
           <div className={`body-col alt`}>
             <div className={`${isSelected(entry.cid, depRowFieldEnum.alt) ? 'selected' : ''}`}
-                 onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.alt, null, windowEnum.altitudeMenu))}
+                 onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.alt, null, menuEnum.altitudeMenu))}
             >
               {entry.altitude}
             </div>
@@ -165,7 +165,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depRoute}>
           <div className={`body-col route hover ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}
-               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, windowEnum.routeMenu))}
+               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, menuEnum.routeMenu))}
           >
           <span>
               <span

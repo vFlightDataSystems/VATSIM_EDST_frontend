@@ -8,13 +8,13 @@ import {EdstContext} from "../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {setAclSort} from "../../redux/slices/aclSlice";
 import {setDepSort} from "../../redux/slices/depSlice";
-import {sortOptionsEnum, windowEnum} from "../../enums";
-import {closeWindow, windowSelector} from "../../redux/slices/appSlice";
+import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
+import {closeMenu, menuSelector} from "../../redux/slices/appSlice";
 
 export const SortMenu: React.FC = () => {
   const dispatch = useAppDispatch();
-  const windowProps = useAppSelector(windowSelector(windowEnum.sortMenu));
-  const window = windowProps.openedBy === windowEnum.dep ? 'dep' : 'acl';
+  const menuProps = useAppSelector(menuSelector(menuEnum.sortMenu));
+  const window = menuProps.openedBy === windowEnum.dep ? 'dep' : 'acl';
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const sortData = useAppSelector((state) => state[window].sortData);
@@ -22,16 +22,16 @@ export const SortMenu: React.FC = () => {
   const ref = useRef(null);
   let sortStateCopy = Object.assign({}, sortState);
 
-  return windowProps?.position && (<div
+  return menuProps?.position && (<div
       onMouseEnter={() => setFocused(true)}
       onMouseLeave={() => setFocused(false)}
       className={`options-menu no-select sort-${window}`}
       ref={ref}
       id="sort-menu"
-      style={{left: windowProps.position.x, top: windowProps.position.y}}
+      style={{left: menuProps.position.x, top: menuProps.position.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.sortMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.sortMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Sort Menu
@@ -156,11 +156,11 @@ export const SortMenu: React.FC = () => {
           <div className="options-col left">
             <EdstButton content="OK" onMouseDown={() => {
               dispatch(window === 'acl' ? setAclSort({selectedOption: sortState.selectedOption, sector: sortState.sector}) : setDepSort(sortState.selectedOption));
-              dispatch(closeWindow(windowEnum.sortMenu));
+              dispatch(closeMenu(menuEnum.sortMenu));
             }}/>
           </div>
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.sortMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.sortMenu))}/>
           </div>
         </div>
       </div>

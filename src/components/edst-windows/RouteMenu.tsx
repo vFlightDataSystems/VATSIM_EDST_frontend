@@ -11,16 +11,15 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
-  AselType,
-  closeWindow,
-  setInputFocused,
-  windowPositionSelector
+  AselType, closeMenu,
+  menuPositionSelector,
+  setInputFocused
 } from "../../redux/slices/appSlice";
-import {addTrialPlanThunk, openWindowThunk} from "../../redux/thunks/thunks";
+import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
@@ -30,7 +29,7 @@ export const RouteMenu: React.FC = () => {
     stopDrag
   } = useContext(EdstContext);
   const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.routeMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.routeMenu));
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
 
@@ -84,7 +83,7 @@ export const RouteMenu: React.FC = () => {
         }));
       }
     }
-    dispatch(closeWindow(windowEnum.routeMenu));
+    dispatch(closeMenu(menuEnum.routeMenu));
   };
 
   const clearedToFix = (clearedFixName: string) => {
@@ -124,7 +123,7 @@ export const RouteMenu: React.FC = () => {
           }));
         }
       }
-      dispatch(closeWindow(windowEnum.routeMenu));
+      dispatch(closeMenu(menuEnum.routeMenu));
     }
   };
 
@@ -147,7 +146,7 @@ export const RouteMenu: React.FC = () => {
       } else {
         dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
       }
-      dispatch(closeWindow(windowEnum.routeMenu));
+      dispatch(closeMenu(menuEnum.routeMenu));
     }
   };
 
@@ -162,7 +161,7 @@ export const RouteMenu: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.routeMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.routeMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Route Menu
@@ -277,15 +276,16 @@ export const RouteMenu: React.FC = () => {
             <EdstButton disabled={true} content="Flight Data" title={Tooltips.routeMenuFlightData}/>
             <EdstButton disabled={entry?.previous_route === undefined} content="Previous Route"
                         onMouseDown={() => {
-                          dispatch(openWindowThunk(windowEnum.prevRouteMenu, ref.current, windowEnum.routeMenu, true));
-                          dispatch(closeWindow(windowEnum.routeMenu));
+                          dispatch(openMenuThunk(menuEnum.prevRouteMenu, ref.current, menuEnum.routeMenu, true));
+                          dispatch(closeMenu(menuEnum.routeMenu));
                         }}
                         title={Tooltips.routeMenuPrevRoute}
             />
             <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute}/>
           </div>
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.routeMenu))}/>
+            <EdstButton className="exit-button" content="Exit"
+                        onMouseDown={() => dispatch(closeMenu(menuEnum.routeMenu))}/>
           </div>
         </div>
       </div>

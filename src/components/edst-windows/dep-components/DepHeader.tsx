@@ -5,9 +5,9 @@ import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {setDepManualPosting} from "../../../redux/slices/depSlice";
-import {windowEnum} from "../../../enums";
+import {menuEnum, windowEnum} from "../../../enums";
 import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
-import {openWindowThunk} from "../../../redux/thunks/thunks";
+import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
 
 type DepHeaderProps = {
@@ -33,7 +33,6 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
       focused={focused}
       closeWindow={() => {
         if (asel?.window === windowEnum.dep) {
-          dispatch(closeWindow([windowEnum.altitudeMenu, windowEnum.routeMenu, windowEnum.prevRouteMenu, windowEnum.planOptions, windowEnum.sortMenu]));
           dispatch(setAsel(null));
         }
         dispatch(closeWindow(windowEnum.dep))
@@ -43,13 +42,13 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
     <div>
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.planOptions, e.currentTarget, windowEnum.dep))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.dep))}
         content="Plan Options..."
         title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton
         id="dep-sort-button"
-        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.sortMenu, e.currentTarget, windowEnum.dep))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.sortMenu, e.currentTarget, windowEnum.dep))}
         content="Sort..."
         title={Tooltips.sort}
       />
@@ -59,7 +58,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
         title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.currentTarget, windowEnum.dep))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.dep))}
         content="Template..."
         title={Tooltips.template}
       />

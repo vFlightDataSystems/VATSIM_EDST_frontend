@@ -6,8 +6,8 @@ import {Tooltips} from "../../../tooltips";
 import React from "react";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {planCleanup, planQueueSelector, selectedPlanIndexSelector} from "../../../redux/slices/planSlice";
-import {openWindowThunk} from "../../../redux/thunks/thunks";
-import {planRowFieldEnum, windowEnum} from "../../../enums";
+import {openMenuThunk} from "../../../redux/thunks/thunks";
+import {menuEnum, planRowFieldEnum, windowEnum} from "../../../enums";
 import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
@@ -35,7 +35,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
                                     window: windowEnum.plansDisplay,
                                     field: planRowFieldEnum.fid
                                   }));
-                                  dispatch(openWindowThunk(windowEnum.planOptions, e.currentTarget, windowEnum.plansDisplay));
+                                  dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.plansDisplay));
                                 }
                               }}
                               content="Plan Options..."
@@ -64,7 +64,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
       />
       <EdstWindowHeaderButton disabled={true} content="Tools..."/>
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.MouseEvent) => dispatch(openWindowThunk(windowEnum.templateMenu, e.target, windowEnum.plansDisplay))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.target, windowEnum.plansDisplay))}
         content="Template..."
         title={Tooltips.template}
       />

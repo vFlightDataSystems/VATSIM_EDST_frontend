@@ -5,14 +5,13 @@ import '../../css/windows/alt-menu-styles.scss';
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
-  AselType,
-  closeWindow,
-  setInputFocused,
-  windowPositionSelector
+  AselType, closeMenu,
+  menuPositionSelector,
+  setInputFocused
 } from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {addTrialPlanThunk} from "../../redux/thunks/thunks";
@@ -26,7 +25,7 @@ type AltMenuProps = {
 export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput}) => {
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.altitudeMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.altitudeMenu));
   const dispatch = useAppDispatch();
   const [selected, setSelected] = useState(asel.window !== windowEnum.dep ? 'trial' : 'amend');
   const [tempAltHover, setTempAltHover] = useState<number | null>(null);
@@ -65,7 +64,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
-    dispatch(closeWindow(windowEnum.altitudeMenu));
+    dispatch(closeMenu(menuEnum.altitudeMenu));
   };
 
   const handleTempAltClick = (alt: number) => {
@@ -80,7 +79,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
-    dispatch(closeWindow(windowEnum.altitudeMenu));
+    dispatch(closeMenu(menuEnum.altitudeMenu));
   };
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -99,7 +98,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
           {entry?.callsign}
         </div>
         <div className="alt-menu-header-right"
-             onMouseDown={() => dispatch(closeWindow(windowEnum.altitudeMenu))}
+             onMouseDown={() => dispatch(closeMenu(menuEnum.altitudeMenu))}
         >
           X
         </div>

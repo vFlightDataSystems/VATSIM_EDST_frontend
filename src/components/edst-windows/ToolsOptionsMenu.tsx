@@ -3,22 +3,23 @@ import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
-import {windowEnum} from "../../enums";
-import {closeWindow} from "../../redux/slices/appSlice";
-import {useAppDispatch} from "../../redux/hooks";
+import {menuEnum} from "../../enums";
+import {closeMenu} from "../../redux/slices/appSlice";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {toolsOptionsSelector, updateToolsOptions} from "../../redux/slices/aclSlice";
 
 export const ToolsOptionsMenu: React.FC = () => {
   const dispatch = useAppDispatch();
-  const [displayCoordinationColumn, setDisplayCoordinationColumn] = useState(false);
-  const [dropTrackDelete, setDropTrackDelete] = useState(false);
-  const [iafDofManual, setIafDofManual] = useState(false);
-  const [nonRvsmIndicator, setNonRvsmIndicator] = useState(false);
-
+  const toolsOptions = useAppSelector(toolsOptionsSelector);
+  const [displayCoordinationColumn, setDisplayCoordinationColumn] = useState(toolsOptions.displayCoordinationColumn);
+  const [dropTrackDelete, setDropTrackDelete] = useState(toolsOptions.dropTrackDelete);
+  const [iafDofManual, setIafDofManual] = useState(toolsOptions.iafDofManual);
+  const [nonRvsmIndicator, setNonRvsmIndicator] = useState(toolsOptions.nonRvsmIndicator);
 
   return (<span>
         <div className="options-row">
           <EdstTooltip className="options-col sort"
-                       onMouseDown={() => setDisplayCoordinationColumn(!dropTrackDelete)}
+                       onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}
           >
             <div className={`box ${displayCoordinationColumn ? 'selected' : ''}`}/>
             Display Coordination Column
@@ -52,12 +53,18 @@ export const ToolsOptionsMenu: React.FC = () => {
           <div className="options-col left">
             <EdstButton content="OK" onMouseDown={() => {
               // set data when OK is pressed
-              dispatch(closeWindow(windowEnum.toolsMenu));
+              dispatch(updateToolsOptions({
+                displayCoordinationColumn: displayCoordinationColumn,
+                dropTrackDelete: dropTrackDelete,
+                iafDofManual: iafDofManual,
+                nonRvsmIndicator: nonRvsmIndicator
+              }));
+              dispatch(closeMenu(menuEnum.toolsMenu));
             }}/>
           </div>
           <div className="options-col right">
             <EdstButton className="exit-button" content="Exit"
-                        onMouseDown={() => dispatch(closeWindow(windowEnum.toolsMenu))}/>
+                        onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))}/>
           </div>
         </div>
       </span>

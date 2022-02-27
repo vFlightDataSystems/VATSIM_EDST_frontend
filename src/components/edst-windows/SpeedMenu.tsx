@@ -8,8 +8,12 @@ import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
-import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {menuEnum} from "../../enums";
+import {
+  aselSelector,
+  AselType, closeMenu,
+  menuPositionSelector
+} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
@@ -27,7 +31,7 @@ export const SpeedMenu: React.FC = () => {
   } = useContext(EdstContext);
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.speedMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.speedMenu));
   const dispatch = useAppDispatch();
   const [focused, setFocused] = useState(false);
   const [speed, setSpeed] = useState(280);
@@ -72,7 +76,7 @@ export const SpeedMenu: React.FC = () => {
       default:
         break;
     }
-    dispatch(closeWindow(windowEnum.speedMenu));
+    dispatch(closeMenu(menuEnum.speedMenu));
   };
 
   return pos && entry && (<div
@@ -84,7 +88,7 @@ export const SpeedMenu: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.speedMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.speedMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Speed Information
@@ -159,7 +163,7 @@ export const SpeedMenu: React.FC = () => {
           })}
           <div className="options-row bottom">
             <div className="options-col right">
-              <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.speedMenu))}/>
+              <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.speedMenu))}/>
             </div>
           </div>
         </div>
