@@ -1,8 +1,8 @@
 import React, {createContext} from "react";
-import {windowEnum} from "../enums";
+import {menuEnum, windowEnum} from "../enums";
 
 type EdstContextProps = {
-  startDrag: (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum) => void,
+  startDrag: (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum | menuEnum) => void,
   stopDrag: (event: React.MouseEvent<HTMLDivElement>) => void
 }
 

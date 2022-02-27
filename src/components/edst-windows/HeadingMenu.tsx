@@ -8,8 +8,12 @@ import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {EdstContext} from "../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
-import {aselSelector, AselType, closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {menuEnum} from "../../enums";
+import {
+  aselSelector,
+  AselType, closeMenu,
+  menuPositionSelector
+} from "../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
@@ -21,7 +25,7 @@ export const HeadingMenu: React.FC = () => {
   } = useContext(EdstContext);
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.headingMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.headingMenu));
   const dispatch = useAppDispatch();
 
   const [focused, setFocused] = useState(false);
@@ -56,7 +60,7 @@ export const HeadingMenu: React.FC = () => {
       default:
         break;
     }
-    dispatch(closeWindow(windowEnum.headingMenu));
+    dispatch(closeMenu(menuEnum.headingMenu));
   };
 
   return pos && entry && (<div
@@ -68,7 +72,7 @@ export const HeadingMenu: React.FC = () => {
     style={{left: pos.x, top: pos.y}}
   >
     <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-         onMouseDown={(event) => startDrag(event, ref, windowEnum.headingMenu)}
+         onMouseDown={(event) => startDrag(event, ref, menuEnum.headingMenu)}
          onMouseUp={(event) => stopDrag(event)}
     >
       Heading Information
@@ -160,12 +164,12 @@ export const HeadingMenu: React.FC = () => {
               default:
                 break;
             }
-            dispatch(closeWindow(windowEnum.headingMenu));
+            dispatch(closeMenu(menuEnum.headingMenu));
           }}/>
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.headingMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.headingMenu))}/>
           </div>
         </div>
       </div>

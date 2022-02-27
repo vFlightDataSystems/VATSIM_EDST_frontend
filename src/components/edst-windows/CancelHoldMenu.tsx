@@ -5,8 +5,8 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
-import {windowEnum} from "../../enums";
-import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {menuEnum} from "../../enums";
+import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
@@ -16,7 +16,7 @@ export const CancelHoldMenu: React.FC = () => {
     stopDrag
   } = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.cancelHoldMenu))
+  const pos = useAppSelector(menuPositionSelector(menuEnum.cancelHoldMenu))
   const dispatch = useAppDispatch();
 
   const [focused, setFocused] = useState(false);
@@ -31,7 +31,7 @@ export const CancelHoldMenu: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.cancelHoldMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.cancelHoldMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Cancel Hold Confirmation
@@ -45,11 +45,11 @@ export const CancelHoldMenu: React.FC = () => {
             <EdstButton content="Cancel Hold" onMouseDown={() => {
               dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
               dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
-              dispatch(closeWindow(windowEnum.cancelHoldMenu))
+              dispatch(closeMenu(menuEnum.cancelHoldMenu))
             }}/>
           </div>
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.cancelHoldMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.cancelHoldMenu))}/>
           </div>
         </div>
       </div>

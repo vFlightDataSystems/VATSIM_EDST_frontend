@@ -5,9 +5,13 @@ import {EdstContext} from "../../contexts/contexts";
 import {computeFrd} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {aselSelector, closeWindow, setInputFocused, windowPositionSelector} from "../../redux/slices/appSlice";
+import {
+  aselSelector, closeMenu,
+  menuPositionSelector,
+  setInputFocused
+} from "../../redux/slices/appSlice";
 
 export const TemplateMenu: React.FC = () => {
   const {
@@ -17,7 +21,7 @@ export const TemplateMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector);
   const entry = useAppSelector(aselEntrySelector);
-  const pos = useAppSelector(windowPositionSelector(windowEnum.templateMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.templateMenu));
   const [focused, setFocused] = useState(false);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState((asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
@@ -77,7 +81,7 @@ export const TemplateMenu: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.templateMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.templateMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         {asel ? 'Amendment' : 'Flight Plan'} Menu
@@ -257,7 +261,7 @@ export const TemplateMenu: React.FC = () => {
             <EdstButton disabled={true} content="Send"/>
           </div>
           <div className="template-col bottom right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.templateMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))}/>
           </div>
         </div>
       </div>

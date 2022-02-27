@@ -8,7 +8,7 @@ import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {deleteAclEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
-import {aclAselActionTriggerEnum, aclRowFieldEnum, windowEnum} from "../../../enums";
+import {aclAselActionTriggerEnum, aclRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {aclAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
@@ -102,7 +102,7 @@ export const AclRow: React.FC<AclRowProps> = (
     switch (event.button) {
       case 0:
         if (!entry.hold_data) {
-          dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hold, null, windowEnum.holdMenu));
+          dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hold, null, menuEnum.holdMenu));
         } else {
           dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : 'route'}}));
         }
@@ -160,7 +160,7 @@ export const AclRow: React.FC<AclRowProps> = (
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hdg, null, windowEnum.headingMenu));
+        dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hdg, null, menuEnum.headingMenu));
         break;
       case 1:
         if (entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) {
@@ -183,7 +183,7 @@ export const AclRow: React.FC<AclRowProps> = (
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.spd, null, windowEnum.speedMenu));
+        dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.spd, null, menuEnum.speedMenu));
         break;
       case 1:
         if (entry.scratch_spd && (displayScratchSpd || entry.spd === null)) {
@@ -256,7 +256,7 @@ export const AclRow: React.FC<AclRowProps> = (
           <div className={`body-col alt`}>
             <div className={`${altMouseDown ? 'md' : ''} ${entry.interim ? 'interim' : ''}
           ${isSelected(entry.cid, aclRowFieldEnum.alt) ? 'selected' : ''}`}
-                 onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.alt, null, windowEnum.altitudeMenu))}
+                 onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.alt, null, menuEnum.altitudeMenu))}
             >
               {entry.altitude}{entry.interim && `T${entry.interim}`}
             </div>
@@ -310,7 +310,7 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
              onContextMenu={(event) => {
                event.preventDefault();
                if (entry?.hold_data) {
-                 dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, windowEnum.cancelHoldMenu));
+                 dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, menuEnum.cancelHoldMenu));
                }
              }}
           // @ts-ignore
@@ -329,7 +329,7 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclRoute}>
           <div className={`body-col route hover ${isSelected(entry.cid, aclRowFieldEnum.route) ? 'selected' : ''}`}
-               onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, windowEnum.routeMenu))}
+               onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, menuEnum.routeMenu))}
           >
             {entry.aclRouteDisplay === 'hold_data' && holdData &&
             `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}

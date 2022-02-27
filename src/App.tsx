@@ -24,8 +24,14 @@ import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
 import {SectorSelector} from "./components/SectorSelector";
 import {initThunk} from "./redux/thunks/initThunk";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
-import {windowEnum} from "./enums";
-import {openWindow, setDragging, setMcaCommandString, setWindowPosition} from "./redux/slices/appSlice";
+import {menuEnum, windowEnum} from "./enums";
+import {
+  openWindow,
+  setDragging,
+  setMcaCommandString,
+  setMenuPosition,
+  setWindowPosition
+} from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/ToolsMenu";
 import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
@@ -38,7 +44,7 @@ import {useEventListener} from "usehooks-ts";
 const ENTRIES_REFRESH_RATE = 20000; // 20 seconds
 const WEATHER_REFRESH_RATE = 600000; // 10 minutes
 
-const DRAGGING_HIDE_CURSOR = [
+const DRAGGING_HIDE_CURSOR: (windowEnum | menuEnum)[] = [
   windowEnum.status,
   windowEnum.outage,
   windowEnum.messageComposeArea,
@@ -50,6 +56,7 @@ const DRAGGING_HIDE_CURSOR = [
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const windows = useAppSelector((state) => state.app.windows);
+  const menus = useAppSelector((state) => state.app.menus);
   const showSectorSelector = useAppSelector((state) => state.app.showSectorSelector);
   const mcaCommandString = useAppSelector((state) => state.app.mcaCommandString);
   const inputFocused = useAppSelector((state) => state.app.inputFocused);
@@ -90,7 +97,14 @@ export const App: React.FC = () => {
     if (event && bodyRef?.current?.windowRef?.current) {
       const relX = event.pageX - bodyRef?.current.relativePos.x;
       const relY = event.pageY - bodyRef?.current.relativePos.y;
-      const ppos = windows[bodyRef.current.draggingWindowName as windowEnum].position;
+      const window = bodyRef.current.draggingWindowName;
+      let ppos;
+      if (window in windowEnum) {
+        ppos = windows[window as windowEnum].position;
+      }
+      else if (window in menuEnum) {
+        ppos = menus[window as menuEnum].position;
+      }
       if (!ppos) {
         return;
       }
@@ -103,11 +117,17 @@ export const App: React.FC = () => {
         width: bodyRef.current.windowRef.current.clientWidth
       });
     }
-  }, [windows]);
+  }, [windows, menus]);
 
-  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum) => {
+  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum | menuEnum) => {
     const relativePos = {x: event.pageX, y: event.pageY};
-    const ppos = windows[window].position;
+    let ppos;
+    if (window in windowEnum) {
+      ppos = windows[window as windowEnum].position;
+    }
+    else if (window in menuEnum) {
+      ppos = menus[window as menuEnum].position;
+    }
     if (!ppos) {
       return;
     }
@@ -134,17 +154,32 @@ export const App: React.FC = () => {
     if (dragging && bodyRef?.current) {
       const relX = event.pageX - bodyRef.current.relativePos.x;
       const relY = event.pageY - bodyRef.current.relativePos.y;
-      const ppos = windows[bodyRef.current.draggingWindowName as windowEnum].position;
-      if (!ppos) {
-        return;
-      }
+      const window = bodyRef.current.draggingWindowName;
       if (bodyRef?.current) {
         bodyRef.current.removeEventListener('mousemove', draggingHandler);
       }
-      dispatch(setWindowPosition({
-        window: bodyRef.current.draggingWindowName as windowEnum,
-        pos: {x: ppos.x + relX, y: ppos.y + relY}
-      }));
+      let ppos;
+      if (window in windowEnum) {
+        ppos = windows[window as windowEnum].position;
+      }
+      else if (window in menuEnum) {
+        ppos = menus[window as menuEnum].position;
+      }
+      if (!ppos) {
+        return;
+      }
+      if (window in windowEnum) {
+        dispatch(setWindowPosition({
+          window: bodyRef.current.draggingWindowName as windowEnum,
+          pos: {x: ppos.x + relX, y: ppos.y + relY}
+        }));
+      }
+      else if (window in menuEnum) {
+        dispatch(setMenuPosition({
+          menu: bodyRef.current.draggingWindowName as menuEnum,
+          pos: {x: ppos.x + relX, y: ppos.y + relY}
+        }));
+      }
       dispatch(setDragging(false));
       setDragPreviewStyle(null);
       setDraggingCursorHide(false);
@@ -154,7 +189,7 @@ export const App: React.FC = () => {
   const handleKeyDown = (event: KeyboardEvent) => {
     // event.preventDefault();
     if (!inputFocused) {
-      if (windows[windowEnum.altitudeMenu].open) {
+      if (menus[menuEnum.altitudeMenu].open) {
         altMenuRef.current.showInput = true;
         if (altMenuRef.current.inputRef?.current) {
           altMenuRef.current?.inputRef.current.focus();
@@ -196,22 +231,22 @@ export const App: React.FC = () => {
         {windows[windowEnum.acl].open && <Acl/>}
         {windows[windowEnum.dep].open && <Dep/>}
         {windows[windowEnum.plansDisplay].open && <PlansDisplay/>}
-        {windows[windowEnum.status].open && <Status/>}
-        {windows[windowEnum.outage].open && <Outage/>}
-        {windows[windowEnum.planOptions].open && <PlanOptions/>}
-        {windows[windowEnum.sortMenu].open && <SortMenu/>}
-        {windows[windowEnum.toolsMenu].open && <ToolsMenu/>}
-        {windows[windowEnum.routeMenu].open && <RouteMenu/>}
-        {windows[windowEnum.templateMenu].open && <TemplateMenu/>}
-        {windows[windowEnum.holdMenu].open && <HoldMenu/>}
-        {windows[windowEnum.cancelHoldMenu].open && <CancelHoldMenu/>}
-        {windows[windowEnum.prevRouteMenu].open && <PreviousRouteMenu/>}
-        {windows[windowEnum.altitudeMenu].open && <AltMenu
+        {menus[menuEnum.planOptions].open && <PlanOptions/>}
+        {menus[menuEnum.sortMenu].open && <SortMenu/>}
+        {menus[menuEnum.toolsMenu].open && <ToolsMenu/>}
+        {menus[menuEnum.routeMenu].open && <RouteMenu/>}
+        {menus[menuEnum.templateMenu].open && <TemplateMenu/>}
+        {menus[menuEnum.holdMenu].open && <HoldMenu/>}
+        {menus[menuEnum.cancelHoldMenu].open && <CancelHoldMenu/>}
+        {menus[menuEnum.prevRouteMenu].open && <PreviousRouteMenu/>}
+        {menus[menuEnum.speedMenu].open && <SpeedMenu/>}
+        {menus[menuEnum.headingMenu].open && <HeadingMenu/>}
+        {menus[menuEnum.altitudeMenu].open && <AltMenu
           setAltMenuInputRef={(ref: React.RefObject<HTMLInputElement> | null) => altMenuRef.current.inputRef = ref}
           showInput={altMenuRef.current.showInput}
         />}
-        {windows[windowEnum.speedMenu].open && <SpeedMenu/>}
-        {windows[windowEnum.headingMenu].open && <HeadingMenu/>}
+        {windows[windowEnum.status].open && <Status/>}
+        {windows[windowEnum.outage].open && <Outage/>}
         {windows[windowEnum.altimeter].open && <AltimeterWindow/>}
         {windows[windowEnum.metar].open && <MetarWindow/>}
         {windows[windowEnum.messageComposeArea].open && <MessageComposeArea

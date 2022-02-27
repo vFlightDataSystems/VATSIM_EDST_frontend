@@ -8,8 +8,8 @@ import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
 import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
 import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
-import {aclRowFieldEnum, sortOptionsEnum, windowEnum} from "../../../enums";
-import {aselSelector, closeWindow, setAsel} from "../../../redux/slices/appSlice";
+import {aclRowFieldEnum, menuEnum, sortOptionsEnum} from "../../../enums";
+import {aselSelector, closeMenu, setAsel} from "../../../redux/slices/appSlice";
 
 export function AclTable() {
   const sortData = useAppSelector((state) => state.acl.sortData);
@@ -44,24 +44,24 @@ export function AclTable() {
       hiddenCopy.splice(hiddenCopy.indexOf(aclRowFieldEnum.spd), 1);
       hiddenCopy.splice(hiddenCopy.indexOf(aclRowFieldEnum.hdg), 1);
       if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.spd) {
-        dispatch(closeWindow(windowEnum.speedMenu));
+        dispatch(closeMenu(menuEnum.speedMenu));
         dispatch(setAsel(null));
       }
       if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.hdg) {
-        dispatch(closeWindow(windowEnum.headingMenu));
+        dispatch(closeMenu(menuEnum.headingMenu));
         dispatch(setAsel(null));
       }
     } else {
       if (!hiddenCopy.includes(aclRowFieldEnum.hdg)) {
         hiddenCopy.push(aclRowFieldEnum.hdg);
         if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.hdg) {
-          dispatch(closeWindow(windowEnum.headingMenu));
+          dispatch(closeMenu(menuEnum.headingMenu));
           dispatch(setAsel(null));
         }
       }
       if (!hiddenCopy.includes(aclRowFieldEnum.spd)) {
         if (asel?.field as aclRowFieldEnum === aclRowFieldEnum.spd) {
-          dispatch(closeWindow(windowEnum.speedMenu));
+          dispatch(closeMenu(menuEnum.speedMenu));
           dispatch(setAsel(null));
         }
         hiddenCopy.push(aclRowFieldEnum.spd);

@@ -5,16 +5,16 @@ import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {copy, removeDestFromRouteString} from "../../lib";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
+import {menuEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.prevRouteMenu));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.prevRouteMenu));
   const dispatch = useAppDispatch();
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
@@ -30,7 +30,7 @@ export const PreviousRouteMenu: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.prevRouteMenu)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.prevRouteMenu)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Previous Route Menu
@@ -57,12 +57,12 @@ export const PreviousRouteMenu: React.FC = () => {
                     route_data: entry.previous_route_data
                   }
                 }));
-                dispatch(closeWindow(windowEnum.prevRouteMenu));
+                dispatch(closeMenu(menuEnum.prevRouteMenu));
               }}
             />
           </div>
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.prevRouteMenu))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.prevRouteMenu))}/>
           </div>
         </div>
       </div>

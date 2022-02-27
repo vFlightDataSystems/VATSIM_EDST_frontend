@@ -6,24 +6,29 @@ import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {windowEnum} from "../../enums";
-import {openWindowThunk} from "../../redux/thunks/thunks";
-import {aselSelector, AselType, closeWindow, setAsel, windowPositionSelector} from "../../redux/slices/appSlice";
+import {menuEnum, windowEnum} from "../../enums";
+import {openMenuThunk} from "../../redux/thunks/thunks";
+import {
+  aselSelector,
+  AselType, closeMenu,
+  menuPositionSelector,
+  setAsel
+} from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
 
 export const PlanOptions: React.FC = () => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector) as AselType;
-  const pos = useAppSelector(windowPositionSelector(windowEnum.planOptions));
+  const pos = useAppSelector(menuPositionSelector(menuEnum.planOptions));
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
   const entry = useAppSelector(state => state.entries[asel.cid]);
   const dep = asel.window === windowEnum.dep;
 
-  function openWindow(window: windowEnum) {
-    dispatch(openWindowThunk(window, ref.current, windowEnum.planOptions, true));
-    dispatch(closeWindow(windowEnum.planOptions));
+  function openMenu(menu: menuEnum) {
+    dispatch(openMenuThunk(menu, ref.current, menuEnum.planOptions, true));
+    dispatch(closeMenu(menuEnum.planOptions));
   }
 
   return pos && (<div
@@ -35,7 +40,7 @@ export const PlanOptions: React.FC = () => {
       style={{left: pos.x, top: pos.y}}
     >
       <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, windowEnum.planOptions)}
+           onMouseDown={(event) => startDrag(event, ref, menuEnum.planOptions)}
            onMouseUp={(event) => stopDrag(event)}
       >
         Plan Options Menu
@@ -49,7 +54,7 @@ export const PlanOptions: React.FC = () => {
             className="options-col hover"
             content="Altitude..."
             title={Tooltips.planOptionsAlt}
-            onMouseDown={() => openWindow(windowEnum.altitudeMenu)}
+            onMouseDown={() => openMenu(menuEnum.altitudeMenu)}
           />
         </div>
         {!dep && <div className="options-row">
@@ -65,7 +70,7 @@ export const PlanOptions: React.FC = () => {
             className="options-col hover"
             content="Route..."
             title={Tooltips.planOptionsRoute}
-            onMouseDown={() => openWindow(windowEnum.routeMenu)}
+            onMouseDown={() => openMenu(menuEnum.routeMenu)}
           />
         </div>
         <div className="options-row">
@@ -74,7 +79,7 @@ export const PlanOptions: React.FC = () => {
             content="Previous Route"
             title={Tooltips.planOptionsPrevRoute} // @ts-ignore
             disabled={entry?.previous_route === undefined}
-            onMouseDown={() => openWindow(windowEnum.prevRouteMenu)}
+            onMouseDown={() => openMenu(menuEnum.prevRouteMenu)}
           />
         </div>
         {!dep && <div className="options-row">
@@ -116,13 +121,13 @@ export const PlanOptions: React.FC = () => {
 
               dispatch(asel.window === windowEnum.acl ? deleteAclEntry(asel.cid) : deleteDepEntry(asel.cid));
               dispatch(setAsel(null));
-              dispatch(closeWindow(windowEnum.planOptions));
+              dispatch(closeMenu(menuEnum.planOptions));
             }}
           />
         </div>
         <div className="options-row bottom">
           <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeWindow(windowEnum.planOptions))}/>
+            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.planOptions))}/>
           </div>
         </div>
       </div>
