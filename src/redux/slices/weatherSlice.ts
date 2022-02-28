@@ -1,5 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store";
+import {Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position} from "@turf/turf";
 
 export type WeatherStateType = {
   altimeterList: { [airport: string]: AltimeterEntryType },
@@ -18,9 +19,18 @@ export type AltimeterEntryType = {
   altimeter: string
 }
 
-export type SigmetEntryType = {
-  sigmetString: string,
-  suppressed: boolean
+export type ApiSigmetType = {
+  airsigmet_type: string,
+  text: string,
+  area: Position[],
+  hazard: {severity: string, type: string},
+  altitude: {max_ft_msg: string, min_ft_msl: string}
+}
+
+export type SigmetEntryType = ApiSigmetType & {
+  suppressed: boolean,
+  acknowledged: boolean,
+  polygons: Feature<Polygon | MultiPolygon>
 }
 
 const initialState = {altimeterList: {}, metarList: {}, sigmetList: {}};
@@ -41,17 +51,22 @@ const weatherSlice = createSlice({
     removeAirportAltimeter(state, action: { payload: string }) {
       delete state.altimeterList[action.payload];
     },
-    addSigmets(state, action: { payload: string[] }) {
+    addSigmets(state, action: { payload: ApiSigmetType[] }) {
       for (let s of action.payload) {
-        if (!Object.keys(state.sigmetList).includes(btoa(s))) {
-          state.sigmetList[btoa(s)] = {sigmetString: s, suppressed: false};
+        if (!Object.keys(state.sigmetList).includes(btoa(s.text))) {
+          const polygons = lineToPolygon(lineString(s.area));
+          state.sigmetList[btoa(s.text)] = {suppressed: false, acknowledged: false, polygons: polygons, ...s};
         }
       }
-
     },
     setSigmetSupressionState(state, action: { payload: { id: string, value: boolean } }) {
       if (Object.keys(state.sigmetList).includes(action.payload.id)) {
         state.sigmetList[action.payload.id].suppressed = action.payload.value;
+      }
+    },
+    setSigmetAcknowledged(state, action: { payload: { id: string, value: boolean } }) {
+      if (Object.keys(state.sigmetList).includes(action.payload.id)) {
+        state.sigmetList[action.payload.id].acknowledged = action.payload.value;
       }
     }
   }
@@ -63,7 +78,8 @@ export const {
   setAirportAltimeter,
   removeAirportAltimeter,
   addSigmets,
-  setSigmetSupressionState
+  setSigmetSupressionState,
+  setSigmetAcknowledged
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 

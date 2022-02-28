@@ -41,7 +41,7 @@ export const EdstHeader: React.FC = () => {
   const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
   const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
   const sigmets = useAppSelector(sigmetSelector);
-  const sigLen = Object.keys(sigmets).length;
+  const sigLen = Object.values(sigmets).filter(sigmetEntry => !sigmetEntry.acknowledged).length;
   const notLen = 0, giLen = 0;
 
   return (
@@ -88,7 +88,7 @@ export const EdstHeader: React.FC = () => {
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.metar))}
           />
           <EdstHeaderButton open={windows[windowEnum.sigmets].open}
-                            content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : ''}`}
+                            content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : '✓'}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sig)}
             // title={Tooltips.sig}
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.sigmets))}
