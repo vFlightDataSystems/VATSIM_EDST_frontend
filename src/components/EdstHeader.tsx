@@ -7,6 +7,7 @@ import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {edstHeaderButtonEnum, windowEnum} from "../enums";
 import {openWindow, toggleWindow} from "../redux/slices/appSlice";
 import {planQueueSelector} from "../redux/slices/planSlice";
+import {sigmetSelector} from "../redux/slices/weatherSlice";
 
 
 type EdstHeaderButtonProps = {
@@ -39,7 +40,9 @@ export const EdstHeader: React.FC = () => {
   const entries = useAppSelector(state => state.entries);
   const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
   const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
-  const sigLen = 0, notLen = 0, giLen = 0;
+  const sigmets = useAppSelector(sigmetSelector);
+  const sigLen = Object.keys(sigmets).length;
+  const notLen = 0, giLen = 0;
 
   return (
     <div className="edst-header">
@@ -66,11 +69,11 @@ export const EdstHeader: React.FC = () => {
                             title={Tooltips.dep}
                             onMouseDown={() => dispatch(openWindow({window: windowEnum.dep}))}
           />
-          <EdstHeaderButton open={windows[windowEnum.graphicPlanDispay].open}
+          <EdstHeaderButton open={windows[windowEnum.graphicPlanDisplay].open}
                             content="GPD"
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.gpd)}
             // title={Tooltips.gpd}
-                            onMouseDown={() => dispatch(openWindow({window: windowEnum.graphicPlanDispay}))}
+                            onMouseDown={() => dispatch(openWindow({window: windowEnum.graphicPlanDisplay}))}
           />
           <EdstHeaderButton open={windows[windowEnum.plansDisplay].open}
                             content="PLANS"

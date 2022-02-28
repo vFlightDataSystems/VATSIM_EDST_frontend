@@ -1,7 +1,13 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {RootState} from "../store";
-import {removeAirportAltimeter, removeAirportMetar, setAirportAltimeter, setAirportMetar} from "../slices/weatherSlice";
-import {fetchAirportMetar} from "../../api";
+import {
+  addSigmets,
+  removeAirportAltimeter,
+  removeAirportMetar,
+  setAirportAltimeter,
+  setAirportMetar
+} from "../slices/weatherSlice";
+import {fetchAirportMetar, fetchSigmets} from "../../api";
 
 const setMetarThunk = createAsyncThunk(
   'weather/setMetar',
@@ -56,10 +62,10 @@ export const toggleMetarThunk = createAsyncThunk(
 
     if (airports instanceof Array) {
       for (let airport of airports) {
-        dispatchAirportAddMetar(airport)
+        dispatchAirportAddMetar(airport);
       }
     } else {
-      dispatchAirportAddMetar(airports)
+      dispatchAirportAddMetar(airports);
     }
   }
 );
@@ -120,6 +126,17 @@ export const toggleAltimeterThunk = createAsyncThunk(
   }
 );
 
+export const refreshSigmets = createAsyncThunk(
+  'weather/refreshSigmets',
+  async (_args, thunkAPI) => {
+    await fetchSigmets()
+      .then(response => response.json())
+      .then(sigmetStrings => {
+        thunkAPI.dispatch(addSigmets(sigmetStrings));
+      });
+  }
+);
+
 export function refreshWeatherThunk(dispatch: any, getState: () => RootState) {
   const weatherState = getState().weather;
   const altimeterAirports = Object.keys(weatherState.altimeterList);
@@ -130,4 +147,5 @@ export function refreshWeatherThunk(dispatch: any, getState: () => RootState) {
   if (metarAirports) {
     dispatch(setMetarThunk(metarAirports));
   }
+  dispatch(refreshSigmets());
 }

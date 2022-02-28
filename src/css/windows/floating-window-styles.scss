@@ -19,6 +19,10 @@ $floating-window-light-grey: #ADADAD;
 
     .floating-window-outer-row {
 
+      &.sigmet {
+        margin: 6px 0;
+      }
+
       .floating-window-row {
         //height: 22px;
         justify-content: center;
@@ -43,6 +47,10 @@ $floating-window-light-grey: #ADADAD;
 
   &.altimeter-window {
     width: 250px;
+  }
+
+  &.sigmet-window {
+    width: 1100px;
   }
 
   &.metar-window {
