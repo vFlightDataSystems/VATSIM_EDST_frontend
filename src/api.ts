@@ -35,3 +35,7 @@ export async function fetchReferenceFixes(artcc: string): Promise<any> {
 export async function fetchAirportMetar(airport: string): Promise<any> {
   return await fetch(`${baseurl}/weather/metar/airport/${airport}`);
 }
+
+export async function fetchSigmets(): Promise<any> {
+  return await fetch(`${baseurl}/weather/sigmets`);
+}

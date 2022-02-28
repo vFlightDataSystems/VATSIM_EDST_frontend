@@ -92,7 +92,7 @@ export enum windowEnum {
   messageResponseArea = "messageResponseArea",
   status = "status",
   outage = "outage",
-  graphicPlanDispay = "graphicPlanDispay",
+  graphicPlanDisplay = "graphicPlanDisplay",
   metar = "metar",
   ua = "ua",
   sigmets = "sigmets",

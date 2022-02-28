@@ -39,6 +39,7 @@ import {MetarWindow} from "./components/edst-windows/MetarWindow";
 import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
 import {useEventListener} from "usehooks-ts";
 import {EquipmentTemplateMenu} from "./components/edst-windows/template-components/EquipmentTemplateMenu";
+import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -51,7 +52,8 @@ const DRAGGING_HIDE_CURSOR: (windowEnum | menuEnum)[] = [
   windowEnum.messageComposeArea,
   windowEnum.messageResponseArea,
   windowEnum.altimeter,
-  windowEnum.metar
+  windowEnum.metar,
+  windowEnum.sigmets
 ];
 
 export const App: React.FC = () => {
@@ -251,6 +253,7 @@ export const App: React.FC = () => {
         {windows[windowEnum.outage].open && <Outage/>}
         {windows[windowEnum.altimeter].open && <AltimeterWindow/>}
         {windows[windowEnum.metar].open && <MetarWindow/>}
+        {windows[windowEnum.sigmets].open && <SigmetWindow/>}
         {windows[windowEnum.messageComposeArea].open && <MessageComposeArea
           setMcaInputRef={setMcaInputRef}
         />}

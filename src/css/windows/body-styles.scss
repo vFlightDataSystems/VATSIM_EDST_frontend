@@ -23,6 +23,10 @@ $body-voice-type-font-color: #989898;
   overflow: scroll;
   scrollbar-width: none;
 
+  &.sigmet-scroll-container {
+    max-height: 500px;
+  }
+
   &::-webkit-scrollbar {
     display: none;
   }

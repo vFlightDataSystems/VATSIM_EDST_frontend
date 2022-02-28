@@ -3,6 +3,7 @@ import {RootState} from "../store";
 import {setArtccId, setReferenceFixes, setSectorId, setSectors} from "../slices/sectorSlice";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk} from "../slices/entriesSlice";
+import {refreshSigmets} from "./weatherThunks";
 
 const DISCLAIMER_MESSAGE = `
 !!! WARNING !!!\n
@@ -48,6 +49,7 @@ export const initThunk = createAsyncThunk(
           }
         });
     }
+    thunkAPI.dispatch(refreshSigmets());
     return thunkAPI.dispatch(refreshEntriesThunk());
   }
 );
