@@ -16,10 +16,10 @@ export const REMOVAL_TIMEOUT = 120000;
  * Computes the signed distance from a given point to the union of all polygons (in nm).
  * The returned value is negative if the point is inside of one of the polygons.
  * @param {Point} point - current position
- * @param {Array<Polygon>} polygons - airspace defining boundaries
+ * @param {Polygon[]} polygons - airspace defining boundaries
  * @returns {number}
  */
-export function getSignedDistancePointToPolygons(point: Point, polygons: Array<Polygon>): number {
+export function getSignedDistancePointToPolygons(point: Point, polygons: Polygon[]): number {
   let minDistance = Infinity;
   for (const poly of polygons) {
     // @ts-ignore
@@ -34,9 +34,9 @@ export function getSignedDistancePointToPolygons(point: Point, polygons: Array<P
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
- * @param {Array<any>} routeData - fixes on the route (order matters)
- * @param {Array<Polygon>} polygons - airspace defining boundaries
- * @param {[number, number]} pos - lon/lat pair, current position
+ * @param {FixType[]} routeData - fixes on the route (order matters)
+ * @param {Polygon[]} polygons - airspace defining boundaries
+ * @param {Position} pos - lon/lat pair, current position
  * @returns {boolean}
  */
 export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
@@ -58,7 +58,7 @@ export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Fe
 /**
  * Compute the distance to each fix on the route and save it in the route data
  * @param {FixType[]} routeData - fixes on the route (order matters)
- * @param {[number, number]} pos - lon/lat pair, current position
+ * @param {Position} pos - lon/lat pair, current position
  * @returns {FixType[]} - original routeData, but each item will have a `distance` attribute
  */
 export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixType & { dist: number })[] {
@@ -72,7 +72,7 @@ export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixT
  * compute the remaining route and its route data, based on current position
  * @param {string} route - parsed route string
  * @param {FixType[]} routeData - fixes on the route
- * @param {[number, number]} pos - lon/lat pair, current position
+ * @param {Position} pos - lon/lat pair, current position
  * @param {string} dest - ICAO string of destination airport
  * @returns {{_route: string, _route_data: FixType}}
  */
