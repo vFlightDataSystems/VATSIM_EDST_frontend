@@ -79,7 +79,8 @@ export enum menuEnum {
   headingMenu = "headingMenu",
   holdMenu = "holdMenu",
   cancelHoldMenu = "cancelHoldMenu",
-  templateMenu = "templateMenu"
+  templateMenu = "templateMenu",
+  equipmentTemplateMenu = "equipmentTemplateMenu"
 }
 
 export enum windowEnum {

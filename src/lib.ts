@@ -73,11 +73,15 @@ export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixT
  * @param {string} route - parsed route string
  * @param {FixType[]} routeData - fixes on the route
  * @param {[number, number]} pos - lon/lat pair, current position
+ * @param {string} dest - ICAO string of destination airport
  * @returns {{_route: string, _route_data: FixType}}
  */
-export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position): { _route: string, _route_data: FixType[] } {
+export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, dest: string): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
-    const fixNames = routeData.map(e => e.name);
+    let fixNames = routeData.map(e => e.name);
+    if (fixNames.slice(-1)[0] === dest) {
+      fixNames.pop();
+    }
     const sortedRouteData = routeData.slice(0).sort((u, v) => u.dist - v.dist);
     const closestFix = sortedRouteData[0];
     const index = routeData.indexOf(closestFix);

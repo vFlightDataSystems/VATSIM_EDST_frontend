@@ -38,6 +38,7 @@ import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
 import {MetarWindow} from "./components/edst-windows/MetarWindow";
 import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
 import {useEventListener} from "usehooks-ts";
+import {EquipmentTemplateMenu} from "./components/edst-windows/template-components/EquipmentTemplateMenu";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -236,6 +237,7 @@ export const App: React.FC = () => {
         {menus[menuEnum.toolsMenu].open && <ToolsMenu/>}
         {menus[menuEnum.routeMenu].open && <RouteMenu/>}
         {menus[menuEnum.templateMenu].open && <TemplateMenu/>}
+        {menus[menuEnum.equipmentTemplateMenu].open && <EquipmentTemplateMenu/>}
         {menus[menuEnum.holdMenu].open && <HoldMenu/>}
         {menus[menuEnum.cancelHoldMenu].open && <CancelHoldMenu/>}
         {menus[menuEnum.prevRouteMenu].open && <PreviousRouteMenu/>}

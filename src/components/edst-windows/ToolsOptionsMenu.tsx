@@ -21,7 +21,7 @@ export const ToolsOptionsMenu: React.FC = () => {
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}
           >
-            <div className={`box ${displayCoordinationColumn ? 'selected' : ''}`}/>
+            <div className={`button-indicator ${displayCoordinationColumn ? 'selected' : ''}`}/>
             Display Coordination Column
           </EdstTooltip>
         </div>
@@ -29,7 +29,7 @@ export const ToolsOptionsMenu: React.FC = () => {
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}
           >
-            <div className={`box ${dropTrackDelete ? 'selected' : ''}`}/>
+            <div className={`button-indicator ${dropTrackDelete ? 'selected' : ''}`}/>
             Drop Track Delete
           </EdstTooltip>
         </div>
@@ -37,7 +37,7 @@ export const ToolsOptionsMenu: React.FC = () => {
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => setIafDofManual(!iafDofManual)}
           >
-            <div className={`box ${iafDofManual ? 'selected' : ''}`}/>
+            <div className={`button-indicator ${iafDofManual ? 'selected' : ''}`}/>
             IAFDOF Manual
           </EdstTooltip>
         </div>
@@ -45,7 +45,7 @@ export const ToolsOptionsMenu: React.FC = () => {
           <EdstTooltip className="options-col sort"
                        onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}
           >
-            <div className={`box ${nonRvsmIndicator ? 'selected' : ''}`}/>
+            <div className={`button-indicator ${nonRvsmIndicator ? 'selected' : ''}`}/>
             Non-RVSM Indicator
           </EdstTooltip>
         </div>

@@ -237,7 +237,7 @@ export const HoldMenu: React.FC = () => {
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'alt-menu', false)}
         >
           <div className="options-col hold-col-7">
-            <div className="input efc-input">
+            <div className="input-container-2 efc">
               <input value={formatUtcMinutes(efc)}
                      readOnly={true}
                 // onChange={(e) => setEfc(e.target.value)}
