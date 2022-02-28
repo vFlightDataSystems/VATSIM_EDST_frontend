@@ -7,11 +7,8 @@ import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {
-  aselSelector, closeMenu,
-  menuPositionSelector,
-  setInputFocused
-} from "../../redux/slices/appSlice";
+import {aselSelector, closeMenu, menuPositionSelector, setInputFocused} from "../../redux/slices/appSlice";
+import {openMenuThunk} from "../../redux/thunks/thunks";
 
 export const TemplateMenu: React.FC = () => {
   const {
@@ -52,24 +49,11 @@ export const TemplateMenu: React.FC = () => {
   //   const speedInput = entry?.flightplan?.ground_speed ?? '';
   //   const timeInput = 'EXX00';
   //   const altInput = entry?.altitude ?? '';
-  //   const routeInput = (asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '';
-  //   const rmkInput = entry?.remarks ?? '';
-  //   setDisplayRawRoute(false);
-  //   setRoute(route);
-  //   setFrd(frd);
-  //   setFrdInput(frd);
-  //   setAidInput(aidInput);
-  //   setNumInput(entry ? 1 : '');
-  //   setSaiInput('');
-  //   setTypeInput(typeInput);
-  //   setEquipInput(equipInput);
-  //   setBeaconInput(beaconInput);
-  //   setSpeedInput(speedInput);
-  //   setTimeInput(timeInput);
-  //   setAltInput(altInput);
-  //   setRouteInput(routeInput);
-  //   setRmkInput(rmkInput);
-  // }, [asel, entry]);
+  //   const routeInput = (asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ??
+  // ''; const rmkInput = entry?.remarks ?? ''; setDisplayRawRoute(false); setRoute(route); setFrd(frd);
+  // setFrdInput(frd); setAidInput(aidInput); setNumInput(entry ? 1 : ''); setSaiInput(''); setTypeInput(typeInput);
+  // setEquipInput(equipInput); setBeaconInput(beaconInput); setSpeedInput(speedInput); setTimeInput(timeInput);
+  // setAltInput(altInput); setRouteInput(routeInput); setRmkInput(rmkInput); }, [asel, entry]);
 
 
   return pos && (<div
@@ -101,7 +85,9 @@ export const TemplateMenu: React.FC = () => {
             TYP
           </div>
           <div className="template-col col-5">
-            <EdstButton disabled={true} content="EQP..."/>
+            <EdstButton content="EQP..."
+                        onMouseDown={() => dispatch(openMenuThunk(menuEnum.equipmentTemplateMenu, ref.current))}
+            />
           </div>
           <div className="template-col col-6 header">
             BCN
@@ -118,7 +104,9 @@ export const TemplateMenu: React.FC = () => {
           <div className="template-col col-10 header">
             ALT
           </div>
-          <EdstButton disabled={true} content="MORE..."/>
+          <div className="template-col">
+            <EdstButton disabled={true} content="More..."/>
+          </div>
         </div>
         <div className="template-row">
           <div className="template-col col-1">
@@ -223,12 +211,12 @@ export const TemplateMenu: React.FC = () => {
           </div>
         </div>
         <div className="template-row">
-          <div className="template-col">
+          <div className="template-col col-1 header">
             RTE
           </div>
         </div>
         <div className="template-row">
-          <div className="input-container">
+          <div className="template-col input-container">
             <textarea
               value={routeInput}
               onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
@@ -239,14 +227,16 @@ export const TemplateMenu: React.FC = () => {
           </div>
         </div>
         <div className="template-row">
-          <div className="template-col">
+          <div className="template-col col-1 header">
             RMK
           </div>
           <div className="template-col right"/>
-          <EdstButton disabled={true} content="Create FP..."/>
+          <div className="template-col">
+            <EdstButton disabled={true} content="Create FP..."/>
+          </div>
         </div>
         <div className="template-row">
-          <div className="input-container">
+          <div className="template-col input-container">
             <textarea
               value={rmkInput}
               onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
@@ -261,10 +251,11 @@ export const TemplateMenu: React.FC = () => {
             <EdstButton disabled={true} content="Send"/>
           </div>
           <div className="template-col bottom right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))}/>
+            <EdstButton className="exit-button" content="Exit"
+                        onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))}/>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};

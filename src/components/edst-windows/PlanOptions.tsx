@@ -45,7 +45,7 @@ export const PlanOptions: React.FC = () => {
       >
         Plan Options Menu
       </div>
-      <div className="options-body">
+      <div className="options-body text-indent">
         <div className="options-row fid">
           {entry.cid} {entry.callsign}
         </div>

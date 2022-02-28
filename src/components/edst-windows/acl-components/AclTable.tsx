@@ -22,7 +22,7 @@ export function AclTable() {
   const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
   const [hiddenList, setHiddenList] = useState<aclRowFieldEnum[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
-  const entries = useAppSelector(state => state.entries);
+  const entries = useAppSelector((state) => state.entries);
 
   const toggleHideColumn = (field: aclRowFieldEnum) => {
     let hiddenCopy = hiddenList.slice(0);
@@ -85,7 +85,7 @@ export function AclTable() {
     }
   };
 
-  const entryList = Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay);
+  const entryList = Object.values(entries).filter((entry: LocalEdstEntryType) => entry.aclDisplay);
   const spaEntryList = Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa));
 
   return (<div className="acl-body no-select">

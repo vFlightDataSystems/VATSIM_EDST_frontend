@@ -122,7 +122,7 @@ export const SpeedMenu: React.FC = () => {
         >
           <div className="options-col">
             Speed:
-            <div className="input speed-input">
+            <div className="input-container-2">
               <input value={speed} onChange={(e) => setSpeed(Number(e.target.value))}/>
             </div>
           </div>

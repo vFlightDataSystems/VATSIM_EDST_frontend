@@ -28,7 +28,7 @@ export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVTy
     if (currentEntry.aar_list?.length) {
       newEntry._aar_list = processAar(currentEntry, currentEntry.aar_list);
     }
-  } else {
+  } else { // if route_data has changed
     if (newEntry.route_data) {
       newEntry._route_data = getRouteDataDistance(newEntry.route_data, pos);
     }
@@ -38,7 +38,7 @@ export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVTy
     }
   }
   if (newEntry._route_data) {
-    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos));
+    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos, dest));
   }
   if (newEntry.update_time === currentEntry.update_time
     || (((newEntry._route_data?.[-1]?.dist ?? Infinity) < 15) && newEntry.dest_info)

@@ -13,7 +13,7 @@ $edst-button-disabled-grey: #707070;
 
   &.exit-button {
     .edst-inner-button {
-      padding: 0 5px;
+      padding: 0 6px;
     }
   }
 
@@ -31,10 +31,6 @@ $edst-button-disabled-grey: #707070;
     margin-left: 6px;
     margin-right: 6px;
     margin-bottom: 1px;
-
-    .edst-inner-button {
-      padding: 0 4px;
-    }
   }
 
   &.medium {
@@ -58,7 +54,7 @@ $edst-button-disabled-grey: #707070;
     border-right: 2px solid $edst-button-dark-grey;
     border-top: 2px solid $edst-button-medium-grey;
     border-left: 2px solid $edst-button-medium-grey;
-    padding: 0 2px;
+    padding: 0 4px;
 
     &.selected {
       background-color: $edst-button-light-grey;

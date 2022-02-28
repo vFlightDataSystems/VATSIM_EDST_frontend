@@ -104,7 +104,7 @@ export const HeadingMenu: React.FC = () => {
       <div className="options-row">
         <div className="options-col">
           Heading:
-          <div className="input speed-input">
+          <div className="input-container-2">
             <input value={heading} onChange={(e) => setHeading(Number(e.target.value))}/>
           </div>
         </div>

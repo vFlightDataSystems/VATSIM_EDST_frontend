@@ -45,7 +45,7 @@ export const SortMenu: React.FC = () => {
                        }}
                        title={Tooltips.sortAclSectorNonSector}
           >
-            <div className={`box ${sortState.sector ? 'selected' : ''}`}/>
+            <div className={`button-indicator ${sortState.sector ? 'selected' : ''}`}/>
             Sector/Non-Sector
           </EdstTooltip>
         </div>}
@@ -57,7 +57,7 @@ export const SortMenu: React.FC = () => {
                        }}
                        title={Tooltips.sortAcid}
           >
-            <div className={`box diamond ${sortState?.selectedOption === 'ACID' ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === 'ACID' ? 'selected' : ''}`}/>
             ACID
           </EdstTooltip>
         </div>
@@ -69,7 +69,7 @@ export const SortMenu: React.FC = () => {
                        }} // @ts-ignore
                        title={Tooltips.sortBoundaryTime}
           >
-            <div className={`box diamond ${sortStateCopy?.selectedOption === sortOptionsEnum.boundaryTime ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortStateCopy?.selectedOption === sortOptionsEnum.boundaryTime ? 'selected' : ''}`}/>
             Boundary Time
           </EdstTooltip>
         </div>}
@@ -82,7 +82,7 @@ export const SortMenu: React.FC = () => {
                        disabled={true}
                        title={Tooltips.sortConflictStatus}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.conflictStatus ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.conflictStatus ? 'selected' : ''}`}/>
             Conflict Status
           </EdstTooltip>
         </div>}
@@ -96,7 +96,7 @@ export const SortMenu: React.FC = () => {
                        disabled={true}
                        title={Tooltips.sortConflictTime}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.conflictTime ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.conflictTime ? 'selected' : ''}`}/>
             Conflict Time
           </EdstTooltip>
         </div>}
@@ -108,7 +108,7 @@ export const SortMenu: React.FC = () => {
                        }}
                        title={Tooltips.sortDestination}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.destination ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.destination ? 'selected' : ''}`}/>
             Destination
           </EdstTooltip>
         </div>
@@ -122,7 +122,7 @@ export const SortMenu: React.FC = () => {
                        disabled={true}
                        title={Tooltips.sortSectorBySector}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.sectorBySector ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.sectorBySector ? 'selected' : ''}`}/>
             Sector-by-Sector
           </EdstTooltip>
         </div>}
@@ -134,7 +134,7 @@ export const SortMenu: React.FC = () => {
                        }}
                        title={Tooltips.sortOrigin}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.origin ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.origin ? 'selected' : ''}`}/>
             Origin
           </EdstTooltip>
         </div>}
@@ -148,7 +148,7 @@ export const SortMenu: React.FC = () => {
                        disabled={true}
                        title={Tooltips.sortPTime}
           >
-            <div className={`box diamond ${sortState?.selectedOption === sortOptionsEnum.pTime ? 'selected' : ''}`}/>
+            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.pTime ? 'selected' : ''}`}/>
             P-Time
           </EdstTooltip>
         </div>}

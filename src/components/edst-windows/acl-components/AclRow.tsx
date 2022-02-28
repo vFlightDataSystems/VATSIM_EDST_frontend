@@ -35,9 +35,25 @@ export const AclRow: React.FC<AclRowProps> = (
   const asel = useAppSelector(aselSelector);
   const dispatch = useAppDispatch();
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const [aarAvail, setAarAvail] = useState(false);
+  const [onAar, setOnAar] = useState(false);
   // if (entry.aar_list === undefined) {
   //   dispatch(fetchAarData(entry.cid));
   // }
+
+  useEffect(() => (() => {
+    if (freeTextContent !== entry.free_text_content) {
+      dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
+    } // eslint-disable-next-line
+  }), []);
+  
+  useEffect(() => {
+    const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
+    const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.onEligibleAar)));
+    const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar)?.length;
+    setAarAvail(aarAvail ?? false);
+    setOnAar(onAar);
+  }, [entry._aar_list, entry._route_data, entry.aar_list, entry.route_data]);
 
   const holdData = entry.hold_data;
   const now = new Date().getTime();
@@ -48,10 +64,6 @@ export const AclRow: React.FC<AclRowProps> = (
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
-
-  const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-  const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.onEligibleAar)));
-  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar)?.length;
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
@@ -91,12 +103,6 @@ export const AclRow: React.FC<AclRowProps> = (
       }
     }
   };
-
-  useEffect(() => (() => {
-    if (freeTextContent !== entry.free_text_content) {
-      dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
-    } // eslint-disable-next-line
-  }), []);
 
   const handleHoldClick = (event: React.MouseEvent) => {
     switch (event.button) {
