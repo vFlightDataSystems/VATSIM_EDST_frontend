@@ -5,30 +5,48 @@ import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {sigmetSelector} from "../../redux/slices/weatherSlice";
+import {setSigmetAcknowledged, setSigmetSupressionState, sigmetSelector} from "../../redux/slices/weatherSlice";
+import {FloatingWindowOptions} from "./FloatingWindowOptions";
+
+enum sigmetOptionEnum {
+  viewSuppressed = "VIEW SUPPRESS",
+  hideSuppressed = "HIDE SUPPRESS"
+}
 
 export const SigmetWindow: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(windowPositionSelector(windowEnum.sigmets));
+  const sectorId = useAppSelector(state => state.sectorData.sectorId);
+  const [showOptions, setShowOptions] = useState(false);
+  const [viewSuppressed, setViewSuppressed] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const sigmetList = useAppSelector(sigmetSelector);
-  // const [deltaY, setDeltaY] = useState(0);
   const {startDrag} = useContext(EdstContext);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
-    if (selected !== airport) {
-      setSelected(airport);
+  const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
+    setShowOptions(false);
+    if (selected !== sigmetId) {
+      if (!sigmetList[sigmetId].acknowledged) {
+        dispatch(setSigmetAcknowledged({id: sigmetId, value: true}));
+      }
+      setSelected(sigmetId);
+      // figure out how to align this correctly :/
       setSelectedPos({
         x: event.currentTarget.offsetLeft,
-        y: event.currentTarget.offsetTop,
-        w: event.currentTarget.offsetWidth
+        y: event.currentTarget.clientTop - 1,
+        w: event.currentTarget.clientWidth + 23
       });
     } else {
       setSelected(null);
       setSelectedPos(null);
     }
+  };
+
+  const handleOptionsMouseDown = () => {
+    setSelected(null);
+    setShowOptions(true);
   };
 
   return pos && (<div className="floating-window sigmet-window"
@@ -37,39 +55,60 @@ export const SigmetWindow: React.FC = () => {
                       style={{left: pos.x + "px", top: pos.y + "px"}}
     >
       <div className="floating-window-header no-select">
-        <div className="floating-window-header-left">
+        <div className="floating-window-header-left" onMouseDown={handleOptionsMouseDown}>
           M
         </div>
         <div className="floating-window-header-middle"
              onMouseDown={(event) => startDrag(event, ref, windowEnum.sigmets)}
         >
-          SIGMETS
+          SIGMETS SECTOR {sectorId}
         </div>
         <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
           <div className="floating-window-header-block-6-2"/>
         </div>
       </div>
-      {Object.values(sigmetList).length > 0 && <div className="floating-window-body scroll-container sigmet-scroll-container">
-        {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) =>
+      {Object.values(sigmetList).length > 0 &&
+      <div className="floating-window-body scroll-container sigmet-scroll-container">
+        {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
           <span className="floating-window-outer-row sigmet" key={`sigmet-list-key-${sigmetId}`}>
-            <div className={`floating-window-row no-select margin ${selected === sigmetId ? 'selected' : ''}`}
-                 onMouseDown={(event) => handleMouseDown(event, sigmetId)}
+            <div className={`floating-window-row ${sigmetEntry.suppressed ? 'suppressed' : ''} no-select margin ${selected === sigmetId ? 'selected' : ''}`}
+                 onMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
             >
-              {sigmetEntry.sigmetString}
+              {sigmetEntry.text}
             </div>
             {selected === sigmetId && selectedPos &&
-            <div className="delete-button no-select"
-                 onMouseDown={() => {
-                   // dispatch(removeAirportMetar(airport));
-                   setSelected(null);
-                   setSelectedPos(null);
-                 }}
-                 style={{left: (selectedPos.x + selectedPos.w) + "px", top: selectedPos.y + "px"}}
-            >
-              SUPPRESS
-            </div>}
+            <FloatingWindowOptions
+              pos={{
+                x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+                y: (ref.current as HTMLDivElement).clientTop
+              }}
+              options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
+              handleOptionClick={() => {
+                dispatch(setSigmetSupressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
+                setSelected(null);
+                setSelectedPos(null);
+              }}
+            />}
           </span>)}
       </div>}
+      {showOptions && <FloatingWindowOptions
+        pos={{
+          x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+          y: (ref.current as HTMLDivElement).clientTop
+        }}
+        header="SIGMETS"
+        closeOptions={() => setShowOptions(false)}
+        options={Object.values(sigmetOptionEnum)}
+        unSelectedOptions={[viewSuppressed ? sigmetOptionEnum.hideSuppressed : sigmetOptionEnum.viewSuppressed]}
+        handleOptionClick={(option) => {
+          if (option as sigmetOptionEnum === sigmetOptionEnum.viewSuppressed) {
+            setViewSuppressed(true);
+          }
+          else if (option as sigmetOptionEnum === sigmetOptionEnum.hideSuppressed) {
+            setViewSuppressed(false);
+          }
+        }}
+      />}
     </div>
   );
 };

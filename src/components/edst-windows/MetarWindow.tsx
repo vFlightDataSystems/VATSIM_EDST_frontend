@@ -6,6 +6,7 @@ import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {metarSelector, removeAirportMetar} from "../../redux/slices/weatherSlice";
+import {FloatingWindowOptions} from "./FloatingWindowOptions";
 
 export const MetarWindow: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -54,16 +55,18 @@ export const MetarWindow: React.FC = () => {
               {airportMetarEntry.metar}
             </div>
             {selected === airport && selectedPos &&
-            <div className="delete-button no-select"
-                 onMouseDown={() => {
-                   dispatch(removeAirportMetar(airport));
-                   setSelected(null);
-                   setSelectedPos(null);
-                 }}
-                 style={{left: (selectedPos.x + selectedPos.w) + "px", top: selectedPos.y + "px"}}
-            >
-              DELETE {airport}
-            </div>}
+            <FloatingWindowOptions
+              pos={{
+                x: selectedPos.x + selectedPos.w,
+                y: selectedPos.y
+              }}
+              options={[`DELETE ${airport}`]}
+              handleOptionClick={() => {
+                dispatch(removeAirportMetar(airport));
+                setSelected(null);
+                setSelectedPos(null);
+              }}
+            />}
           </span>)}
       </div>}
     </div>

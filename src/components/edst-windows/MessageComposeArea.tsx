@@ -140,10 +140,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
           break;//end case UU
         case 'QD':
           dispatch(toggleAltimeterThunk(args));
+          dispatch(openWindowThunk(windowEnum.altimeter));
           setResponse(`ACCEPT\nALTIMETER REQ`);
           break;
         case 'WR':
           dispatch(toggleMetarThunk(args));
+          dispatch(openWindowThunk(windowEnum.metar));
           setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
           break;
         case 'FR':

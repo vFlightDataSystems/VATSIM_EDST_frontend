@@ -3,6 +3,7 @@
 $floating-window-background-dark-grey: #575757;
 $floating-window-medium-grey: #919191;
 $floating-window-light-grey: #ADADAD;
+$floating-window-row-fg-color: #919191;
 
 .floating-window {
   position: absolute;
@@ -28,13 +29,18 @@ $floating-window-light-grey: #ADADAD;
         justify-content: center;
         padding: 0 30px 0 10px;
         border: 1px solid transparent;
+        color: $floating-window-row-fg-color;
+
+        &.suppressed {
+          color: $floating-window-background-dark-grey;
+        }
 
         &.margin {
           margin: 4px 21px 0 0;
         }
 
         &.selected {
-          background-color: $floating-window-light-grey;
+          background-color: $floating-window-row-fg-color;
           color: #000000;
         }
 
@@ -103,15 +109,24 @@ $floating-window-light-grey: #ADADAD;
   }
 }
 
-.delete-button {
+.floating-window-options {
   position: absolute;
-  display: block;
-  height: 18px;
-  padding: 0 2px;
-  width: 100px;
+  display: flex;
+  flex-flow: column;
+  height: auto;
+  width: 140px;
+}
 
+.floating-window-option {
+  //position: absolute;
+  display: inline-flex;
   background-color: $floating-window-background-dark-grey;
   border: 1px solid $floating-window-light-grey;
+  text-indent: 4px;
+
+  &.unselected {
+    background-color: #000000;
+  }
 
   &:hover {
     border: 1px solid #FFFFFF;

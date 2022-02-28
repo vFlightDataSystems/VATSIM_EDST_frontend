@@ -1,7 +1,7 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {
-  addSigmets,
+  addSigmets, ApiSigmetType,
   removeAirportAltimeter,
   removeAirportMetar,
   setAirportAltimeter,
@@ -131,8 +131,8 @@ export const refreshSigmets = createAsyncThunk(
   async (_args, thunkAPI) => {
     await fetchSigmets()
       .then(response => response.json())
-      .then(sigmetStrings => {
-        thunkAPI.dispatch(addSigmets(sigmetStrings));
+      .then((sigmetEntries: ApiSigmetType[]) => {
+        thunkAPI.dispatch(addSigmets(sigmetEntries));
       });
   }
 );

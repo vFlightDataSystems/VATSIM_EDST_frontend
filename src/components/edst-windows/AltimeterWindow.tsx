@@ -6,12 +6,13 @@ import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {altimeterSelector, removeAirportAltimeter} from "../../redux/slices/weatherSlice";
+import {FloatingWindowOptions} from "./FloatingWindowOptions";
 
 export const AltimeterWindow: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(windowPositionSelector(windowEnum.altimeter));
   const [selected, setSelected] = useState<string | null>(null);
-  const [selectedPos, setSelectedPos] = useState<{x: number, y: number, w: number} | null>(null);
+  const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const altimeterList = useAppSelector(altimeterSelector);
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
@@ -19,13 +20,16 @@ export const AltimeterWindow: React.FC = () => {
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selected !== airport) {
       setSelected(airport);
-      setSelectedPos({x: event.currentTarget.offsetLeft, y: event.currentTarget.offsetTop, w: event.currentTarget.offsetWidth});
-    }
-    else {
+      setSelectedPos({
+        x: event.currentTarget.offsetLeft,
+        y: event.currentTarget.offsetTop,
+        w: event.currentTarget.offsetWidth
+      });
+    } else {
       setSelected(null);
       setSelectedPos(null);
     }
-  }
+  };
 
   return pos && (<div className="floating-window altimeter-window"
                       ref={ref}
@@ -54,12 +58,18 @@ export const AltimeterWindow: React.FC = () => {
             {airportAltimeterEntry.airport} {airportAltimeterEntry.time} {airportAltimeterEntry.altimeter}
           </div>
             {selected === airport && selectedPos &&
-            <div className="delete-button no-select"
-                 onMouseDown={() => dispatch(removeAirportAltimeter(airport))}
-                 style={{left: (selectedPos.x + selectedPos.w) + "px", top: selectedPos.y + "px"}}
-            >
-              DELETE {airport}
-            </div>}
+            <FloatingWindowOptions
+              pos={{
+                x: selectedPos.x + selectedPos.w,
+                y: selectedPos.y
+              }}
+              options={[`DELETE ${airport}`]}
+              handleOptionClick={() => {
+                dispatch(removeAirportAltimeter(airport));
+                setSelected(null);
+                setSelectedPos(null);
+              }}
+            />}
           </span>)}
       </div>}
     </div>
