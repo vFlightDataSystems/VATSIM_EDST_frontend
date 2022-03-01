@@ -129,6 +129,7 @@ export const toggleAltimeterThunk = createAsyncThunk(
 export const refreshSigmets = createAsyncThunk(
   'weather/refreshSigmets',
   async (_args, thunkAPI) => {
+    // const sectors = (thunkAPI.getState() as RootState).sectorData.sectors;
     await fetchSigmets()
       .then(response => response.json())
       .then((sigmetEntries: ApiSigmetType[]) => {

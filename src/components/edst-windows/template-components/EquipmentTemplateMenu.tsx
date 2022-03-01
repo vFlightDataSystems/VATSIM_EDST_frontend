@@ -9,6 +9,7 @@ import {EquipmentNavTemplate} from "./EquipmentNavTemplate";
 import {EquipmentSurvTemplate} from "./EquipmentSurvTemplate";
 import {EquipmentCommTemplate} from "./EquipmentCommTemplate";
 import {EquipmentAppServTemplate} from "./EquipmentAppServTemplate";
+import {Tooltips} from "../../../tooltips";
 
 enum menuOptions {
   surv,
@@ -53,18 +54,22 @@ export const EquipmentTemplateMenu: React.FC = () => {
             <EdstButton className={selectedMenu === menuOptions.surv ? 'selected' : ''}
                         content="SURV"
                         onMouseDown={() => setSelectedMenu(menuOptions.surv)}
+                        title={Tooltips.equipmentTemplateMenuSurv}
             />
             <EdstButton className={selectedMenu === menuOptions.nav ? 'selected' : ''}
                         content="NAV"
                         onMouseDown={() => setSelectedMenu(menuOptions.nav)}
+                        title={Tooltips.equipmentTemplateMenuNAV}
             />
             <EdstButton className={selectedMenu === menuOptions.comm ? 'selected' : ''}
                         content="COMM"
                         onMouseDown={() => setSelectedMenu(menuOptions.comm)}
+                        title={Tooltips.equipmentTemplateMenuComm}
             />
             <EdstButton className={selectedMenu === menuOptions.appServ ? 'selected' : ''}
                         content="APP/SERV"
                         onMouseDown={() => setSelectedMenu(menuOptions.appServ)}
+                        title={Tooltips.equipmentTemplateMenuAppServ}
             />
           </div>
           <div className="options-col right">
