@@ -24,7 +24,8 @@ export type ApiSigmetType = {
   text: string,
   area: Position[],
   hazard: {severity: string, type: string},
-  altitude: {max_ft_msg: string, min_ft_msl: string}
+  altitude: {max_ft_msg: string, min_ft_msl: string},
+  sectorIntersects?: {[id: string]: boolean}
 }
 
 export type SigmetEntryType = ApiSigmetType & {

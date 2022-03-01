@@ -1,5 +1,6 @@
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import React from "react";
+import {Tooltips} from "../../../tooltips";
 
 
 export const EquipmentCommTemplate: React.FC = () => {
@@ -10,28 +11,28 @@ export const EquipmentCommTemplate: React.FC = () => {
           VOICE CATEGORY
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_H}>
             <div className={`button-indicator`}/>
             H
           </EdstTooltip>
           (HF)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_V}>
             <div className={`button-indicator`}/>
             V
           </EdstTooltip>
           (VHF)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_U}>
             <div className={`button-indicator`}/>
             U
           </EdstTooltip>
           (UHF)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_Y}>
             <div className={`button-indicator`}/>
             Y
           </EdstTooltip>
@@ -43,49 +44,49 @@ export const EquipmentCommTemplate: React.FC = () => {
           CPDLC CATEGORY
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J1}>
             <div className={`button-indicator`}/>
             J1
           </EdstTooltip>
           (ATN VDL MODE 2)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J2}>
             <div className={`button-indicator`}/>
             J2
           </EdstTooltip>
           (FANS1/A HF)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J3}>
             <div className={`button-indicator`}/>
             J3
           </EdstTooltip>
           (FANS1/A VDL MODE A)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J4}>
             <div className={`button-indicator`}/>
             J4
           </EdstTooltip>
           (FANS1/A VDL MODE 2)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J5}>
             <div className={`button-indicator`}/>
             J5
           </EdstTooltip>
           (FANS1/A INMARSAT)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J6}>
             <div className={`button-indicator`}/>
             J6
           </EdstTooltip>
           (FANS1/A MTSAT)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_J7}>
             <div className={`button-indicator`}/>
             J7
           </EdstTooltip>
@@ -97,21 +98,21 @@ export const EquipmentCommTemplate: React.FC = () => {
           ACARS CATEGORY
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_E1}>
             <div className={`button-indicator`}/>
             E1
           </EdstTooltip>
           (FMCWPR)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_E2}>
             <div className={`button-indicator`}/>
             E2
           </EdstTooltip>
           (D-FIS)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_E3}>
             <div className={`button-indicator`}/>
             E3
           </EdstTooltip>
@@ -123,21 +124,21 @@ export const EquipmentCommTemplate: React.FC = () => {
           SATELLITE RTF
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_M1}>
             <div className={`button-indicator`}/>
             M1
           </EdstTooltip>
           (INMARSAT)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_M2}>
             <div className={`button-indicator`}/>
             M2
           </EdstTooltip>
           (MTSAT)
         </div>
         <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn">
+          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuComm_M3}>
             <div className={`button-indicator`}/>
             M3
           </EdstTooltip>
@@ -147,15 +148,15 @@ export const EquipmentCommTemplate: React.FC = () => {
     </div>
     <div className="eqp-template-row bottom-row">
       DAT/
-      <div className="input-container flex">
+      <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuComm_Dat}>
         <input/>
-      </div>
+      </EdstTooltip>
     </div>
     <div className="eqp-template-row bottom-row">
       COM/
-      <div className="input-container flex">
+      <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuComm_Com}>
         <input/>
-      </div>
+      </EdstTooltip>
     </div>
   </div>);
 };

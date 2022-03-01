@@ -1,5 +1,6 @@
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import React from "react";
+import {Tooltips} from "../../../tooltips";
 
 
 export const EquipmentNavTemplate: React.FC = () => {
@@ -10,28 +11,28 @@ export const EquipmentNavTemplate: React.FC = () => {
             NAVAIDS
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_F}>
               <div className={`button-indicator`}/>
               F
             </EdstTooltip>
             (ADF)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_O}>
               <div className={`button-indicator`}/>
               O
             </EdstTooltip>
             (VOR)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_D}>
               <div className={`button-indicator`}/>
               D
             </EdstTooltip>
             (DME)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_T}>
               <div className={`button-indicator`}/>
               T
             </EdstTooltip>
@@ -43,35 +44,35 @@ export const EquipmentNavTemplate: React.FC = () => {
             RNAV
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_G}>
               <div className={`button-indicator`}/>
               G
             </EdstTooltip>
             (GPS/GNSS)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_I}>
               <div className={`button-indicator`}/>
               I
             </EdstTooltip>
             (INS)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_C}>
               <div className={`button-indicator`}/>
               C
             </EdstTooltip>
             (LORAN C)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_R}>
               <div className={`button-indicator`}/>
               R
             </EdstTooltip>
             (PBN APPROVED)
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_X}>
               <div className={`button-indicator`}/>
               X
             </EdstTooltip>
@@ -80,49 +81,49 @@ export const EquipmentNavTemplate: React.FC = () => {
         </div>
         <div className="eqp-col">
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
               <div className={`button-indicator circle`}/>
               RNAV
             </EdstTooltip>
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
               <div className={`button-indicator circle`}/>
               RNP
             </EdstTooltip>
           </div>
           <div className="eqp-template-row">
-            <div className="input-container small">
+            <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
               <input/>
-            </div>
+            </EdstTooltip>
             D (DEPARTURE)
           </div>
           <div className="eqp-template-row">
-            <div className="input-container small">
+            <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
               <input/>
-            </div>
+            </EdstTooltip>
             E (EN ROUTE)
           </div>
           <div className="eqp-template-row">
-            <div className="input-container small">
+            <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
               <input/>
-            </div>
+            </EdstTooltip>
             A (ARRIVAL)
           </div>
           <div className="eqp-template-row">
-            <div className="input-container small">
+            <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
               <input/>
-            </div>
+            </EdstTooltip>
             G (GLOBAL/OCEAN)
           </div>
           <div className="eqp-template-row">
-            <div className="input-container small">
+            <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
               <input/>
-            </div>
+            </EdstTooltip>
             L (LANDING)
           </div>
           <div className="eqp-template-row">
-            <div className="input-container small">
+            <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
               <input/>
-            </div>
+            </EdstTooltip>
             S (SPECIAL)
           </div>
         </div>
@@ -131,7 +132,7 @@ export const EquipmentNavTemplate: React.FC = () => {
             RVSM
           </div>
           <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn">
+            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_W}>
               <div className={`button-indicator`}/>
               W
             </EdstTooltip>
@@ -141,9 +142,9 @@ export const EquipmentNavTemplate: React.FC = () => {
       </div>
       <div className="eqp-template-row bottom-row">
         NAV/
-        <div className="input-container flex">
+        <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuNAV_Nav}>
           <input/>
-        </div>
+        </EdstTooltip>
       </div>
     </div>);
 };
