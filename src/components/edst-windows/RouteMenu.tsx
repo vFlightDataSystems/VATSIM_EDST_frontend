@@ -39,7 +39,13 @@ export const RouteMenu: React.FC = () => {
   const [route, setRoute] = useState<string>(removeDestFromRouteString((asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, '') ?? ''), entry.dest));
   const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
-  const routes = (asel.window === windowEnum.dep ? entry.routes ?? [] : []).concat(entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)));
+  let routes: any[];
+  if (asel.window === windowEnum.dep) {
+    routes = entry.adar.concat(entry.adr).concat(entry.aar_list ?? []);
+  }
+  else {
+    routes = entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
+  }
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
   const [frd, setFrd] = useState(entry.referenceFix ? computeFrd(entry.referenceFix) : 'XXX000000');
   const {appendOplus, appendStar} = append;
@@ -61,10 +67,14 @@ export const RouteMenu: React.FC = () => {
   const clearedReroute = (rerouteData: any) => {
     let planData;
     const dest = entry.dest;
-    if (!rerouteData.aar) {
-      planData = {route: rerouteData.route, route_data: rerouteData.route_data};
-    } else {
+    if (rerouteData.routeType === 'aar') {
       planData = {route: rerouteData.amended_route, route_fixes: rerouteData.amended_route_fixes};
+    }
+    else if (rerouteData.routeType === 'adr') {
+      planData = {route: rerouteData.amendment + rerouteData.route, route_fixes: rerouteData.amended_route_fixes};
+    }
+    else {
+      planData = {route: rerouteData.route, route_data: rerouteData.route_data};
     }
     planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
     // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or
@@ -270,7 +280,12 @@ export const RouteMenu: React.FC = () => {
           })}
         </div>)}
         {routes?.length > 0 &&
-        <PreferredRouteDisplay routes={routes} clearedReroute={clearedReroute}/>}
+        <PreferredRouteDisplay
+          aar={entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
+          adr={asel.window === windowEnum.dep ? entry.adr : []}
+          adar={asel.window === windowEnum.dep ? entry.adar : []}
+          dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}
+        />}
         <div className="options-row bottom">
           <div className="options-col left">
             <EdstButton disabled={true} content="Flight Data" title={Tooltips.routeMenuFlightData}/>

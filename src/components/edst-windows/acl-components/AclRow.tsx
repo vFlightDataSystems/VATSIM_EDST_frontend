@@ -46,7 +46,7 @@ export const AclRow: React.FC<AclRowProps> = (
       dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     } // eslint-disable-next-line
   }), []);
-  
+
   useEffect(() => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
     const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.onEligibleAar)));
@@ -110,7 +110,10 @@ export const AclRow: React.FC<AclRowProps> = (
         if (!entry.hold_data) {
           dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hold, null, menuEnum.holdMenu));
         } else {
-          dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : 'route'}}));
+          dispatch(updateEntry({
+            cid: entry.cid,
+            data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : 'route'}
+          }));
         }
         break;
       case 1:
