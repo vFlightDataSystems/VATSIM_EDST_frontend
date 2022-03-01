@@ -77,9 +77,11 @@ export type FixType = {
 
 export type EdstPreferredRouteType = {
   eligible?: boolean,
-  route: string,
+  routeType?: string,
+  route?: string,
   route_data?: FixType[],
-  aar_amendment_route_string?: string,
+  amendment?: string,
+  dep?: string,
   dest?: string
 }
 

@@ -9,6 +9,8 @@ import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {aselSelector, closeMenu, menuPositionSelector, setInputFocused} from "../../redux/slices/appSlice";
 import {openMenuThunk} from "../../redux/thunks/thunks";
+import {EdstTooltip} from "../resources/EdstTooltip";
+import {Tooltips} from "../../tooltips";
 
 export const TemplateMenu: React.FC = () => {
   const {
@@ -87,6 +89,7 @@ export const TemplateMenu: React.FC = () => {
           <div className="template-col col-5">
             <EdstButton content="EQP..."
                         onMouseDown={() => dispatch(openMenuThunk(menuEnum.equipmentTemplateMenu, ref.current))}
+                        title={Tooltips.templateMenuEqpButton}
             />
           </div>
           <div className="template-col col-6 header">
@@ -105,109 +108,109 @@ export const TemplateMenu: React.FC = () => {
             ALT
           </div>
           <div className="template-col">
-            <EdstButton disabled={true} content="More..."/>
+            <EdstButton disabled={true} content="More..." title={Tooltips.templateMenuMore}/>
           </div>
         </div>
         <div className="template-row">
           <div className="template-col col-1">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuAid}>
               <input
                 value={aidInput}
                 onChange={(event) => setAidInput(event.target.value.toUpperCase())}
                 onFocus={() => dispatch(setInputFocused(true))}
                 onBlur={() => dispatch(setInputFocused(false))}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-2">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuNum}>
               <input
                 value={numInput}
                 onChange={(event) => setNumInput(event.target.value.toUpperCase())}
                 onFocus={() => dispatch(setInputFocused(true))}
                 onBlur={() => dispatch(setInputFocused(false))}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-3">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuSai}>
               <input
                 value={saiInput}
                 onChange={(event) => setSaiInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-4">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuTyp}>
               <input
                 value={typeInput}
                 onChange={(event) => setTypeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-5">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuEqpBox}>
               <input
                 value={equipInput}
                 onChange={(event) => setEquipInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-6">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuBcn}>
               <input
                 value={beaconInput}
                 onChange={(event) => setBeaconInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-7">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuSpd}>
               <input
                 value={speedInput}
                 onChange={(event) => setSpeedInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-8">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuFix}>
               <input
                 value={frdInput}
                 onChange={(event) => setFrdInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-9">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuTim}>
               <input
                 value={timeInput}
                 onChange={(event) => setTimeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
           <div className="template-col col-10">
-            <div className="input-container">
+            <EdstTooltip className="input-container" title={Tooltips.templateMenuAlt}>
               <input
                 value={altInput}
                 onChange={(event) => setAltInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
-            </div>
+            </EdstTooltip>
           </div>
         </div>
         <div className="template-row">
@@ -216,7 +219,7 @@ export const TemplateMenu: React.FC = () => {
           </div>
         </div>
         <div className="template-row">
-          <div className="template-col input-container">
+          <EdstTooltip className="template-col input-container" title={Tooltips.templateMenuRte}>
             <textarea
               value={routeInput}
               onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
@@ -224,7 +227,7 @@ export const TemplateMenu: React.FC = () => {
               onBlur={() => setInputFocused(false)}
               rows={3}
             />
-          </div>
+          </EdstTooltip>
         </div>
         <div className="template-row">
           <div className="template-col col-1 header">
@@ -232,11 +235,11 @@ export const TemplateMenu: React.FC = () => {
           </div>
           <div className="template-col right"/>
           <div className="template-col">
-            <EdstButton disabled={true} content="Create FP..."/>
+            <EdstButton disabled={true} content="Create FP..." title={Tooltips.templateMenuCreateFp}/>
           </div>
         </div>
         <div className="template-row">
-          <div className="template-col input-container">
+          <EdstTooltip className="template-col input-container" title={Tooltips.templateMenuRmk}>
             <textarea
               value={rmkInput}
               onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
@@ -244,14 +247,14 @@ export const TemplateMenu: React.FC = () => {
               onBlur={() => setInputFocused(false)}
               rows={3}
             />
-          </div>
+          </EdstTooltip>
         </div>
         <div className="template-row">
           <div className="template-col bottom">
-            <EdstButton disabled={true} content="Send"/>
+            <EdstButton disabled={true} content="Send" title={Tooltips.templateMenuSend}/>
           </div>
           <div className="template-col bottom right">
-            <EdstButton className="exit-button" content="Exit"
+            <EdstButton className="exit-button" content="Exit" title={Tooltips.templateMenuExit}
                         onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))}/>
           </div>
         </div>

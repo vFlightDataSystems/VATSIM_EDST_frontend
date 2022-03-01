@@ -24,6 +24,10 @@ type DepRowProps = {
 export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector);
+  const [aarAvail, setAarAvail] = useState(false);
+  const [onAar, setOnAar] = useState(false);
+  const [adrAvail, setAdrAvail] = useState(false);
+  const [onAdr, setOnAdr] = useState(false);
 
   const now = new Date().getTime();
   const route = removeDestFromRouteString(entry.route.slice(0), entry.dest);
@@ -31,14 +35,22 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
   const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const currentFixNames = entry.route_data.map(fix => fix.name);
-  const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix))
-    && !(entry?._aar_list?.filter((aar) => aar.onEligibleAar)));
-  const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar);
+  useEffect(() => {
+    const currentFixNames = entry.route_data.map(fix => fix.name);
+    const aarAvail = !!entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)).length;
+    const onAar = !!entry.aar_list?.filter((aar) => aar.onEligibleAar)?.length;
+    setAarAvail(aarAvail);
+    setOnAar(onAar);
+
+    const adrAvail = !!entry.adr.filter((adr) => adr.eligible).length;
+    const onAdr = entry.adr.filter((adr) => route.startsWith(adr.amendment.adr_amendment))?.length > 0;
+    setAdrAvail(adrAvail);
+    setOnAdr(onAdr);
+  }, [entry.aar_list, entry.adr, entry.route_data, route]);
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-    const eligibleAar = entry?._aar_list?.filter((aar) => aar.eligible);
+    const eligibleAar = entry._aar_list?.filter((aar) => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
       if (currentFixNames.includes(aar.tfix)) {
@@ -46,7 +58,16 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
       }
     }
     return null;
-  }
+  };
+
+  const checkAdrReroutePending = () => {
+    const eligibleAdr = entry.adr.filter((adr) => adr.eligible);
+    if (eligibleAdr?.length > 0) {
+      return eligibleAdr.sort((u: { order: string }, v: { order: string }) => Number(u.order) - Number(v.order))[0].amendment.adr_amendment;
+    }
+    return null;
+  };
+  const pendingAdr = checkAdrReroutePending();
   const pendingAar = checkAarReroutePending();
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
@@ -61,7 +82,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     if (event.button === 2) {
       dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
     }
-  }
+  };
 
   const updateStatus = () => {
     if (entry.depStatus === -1) {
@@ -73,7 +94,7 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
         dispatch(updateEntry({cid: entry.cid, data: {depStatus: 0}}));
       }
     }
-  }
+  };
 
   useEffect(() => (() => {
     if (freeTextContent !== entry.free_text_content) {
@@ -94,13 +115,13 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
         break;
 
     }
-  }
+  };
 
   const isSelected = (cid: string, field: depRowFieldEnum): boolean => {
     return asel?.window === windowEnum.dep && asel?.cid === cid && asel?.field === field;
-  }
+  };
 
-  return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
+  return (<div className={`body-row-container ${index%3 === 2 ? 'row-sep-border' : ''}`}
                key={`dep-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
@@ -169,9 +190,13 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
           >
           <span>
               <span
-                className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
+                className={`${((aarAvail && !onAar) || (adrAvail && !onAdr)) ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
                 {entry.dep}
               </span>
+            {pendingAdr && !onAdr &&
+            <span className={`amendment-2 ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
+              {`[${pendingAdr}]`}
+              </span>}
             {route}
             {pendingAar && !onAar &&
             <span className={`amendment-2 ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
@@ -199,4 +224,4 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
       </div>
     </div>}
   </div>);
-}
+};
