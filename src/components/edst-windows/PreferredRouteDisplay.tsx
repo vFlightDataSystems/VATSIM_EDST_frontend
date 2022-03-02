@@ -42,7 +42,6 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
        clearedReroute
      }) => {
   const [eligibleOnly, setEligibleOnly] = useState(false);
-  const [deltaY, setDeltaY] = useState(0);
 
   const routes = computeRouteList(aar.slice(0), adr.slice(0), adar.slice(0), dep, dest);
 
@@ -65,15 +64,14 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
           />
         </div>
       </div>
-      <div className="prefroute-container"
-           onWheel={(e) => setDeltaY((prevDeltaY) => Math.max(Math.min(((prevDeltaY + e.deltaY/100) | 0), routes.length - 5), 0))}>
-        {Object.entries(routes.slice(deltaY, deltaY + 5) ?? {}).map(([i, r]: [string, EdstPreferredRouteType]) => {
-          return r && (!eligibleOnly || r.eligible) && (r.amendment || r.route) && (
+      <div className="prefroute-container scroll-container prefroute-scroll-container">
+        {Object.entries(routes).map(([i, r]: [string, EdstPreferredRouteType]) => {
+          return r && (!eligibleOnly || r.eligible) && ((r.amendment?.length ?? 0) > 0) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
               <div className="options-col prefroute-col hover"
                    onMouseDown={() => clearedReroute(r)}
               >
-                {r.dep ?? ''}{(r.amendment?.length ?? 0) > 0 ? r.amendment : r.route}{r.dest ?? ''}
+                {r.dep ?? ''}{r.amendment}{r.dest ?? ''}
               </div>
             </div>);
         })}
