@@ -60,14 +60,21 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     return null;
   };
 
-  const checkAdrReroutePending = () => {
-    const eligibleAdr = entry.adr.filter((adr) => adr.eligible);
-    if (eligibleAdr?.length > 0) {
-      return eligibleAdr.sort((u: { order: string }, v: { order: string }) => Number(u.order) - Number(v.order))[0].amendment.adr_amendment;
+  const checkAdrReroutePending = (routes: ({ eligible: boolean, order: string, ierr: any[] } & any)[]) => {
+    const eligibleRoutes = routes.filter((adr) => adr.eligible);
+    if (eligibleRoutes?.length > 0) {
+      const eligibleRnavRoutes = eligibleRoutes.filter((adr) => adr.ierr.length > 0);
+      if (eligibleRnavRoutes.length > 0) {
+        return eligibleRnavRoutes.sort((u: { order: string }, v: { order: string }) => Number(u.order) - Number(v.order))[0].amendment.adr_amendment;
+      } else {
+        return eligibleRoutes.sort((u: { order: string }, v: { order: string }) => Number(u.order) - Number(v.order))[0].amendment.adr_amendment;
+      }
     }
     return null;
   };
-  const pendingAdr = checkAdrReroutePending();
+
+  const pendingAdr = checkAdrReroutePending(entry.adr);
+  // const pendingAdar = checkAdrReroutePending(entry.adar);
   const pendingAar = checkAarReroutePending();
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
