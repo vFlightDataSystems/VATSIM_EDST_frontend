@@ -196,8 +196,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
                onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, menuEnum.routeMenu))}
           >
           <span>
-              <span
-                className={`${((aarAvail && !onAar) || (adrAvail && !onAdr)) ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
+              <span>
+                {/*className={`${((aarAvail && !onAar) || (adrAvail && !onAdr)) ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>*/}
                 {entry.dep}
               </span>
             {pendingAdr && !onAdr &&

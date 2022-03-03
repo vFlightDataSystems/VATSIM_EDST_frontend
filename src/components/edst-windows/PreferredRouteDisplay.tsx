@@ -15,7 +15,7 @@ type PreferredRouteDisplayProps = {
   clearedReroute: (rerouteData: any) => void
 }
 
-export function computeRouteList(aar: any[], adr: any[], adar: any[], dep: string, dest: string): EdstPreferredRouteType[] {
+function computeRouteList(aar: any[], adr: any[], adar: any[], dep: string, dest: string): EdstPreferredRouteType[] {
   let routes: EdstPreferredRouteType[] = adar.map(r => {
     return _.assign({}, r, {dep: dep, dest: dest, routeType: 'adar'});
   });
