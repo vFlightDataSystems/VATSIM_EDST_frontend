@@ -16,6 +16,9 @@ export const AltimeterWindow: React.FC = () => {
   const altimeterList = useAppSelector(altimeterSelector);
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
+  const now = new Date();
+  const utcMinutesNow = now.getUTCHours()*60 + now.getUTCMinutes();
+  console.log(utcMinutesNow);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selected !== airport) {
@@ -50,12 +53,19 @@ export const AltimeterWindow: React.FC = () => {
         </div>
       </div>
       {Object.values(altimeterList).length > 0 && <div className="floating-window-body">
-        {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) =>
-          <span className="floating-window-outer-row" key={`altimeter-list-key-${airport}`}>
+        {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) => {
+          const observationTime = Number(airportAltimeterEntry.time.slice(0, 2))*60 + Number(airportAltimeterEntry.time.slice(2));
+          return (<span className="floating-window-outer-row" key={`altimeter-list-key-${airport}`}>
             <div className={`floating-window-row margin no-select ${selected === airport ? 'selected' : ''}`}
                  onMouseDown={(event) => handleMouseDown(event, airport)}
             >
-            {airportAltimeterEntry.airport} {airportAltimeterEntry.time} {airportAltimeterEntry.altimeter}
+            {airportAltimeterEntry.airport}&nbsp;
+              <span className={(Number(utcMinutesNow) - observationTime) > 60 ? 'altim-underline' : ''}>{airportAltimeterEntry.time}</span>
+              &nbsp;
+              {(Number(utcMinutesNow) - observationTime) > 120 ? '-M-' :
+              <span className={Number(airportAltimeterEntry.altimeter) < 2992 ? 'altim-underline' : ''}>
+                {airportAltimeterEntry.altimeter.slice(1)}
+              </span>}
           </div>
             {selected === airport && selectedPos &&
             <FloatingWindowOptions
@@ -70,7 +80,8 @@ export const AltimeterWindow: React.FC = () => {
                 setSelectedPos(null);
               }}
             />}
-          </span>)}
+          </span>);
+        })}
       </div>}
     </div>
   );

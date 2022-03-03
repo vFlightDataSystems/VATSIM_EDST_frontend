@@ -83,7 +83,7 @@ const setAltimeterThunk = createAsyncThunk(
         .then(metarData => {
           const metarString: string = metarData[0];
           const time = metarString.match(/\d\d(\d{4})Z/)?.[1];
-          const altimeter = metarString.match(/A\d(\d{3})/)?.[1];
+          const altimeter = metarString.match(/A(\d{4})/)?.[1];
           if (time && altimeter) {
             thunkAPI.dispatch(setAirportAltimeter({airport: airport.slice(1), time: time, altimeter: altimeter}));
           }
