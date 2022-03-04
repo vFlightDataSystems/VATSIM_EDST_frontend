@@ -133,6 +133,12 @@ export const refreshSigmets = createAsyncThunk(
     await fetchSigmets()
       .then(response => response.json())
       .then((sigmetEntries: ApiSigmetType[]) => {
+        for (let sigmetEntry of sigmetEntries) {
+          const observationTime = sigmetEntry.text.match(/\d{6}/)?.[0];
+          if (observationTime) {
+            sigmetEntry.text = sigmetEntry.text.slice(sigmetEntry.text.lastIndexOf(observationTime) + 2);
+          }
+        }
         thunkAPI.dispatch(addSigmets(sigmetEntries));
       });
   }

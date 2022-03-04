@@ -5,7 +5,8 @@ import {Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position} fro
 export type WeatherStateType = {
   altimeterList: { [airport: string]: AltimeterEntryType },
   metarList: { [airport: string]: MetarEntryType },
-  sigmetList: { [id: string]: SigmetEntryType }
+  sigmetList: { [id: string]: SigmetEntryType },
+  viewSigmetSuppressed: boolean
 }
 
 export type MetarEntryType = {
@@ -34,7 +35,7 @@ export type SigmetEntryType = ApiSigmetType & {
   polygons: Feature<Polygon | MultiPolygon>
 }
 
-const initialState = {altimeterList: {}, metarList: {}, sigmetList: {}};
+const initialState = {altimeterList: {}, metarList: {}, sigmetList: {}, viewSigmetSuppressed: true};
 
 const weatherSlice = createSlice({
   name: 'weather',
@@ -69,6 +70,9 @@ const weatherSlice = createSlice({
       if (Object.keys(state.sigmetList).includes(action.payload.id)) {
         state.sigmetList[action.payload.id].acknowledged = action.payload.value;
       }
+    },
+    setviewSigmetSuppressed(state, action: {payload: boolean}) {
+      state.viewSigmetSuppressed = action.payload
     }
   }
 });
@@ -80,10 +84,12 @@ export const {
   removeAirportAltimeter,
   addSigmets,
   setSigmetSupressionState,
-  setSigmetAcknowledged
+  setSigmetAcknowledged,
+  setviewSigmetSuppressed
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 
 export const altimeterSelector = (state: RootState) => state.weather.altimeterList;
 export const metarSelector = (state: RootState) => state.weather.metarList;
 export const sigmetSelector = (state: RootState) => state.weather.sigmetList;
+export const viewSigmetSuppressedSelector = (state: RootState) => state.weather.viewSigmetSuppressed;
