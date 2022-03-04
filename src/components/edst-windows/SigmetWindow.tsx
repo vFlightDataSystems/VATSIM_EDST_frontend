@@ -5,7 +5,12 @@ import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
-import {setSigmetAcknowledged, setSigmetSupressionState, sigmetSelector} from "../../redux/slices/weatherSlice";
+import {
+  setSigmetAcknowledged,
+  setSigmetSupressionState, setviewSigmetSuppressed,
+  sigmetSelector,
+  viewSigmetSuppressedSelector
+} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 
 enum sigmetOptionEnum {
@@ -17,8 +22,8 @@ export const SigmetWindow: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(windowPositionSelector(windowEnum.sigmets));
   const sectorId = useAppSelector(state => state.sectorData.sectorId);
+  const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
   const [showOptions, setShowOptions] = useState(false);
-  const [viewSuppressed, setViewSuppressed] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const sigmetList = useAppSelector(sigmetSelector);
@@ -102,10 +107,10 @@ export const SigmetWindow: React.FC = () => {
         unSelectedOptions={[viewSuppressed ? sigmetOptionEnum.hideSuppressed : sigmetOptionEnum.viewSuppressed]}
         handleOptionClick={(option) => {
           if (option as sigmetOptionEnum === sigmetOptionEnum.viewSuppressed) {
-            setViewSuppressed(true);
+            dispatch(setviewSigmetSuppressed(true));
           }
           else if (option as sigmetOptionEnum === sigmetOptionEnum.hideSuppressed) {
-            setViewSuppressed(false);
+            dispatch(setviewSigmetSuppressed(false));
           }
         }}
       />}

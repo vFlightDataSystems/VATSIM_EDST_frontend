@@ -140,7 +140,7 @@ $floating-window-row-fg-color: #919191;
 
 .floating-window-option {
   //position: absolute;
-  display: inline-flex;
+  display: flex;
   height: 18px;
   background-color: $floating-window-background-dark-grey;
   border: 1px solid $floating-window-light-grey;
