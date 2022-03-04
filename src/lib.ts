@@ -209,7 +209,7 @@ export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Poly
   const posPoint = point(pos);
   console.log(polygons);
   // @ts-ignore
-  const sdist = getSignedStratumDistancePointToPolygons(posPoint, entry.flightplan.altitude, entry.interim, polygons);
+  const sdist = getSignedStratumDistancePointToPolygons(posPoint, polygons, entry.flightplan.altitude, entry.interim);
   return sdist*60/entry.flightplan.ground_speed;
 }
 
