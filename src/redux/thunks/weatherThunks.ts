@@ -139,7 +139,7 @@ export const refreshSigmets = createAsyncThunk(
             sigmetEntry.text = sigmetEntry.text.slice(sigmetEntry.text.lastIndexOf(observationTime) + 2);
           }
         }
-        thunkAPI.dispatch(addSigmets(sigmetEntries));
+        thunkAPI.dispatch(addSigmets(sigmetEntries.reverse()));
       });
   }
 );
