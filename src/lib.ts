@@ -26,20 +26,23 @@ function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
  * The returned value is negative if the point is inside of one of the polygons.
  * @param {Point} point - current position
  * @param altitude - filed/assigned altitude
+ * @param interim - assigned temp altitude
  * @param {Feature<Polygon>[]} polygons - airspace defining boundaries
  * @returns {number}
  */
-export function getSignedStratumDistancePointToPolygons(point: Point, altitude: number, polygons: Feature<Polygon>[]): number {
+export function getSignedStratumDistancePointToPolygons(point: Point, polygons: Feature<Polygon>[], altitude: number, interim?: number): number {
   let minDistance = Infinity;
   for (const poly of polygons) {
+    let dist = signedDistancePointToPolygon(point, poly);
     const stratumLow = poly.properties?.alt_low;
     const stratumHigh = poly.properties?.alt_high;
     if (!(stratumLow && stratumHigh)) {
-      let dist = signedDistancePointToPolygon(point, poly);
       minDistance = Math.min(minDistance, dist);
     }
-    else if (altitude > stratumLow && altitude < Number(stratumHigh)) {
-      let dist = signedDistancePointToPolygon(point, poly);
+    else if ((altitude > Number(stratumLow) && altitude < Number(stratumHigh))) {
+      minDistance = Math.min(minDistance, dist);
+    }
+    else if (interim && interim > Number(stratumLow) && interim < Number(stratumHigh)) {
       minDistance = Math.min(minDistance, dist);
     }
   }
@@ -206,7 +209,7 @@ export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Poly
   const posPoint = point(pos);
   console.log(polygons);
   // @ts-ignore
-  const sdist = getSignedStratumDistancePointToPolygons(posPoint, entry.flightplan.altitude, polygons);
+  const sdist = getSignedStratumDistancePointToPolygons(posPoint, entry.flightplan.altitude, entry.interim, polygons);
   return sdist*60/entry.flightplan.ground_speed;
 }
 
