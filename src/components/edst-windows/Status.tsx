@@ -4,13 +4,15 @@ import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {closeWindow, setShowSectorSelector, windowPositionSelector} from "../../redux/slices/appSlice";
+import {EdstButton} from "../resources/EdstButton";
 
 export const Status: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(windowPositionSelector(windowEnum.status));
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
+
 
   return pos && (<div className="floating-window status-window"
                       ref={ref}
@@ -30,13 +32,15 @@ export const Status: React.FC = () => {
           <div className="floating-window-header-block-6-2"/>
         </div>
       </div>
-      <div className="floating-window-body">
+      <div className="floating-window-body status-body">
+        <EdstButton className="floating-window-outer-row" onMouseDown={() => dispatch(setShowSectorSelector(true))}>
+          Change Sectors
+        </EdstButton>
         <div className="floating-window-outer-row">
           Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a>
         </div>
         <div className="floating-window-outer-row">
-          <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank"
-             rel="noreferrer">Roadmap</a>
+          <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank" rel="noreferrer">Roadmap</a>
         </div>
       </div>
     </div>
