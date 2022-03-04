@@ -88,6 +88,7 @@ export const EdstHeader: React.FC = () => {
                             onMouseDown={() =>dispatch(toggleWindow(windowEnum.metar))}
           />
           <EdstHeaderButton open={windows[windowEnum.sigmets].open}
+                            className={sigLen > 0 ? `yellow-border` : ''}
                             content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : '✓'}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sig)}
             // title={Tooltips.sig}
