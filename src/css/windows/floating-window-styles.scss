@@ -18,10 +18,19 @@ $floating-window-row-fg-color: #919191;
     display: flex;
     flex-flow: column;
 
+    &.status-body {
+      padding-top: 4px;
+      padding-left: 20px;
+    }
+
     .floating-window-outer-row {
 
       &.sigmet {
         margin: 6px 0;
+      }
+
+      &.status-row {
+        margin: 3px 0;
       }
 
       .floating-window-row {
@@ -150,6 +159,10 @@ $floating-window-row-fg-color: #919191;
   width: 6px;
   height: 0;
   background-color: $floating-window-light-grey;
+
+  &:hover {
+    all: unset;
+  }
 }
 
 .mca {
