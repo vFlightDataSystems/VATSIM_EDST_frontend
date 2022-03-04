@@ -12,22 +12,36 @@ import {toast} from "./components/toast/ToastManager";
 
 export const REMOVAL_TIMEOUT = 120000;
 
+function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
+  // @ts-ignore
+  let dist = pointToLineDistance(point, polygonToLineString(polygon), {units: 'nauticalmiles'});
+  if (booleanPointInPolygon(point, polygon)) {
+    dist = dist* -1;
+  }
+  return dist
+}
+
 /**
  * Computes the signed distance from a given point to the union of all polygons (in nm).
  * The returned value is negative if the point is inside of one of the polygons.
  * @param {Point} point - current position
- * @param {Polygon[]} polygons - airspace defining boundaries
+ * @param altitude - filed/assigned altitude
+ * @param {Feature<Polygon>[]} polygons - airspace defining boundaries
  * @returns {number}
  */
-export function getSignedDistancePointToPolygons(point: Point, polygons: Polygon[]): number {
+export function getSignedStratumDistancePointToPolygons(point: Point, altitude: number, polygons: Feature<Polygon>[]): number {
   let minDistance = Infinity;
   for (const poly of polygons) {
-    // @ts-ignore
-    let dist = pointToLineDistance(point, polygonToLineString(poly), {units: 'nauticalmiles'});
-    if (booleanPointInPolygon(point, poly)) {
-      dist = dist* -1;
+    const stratumLow = poly.properties?.alt_low;
+    const stratumHigh = poly.properties?.alt_high;
+    if (!(stratumLow && stratumHigh)) {
+      let dist = signedDistancePointToPolygon(point, poly);
+      minDistance = Math.min(minDistance, dist);
     }
-    minDistance = Math.min(minDistance, dist);
+    else if (altitude > stratumLow && altitude < Number(stratumHigh)) {
+      let dist = signedDistancePointToPolygon(point, poly);
+      minDistance = Math.min(minDistance, dist);
+    }
   }
   return minDistance;
 }
@@ -190,8 +204,9 @@ export function processAar(entry: Partial<LocalEdstEntryType>, aar_list: Array<a
 export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Polygon>[]): number {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
   const posPoint = point(pos);
+  console.log(polygons);
   // @ts-ignore
-  const sdist = getSignedDistancePointToPolygons(posPoint, polygons);
+  const sdist = getSignedStratumDistancePointToPolygons(posPoint, entry.flightplan.altitude, polygons);
   return sdist*60/entry.flightplan.ground_speed;
 }
 
