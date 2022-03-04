@@ -59,11 +59,11 @@ export const AltimeterWindow: React.FC = () => {
             <div className={`floating-window-row margin no-select ${selected === airport ? 'selected' : ''}`}
                  onMouseDown={(event) => handleMouseDown(event, airport)}
             >
-            {airportAltimeterEntry.airport}&nbsp;
-              <span className={(Number(utcMinutesNow) - observationTime) > 60 ? 'altim-underline' : ''}>{airportAltimeterEntry.time}</span>
-              &nbsp;
-              {(Number(utcMinutesNow) - observationTime) > 120 ? '-M-' :
-              <span className={Number(airportAltimeterEntry.altimeter) < 2992 ? 'altim-underline' : ''}>
+              <span className="altim-col altim-report-station-col">{airportAltimeterEntry.airport}</span>
+
+              <span className={`altim-col ${(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 60 ? 'altim-underline' : ''}`}>{airportAltimeterEntry.time}</span>
+              {(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 120 ? '-M-' :
+              <span className={`altim-col ${Number(airportAltimeterEntry.altimeter) < 2992 ? 'altim-underline' : ''}`}>
                 {airportAltimeterEntry.altimeter.slice(1)}
               </span>}
           </div>
