@@ -44,7 +44,7 @@ import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
 // const CACHE_TIMEOUT = 300000; // ms
 
 const ENTRIES_REFRESH_RATE = 20000; // 20 seconds
-const WEATHER_REFRESH_RATE = 600000; // 10 minutes
+const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
 const DRAGGING_HIDE_CURSOR: (windowEnum | menuEnum)[] = [
   windowEnum.status,
