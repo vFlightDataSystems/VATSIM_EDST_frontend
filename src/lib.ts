@@ -9,6 +9,7 @@ import {
 import booleanIntersects from "@turf/boolean-intersects";
 import {LocalEdstEntryType, FixType, ReferenceFixType, EdstEntryType} from "./types";
 import {toast} from "./components/toast/ToastManager";
+import * as geomag from 'geomag';
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -207,7 +208,6 @@ export function processAar(entry: Partial<LocalEdstEntryType>, aar_list: Array<a
 export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Polygon>[]): number {
   const pos = [entry.flightplan.lon, entry.flightplan.lat];
   const posPoint = point(pos);
-  console.log(polygons);
   // @ts-ignore
   const sdist = getSignedStratumDistancePointToPolygons(posPoint, polygons, entry.flightplan.altitude, entry.interim);
   return sdist*60/entry.flightplan.ground_speed;
@@ -244,7 +244,8 @@ export function computeCrossingTimes(entry: LocalEdstEntryType): (FixType & { mi
  * @returns {string} - fix/radial/distance in standard format: ABC123456
  */
 export function computeFrd(referenceFix: ReferenceFixType): string {
-  return referenceFix.waypoint_id + Math.round(referenceFix.bearing).toString().padStart(3, '0')
+  const magneticVariation = geomag.field(referenceFix.point.geometry.coordinates[1], referenceFix.point.geometry.coordinates[0]).declination;
+  return referenceFix.waypoint_id + Math.round(referenceFix.bearing - magneticVariation).toString().padStart(3, '0')
     + Math.round(referenceFix.distance).toString().padStart(3, '0');
 }
 
