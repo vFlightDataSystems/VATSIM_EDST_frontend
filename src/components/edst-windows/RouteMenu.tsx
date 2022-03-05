@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
-import {computeFrd, copy, removeDestFromRouteString} from "../../lib";
+import {computeFrd, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../css/images/glob_bright.png';
@@ -22,6 +22,7 @@ import {
 import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
+import {point} from "@turf/turf";
 
 export const RouteMenu: React.FC = () => {
   const {
@@ -32,6 +33,7 @@ export const RouteMenu: React.FC = () => {
   const pos = useAppSelector(menuPositionSelector(menuEnum.routeMenu));
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
+  const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
 
   const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
@@ -47,7 +49,8 @@ export const RouteMenu: React.FC = () => {
     routes = entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
   }
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
-  const [frd, setFrd] = useState(entry.referenceFix ? computeFrd(entry.referenceFix) : 'XXX000000');
+  const closedReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
+  const [frd, setFrd] = useState(closedReferenceFix ? computeFrd(closedReferenceFix) : 'XXX000000');
   const {appendOplus, appendStar} = append;
 
   const ref = useRef(null);
@@ -61,8 +64,9 @@ export const RouteMenu: React.FC = () => {
     }
     setRoute(route);
     setRouteInput(dep ? entry.dep + route + entry.dest : route + entry.dest);
-    setFrd(entry.referenceFix ? computeFrd(entry.referenceFix) : 'XXX000000');
-  }, [asel.window, entry._route, entry.dep, entry.dest, entry.referenceFix, entry.route]);
+    const closedReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
+    setFrd(closedReferenceFix ? computeFrd(closedReferenceFix) : 'XXX000000');
+  }, [asel.window, entry._route, entry.dep, entry.dest, entry.flightplan.lat, entry.flightplan.lon, entry.referenceFix, entry.route, referenceFixes]);
 
   const clearedReroute = (rerouteData: any) => {
     let planData;
