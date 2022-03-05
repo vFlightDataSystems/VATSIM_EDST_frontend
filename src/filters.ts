@@ -20,7 +20,7 @@ export const depFilter = (entry: EdstEntryType, artccId: string) => {
 export const entryFilter = (entry: Partial<LocalEdstEntryType>, polygons: Feature<Polygon>[]) => {
   const pos: Position = [entry.flightplan.lon, entry.flightplan.lat];
   const willEnterAirspace = entry._route_data ? routeWillEnterAirspace(entry._route_data.slice(0), polygons, pos) : false;
-  return ((((entry.boundaryTime ?? Infinity) < BOUNDARY_TIME_FILTER) || entry.aclDisplay)
+  return ((((entry.boundaryTime ?? Infinity) < BOUNDARY_TIME_FILTER))
     && willEnterAirspace
     && Number(entry.flightplan.ground_speed) > AIRBORNE_GROUNDSPEED_FILTER);
 };

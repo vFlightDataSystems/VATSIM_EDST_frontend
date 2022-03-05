@@ -38,25 +38,10 @@ export const refreshEntriesThunk: any = createAsyncThunk(
       const state = thunkAPI.getState() as RootState;
       let currentEntry = _.assign({}, state.entries[newEntry.cid] ?? currentEntryFallbackValue);
       currentEntry = _.assign(currentEntry, refreshEntry(newEntry, polygons, artccId, currentEntry));
-      if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
-        if (!currentEntry.depDisplay) {
-          currentEntry.depDisplay = true;
-          if (currentEntry.aar_list === undefined) {
-            await fetchAarList(state.sectorData.artccId, currentEntry.cid)
-              .then(response => response.json())
-              .then(aarList => {
-                currentEntry.aar_list = aarList;
-                currentEntry._aar_list = processAar(currentEntry, aarList);
-              });
-          }
-        }
-      } else {
-        if (entryFilter(currentEntry, polygons)) {
-          if (!currentEntry.aclDisplay && !currentEntry.aclDeleted) {
-            // remove cid from departure list if will populate the aircraft list
-            currentEntry.aclDisplay = true;
-            currentEntry.depDeleted = true;
-            currentEntry.depDisplay = false;
+      if (currentEntry.flightplan.flight_rules === 'I' || currentEntry.aclDisplay || currentEntry.depDisplay) {
+        if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
+          if (!currentEntry.depDisplay) {
+            currentEntry.depDisplay = true;
             if (currentEntry.aar_list === undefined) {
               await fetchAarList(state.sectorData.artccId, currentEntry.cid)
                 .then(response => response.json())
@@ -66,8 +51,25 @@ export const refreshEntriesThunk: any = createAsyncThunk(
                 });
             }
           }
-          if (referenceFixes.length > 0) {
-            currentEntry.referenceFix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
+        } else {
+          if (currentEntry.aclDisplay || entryFilter(currentEntry, polygons)) {
+            if (!currentEntry.aclDisplay && !currentEntry.aclDeleted) {
+              // remove cid from departure list if will populate the aircraft list
+              currentEntry.aclDisplay = true;
+              currentEntry.depDeleted = true;
+              currentEntry.depDisplay = false;
+              if (currentEntry.aar_list === undefined) {
+                await fetchAarList(state.sectorData.artccId, currentEntry.cid)
+                  .then(response => response.json())
+                  .then(aarList => {
+                    currentEntry.aar_list = aarList;
+                    currentEntry._aar_list = processAar(currentEntry, aarList);
+                  });
+              }
+            }
+            if (referenceFixes.length > 0) {
+              currentEntry.referenceFix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
+            }
           }
         }
       }
