@@ -42,7 +42,7 @@ export const AclRow: React.FC<AclRowProps> = (
   // }
 
   useEffect(() => (() => {
-    if (freeTextContent !== entry.free_text_content) {
+    if (freeTextContent !== (entry.free_text_content ?? '')) {
       dispatch(amendEntryThunk({cid: entry.cid, planData: {free_text_content: freeTextContent}}));
     } // eslint-disable-next-line
   }), []);
