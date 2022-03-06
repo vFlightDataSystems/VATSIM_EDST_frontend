@@ -225,7 +225,7 @@ export const App: React.FC = () => {
       <div className="edst-dragging-outline" style={dragging ? dragPreviewStyle : {display: 'none'}}
            onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
       >
-        {draggingCursorHide && <div className="cursor"/>}
+        {draggingCursorHide && <div className="dragging-cursor"/>}
       </div>
       <EdstContext.Provider value={{
         startDrag: startDrag,

@@ -3,6 +3,9 @@
     src: url('./fonts/EDST.ttf')
 }
 
+$default-cursor: url("cursors/ERAMCursor2.cur"), default;
+$delete-cursor: url("cursors/ERAMDeletionCursor.cur"), default;
+
 $edst-background-black: #000000;
 $edst-font-grey: #ADADAD;
 $edst-font-yellow: #ADAD00;
@@ -25,17 +28,20 @@ $edst-window-dark-grey: #575757;
   background-color: black;
   font-family: Consolas, monospace;
   caret-color: transparent;
+
+  cursor: $default-cursor;
 }
 
 button {
   font-family: Consolas, monospace;
   font-weight: bold;
+  cursor: $default-cursor;
 }
 
 input, textarea {
   caret-color: $edst-font-grey;
   font-family: Consolas, monospace;
-  cursor: default;
+  cursor: $default-cursor;
   font-size: 16px;
   outline: none;
   display: flex;
@@ -68,11 +74,16 @@ input, textarea {
   }
 }
 
-.cursor {
+.dragging-cursor {
   z-index: 999;
-  width: 25px;
-  height: 25px;
-  content: url('images/aero_arrow.cur');
+  width: auto;
+  height: auto;
+  transform: translate(-25%, -25%);
+  content: url('cursors/ERAMCursor2.cur');
+}
+
+.delete-cursor {
+  cursor: $delete-cursor;  
 }
 
 .no-select {
