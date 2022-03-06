@@ -25,16 +25,16 @@ export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVTy
   if (currentEntry.route_data === newEntry.route_data && currentEntry._route_data) { // if route_data has not changed
     newEntry._route_data = getRouteDataDistance(currentEntry._route_data, pos);
     // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-    if (currentEntry.aar_list?.length) {
-      newEntry._aar_list = processAar(currentEntry, currentEntry.aar_list);
+    if (currentEntry.aarList?.length) {
+      newEntry._aarList = processAar(currentEntry, currentEntry.aarList);
     }
   } else { // if route_data has changed
     if (newEntry.route_data) {
       newEntry._route_data = getRouteDataDistance(newEntry.route_data, pos);
     }
     // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-    if (currentEntry.aar_list) {
-      newEntry._aar_list = processAar(currentEntry, currentEntry.aar_list);
+    if (currentEntry.aarList) {
+      newEntry._aarList = processAar(currentEntry, currentEntry.aarList);
     }
   }
   if (newEntry._route_data) {

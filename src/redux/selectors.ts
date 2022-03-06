@@ -15,7 +15,7 @@ export const anyHoldingSelector = createSelector([entriesSelector], (entries) =>
 
 export const anyAssignedHdgSelector = createSelector([entriesSelector], (entries) => {
   for (let entry of Object.values(entries)) {
-    if ((entry?.hdg || entry?.scratch_hdg) && entry.aclDisplay) {
+    if ((entry?.hdg || entry?.scratchHdg) && entry.aclDisplay) {
       return true;
     }
   }
@@ -24,7 +24,7 @@ export const anyAssignedHdgSelector = createSelector([entriesSelector], (entries
 
 export const anyAssignedSpdSelector = createSelector([entriesSelector], (entries) => {
   for (let entry of Object.values(entries)) {
-    if ((entry?.spd || entry?.scratch_spd) && entry.aclDisplay) {
+    if ((entry?.spd || entry?.scratchSpd) && entry.aclDisplay) {
       return true;
     }
   }

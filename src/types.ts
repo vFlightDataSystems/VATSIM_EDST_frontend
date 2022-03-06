@@ -36,8 +36,8 @@ export type EdstEntryType = {
 export type LocalEdstEntryVType = {
   _route?: string, // shortened route string, starting at the next inbound fix
   _route_data?: (FixType & { dist: number })[],
-  aar_list?: any[], // preferred arrival routes
-  _aar_list?: any[] | null, // preferred arrival routes processed by the frontend
+  aarList?: any[], // preferred arrival routes
+  _aarList?: any[] | null, // preferred arrival routes processed by the frontend
   vciStatus: number, // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
   depStatus: number, // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
   aclHighlighted?: boolean,
@@ -48,8 +48,8 @@ export type LocalEdstEntryVType = {
   boundaryTime: number, // minutes until entering the sector's airspace (will be negative if already inside)
   referenceFix?: ReferenceFixType | null, // current FRD
   pendingRemoval?: number | null, // if not null, number represents timestamp when pendingRemoval status was activated
-  scratch_hdg?: string, // speed assigned in the scratchpad
-  scratch_spd?: string, // heading assigned in the scratchpad
+  scratchHdg?: string, // speed assigned in the scratchpad
+  scratchSpd?: string, // heading assigned in the scratchpad
   showFreeText?: boolean, // boolean whether to display the free text row or not
   voiceType?: string, // voice type in VATSIM flightplan, /v/ by default
   aclDisplay: boolean,
@@ -105,6 +105,6 @@ export type SectorDataType = {
 export type PlanDataType = {
   cid: string,
   callsign: string,
-  plan_data: any,
+  planData: { [key: string]: any },
   msg: string
 }

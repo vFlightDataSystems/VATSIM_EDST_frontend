@@ -23,8 +23,9 @@ export const TemplateMenu: React.FC = () => {
   const pos = useAppSelector(menuPositionSelector(menuEnum.templateMenu));
   const [focused, setFocused] = useState(false);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
-  const [route, setRoute] = useState((asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '');
-  const [frd, setFrd] = useState(entry?.referenceFix ? computeFrd(entry.referenceFix) : '');
+
+  const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
+  const frd = entry?.referenceFix ? computeFrd(entry.referenceFix) : '';
 
   const [aidInput, setAidInput] = useState(entry?.callsign ?? '');
   const [numInput, setNumInput] = useState(entry ? 1 : '');
