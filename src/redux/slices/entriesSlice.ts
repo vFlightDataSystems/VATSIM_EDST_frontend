@@ -42,12 +42,12 @@ export const refreshEntriesThunk: any = createAsyncThunk(
         if (depFilter(currentEntry, state.sectorData.artccId) && !currentEntry.depDeleted) {
           if (!currentEntry.depDisplay) {
             currentEntry.depDisplay = true;
-            if (currentEntry.aar_list === undefined) {
+            if (currentEntry.aarList === undefined) {
               await fetchAarList(state.sectorData.artccId, currentEntry.cid)
                 .then(response => response.json())
                 .then(aarList => {
-                  currentEntry.aar_list = aarList;
-                  currentEntry._aar_list = processAar(currentEntry, aarList);
+                  currentEntry.aarList = aarList;
+                  currentEntry._aarList = processAar(currentEntry, aarList);
                 });
             }
           }
@@ -58,12 +58,12 @@ export const refreshEntriesThunk: any = createAsyncThunk(
               currentEntry.aclDisplay = true;
               currentEntry.depDeleted = true;
               currentEntry.depDisplay = false;
-              if (currentEntry.aar_list === undefined) {
+              if (currentEntry.aarList === undefined) {
                 await fetchAarList(state.sectorData.artccId, currentEntry.cid)
                   .then(response => response.json())
                   .then(aarList => {
-                    currentEntry.aar_list = aarList;
-                    currentEntry._aar_list = processAar(currentEntry, aarList);
+                    currentEntry.aarList = aarList;
+                    currentEntry._aarList = processAar(currentEntry, aarList);
                   });
               }
             }

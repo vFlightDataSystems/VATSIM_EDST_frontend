@@ -49,11 +49,11 @@ export const AclRow: React.FC<AclRowProps> = (
 
   useEffect(() => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-    const aarAvail = (entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aar_list?.filter((aar) => aar.onEligibleAar)));
-    const onAar = !!entry._aar_list?.filter((aar) => aar.onEligibleAar)?.length;
+    const aarAvail = (entry.aarList?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)) && !(entry._aarList?.filter((aar) => aar.onEligibleAar)));
+    const onAar = !!entry._aarList?.filter((aar) => aar.onEligibleAar)?.length;
     setAarAvail(aarAvail ?? false);
     setOnAar(onAar);
-  }, [entry._aar_list, entry._route_data, entry.aar_list, entry.route_data]);
+  }, [entry._aarList, entry._route_data, entry.aarList, entry.route_data]);
 
   const holdData = entry.hold_data;
   const now = new Date().getTime();
@@ -67,7 +67,7 @@ export const AclRow: React.FC<AclRowProps> = (
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-    const eligibleAar = entry?._aar_list?.filter((aar) => aar.eligible);
+    const eligibleAar = entry?._aarList?.filter((aar) => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
       if (currentFixNames.includes(aar.tfix)) {
@@ -172,15 +172,15 @@ export const AclRow: React.FC<AclRowProps> = (
         dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.hdg, null, menuEnum.headingMenu));
         break;
       case 1:
-        if (entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) {
-          let promotedHdg = 'LRH'.includes(entry.scratch_hdg.slice(-1)) ? entry.scratch_hdg : `H${entry.scratch_hdg}`;
+        if (entry.scratchHdg && (displayScratchHdg || entry.hdg === null)) {
+          let promotedHdg = 'LRH'.includes(entry.scratchHdg.slice(-1)) ? entry.scratchHdg : `H${entry.scratchHdg}`;
           dispatch(amendEntryThunk({cid: entry.cid, planData: {hdg: promotedHdg, scratch_hdg: null}}));
         }
         break;
       case 2:
         dispatch(amendEntryThunk({
           cid: entry.cid,
-          planData: {[(displayScratchHdg || !entry.hdg) && entry.scratch_hdg ? 'scratch_hdg' : 'hdg']: null}
+          planData: {[(displayScratchHdg || !entry.hdg) && entry.scratchHdg ? 'scratch_hdg' : 'hdg']: null}
         }));
         break;
       default:
@@ -195,15 +195,15 @@ export const AclRow: React.FC<AclRowProps> = (
         dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.spd, null, menuEnum.speedMenu));
         break;
       case 1:
-        if (entry.scratch_spd && (displayScratchSpd || entry.spd === null)) {
-          let promotedSpd = entry.scratch_spd.slice(0, 1) === 'M' ? entry.scratch_spd : `S${entry.scratch_spd}`;
+        if (entry.scratchSpd && (displayScratchSpd || entry.spd === null)) {
+          let promotedSpd = entry.scratchSpd.slice(0, 1) === 'M' ? entry.scratchSpd : `S${entry.scratchSpd}`;
           dispatch(amendEntryThunk({cid: entry.cid, planData: {spd: promotedSpd, scratch_spd: null}}));
         }
         break;
       case 2:
         dispatch(amendEntryThunk({
           cid: entry.cid,
-          planData: {[(displayScratchSpd || !entry.spd) && entry.scratch_spd ? 'scratch_spd' : 'spd']: null}
+          planData: {[(displayScratchSpd || !entry.spd) && entry.scratchSpd ? 'scratch_spd' : 'spd']: null}
         }));
         break;
       default:
@@ -283,15 +283,15 @@ export const AclRow: React.FC<AclRowProps> = (
         <div className={`body-col hover special`}
              onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)}
           // @ts-ignore
-             disabled={!(entry.hdg && entry.scratch_hdg)}>
-          {entry.hdg && entry.scratch_hdg && '*'}
+             disabled={!(entry.hdg && entry.scratchHdg)}>
+          {entry.hdg && entry.scratchHdg && '*'}
         </div>
         <EdstTooltip title={Tooltips.aclHdg}>
           <div className={`body-col hs spd hover ${hidden.includes(aclRowFieldEnum.hdg) ? 'content hidden' : ''}
-              ${isSelected(entry.cid, aclRowFieldEnum.hdg) ? 'selected' : ''} ${(entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) ? 'yellow' : ''}`}
+              ${isSelected(entry.cid, aclRowFieldEnum.hdg) ? 'selected' : ''} ${(entry.scratchHdg && (displayScratchHdg || entry.hdg === null)) ? 'yellow' : ''}`}
                onMouseDown={handleHeadingClick}
           >
-            {(entry.scratch_hdg && (displayScratchHdg || entry.hdg === null)) ? entry.scratch_hdg : entry.hdg}
+            {(entry.scratchHdg && (displayScratchHdg || entry.hdg === null)) ? entry.scratchHdg : entry.hdg}
           </div>
         </EdstTooltip>
         <div className="body-col hs-slash">
@@ -299,17 +299,17 @@ export const AclRow: React.FC<AclRowProps> = (
         </div>
         <EdstTooltip title={Tooltips.aclSpd}>
           <div className={`body-col hs spd hover ${hidden.includes(aclRowFieldEnum.spd) ? 'content hidden' : ''}
-${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch_spd && (displayScratchSpd || entry.spd === null)) ? 'yellow' : ''}`}
+${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratchSpd && (displayScratchSpd || entry.spd === null)) ? 'yellow' : ''}`}
                onMouseDown={handleSpeedClick}
           >
-            {(entry.scratch_spd && (displayScratchSpd || entry.spd === null)) ? entry.scratch_spd : entry.spd}
+            {(entry.scratchSpd && (displayScratchSpd || entry.spd === null)) ? entry.scratchSpd : entry.spd}
           </div>
         </EdstTooltip>
         <div className={`body-col hover special`}
              onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)}
           // @ts-ignore
-             disabled={!(entry.spd && entry.scratch_spd)}>
-          {entry.spd && entry.scratch_spd && '*'}
+             disabled={!(entry.spd && entry.scratchSpd)}>
+          {entry.spd && entry.scratchSpd && '*'}
         </div>
         <div className={`body-col special`}
           // @ts-ignore

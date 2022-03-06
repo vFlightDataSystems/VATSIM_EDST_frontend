@@ -43,10 +43,10 @@ export const RouteMenu: React.FC = () => {
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
   let routes: any[];
   if (asel.window === windowEnum.dep) {
-    routes = entry.adar.concat(entry.adr).concat(entry.aar_list ?? []);
+    routes = entry.adar.concat(entry.adr).concat(entry.aarList ?? []);
   }
   else {
-    routes = entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
+    routes = entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
   }
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
   const closedReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
@@ -285,7 +285,7 @@ export const RouteMenu: React.FC = () => {
         </div>)}
         {routes?.length > 0 &&
         <PreferredRouteDisplay
-          aar={entry._aar_list?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
+          aar={entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
           adr={asel.window === windowEnum.dep ? entry.adr : []}
           adar={asel.window === windowEnum.dep ? entry.adar : []}
           dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}

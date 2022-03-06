@@ -37,8 +37,8 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
 
   useEffect(() => {
     const currentFixNames = entry.route_data.map(fix => fix.name);
-    const aarAvail = !!entry.aar_list?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)).length;
-    const onAar = !!entry.aar_list?.filter((aar) => aar.onEligibleAar)?.length;
+    const aarAvail = !!entry.aarList?.filter((aar) => aar.eligible && currentFixNames.includes(aar.tfix)).length;
+    const onAar = !!entry.aarList?.filter((aar) => aar.onEligibleAar)?.length;
     setAarAvail(aarAvail);
     setOnAar(onAar);
 
@@ -46,11 +46,11 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     const onAdr = entry.adr.filter((adr) => route.startsWith(adr.amendment.adr_amendment))?.length > 0;
     setAdrAvail(adrAvail);
     setOnAdr(onAdr);
-  }, [entry.aar_list, entry.adr, entry.route_data, route]);
+  }, [entry.aarList, entry.adr, entry.route_data, route]);
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
-    const eligibleAar = entry._aar_list?.filter((aar) => aar.eligible);
+    const eligibleAar = entry._aarList?.filter((aar) => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
       if (currentFixNames.includes(aar.tfix)) {
