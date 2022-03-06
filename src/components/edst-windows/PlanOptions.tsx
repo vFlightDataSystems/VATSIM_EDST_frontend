@@ -114,7 +114,7 @@ export const PlanOptions: React.FC = () => {
         </div>
         <div className="options-row">
           <EdstTooltip
-            className="options-col hover"
+            className="options-col hover delete-cursor"
             content="Delete"
             title={Tooltips.planOptionsDelete}
             onMouseDown={() => {
