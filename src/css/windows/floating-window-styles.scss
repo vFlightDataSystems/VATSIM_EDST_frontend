@@ -126,6 +126,15 @@ $floating-window-row-fg-color: #919191;
       align-items: center;
       display: inline-flex;
       width: 20px;
+
+      .floating-window-header-block-6-2 {
+        width: 8px;
+        height: 2px;
+        background-color: $floating-window-light-grey;
+        border: none;
+        outline: none;
+        pointer-events: none;
+      }
     }
   }
 }
@@ -152,16 +161,6 @@ $floating-window-row-fg-color: #919191;
 
   &:hover {
     border: 1px solid #FFFFFF;
-  }
-}
-
-.floating-window-header-block-6-2 {
-  width: 6px;
-  height: 0;
-  background-color: $floating-window-light-grey;
-
-  &:hover {
-    all: unset;
   }
 }
 

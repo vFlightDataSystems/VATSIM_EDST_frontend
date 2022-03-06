@@ -1,10 +1,10 @@
 @font-face {
-    font-family: EDST, monospace;
-    src: url('./fonts/EDST.ttf')
+  font-family: EDST, monospace;
+  src: url('./fonts/EDST.ttf')
 }
 
-$default-cursor: url("cursors/ERAMCursor2.cur"), default;
-$delete-cursor: url("cursors/ERAMDeletionCursor.cur"), default;
+$eram-cursor: url("cursors/ERAMCursor2.cur"), auto;
+$eram-delete-cursor: url("cursors/ERAMDeletionCursor.cur"), auto;
 
 $edst-background-black: #000000;
 $edst-font-grey: #ADADAD;
@@ -29,19 +29,19 @@ $edst-window-dark-grey: #575757;
   font-family: Consolas, monospace;
   caret-color: transparent;
 
-  cursor: $default-cursor;
+  cursor: $eram-cursor;
 }
 
 button {
   font-family: Consolas, monospace;
   font-weight: bold;
-  cursor: $default-cursor;
+  cursor: $eram-cursor;
 }
 
 input, textarea {
   caret-color: $edst-font-grey;
   font-family: Consolas, monospace;
-  cursor: $default-cursor;
+  cursor: $eram-cursor;
   font-size: 16px;
   outline: none;
   display: flex;
@@ -83,7 +83,7 @@ input, textarea {
 }
 
 .delete-cursor {
-  cursor: $delete-cursor;  
+  cursor: $eram-delete-cursor;
 }
 
 .no-select {
@@ -107,7 +107,6 @@ input, textarea {
   input, textarea {
     width: calc(100% - 7px);
     //height: calc(100% - 9px);
-    cursor: default;
     font-size: 16px;
     outline: none;
     display: flex;
