@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -41,6 +41,12 @@ export const TemplateMenu: React.FC = () => {
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setInputFocused(false));
+    }
+  }, []);
 
   // useEffect(() => {
   //   const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
