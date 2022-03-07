@@ -1,5 +1,8 @@
+@import "styles";
+
 .sector-selector {
   color: white;
+
   h1 {
     text-align: center;
     font-size: 25px;
@@ -21,11 +24,11 @@
     left: -9999px;
   }
   label {
-    cursor: pointer;
     position: relative;
     display: flex;
     align-items: center;
     margin-top: 10px;
+    cursor: $eram-cursor;
   }
   label::before,
   label::after {

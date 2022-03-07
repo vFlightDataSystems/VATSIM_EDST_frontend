@@ -5,6 +5,7 @@ import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {toggleSector} from "../redux/slices/sectorSlice";
 import {setShowSectorSelector} from "../redux/slices/appSlice";
 import {refreshEntriesThunk} from "../redux/slices/entriesSlice";
+import {EdstTooltip} from "./resources/EdstTooltip";
 
 export const SectorSelector: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,12 +23,13 @@ export const SectorSelector: React.FC = () => {
         <h1>Pick your sectors</h1>
         <form>
           <div className="checkbox-block">
-            {Object.keys(sectors).map((id) =>
-              [<input key={`sector-selector-${id}-input`} type="checkbox" className="checkbox-effect checkbox-effect-2"
-                      onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id} checked={selectedSectors.includes(id)}
-              />,
-                <label key={`sector-selector-${id}-label`} htmlFor={id}>{id}</label>
-              ])}
+            {Object.entries(sectors).map(([id, sector]) =>
+              <EdstTooltip title={sector?.properties?.name} key={`sector-selector-${id}-container`}>
+                {[<input key={`sector-selector-${id}-input`} type="checkbox" className="checkbox-effect checkbox-effect-2"
+                       onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id} checked={selectedSectors.includes(id)}
+                />,
+                <label key={`sector-selector-${id}-label`} htmlFor={id}>{id}</label>]}
+              </EdstTooltip>)}
           </div>
         </form>
         <EdstButton className="no-select" content="Save" onMouseDown={() => {
