@@ -1,13 +1,19 @@
 import {
   bearing,
-  booleanPointInPolygon, distance, Feature, length,
-  lineString, Point,
+  booleanPointInPolygon,
+  distance,
+  Feature,
+  length,
+  lineString,
+  Point,
   point,
-  pointToLineDistance, Polygon,
-  polygonToLineString, Position
+  pointToLineDistance,
+  Polygon,
+  polygonToLineString,
+  Position
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {LocalEdstEntryType, FixType, ReferenceFixType, EdstEntryType} from "./types";
+import {EdstEntryType, FixType, LocalEdstEntryType, ReferenceFixType} from "./types";
 import {toast} from "./components/toast/ToastManager";
 import * as geomag from 'geomag';
 
@@ -19,7 +25,7 @@ function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
   if (booleanPointInPolygon(point, polygon)) {
     dist = dist* -1;
   }
-  return dist
+  return dist;
 }
 
 /**
@@ -39,11 +45,9 @@ export function getSignedStratumDistancePointToPolygons(point: Point, polygons: 
     const stratumHigh = poly.properties?.alt_high;
     if (!(stratumLow && stratumHigh)) {
       minDistance = Math.min(minDistance, dist);
-    }
-    else if ((altitude > Number(stratumLow) && altitude < Number(stratumHigh))) {
+    } else if ((altitude > Number(stratumLow) && altitude < Number(stratumHigh))) {
       minDistance = Math.min(minDistance, dist);
-    }
-    else if (interim && interim > Number(stratumLow) && interim < Number(stratumHigh)) {
+    } else if (interim && interim > Number(stratumLow) && interim < Number(stratumHigh)) {
       minDistance = Math.min(minDistance, dist);
     }
   }
@@ -284,4 +288,37 @@ export function removeDestFromRouteString(route: string, dest: string): string {
     route = route.slice(0, -dest.length);
   }
   return route;
+}
+
+export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEdstEntryType, referenceFixes: ReferenceFixType[] | null):
+  { route: string, route_data: FixType[], cleared_direct: { frd: string | null, fix: string } } | null {
+  let {_route: newRoute, _route_data: routeData, dest} = entry;
+  if (newRoute && routeData) {
+    let fixNames = routeData.map((e: { name: string }) => e.name);
+    const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
+    const frd = closestReferenceFix ? computeFrd(closestReferenceFix) : null;
+
+    const index = fixNames.indexOf(clearedFixName);
+    for (let name of fixNames.slice(0, index + 1).reverse()) {
+      if (newRoute.includes(name)) {
+        newRoute = newRoute.slice(newRoute.indexOf(name) + name.length);
+        if (!Number(newRoute[0])) {
+          newRoute = `..${clearedFixName}` + newRoute;
+        } else {
+          newRoute = `..${clearedFixName}.${name}${newRoute}`;
+        }
+        break;
+      }
+    }
+    // new_route = `..${fix}` + new_route;
+    newRoute = removeDestFromRouteString(newRoute.slice(0), dest);
+    // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
+    copy(`${frd ?? ''}${newRoute}`.replace(/\.+$/, ''));
+    return {
+      route: newRoute,
+      route_data: routeData.slice(index),
+      cleared_direct: {frd: (frd ?? null), fix: clearedFixName}
+    };
+  }
+  return null;
 }

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
-import {computeFrd, formatUtcMinutes} from "../../lib";
+import {computeFrd, formatUtcMinutes, getClearedToFixRouteData} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/slices/aclSlice";
@@ -18,7 +18,7 @@ import {
   windowPositionSelector
 } from "../../redux/slices/appSlice";
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
-import {addAclEntryByFid} from "../../redux/thunks/entriesThunks";
+import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
 
 type MessageComposeAreaProps = {
   setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
@@ -33,6 +33,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const mcaCommandString = useAppSelector(mcaCommandStringSelector);
   const pos = useAppSelector(windowPositionSelector(windowEnum.messageComposeArea));
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const referenceFixes = useAppSelector(state => state.sectorData.referenceFixes);
   const entries = useAppSelector(state => state.entries);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
@@ -71,18 +72,37 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     }
   };
 
+  const getEntryByFid = (fid: string): LocalEdstEntryType | undefined => {
+   return Object.values(entries ?? {})
+     ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+  }
+
   const flightplanReadout = (fid: string) => {
     const now = new Date();
     const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
-    const entry: LocalEdstEntryType | any = Object.values(entries ?? {})
-      ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: LocalEdstEntryType | undefined = getEntryByFid(fid);
     if (entry) {
       let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
-        + ` ${entry.altitude} ${entry.dep}./.${entry?.reference_fix ? computeFrd(entry?.reference_fix) + '..' : ''}${entry._route.replace(/^\.+/, '')}`;
+        + ` ${entry.altitude} ${entry.dep}./.${entry.referenceFix ? computeFrd(entry.referenceFix) + '..' : ''}${entry._route?.replace(/^\.+/, '')}`;
       dispatch(setMraMessage(msg));
     }
   };
+
+  const parseQU = (args: string[]) => {
+    if (args.length === 2) {
+      const entry = getEntryByFid(args[1]);
+      if (entry && entry.aclDisplay && entry._route_data?.map(fix => fix.name).includes(args[0])) {
+        const planData = getClearedToFixRouteData(args[0], entry, referenceFixes);
+        if (planData) {
+          dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
+          setResponse(`ACCEPT\nCLEARED DIRECT`);
+          return;
+        }
+      }
+    }
+    setResponse(`REJECT\nFORMAT`);
+  }
 
   const parseCommand = () => {
     // TODO: rename command variable
@@ -138,24 +158,27 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
               setResponse(`REJECT\n${mcaCommandString}`);
           }
           break;//end case UU
-        case 'QD':
+        case 'QU': // cleared direct to fix: QU <fix> <fid>
+          parseQU(args);
+          break; //end case QU
+        case 'QD': // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));
           dispatch(openWindowThunk(windowEnum.altimeter));
           setResponse(`ACCEPT\nALTIMETER REQ`);
-          break;
-        case 'WR':
+          break; //end case QD
+        case 'WR': // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
           dispatch(openWindowThunk(windowEnum.metar));
           setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
-          break;
-        case 'FR':
+          break; //end case WR
+        case 'FR': // flightplan readout: FR <fid>
           if (args.length === 1) {
             flightplanReadout(args[0]);
             setResponse(`ACCEPT\nREADOUT\n${mcaCommandString}`);
           } else {
             setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
-          break;//end case FR
+          break; //end case FR
         default: // TODO: give better error msg
           setResponse(`REJECT\n\n${mcaCommandString}`);
       }

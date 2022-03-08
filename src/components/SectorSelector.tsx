@@ -10,7 +10,7 @@ import {EdstTooltip} from "./resources/EdstTooltip";
 export const SectorSelector: React.FC = () => {
   const dispatch = useAppDispatch();
   const sectors = useAppSelector((state) => state.sectorData.sectors);
-  const selectedSectors = useAppSelector((state) => state.sectorData.selectedSectors)
+  const selectedSectors = useAppSelector((state) => state.sectorData.selectedSectors);
 
   return (
     <div className="sector-selector">
