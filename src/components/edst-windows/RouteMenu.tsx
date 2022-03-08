@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
-import {computeFrd, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
+import {computeFrd, copy, getClearedToFixRouteData, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../css/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../css/images/glob_bright.png';
@@ -44,13 +44,12 @@ export const RouteMenu: React.FC = () => {
   let routes: any[];
   if (asel.window === windowEnum.dep) {
     routes = entry.adar.concat(entry.adr).concat(entry.aarList ?? []);
-  }
-  else {
+  } else {
     routes = entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
   }
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
-  const closedReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
-  const [frd, setFrd] = useState(closedReferenceFix ? computeFrd(closedReferenceFix) : 'XXX000000');
+  const closestReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
+  const [frd, setFrd] = useState(closestReferenceFix ? computeFrd(closestReferenceFix) : 'XXX000000');
   const {appendOplus, appendStar} = append;
 
   const ref = useRef(null);
@@ -73,11 +72,9 @@ export const RouteMenu: React.FC = () => {
     const dest = entry.dest;
     if (rerouteData.routeType === 'aar') {
       planData = {route: rerouteData.amended_route, route_fixes: rerouteData.amended_route_fixes};
-    }
-    else if (rerouteData.routeType === 'adr') {
+    } else if (rerouteData.routeType === 'adr') {
       planData = {route: rerouteData.amendment + rerouteData.route, route_fixes: rerouteData.amended_route_fixes};
-    }
-    else {
+    } else {
       planData = {route: rerouteData.route, route_data: rerouteData.route_data};
     }
     planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
@@ -101,44 +98,20 @@ export const RouteMenu: React.FC = () => {
   };
 
   const clearedToFix = (clearedFixName: string) => {
-    let {_route: newRoute, _route_data: routeData, dest} = entry;
-    if (newRoute && routeData) {
-      let fixNames = routeData.map((e: { name: string }) => e.name);
-      const index = fixNames?.indexOf(clearedFixName);
-      for (let name of fixNames.slice(0, index + 1).reverse()) {
-        if (newRoute.includes(name)) {
-          newRoute = newRoute.slice(newRoute.indexOf(name) + name.length);
-          if (!Number(newRoute[0])) {
-            newRoute = `..${clearedFixName}` + newRoute;
-          } else {
-            newRoute = `..${clearedFixName}.${name}${newRoute}`;
-          }
-          break;
-        }
+    const planData = getClearedToFixRouteData(clearedFixName, entry, !(asel.window === windowEnum.dep) ? referenceFixes : null);
+    if (planData) {
+      if (!trialPlan) {
+        dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
+      } else {
+        dispatch(addTrialPlanThunk({
+          cid: entry.cid,
+          callsign: entry.callsign,
+          planData: planData,
+          msg: `AM ${entry.cid} RTE ${!(asel.window === windowEnum.dep) && planData.cleared_direct.frd}${planData.route}${entry.dest}`
+        }));
       }
-      // new_route = `..${fix}` + new_route;
-      newRoute = removeDestFromRouteString(newRoute.slice(0), dest);
-      // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
-      copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${newRoute}`.replace(/\.+$/, ''));
-      const planData = {
-        route: newRoute,
-        route_data: routeData.slice(index),
-        cleared_direct: {frd: (!(asel.window === windowEnum.dep) ? frd : null), fix: clearedFixName}
-      };
-      if (planData) {
-        if (!trialPlan) {
-          dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
-        } else {
-          dispatch(addTrialPlanThunk({
-            cid: entry.cid,
-            callsign: entry.callsign,
-            planData: planData,
-            msg: `AM ${entry.cid} RTE ${!(asel.window === windowEnum.dep) && planData.cleared_direct.frd}${newRoute}${dest}`
-          }));
-        }
-      }
-      dispatch(closeMenu(menuEnum.routeMenu));
     }
+    dispatch(closeMenu(menuEnum.routeMenu));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
