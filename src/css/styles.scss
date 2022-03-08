@@ -1,10 +1,18 @@
 @font-face {
-  font-family: EDST, monospace;
-  src: url('./fonts/EDST.ttf')
+  font-family: EDST;
+  src: url('./fonts/EDST.ttf');
+}
+
+@font-face {
+  font-family: SPLEEN;
+  src: url('./fonts/spleen-8x16.otf');
 }
 
 $eram-cursor: url("cursors/ERAMCursor2.cur"), default;
 $eram-delete-cursor: url("cursors/ERAMDeletionCursor.cur"), default;
+
+$default-cursor: default;
+$default-delete-cursor: default;
 
 $edst-background-black: #000000;
 $edst-font-grey: #ADADAD;
@@ -26,22 +34,26 @@ $edst-window-dark-grey: #575757;
   padding: 0;
   margin: 0;
   background-color: black;
-  font-family: Consolas, monospace;
+  font-family: EDST;
   caret-color: transparent;
 
-  cursor: $eram-cursor;
+  -webkit-font-smoothing: none;
+
+  cursor: $default-cursor;
 }
 
 button {
-  font-family: Consolas, monospace;
-  font-weight: bold;
-  cursor: $eram-cursor;
+  font-family: EDST;
+  //font-weight: bold;
+  -webkit-font-smoothing: none;
+  cursor: $default-cursor;
 }
 
 input, textarea {
   caret-color: $edst-font-grey;
-  font-family: Consolas, monospace;
-  cursor: $eram-cursor;
+  font-family: EDST;
+  -webkit-font-smoothing: none;
+  cursor: $default-cursor;
   font-size: 16px;
   outline: none;
   display: flex;
@@ -49,7 +61,7 @@ input, textarea {
   overflow-wrap: anywhere;
   color: $edst-font-grey;
   border: none;
-  //caret: underscore;
+  caret: underscore;
   background-color: #000000;
 }
 
@@ -76,14 +88,15 @@ input, textarea {
 
 .dragging-cursor {
   z-index: 999;
-  width: auto;
-  height: auto;
-  transform: translate(-25%, -25%);
-  content: url('cursors/ERAMCursor2.cur');
+  width: 25px;
+  height: 25px;
+  content: url('cursors/aero_arrow.cur');
+  //transform: translate(-25%, -25%);
+  //content: url('cursors/ERAMCursor2.cur');
 }
 
 .delete-cursor {
-  cursor: $eram-delete-cursor;
+  cursor: $default-delete-cursor;
 }
 
 .no-select {
