@@ -95,39 +95,37 @@ export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixT
  * @param {string} route - parsed route string
  * @param {FixType[]} routeData - fixes on the route
  * @param {Position} pos - lon/lat pair, current position
+ * @param {Feature<Polygon>[]} polygons - airspace defining polygons
  * @param {string} dest - ICAO string of destination airport
  * @returns {{_route: string, _route_data: FixType}}
  */
-export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, dest: string): { _route: string, _route_data: FixType[] } {
+export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, polygons: Feature<Polygon>[], dest: string): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
     let fixNames = routeData.map(e => e.name);
     if (fixNames.slice(-1)[0] === dest) {
       fixNames.pop();
     }
-    const sortedRouteData = routeData.slice(0).sort((u, v) => u.dist - v.dist);
-    const closestFix = sortedRouteData[0];
-    const index = routeData.indexOf(closestFix);
-    if (index === routeData.length - 1) {
-      return {_route: `.${closestFix.name}`, _route_data: [closestFix]};
+    let firstFixToShow = routeData[0];
+    for (let fix of routeData) {
+      if (polygons.filter(polygon => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
+        break;
+      }
+      firstFixToShow = fix;
     }
-    const followingFix = routeData[index + 1];
-    const posPoint = point(pos);
-    const line = lineString([closestFix.pos, followingFix.pos]);
-    const lineDistance = pointToLineDistance(posPoint, line, {units: 'nauticalmiles'});
-    const nextFix = (lineDistance >= closestFix.dist) ? closestFix : followingFix;
-    for (let name of fixNames.slice(0, fixNames.indexOf(nextFix.name) + 1).reverse()) {
+    // compute route string starting from firstFixToShow
+    for (let name of fixNames.slice(0, fixNames.indexOf(firstFixToShow.name) + 1).reverse()) {
       let index = route.lastIndexOf(name);
       if (index > -1) {
         route = route.slice(index + name.length);
         if (!Number(route[0])) {
-          route = `..${nextFix.name}` + route;
+          route = `..${firstFixToShow.name}` + route;
         } else {
-          route = `..${nextFix.name}.${name}${route}`;
+          route = `..${firstFixToShow.name}.${name}${route}`;
         }
         break;
       }
     }
-    routeData = routeData.slice(routeData.indexOf(nextFix));
+    routeData = routeData.slice(routeData.indexOf(firstFixToShow));
   }
   return {_route: route, _route_data: routeData};
 }
