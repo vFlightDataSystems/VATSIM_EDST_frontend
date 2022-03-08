@@ -1,5 +1,10 @@
 @import "../styles";
 
+@font-face {
+  font-family: EDST, monospace;
+  src: url('../fonts/EDST.ttf')
+}
+
 $floating-window-background-dark-grey: #575757;
 $floating-window-medium-grey: #919191;
 $floating-window-light-grey: #ADADAD;
