@@ -24,10 +24,10 @@ export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVTy
   newEntry.route = removeDestFromRouteString(newEntry.route.slice(0), newEntry.dest);
   if (currentEntry.route_data === newEntry.route_data && currentEntry._route_data) { // if route_data has not changed
     newEntry._route_data = getRouteDataDistance(currentEntry._route_data, pos);
-    // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
-    if (currentEntry.aarList?.length) {
-      newEntry._aarList = processAar(currentEntry, currentEntry.aarList);
-    }
+    // // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
+    // if (currentEntry.aarList?.length) {
+    //   newEntry._aarList = processAar(currentEntry, currentEntry.aarList);
+    // }
   } else { // if route_data has changed
     if (newEntry.route_data) {
       newEntry._route_data = getRouteDataDistance(newEntry.route_data, pos);
@@ -38,7 +38,7 @@ export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVTy
     }
   }
   if (newEntry._route_data) {
-    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos, dest));
+    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos, polygons, dest));
   }
   if (newEntry.update_time === currentEntry.update_time
     || (((newEntry._route_data?.[-1]?.dist ?? Infinity) < 15) && newEntry.dest_info)
