@@ -132,7 +132,7 @@ export const AclRow: React.FC<AclRowProps> = (
       case 0:
         dispatch(updateEntry({
           cid: entry.cid, data: {
-            aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') ? 'remarks' : null,
+            aclRouteDisplay: !(entry.aclRouteDisplay === 'remarks') && entry.remarks.length > 0 ? 'remarks' : null,
             remarksChecked: true
           }
         }));
@@ -328,12 +328,10 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
           {entry.hold_data ? 'H' : ''}
         </div>
         <EdstTooltip title={Tooltips.aclRemarksBtn}>
-          <div className={`body-col special ${!entry.remarksChecked ? 'remarks-unchecked' : ''}`}
-            // @ts-ignore
-               disabled={!(entry.flightplan.remarks?.length > 0)}
+          <div className={`body-col special ${!entry.remarksChecked && entry.remarks.length > 0 ? 'remarks-unchecked' : ''}`}
                onMouseDown={handleRemarksClick}
           >
-            *
+            {entry.remarks.length > 0 && '*'}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclRoute}>
