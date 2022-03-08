@@ -23,6 +23,7 @@ import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
+import _ from "lodash";
 
 export const RouteMenu: React.FC = () => {
   const {
@@ -245,9 +246,9 @@ export const RouteMenu: React.FC = () => {
             {(asel.window === windowEnum.dep) ? entry.dep + route + entry.dest : `./.${route}${entry.dest}`}
           </div>
         </div>
-        {[...Array(Math.min(routeData?.length ?? 0, 10)).keys()].map((i) => <div className="options-row"
+        {_.range(0, Math.min(routeData?.length ?? 0, 10)).map((i) => <div className="options-row"
                                                                                  key={`route-menu-row-${i}`}>
-          {[...Array(((routeData?.length ?? 0)/10 | 0) + 1).keys()].map((j) => {
+          {_.range(0, ((routeData?.length ?? 0)/10 | 0) + 1).map((j) => {
             const fixName = routeData?.[Number(i) + Number(j)*10]?.name;
             return (fixName && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                             content={fixName}
