@@ -96,10 +96,15 @@ export const App: React.FC = () => {
     }
   }, [altMenuRef.current.inputRef]);
 
+  const computePreviewPos = (x: number, y: number, width: number, height: number): {left: number, top: number} => {
+    return {left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 1)), top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 1))};
+  }
+
   const draggingHandler = useCallback((event: MouseEvent) => {
     if (event && bodyRef?.current?.windowRef?.current) {
       const relX = event.pageX - bodyRef?.current.relativePos.x;
       const relY = event.pageY - bodyRef?.current.relativePos.y;
+      const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
       const window = bodyRef.current.draggingWindowName;
       let ppos;
       if (window in windowEnum) {
@@ -112,12 +117,11 @@ export const App: React.FC = () => {
         return;
       }
       setDragPreviewStyle({
-        left: ppos.x + relX,
-        top: ppos.y + relY,
+        ...computePreviewPos( ppos.x + relX, ppos.y + relY, width, height),
         position: "absolute",
         zIndex: 999,
-        height: bodyRef.current.windowRef.current.clientHeight,
-        width: bodyRef.current.windowRef.current.clientWidth
+        height: height,
+        width: width
       });
     }
   }, [windows, menus]);
@@ -157,6 +161,7 @@ export const App: React.FC = () => {
     if (dragging && bodyRef?.current) {
       const relX = event.pageX - bodyRef.current.relativePos.x;
       const relY = event.pageY - bodyRef.current.relativePos.y;
+      const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
       const window = bodyRef.current.draggingWindowName;
       if (bodyRef?.current) {
         bodyRef.current.removeEventListener('mousemove', draggingHandler);
@@ -171,16 +176,17 @@ export const App: React.FC = () => {
       if (!ppos) {
         return;
       }
+      const {left: x, top: y} = computePreviewPos( ppos.x + relX, ppos.y + relY, width, height);
       if (window in windowEnum) {
         dispatch(setWindowPosition({
           window: bodyRef.current.draggingWindowName as windowEnum,
-          pos: {x: ppos.x + relX, y: ppos.y + relY}
+          pos: {x: x, y: y}
         }));
       }
       else if (window in menuEnum) {
         dispatch(setMenuPosition({
           menu: bodyRef.current.draggingWindowName as menuEnum,
-          pos: {x: ppos.x + relX, y: ppos.y + relY}
+          pos: {x: x, y: y}
         }));
       }
       dispatch(setDragging(false));
