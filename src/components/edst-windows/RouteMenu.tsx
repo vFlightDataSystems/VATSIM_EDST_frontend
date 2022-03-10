@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
@@ -36,24 +36,29 @@ export const RouteMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
 
-  const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
   const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(removeDestFromRouteString((asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, '') ?? ''), entry.dest));
   const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
+  const [append, setAppend] = useState({appendOplus: false, appendStar: false});
+  const ref = useRef(null);
+
+  const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
+    [entry.flightplan.lat, entry.flightplan.lon, referenceFixes]);
+  const frd = useMemo(() => closestReferenceFix ? computeFrd(closestReferenceFix) : 'XXX000000', [closestReferenceFix]);
+
+  const {appendOplus, appendStar} = useMemo(() => append, [append]);
+  const currentRouteFixes: string[] = useMemo(() => entry?._route_data?.map(fix => fix.name) ?? [], [entry._route_data]);
+  const routeData = useMemo(() => (asel.window === windowEnum.dep) ? entry.route_data : entry._route_data,
+    [asel.window, entry._route_data, entry.route_data]);
+
   let routes: any[];
   if (asel.window === windowEnum.dep) {
     routes = entry.adar.concat(entry.adr).concat(entry.aarList ?? []);
   } else {
     routes = entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
   }
-  const [append, setAppend] = useState({appendOplus: false, appendStar: false});
-  const closestReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
-  const [frd, setFrd] = useState(closestReferenceFix ? computeFrd(closestReferenceFix) : 'XXX000000');
-  const {appendOplus, appendStar} = append;
-
-  const ref = useRef(null);
 
   useEffect(() => {
     const dep = asel.window === windowEnum.dep;
@@ -64,8 +69,6 @@ export const RouteMenu: React.FC = () => {
     }
     setRoute(route);
     setRouteInput(dep ? entry.dep + route + entry.dest : route + entry.dest);
-    const closedReferenceFix = getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]));
-    setFrd(closedReferenceFix ? computeFrd(closedReferenceFix) : 'XXX000000');
   }, [asel.window, entry._route, entry.dep, entry.dest, entry.flightplan.lat, entry.flightplan.lon, entry.referenceFix, entry.route, referenceFixes]);
 
   const clearedReroute = (rerouteData: any) => {
@@ -137,8 +140,6 @@ export const RouteMenu: React.FC = () => {
       dispatch(closeMenu(menuEnum.routeMenu));
     }
   };
-
-  const routeData = (asel.window === windowEnum.dep) ? entry.route_data : entry._route_data;
 
   return pos && (<div
       onMouseEnter={() => setFocused(true)}
@@ -247,7 +248,7 @@ export const RouteMenu: React.FC = () => {
           </div>
         </div>
         {_.range(0, Math.min(routeData?.length ?? 0, 10)).map((i) => <div className="options-row"
-                                                                                 key={`route-menu-row-${i}`}>
+                                                                          key={`route-menu-row-${i}`}>
           {_.range(0, ((routeData?.length ?? 0)/10 | 0) + 1).map((j) => {
             const fixName = routeData?.[Number(i) + Number(j)*10]?.name;
             return (fixName && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}

@@ -222,3 +222,4 @@ export const menuPositionSelector = (menu: menuEnum) => (state: RootState) => st
 export const aselSelector = (state: RootState) => state.app.asel;
 export const aclAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.acl ? state.app.asel : null;
 export const depAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.dep ? state.app.asel : null;
+export const draggingSelector = (state: RootState) => state.app.dragging;

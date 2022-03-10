@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
@@ -85,8 +85,8 @@ export function AclTable() {
     }
   };
 
-  const entryList = Object.values(entries).filter((entry: LocalEdstEntryType) => entry.aclDisplay);
-  const spaEntryList = Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa));
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay), [entries]);
+  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa)), [entryList]);
 
   return (<div className="acl-body no-select">
     <div className="body-row header" key="acl-table-header">

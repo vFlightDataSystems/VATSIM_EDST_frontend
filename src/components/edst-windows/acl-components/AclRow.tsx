@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useEffect, useRef, useState} from 'react';
+import React, {MouseEventHandler, useEffect, useMemo, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
@@ -55,10 +55,13 @@ export const AclRow: React.FC<AclRowProps> = (
     setOnAar(onAar);
   }, [entry._aarList, entry._route_data, entry.aarList, entry.route_data]);
 
-  const holdData = entry.hold_data;
+  const holdData = useMemo(() => entry.hold_data, [entry.hold_data]);
+  const route = useMemo(() => {
+    let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
+    return removeDestFromRouteString(route.slice(0), entry.dest);
+  }, [entry]);
+
   const now = new Date().getTime();
-  let route = entry._route?.replace(/^\.+/, '') ?? entry.route;
-  route = removeDestFromRouteString(route.slice(0), entry.dest);
 
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
