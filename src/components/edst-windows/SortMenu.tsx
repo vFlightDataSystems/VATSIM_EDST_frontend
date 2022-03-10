@@ -15,11 +15,12 @@ export const SortMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const menuProps = useAppSelector(menuSelector(menuEnum.sortMenu));
   const window = menuProps.openedBy === windowEnum.dep ? 'dep' : 'acl';
-  const {startDrag, stopDrag} = useContext(EdstContext);
-  const [focused, setFocused] = useState(false);
   const sortData = useAppSelector((state) => state[window].sortData);
+  const [focused, setFocused] = useState(false);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
+  const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef(null);
+
   let sortStateCopy = Object.assign({}, sortState);
 
   return menuProps?.position && (<div

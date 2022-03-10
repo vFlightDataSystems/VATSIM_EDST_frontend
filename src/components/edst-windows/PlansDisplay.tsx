@@ -4,9 +4,10 @@ import '../../css/windows/plans-display-styles.scss';
 import {PlansDisplayHeader} from "./plans-display-components/PlansDisplayHeader";
 import {PlansDisplayTable} from "./plans-display-components/PlansDisplayTable";
 import {useAppSelector} from "../../redux/hooks";
+import {draggingSelector} from "../../redux/slices/appSlice";
 
 export const PlansDisplay: React.FC = () => {
-  const dragging = useAppSelector((state) => state.app.dragging);
+  const dragging = useAppSelector(draggingSelector);
   const [focused, setFocused] = useState(false);
 
   return (<div

@@ -18,7 +18,6 @@ export const AltimeterWindow: React.FC = () => {
   const ref = useRef(null);
   const now = new Date();
   const utcMinutesNow = now.getUTCHours()*60 + now.getUTCMinutes();
-  console.log(utcMinutesNow);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selected !== airport) {

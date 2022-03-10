@@ -23,10 +23,10 @@ export const SigmetWindow: React.FC = () => {
   const pos = useAppSelector(windowPositionSelector(windowEnum.sigmets));
   const sectorId = useAppSelector(state => state.sectorData.sectorId);
   const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
+  const sigmetList = useAppSelector(sigmetSelector);
   const [showOptions, setShowOptions] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
-  const sigmetList = useAppSelector(sigmetSelector);
   const {startDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement>(null);
 

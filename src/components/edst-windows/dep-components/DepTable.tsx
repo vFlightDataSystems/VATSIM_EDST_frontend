@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
@@ -11,9 +11,8 @@ const COMPLETED_SYMBOL = '✓';
 export function DepTable() {
   const sortData = useAppSelector((state) => state.dep.sortData);
   const manualPosting = useAppSelector((state) => state.dep.manualPosting);
-
-  const [hidden, setHidden] = useState<string[]>([]);
   const entries = useAppSelector(state => state.entries);
+  const [hidden, setHidden] = useState<string[]>([]);
 
   const toggleHideColumn = (name: string) => {
     let hiddenCopy = hidden.slice(0);
@@ -39,8 +38,8 @@ export function DepTable() {
     }
   };
 
-  const entryList = Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.depDisplay);
-  const spaEntryList = Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa));
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.depDisplay), [entries]);
+  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa)), [entryList]);
 
   return (<div className="dep-body no-select">
     <div className="body-row header" key="dep-table-header">

@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useMemo, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
@@ -24,7 +24,8 @@ export const PlanOptions: React.FC = () => {
   const [focused, setFocused] = useState(false);
   const ref = useRef(null);
   const entry = useAppSelector(state => state.entries[asel.cid]);
-  const dep = asel.window === windowEnum.dep;
+
+  const dep = useMemo(() => asel.window === windowEnum.dep, [asel.window]);
 
   function openMenu(menu: menuEnum) {
     dispatch(openMenuThunk(menu, ref.current, menuEnum.planOptions, true));

@@ -26,6 +26,7 @@ import {initThunk} from "./redux/thunks/initThunk";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
 import {menuEnum, windowEnum} from "./enums";
 import {
+  draggingSelector,
   openWindow,
   setDragging,
   setMcaCommandString,
@@ -63,7 +64,7 @@ export const App: React.FC = () => {
   const showSectorSelector = useAppSelector((state) => state.app.showSectorSelector);
   const mcaCommandString = useAppSelector((state) => state.app.mcaCommandString);
   const inputFocused = useAppSelector((state) => state.app.inputFocused);
-  const dragging = useAppSelector((state) => state.app.dragging);
+  const dragging = useAppSelector(draggingSelector);
   const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
