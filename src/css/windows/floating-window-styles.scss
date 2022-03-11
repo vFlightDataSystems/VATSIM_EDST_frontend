@@ -174,7 +174,7 @@ $floating-window-row-fg-color: #919191;
   width: 400px;
   background-color: #000000;
   border: 1px solid $floating-window-light-grey;
-  font-family: EDST, monospace;
+  font-family: $default-font-family;
 
   .mca-input-area {
     line-height: 1;
@@ -184,7 +184,7 @@ $floating-window-row-fg-color: #919191;
 
     input {
       width: 98%;
-      font-family: EDST, monospace;
+      font-family: $default-font-family;
     }
   }
 

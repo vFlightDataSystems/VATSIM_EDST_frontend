@@ -8,8 +8,20 @@
   src: url('./fonts/spleen-8x16.otf');
 }
 
+@font-face {
+  font-family: RETRO_GAMING;
+  src: url('./fonts/Retro Gaming.ttf');
+}
+
+@font-face {
+  font-family: VCS_MONO;
+  src: url('./fonts/VCR_OSD_MONO_1.001.ttf');
+}
+
 $eram-cursor: url("cursors/ERAMCursor2.cur"), default;
 $eram-delete-cursor: url("cursors/ERAMDeletionCursor.cur"), default;
+
+$default-font-family: VCS_MONO;
 
 $default-cursor: default;
 $default-delete-cursor: default;
@@ -34,7 +46,7 @@ $edst-window-dark-grey: #575757;
   padding: 0;
   margin: 0;
   background-color: black;
-  font-family: EDST;
+  font-family: $default-font-family;
   caret-color: transparent;
 
   -webkit-font-smoothing: none;
@@ -43,7 +55,7 @@ $edst-window-dark-grey: #575757;
 }
 
 button {
-  font-family: EDST;
+  font-family: $default-font-family;
   //font-weight: bold;
   -webkit-font-smoothing: none;
   cursor: $default-cursor;
@@ -51,7 +63,7 @@ button {
 
 input, textarea {
   caret-color: $edst-font-grey;
-  font-family: EDST;
+  font-family: $default-font-family;
   -webkit-font-smoothing: none;
   cursor: $default-cursor;
   font-size: 16px;
