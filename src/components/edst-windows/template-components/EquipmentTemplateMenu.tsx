@@ -10,12 +10,37 @@ import {EquipmentSurvTemplate} from "./EquipmentSurvTemplate";
 import {EquipmentCommTemplate} from "./EquipmentCommTemplate";
 import {EquipmentAppServTemplate} from "./EquipmentAppServTemplate";
 import {Tooltips} from "../../../tooltips";
+import {EdstTooltip} from "../../resources/EdstTooltip";
 
 enum menuOptions {
   surv,
   nav,
   comm,
   appServ
+}
+
+export type EquipmentTemplateRowProps = {
+  rowClassName?: string
+  buttonClassName?: string,
+  buttonText: string,
+  selected: boolean,
+  tooltip: string,
+  text?: string,
+  key: string,
+  toggleSelect: () => void
+};
+
+export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = (props) => {
+  return <div className={`eqp-template-row ${props.rowClassName ?? ''}`} key={props.key}>
+    <EdstTooltip className="eqp-content-col btn"
+                 title={props.tooltip}
+                 onMouseDown={props.toggleSelect}
+    >
+      <div className={`button-indicator ${props.buttonClassName ?? ''} ${props.selected ? 'selected' : ''}`}/>
+      {props.buttonText}
+    </EdstTooltip>
+    {props.text ?? ''}
+  </div>;
 }
 
 export const EquipmentTemplateMenu: React.FC = () => {
