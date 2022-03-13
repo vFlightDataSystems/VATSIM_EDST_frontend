@@ -192,13 +192,19 @@ export const EquipmentCommTemplate: React.FC = () => {
     <div className="eqp-template-row bottom-row">
       DAT/
       <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuComm_Dat}>
-        <input/>
+        <input value={[...acarsCategories as string[]].concat([...satelliteCategories as string[]])
+          .sort((u,v) => u.localeCompare(v)).join('')}
+               onChange={() => {}}
+        />
       </EdstTooltip>
     </div>
     <div className="eqp-template-row bottom-row">
       COM/
       <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuComm_Com}>
-        <input/>
+        <input value={[...voiceCategories as string[]].concat([...cpdlcCategories as string[]])
+          .sort((u,v) => u.localeCompare(v)).join('')}
+               onChange={() => {}}
+        />
       </EdstTooltip>
     </div>
   </div>);
