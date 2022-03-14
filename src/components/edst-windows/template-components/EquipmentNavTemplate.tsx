@@ -71,7 +71,6 @@ export const EquipmentNavTemplate: React.FC = () => {
     }
   }
 
-
   return (<div>
     <div className="options-row margin-top">
       <div className="eqp-col">
