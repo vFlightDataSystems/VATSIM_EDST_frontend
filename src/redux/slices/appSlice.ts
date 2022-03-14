@@ -19,7 +19,8 @@ export const AIRCRAFT_MENUS = [
   menuEnum.headingMenu,
   menuEnum.holdMenu,
   menuEnum.cancelHoldMenu,
-  menuEnum.templateMenu
+  menuEnum.templateMenu,
+  menuEnum.equipmentTemplateMenu
 ];
 
 type AppWindowType = {
