@@ -49,7 +49,7 @@ export const EdstHeader: React.FC = () => {
       <div className="edst-header-row">
         <div className="edst-header-row-left">
           <button className="tiny" disabled={true}>
-            🡳
+            {'\u{1F873}'}
           </button>
           <button className={`small ${windows[windowEnum.more].open ? 'open' : ''}`}
                   disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.more)}
