@@ -26,7 +26,7 @@ export type EquipmentTemplateRowProps = {
   selected: boolean,
   tooltip: string,
   text?: string,
-  key: string,
+  key?: string,
   toggleSelect: () => void
 };
 

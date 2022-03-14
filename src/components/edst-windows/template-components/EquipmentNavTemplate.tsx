@@ -37,14 +37,15 @@ const rnavCatText = {
 
 export const EquipmentNavTemplate: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
-  const strings = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]?.split('-')?.[1]?.match(/[A-Z]\d?/g);
-  const navaidCats = strings?.filter(s => Object.keys(NavCatEnum).includes(s)) as NavCatEnum[];
+  const field10a = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]?.split('-')?.[1]?.match(/[A-Z]\d?/g);
+  const navaidCats = field10a?.filter(s => Object.keys(NavCatEnum).includes(s)) as NavCatEnum[];
   const [navCategories, setNavCategories] = useState<NavCatEnum[]>(navaidCats ?? []);
 
-  const rnavCats = strings?.filter(s => Object.keys(RnavCatEnum).includes(s)) as RnavCatEnum[];
+  const rnavCats = field10a?.filter(s => Object.keys(RnavCatEnum).includes(s)) as RnavCatEnum[];
   const [rnavCategories, setRnavCategories] = useState<RnavCatEnum[]>(rnavCats ?? []);
 
-  const [rvsm, setRvsm] = useState<boolean>(false);
+  const initialRvsm = !!field10a?.includes('W');
+  const [rvsm, setRvsm] = useState<boolean>(initialRvsm);
 
   const toggleCategory = (cat: NavCatEnum | RnavCatEnum) => {
     if (Object.keys(NavCatEnum).includes(cat)) {
