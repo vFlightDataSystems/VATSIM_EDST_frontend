@@ -320,3 +320,15 @@ export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEds
   }
   return null;
 }
+
+export function equipmentIcaoToNas(s: string): string {
+  return '';
+}
+
+export function getDepString(dep?: string): string | null {
+  return dep ? `${dep}\u{2191}` : null;
+}
+
+export function getDestString(dest?: string): string | null {
+  return dest ? `${dest}\u{2193}` : null;
+}
