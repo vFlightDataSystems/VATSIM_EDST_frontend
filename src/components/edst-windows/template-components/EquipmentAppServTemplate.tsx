@@ -14,8 +14,8 @@ enum AppCategoryEnum {
 
 export const EquipmentAppServTemplate: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
-  const strings = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]?.split('-')?.[1]?.match(/[A-Z]\d?/g);
-  const appCats = strings?.[0]?.split('')?.filter(s => Object.keys(AppCategoryEnum).includes(s)) as AppCategoryEnum[];
+  const field10a = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]?.split('-')?.[1]?.match(/[A-Z]\d?/g);
+  const appCats = field10a?.[0]?.split('')?.filter(s => Object.keys(AppCategoryEnum).includes(s)) as AppCategoryEnum[];
   const [appCategories, setAppCategories] = useState<AppCategoryEnum[]>(appCats ?? []);
 
   const toggleCategory = (cat: AppCategoryEnum) => {

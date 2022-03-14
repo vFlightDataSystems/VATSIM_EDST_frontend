@@ -5,7 +5,7 @@ import {fetchEdstEntries, fetchAarList} from "../../api";
 import {refreshEntry} from "../refresh";
 import {RootState} from "../store";
 import {depFilter, entryFilter} from "../../filters";
-import {getClosestReferenceFix, processAar} from "../../lib";
+import {equipmentIcaoToNas, getClosestReferenceFix, processAar} from "../../lib";
 import {point} from "@turf/turf";
 
 export type EntriesStateType = {
@@ -51,6 +51,11 @@ export const refreshEntriesThunk: any = createAsyncThunk(
                 });
             }
           }
+          let icaoFields = currentEntry.flightplan?.aircraft?.split('/').slice(1);
+          icaoFields[0] = icaoFields[0]?.split('-')?.pop();
+          if (icaoFields?.length === 2) {
+            currentEntry.equipment = equipmentIcaoToNas(icaoFields[0], icaoFields[1]);
+          }
         } else {
           if (currentEntry.aclDisplay || entryFilter(currentEntry, polygons)) {
             if (!currentEntry.aclDisplay && !currentEntry.aclDeleted) {
@@ -69,6 +74,11 @@ export const refreshEntriesThunk: any = createAsyncThunk(
             }
             if (referenceFixes.length > 0) {
               currentEntry.referenceFix = getClosestReferenceFix(referenceFixes, point([newEntry.flightplan.lon, newEntry.flightplan.lat]));
+            }
+            let icaoFields = currentEntry.flightplan?.aircraft?.split('/').slice(1);
+            icaoFields[0] = icaoFields[0]?.split('-')?.pop();
+            if (icaoFields?.length === 2) {
+              currentEntry.equipment = equipmentIcaoToNas(icaoFields[0], icaoFields[1]);
             }
           }
         }

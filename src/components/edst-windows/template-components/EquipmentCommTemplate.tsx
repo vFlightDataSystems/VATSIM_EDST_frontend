@@ -65,18 +65,18 @@ const satCatText = {
 
 export const EquipmentCommTemplate: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
-  const strings = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]
+  const field10a = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]
     ?.split('-')?.[1]?.match(/[A-Z]\d?/g);
-  const voiceCat = strings?.[0]?.split('')?.filter(s => Object.keys(VoiceCatEnum).includes(s)) as VoiceCatEnum[];
+  const voiceCat = field10a?.[0]?.split('')?.filter(s => Object.keys(VoiceCatEnum).includes(s)) as VoiceCatEnum[];
   const [voiceCategories, setVoiceCategories] = useState<VoiceCatEnum[]>(voiceCat ?? []);
 
-  const cpdlcCats = strings?.filter(s => Object.keys(CpdlcCatEnum).includes(s)) as CpdlcCatEnum[];
+  const cpdlcCats = field10a?.filter(s => Object.keys(CpdlcCatEnum).includes(s)) as CpdlcCatEnum[];
   const [cpdlcCategories, setCpdlcCategories] = useState<CpdlcCatEnum[]>(cpdlcCats ?? []);
 
-  const acarsCats = strings?.filter(s => Object.keys(AcarsCatEnum).includes(s)) as AcarsCatEnum[];
+  const acarsCats = field10a?.filter(s => Object.keys(AcarsCatEnum).includes(s)) as AcarsCatEnum[];
   const [acarsCategories, setAcarsCategories] = useState<AcarsCatEnum[]>(acarsCats ?? []);
 
-  const satCats = strings?.filter(s => Object.keys(SatCatEnum).includes(s)) as SatCatEnum[];
+  const satCats = field10a?.filter(s => Object.keys(SatCatEnum).includes(s)) as SatCatEnum[];
   const [satelliteCategories, setSatelliteCategories] = useState<SatCatEnum[]>(satCats ?? []);
 
   const toggleCategory = (cat: CpdlcCatEnum | AcarsCatEnum | SatCatEnum | VoiceCatEnum) => {

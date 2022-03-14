@@ -46,14 +46,14 @@ enum AdsbVTypeEnum {
 
 export const EquipmentSurvTemplate: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
-  const equipment = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(2)?.[0]?.match(/[A-Z]\d?/g);
+  const field10b = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(2)?.[0]?.match(/[A-Z]\d?/g);
 
-  const transponderType = equipment?.[0];
+  const transponderType = field10b?.[0];
   const [transponderCategory, setTransponderCategory] = useState<TransponderCatEnum | null>(
     transponderType && Object.keys(TransponderCatEnum).includes(transponderType) ? transponderType as TransponderCatEnum : null);
-  const adsbBInitialType = Object.keys(AdsbBTypeEnum).filter(t => equipment?.includes(t))?.[0];
-  const adsbUInitialType = Object.keys(AdsbUTypeEnum).filter(t => equipment?.includes(t))?.[0];
-  const adsbVInitialType = Object.keys(AdsbVTypeEnum).filter(t => equipment?.includes(t))?.[0];
+  const adsbBInitialType = Object.keys(AdsbBTypeEnum).filter(t => field10b?.includes(t))?.[0];
+  const adsbUInitialType = Object.keys(AdsbUTypeEnum).filter(t => field10b?.includes(t))?.[0];
+  const adsbVInitialType = Object.keys(AdsbVTypeEnum).filter(t => field10b?.includes(t))?.[0];
   const [adsbBType, setAdsbBType] = useState<AdsbBTypeEnum | null>(adsbBInitialType as AdsbBTypeEnum ?? null);
   const [adsbUType, setAdsbUType] = useState<AdsbUTypeEnum | null>(adsbUInitialType as AdsbUTypeEnum ?? null);
   const [adsbVType, setAdsbVType] = useState<AdsbVTypeEnum | null>(adsbVInitialType as AdsbVTypeEnum ?? null);

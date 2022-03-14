@@ -23,7 +23,7 @@ function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
   // @ts-ignore
   let dist = pointToLineDistance(point, polygonToLineString(polygon), {units: 'nauticalmiles'});
   if (booleanPointInPolygon(point, polygon)) {
-    dist = dist* -1;
+    dist = dist * -1;
   }
   return dist;
 }
@@ -97,7 +97,7 @@ export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixT
  * @param {Position} pos - lon/lat pair, current position
  * @param {Feature<Polygon>[]} polygons - airspace defining polygons
  * @param {string} dest - ICAO string of destination airport
- * @returns {{_route: string, _route_data: FixType}}
+ * @returns {{_route: string, _route_data: FixType[]}}
  */
 export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, polygons: Feature<Polygon>[], dest: string): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
@@ -145,7 +145,7 @@ export function getClosestReferenceFix(referenceFixes: any[], posPoint: Feature<
     }, fix);
   });
   let closestFix = fixesDistance.sort((u, v) => u.distance - v.distance)[0];
-  closestFix.bearing = (bearing(closestFix.point, posPoint) + 360)%360;
+  closestFix.bearing = (bearing(closestFix.point, posPoint) + 360) % 360;
   return closestFix;
 }
 
@@ -212,7 +212,7 @@ export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Poly
   const posPoint = point(pos);
   // @ts-ignore
   const sdist = getSignedStratumDistancePointToPolygons(posPoint, polygons, entry.flightplan.altitude, entry.interim);
-  return sdist*60/entry.flightplan.ground_speed;
+  return sdist * 60 / entry.flightplan.ground_speed;
 }
 
 /**
@@ -224,7 +224,7 @@ export function computeCrossingTimes(entry: LocalEdstEntryType): (FixType & { mi
   let newRouteData = [];
   if (entry._route_data) {
     const now = new Date();
-    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const groundspeed = Number(entry.flightplan?.ground_speed);
     if (entry._route_data.length > 0 && groundspeed > 0) {
       let lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
@@ -232,7 +232,7 @@ export function computeCrossingTimes(entry: LocalEdstEntryType): (FixType & { mi
         lineData.push(fix.pos);
         newRouteData.push({
           ...fix,
-          minutesAtFix: utcMinutes + 60*length(lineString(lineData), {units: 'nauticalmiles'})/groundspeed
+          minutesAtFix: utcMinutes + 60 * length(lineString(lineData), {units: 'nauticalmiles'}) / groundspeed
         });
       }
     }
@@ -257,7 +257,7 @@ export function computeFrd(referenceFix: ReferenceFixType): string {
  * @returns {string} - UTC time string in HHMM format
  */
 export function formatUtcMinutes(minutes: number): string {
-  return (((minutes%1440 + 1440)/60 | 0)%24).toString().padStart(2, "0") + ((minutes + 60)%60 | 0).toString().padStart(2, "0");
+  return (((minutes % 1440 + 1440) / 60 | 0) % 24).toString().padStart(2, "0") + ((minutes + 60) % 60 | 0).toString().padStart(2, "0");
 }
 
 export function copy(text: string) {
@@ -321,8 +321,62 @@ export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEds
   return null;
 }
 
-export function equipmentIcaoToNas(s: string): string {
-  return '';
+export function equipmentIcaoToNas(field10a: string, field10b: string): string {
+  let nasSuffix = '';
+  if (field10a.includes('W')) {
+    if (field10b.match(/[CPSEHL]/g)?.length) {
+      if (field10a.includes('G')) {
+        nasSuffix = 'L';
+      } else if (field10b.match(/[RCIX]/g)?.length) {
+        nasSuffix = 'Z';
+      } else {
+        nasSuffix = 'W';
+      }
+    } else if (field10b.match(/[AXIN]/g)?.length) {
+      nasSuffix = 'H';
+    }
+  } else if (field10a.includes('G')) {
+    if (field10b.match(/[CPSEHL]/g)?.length) {
+      nasSuffix = 'G';
+    } else if (field10b.match(/[AXIN]/g)?.length) {
+      nasSuffix = 'S';
+    } else {
+      nasSuffix = 'V';
+    }
+  } else if (field10a.match(/[RCIX]/g)?.length) {
+    if (field10b.match(/[CPSEHL]/g)?.length) {
+      nasSuffix = 'I';
+    } else if (field10b.match(/[AXIN]/g)?.length) {
+      nasSuffix = 'C';
+    } else {
+      nasSuffix = 'Y';
+    }
+  } else if (field10a.includes('D')) {
+    if (field10b.match(/[CPSEHL]/g)?.length) {
+      nasSuffix = 'A';
+    } else if (field10b.match(/[AXIN]/g)?.length) {
+      nasSuffix = 'B';
+    } else {
+      nasSuffix = 'D';
+    }
+  } else if (field10a.includes('T')) {
+    if (field10b.match(/[CPSEHL]/g)?.length) {
+      nasSuffix = 'P';
+    } else if (field10b.match(/[AXIN]/g)?.length) {
+      nasSuffix = 'N';
+    } else {
+      nasSuffix = 'M';
+    }
+  } else {
+    if (field10b.match(/[CPSEHL]/g)?.length) {
+      nasSuffix = 'U';
+    } else if (field10b.match(/[AXIN]/g)?.length) {
+      nasSuffix = 'T';
+    } else {
+      nasSuffix = 'X';
+    }
+  }
+  return nasSuffix;
 }
 
 export function getDepString(dep?: string): string | null {
