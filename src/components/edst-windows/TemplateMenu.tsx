@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
-import {computeFrd} from "../../lib";
+import {computeFrd, getDepString, getDestString} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
@@ -24,7 +24,10 @@ export const TemplateMenu: React.FC = () => {
   const [focused, setFocused] = useState(false);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
-  const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
+  const route = (asel?.window === windowEnum.dep
+      ? entry?.route?.concat(getDestString(entry?.dest) ?? '')
+      : entry?._route?.replace(/^\.*/, '')?.concat(getDestString(entry?.dest) ?? ''))
+    ?? '';
   const frd = entry?.referenceFix ? computeFrd(entry.referenceFix) : '';
 
   const [aidInput, setAidInput] = useState(entry?.callsign ?? '');
@@ -37,7 +40,7 @@ export const TemplateMenu: React.FC = () => {
   const [frdInput, setFrdInput] = useState(frd);
   const [timeInput, setTimeInput] = useState('EXX00');
   const [altInput, setAltInput] = useState(entry?.altitude ?? '');
-  const [routeInput, setRouteInput] = useState((asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ?? '');
+  const [routeInput, setRouteInput] = useState((asel?.window === windowEnum.dep ? (getDepString(entry?.dep) ?? '') + route : (frd ? frd + '..' : '') + route) ?? '');
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
@@ -45,7 +48,7 @@ export const TemplateMenu: React.FC = () => {
   useEffect(() => {
     return () => {
       dispatch(setInputFocused(false));
-    }
+    } // eslint-disable-next-line
   }, []);
 
   // useEffect(() => {
