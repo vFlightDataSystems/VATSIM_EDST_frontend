@@ -17,6 +17,7 @@ import {
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
+ import {useFocused} from "../../hooks";
 
 enum signEnum {
   more = '+',
@@ -33,15 +34,14 @@ export const SpeedMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.speedMenu));
   const dispatch = useAppDispatch();
-  const [focused, setFocused] = useState(false);
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState<signEnum>(signEnum.none);
   const [amend, setAmend] = useState(true);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   useEffect(() => {
-    setFocused(false);
     setSpeed(280);
     setDeltaY(0);
     setSign(signEnum.none);
@@ -80,8 +80,6 @@ export const SpeedMenu: React.FC = () => {
   };
 
   return pos && entry && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu speed no-select"
       ref={ref}
       id="speed-menu"

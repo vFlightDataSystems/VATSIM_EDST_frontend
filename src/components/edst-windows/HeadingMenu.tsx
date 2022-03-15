@@ -17,6 +17,7 @@ import {
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
+import {useFocused} from "../../hooks";
 
 export const HeadingMenu: React.FC = () => {
   const {
@@ -28,14 +29,13 @@ export const HeadingMenu: React.FC = () => {
   const pos = useAppSelector(menuPositionSelector(menuEnum.headingMenu));
   const dispatch = useAppDispatch();
 
-  const [focused, setFocused] = useState(false);
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [amend, setAmend] = useState(true);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   useEffect(() => {
-    setFocused(false);
     setHeading(280);
     setDeltaY(0);
     setAmend(true);
@@ -64,8 +64,6 @@ export const HeadingMenu: React.FC = () => {
   };
 
   return pos && entry && (<div
-    onMouseEnter={() => setFocused(true)}
-    onMouseLeave={() => setFocused(false)}
     className="options-menu heading no-select"
     ref={ref}
     id="heading-menu"

@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
@@ -11,6 +11,7 @@ import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
+import {useFocused} from "../../hooks";
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
@@ -18,8 +19,8 @@ export const PreviousRouteMenu: React.FC = () => {
   const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
   const pos = useAppSelector(menuPositionSelector(menuEnum.prevRouteMenu));
   const dispatch = useAppDispatch();
-  const [focused, setFocused] = useState(false);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   const closestReferenceFix = entry.aclDisplay ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
   const frd = closestReferenceFix ? computeFrd(closestReferenceFix) : null;
@@ -28,8 +29,6 @@ export const PreviousRouteMenu: React.FC = () => {
 
   return pos && entry && (<div
       ref={ref}
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu prev-route no-select"
       id="prev-route-menu"
       style={{left: pos.x, top: pos.y}}
