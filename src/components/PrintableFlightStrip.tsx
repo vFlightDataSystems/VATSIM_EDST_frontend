@@ -44,7 +44,7 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
         currTimeAct: '',
         curr: '',
         alt: entry.altitude,
-        next: nextFix.name ?? '',
+        next: nextFix?.name ?? '',
         nextTime: nextFix? formatUtcMinutes(nextFix.minutesAtFix) : '',
         dofArrow: '',
         reqAlt: '',
