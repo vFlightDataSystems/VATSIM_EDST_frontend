@@ -11,6 +11,7 @@ import {EquipmentCommTemplate} from "./EquipmentCommTemplate";
 import {EquipmentAppServTemplate} from "./EquipmentAppServTemplate";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
+import {useFocused} from "../../../hooks";
 
 enum menuOptions {
   surv,
@@ -53,12 +54,10 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
 
-  const [focused, setFocused] = useState(false);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   return pos && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu equipment-template no-select"
       ref={ref}
       id="equipment-template-menu"

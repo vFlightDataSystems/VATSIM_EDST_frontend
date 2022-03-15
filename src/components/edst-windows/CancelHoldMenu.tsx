@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState,} from 'react';
+import React, {useContext, useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
@@ -9,6 +9,7 @@ import {menuEnum} from "../../enums";
 import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
+import {useFocused} from "../../hooks";
 
 export const CancelHoldMenu: React.FC = () => {
   const {
@@ -18,13 +19,10 @@ export const CancelHoldMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.cancelHoldMenu))
   const dispatch = useAppDispatch();
-
-  const [focused, setFocused] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const focused = useFocused(ref);
 
   return pos && entry && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu cancel-hold no-select"
       ref={ref}
       id="cancel-hold-menu"

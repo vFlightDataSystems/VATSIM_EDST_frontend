@@ -1,4 +1,4 @@
-import React, {useContext, useMemo, useRef, useState} from 'react';
+import React, {useContext, useMemo, useRef} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
@@ -15,14 +15,15 @@ import {
   setAsel
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
+import {useFocused} from "../../hooks";
 
 export const PlanOptions: React.FC = () => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector) as AselType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.planOptions));
   const {startDrag, stopDrag} = useContext(EdstContext);
-  const [focused, setFocused] = useState(false);
   const ref = useRef(null);
+  const focused = useFocused(ref);
   const entry = useAppSelector(state => state.entries[asel.cid]);
 
   const dep = useMemo(() => asel.window === windowEnum.dep, [asel.window]);
@@ -33,8 +34,6 @@ export const PlanOptions: React.FC = () => {
   }
 
   return pos && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu plan no-select"
       ref={ref}
       id="plan-menu"

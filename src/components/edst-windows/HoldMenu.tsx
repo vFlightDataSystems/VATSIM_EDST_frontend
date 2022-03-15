@@ -13,6 +13,7 @@ import {menuEnum} from "../../enums";
 import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType, FixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
+import {useFocused} from "../../hooks";
 
 export const HoldMenu: React.FC = () => {
   const {
@@ -32,8 +33,8 @@ export const HoldMenu: React.FC = () => {
   const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utcMinutes);
   const [routeData, setRouteData] = useState<(FixType & { minutesAtFix: number })[] | null>(null);
-  const [focused, setFocused] = useState(false);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   useEffect(() => {
     if (!entry) {
@@ -66,8 +67,6 @@ export const HoldMenu: React.FC = () => {
   };
 
   return pos && entry && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu hold no-select"
       ref={ref}
       id="hold-menu"

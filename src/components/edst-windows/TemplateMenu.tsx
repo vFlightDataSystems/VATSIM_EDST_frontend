@@ -11,6 +11,7 @@ import {aselSelector, closeMenu, menuPositionSelector, setInputFocused} from "..
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
+import {useFocused} from "../../hooks";
 
 export const TemplateMenu: React.FC = () => {
   const {
@@ -21,7 +22,6 @@ export const TemplateMenu: React.FC = () => {
   const asel = useAppSelector(aselSelector);
   const entry = useAppSelector(aselEntrySelector);
   const pos = useAppSelector(menuPositionSelector(menuEnum.templateMenu));
-  const [focused, setFocused] = useState(false);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
   const route = (asel?.window === windowEnum.dep
@@ -44,6 +44,7 @@ export const TemplateMenu: React.FC = () => {
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   useEffect(() => {
     return () => {
@@ -69,8 +70,6 @@ export const TemplateMenu: React.FC = () => {
 
 
   return pos && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu template no-select"
       ref={ref}
       id="template-menu"

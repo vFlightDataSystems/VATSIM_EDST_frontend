@@ -8,18 +8,17 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum} from "../../enums";
 import {closeMenu, menuSelector} from "../../redux/slices/appSlice";
 import {ToolsOptionsMenu} from "./ToolsOptionsMenu";
+import {useFocused} from "../../hooks";
 
 export const ToolsMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const menuProps = useAppSelector(menuSelector(menuEnum.toolsMenu));
   const {startDrag, stopDrag} = useContext(EdstContext);
-  const [focused, setFocused] = useState(false);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   return menuProps?.position && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className={`options-menu no-select tools`}
       ref={ref}
       id="tools-menu"

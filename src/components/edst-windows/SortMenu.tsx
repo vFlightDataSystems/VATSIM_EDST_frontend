@@ -10,22 +10,21 @@ import {setAclSort} from "../../redux/slices/aclSlice";
 import {setDepSort} from "../../redux/slices/depSlice";
 import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
 import {closeMenu, menuSelector} from "../../redux/slices/appSlice";
+import {useFocused} from "../../hooks";
 
 export const SortMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const menuProps = useAppSelector(menuSelector(menuEnum.sortMenu));
   const window = menuProps.openedBy === windowEnum.dep ? 'dep' : 'acl';
   const sortData = useAppSelector((state) => state[window].sortData);
-  const [focused, setFocused] = useState(false);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   let sortStateCopy = Object.assign({}, sortState);
 
   return menuProps?.position && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className={`options-menu no-select sort-${window}`}
       ref={ref}
       id="sort-menu"

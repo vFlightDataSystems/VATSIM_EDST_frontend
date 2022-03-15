@@ -24,6 +24,7 @@ import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
 import _ from "lodash";
+import {useFocused} from "../../hooks";
 
 export const RouteMenu: React.FC = () => {
   const {
@@ -36,13 +37,13 @@ export const RouteMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
 
-  const [focused, setFocused] = useState(false);
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(removeDestFromRouteString((asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, '') ?? ''), entry.dest));
   const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
   const ref = useRef(null);
+  const focused = useFocused(ref);
 
   const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
     [entry.flightplan.lat, entry.flightplan.lon, referenceFixes]);
@@ -142,8 +143,6 @@ export const RouteMenu: React.FC = () => {
   };
 
   return pos && (<div
-      onMouseEnter={() => setFocused(true)}
-      onMouseLeave={() => setFocused(false)}
       className="options-menu route no-select"
       ref={ref}
       id="route-menu"
