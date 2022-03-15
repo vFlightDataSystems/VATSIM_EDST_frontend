@@ -16,6 +16,7 @@ import booleanIntersects from "@turf/boolean-intersects";
 import {EdstEntryType, FixType, LocalEdstEntryType, ReferenceFixType} from "./types";
 import {toast} from "./components/toast/ToastManager";
 import * as geomag from 'geomag';
+import _ from "lodash";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -128,6 +129,22 @@ export function getRemainingRouteData(route: string, routeData: (FixType & { dis
     routeData = routeData.slice(routeData.indexOf(firstFixToShow));
   }
   return {_route: route, _route_data: routeData};
+}
+
+export function getNextFix(route: string, routeData: FixType[], pos: Position): (FixType & {dist: number})[] {
+  const routeDataWithDistance = getRouteDataDistance(_.cloneDeep(routeData), pos);
+  if (routeDataWithDistance.length > 1) {
+    const sortedRouteData = routeDataWithDistance.sort((u, v) => u.dist - v.dist);
+    const closestFix = sortedRouteData[0];
+    const index = routeDataWithDistance.indexOf(closestFix);
+    const followingFix = routeDataWithDistance[index + 1];
+    const line = lineString([closestFix.pos, followingFix.pos]);
+    const lineDistance = pointToLineDistance(pos, line, {units: 'nauticalmiles'});
+    return (lineDistance >= closestFix.dist) ? [closestFix, followingFix] : [followingFix, closestFix];
+  }
+  else {
+    return routeDataWithDistance;
+  }
 }
 
 /**

@@ -19,6 +19,7 @@ import {
 } from "../../redux/slices/appSlice";
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
+import {printFlightStrip} from "../PrintableFlightStrip";
 
 type MessageComposeAreaProps = {
   setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
@@ -179,6 +180,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
             setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
           break; //end case FR
+        case 'SR':
+          if (args.length === 1) {
+            printFlightStrip(getEntryByFid(args[0]));
+            setResponse(`ACCEPT\nD POS KEYBD`);
+          }
+          break;
         default: // TODO: give better error msg
           setResponse(`REJECT\n\n${mcaCommandString}`);
       }

@@ -224,6 +224,7 @@ export const App: React.FC = () => {
               tabIndex={!(inputFocused) ? -1 : 0}
   >
     <EdstHeader/>
+    <div id='toPrint'/>
     <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
          ref={bodyRef}
          onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
