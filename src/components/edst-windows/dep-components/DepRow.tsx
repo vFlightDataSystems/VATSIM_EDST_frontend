@@ -155,11 +155,11 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+        <div className={`body-col special-box ${!entry.spa ? 'special-hidden' : ''}`}>
           {entry.spa && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.depHotbox}>
-          <div className="body-col special hotbox"
+          <div className="body-col special-box hotbox"
                onContextMenu={event => event.preventDefault()}
                onMouseDown={handleHotboxMouseDown}
           >

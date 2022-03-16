@@ -37,9 +37,6 @@ export const AclRow: React.FC<AclRowProps> = (
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);
-  // if (entry.aar_list === undefined) {
-  //   dispatch(fetchAarData(entry.cid));
-  // }
 
   useEffect(() => (() => {
     if (freeTextContent !== (entry.free_text_content ?? '')) {
@@ -67,6 +64,9 @@ export const AclRow: React.FC<AclRowProps> = (
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
+
+  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM capable
+  const showCoralBox = (!entry.equipment.match(/[LZWH]/g) && Number(entry.altitude) > 280);
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
@@ -245,11 +245,11 @@ export const AclRow: React.FC<AclRowProps> = (
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+        <div className={`body-col special-box ${!entry.spa ? 'special-hidden' : ''}`}>
           {entry.spa && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.aclHotbox}>
-          <div className="body-col special hotbox"
+          <div className="body-col special-box hotbox"
                onContextMenu={event => event.preventDefault()}
                onMouseDown={handleHotboxMouseDown}
           >
@@ -272,6 +272,7 @@ export const AclRow: React.FC<AclRowProps> = (
             >
               {entry.altitude}{entry.interim && `T${entry.interim}`}
             </div>
+            {showCoralBox && <div className="special coral-box"/>}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclCode}>
@@ -283,7 +284,7 @@ export const AclRow: React.FC<AclRowProps> = (
             {entry.beacon}
           </div>
         </EdstTooltip>
-        <div className={`body-col hover special`}
+        <div className={`body-col hover special-box`}
              onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)}
           // @ts-ignore
              disabled={!(entry.hdg && entry.scratchHdg)}>
@@ -308,16 +309,16 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
             {(entry.scratchSpd && (displayScratchSpd || entry.spd === null)) ? entry.scratchSpd : entry.spd}
           </div>
         </EdstTooltip>
-        <div className={`body-col hover special`}
+        <div className={`body-col hover special-box`}
              onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)}
           // @ts-ignore
              disabled={!(entry.spd && entry.scratchSpd)}>
           {entry.spd && entry.scratchSpd && '*'}
         </div>
-        <div className={`body-col special`}
+        <div className={`body-col special-box`}
           // @ts-ignore
              disabled={true}/>
-        <div className={`body-col special hold-col ${isSelected(entry.cid, aclRowFieldEnum.hold) ? 'selected' : ''}`}
+        <div className={`body-col special-box hold-col ${isSelected(entry.cid, aclRowFieldEnum.hold) ? 'selected' : ''}`}
              onMouseDown={handleHoldClick}
              onContextMenu={(event) => {
                event.preventDefault();
@@ -331,7 +332,7 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
           {entry.hold_data ? 'H' : ''}
         </div>
         <EdstTooltip title={Tooltips.aclRemarksBtn}>
-          <div className={`body-col special ${!entry.remarksChecked && entry.remarks.length > 0 ? 'remarks-unchecked' : ''}`}
+          <div className={`body-col special-box ${!entry.remarksChecked && entry.remarks.length > 0 ? 'remarks-unchecked' : ''}`}
                onMouseDown={handleRemarksClick}
           >
             {entry.remarks.length > 0 && '*'}

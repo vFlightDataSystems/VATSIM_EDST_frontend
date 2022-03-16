@@ -108,8 +108,8 @@ export function AclTable() {
           Flight ID
         </div>
         <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
-        <div className="body-col special special-hidden"/>
-        <div className="body-col special special-hidden"/>
+        <div className="body-col special-box special-hidden"/>
+        <div className="body-col special-box special-hidden"/>
         <div className={`body-col type ${hiddenList.includes(aclRowFieldEnum.type) ? 'hidden' : ''}`}>
           <div className="hover" onMouseDown={() => toggleHideColumn(aclRowFieldEnum.type)}>
             T{!hiddenList.includes(aclRowFieldEnum.type) && 'ype'}
@@ -125,7 +125,7 @@ export function AclTable() {
              onMouseDown={() => toggleHideColumn(aclRowFieldEnum.code)}>
           C{!hiddenList.includes(aclRowFieldEnum.code) && 'ode'}
         </div>
-        <div className={`body-col special special-header`}/>
+        <div className={`body-col special-box special-header`}/>
         <EdstTooltip title={Tooltips.aclHeaderHdg}>
           <div className={`body-col hs hdg hover ${hiddenList.includes(aclRowFieldEnum.hdg) ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn(aclRowFieldEnum.hdg)}>
@@ -143,14 +143,14 @@ export function AclTable() {
             S{!hiddenList.includes(aclRowFieldEnum.spd) && 'pd'}{hiddenList.includes(aclRowFieldEnum.spd) && anyAssignedSpeed && '*'}
           </div>
         </EdstTooltip>
-        <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`} // @ts-ignore
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`} // @ts-ignore
              disabled={!anyHolding}>
           H
         </div>
-        <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`}/>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
         <div className="body-col route">
           Route
         </div>

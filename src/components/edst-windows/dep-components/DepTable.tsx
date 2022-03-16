@@ -53,8 +53,8 @@ export function DepTable() {
         Flight ID
       </div>
       <div className="body-col pa header"/>
-      <div className="body-col special special-hidden"/>
-      <div className="body-col special special-hidden"/>
+      <div className="body-col special-box special-hidden"/>
+      <div className="body-col special-box special-hidden"/>
       <div className={`body-col type dep-type ${hidden.includes('type') ? 'hidden' : ''}`}>
         <div className="hover" onMouseDown={() => toggleHideColumn('type')}>
           T{!hidden.includes('type') && 'ype'}
