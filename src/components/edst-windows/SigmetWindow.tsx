@@ -6,16 +6,19 @@ import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {
+  selectedSigmetSortOptionSelector, setSelectedSortOption,
   setSigmetAcknowledged,
-  setSigmetSupressionState, setviewSigmetSuppressed,
-  sigmetSelector,
+  setSigmetSupressionState, setViewSigmetSuppressed,
+  sigmetSelector, sigmetSortOptionsEnum,
   viewSigmetSuppressedSelector
 } from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 
 enum sigmetOptionEnum {
+  sort = "SORT",
   viewSuppressed = "VIEW SUPPRESS",
-  hideSuppressed = "HIDE SUPPRESS"
+  hideSuppressed = "HIDE SUPPRESS",
+  printAll = "PRINT ALL"
 }
 
 export const SigmetWindow: React.FC = () => {
@@ -24,19 +27,21 @@ export const SigmetWindow: React.FC = () => {
   const sectorId = useAppSelector(state => state.sectorData.sectorId);
   const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
   const sigmetList = useAppSelector(sigmetSelector);
+  const selectedSortOption = useAppSelector(selectedSigmetSortOptionSelector);
   const [showOptions, setShowOptions] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [showSortOptions, setShowSortOptions] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const {startDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement>(null);
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
-    if (selected !== sigmetId) {
+    if (selectedOption !== sigmetId) {
       if (!sigmetList[sigmetId].acknowledged) {
         dispatch(setSigmetAcknowledged({id: sigmetId, value: true}));
       }
-      setSelected(sigmetId);
+      setSelectedOption(sigmetId);
       // figure out how to align this correctly :/
       setSelectedPos({
         x: event.currentTarget.offsetLeft,
@@ -44,13 +49,13 @@ export const SigmetWindow: React.FC = () => {
         w: event.currentTarget.clientWidth + 23
       });
     } else {
-      setSelected(null);
+      setSelectedOption(null);
       setSelectedPos(null);
     }
   };
 
   const handleOptionsMouseDown = () => {
-    setSelected(null);
+    setSelectedOption(null);
     setShowOptions(true);
   };
 
@@ -76,12 +81,12 @@ export const SigmetWindow: React.FC = () => {
       <div className="floating-window-body scroll-container sigmet-scroll-container">
         {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
           <span className="floating-window-outer-row sigmet" key={`sigmet-list-key-${sigmetId}`}>
-            <div className={`floating-window-row ${sigmetEntry.suppressed ? 'suppressed' : ''} no-select margin ${selected === sigmetId ? 'selected' : ''}`}
+            <div className={`floating-window-row ${sigmetEntry.suppressed ? 'suppressed' : ''} no-select margin ${selectedOption === sigmetId ? 'selected' : ''}`}
                  onMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
             >
               {sigmetEntry.text}
             </div>
-            {selected === sigmetId && selectedPos &&
+            {selectedOption === sigmetId && selectedPos &&
             <FloatingWindowOptions
               pos={{
                 x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
@@ -90,7 +95,7 @@ export const SigmetWindow: React.FC = () => {
               options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
               handleOptionClick={() => {
                 dispatch(setSigmetSupressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
-                setSelected(null);
+                setSelectedOption(null);
                 setSelectedPos(null);
               }}
             />}
@@ -104,15 +109,34 @@ export const SigmetWindow: React.FC = () => {
         header="SIGMETS"
         closeOptions={() => setShowOptions(false)}
         options={Object.values(sigmetOptionEnum)}
-        unSelectedOptions={[viewSuppressed ? sigmetOptionEnum.hideSuppressed : sigmetOptionEnum.viewSuppressed]}
+        selectedOptions={[viewSuppressed ? sigmetOptionEnum.viewSuppressed : sigmetOptionEnum.hideSuppressed
+        ]}
         handleOptionClick={(option) => {
-          if (option as sigmetOptionEnum === sigmetOptionEnum.viewSuppressed) {
-            dispatch(setviewSigmetSuppressed(true));
-          }
-          else if (option as sigmetOptionEnum === sigmetOptionEnum.hideSuppressed) {
-            dispatch(setviewSigmetSuppressed(false));
+          switch (option as sigmetOptionEnum) {
+            case sigmetOptionEnum.viewSuppressed:
+              dispatch(setViewSigmetSuppressed(true));
+              break;
+            case sigmetOptionEnum.hideSuppressed:
+              dispatch(setViewSigmetSuppressed(false));
+              break;
+            case sigmetOptionEnum.sort:
+              setShowSortOptions(true);
+              setShowOptions(false);
+              break;
+            default: break;
           }
         }}
+      />}
+      {showSortOptions && <FloatingWindowOptions
+          pos={{
+            x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+            y: (ref.current as HTMLDivElement).clientTop
+          }}
+          header="SORT"
+          closeOptions={() => setShowSortOptions(false)}
+          options={Object.values(sigmetSortOptionsEnum)}
+          selectedOptions={[selectedSortOption]}
+          handleOptionClick={(option) => dispatch(setSelectedSortOption(option as sigmetSortOptionsEnum))}
       />}
     </div>
   );
