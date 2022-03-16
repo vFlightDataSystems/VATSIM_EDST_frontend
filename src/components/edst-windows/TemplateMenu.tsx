@@ -40,7 +40,9 @@ export const TemplateMenu: React.FC = () => {
   const [frdInput, setFrdInput] = useState(frd);
   const [timeInput, setTimeInput] = useState('EXX00');
   const [altInput, setAltInput] = useState(entry?.altitude ?? '');
-  const [routeInput, setRouteInput] = useState((asel?.window === windowEnum.dep ? (getDepString(entry?.dep) ?? '') + route : (frd ? frd + '..' : '') + route) ?? '');
+  const [routeInput, setRouteInput] = useState((asel?.window === windowEnum.dep
+    ? (getDepString(entry?.dep) ?? '') + route : (entry?.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix)
+    ? entry.cleared_direct?.frd + '..' : '') + route) ?? '');
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
   const ref = useRef(null);
