@@ -5,7 +5,7 @@ type FloatingWindowOptionsProps = {
   closeOptions?: () => void,
   header?: string,
   options?: string[],
-  unSelectedOptions?: string[],
+  selectedOptions?: string[],
   handleOptionClick?: (option?: string) => void
 }
 
@@ -20,7 +20,7 @@ export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({pos
       </div>
     </div>}
     {props.options?.map((option) =>
-      <div className={`floating-window-option ${props.unSelectedOptions?.includes(option) ? 'unselected' : ''}`}
+      <div className={`floating-window-option ${!props.selectedOptions?.includes(option) ? 'unselected' : ''}`}
            key={`sigmet-option-${option}`}
            onMouseDown={() => props.handleOptionClick?.(option)}
       >
