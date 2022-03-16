@@ -20,7 +20,7 @@ export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({pos
       </div>
     </div>}
     {props.options?.map((option) =>
-      <div className={`floating-window-option ${(!props.selectedOptions?.includes(option) ?? false) ? 'unselected' : ''}`}
+      <div className={`floating-window-option ${!(props.selectedOptions?.includes(option) ?? true) ? 'unselected' : ''}`}
            key={`sigmet-option-${option}`}
            onMouseDown={() => props.handleOptionClick?.(option)}
       >
