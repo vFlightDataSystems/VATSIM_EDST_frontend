@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
@@ -102,8 +102,9 @@ export function AclTable() {
       <div className="body-col body-col-1 orange">
         A
       </div>
-      <div className="body-col body-col-1"/>
       <div className="inner-row">
+        <div className="body-col special-box special-hidden"/>
+        <div className="body-col special-box special-hidden"/>
         <div className="body-col fid">
           Flight ID
         </div>
@@ -149,6 +150,8 @@ export function AclTable() {
              disabled={!anyHolding}>
           H
         </div>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
         <div className={`body-col special-box special-header`}/>
         <div className={`body-col special-box special-header`}/>
         <div className="body-col route">
