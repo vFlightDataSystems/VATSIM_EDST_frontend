@@ -6,16 +6,14 @@ import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {
-  selectedSigmetSortOptionSelector, setSelectedSortOption,
   setSigmetAcknowledged,
   setSigmetSupressionState, setViewSigmetSuppressed,
-  sigmetSelector, sigmetSortOptionsEnum,
+  sigmetSelector,
   viewSigmetSuppressedSelector
 } from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 
 enum sigmetOptionEnum {
-  sort = "SORT",
   viewSuppressed = "VIEW SUPPRESS",
   hideSuppressed = "HIDE SUPPRESS",
   printAll = "PRINT ALL"
@@ -27,9 +25,7 @@ export const SigmetWindow: React.FC = () => {
   const sectorId = useAppSelector(state => state.sectorData.sectorId);
   const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
   const sigmetList = useAppSelector(sigmetSelector);
-  const selectedSortOption = useAppSelector(selectedSigmetSortOptionSelector);
   const [showOptions, setShowOptions] = useState(false);
-  const [showSortOptions, setShowSortOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const {startDrag} = useContext(EdstContext);
@@ -119,24 +115,9 @@ export const SigmetWindow: React.FC = () => {
             case sigmetOptionEnum.hideSuppressed:
               dispatch(setViewSigmetSuppressed(false));
               break;
-            case sigmetOptionEnum.sort:
-              setShowSortOptions(true);
-              setShowOptions(false);
-              break;
             default: break;
           }
         }}
-      />}
-      {showSortOptions && <FloatingWindowOptions
-          pos={{
-            x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-            y: (ref.current as HTMLDivElement).clientTop
-          }}
-          header="SORT"
-          closeOptions={() => setShowSortOptions(false)}
-          options={Object.values(sigmetSortOptionsEnum)}
-          selectedOptions={[selectedSortOption]}
-          handleOptionClick={(option) => dispatch(setSelectedSortOption(option as sigmetSortOptionsEnum))}
       />}
     </div>
   );
