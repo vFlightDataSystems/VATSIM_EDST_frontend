@@ -2,21 +2,11 @@ import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position} from "@turf/turf";
 
-export enum sigmetSortOptionsEnum {
-  cancelledTime = "CANCELLED TIME",
-  effectiveTime = "EFFECTIVE TIME",
-  expirationTime = "EXPIRATION TIME",
-  locationId = "LOCATION ID",
-  notamId = "NOTAM ID",
-  notamType = "NOTAM TYPE"
-}
-
 export type WeatherStateType = {
   altimeterList: { [airport: string]: AltimeterEntryType },
   metarList: { [airport: string]: MetarEntryType },
   sigmetList: { [id: string]: SigmetEntryType },
-  viewSigmetSuppressed: boolean,
-  selectedSigmetSortOption: sigmetSortOptionsEnum
+  viewSigmetSuppressed: boolean
 }
 
 export type MetarEntryType = {
@@ -45,8 +35,7 @@ export type SigmetEntryType = ApiSigmetType & {
   polygons: Feature<Polygon | MultiPolygon>
 }
 
-const initialState = {altimeterList: {}, metarList: {}, sigmetList: {}, viewSigmetSuppressed: true,
-  selectedSigmetSortOption: sigmetSortOptionsEnum.effectiveTime};
+const initialState = {altimeterList: {}, metarList: {}, sigmetList: {}, viewSigmetSuppressed: true};
 
 const weatherSlice = createSlice({
   name: 'weather',
@@ -84,9 +73,6 @@ const weatherSlice = createSlice({
     },
     setViewSigmetSuppressed(state, action: {payload: boolean}) {
       state.viewSigmetSuppressed = action.payload
-    },
-    setSelectedSortOption(state, action: {payload: sigmetSortOptionsEnum}) {
-      state.selectedSigmetSortOption = action.payload
     }
   }
 });
@@ -100,7 +86,6 @@ export const {
   setSigmetSupressionState,
   setSigmetAcknowledged,
   setViewSigmetSuppressed,
-  setSelectedSortOption
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 
@@ -108,4 +93,3 @@ export const altimeterSelector = (state: RootState) => state.weather.altimeterLi
 export const metarSelector = (state: RootState) => state.weather.metarList;
 export const sigmetSelector = (state: RootState) => state.weather.sigmetList;
 export const viewSigmetSuppressedSelector = (state: RootState) => state.weather.viewSigmetSuppressed;
-export const selectedSigmetSortOptionSelector = (state: RootState) => state.weather.selectedSigmetSortOption;
