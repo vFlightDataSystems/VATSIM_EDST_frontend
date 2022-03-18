@@ -8,6 +8,21 @@ $options-menu-light-grey: #ADADAD;
 $options-menu-hover-white: #F0F0F0;
 $route-menu-alert-cyan: #00ADAD;
 
+.uplink-symbol {
+
+  &.route-menu {
+    margin-top: 2px;
+  }
+
+  &.edst-outer-button .edst-inner-button {
+    height: 17px;
+    width: 6px;
+    overflow: hidden;
+    font-size: 30px;
+    transform: scale(-1, -1);
+  }
+}
+
 @mixin button-indicator {
   border-bottom: 2px solid $options-menu-medium-grey;
   border-right: 2px solid $options-menu-medium-grey;
@@ -150,6 +165,7 @@ $route-menu-alert-cyan: #00ADAD;
     border: 2px solid $options-menu-dark-grey;
     //overflow: hidden;
     margin: 6px;
+    min-height: 40px;
   }
 
   @mixin options-row {
@@ -534,6 +550,7 @@ $route-menu-alert-cyan: #00ADAD;
 
     &.display-route {
       border: 2px solid $options-menu-dark-grey;
+      padding: 0 3px;
       margin: 2px 8px 8px 8px;
     }
 
@@ -725,7 +742,7 @@ $route-menu-alert-cyan: #00ADAD;
     &.right {
       justify-content: right;
       display: flex;
-      margin-left: auto
+      margin-left: auto;
     }
 
     .input-container-2 {
