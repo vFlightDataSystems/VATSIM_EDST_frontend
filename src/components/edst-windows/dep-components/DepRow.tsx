@@ -12,7 +12,7 @@ import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {depAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
-const SPA_INDICATOR = '^';
+const SPA_INDICATOR = '\u2303';
 const COMPLETED_SYMBOL = '✓';
 
 type DepRowProps = {

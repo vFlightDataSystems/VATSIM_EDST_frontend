@@ -13,7 +13,7 @@ import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {aclAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
-const SPA_INDICATOR = '^';
+const SPA_INDICATOR = '\u2303';
 
 type AclRowProps = {
   key: string,
