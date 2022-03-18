@@ -44,6 +44,7 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
   const [eligibleOnly, setEligibleOnly] = useState(false);
 
   const routes = computeRouteList(aar.slice(0), adr.slice(0), adar.slice(0), dep, dest);
+  const eligibleRoutes = routes.filter(r => r.eligible);
 
   return (<div>
       <div className="options-row route-row bottom-border"/>
@@ -65,6 +66,10 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
         </div>
       </div>
       <div className="prefroute-container scroll-container prefroute-scroll-container">
+        {eligibleOnly && eligibleRoutes.length === 0 &&
+            <div className="options-row prefroute-row" key={`route-menu-prefroute-row-no-eligible-avail`}>
+                No Eligible APRs: Select ALL to display Ineligible APRs
+            </div>}
         {Object.entries(routes).map(([i, r]: [string, EdstPreferredRouteType]) => {
           return r && (!eligibleOnly || r.eligible) && ((r.amendment?.length ?? 0) > 0) && (
             <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
