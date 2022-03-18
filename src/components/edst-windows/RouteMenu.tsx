@@ -188,7 +188,7 @@ export const RouteMenu: React.FC = () => {
             </a>
           </EdstTooltip>
           <div className={`options-col uplink-symbol right`}>
-            <EdstButton className="uplink-symbol route-menu" disabled={true} content={`\u{1D925}`}/>
+            {entry.uplinkEligible && <EdstButton className="uplink-symbol route-menu" disabled={true} content={`\u{1D925}`}/>}
             <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)}
                         title={Tooltips.routeMenuAmend}
             />

@@ -55,7 +55,8 @@ export type LocalEdstEntryVType = {
   aclDisplay: boolean,
   aclDeleted: boolean,
   depDisplay: boolean,
-  depDeleted: boolean
+  depDeleted: boolean,
+  uplinkEligible?: boolean
 }
 
 // type for a single EDST entry
