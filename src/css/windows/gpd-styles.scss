@@ -1,0 +1,21 @@
+@import "../styles";
+
+$acl-border-grey: #888888;
+$acl-border-light-grey: #ADADAD;
+$wifi-green: #00AD00;
+
+.gpd {
+  white-space: nowrap;
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+  margin: 2px;
+  flex-grow: 1;
+  border: 3px solid $acl-border-grey;
+  outline: 1px solid $acl-border-light-grey;
+  color: $edst-font-grey;
+}
+
+.gpd-body {
+
+}

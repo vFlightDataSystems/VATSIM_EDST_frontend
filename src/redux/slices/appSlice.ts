@@ -48,7 +48,6 @@ export type AppStateType = {
 }
 
 export const DISABLED_HEADER_BUTTONS = [
-  edstHeaderButtonEnum.gpd,
   edstHeaderButtonEnum.not,
   edstHeaderButtonEnum.gi,
   edstHeaderButtonEnum.ua,
