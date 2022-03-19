@@ -1,6 +1,7 @@
 import {Feature, polygon, Polygon} from "@turf/turf";
 import {createSlice} from "@reduxjs/toolkit";
 import {SectorDataType} from "../../types";
+import {RootState} from "../store";
 
 export type SectorDataStateType = {
   sectors: {[id: string]: Feature<Polygon>},
@@ -52,3 +53,5 @@ const sectorSlice = createSlice({
 
 export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes} = sectorSlice.actions
 export default sectorSlice.reducer;
+export const referenceFixSelector = (state: RootState) => state.sectorData.referenceFixes;
+export const sectorPolygonSelector = (state: RootState) => state.sectorData.sectors;
