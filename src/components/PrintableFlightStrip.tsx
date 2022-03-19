@@ -24,13 +24,12 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
     const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (FixType & {minutesAtFix: number})[];
     ReactDOM.render(<PrintableFlightStrip
       fs={{
-        rev: '1',                                                         // revision
         callsign: entry.callsign,                                         // callsign
         type: entry.type,                                                 // weight, type, equipment suffix
         tas: 'TXXX',                                                      // true airspeed
-        sect: 'XXX',                                                      // current sector
+        sect: 'XX',                                                       // current sector
         cid: entry.cid,                                                   // cid
-        estGs: entry.flightplan.ground_speed,                             // filed ground speed
+        estGs: "G" + entry.flightplan.ground_speed,                       // filed ground speed
         stripReqOrig: 'XXX',                                              // strip request origin
         stripNum: '1',                                                    // strip number
         prev: prevFix?.name ?? '',                                        // previous fix
@@ -75,58 +74,56 @@ function PrintableFlightStrip(props: any) {
     borderRight: '1px solid black',
     padding: '0px'
   };
+  {/* TODO find good font */}
+  {/* TODO replace with grid/better solution */}
   return (
     <div className="printable-flight-strip">
       <table style={{border: '1px solid black'}}>
         <tbody>
         <tr>
           <td style={rootTdStyle}>
-            <table style={{width: "160px"}}>
+            <table style={{width: "130", textAlign: "center"}}>
               <tbody>
               <tr>
-                <td style={{textAlign: "left"}}>{fs.callsign}</td> {/* block 3 */}
-                <td/>
-                <td style={{textAlign: "right"}}>{fs.rev}</td> {/* block 2 */}
+                <td style={{fontSize: "20.8px", paddingBottom: "10px"}}>{fs.callsign}</td>
               </tr>
               <tr>
-                <td>{fs.type}</td> {/* block 4 */}
+                <td>{fs.type}</td>
               </tr>
               <tr>
-                <td>{fs.tas}</td> {/* block 5 */}
-                <td>?</td>
-                {/*TODO what number is this? GS?*/}
+                <td>{fs.tas}</td>
+                <td>{fs.estGs}</td>
               </tr>
               <tr>
-                <td style={{textAlign: "right"}}>{fs.sect}</td> {/* block 6 */}
-                <td style={{textAlign: "right"}}>16</td>
+                <td style={{textAlign: "right"}}>{fs.sect}</td>
+                <td>16</td>
                 {/*TODO what number is this?*/}
               </tr>
               <tr>
-                <td style={{textAlign: "left"}}>486</td>
-                {/*TODO what number is this? CID?*/}
-                <td style={{textAlign: "right"}}>09</td>
+                <td>{fs.cid}</td>
+                <td>09</td>
                 {/*TODO what number is this?*/}
               </tr>
               </tbody>
             </table>
           </td>
           <td style={rootTdStyle}>
-            <table style={{width: "70px"}}>
+            <table style={{width: "60px"}}>
               <tbody>
               <tr>
-                <td>{fs.prev}</td> {/* block 11 */}
+                <td>{fs.prev}</td>
               </tr>
               <tr>
-                <td>{fs.prevTime}</td> {/* block 12 */}
+                <td>{fs.prevTime}</td>
               </tr>
               <tr>
-                <td>{fs.prevTimeRev}</td> {/* block 13 */}
+                <td>{fs.prevTimeRev}</td>
               </tr>
               <tr>
-                <td>{fs.prevTimeAct}</td> {/* block 14 */}
+                <td>{fs.prevTimeAct}</td>
               </tr>
               <tr>
-                <td>{fs.postedFixTime}</td> {/* block 14a */}
+                <td>{fs.postedFixTime}</td>
               </tr>
               </tbody>
             </table>
@@ -135,8 +132,8 @@ function PrintableFlightStrip(props: any) {
             <table style={{borderCollapse: "collapse", width: "170px"}}>
               <tbody>
               <tr>
-                <td style={{textAlign: "center"}}>{fs.currTimeCentre}</td> {/* block 15 */}
-                <td style={{textAlign: "center", paddingRight: "9px"}}>{fs.directionArrow}</td> {/* block 16 */}
+                <td style={{textAlign: "center"}}>{fs.currTimeCentre}</td>
+                <td style={{textAlign: "center", paddingRight: "9px"}}>{fs.directionArrow}</td>
               </tr>
               <tr>
                 <td/>
@@ -144,12 +141,12 @@ function PrintableFlightStrip(props: any) {
               <tr>
                 <td/>
               </tr>
-              <tr style={{height: "42px"}}>
-                <td style={{border: "1px solid black", textAlign: "center", width: "50%"}}>{fs.currTimePilot}</td> {/* block 17 */}
-                <td style={{border: "1px solid black", textAlign: "center"}}>{fs.currTimeAct}</td> {/* block 18 */}
+              <tr style={{height: "42px", overflow: "hidden"}}>
+                <td style={{border: "1px solid black", textAlign: "center", width: "50%"}}>{fs.currTimePilot}</td>
+                <td style={{border: "1px solid black", textAlign: "center", width: "50%"}}>{fs.currTimeAct}</td>
               </tr>
               <tr>
-                <td style={{paddingLeft: "10px", textAlign: "left"}}>{fs.curr}</td> {/* block 19 */}
+                <td style={{paddingLeft: "10px", textAlign: "left"}}>{fs.curr}</td>
               </tr>
               </tbody>
             </table>
@@ -158,53 +155,53 @@ function PrintableFlightStrip(props: any) {
             <table style={{width: "80px"}}>
               <tbody>
               <tr>
-                <td style={{textAlign: "left", paddingLeft: "10px"}}>{fs.alt}</td> {/* block 20 */}
+                <td style={{textAlign: "left", paddingBottom: "70px"}}>{fs.alt}</td>
               </tr>
               </tbody>
             </table>
           </td>
           <td style={rootTdStyle}>
-            <table style={{width: "90px", textAlign: "left", paddingLeft: "10px"}}>
+            <table style={{width: "40px", textAlign: "left"}}>
               <tbody>
               <tr>
-                <td style={{paddingBottom: "5px"}}>{fs.next}</td> {/* block 21 */}
+                <td style={{paddingBottom: "5px"}}>{fs.next}</td>
               </tr>
               <tr>
-                <td>{fs.nextTime}</td> {/* block 22 */}
+                <td>{fs.nextTime}</td>
               </tr>
               <tr>
-                <td>{fs.dofArrow}</td> {/* block 23 */}
+                <td>{fs.dofArrow}</td>
               </tr>
               <tr>
-                <td>{fs.reqAlt}</td> {/* block 24 */}
+                <td>{fs.reqAlt}</td>
               </tr>
               </tbody>
             </table>
           </td>
           <td style={rootTdStyle}>
-            <table style={{width: "180px", textAlign: "left", paddingLeft: "10px"}}>
+            <table style={{width: "220px", textAlign: "left", paddingLeft: "10px"}}>
               <tbody>
               <tr>
-                <td style={{paddingBottom: "70px", overflowWrap: 'anywhere'}}>{fs.route}</td> {/* block 25 */}
+                <td style={{paddingBottom: "70px", overflowWrap: 'anywhere'}}>{fs.route}</td>
               </tr>
               <tr>
-                <td>{fs.remarks}</td> {/* block 26 */}
+                <td>{fs.remarks}</td>
               </tr>
               </tbody>
             </table>
           </td>
           <td>
-            <table style={{width: "100px", textAlign: "left", paddingLeft: "10px"}}>
+            <table style={{width: "50px"}}>
               <tbody>
               <tr>
-                <td>{fs.squawk}</td> {/* block 27 */}
+                <td style={{textAlign: "right", paddingLeft: "20px", paddingBottom: "50px"}}>{fs.squawk}</td>
               </tr>
               <tr>
-                <td style={{paddingBottom: "50px"}}>{fs.misc}</td> {/* block 28 */}
+                <td style={{paddingBottom: "50px"}}>{fs.misc}</td>
               </tr>
               <tr>
-                <td>{fs.trans1}</td> {/* block 29 */}
-                <td style={{textAlign: "right", paddingLeft: "0px", paddingRight: "10px"}}>{fs.trans2}</td> {/* block 30 */}
+                <td>{fs.trans1}</td>
+                <td style={{textAlign: "right", paddingLeft: "0px", paddingRight: "10px"}}>{fs.trans2}</td>
               </tr>
               </tbody>
             </table>
