@@ -41,6 +41,7 @@ import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
 import {useEventListener} from "usehooks-ts";
 import {EquipmentTemplateMenu} from "./components/edst-windows/template-components/EquipmentTemplateMenu";
 import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
+import {Gpd} from "./components/edst-windows/Gpd";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -241,6 +242,7 @@ export const App: React.FC = () => {
       }}>
         {windows[windowEnum.acl].open && <Acl/>}
         {windows[windowEnum.dep].open && <Dep/>}
+        {windows[windowEnum.graphicPlanDisplay].open && <Gpd/>}
         {windows[windowEnum.plansDisplay].open && <PlansDisplay/>}
         {menus[menuEnum.planOptions].open && <PlanOptions/>}
         {menus[menuEnum.sortMenu].open && <SortMenu/>}
