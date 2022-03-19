@@ -2,7 +2,6 @@
 
 $acl-border-grey: #888888;
 $acl-border-light-grey: #ADADAD;
-$wifi-green: #00AD00;
 
 .gpd {
   white-space: nowrap;
@@ -17,5 +16,13 @@ $wifi-green: #00AD00;
 }
 
 .gpd-body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 
+  .leaflet-container {
+    width: 100%;
+    height: 100%;
+    background: #000000;
+  }
 }
