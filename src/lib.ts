@@ -100,18 +100,20 @@ export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixT
  * @param {string} dest - ICAO string of destination airport
  * @returns {{_route: string, _route_data: FixType[]}}
  */
-export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, polygons: Feature<Polygon>[], dest: string): { _route: string, _route_data: FixType[] } {
+export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, dest: string, polygons?: Feature<Polygon>[]): { _route: string, _route_data: FixType[] } {
   if (routeData.length > 1) {
     let fixNames = routeData.map(e => e.name);
     if (fixNames.slice(-1)[0] === dest) {
       fixNames.pop();
     }
     let firstFixToShow = routeData[0];
-    for (let fix of routeData) {
-      if (polygons.filter(polygon => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
-        break;
+    if (polygons) {
+      for (let fix of routeData) {
+        if (polygons.filter(polygon => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
+          break;
+        }
+        firstFixToShow = fix;
       }
-      firstFixToShow = fix;
     }
     // compute route string starting from firstFixToShow
     for (let name of fixNames.slice(0, fixNames.indexOf(firstFixToShow.name) + 1).reverse()) {
