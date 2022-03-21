@@ -1,6 +1,6 @@
 import {Feature, polygon, Polygon} from "@turf/turf";
 import {createSlice} from "@reduxjs/toolkit";
-import {SectorDataType} from "../../types";
+import {NavFixType, SectorDataType} from "../../types";
 import {RootState} from "../store";
 
 export type SectorDataStateType = {
@@ -8,13 +8,17 @@ export type SectorDataStateType = {
   selectedSectors: string[],
   referenceFixes: any[],
   sectorId: string,
-  artccId: string
+  artccId: string,
+  vorHighList: NavFixType[],
+  vorLowList: NavFixType[]
 };
 
 const initialState = {
   sectors: {},
   selectedSectors: [],
   referenceFixes: [],
+  vorHighList: [],
+  vorLowList: [],
   sectorId: '',
   artccId: ''
 };
@@ -47,11 +51,19 @@ const sectorSlice = createSlice({
     },
     setReferenceFixes(state: SectorDataStateType, action) {
       state.referenceFixes = action.payload;
+    },
+    setVorHighList(state: SectorDataStateType, action) {
+      state.vorHighList = action.payload;
+    },
+    setVorLowList(state: SectorDataStateType, action) {
+      state.vorLowList = action.payload;
     }
   }
 });
 
-export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes} = sectorSlice.actions
+export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes, setVorHighList, setVorLowList} = sectorSlice.actions
 export default sectorSlice.reducer;
 export const referenceFixSelector = (state: RootState) => state.sectorData.referenceFixes;
 export const sectorPolygonSelector = (state: RootState) => state.sectorData.sectors;
+export const vorHighListSelector = (state: RootState) => state.sectorData.vorHighList;
+export const vorLowListSelector = (state: RootState) => state.sectorData.vorLowList;

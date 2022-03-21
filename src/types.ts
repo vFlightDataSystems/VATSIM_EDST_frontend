@@ -76,6 +76,16 @@ export type FixType = {
   minutesAtFix?: number
 }
 
+export type NavFixType = {
+  navaid_id: string,
+  type: string,
+  name: string,
+  lat: string,
+  lon: string,
+  artcc_low: string,
+  artcc_high: string
+}
+
 export type EdstPreferredRouteType = {
   eligible?: boolean,
   routeType?: string,

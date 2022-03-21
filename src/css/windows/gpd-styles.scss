@@ -26,3 +26,33 @@ $acl-border-light-grey: #ADADAD;
     background: #000000;
   }
 }
+
+.circle-icon {
+  background-image: url("../images/Circle.svg");
+}
+
+.diamond-icon {
+  background-image: url("../images/Diamond.svg");
+}
+
+.square-icon {
+  background-image: url("../images/Square.svg");
+}
+
+.aircraft-track-line {
+  background: #000000;
+
+  .line {
+    transform: rotate(-45deg);
+    height: 0;
+    width: 30px;
+    border: 1px solid #ADADAD;
+  }
+}
+
+.data-block {
+  font-family: EDST;
+  font-size: 16px;
+  line-height: 16px;
+  color: #ADADAD
+}
