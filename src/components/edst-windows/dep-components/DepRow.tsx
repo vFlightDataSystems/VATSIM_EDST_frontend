@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
-import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";

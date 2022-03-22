@@ -9,6 +9,7 @@ import {menuEnum, windowEnum} from "../../../enums";
 import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
+import {NoSelectDiv} from "../../../styles/styles";
 
 type DepHeaderProps = {
   focused: boolean
@@ -28,7 +29,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
     }
   };
 
-  return (<div className="no-select">
+  return (<NoSelectDiv>
     <WindowTitleBar
       focused={focused}
       closeWindow={() => {
@@ -75,5 +76,5 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
         />
       </div>
     </div>
-  </div>);
+  </NoSelectDiv>);
 }
