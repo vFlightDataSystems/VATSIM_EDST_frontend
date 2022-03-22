@@ -1,6 +1,9 @@
 import L from "leaflet";
 import '../../../css/windows/gpd-styles.scss';
+import {GpdDataBlock} from "./GpdDataBlock";
+import ReactDOMServer from 'react-dom/server';
 import {LocalEdstEntryType} from "../../../types";
+import {aclRowFieldEnum} from "../../../enums";
 
 export const trackIcon = L.divIcon({
   className: 'diamond-icon',
@@ -18,10 +21,9 @@ export const trackArrowIcon = L.divIcon({
   iconAnchor: [-4, 20],
 })
 
-export const dataBlockIcon = (entry: LocalEdstEntryType) => L.divIcon({
+export const dataBlockIcon = (entry: LocalEdstEntryType, selectedField: aclRowFieldEnum | null) => L.divIcon({
   className: "data-block",
-  html: `${entry.callsign}<br/>${entry.interim ? entry.interim + 'T' + entry.altitude : entry.altitude + 'C'}
-<br/>${entry.dest} ${entry.flightplan.ground_speed}`,
-  iconSize: [50, 40],
+  html: ReactDOMServer.renderToString(<GpdDataBlock entry={entry} selectedField={selectedField}/>),
+  iconSize: [60, 50],
   iconAnchor: [-40, 40]
 })
