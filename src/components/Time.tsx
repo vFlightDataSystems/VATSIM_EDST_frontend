@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import styled from "styled-components";
-import {edstFontGrey} from "../styles";
+import {edstFontGrey} from "../styles/colors";
 
 const TimeStyle = styled.div`
   display: inline-flex;

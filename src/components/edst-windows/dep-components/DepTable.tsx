@@ -1,12 +1,22 @@
 import {useMemo, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
-import '../../../css/windows/dep-styles.scss';
 import {DepRow} from "./DepRow";
 import {LocalEdstEntryType} from "../../../types";
 import {useAppSelector} from '../../../redux/hooks';
 import {sortOptionsEnum} from "../../../enums";
+import {NoSelectDiv} from "../../../styles/styles";
+import styled from "styled-components";
+import {edstFontGrey} from "../../../styles/colors";
 
 const COMPLETED_SYMBOL = '✓';
+
+const DepBodyStyleDiv = styled(NoSelectDiv)`
+  white-space:nowrap;
+  overflow: hidden;
+  flex-flow: column;
+  display: flex;
+  color: ${edstFontGrey}
+`;
 
 export function DepTable() {
   const sortData = useAppSelector((state) => state.dep.sortData);
@@ -41,7 +51,7 @@ export function DepTable() {
   const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.depDisplay), [entries]);
   const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa)), [entryList]);
 
-  return (<div className="dep-body no-select">
+  return (<DepBodyStyleDiv>
     <div className="body-row header" key="dep-table-header">
       <div className="body-col radio-header checkmark">
         {COMPLETED_SYMBOL}
@@ -98,5 +108,5 @@ export function DepTable() {
             hidden={hidden}
           />)}
     </div>
-  </div>);
+  </DepBodyStyleDiv>);
 }

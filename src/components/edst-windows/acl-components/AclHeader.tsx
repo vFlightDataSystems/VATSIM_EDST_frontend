@@ -15,6 +15,7 @@ import {
   setInputFocused
 } from "../../../redux/slices/appSlice";
 import {addAclEntryByFid} from "../../../redux/thunks/entriesThunks";
+import {NoSelectDiv} from "../../../styles/styles";
 
 
 export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
@@ -31,7 +32,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
     }
   };
 
-  return (<div>
+  return (<NoSelectDiv>
     <WindowTitleBar
       focused={focused}
       closeWindow={() => {
@@ -101,5 +102,5 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         />
       </div>
     </div>
-  </div>);
+  </NoSelectDiv>);
 };
