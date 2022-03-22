@@ -8,7 +8,13 @@ import {edstHeaderButtonEnum, windowEnum} from "../enums";
 import {openWindow, toggleWindow} from "../redux/slices/appSlice";
 import {planQueueSelector} from "../redux/slices/planSlice";
 import {sigmetSelector} from "../redux/slices/weatherSlice";
+import styled from "styled-components";
 
+export const EdstHeaderStyle = styled.div`
+  width: 100vw;
+  position: absolute;
+  z-index: 999;
+`;
 
 type EdstHeaderButtonProps = {
   title?: string,
@@ -45,7 +51,7 @@ export const EdstHeader: React.FC = () => {
   const notLen = 0, giLen = 0;
 
   return (
-    <div className="edst-header">
+    <EdstHeaderStyle>
       <div className="edst-header-row">
         <div className="edst-header-row-left">
           <button className="tiny" disabled={true}>
@@ -204,6 +210,6 @@ export const EdstHeader: React.FC = () => {
           />
         </div>
       </div>}
-    </div>
+    </EdstHeaderStyle>
   );
 };

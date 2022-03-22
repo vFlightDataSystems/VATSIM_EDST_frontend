@@ -10,12 +10,6 @@ $edst-header-outage-background-red: #590000;
 $edst-header-window-open-light-grey: #595959;
 $edst-header-window-closed-black: #000000;
 
-.edst-header {
-  width: 100vw;
-  position: absolute;
-  z-index: 999;
-}
-
 .edst-header-row {
   height: 30px;
   margin: 2px 0;
@@ -103,15 +97,4 @@ $edst-header-window-closed-black: #000000;
       color: $edst-header-button-disabled-font-grey;
     }
   }
-}
-
-.edst-header-time {
-  display: inline-flex;
-  justify-content: center;
-  height: 30px;
-  line-height: 28px;
-  width: 120px;
-  margin: 0 1px;
-  color: $edst-font-grey;
-  font-size: 20px;
 }
