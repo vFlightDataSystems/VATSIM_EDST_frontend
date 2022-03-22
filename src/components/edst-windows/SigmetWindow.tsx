@@ -7,11 +7,16 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {
   setSigmetAcknowledged,
-  setSigmetSupressionState, setViewSigmetSuppressed,
+  setSigmetSuppressionState, setViewSigmetSuppressed,
   sigmetSelector,
   viewSigmetSuppressedSelector
 } from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
+import {
+  FloatingWindowHeaderBlock,
+  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderDiv
+} from "../../styles/floatingWindowStyles";
 
 enum sigmetOptionEnum {
   viewSuppressed = "VIEW SUPPRESS",
@@ -60,19 +65,18 @@ export const SigmetWindow: React.FC = () => {
                       id="edst-status"
                       style={{left: pos.x + "px", top: pos.y + "px"}}
     >
-      <div className="floating-window-header no-select">
-        <div className="floating-window-header-left" onMouseDown={handleOptionsMouseDown}>
-          M
-        </div>
-        <div className="floating-window-header-middle"
-             onMouseDown={(event) => startDrag(event, ref, windowEnum.sigmets)}
+      <FloatingWindowHeaderDiv>
+        <FloatingWindowHeaderColDiv width={20} onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv>
+        <FloatingWindowHeaderColDiv
+          flexGrow={1}
+          onMouseDown={(event) => startDrag(event, ref, windowEnum.sigmets)}
         >
           SIGMETS SECTOR {sectorId}
-        </div>
-        <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
-          <div className="floating-window-header-block-6-2"/>
-        </div>
-      </div>
+        </FloatingWindowHeaderColDiv>
+        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
+          <FloatingWindowHeaderBlock width={8} height={2}/>
+        </FloatingWindowHeaderColDiv>
+      </FloatingWindowHeaderDiv>
       {Object.values(sigmetList).length > 0 &&
       <div className="floating-window-body scroll-container sigmet-scroll-container">
         {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
@@ -90,7 +94,7 @@ export const SigmetWindow: React.FC = () => {
               }}
               options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
               handleOptionClick={() => {
-                dispatch(setSigmetSupressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
+                dispatch(setSigmetSuppressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
                 setSelectedOption(null);
                 setSelectedPos(null);
               }}
