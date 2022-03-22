@@ -145,7 +145,7 @@ export const HeadingMenu: React.FC = () => {
             </div>
           </div>;
         })}
-        <div className="options-row present-headging-row">
+        <div className="options-row present-heading-row">
           <EdstButton content="Present Heading" onMouseDown={(event) => {
             switch (event.button) {
               case 0:

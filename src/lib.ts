@@ -271,7 +271,7 @@ export function computeFrd(referenceFix: ReferenceFixType): string {
 }
 
 /**
- * given a number, representing minutes minutes elapsed after midnight, give the corresponding UTC string HHMM format
+ * given a number, representing minutes elapsed after midnight, give the corresponding UTC string HHMM format
  * @param {number} minutes - minutes after midnight
  * @returns {string} - UTC time string in HHMM format
  */

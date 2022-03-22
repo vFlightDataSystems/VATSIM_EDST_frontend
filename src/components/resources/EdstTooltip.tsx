@@ -1,11 +1,23 @@
 import React from 'react';
-import '../../css/resources/tooltip.scss';
 import {useAppSelector} from "../../redux/hooks";
+import styled from "styled-components";
+
+const TooltipDiv = styled.div`
+  position: absolute;
+  color: #FFFFFF;
+  background-color: #000000;
+  border: 1px solid #ADAD00;
+  padding: 2px;
+  font-size: 0.85em;
+  transform: translateY(32px);
+  z-index: 999;
+  white-space: pre-line;
+`;
 
 const TooltipContent: React.FC<{content: any}> = (props) => {
-  return (<div className="tooltip-content" tabIndex={999}>
+  return (<TooltipDiv tabIndex={999}>
     {props.content}
-  </div>);
+  </TooltipDiv>);
 }
 
 type EdstTooltipProps = {
