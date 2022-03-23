@@ -11,6 +11,7 @@ import {aclAselActionTriggerEnum, aclRowFieldEnum, menuEnum, windowEnum} from ".
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {aclAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
+import {toolsOptionsSelector} from "../../../redux/slices/aclSlice";
 
 const SPA_INDICATOR = '\u2303';
 
@@ -34,6 +35,7 @@ export const AclRow: React.FC<AclRowProps> = (
   const asel = useAppSelector(aselSelector);
   const dispatch = useAppDispatch();
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const toolOptions = useAppSelector(toolsOptionsSelector);
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);
 
@@ -65,7 +67,7 @@ export const AclRow: React.FC<AclRowProps> = (
   const ref = useRef<HTMLDivElement | null>(null);
 
   // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM capable
-  const showCoralBox = (!entry.equipment.match(/[LZWH]/g) && Number(entry.altitude) > 280);
+  const showCoralBox = (!entry.equipment.match(/[LZWH]/g) && Number(entry.altitude) > 280) && toolOptions.nonRvsmIndicator;
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
