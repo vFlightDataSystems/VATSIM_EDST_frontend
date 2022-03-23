@@ -6,6 +6,11 @@ import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, setShowSectorSelector, windowPositionSelector} from "../../redux/slices/appSlice";
 import {EdstButton} from "../resources/EdstButton";
+import {
+  FloatingWindowHeaderBlock,
+  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderDiv
+} from "../../styles/floatingWindowStyles";
 
 export const Status: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,19 +24,18 @@ export const Status: React.FC = () => {
                       id="edst-status"
                       style={{left: pos.x + "px", top: pos.y + "px"}}
     >
-      <div className="floating-window-header no-select">
-        <div className="floating-window-header-left">
-          M
-        </div>
-        <div className="floating-window-header-middle"
-             onMouseDown={(event) => startDrag(event, ref, windowEnum.status)}
+      <FloatingWindowHeaderDiv>
+        <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
+        <FloatingWindowHeaderColDiv
+          flexGrow={1}
+          onMouseDown={(event) => startDrag(event, ref, windowEnum.status)}
         >
           STATUS
-        </div>
-        <div className="floating-window-header-right" onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
-          <div className="floating-window-header-block-6-2"/>
-        </div>
-      </div>
+        </FloatingWindowHeaderColDiv>
+        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
+          <FloatingWindowHeaderBlock width={8} height={2}/>
+        </FloatingWindowHeaderColDiv>
+      </FloatingWindowHeaderDiv>
       <div className="floating-window-body status-body">
         <EdstButton className="floating-window-outer-row" onMouseDown={() => dispatch(setShowSectorSelector(true))}>
           Change Sectors

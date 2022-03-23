@@ -1,6 +1,5 @@
 import React, {MouseEventHandler, useEffect, useMemo, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
-import '../../../css/windows/acl-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
@@ -12,8 +11,9 @@ import {aclAselActionTriggerEnum, aclRowFieldEnum, menuEnum, windowEnum} from ".
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {aclAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
+import {toolsOptionsSelector} from "../../../redux/slices/aclSlice";
 
-const SPA_INDICATOR = '^';
+const SPA_INDICATOR = '\u2303';
 
 type AclRowProps = {
   key: string,
@@ -35,11 +35,9 @@ export const AclRow: React.FC<AclRowProps> = (
   const asel = useAppSelector(aselSelector);
   const dispatch = useAppDispatch();
   const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const toolOptions = useAppSelector(toolsOptionsSelector);
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);
-  // if (entry.aar_list === undefined) {
-  //   dispatch(fetchAarData(entry.cid));
-  // }
 
   useEffect(() => (() => {
     if (freeTextContent !== (entry.free_text_content ?? '')) {
@@ -67,6 +65,9 @@ export const AclRow: React.FC<AclRowProps> = (
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? '');
   const ref = useRef<HTMLDivElement | null>(null);
+
+  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM capable
+  const showCoralBox = (!entry.equipment.match(/[LZWH]/g) && Number(entry.altitude) > 280) && toolOptions.nonRvsmIndicator;
 
   const checkAarReroutePending = () => {
     const currentFixNames = (entry._route_data ?? entry.route_data).map(fix => fix.name);
@@ -115,7 +116,7 @@ export const AclRow: React.FC<AclRowProps> = (
         } else {
           dispatch(updateEntry({
             cid: entry.cid,
-            data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : 'route'}
+            data: {aclRouteDisplay: !entry.aclRouteDisplay ? 'hold_data' : null}
           }));
         }
         break;
@@ -218,7 +219,7 @@ export const AclRow: React.FC<AclRowProps> = (
     return asel?.window === windowEnum.acl && asel?.cid === cid && asel?.field === field;
   };
 
-  return (<div className={`body-row-container ${index%3 === 2 ? 'row-sep-border' : ''}`}
+  return (<div className={`body-row-container ${index % 3 === 2 ? 'row-sep-border' : ''}`}
                key={`acl-row-container-${entry.cid}`}
                onContextMenu={(event) => event.preventDefault()}>
     <div className={`body-row ${(now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
@@ -231,7 +232,10 @@ export const AclRow: React.FC<AclRowProps> = (
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
       <div className="body-col body-col-1 border"/>
-      <div className="body-col body-col-1"/>
+      <div className={`body-col special-box`} // @ts-ignore
+           disabled={true}/>
+      <div className={`body-col special-box`} // @ts-ignore
+           disabled={true}/>
       <div className={`inner-row ${entry.aclHighlighted ? 'highlighted' : ''}`}
            ref={ref}
            style={{minWidth: entry.showFreeText ? '1200px' : 0}}
@@ -245,12 +249,11 @@ export const AclRow: React.FC<AclRowProps> = (
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+        <div className={`body-col special-box ${!entry.spa ? 'special-hidden' : ''}`}>
           {entry.spa && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.aclHotbox}>
-          <div className="body-col special hotbox"
-               onContextMenu={event => event.preventDefault()}
+          <div className="body-col special-box hotbox"
                onMouseDown={handleHotboxMouseDown}
           >
             {freeTextContent && '*'}
@@ -272,6 +275,7 @@ export const AclRow: React.FC<AclRowProps> = (
             >
               {entry.altitude}{entry.interim && `T${entry.interim}`}
             </div>
+            {showCoralBox && <div className="special coral-box"/>}
           </div>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclCode}>
@@ -283,7 +287,7 @@ export const AclRow: React.FC<AclRowProps> = (
             {entry.beacon}
           </div>
         </EdstTooltip>
-        <div className={`body-col hover special`}
+        <div className={`body-col hover special-box`}
              onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)}
           // @ts-ignore
              disabled={!(entry.hdg && entry.scratchHdg)}>
@@ -308,46 +312,53 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
             {(entry.scratchSpd && (displayScratchSpd || entry.spd === null)) ? entry.scratchSpd : entry.spd}
           </div>
         </EdstTooltip>
-        <div className={`body-col hover special`}
+        <div className={`body-col hover special-box`}
              onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)}
           // @ts-ignore
              disabled={!(entry.spd && entry.scratchSpd)}>
           {entry.spd && entry.scratchSpd && '*'}
         </div>
-        <div className={`body-col special`}
-          // @ts-ignore
+        <div className={`body-col special-box`} // @ts-ignore
              disabled={true}/>
-        <div className={`body-col special hold-col ${isSelected(entry.cid, aclRowFieldEnum.hold) ? 'selected' : ''}`}
-             onMouseDown={handleHoldClick}
-             onContextMenu={(event) => {
-               event.preventDefault();
-               if (entry?.hold_data) {
-                 dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, menuEnum.cancelHoldMenu));
-               }
-             }}
+        <div
+          className={`body-col special-box hold-col ${isSelected(entry.cid, aclRowFieldEnum.hold) ? 'selected' : ''}`}
+          onMouseDown={handleHoldClick}
+          onContextMenu={(event) => {
+            event.preventDefault();
+            if (entry?.hold_data) {
+              dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, menuEnum.cancelHoldMenu));
+            }
+          }}
           // @ts-ignore
-             disabled={!anyHolding}
+          disabled={!anyHolding}
         >
           {entry.hold_data ? 'H' : ''}
         </div>
+        <div className={`body-col special-box`} // @ts-ignore
+             disabled={true}/>
         <EdstTooltip title={Tooltips.aclRemarksBtn}>
-          <div className={`body-col special ${!entry.remarksChecked && entry.remarks.length > 0 ? 'remarks-unchecked' : ''}`}
-               onMouseDown={handleRemarksClick}
+          <div
+            className={`body-col special-box ${!entry.remarksChecked && entry.remarks.length > 0 ? 'remarks-unchecked' : ''}`}
+            onMouseDown={handleRemarksClick}
           >
             {entry.remarks.length > 0 && '*'}
           </div>
         </EdstTooltip>
+        <div className={`body-col special-box`} // @ts-ignore
+             disabled={true}/>
+        <div className={`body-col special-box`} // @ts-ignore
+             disabled={true}/>
         <EdstTooltip title={Tooltips.aclRoute}>
           <div className={`body-col route hover ${isSelected(entry.cid, aclRowFieldEnum.route) ? 'selected' : ''}`}
                onMouseDown={(event) => dispatch(aclAircraftSelect(event, entry.cid, aclRowFieldEnum.route, null, menuEnum.routeMenu))}
           >
             {entry.aclRouteDisplay === 'hold_data' && holdData &&
-            `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}
+              `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}
             {entry.aclRouteDisplay === 'remarks' && <span>{entry.flightplan.remarks}</span>}
             {entry.aclRouteDisplay === 'raw_route' && <span>{entry.flightplan.route}</span>}
             {!entry.aclRouteDisplay && <span className="no-pad">
             <span
-              className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, aclRowFieldEnum.route) ? 'selected' : ''}`}>
+                className={`${aarAvail && !onAar ? 'amendment-1' : ''} ${isSelected(entry.cid, aclRowFieldEnum.route) ? 'selected' : ''}`}>
               {entry.dep}
             </span>
             ./.
@@ -355,7 +366,7 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
               {/*{entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''}*/}
               {route}{!route.endsWith('.') && route.length > 0 && `.`}
               {pendingAar && !onAar &&
-              <span className={`amendment-2 ${isSelected(entry.cid, aclRowFieldEnum.route) ? 'selected' : ''}`}>
+                  <span className={`amendment-2 ${isSelected(entry.cid, aclRowFieldEnum.route) ? 'selected' : ''}`}>
               {`[${pendingAar}]`}
               </span>}
               {entry.dest}
@@ -365,22 +376,25 @@ ${isSelected(entry.cid, aclRowFieldEnum.spd) ? 'selected' : ''} ${(entry.scratch
       </div>
     </div>
     {entry.showFreeText && <div className="body-row">
-      <div className={`body-col body-col-1 radio`}/>
-      <div className="body-col body-col-1"/>
-      <div className="body-col body-col-1"/>
-      <div className="body-col body-col-1"/>
-      <div className="body-col body-col-1"/>
-      <div className={`inner-row-2 ${entry.aclHighlighted ? 'highlighted' : ''}`}
-           style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
-      >
-        <div className="free-text-row">
-          <input
-            onFocus={() => dispatch(setInputFocused(true))}
-            onBlur={() => dispatch(setInputFocused(false))}
-            value={freeTextContent}
-            onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
+        <div className={`body-col body-col-1 radio`}/>
+        <div className="body-col body-col-1"/>
+        <div className="body-col body-col-1"/>
+        <div className="body-col body-col-1"/>
+        <div className={`body-col special-box`} // @ts-ignore
+             disabled={true}/>
+        <div className={`body-col special-box`} // @ts-ignore
+             disabled={true}/>
+        <div className={`inner-row-2 ${entry.aclHighlighted ? 'highlighted' : ''}`}
+             style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
+        >
+            <div className="free-text-row">
+                <input
+                    onFocus={() => dispatch(setInputFocused(true))}
+                    onBlur={() => dispatch(setInputFocused(false))}
+                    value={freeTextContent}
+                    onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
+            </div>
         </div>
-      </div>
     </div>}
   </div>);
 };

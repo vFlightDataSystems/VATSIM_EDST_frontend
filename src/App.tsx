@@ -41,6 +41,8 @@ import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
 import {useEventListener} from "usehooks-ts";
 import {EquipmentTemplateMenu} from "./components/edst-windows/template-components/EquipmentTemplateMenu";
 import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
+import {Gpd} from "./components/edst-windows/Gpd";
+import {DraggingCursorDiv, EdstDraggingOutlineDiv, StyledEdstDiv, StyledEdstBodyDiv} from "./styles/edstStyles";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -219,28 +221,29 @@ export const App: React.FC = () => {
 
   useEventListener('keydown', handleKeyDown);
 
-  return <div className="edst no-select"
+  return <StyledEdstDiv
               onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
               tabIndex={!(inputFocused) ? -1 : 0}
   >
     <EdstHeader/>
     <div id='toPrint'/>
-    <div className={`edst-body ${draggingCursorHide ? 'hide-cursor' : ''}`}
-         ref={bodyRef}
-         onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
+    <StyledEdstBodyDiv className={`${draggingCursorHide ? 'hide-cursor' : ''}`}
+                       ref={bodyRef}
+                       onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
     >
       {showSectorSelector && <SectorSelector/>}
-      <div className="edst-dragging-outline" style={dragging ? dragPreviewStyle : {display: 'none'}}
-           onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
+      <EdstDraggingOutlineDiv style={dragging ? dragPreviewStyle : {display: 'none'}}
+                              onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
       >
-        {draggingCursorHide && <div className="dragging-cursor"/>}
-      </div>
+        {draggingCursorHide && <DraggingCursorDiv/>}
+      </EdstDraggingOutlineDiv>
       <EdstContext.Provider value={{
         startDrag: startDrag,
         stopDrag: stopDrag
       }}>
         {windows[windowEnum.acl].open && <Acl/>}
         {windows[windowEnum.dep].open && <Dep/>}
+        {windows[windowEnum.graphicPlanDisplay].open && <Gpd/>}
         {windows[windowEnum.plansDisplay].open && <PlansDisplay/>}
         {menus[menuEnum.planOptions].open && <PlanOptions/>}
         {menus[menuEnum.sortMenu].open && <SortMenu/>}
@@ -267,6 +270,6 @@ export const App: React.FC = () => {
         />}
         {windows[windowEnum.messageResponseArea].open && <MessageResponseArea/>}
       </EdstContext.Provider>
-    </div>
-  </div>;
+    </StyledEdstBodyDiv>
+  </StyledEdstDiv>;
 };

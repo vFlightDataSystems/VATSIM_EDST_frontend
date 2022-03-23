@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
-import {computeFrd, formatUtcMinutes, getClearedToFixRouteData} from "../../lib";
+import {formatUtcMinutes, getClearedToFixRouteData} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setAclManualPosting} from "../../redux/slices/aclSlice";
@@ -20,13 +20,56 @@ import {
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {printFlightStrip} from "../PrintableFlightStrip";
+import {defaultFontFamily, FloatingWindowDiv} from "../../styles/styles";
+import styled from "styled-components";
+
+const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
+  height: 84px;
+  width: 400px;
+  background-color: #000000;
+  border: 1px solid #ADADAD;
+  font-family: ${defaultFontFamily};
+`;
+
+const MessageComposeInputAreaDiv = styled.div`
+  line-height: 1;
+  width: 100%;
+  height: 40%;
+  border-bottom: 1px solid #ADADAD;
+
+  input {
+    width: 98%;
+    font-family: ${defaultFontFamily};
+  }
+`
+
+const MessageComposeResponseAreaDiv = styled.div`
+  line-height: 0.95;
+  padding: 2px;
+  display: flex;
+  flex-grow: 1;
+  white-space: pre-line;
+`;
 
 type MessageComposeAreaProps = {
   setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
 }
 
-const ACCEPT_CHECKMARK = '✓';
-const REJECT_CROSS = 'X'; // apparently this is literally just the character X (xray)
+const AcceptCheckmarkSpan = styled.span`
+  color: #00AD00;
+
+  ::before {
+    content: "✓";
+  }
+`;
+
+const RejectCrossSpan = styled.span`
+  color: #AD0000;
+
+  ::before {
+    content: "X"; // apparently this is literally just the character X (xray)
+  }
+`;
 
 export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
   const [response, setResponse] = useState<string | null>(null);
@@ -74,18 +117,20 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   };
 
   const getEntryByFid = (fid: string): LocalEdstEntryType | undefined => {
-   return Object.values(entries ?? {})
-     ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    return Object.values(entries ?? {})
+      ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
   }
 
   const flightplanReadout = (fid: string) => {
     const now = new Date();
-    const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry: LocalEdstEntryType | undefined = getEntryByFid(fid);
     if (entry) {
       let msg = formatUtcMinutes(utcMinutes) + '\n'
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
-        + ` ${entry.altitude} ${entry.dep}./.${entry.referenceFix ? computeFrd(entry.referenceFix) + '..' : ''}${entry._route?.replace(/^\.+/, '')}`;
+        + ` ${entry.altitude} ${entry.dep}./.`
+        + `${entry.cleared_direct?.fix && entry._route?.startsWith(entry.cleared_direct?.fix) ? entry.cleared_direct?.frd + '..' : ''}`
+        + `${entry._route?.replace(/^\.+/, '')}`;
       dispatch(setMraMessage(msg));
     }
   };
@@ -218,14 +263,14 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     }
   };
 
-  return pos && (<div className="floating-window mca"
-                      ref={ref}
-                      id="edst-mca"
-                      style={{left: pos.x + "px", top: pos.y + "px"}}
-                      onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
+  return pos && (<MessageComposeAreaDiv
+      ref={ref}
+      id="edst-mca"
+      style={{left: pos.x + "px", top: pos.y + "px"}}
+      onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
       // onMouseEnter={() => setInputFocus()}
     >
-      <div className="mca-input-area">
+      <MessageComposeInputAreaDiv>
         <input
           ref={inputRef}
           onFocus={() => {
@@ -241,12 +286,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
           onChange={handleInputChange}
           onKeyDownCapture={handleKeyDown}
         />
-      </div>
-      <div className="mca-response-area">
-        {response?.startsWith('ACCEPT') && <span className="green">{ACCEPT_CHECKMARK}</span>}
-        {response?.startsWith('REJECT') && <span className="red">{REJECT_CROSS}</span>}
+      </MessageComposeInputAreaDiv>
+      <MessageComposeResponseAreaDiv>
+        {response?.startsWith('ACCEPT') && <AcceptCheckmarkSpan/>}
+        {response?.startsWith('REJECT') && <RejectCrossSpan/>}
         {response}
-      </div>
-    </div>
+      </MessageComposeResponseAreaDiv>
+    </MessageComposeAreaDiv>
   );
 };

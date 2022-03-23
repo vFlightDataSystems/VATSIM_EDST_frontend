@@ -45,21 +45,7 @@ $edst-window-light-cyan: #008585;
 $edst-window-dark-cyan: #005757;
 $edst-window-light-grey: #888888;
 $edst-window-dark-grey: #575757;
-
-.edst {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  padding: 0;
-  margin: 0;
-  background-color: black;
-  font-family: $default-font-family;
-  font-size: $default-font-size;
-  caret-color: transparent;
-
-  -webkit-font-smoothing: none;
-  cursor: $default-cursor;
-}
+$edst-window-coral: #D698A5;
 
 button {
   font-family: $default-font-family;
@@ -82,36 +68,6 @@ input, textarea {
   border: none;
   caret: underscore;
   background-color: #000000;
-}
-
-.edst-body {
-  overflow: hidden;
-  flex-flow: column;
-  position: absolute;
-  top: 36px;
-  left: 0;
-  height: calc(100vh - 36px);
-  width: 100vw;
-  flex-grow: 1;
-  display: flex;
-
-  &.hide-cursor {
-    cursor: none;
-  }
-
-  .edst-dragging-outline {
-    background-color: transparent;
-    border: 1px solid #FFFFFF;
-  }
-}
-
-.dragging-cursor {
-  z-index: 999;
-  width: 25px;
-  height: 25px;
-  content: url('cursors/aero_arrow.cur');
-  //transform: translate(-25%, -25%);
-  //content: url('cursors/ERAMCursor2.cur');
 }
 
 .delete-cursor {

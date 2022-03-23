@@ -187,7 +187,8 @@ export const RouteMenu: React.FC = () => {
               <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo"/>
             </a>
           </EdstTooltip>
-          <div className={`options-col right ${!trialPlan ? 'selected' : ''}`}>
+          <div className={`options-col uplink-symbol right`}>
+            {entry.uplinkEligible && <EdstButton className="uplink-symbol route-menu" disabled={true} content={`\u{1D925}`}/>}
             <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)}
                         title={Tooltips.routeMenuAmend}
             />
@@ -234,7 +235,7 @@ export const RouteMenu: React.FC = () => {
                        onMouseDown={() => setAppend({appendOplus: !appendOplus, appendStar: false})}
           >
             <EdstButton disabled={true} className="tiny" selected={appendOplus}/>
-            Append<span>&nbsp;⊕</span>
+            Append<span>&nbsp;{`\u2295`}</span>
           </EdstTooltip>
         </div>
         <EdstTooltip className="options-row route-row underline"
@@ -248,8 +249,8 @@ export const RouteMenu: React.FC = () => {
         </div>
         {_.range(0, Math.min(routeData?.length ?? 0, 10)).map((i) => <div className="options-row"
                                                                           key={`route-menu-row-${i}`}>
-          {_.range(0, ((routeData?.length ?? 0)/10 | 0) + 1).map((j) => {
-            const fixName = routeData?.[Number(i) + Number(j)*10]?.name;
+          {_.range(0, ((routeData?.length ?? 0) / 10 | 0) + 1).map((j) => {
+            const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
             return (fixName && <EdstTooltip className="options-col dct-col hover" key={`route-menu-col-${i}-${j}`}
                                             content={fixName}
                                             onMouseDown={() => clearedToFix(fixName)}
@@ -258,12 +259,12 @@ export const RouteMenu: React.FC = () => {
           })}
         </div>)}
         {routes?.length > 0 &&
-        <PreferredRouteDisplay
-          aar={entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
-          adr={asel.window === windowEnum.dep ? entry.adr : []}
-          adar={asel.window === windowEnum.dep ? entry.adar : []}
-          dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}
-        />}
+            <PreferredRouteDisplay
+                aar={entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
+                adr={asel.window === windowEnum.dep ? entry.adr : []}
+                adar={asel.window === windowEnum.dep ? entry.adar : []}
+                dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}
+            />}
         <div className="options-row bottom">
           <div className="options-col left">
             <EdstButton disabled={true} content="Flight Data" title={Tooltips.routeMenuFlightData}/>
