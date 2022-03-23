@@ -18,12 +18,12 @@ export const vorIcon = L.divIcon({
 export const trackArrowIcon = L.divIcon({
   className: "aircraft-track-line",
   html: "<div class='line'/>",
-  iconAnchor: [-4, 20],
-})
+  iconAnchor: [-4, 20]
+});
 
 export const dataBlockIcon = (entry: LocalEdstEntryType, selectedField: aclRowFieldEnum | null) => L.divIcon({
   className: "data-block",
   html: ReactDOMServer.renderToString(<GpdDataBlock entry={entry} selectedField={selectedField}/>),
   iconSize: [60, 50],
-  iconAnchor: [-40, 40]
+  iconAnchor: [-34, 40]
 })
