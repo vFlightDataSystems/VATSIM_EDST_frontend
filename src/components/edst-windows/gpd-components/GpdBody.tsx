@@ -19,7 +19,7 @@ export const GpdBody: React.FC = () => {
   const vorLowList = useAppSelector(vorLowListSelector);
   const sectors = useAppSelector(sectorPolygonSelector);
   const entries = useAppSelector(entriesSelector);
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay), [entries]);
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay && entry.flightplan.ground_speed > 40), [entries]);
 
   const vorHighNames = useMemo(() => vorHighList.map(fix => fix.name), [vorHighList]);
 
