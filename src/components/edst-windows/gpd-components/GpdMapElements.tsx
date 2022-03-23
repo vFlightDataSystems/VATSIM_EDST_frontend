@@ -1,12 +1,11 @@
-import {GeoJSON, Marker} from "react-leaflet";
-import React from "react";
+import {GeoJSON, Marker, useMap} from "react-leaflet";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Feature, Polygon, Position, Properties} from "@turf/turf";
-import {LatLngExpression} from "leaflet";
+import L, {LatLngExpression} from "leaflet";
 import {useAppSelector} from "../../../redux/hooks";
 import {entrySelector} from "../../../redux/slices/entriesSlice";
-import {dataBlockIcon, trackArrowIcon, trackIcon, vorIcon} from "./LeafletIcons";
-import {aselSelector} from "../../../redux/slices/appSlice";
-import {aclRowFieldEnum, windowEnum} from "../../../enums";
+import {trackArrowIcon, trackIcon, vorIcon} from "./LeafletIcons";
+import {GpdDataBlock} from "./GpdDataBlock";
 
 type GpdFixProps = {
   lat: number | string,
@@ -23,20 +22,26 @@ function posToLatLng(pos: Position | { lat: number, lon: number }): LatLngExpres
 
 // function getRouteLine(entry: LocalEdstEntryType) {
 //   let {route, route_data: routeData, dest} = entry;
-//   let routeDataCopy = routeData.slice(0);
-//   let fixNames = routeDataCopy.map((e: { name: string }) => e.name);
-//   if (entry.dest_info && !fixNames.includes(dest)) {
-//     routeData.push({
-//       name: entry.dest_info.icao,
-//       pos: [Number(entry.dest_info.lon), Number(entry.dest_info.lat)]
-//     });
-//   }
-//   if (route && routeDataCopy) {
-//     const pos = [entry.flightplan.lon, entry.flightplan.lat];
-//     const nextFix = getNextFix(route, routeDataCopy, pos)[0] as FixType;
-//     const index = fixNames.indexOf(nextFix.name);
-//     routeDataCopy.unshift({pos: pos, name: 'ppos'});
-//     return routeDataCopy.slice(index);
+//   const indexToSplit = route.indexOf('[XXX]');
+//   const routeToDisplay = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, '') : route;
+//   if (routeToDisplay.length > 0) {
+//     let fixNames = routeData.map((e: { name: string }) => e.name);
+//     const lastFixIndex = fixNames.indexOf(routeToDisplay.split('.').pop() as string);
+//     fixNames = fixNames.slice(0, lastFixIndex);
+//     const routeDataToDisplay = routeData.slice(0, lastFixIndex);
+//     if (entry.dest_info && !fixNames.includes(dest)) {
+//       routeDataToDisplay.push({
+//         name: entry.dest_info.icao,
+//         pos: [Number(entry.dest_info.lon), Number(entry.dest_info.lat)]
+//       });
+//     }
+//     if (routeToDisplay && routeDataToDisplay) {
+//       const pos = [entry.flightplan.lon, entry.flightplan.lat];
+//       const nextFix = getNextFix(route, routeDataToDisplay, pos).pop() as FixType;
+//       const index = fixNames.indexOf(nextFix.name);
+//       routeDataToDisplay.unshift({pos: pos, name: 'ppos'});
+//       return routeDataToDisplay.slice(index);
+//     }
 //   }
 //   return null
 // }
@@ -56,18 +61,41 @@ export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon, Properties
 
 export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
   const entry = useAppSelector(entrySelector(cid));
-  const asel = useAppSelector(aselSelector);
-  const posLatLng = posToLatLng({...entry.flightplan});
+  const posLatLng = useMemo(() => posToLatLng({...entry.flightplan}), [entry.flightplan]);
+  const [trackPos, setTrackPos] = useState<{ x: number, y: number } | null>(null);
+  const ref = useRef<L.Marker | null>(null);
+
   // const routeLine = useMemo(() => {
   //   return getRouteLine(entry);
-  // }, [entry.flightplan]);
+  // }, [entry]);
+
+  const updateHandler = useCallback(() => {
+    const element: HTMLElement & any = ref.current?.getElement();
+    if (element) {
+      setTrackPos(element._leaflet_pos);
+    }
+  }, []);
+
+  const map = useMap();
+  useEffect(() => {
+    updateHandler();
+    map.on({zoom: updateHandler});
+  }, [])
+  useEffect(() => {
+    updateHandler();
+  }, [posLatLng, updateHandler])
+
 
   return <>
-    {/*<Circle center={posLatLng} radius={2000} pathOptions={{color: '#ADAD00', weight: 1.1}}/>*/}
-    <Marker position={posLatLng} icon={trackIcon} opacity={1}/>
+    <Marker position={posLatLng} icon={trackIcon} opacity={1} ref={ref}
+            riseOnHover={true}
+    >
+      <GpdDataBlock
+        entry={entry}
+        pos={trackPos}
+      />
+    </Marker>
+    {/*{routeLine && <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))}/>}*/}
     <Marker position={posLatLng} icon={trackArrowIcon}/>
-    <Marker position={posLatLng} icon={dataBlockIcon(entry, asel?.cid === entry.cid
-    && asel?.window === windowEnum.graphicPlanDisplay ? asel.field as aclRowFieldEnum : null)}/>
-    {/*{routeLine && <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))} pathOptions={{color: '#ADAD00', weight: 1}}/>}*/}
   </>;
 };

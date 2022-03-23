@@ -101,8 +101,8 @@ function PrintableFlightStrip(props: any) {
     borderRight: '1px solid black',
     padding: '0px'
   };
-  {/* TODO find good font */}
-  {/* TODO replace with grid/better solution */}
+  /* TODO find good font */
+  /* TODO replace with grid/better solution */
   return (
     <div className="printable-flight-strip">
       <table style={{border: '1px solid black'}}>

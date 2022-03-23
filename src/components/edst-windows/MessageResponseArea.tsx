@@ -9,6 +9,7 @@ import styled from "styled-components";
 import {FloatingWindowDiv} from "../../styles/styles";
 
 const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
+  z-index: 1000;
   line-height: 1;
   padding: 0 2px;
   height: 80px;

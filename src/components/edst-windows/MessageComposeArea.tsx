@@ -24,6 +24,7 @@ import {defaultFontFamily, FloatingWindowDiv} from "../../styles/styles";
 import styled from "styled-components";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
+  z-index: 1000;
   height: 84px;
   width: 400px;
   background-color: #000000;

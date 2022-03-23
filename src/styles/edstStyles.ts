@@ -32,12 +32,13 @@ export const StyledEdstBodyDiv = styled.div`
 `;
 
 export const EdstDraggingOutlineDiv = styled.div`
+  z-index: 1001;
   background-color: transparent;
   border: 1px solid #FFFFFF;
 `;
 
 export const DraggingCursorDiv = styled.div`
-  z-index: 999;
+  z-index: 1001;
   width: 25px;
   height: 25px;
   content: url(${cursor});
