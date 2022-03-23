@@ -24,36 +24,36 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
     const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (FixType & {minutesAtFix: number})[];
     ReactDOM.render(<PrintableFlightStrip
       fs={{
-        rev: '1',
-        callsign: entry.callsign,
-        type: entry.type,
-        tas: 'TXXX',
-        sect: 'XXX',
-        cid: entry.cid,
-        estGs: entry.flightplan.ground_speed,
-        stripReqOrig: 'XXX',
-        stripNum: '1',
-        prev: prevFix?.name ?? '',
-        prevTime: '',
-        prevTimeRev: '',
-        prevTimeAct: '',
-        postedFixTime: '',
-        currTimeCentre: '',
-        directionArrow: '',
-        currTimePilot: '',
-        currTimeAct: '',
-        curr: '',
-        alt: entry.altitude,
-        next: nextFix.name ?? '',
-        nextTime: nextFix? formatUtcMinutes(nextFix.minutesAtFix) : '',
-        dofArrow: '',
-        reqAlt: '',
-        route: getRouteString(entry),
-        remarks: entry.remarks.split('RMK')?.pop() ?? '',
-        squawk: entry.beacon,
-        misc: '',
-        trans1: '',
-        trans2: ''
+        callsign: entry.callsign,                                         // callsign
+        type: entry.type,                                                 // weight, type, equipment suffix
+        tas: 'TXXX',                                                      // true airspeed
+        sect: 'XX',                                                       // current sector
+        cid: entry.cid,                                                   // cid
+        estGs: "G" + entry.flightplan.ground_speed,                       // filed ground speed
+        stripReqOrig: 'XXX',                                              // strip request origin
+        stripNum: '1',                                                    // strip number
+        prev: prevFix?.name ?? '',                                        // previous fix
+        prevTime: '',                                                     // previous fix timestamp
+        prevTimeRev: '',                                                  // previous fix timestamp, revised
+        prevTimeAct: '',                                                  // previous fix timestamp, actual
+        postedFixTime: '',                                                // posted fix timestamp
+        currTimeCentre: '',                                               // current fix timestamp, from centre
+        directionArrow: '',                                               // departure/arrival arrow
+        currTimePilot: '',                                                // current fix timestamp, from pilot
+        currTimeAct: '',                                                  // current fix timestamp, actual
+        curr: '',                                                         // current fix / departure time
+        alt: entry.altitude,                                              // assigned altitude
+        next: nextFix?.name ?? '',                                        // next fix
+        nextTime: nextFix? formatUtcMinutes(nextFix.minutesAtFix) : '',   // next fix timestamp
+        dofArrow: '',                                                     // direction of flight arrow
+        reqAlt: '',                                                       // requested altitude
+        route: getRouteString(entry).split('.')
+            .filter(function (x) {return x !== ''}).join(' '),       // route
+        remarks: filterRemarks(entry.flightplan.remarks),                 // remarks
+        squawk: entry.beacon,                                             // squawk code
+        misc: '',                                                         // miscellaneous info
+        trans1: '',                                                       // transfer of control info
+        trans2: ''                                                        // transfer of control info
       }}
     />, document.getElementById('toPrint'))
     let printer = window.open("") as Window;
@@ -69,49 +69,70 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
   }
 }
 
+function filterRemarks(remarks: string): string {
+  remarks = remarks.split('RMK')?.pop() ?? '';
+
+  remarks = removeRemark(remarks, 'EET');
+  remarks = removeRemark(remarks, 'REG');
+
+  var index = remarks.indexOf('RALT');
+  remarks = index !== -1 ? remarks.slice(0, index) + remarks.slice(index + 9) : remarks;
+
+  index = remarks.indexOf('/TCAS SIMBRIEF');
+  remarks = index !== -1 ? remarks.slice(0, index) + remarks.slice(index + 15) : remarks;
+
+  return remarks;
+}
+
+function removeRemark(remarks: string, remark: string): string {
+  if (remarks.indexOf(remark) > -1) {
+    remark = remark + '/';
+    const rem = remarks.split(remark)?.pop() ?? '';
+    const remS = rem.split('/');
+    remS.shift(); remS.pop();
+    remarks = remarks.split(remark)[0] + rem.split('/')[0].slice(-3) + '/' + remS.join('/');
+  }
+  return remarks;
+}
+
 function PrintableFlightStrip(props: any) {
   const {fs} = props;
   const rootTdStyle = {
     borderRight: '1px solid black',
     padding: '0px'
   };
+  {/* TODO find good font */}
+  {/* TODO replace with grid/better solution */}
   return (
     <div className="printable-flight-strip">
       <table style={{border: '1px solid black'}}>
         <tbody>
         <tr>
           <td style={rootTdStyle}>
-            <table style={{width: "160px"}}>
+            <table style={{width: "130", textAlign: "center"}}>
               <tbody>
               <tr>
-                <td style={{textAlign: "left"}}>{fs.callsign}</td>
-                <td/>
-                <td style={{textAlign: "right"}}>{fs.rev}</td>
+                <td style={{fontSize: "20.8px", paddingBottom: "10px"}}>{fs.callsign}</td>
               </tr>
               <tr>
                 <td>{fs.type}</td>
               </tr>
               <tr>
                 <td>{fs.tas}</td>
-                <td>?</td>
-                {/*TODO what number is this? GS?*/}
+                <td>{fs.estGs}</td>
               </tr>
               <tr>
                 <td style={{textAlign: "right"}}>{fs.sect}</td>
-                <td style={{textAlign: "right"}}>16</td>
-                {/*TODO what number is this?*/}
+                <td>{fs.sect}</td>
               </tr>
               <tr>
-                <td style={{textAlign: "left"}}>486</td>
-                {/*TODO what number is this? CID?*/}
-                <td style={{textAlign: "right"}}>09</td>
-                {/*TODO what number is this?*/}
+                <td>{fs.cid}</td>
               </tr>
               </tbody>
             </table>
           </td>
           <td style={rootTdStyle}>
-            <table style={{width: "70px"}}>
+            <table style={{width: "60px"}}>
               <tbody>
               <tr>
                 <td>{fs.prev}</td>
@@ -126,7 +147,7 @@ function PrintableFlightStrip(props: any) {
                 <td>{fs.prevTimeAct}</td>
               </tr>
               <tr>
-                <td>{fs.postedTime}</td>
+                <td>{fs.postedFixTime}</td>
               </tr>
               </tbody>
             </table>
@@ -144,9 +165,9 @@ function PrintableFlightStrip(props: any) {
               <tr>
                 <td/>
               </tr>
-              <tr style={{height: "42px"}}>
+              <tr style={{height: "42px", overflow: "hidden"}}>
                 <td style={{border: "1px solid black", textAlign: "center", width: "50%"}}>{fs.currTimePilot}</td>
-                <td style={{border: "1px solid black", textAlign: "center"}}>{fs.currTimeAct}</td>
+                <td style={{border: "1px solid black", textAlign: "center", width: "50%"}}>{fs.currTimeAct}</td>
               </tr>
               <tr>
                 <td style={{paddingLeft: "10px", textAlign: "left"}}>{fs.curr}</td>
@@ -158,19 +179,18 @@ function PrintableFlightStrip(props: any) {
             <table style={{width: "80px"}}>
               <tbody>
               <tr>
-                <td style={{textAlign: "left", paddingLeft: "10px"}}>{fs.alt}</td>
+                <td style={{textAlign: "left", paddingBottom: "70px"}}>{fs.alt}</td>
               </tr>
               </tbody>
             </table>
           </td>
           <td style={rootTdStyle}>
-            <table style={{width: "90px", textAlign: "left", paddingLeft: "10px"}}>
+            <table style={{width: "40px", textAlign: "left"}}>
               <tbody>
               <tr>
-                <td style={{paddingBottom: "5px"}}>{fs.nextPosted}</td>
+                <td style={{paddingBottom: "5px"}}>{fs.next}</td>
               </tr>
               <tr>
-                <td>{fs.next}</td>
                 <td>{fs.nextTime}</td>
               </tr>
               <tr>
@@ -183,7 +203,7 @@ function PrintableFlightStrip(props: any) {
             </table>
           </td>
           <td style={rootTdStyle}>
-            <table style={{width: "180px", textAlign: "left", paddingLeft: "10px"}}>
+            <table style={{width: "220px", textAlign: "left", paddingLeft: "10px"}}>
               <tbody>
               <tr>
                 <td style={{paddingBottom: "70px", overflowWrap: 'anywhere'}}>{fs.route}</td>
@@ -195,10 +215,10 @@ function PrintableFlightStrip(props: any) {
             </table>
           </td>
           <td>
-            <table style={{width: "100px", textAlign: "left", paddingLeft: "10px"}}>
+            <table style={{width: "50px"}}>
               <tbody>
               <tr>
-                <td>{fs.squawk}</td>
+                <td style={{textAlign: "right", paddingLeft: "20px", paddingBottom: "50px"}}>{fs.squawk}</td>
               </tr>
               <tr>
                 <td style={{paddingBottom: "50px"}}>{fs.misc}</td>
