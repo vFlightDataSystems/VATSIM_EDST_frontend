@@ -11,6 +11,7 @@ $alt-menu-selected-light-pink: #AD6C6C;
 $alt-selected-font-white: #D6D6D6;
 
 .alt-menu {
+  z-index: 1000;
   background-color: $alt-menu-background-grey;
   position: absolute;
   width: 100px;

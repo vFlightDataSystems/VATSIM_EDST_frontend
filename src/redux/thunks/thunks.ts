@@ -90,6 +90,10 @@ function aircraftSelect(
   };
 }
 
+export function gpdAircraftSelect(event: Event & any, cid: string, field: aclRowFieldEnum, aselAction?: aclAselActionTriggerEnum | null, triggerOpenWindow?: windowEnum | menuEnum | null) {
+  return aircraftSelect(event, windowEnum.graphicPlanDisplay, cid, field, aselAction, triggerOpenWindow);
+}
+
 export function aclAircraftSelect(event: Event & any, cid: string, field: aclRowFieldEnum, aselAction?: aclAselActionTriggerEnum | null, triggerOpenWindow?: windowEnum | menuEnum | null) {
   return aircraftSelect(event, windowEnum.acl, cid, field, aselAction, triggerOpenWindow);
 }

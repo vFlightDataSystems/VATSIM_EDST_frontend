@@ -2,12 +2,13 @@ import styled from "styled-components";
 import {NoSelectDiv} from "./styles";
 
 
-export const FloatingWindowDiv = styled.div`
+export const FloatingWindowDiv = styled(NoSelectDiv)`
+  z-index: 1000;
   position: absolute;
   color: #ADADAD;
 `;
 
-export const FloatingWindowBodyDiv = styled.div`
+export const FloatingWindowBodyDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
   padding: 0 0 4px 6px;
   border-left: 1px solid #ADADAD;
@@ -17,7 +18,7 @@ export const FloatingWindowBodyDiv = styled.div`
   flex-flow: column;
 `;
 
-export const FloatingWindowHeaderDiv = styled(NoSelectDiv)`
+export const FloatingWindowHeaderDiv = styled(FloatingWindowDiv)`
   background-color: #575757;
   justify-content: space-between;
   display: flex;

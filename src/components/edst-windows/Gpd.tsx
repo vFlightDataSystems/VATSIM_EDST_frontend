@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import '../../css/header-styles.scss';
 import '../../css/windows/gpd-styles.scss';
 import {useAppSelector} from "../../redux/hooks";
@@ -11,13 +11,13 @@ export const Gpd: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const dragging = useAppSelector(draggingSelector);
+  const [zoomLevel, setZoomLevel] = useState(6);
 
   return (<div
     ref={ref}
     className={`gpd ${dragging ? 'dragging' : ''}`}
-    // style={{zIndex: props.z_index}}
   >
-    <GpdHeader focused={focused}/>
-    <GpdBody/>
+    <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel}/>
+    <GpdBody zoomLevel={zoomLevel}/>
   </div>);
 }

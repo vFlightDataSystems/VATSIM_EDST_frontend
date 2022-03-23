@@ -99,8 +99,11 @@ export const App: React.FC = () => {
     }
   }, [altMenuRef.current.inputRef]);
 
-  const computePreviewPos = (x: number, y: number, width: number, height: number): {left: number, top: number} => {
-    return {left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 1)), top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 1))};
+  const computePreviewPos = (x: number, y: number, width: number, height: number): { left: number, top: number } => {
+    return {
+      left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 1)),
+      top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 1))
+    };
   }
 
   const draggingHandler = useCallback((event: MouseEvent) => {
@@ -112,17 +115,16 @@ export const App: React.FC = () => {
       let ppos;
       if (window in windowEnum) {
         ppos = windows[window as windowEnum].position;
-      }
-      else if (window in menuEnum) {
+      } else if (window in menuEnum) {
         ppos = menus[window as menuEnum].position;
       }
       if (!ppos) {
         return;
       }
       setDragPreviewStyle({
-        ...computePreviewPos( ppos.x + relX, ppos.y + relY, width, height),
+        ...computePreviewPos(ppos.x + relX, ppos.y + relY, width, height),
         position: "absolute",
-        zIndex: 999,
+        zIndex: 1001,
         height: height,
         width: width
       });
@@ -134,18 +136,17 @@ export const App: React.FC = () => {
     let ppos;
     if (window in windowEnum) {
       ppos = windows[window as windowEnum].position;
-    }
-    else if (window in menuEnum) {
+    } else if (window in menuEnum) {
       ppos = menus[window as menuEnum].position;
     }
     if (!ppos) {
       return;
     }
     const style = {
+      zIndex: 1001,
       left: ppos.x,
       top: ppos.y,
       position: "absolute",
-      zIndex: 999,
       height: ref.current.clientHeight,
       width: ref.current.clientWidth
     };
@@ -172,21 +173,19 @@ export const App: React.FC = () => {
       let ppos;
       if (window in windowEnum) {
         ppos = windows[window as windowEnum].position;
-      }
-      else if (window in menuEnum) {
+      } else if (window in menuEnum) {
         ppos = menus[window as menuEnum].position;
       }
       if (!ppos) {
         return;
       }
-      const {left: x, top: y} = computePreviewPos( ppos.x + relX, ppos.y + relY, width, height);
+      const {left: x, top: y} = computePreviewPos(ppos.x + relX, ppos.y + relY, width, height);
       if (window in windowEnum) {
         dispatch(setWindowPosition({
           window: bodyRef.current.draggingWindowName as windowEnum,
           pos: {x: x, y: y}
         }));
-      }
-      else if (window in menuEnum) {
+      } else if (window in menuEnum) {
         dispatch(setMenuPosition({
           menu: bodyRef.current.draggingWindowName as menuEnum,
           pos: {x: x, y: y}
@@ -222,8 +221,8 @@ export const App: React.FC = () => {
   useEventListener('keydown', handleKeyDown);
 
   return <StyledEdstDiv
-              onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
-              tabIndex={!(inputFocused) ? -1 : 0}
+    onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
+    tabIndex={!(inputFocused) ? -1 : 0}
   >
     <EdstHeader/>
     <div id='toPrint'/>
@@ -232,8 +231,9 @@ export const App: React.FC = () => {
                        onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
     >
       {showSectorSelector && <SectorSelector/>}
-      <EdstDraggingOutlineDiv style={dragging ? dragPreviewStyle : {display: 'none'}}
-                              onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
+      <EdstDraggingOutlineDiv
+        style={dragging ? dragPreviewStyle : {display: 'none'}}
+        onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
       >
         {draggingCursorHide && <DraggingCursorDiv/>}
       </EdstDraggingOutlineDiv>
@@ -257,8 +257,8 @@ export const App: React.FC = () => {
         {menus[menuEnum.speedMenu].open && <SpeedMenu/>}
         {menus[menuEnum.headingMenu].open && <HeadingMenu/>}
         {menus[menuEnum.altitudeMenu].open && <AltMenu
-          setAltMenuInputRef={(ref: React.RefObject<HTMLInputElement> | null) => altMenuRef.current.inputRef = ref}
-          showInput={altMenuRef.current.showInput}
+            setAltMenuInputRef={(ref: React.RefObject<HTMLInputElement> | null) => altMenuRef.current.inputRef = ref}
+            showInput={altMenuRef.current.showInput}
         />}
         {windows[windowEnum.status].open && <Status/>}
         {windows[windowEnum.outage].open && <Outage/>}
@@ -266,7 +266,7 @@ export const App: React.FC = () => {
         {windows[windowEnum.metar].open && <MetarWindow/>}
         {windows[windowEnum.sigmets].open && <SigmetWindow/>}
         {windows[windowEnum.messageComposeArea].open && <MessageComposeArea
-          setMcaInputRef={setMcaInputRef}
+            setMcaInputRef={setMcaInputRef}
         />}
         {windows[windowEnum.messageResponseArea].open && <MessageResponseArea/>}
       </EdstContext.Provider>

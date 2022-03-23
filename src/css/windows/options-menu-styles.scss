@@ -60,6 +60,7 @@ $route-menu-alert-cyan: #00ADAD;
   position: absolute;
   color: $options-menu-light-grey;
   border: none;
+  z-index: 1000;
 
   &.sort-acl {
     width: 220px;

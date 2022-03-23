@@ -6,17 +6,35 @@ import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, windowEnum} from "../../../enums";
 import {
-  aclAselSelector,
+  aselSelector,
   AselType,
   closeAllMenus, closeMenu,
   closeWindow,
   setAsel,
 } from "../../../redux/slices/appSlice";
 
+type GpdHeaderProps = {
+  focused: boolean,
+  zoomLevel: number
+  setZoomLevel: React.Dispatch<React.SetStateAction<number>>
+}
 
-export const GpdHeader: React.FC<{ focused: boolean }> = ({focused}) => {
-  const asel = useAppSelector(aclAselSelector);
+export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoomLevel}) => {
+  const asel = useAppSelector(aselSelector);
   const dispatch = useAppDispatch();
+
+  const handleRangeClick = (event: React.MouseEvent) => {
+    switch (event.button) {
+      case 0:
+        setZoomLevel(Math.min(zoomLevel + 1, 10));
+        break;
+      case 1:
+        setZoomLevel(Math.max(zoomLevel - 1, 4));
+        break;
+      default:
+        break;
+    }
+  }
 
   return (<div>
     <WindowTitleBar
@@ -66,7 +84,7 @@ export const GpdHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         content="Recenter"
         title={Tooltips.planOptions}
       />
-      <EdstWindowHeaderButton disabled={true} content="Range"/>
+      <EdstWindowHeaderButton disabled={true} onMouseDown={handleRangeClick} content={`Range`}/>
       <EdstWindowHeaderButton disabled={true} content="Suppress"/>
       <EdstWindowHeaderButton
         disabled={true}
