@@ -294,10 +294,14 @@ $body-voice-type-font-color: #989898;
   //   }
   // }
 
-  &.special {
+  @mixin box {
     margin: 0 2px;
     width: 8px;
     border: 1px solid transparent;
+  }
+
+  &.special-box {
+    @include box;
 
     &.remarks-unchecked {
       color: $edst-font-yellow;
@@ -366,6 +370,16 @@ $body-voice-type-font-color: #989898;
     > div {
       border: 1px solid transparent;
 
+      &.coral-box {
+        @include box;
+        height: 100%;
+        border: 1px solid $edst-window-coral;
+
+        &:hover {
+          border: 1px solid $edst-window-coral;
+        }
+      }
+
       &.interim {
         width: 75px;
       }
@@ -384,6 +398,7 @@ $body-voice-type-font-color: #989898;
         border: 1px solid $body-hover-white;
       }
     }
+
   }
 
   &.hidden {

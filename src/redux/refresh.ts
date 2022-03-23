@@ -38,7 +38,7 @@ export function refreshEntry(newEntry: EdstEntryType & Partial<LocalEdstEntryVTy
     }
   }
   if (newEntry._route_data) {
-    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos, polygons, dest));
+    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry._route_data.slice(0), pos, dest, polygons));
   }
   if (newEntry.update_time === currentEntry.update_time
     || (((newEntry._route_data?.[-1]?.dist ?? Infinity) < 15) && newEntry.dest_info)

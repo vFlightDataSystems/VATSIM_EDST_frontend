@@ -1,6 +1,5 @@
-import {useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
-import '../../../css/windows/acl-styles.scss';
 import {AclRow} from "./AclRow";
 import VCI from '../../../css/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
@@ -10,6 +9,26 @@ import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
 import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
 import {aclRowFieldEnum, menuEnum, sortOptionsEnum} from "../../../enums";
 import {aselSelector, closeMenu, setAsel} from "../../../redux/slices/appSlice";
+import {NoSelectDiv} from "../../../styles/styles";
+import styled from "styled-components";
+import {edstFontGrey} from "../../../styles/colors";
+
+const AclBodyStyleDiv = styled(NoSelectDiv)`
+  white-space: nowrap;
+  overflow: hidden;
+  flex-flow: column;
+  display: flex;
+  color: ${edstFontGrey};
+  
+  img {
+    width: 8px;
+    object-fit: contain;
+  }
+  
+  .wifi-symbol {
+    background-image: url(${VCI});
+  }
+`;
 
 export function AclTable() {
   const sortData = useAppSelector((state) => state.acl.sortData);
@@ -88,7 +107,7 @@ export function AclTable() {
   const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay), [entries]);
   const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa)), [entryList]);
 
-  return (<div className="acl-body no-select">
+  return (<AclBodyStyleDiv>
     <div className="body-row header" key="acl-table-header">
       <div className="body-col radio-header green">
         <img src={VCI} alt="wifi-symbol"/>
@@ -102,14 +121,15 @@ export function AclTable() {
       <div className="body-col body-col-1 orange">
         A
       </div>
-      <div className="body-col body-col-1"/>
       <div className="inner-row">
+        <div className="body-col special-box special-hidden"/>
+        <div className="body-col special-box special-hidden"/>
         <div className="body-col fid">
           Flight ID
         </div>
         <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
-        <div className="body-col special special-hidden"/>
-        <div className="body-col special special-hidden"/>
+        <div className="body-col special-box special-hidden"/>
+        <div className="body-col special-box special-hidden"/>
         <div className={`body-col type ${hiddenList.includes(aclRowFieldEnum.type) ? 'hidden' : ''}`}>
           <div className="hover" onMouseDown={() => toggleHideColumn(aclRowFieldEnum.type)}>
             T{!hiddenList.includes(aclRowFieldEnum.type) && 'ype'}
@@ -125,7 +145,7 @@ export function AclTable() {
              onMouseDown={() => toggleHideColumn(aclRowFieldEnum.code)}>
           C{!hiddenList.includes(aclRowFieldEnum.code) && 'ode'}
         </div>
-        <div className={`body-col special special-header`}/>
+        <div className={`body-col special-box special-header`}/>
         <EdstTooltip title={Tooltips.aclHeaderHdg}>
           <div className={`body-col hs hdg hover ${hiddenList.includes(aclRowFieldEnum.hdg) ? 'hidden' : ''}`}
                onMouseDown={() => toggleHideColumn(aclRowFieldEnum.hdg)}>
@@ -143,14 +163,16 @@ export function AclTable() {
             S{!hiddenList.includes(aclRowFieldEnum.spd) && 'pd'}{hiddenList.includes(aclRowFieldEnum.spd) && anyAssignedSpeed && '*'}
           </div>
         </EdstTooltip>
-        <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`} // @ts-ignore
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`} // @ts-ignore
              disabled={!anyHolding}>
           H
         </div>
-        <div className={`body-col special special-header`}/>
-        <div className={`body-col special special-header`}/>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
+        <div className={`body-col special-box special-header`}/>
         <div className="body-col route">
           Route
         </div>
@@ -189,5 +211,5 @@ export function AclTable() {
             altMouseDown={altMouseDown}
           />)}
     </div>
-  </div>);
+  </AclBodyStyleDiv>);
 }

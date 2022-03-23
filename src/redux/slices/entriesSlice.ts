@@ -59,7 +59,7 @@ export const refreshEntriesThunk: any = createAsyncThunk(
         } else {
           if (currentEntry.aclDisplay || entryFilter(currentEntry, polygons)) {
             if (!currentEntry.aclDisplay && !currentEntry.aclDeleted) {
-              // remove cid from departure list if will populate the aircraft list
+              // remove cid from departure list if it will populate the aircraft list
               currentEntry.aclDisplay = true;
               currentEntry.depDeleted = true;
               currentEntry.depDisplay = false;

@@ -32,6 +32,14 @@ export async function fetchReferenceFixes(artcc: string): Promise<any> {
   return await fetch(`${baseurl}/edst/reference_fixes/${artcc}`);
 }
 
+export async function fetchHighVorList(artcc: string): Promise<any> {
+  return await fetch(`${baseurl}/navdata/${artcc}/vor/high`);
+}
+
+export async function fetchLowVorList(artcc: string): Promise<any> {
+  return await fetch(`${baseurl}/navdata/${artcc}/vor/low`);
+}
+
 export async function fetchAirportMetar(airport: string): Promise<any> {
   return await fetch(`${baseurl}/weather/metar/airport/${airport}`);
 }

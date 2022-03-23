@@ -61,7 +61,7 @@ const weatherSlice = createSlice({
         }
       }
     },
-    setSigmetSupressionState(state, action: { payload: { id: string, value: boolean } }) {
+    setSigmetSuppressionState(state, action: { payload: { id: string, value: boolean } }) {
       if (Object.keys(state.sigmetList).includes(action.payload.id)) {
         state.sigmetList[action.payload.id].suppressed = action.payload.value;
       }
@@ -71,7 +71,7 @@ const weatherSlice = createSlice({
         state.sigmetList[action.payload.id].acknowledged = action.payload.value;
       }
     },
-    setviewSigmetSuppressed(state, action: {payload: boolean}) {
+    setViewSigmetSuppressed(state, action: {payload: boolean}) {
       state.viewSigmetSuppressed = action.payload
     }
   }
@@ -83,9 +83,9 @@ export const {
   setAirportAltimeter,
   removeAirportAltimeter,
   addSigmets,
-  setSigmetSupressionState,
+  setSigmetSuppressionState,
   setSigmetAcknowledged,
-  setviewSigmetSuppressed
+  setViewSigmetSuppressed,
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 

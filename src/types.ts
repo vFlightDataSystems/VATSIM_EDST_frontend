@@ -55,7 +55,8 @@ export type LocalEdstEntryVType = {
   aclDisplay: boolean,
   aclDeleted: boolean,
   depDisplay: boolean,
-  depDeleted: boolean
+  depDeleted: boolean,
+  uplinkEligible?: boolean
 }
 
 // type for a single EDST entry
@@ -73,6 +74,16 @@ export type FixType = {
   pos: Position,
   dist?: number,
   minutesAtFix?: number
+}
+
+export type NavFixType = {
+  navaid_id: string,
+  type: string,
+  name: string,
+  lat: string,
+  lon: string,
+  artcc_low: string,
+  artcc_high: string
 }
 
 export type EdstPreferredRouteType = {

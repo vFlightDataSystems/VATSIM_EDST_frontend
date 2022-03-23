@@ -1,6 +1,13 @@
-import {fetchFavData, fetchReferenceFixes} from "../../api";
+import {fetchFavData, fetchHighVorList, fetchLowVorList, fetchReferenceFixes} from "../../api";
 import {RootState} from "../store";
-import {setArtccId, setReferenceFixes, setSectorId, setSectors} from "../slices/sectorSlice";
+import {
+  setArtccId,
+  setReferenceFixes,
+  setSectorId,
+  setSectors,
+  setVorHighList,
+  setVorLowList
+} from "../slices/sectorSlice";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk} from "../slices/entriesSlice";
 import {refreshSigmets} from "./weatherThunks";
@@ -46,6 +53,24 @@ export const initThunk = createAsyncThunk(
         .then(referenceFixes => {
           if (referenceFixes) {
             thunkAPI.dispatch(setReferenceFixes(referenceFixes));
+          }
+        });
+    }
+    if (!(sectorData.vorHighList.length > 0)) {
+      await fetchHighVorList(artccId)
+        .then(response => response.json())
+        .then(vorList => {
+          if (vorList) {
+            thunkAPI.dispatch(setVorHighList(vorList));
+          }
+        });
+    }
+    if (!(sectorData.vorHighList.length > 0)) {
+      await fetchLowVorList(artccId)
+        .then(response => response.json())
+        .then(vorList => {
+          if (vorList) {
+            thunkAPI.dispatch(setVorLowList(vorList));
           }
         });
     }

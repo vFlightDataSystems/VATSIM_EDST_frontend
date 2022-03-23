@@ -3,7 +3,8 @@ import {
   aclAselActionTriggerEnum,
   aclRowFieldEnum,
   depAselActionTriggerEnum,
-  depRowFieldEnum, menuEnum,
+  depRowFieldEnum,
+  menuEnum,
   windowEnum
 } from "../../enums";
 import {REMOVAL_TIMEOUT} from "../../lib";
@@ -63,6 +64,12 @@ function aircraftSelect(
               dispatch(openMenuThunk(triggerOpenWindow as menuEnum, event.currentTarget, windowEnum.dep, false, cid));
             }
           }
+          break;
+        case windowEnum.graphicPlanDisplay:
+          if (triggerOpenWindow && triggerOpenWindow in menuEnum) {
+            dispatch(openMenuThunk(triggerOpenWindow as menuEnum, event.currentTarget, windowEnum.graphicPlanDisplay, false, cid));
+          }
+          dispatch(setAsel({cid: cid, field: field as aclRowFieldEnum, window: windowEnum.graphicPlanDisplay}));
           break;
         default:
           if (!state.acl.manualPosting && field === aclRowFieldEnum.fid && aselAction === aclAselActionTriggerEnum.setVciNeutral && entry?.vciStatus === -1) {

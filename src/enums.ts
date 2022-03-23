@@ -11,7 +11,7 @@ export enum aclRowFieldEnum {
 }
 
 export enum depRowFieldEnum {
-  p_time,
+  pTime,
   fid,
   type,
   alt,

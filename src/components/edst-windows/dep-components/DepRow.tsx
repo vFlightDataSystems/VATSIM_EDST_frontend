@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
-import '../../../css/windows/dep-styles.scss';
 import {REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
@@ -12,7 +11,7 @@ import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {depAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 
-const SPA_INDICATOR = '^';
+const SPA_INDICATOR = '\u2303';
 const COMPLETED_SYMBOL = '✓';
 
 type DepRowProps = {
@@ -155,11 +154,11 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
           </div>
         </EdstTooltip>
         <div className="body-col pa"/>
-        <div className={`body-col special ${!entry.spa ? 'special-hidden' : ''}`}>
+        <div className={`body-col special-box ${!entry.spa ? 'special-hidden' : ''}`}>
           {entry.spa && SPA_INDICATOR}
         </div>
         <EdstTooltip title={Tooltips.depHotbox}>
-          <div className="body-col special hotbox"
+          <div className="body-col special-box hotbox"
                onContextMenu={event => event.preventDefault()}
                onMouseDown={handleHotboxMouseDown}
           >
