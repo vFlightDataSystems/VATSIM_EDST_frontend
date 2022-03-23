@@ -47,8 +47,9 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
         nextTime: nextFix? formatUtcMinutes(nextFix.minutesAtFix) : '',   // next fix timestamp
         dofArrow: '',                                                     // direction of flight arrow
         reqAlt: '',                                                       // requested altitude
-        route: getRouteString(entry).split('.').join(' '),        // route
-        remarks: entry.remarks.split('RMK')?.pop() ?? '',         // remarks
+        route: getRouteString(entry).split('.')
+            .filter(function (x) {return x !== ''}).join(' '),       // route
+        remarks: filterRemarks(entry.flightplan.remarks),                 // remarks
         squawk: entry.beacon,                                             // squawk code
         misc: '',                                                         // miscellaneous info
         trans1: '',                                                       // transfer of control info
@@ -66,6 +67,32 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
       }
     }
   }
+}
+
+function filterRemarks(remarks: string): string {
+  remarks = remarks.split('RMK')?.pop() ?? '';
+
+  remarks = removeRemark(remarks, 'EET');
+  remarks = removeRemark(remarks, 'REG');
+
+  var index = remarks.indexOf('RALT');
+  remarks = index !== -1 ? remarks.slice(0, index) + remarks.slice(index + 9) : remarks;
+
+  index = remarks.indexOf('/TCAS SIMBRIEF');
+  remarks = index !== -1 ? remarks.slice(0, index) + remarks.slice(index + 15) : remarks;
+
+  return remarks;
+}
+
+function removeRemark(remarks: string, remark: string): string {
+  if (remarks.indexOf(remark) > -1) {
+    remark = remark + '/';
+    const rem = remarks.split(remark)?.pop() ?? '';
+    const remS = rem.split('/');
+    remS.shift(); remS.pop();
+    remarks = remarks.split(remark)[0] + rem.split('/')[0].slice(-3) + '/' + remS.join('/');
+  }
+  return remarks;
 }
 
 function PrintableFlightStrip(props: any) {
@@ -96,13 +123,10 @@ function PrintableFlightStrip(props: any) {
               </tr>
               <tr>
                 <td style={{textAlign: "right"}}>{fs.sect}</td>
-                <td>16</td>
-                {/*TODO what number is this?*/}
+                <td>{fs.sect}</td>
               </tr>
               <tr>
                 <td>{fs.cid}</td>
-                <td>09</td>
-                {/*TODO what number is this?*/}
               </tr>
               </tbody>
             </table>
