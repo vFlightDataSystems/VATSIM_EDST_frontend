@@ -1,4 +1,3 @@
-import '../../../css/windows/gpd-styles.scss';
 import React, {useEffect, useMemo} from "react";
 import {MapContainer, useMap} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -11,6 +10,7 @@ import {
 import {GpdAircraftTrack, GpdFix, GpdMapSectorPolygon} from "./GpdMapElements";
 import {LocalEdstEntryType} from "../../../types";
 import {entriesSelector} from "../../../redux/slices/entriesSlice";
+import styled from "styled-components";
 
 const center = {lat: 42.362944444444445, lng: -71.00638888888889};
 
@@ -26,6 +26,18 @@ const MapConfigurator: React.FC<MapConfiguratorProps> = ({zoomLevel}) => {
   return null
 }
 
+const GpdBodyDiv = styled.div`
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+
+  .leaflet-container {
+    width: 100%;
+    height: 100%;
+    background: #000000;
+  }
+`;
+
 export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
   const vorHighList = useAppSelector(vorHighListSelector);
   const vorLowList = useAppSelector(vorLowListSelector);
@@ -35,7 +47,7 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
 
   const vorHighNames = useMemo(() => vorHighList.map(fix => fix.name), [vorHighList]);
 
-  return (<div className="gpd-body">
+  return (<GpdBodyDiv>
     <MapContainer
       center={center}
       doubleClickZoom={false}
@@ -43,6 +55,9 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
       dragging={false}
       placeholder={true}
       zoomControl={false}
+      zoomAnimation={false}
+      maxZoom={10}
+      minZoom={5}
     >
       <MapConfigurator zoomLevel={zoomLevel}/>
       {Object.values(sectors).map((sector) => <GpdMapSectorPolygon sector={sector}/>)}
@@ -50,5 +65,5 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
       {vorLowList.map(fix => (!vorHighNames.includes(fix.name) && <GpdFix {...fix}/>))}
       {entryList.map(entry => <GpdAircraftTrack cid={entry.cid}/>)}
     </MapContainer>
-  </div>);
+  </GpdBodyDiv>);
 }

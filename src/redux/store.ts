@@ -1,6 +1,7 @@
 import {configureStore} from "@reduxjs/toolkit";
 import aclReducer from './slices/aclSlice';
 import depReducer from './slices/depSlice';
+import gpdReducer from './slices/gpdSlice';
 import sectorReducer from "./slices/sectorSlice";
 import entriesReducer from "./slices/entriesSlice";
 import planReducer from './slices/planSlice';
@@ -12,6 +13,7 @@ const store = configureStore({
     app: appReducer,
     acl: aclReducer,
     dep: depReducer,
+    gpd: gpdReducer,
     plan: planReducer,
     sectorData: sectorReducer,
     entries: entriesReducer,

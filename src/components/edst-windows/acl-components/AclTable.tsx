@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import {AclRow} from "./AclRow";
-import VCI from '../../../css/images/VCI_v4.png';
+import VCI from '../../../resources/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";

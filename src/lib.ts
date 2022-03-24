@@ -57,18 +57,29 @@ export function getSignedStratumDistancePointToPolygons(point: Point, polygons: 
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
+ * @param {string} route - truncated route string
  * @param {FixType[]} routeData - fixes on the route (order matters)
  * @param {Polygon[]} polygons - airspace defining boundaries
  * @param {Position} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(routeData: FixType[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
-  if (routeData === null) {
+export function routeWillEnterAirspace(route: string, routeData: FixType[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
+  if (routeData === null || route.length === 0) {
     return false;
   }
-  routeData.unshift({pos: pos, name: 'ppos'});
-  if (routeData.length > 1) {
-    const lines = lineString(routeData.map(e => e.pos));
+  route = route.replace(/^\.*\[XXX\]\.*/g, '');
+  const indexToSplit = route.indexOf('[XXX]');
+  const routeToProcess = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, '') : route;
+  let fixNames = routeData.map((e: { name: string }) => e.name);
+  const lastFixIndex = fixNames.indexOf(routeToProcess.split('.').pop() as string);
+  let routeDataToProcess = routeData.slice(0, lastFixIndex);
+  routeDataToProcess.unshift({pos: pos, name: 'ppos'});
+  if (routeDataToProcess.length > 1) {
+    const nextFix = getNextFix(route, routeDataToProcess, pos)[0] as FixType;
+    const index = fixNames.indexOf(nextFix.name);
+    routeDataToProcess = routeDataToProcess.slice(index);
+    routeDataToProcess.unshift({name: 'ppos', pos: pos});
+    const lines = lineString(routeDataToProcess.map(e => e.pos));
     for (const poly of polygons) {
       if (booleanIntersects(lines, poly)) {
         return true;
@@ -133,7 +144,7 @@ export function getRemainingRouteData(route: string, routeData: (FixType & { dis
   return {_route: route, _route_data: routeData};
 }
 
-export function getNextFix(route: string, routeData: FixType[], pos: Position): (FixType & {dist: number})[] {
+export function getNextFix(route: string, routeData: FixType[], pos: Position): (FixType & { dist: number })[] {
   const routeDataWithDistance = getRouteDataDistance(_.cloneDeep(routeData), pos);
   if (routeDataWithDistance.length > 1) {
     const sortedRouteData = routeDataWithDistance.sort((u, v) => u.dist - v.dist);
@@ -143,8 +154,7 @@ export function getNextFix(route: string, routeData: FixType[], pos: Position): 
     const line = lineString([closestFix.pos, followingFix.pos]);
     const lineDistance = pointToLineDistance(pos, line, {units: 'nauticalmiles'});
     return (lineDistance >= closestFix.dist) ? [closestFix, followingFix] : [followingFix, closestFix];
-  }
-  else {
+  } else {
     return routeDataWithDistance;
   }
 }
