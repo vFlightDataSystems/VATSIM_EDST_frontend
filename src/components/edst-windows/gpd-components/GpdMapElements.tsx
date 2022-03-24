@@ -8,6 +8,9 @@ import {trackArrowIcon, trackIcon, vorIcon} from "./LeafletIcons";
 import {GpdDataBlock} from "./GpdDataBlock";
 import {FixType, LocalEdstEntryType} from "../../../types";
 import {getNextFix} from "../../../lib";
+import {useBoolean} from 'usehooks-ts';
+
+const SHOW_ROUTE = false;
 
 type GpdFixProps = {
   lat: number | string,
@@ -61,6 +64,7 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
   const entry = useAppSelector(entrySelector(cid));
   const posLatLng = useMemo(() => posToLatLng({...entry.flightplan}), [entry.flightplan]);
   const [trackPos, setTrackPos] = useState<{ x: number, y: number } | null>(null);
+  const {value: showDataBlock, toggle: toggleShowDataBlock} = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
 
   const routeLine = getRouteLine(entry);
@@ -82,19 +86,16 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
     updateHandler();
   }, [posLatLng, updateHandler]);
 
-  console.log(entry.callsign, routeLine)
-
   return <>
-    <Marker position={posLatLng} icon={trackIcon} opacity={1} ref={ref}
-            riseOnHover={true}
+    <Marker position={posLatLng} icon={trackIcon} opacity={1} ref={ref} riseOnHover={true}
+            eventHandlers={{contextmenu: toggleShowDataBlock}}
     >
-      <GpdDataBlock
-        entry={entry}
-        pos={trackPos}
-      />
+      {showDataBlock && <>
+          <Marker position={posLatLng} icon={trackArrowIcon}/>
+          <GpdDataBlock entry={entry} pos={trackPos}/>
+      </>}
     </Marker>
-    {routeLine && <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))}
-                            pathOptions={{color: '#ADAD00', weight: 1.1}}/>}
-    <Marker position={posLatLng} icon={trackArrowIcon}/>
+    {SHOW_ROUTE && routeLine && <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))}
+                                          pathOptions={{color: '#ADAD00', weight: 1.1}}/>}
   </>;
 };

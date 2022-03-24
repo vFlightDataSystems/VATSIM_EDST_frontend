@@ -112,8 +112,7 @@ const appSlice = createSlice({
         for (const window of action.payload) {
           state.windows[window].open = false;
         }
-      }
-      else {
+      } else {
         state.windows[action.payload].open = false;
       }
     },
@@ -122,8 +121,7 @@ const appSlice = createSlice({
         for (const menu of action.payload) {
           state.menus[menu].open = false;
         }
-      }
-      else {
+      } else {
         state.menus[action.payload].open = false;
       }
     },
@@ -222,4 +220,5 @@ export const menuPositionSelector = (menu: menuEnum) => (state: RootState) => st
 export const aselSelector = (state: RootState) => state.app.asel;
 export const aclAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.acl ? state.app.asel : null;
 export const depAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.dep ? state.app.asel : null;
+export const gpdAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.graphicPlanDisplay ? state.app.asel : null;
 export const draggingSelector = (state: RootState) => state.app.dragging;

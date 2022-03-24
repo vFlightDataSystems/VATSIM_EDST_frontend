@@ -10,12 +10,14 @@ $edst-window-header-button-hover-border: #FFFFFF;
 $edst-window-header-outage-background-red: #590000;
 $edst-window-header-window-open-light-grey: #595959;
 
-.edst-window-header-bottom-row {
-  align-items: center;
-  display: flex;
-  padding: 0 10px;
-  border-top: 1px solid $edst-window-header-border-light-grey;
-  /* border-bottom: 1px solid $edst-window-header-border-light-grey; */
+.edst-window-header-row-border-bottom {
+  border-bottom: 1px solid $edst-window-header-border-light-grey;
+
+  &.bottom {
+    align-items: center;
+    display: flex;
+    padding: 0 10px;
+  }
 
   .input-container {
     @include input-container;

@@ -13,12 +13,12 @@
 }
 
 .aircraft-track-line {
-  background: #000000;
+  background: transparent;
 
   .line {
-    transform: rotate(-45deg);
-    height: 0;
+    transform: translate(1px, -5px) rotate(-45deg);
+    height: 1px;
     width: 30px;
-    border: 1px solid #ADADAD;
+    background-color: #ADADAD;
   }
 }

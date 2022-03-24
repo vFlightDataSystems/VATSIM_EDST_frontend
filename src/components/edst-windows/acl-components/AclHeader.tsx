@@ -44,7 +44,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
       }}
       text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
-    <div className="no-select">
+    <div className="edst-window-header-row-border-bottom">
       <EdstWindowHeaderButton
         disabled={asel === null}
         onMouseDown={(e: React.KeyboardEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget))}
@@ -90,7 +90,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         title={Tooltips.aclCleanUp}
       />
     </div>
-    <div className="edst-window-header-bottom-row no-select">
+    <div className="edst-window-header-row-border-bottom bottom">
       Add/Find
       <div className="input-container">
         <input
