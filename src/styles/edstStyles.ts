@@ -2,7 +2,7 @@ import styled from "styled-components";
 import {defaultFontFamily, defaultFontSize, NoSelectDiv} from "./styles";
 import cursor from './cursors/aero_arrow.cur';
 
-export const StyledEdstDiv = styled(NoSelectDiv)`
+export const EdstDiv = styled(NoSelectDiv)`
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -15,7 +15,7 @@ export const StyledEdstDiv = styled(NoSelectDiv)`
   -webkit-font-smoothing: none;
 `;
 
-export const StyledEdstBodyDiv = styled.div`
+export const EdstBodyDiv = styled.div`
   overflow: hidden;
   flex-flow: column;
   position: absolute;
