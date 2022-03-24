@@ -40,7 +40,7 @@ export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({entry, pos}) => {
   const asel = useAppSelector(aselSelector);
   const selectedField = asel?.cid === entry.cid && asel?.window === windowEnum.graphicPlanDisplay
     ? asel.field as aclRowFieldEnum : null;
-  return pos && (<DataBlockDiv style={{left: pos.x + 34, top: pos.y - 40}}>
+  return pos && (<DataBlockDiv style={{left: pos.x + 24, top: pos.y - 30}}>
     <DataBlockElement
       selected={selectedField === aclRowFieldEnum.fid}
       onMouseDown={(event) => dispatch(gpdAircraftSelect(event, entry.cid, aclRowFieldEnum.fid))}

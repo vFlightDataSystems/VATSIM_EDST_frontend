@@ -120,10 +120,9 @@ $body-voice-type-font-color: #989898;
   }
 
   &.header {
-    margin: 2px 0;
+    margin-bottom: 2px;
     min-height: 24px;
     max-height: 24px;
-    border-top: 1px solid $edst-window-header-border-light-grey;
     border-bottom: 1px solid $edst-window-header-border-light-grey;
 
     .body-col {

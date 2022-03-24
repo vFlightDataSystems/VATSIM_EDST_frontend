@@ -8,11 +8,10 @@ export const trackIcon = L.divIcon({
 
 export const vorIcon = L.divIcon({
   className: 'circle-icon',
-  iconSize: [14, 14]
+  iconSize: [12, 12]
 });
 
 export const trackArrowIcon = L.divIcon({
   className: "aircraft-track-line",
   html: "<div class='line'/>",
-  iconAnchor: [-4, 20]
 });

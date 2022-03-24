@@ -40,7 +40,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
       }}
       text={['Departure List', `${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
-    <div>
+    <div className="edst-window-header-row-border-bottom">
       <EdstWindowHeaderButton
         disabled={asel === null}
         onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.dep))}
@@ -64,7 +64,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
         title={Tooltips.template}
       />
     </div>
-    <div className="edst-window-header-bottom-row no-select">
+    <div className="edst-window-header-row-border-bottom bottom">
       Add/Find
       <div className="input-container">
         <input

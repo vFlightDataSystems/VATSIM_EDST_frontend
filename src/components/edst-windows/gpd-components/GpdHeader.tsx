@@ -6,12 +6,12 @@ import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, windowEnum} from "../../../enums";
 import {
-  aselSelector,
   AselType,
   closeAllMenus, closeMenu,
-  closeWindow,
+  closeWindow, gpdAselSelector,
   setAsel,
 } from "../../../redux/slices/appSlice";
+import {NoSelectDiv} from "../../../styles/styles";
 
 type GpdHeaderProps = {
   focused: boolean,
@@ -20,7 +20,7 @@ type GpdHeaderProps = {
 }
 
 export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoomLevel}) => {
-  const asel = useAppSelector(aselSelector);
+  const asel = useAppSelector(gpdAselSelector);
   const dispatch = useAppDispatch();
 
   const handleRangeClick = (event: React.MouseEvent) => {
@@ -36,7 +36,7 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
     }
   }
 
-  return (<div>
+  return (<NoSelectDiv>
     <WindowTitleBar
       focused={focused}
       closeWindow={() => {
@@ -78,7 +78,7 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
         // title={Tooltips.gpdCleanUp}
       />
     </div>
-    <div className="no-select">
+    <div className="edst-window-header-row-border-bottom">
       <EdstWindowHeaderButton
         disabled={true}
         content="Recenter"
@@ -102,5 +102,5 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
         content="Saved Map"
       />
     </div>
-  </div>);
+  </NoSelectDiv>);
 };
