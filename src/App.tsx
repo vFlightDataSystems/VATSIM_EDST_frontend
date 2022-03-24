@@ -42,7 +42,7 @@ import {useEventListener} from "usehooks-ts";
 import {EquipmentTemplateMenu} from "./components/edst-windows/template-components/EquipmentTemplateMenu";
 import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
 import {Gpd} from "./components/edst-windows/Gpd";
-import {DraggingCursorDiv, EdstDraggingOutlineDiv, StyledEdstDiv, StyledEdstBodyDiv} from "./styles/edstStyles";
+import {DraggingCursorDiv, EdstDraggingOutlineDiv, EdstDiv, EdstBodyDiv} from "./styles/edstStyles";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -220,15 +220,15 @@ export const App: React.FC = () => {
 
   useEventListener('keydown', handleKeyDown);
 
-  return <StyledEdstDiv
+  return <EdstDiv
     onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
     tabIndex={!(inputFocused) ? -1 : 0}
   >
     <EdstHeader/>
     <div id='toPrint'/>
-    <StyledEdstBodyDiv className={`${draggingCursorHide ? 'hide-cursor' : ''}`}
-                       ref={bodyRef}
-                       onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
+    <EdstBodyDiv className={`${draggingCursorHide ? 'hide-cursor' : ''}`}
+                 ref={bodyRef}
+                 onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
     >
       {showSectorSelector && <SectorSelector/>}
       <EdstDraggingOutlineDiv
@@ -270,6 +270,6 @@ export const App: React.FC = () => {
         />}
         {windows[windowEnum.messageResponseArea].open && <MessageResponseArea/>}
       </EdstContext.Provider>
-    </StyledEdstBodyDiv>
-  </StyledEdstDiv>;
+    </EdstBodyDiv>
+  </EdstDiv>;
 };

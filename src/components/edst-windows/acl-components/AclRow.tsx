@@ -1,7 +1,7 @@
 import React, {MouseEventHandler, useEffect, useMemo, useRef, useState} from 'react';
 import '../../../css/windows/body-styles.scss';
 import {formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
-import VCI from '../../../css/images/VCI_v4.png';
+import VCI from '../../../resources/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
