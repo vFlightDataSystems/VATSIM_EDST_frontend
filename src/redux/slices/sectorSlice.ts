@@ -1,6 +1,6 @@
 import {Feature, polygon, Polygon} from "@turf/turf";
 import {createSlice} from "@reduxjs/toolkit";
-import {NavFixType, SectorDataType} from "../../types";
+import {NavaidType, SectorDataType} from "../../types";
 import {RootState} from "../store";
 
 export type SectorDataStateType = {
@@ -9,8 +9,8 @@ export type SectorDataStateType = {
   referenceFixes: any[],
   sectorId: string,
   artccId: string,
-  vorHighList: NavFixType[],
-  vorLowList: NavFixType[]
+  vorHighList: NavaidType[],
+  vorLowList: NavaidType[]
 };
 
 const initialState = {
@@ -37,7 +37,7 @@ const sectorSlice = createSlice({
       if (state.selectedSectors.includes(action.payload)) {
         const selectedSectorsSet = new Set(state.selectedSectors);
         selectedSectorsSet.delete(action.payload);
-        state.selectedSectors = [...selectedSectorsSet]
+        state.selectedSectors = [...selectedSectorsSet];
       }
       else {
         state.selectedSectors = [...state.selectedSectors, action.payload];
