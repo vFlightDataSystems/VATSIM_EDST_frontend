@@ -11,7 +11,7 @@ import _ from "lodash";
 import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
 import {menuEnum} from "../../enums";
 import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
-import {LocalEdstEntryType, FixType} from "../../types";
+import {LocalEdstEntryType, RouteFixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {useFocused} from "../../hooks";
 
@@ -32,7 +32,7 @@ export const HoldMenu: React.FC = () => {
   const [holdDirection, setHoldDirection] = useState<string | null>(null);
   const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utcMinutes);
-  const [routeData, setRouteData] = useState<(FixType & { minutesAtFix: number })[] | null>(null);
+  const [routeData, setRouteData] = useState<(RouteFixType & { minutesAtFix: number })[] | null>(null);
   const ref = useRef(null);
   const focused = useFocused(ref);
 

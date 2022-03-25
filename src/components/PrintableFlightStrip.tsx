@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from "react-dom";
-import {FixType, LocalEdstEntryType} from "../types";
+import {RouteFixType, LocalEdstEntryType} from "../types";
 import {computeCrossingTimes, formatUtcMinutes, getNextFix} from "../lib";
 import {Position} from "@turf/turf";
 
@@ -21,7 +21,7 @@ export function printFlightStrip(entry?: LocalEdstEntryType) {
       ReactDOM.unmountComponentAtNode(printDoc);
     }
     const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)] as Position;
-    const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (FixType & {minutesAtFix: number})[];
+    const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (RouteFixType & {minutesAtFix: number})[];
     ReactDOM.render(<PrintableFlightStrip
       fs={{
         callsign: entry.callsign,                                         // callsign

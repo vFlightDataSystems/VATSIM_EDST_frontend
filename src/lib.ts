@@ -13,7 +13,7 @@ import {
   Position
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {EdstEntryType, FixType, LocalEdstEntryType, ReferenceFixType} from "./types";
+import {EdstEntryType, RouteFixType, LocalEdstEntryType, ReferenceFixType} from "./types";
 import {toast} from "./components/toast/ToastManager";
 import * as geomag from 'geomag';
 import _ from "lodash";
@@ -58,12 +58,12 @@ export function getSignedStratumDistancePointToPolygons(point: Point, polygons: 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
  * @param {string} route - truncated route string
- * @param {FixType[]} routeData - fixes on the route (order matters)
+ * @param {RouteFixType[]} routeData - fixes on the route (order matters)
  * @param {Polygon[]} polygons - airspace defining boundaries
  * @param {Position} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(route: string, routeData: FixType[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
+export function routeWillEnterAirspace(route: string, routeData: RouteFixType[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
   if (routeData === null || route.length === 0) {
     return false;
   }
@@ -75,7 +75,7 @@ export function routeWillEnterAirspace(route: string, routeData: FixType[] | nul
   let routeDataToProcess = routeData.slice(0, lastFixIndex);
   routeDataToProcess.unshift({pos: pos, name: 'ppos'});
   if (routeDataToProcess.length > 1) {
-    const nextFix = getNextFix(route, routeDataToProcess, pos)[0] as FixType;
+    const nextFix = getNextFix(route, routeDataToProcess, pos)[0] as RouteFixType;
     const index = fixNames.indexOf(nextFix.name);
     routeDataToProcess = routeDataToProcess.slice(index);
     routeDataToProcess.unshift({name: 'ppos', pos: pos});
@@ -91,27 +91,27 @@ export function routeWillEnterAirspace(route: string, routeData: FixType[] | nul
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
- * @param {FixType[]} routeData - fixes on the route (order matters)
+ * @param {RouteFixType[]} routeData - fixes on the route (order matters)
  * @param {Position} pos - lon/lat pair, current position
- * @returns {FixType[]} - original routeData, but each item will have a `distance` attribute
+ * @returns {RouteFixType[]} - original routeData, but each item will have a `distance` attribute
  */
-export function getRouteDataDistance(routeData: FixType[], pos: Position): (FixType & { dist: number })[] {
+export function getRouteDataDistance(routeData: RouteFixType[], pos: Position): (RouteFixType & { dist: number })[] {
   for (let fix of routeData) {
     fix.dist = distance(point(fix.pos), point(pos), {units: 'nauticalmiles'});
   }
-  return routeData as (FixType & { dist: number })[];
+  return routeData as (RouteFixType & { dist: number })[];
 }
 
 /**
  * compute the remaining route and its route data, based on current position
  * @param {string} route - parsed route string
- * @param {FixType[]} routeData - fixes on the route
+ * @param {RouteFixType[]} routeData - fixes on the route
  * @param {Position} pos - lon/lat pair, current position
  * @param {Feature<Polygon>[]} polygons - airspace defining polygons
  * @param {string} dest - ICAO string of destination airport
- * @returns {{_route: string, _route_data: FixType[]}}
+ * @returns {{_route: string, _route_data: RouteFixType[]}}
  */
-export function getRemainingRouteData(route: string, routeData: (FixType & { dist: number })[], pos: Position, dest: string, polygons?: Feature<Polygon>[]): { _route: string, _route_data: FixType[] } {
+export function getRemainingRouteData(route: string, routeData: (RouteFixType & { dist: number })[], pos: Position, dest: string, polygons?: Feature<Polygon>[]): { _route: string, _route_data: RouteFixType[] } {
   if (routeData.length > 1) {
     let fixNames = routeData.map(e => e.name);
     if (fixNames.slice(-1)[0] === dest) {
@@ -144,7 +144,7 @@ export function getRemainingRouteData(route: string, routeData: (FixType & { dis
   return {_route: route, _route_data: routeData};
 }
 
-export function getNextFix(route: string, routeData: FixType[], pos: Position): (FixType & { dist: number })[] {
+export function getNextFix(route: string, routeData: RouteFixType[], pos: Position): (RouteFixType & { dist: number })[] {
   const routeDataWithDistance = getRouteDataDistance(_.cloneDeep(routeData), pos);
   if (routeDataWithDistance.length > 1) {
     const sortedRouteData = routeDataWithDistance.sort((u, v) => u.dist - v.dist);
@@ -247,9 +247,9 @@ export function computeBoundaryTime(entry: EdstEntryType, polygons: Feature<Poly
 /**
  *
  * @param {LocalEdstEntryType} entry
- * @returns {FixType[]}
+ * @returns {RouteFixType[]}
  */
-export function computeCrossingTimes(entry: LocalEdstEntryType): (FixType & { minutesAtFix: number })[] {
+export function computeCrossingTimes(entry: LocalEdstEntryType): (RouteFixType & { minutesAtFix: number })[] {
   let newRouteData = [];
   if (entry._route_data) {
     const now = new Date();
@@ -318,7 +318,7 @@ export function removeDestFromRouteString(route: string, dest: string): string {
 }
 
 export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEdstEntryType, referenceFixes: ReferenceFixType[] | null):
-  { route: string, route_data: FixType[], cleared_direct: { frd: string | null, fix: string } } | null {
+  { route: string, route_data: RouteFixType[], cleared_direct: { frd: string | null, fix: string } } | null {
   let {_route: newRoute, _route_data: routeData, dest} = entry;
   if (newRoute && routeData) {
     let fixNames = routeData.map((e: { name: string }) => e.name);

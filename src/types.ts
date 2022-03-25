@@ -1,13 +1,14 @@
 import {Feature, Point, Position} from "@turf/turf";
 
+// backend data for a single EDST entry
 export type EdstEntryType = {
   cid: string, // 3 character unique identifier within EDST
   callsign: string, // aircraft callsign
   route: string, // route string parsed by EDST
   routes?: any[],
-  route_data: FixType[],
+  route_data: RouteFixType[],
   previous_route?: string,
-  previous_route_data?: FixType[], // fixes for latest previous route
+  previous_route_data?: RouteFixType[], // fixes for latest previous route
   altitude: string,
   interim?: number,
   type: string,
@@ -32,10 +33,10 @@ export type EdstEntryType = {
                                                  // fix the aircraft was cleared to
 }
 
-// type for a single EDST entry
+// local data for a single EDST entry
 export type LocalEdstEntryVType = {
   _route?: string, // shortened route string, starting at the next inbound fix
-  _route_data?: (FixType & { dist: number })[],
+  _route_data?: (RouteFixType & { dist: number })[],
   aarList?: any[], // preferred arrival routes
   _aarList?: any[] | null, // preferred arrival routes processed by the frontend
   vciStatus: number, // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
@@ -62,6 +63,16 @@ export type LocalEdstEntryVType = {
 // type for a single EDST entry
 export type LocalEdstEntryType = EdstEntryType & LocalEdstEntryVType;
 
+export type FixType = {
+  artcc_high: string,
+  artcc_low: string,
+  lat: string | number,
+  lon: string | number,
+  name: string,
+  type: string,
+  waypoint_id: string
+}
+
 export type ReferenceFixType = {
   waypoint_id: string,
   point: Feature<Point>,
@@ -69,14 +80,14 @@ export type ReferenceFixType = {
   bearing: number
 }
 
-export type FixType = {
+export type RouteFixType = {
   name: string,
   pos: Position,
   dist?: number,
   minutesAtFix?: number
 }
 
-export type NavFixType = {
+export type NavaidType = {
   navaid_id: string,
   type: string,
   name: string,
@@ -90,7 +101,7 @@ export type EdstPreferredRouteType = {
   eligible?: boolean,
   routeType?: string,
   route?: string,
-  route_data?: FixType[],
+  route_data?: RouteFixType[],
   amendment?: string,
   dep?: string,
   dest?: string

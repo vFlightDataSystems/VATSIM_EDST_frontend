@@ -1,5 +1,14 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store";
+import {FixType} from "../../types";
+
+export enum SectorTypeEnum {
+  ultraLow = "UL",
+  low = "L",
+  high = "H",
+  ultraHigh = "UH",
+  lowHigh = "LH"
+}
 
 export enum MapFeatureOptionEnum {
   ultraLowSectors = "Ultra Low",
@@ -41,11 +50,19 @@ export type aircraftDisplayOptionsType = {
 export type GpdStateType = {
   mapFeatureOptions: MapFeatureOptionsType,
   aircraftDisplayOptions: aircraftDisplayOptionsType,
-  displayCidList: string[]
+  sectorTypes: { [key: string]: SectorTypeEnum }
+  navaids: FixType[],
+  waypoints: FixType[],
+  airways: any[],
+  displayData: any
 };
 
 const initialState: GpdStateType = {
   mapFeatureOptions: {},
+  sectorTypes: {},
+  navaids: [],
+  waypoints: [],
+  airways: [],
   aircraftDisplayOptions: {
     [AircraftDisplayOptionsEnum.aircraftListFilter]: false,
     [AircraftDisplayOptionsEnum.altitudeFilterLimits]: false,
@@ -55,30 +72,50 @@ const initialState: GpdStateType = {
     [AircraftDisplayOptionsEnum.mspLabels]: false,
     [AircraftDisplayOptionsEnum.routePreviewMinutes]: 0
   },
-  displayCidList: []
+  displayData: null
 };
 
 const gpdSlice = createSlice({
   name: 'gpd',
   initialState: initialState as GpdStateType,
   reducers: {
-    setGpdDisplayCidList(state, action: { payload: string[] }) {
-      state.displayCidList = action.payload;
+    setGpdDisplayData(state, action) {
+      state.displayData = action.payload;
     },
-    setMapFeatureOption(state, action: { payload: MapFeatureOptionsType }) {
+    setMapFeatureOptions(state, action: { payload: MapFeatureOptionsType }) {
       state.mapFeatureOptions = action.payload;
     },
     setAircraftDisplayOptions(state, action: { payload: aircraftDisplayOptionsType }) {
       state.aircraftDisplayOptions = action.payload;
+    },
+    setSectorTypes(state, action: { payload: { [key: string]: SectorTypeEnum } }) {
+      state.sectorTypes = action.payload;
+    },
+    setNavaids(state, action: { payload: FixType[] }) {
+      state.navaids = action.payload;
+    },
+    setWaypoints(state, action: { payload: FixType[] }) {
+      state.waypoints = action.payload;
+    },
+    setAirways(state, action) {
+      state.airways = action.payload;
     }
   }
 });
 
 export const {
-  setGpdDisplayCidList,
-  setMapFeatureOption,
-  setAircraftDisplayOptions
+  setGpdDisplayData,
+  setMapFeatureOptions,
+  setAircraftDisplayOptions,
+  setSectorTypes,
+  setNavaids,
+  setWaypoints,
 } = gpdSlice.actions;
 export default gpdSlice.reducer;
 
-export const gpdCidListSelector = (state: RootState) => state.gpd.displayCidList;
+export const gpdMapFeatureOptionsSelector = (state: RootState) => state.gpd.mapFeatureOptions;
+export const gpdAircraftDispalyOptionsSelector = (state: RootState) => state.gpd.aircraftDisplayOptions;
+export const gpdSectorTypesSelector = (state: RootState) => state.gpd.sectorTypes;
+export const gpdNavaidSelector = (state: RootState) => state.gpd.navaids;
+export const gpdWaypointSelector = (state: RootState) => state.gpd.waypoints;
+export const gpdAirwaySelector = (state: RootState) => state.gpd.airways;
