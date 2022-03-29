@@ -101,7 +101,7 @@ export const AclRow: React.FC<AclRowProps> = (
       dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
     } else {
       if (entry.vciStatus < 1) {
-        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 1}}));
+        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: entry.vciStatus + 1}}));
       } else {
         dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
       }
