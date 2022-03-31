@@ -21,14 +21,14 @@ export const GpdMapFeaturesMenu: React.FC = () => {
   const [currentOptions, setCurrentOptions] = useState(_.cloneDeep(mapFeatureOptions));
 
   return (<>
-      {Object.entries(MapFeatureOptionEnum).map(([key, val]) => {
+      {Object.values(MapFeatureOptionEnum).map((option) => {
         return <OptionsBodyRow>
-          <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setCurrentOptions(prev => ({...prev, [key as MapFeatureOptionEnum]: !currentOptions[key as MapFeatureOptionEnum]}))}>
+          <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setCurrentOptions(prev => ({...prev, [option as MapFeatureOptionEnum]: !currentOptions[option as MapFeatureOptionEnum]}))}>
             <OptionsFlexCol>
               <OptionSelectedIndicator
-                selected={currentOptions[key as MapFeatureOptionEnum]}
+                selected={currentOptions[option as MapFeatureOptionEnum]}
               />
-              {val}
+              {option}
             </OptionsFlexCol>
           </EdstTooltip>
         </OptionsBodyRow>

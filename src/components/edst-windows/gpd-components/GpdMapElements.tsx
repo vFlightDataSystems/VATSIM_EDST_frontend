@@ -51,7 +51,7 @@ function getRouteLine(entry: LocalEdstEntryType) {
   return null;
 }
 
-export const GpdFix: React.FC<GpdFixProps> = ({lat, lon}) => {
+export const GpdNavaid: React.FC<GpdFixProps> = ({lat, lon}) => {
   const posLatLng = posToLatLng([Number(lon), Number(lat)]);
   return <Marker position={posLatLng} icon={vorIcon}/>;
 };

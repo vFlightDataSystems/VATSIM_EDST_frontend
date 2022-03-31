@@ -5,7 +5,7 @@ import {useAppSelector} from "../../../redux/hooks";
 import {
   sectorPolygonSelector
 } from "../../../redux/slices/sectorSlice";
-import {GpdAircraftTrack, GpdFix, GpdMapSectorPolygon} from "./GpdMapElements";
+import {GpdAircraftTrack, GpdNavaid, GpdMapSectorPolygon} from "./GpdMapElements";
 import {LocalEdstEntryType} from "../../../types";
 import {entriesSelector} from "../../../redux/slices/entriesSlice";
 import styled from "styled-components";
@@ -15,7 +15,7 @@ import {
   gpdMapFeatureOptionsSelector,
   gpdNavaidSelector,
   gpdSectorTypesSelector,
-  gpdWaypointSelector
+  gpdWaypointSelector, MapFeatureOptionEnum, SectorTypeEnum
 } from "../../../redux/slices/gpdSlice";
 
 const center = {lat: 42.362944444444445, lng: -71.00638888888889};
@@ -31,7 +31,6 @@ const MapConfigurator: React.FC<MapConfiguratorProps> = ({zoomLevel}) => {
   }, [zoomLevel]);
   return null
 }
-
 const GpdBodyDiv = styled.div`
   overflow: hidden;
   width: 100%;
@@ -68,9 +67,19 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
       minZoom={5}
     >
       <MapConfigurator zoomLevel={zoomLevel}/>
-      {Object.values(sectors).map((sector) => <GpdMapSectorPolygon sector={sector}/>)}
-      {navaidList.map(fix => <GpdFix {...fix}/>)}
-      {entryList.map(entry => <GpdAircraftTrack cid={entry.cid}/>)}
+      {Object.entries(sectors).map(([id, sector]) =>
+        ((selectedMapFeatureOptions[MapFeatureOptionEnum.ultraLowSectors]
+            && sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.ultraLow)
+          || (selectedMapFeatureOptions[MapFeatureOptionEnum.lowSectors]
+            && (sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.low || sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.lowHigh))
+          || (selectedMapFeatureOptions[MapFeatureOptionEnum.highSectors]
+            && (sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.high || sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.lowHigh))
+          || (selectedMapFeatureOptions[MapFeatureOptionEnum.ultraHighSectors]
+            && sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.ultraHigh)
+        ) && <GpdMapSectorPolygon sector={sector}/>
+      )}
+      {selectedMapFeatureOptions[MapFeatureOptionEnum.navaid] && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.name}`} {...fix}/>)}
+      {entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.cid}`} cid={entry.cid}/>)}
     </MapContainer>
   </GpdBodyDiv>);
 }
