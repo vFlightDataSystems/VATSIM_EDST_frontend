@@ -1,5 +1,3 @@
-import '../../../css/windows/titlebar-styles.scss';
-import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
@@ -10,6 +8,7 @@ import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, planRowFieldEnum, windowEnum} from "../../../enums";
 import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
+import {NoSelectDiv} from "../../../styles/styles";
 
 type PlansDisplayHeaderProps = {
   focused: boolean
@@ -26,7 +25,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
       closeWindow={() => dispatch(closeWindow(windowEnum.plansDisplay))}
       text={['Plans Display']}
     />
-    <div className="no-select">
+    <NoSelectDiv>
       <EdstWindowHeaderButton disabled={selectedPlanIndex === null}
                               onMouseDown={(e: React.MouseEvent) => {
                                 if (selectedPlanIndex !== null) {
@@ -77,6 +76,6 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
         content="Clean Up"
         title={Tooltips.plansCleanUp}
       />
-    </div>
+    </NoSelectDiv>
   </div>);
 };

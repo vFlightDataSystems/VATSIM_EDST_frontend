@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {defaultFontFamily, defaultFontSize, NoSelectDiv} from "./styles";
-import cursor from './cursors/aero_arrow.cur';
 
 export const EdstDiv = styled(NoSelectDiv)`
   display: flex;
@@ -13,9 +12,18 @@ export const EdstDiv = styled(NoSelectDiv)`
   font-size: ${defaultFontSize};
   caret-color: transparent;
   -webkit-font-smoothing: none;
+
+  button, input, textarea {
+    font-family: ${defaultFontFamily};
+    //font-weight: bold;
+    -webkit-font-smoothing: none;
+    cursor: default;
+    overflow-wrap: anywhere;
+    caret: underscore;
+  }
 `;
 
-export const EdstBodyDiv = styled.div`
+export const EdstBodyDiv = styled.div<{hideCursor?: boolean}>`
   overflow: hidden;
   flex-flow: column;
   position: absolute;
@@ -25,21 +33,6 @@ export const EdstBodyDiv = styled.div`
   width: 100vw;
   flex-grow: 1;
   display: flex;
-
-  &.hide-cursor {
-    cursor: none;
-  }
-`;
-
-export const EdstDraggingOutlineDiv = styled.div`
-  z-index: 1001;
-  background-color: transparent;
-  border: 1px solid #FFFFFF;
-`;
-
-export const DraggingCursorDiv = styled.div`
-  z-index: 1001;
-  width: 25px;
-  height: 25px;
-  content: url(${cursor});
+  
+  ${props => props.hideCursor && {cursor: "none"}};
 `;

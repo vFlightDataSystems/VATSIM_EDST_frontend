@@ -31,8 +31,8 @@ export const amendEntryThunk = createAsyncThunk(
         if (updatedEntry) {
           updatedEntry = refreshEntry(updatedEntry, polygons, artccId, _.cloneDeep(currentEntry));
           updatedEntry.pendingRemoval = null;
-          if (planData.scratch_hdg !== undefined) updatedEntry.scratch_hdg = planData.scratch_hdg;
-          if (planData.scratch_spd !== undefined) updatedEntry.scratch_spd = planData.scratch_spd;
+          if (planData.scratchHdg !== undefined) updatedEntry.scratchHdg = planData.scratchHdg;
+          if (planData.scratchSpd !== undefined) updatedEntry.scratchSpd = planData.scratchSpd;
           thunkAPI.dispatch(setEntry(updatedEntry));
         }
       });

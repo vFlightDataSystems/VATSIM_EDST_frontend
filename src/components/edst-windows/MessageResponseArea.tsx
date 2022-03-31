@@ -1,12 +1,10 @@
 import React, {useContext, useRef} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppSelector} from "../../redux/hooks";
 import {mraMsgSelector, windowPositionSelector} from "../../redux/slices/appSlice";
 import styled from "styled-components";
-import {FloatingWindowDiv} from "../../styles/styles";
+import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 
 const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
   z-index: 1000;
@@ -27,11 +25,11 @@ export const MessageResponseArea: React.FC = () => {
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 
-  return pos && (<MessageResponseAreaDiv className="floating-window mra no-select"
-               ref={ref}
-               id="edst-mra"
-               style={{left: pos.x + "px", top: pos.y + "px"}}
-               onMouseDown={(event) => startDrag(event, ref, windowEnum.messageResponseArea)}
+  return pos && (<MessageResponseAreaDiv
+      pos={pos}
+      ref={ref}
+      id="edst-mra"
+      onMouseDown={(event) => startDrag(event, ref, windowEnum.messageResponseArea)}
     >
       {msg}
     </MessageResponseAreaDiv>

@@ -5,6 +5,7 @@ import {aclRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {gpdAircraftSelect} from "../../../redux/thunks/thunks";
 import {aselSelector} from "../../../redux/slices/appSlice";
+import {defaultFontFamily} from "../../../styles/styles";
 
 type GpdDataBlockProps = {
   entry: LocalEdstEntryType,
@@ -15,7 +16,7 @@ const DataBlockDiv = styled.div`
   z-index: 999;
   width: auto;
   position: absolute;
-  font-family: EDST;
+  font-family: ${defaultFontFamily};
   font-size: 16px;
   line-height: 16px;
   color: #ADADAD;

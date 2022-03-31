@@ -119,7 +119,7 @@ export const SectorSelector: React.FC = () => {
               </EdstTooltip>)}
           </CheckBoxBlock>
         </SectorSelectorForm>
-        <EdstButton className="no-select" content="Save" onMouseDown={() => {
+        <EdstButton content="Save" onMouseDown={() => {
           dispatch(refreshEntriesThunk());
           dispatch(setShowSectorSelector(false));
         }}/>

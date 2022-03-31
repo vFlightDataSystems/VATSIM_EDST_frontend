@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const defaultFontFamily = 'TERMINUS';
+export const defaultFontFamily = 'Consolas';
 export const defaultFontSize = '17px';
 export const defaultInputFontSize = '16px';
 
@@ -16,9 +16,4 @@ export const DraggingDiv = styled(NoSelectDiv)`
 
 export const FocusedWindowDiv = styled.div`
   background-color: #008585;
-`;
-
-export const FloatingWindowDiv = styled.div`
-  position: absolute;
-  color: #ADADAD;
 `;

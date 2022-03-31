@@ -1,10 +1,31 @@
 import React, {useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstPreferredRouteType} from "../../types";
 import _ from "lodash";
+import styled from "styled-components";
+import {OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow} from "../../styles/optionMenuStyles";
+
+const PrefrouteContainer = styled(ScrollContainer)`
+  border: 2px solid #414141;
+  margin: 6px;
+  min-height: 40px;
+`;
+
+const Row = styled(OptionsBodyRow)`padding: 4px 0;`;
+
+const PrefrouteRow = styled(OptionsBodyRow)`
+  padding: 0 0 0 10px;
+  margin: 0;
+`;
+
+const Col = styled(OptionsBodyCol)`
+  align-items: center;
+  vertical-align: center;
+  height: auto;
+  margin-right: 0;
+  padding-left: 4px;
+`;
 
 type PreferredRouteDisplayProps = {
   aar: any[],
@@ -47,40 +68,38 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
   const eligibleRoutes = routes.filter(r => r.eligible);
 
   return (<div>
-      <div className="options-row route-row bottom-border"/>
-      <div className="options-row route-row underline">
+      <Row bottomBorder={true}/>
+      <UnderlineRow as={Row}>
         Apply ATC Preferred Route
-      </div>
-      <div className="options-row route-row"
-      >
-        <div className="options-col prefroute-col"
-        >
+      </UnderlineRow>
+      <Row>
+        <Col>
           <EdstButton content="ELIGIBLE" selected={eligibleOnly}
+                      margin="0 6px"
+                      width={85}
                       onMouseDown={() => setEligibleOnly(true)}
                       title={Tooltips.routeMenuPreferredEligible}
           />
-          <EdstButton content="ALL" selected={!eligibleOnly}
+          <EdstButton content="ALL" selected={!eligibleOnly} width={75}
                       onMouseDown={() => setEligibleOnly(false)}
                       title={Tooltips.routeMenuPreferredAll}
           />
-        </div>
-      </div>
-      <div className="prefroute-container scroll-container prefroute-scroll-container">
+        </Col>
+      </Row>
+      <PrefrouteContainer maxHeight={100}>
         {eligibleOnly && eligibleRoutes.length === 0 &&
-            <div className="options-row prefroute-row" key={`route-menu-prefroute-row-no-eligible-avail`}>
+            <PrefrouteRow key={`route-menu-prefroute-row-no-eligible-avail`}>
                 No Eligible APRs: Select ALL to display Ineligible APRs
-            </div>}
+            </PrefrouteRow>}
         {Object.entries(routes).map(([i, r]: [string, EdstPreferredRouteType]) => {
           return r && (!eligibleOnly || r.eligible) && ((r.amendment?.length ?? 0) > 0) && (
-            <div className="options-row prefroute-row" key={`route-menu-prefroute-row-${i}`}>
-              <div className="options-col prefroute-col hover"
-                   onMouseDown={() => clearedReroute(r)}
-              >
+            <PrefrouteRow key={`route-menu-prefroute-row-${i}`}>
+              <Col hover={true} onMouseDown={() => clearedReroute(r)}>
                 {r.dep ?? ''}{r.amendment}{r.dest ?? ''}
-              </div>
-            </div>);
+              </Col>
+            </PrefrouteRow>);
         })}
-      </div>
+      </PrefrouteContainer>
     </div>
   );
 };

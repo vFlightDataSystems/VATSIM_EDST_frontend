@@ -12,6 +12,28 @@ import {EquipmentAppServTemplate} from "./EquipmentAppServTemplate";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {useFocused} from "../../../hooks";
+import {
+  OptionsBodyCol,
+  OptionsBody, OptionsBodyRow,
+  OptionSelectedIndicator,
+  OptionsMenu,
+  OptionsMenuHeader,
+  FidRow
+} from "../../../styles/optionMenuStyles";
+import styled from "styled-components";
+import {EqpContentCol, EqpRow} from "./styled";
+
+const EqpTemplateBody = styled(OptionsBody)`height: 100%`;
+const EqpTemplateRow = styled(OptionsBodyRow)`
+  display: flex;
+  align-items: center;
+`;
+const EqpTemplateBottomRow = styled(EqpTemplateRow)`
+  margin-bottom: 4px;
+  padding-top: 6px;
+  margin-top: 10px;
+  border-top: 1px solid #ADADAD;
+`;
 
 enum menuOptions {
   surv,
@@ -21,8 +43,9 @@ enum menuOptions {
 }
 
 export type EquipmentTemplateRowProps = {
-  rowClassName?: string
-  buttonClassName?: string,
+  margin?: string
+  circle?: boolean,
+  diamond?: boolean
   buttonText: string,
   selected: boolean,
   tooltip: string,
@@ -32,16 +55,18 @@ export type EquipmentTemplateRowProps = {
 };
 
 export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = (props) => {
-  return <div className={`eqp-template-row ${props.rowClassName ?? ''}`} key={props.key}>
-    <EdstTooltip className="eqp-content-col btn"
-                 title={props.tooltip}
+  return <EqpRow margin={props.margin} key={props.key}>
+    <EdstTooltip title={props.tooltip}
                  onMouseDown={props.toggleSelect}
     >
-      <div className={`button-indicator ${props.buttonClassName ?? ''} ${props.selected ? 'selected' : ''}`}/>
-      {props.buttonText}
+      <EqpContentCol>
+        <OptionSelectedIndicator selected={props.selected} circle={props.circle} diamond={props.diamond}/>
+        {props.buttonText}
+      </EqpContentCol>
+
     </EdstTooltip>
     {props.text ?? ''}
-  </div>;
+  </EqpRow>;
 }
 
 export const EquipmentTemplateMenu: React.FC = () => {
@@ -57,63 +82,75 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const ref = useRef(null);
   const focused = useFocused(ref);
 
-  return pos && (<div
-      className="options-menu equipment-template no-select"
+  return pos && (<OptionsMenu
+      width={900}
+      pos={pos}
       ref={ref}
       id="equipment-template-menu"
-      style={{left: pos.x, top: pos.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.equipmentTemplateMenu)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.equipmentTemplateMenu)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         Equipment Template
-      </div>
-      <div className="options-body eqp-template-body">
-        <div className="options-row fid">
+      </OptionsMenuHeader>
+      <EqpTemplateBody>
+        <FidRow>
           {entry && `${entry.callsign} ${entry.type}/${entry.equipment}`}
-        </div>
-        <div className="options-row eqp-template-row">
-          <div className="eqp-template-header-col">
-            <EdstButton className={selectedMenu === menuOptions.surv ? 'selected' : ''}
-                        content="SURV"
-                        onMouseDown={() => setSelectedMenu(menuOptions.surv)}
-                        title={Tooltips.equipmentTemplateMenuSurv}
+        </FidRow>
+        <EqpTemplateRow>
+            <EdstButton
+              width={85}
+              margin="0 4px"
+              selected={selectedMenu === menuOptions.surv}
+              content="SURV"
+              onMouseDown={() => setSelectedMenu(menuOptions.surv)}
+              title={Tooltips.equipmentTemplateMenuSurv}
             />
-            <EdstButton className={selectedMenu === menuOptions.nav ? 'selected' : ''}
-                        content="NAV"
-                        onMouseDown={() => setSelectedMenu(menuOptions.nav)}
-                        title={Tooltips.equipmentTemplateMenuNAV}
+            <EdstButton
+              width={85}
+              margin="0 4px"
+              selected={selectedMenu === menuOptions.nav}
+              content="NAV"
+              onMouseDown={() => setSelectedMenu(menuOptions.nav)}
+              title={Tooltips.equipmentTemplateMenuNAV}
             />
-            <EdstButton className={selectedMenu === menuOptions.comm ? 'selected' : ''}
-                        content="COMM"
-                        onMouseDown={() => setSelectedMenu(menuOptions.comm)}
-                        title={Tooltips.equipmentTemplateMenuComm}
+            <EdstButton
+              width={85}
+              margin="0 4px"
+              selected={selectedMenu === menuOptions.comm}
+              content="COMM"
+              onMouseDown={() => setSelectedMenu(menuOptions.comm)}
+              title={Tooltips.equipmentTemplateMenuComm}
             />
-            <EdstButton className={selectedMenu === menuOptions.appServ ? 'selected' : ''}
-                        content="APP/SERV"
-                        onMouseDown={() => setSelectedMenu(menuOptions.appServ)}
-                        title={Tooltips.equipmentTemplateMenuAppServ}
+            <EdstButton
+              width={85}
+              margin="0 4px"
+              selected={selectedMenu === menuOptions.appServ}
+              content="APP/SERV"
+              onMouseDown={() => setSelectedMenu(menuOptions.appServ)}
+              title={Tooltips.equipmentTemplateMenuAppServ}
             />
-          </div>
-          <div className="options-col right">
+          <OptionsBodyCol alignRight={true}>
             <EdstButton content="Reset"/>
-          </div>
-        </div>
+          </OptionsBodyCol>
+        </EqpTemplateRow>
         {selectedMenu === menuOptions.surv && <EquipmentSurvTemplate/>}
         {selectedMenu === menuOptions.nav && <EquipmentNavTemplate/>}
         {selectedMenu === menuOptions.comm && <EquipmentCommTemplate/>}
         {selectedMenu === menuOptions.appServ && <EquipmentAppServTemplate/>}
-        <div className="eqp-template-row bottom top-border">
-          <div className="options-col">
+        <EqpTemplateBottomRow>
+          <OptionsBodyCol>
             <EdstButton disabled={true} content="OK"/>
-          </div>
-          <div className="options-col right">
-            <EdstButton className="exit-button" content="Cancel"
-                        onMouseDown={() => dispatch(closeMenu(menuEnum.equipmentTemplateMenu))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Cancel"
+                        onMouseDown={() => dispatch(closeMenu(menuEnum.equipmentTemplateMenu))}
+            />
+          </OptionsBodyCol>
+        </EqpTemplateBottomRow>
+      </EqpTemplateBody>
+    </OptionsMenu>
   );
 };

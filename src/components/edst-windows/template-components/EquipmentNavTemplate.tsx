@@ -4,6 +4,16 @@ import {Tooltips} from "../../../tooltips";
 import {useAppSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
+import {EdstInput, OptionsBodyRow, OptionSelectedIndicator} from "../../../styles/optionMenuStyles";
+import {
+  EqpCol,
+  EqpColTitle,
+  EqpContentCol,
+  EqpContentRow,
+  EqpInput,
+  EqpInputContainer,
+  EqpInputRow
+} from "./styled";
 
 enum NavCatEnum {
   F = 'F',
@@ -73,11 +83,11 @@ export const EquipmentNavTemplate: React.FC = () => {
   }
 
   return (<div>
-    <div className="options-row margin-top">
-      <div className="eqp-col">
-        <div className="eqp-template-row col-title">
+    <OptionsBodyRow margin="10px 0 0 0" padding="4px 0 0 0">
+      <EqpCol>
+        <EqpColTitle>
           NAVAIDS
-        </div>
+        </EqpColTitle>
         {Object.keys(NavCatEnum).map((category) =>
           <EquipmentTemplateRow
             key={`nav-cat-row-${category}`}
@@ -88,11 +98,11 @@ export const EquipmentNavTemplate: React.FC = () => {
             toggleSelect={() => toggleCategory(category as NavCatEnum)}
           />
         )}
-      </div>
-      <div className="eqp-col">
-        <div className="eqp-template-row col-title">
+      </EqpCol>
+      <EqpCol>
+        <EqpColTitle>
           RNAV
-        </div>
+        </EqpColTitle>
         {Object.keys(RnavCatEnum).map((category) =>
           <EquipmentTemplateRow
             key={`rnav-cat-row-${category}`}
@@ -103,59 +113,76 @@ export const EquipmentNavTemplate: React.FC = () => {
             toggleSelect={() => toggleCategory(category as RnavCatEnum)}
           />
         )}
-      </div>
-      <div className="eqp-col">
-        <div className="eqp-template-row">
-          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
-            <div className={`button-indicator circle`}/>
-            RNAV
+      </EqpCol>
+      <EqpCol>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
+            <EqpContentCol>
+              <OptionSelectedIndicator circle={true}/>
+              RNAV
+            </EqpContentCol>
+
           </EdstTooltip>
-          <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
-            <div className={`button-indicator circle`}/>
-            RNP
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
+            <EqpContentCol>
+              <OptionSelectedIndicator circle={true}/>
+              RNP
+            </EqpContentCol>
           </EdstTooltip>
-        </div>
-        <div className="eqp-template-row">
-          <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-            <input/>
+        </EqpContentRow>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <EqpInputContainer>
+              <EdstInput/>
+            </EqpInputContainer>
           </EdstTooltip>
           D (DEPARTURE)
-        </div>
-        <div className="eqp-template-row">
-          <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-            <input/>
+        </EqpContentRow>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <EqpInputContainer>
+              <EdstInput/>
+            </EqpInputContainer>
           </EdstTooltip>
           E (EN ROUTE)
-        </div>
-        <div className="eqp-template-row">
-          <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-            <input/>
+        </EqpContentRow>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <EqpInputContainer>
+              <EdstInput/>
+            </EqpInputContainer>
           </EdstTooltip>
           A (ARRIVAL)
-        </div>
-        <div className="eqp-template-row">
-          <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-            <input/>
+        </EqpContentRow>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <EqpInputContainer>
+              <EdstInput/>
+            </EqpInputContainer>
           </EdstTooltip>
           G (GLOBAL/OCEAN)
-        </div>
-        <div className="eqp-template-row">
-          <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-            <input/>
+        </EqpContentRow>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <EqpInputContainer>
+              <EdstInput/>
+            </EqpInputContainer>
           </EdstTooltip>
           L (LANDING)
-        </div>
-        <div className="eqp-template-row">
-          <EdstTooltip className="input-container small" title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-            <input/>
+        </EqpContentRow>
+        <EqpContentRow>
+          <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <EqpInputContainer>
+              <EdstInput/>
+            </EqpInputContainer>
           </EdstTooltip>
           S (SPECIAL)
-        </div>
-      </div>
-      <div className="eqp-col">
-        <div className="eqp-template-row col-title">
+        </EqpContentRow>
+      </EqpCol>
+      <EqpCol>
+        <EqpColTitle>
           RVSM
-        </div>
+        </EqpColTitle>
         <EquipmentTemplateRow
           key={`eqp-rvsm-row`}
           buttonText="W"
@@ -164,16 +191,18 @@ export const EquipmentNavTemplate: React.FC = () => {
           selected={rvsm}
           toggleSelect={() => setRvsm(!rvsm)}
         />
-      </div>
-    </div>
-    <div className="eqp-template-row bottom-row">
+      </EqpCol>
+    </OptionsBodyRow>
+    <EqpInputRow>
       NAV/
-      <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuNAV_Nav}>
-        <input value={[...navCategories as string[]].concat([...rnavCategories as string[]])
-          .sort((u,v) => u.localeCompare(v)).join('') + (rvsm ? 'W' : '')}
-               onChange={() => {}}
-        />
+      <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
+        <EqpInputContainer width="60%">
+          <EqpInput value={[...navCategories as string[]].concat([...rnavCategories as string[]])
+            .sort((u,v) => u.localeCompare(v)).join('') + (rvsm ? 'W' : '')}
+                 onChange={() => {}}
+          />
+        </EqpInputContainer>
       </EdstTooltip>
-    </div>
+    </EqpInputRow>
   </div>);
 };

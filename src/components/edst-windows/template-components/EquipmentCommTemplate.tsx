@@ -4,6 +4,11 @@ import {Tooltips} from "../../../tooltips";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
 import {useAppSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
+import {EqpCol, EqpColTitle, EqpInput, EqpInputContainer, EqpInputRow} from "./styled";
+import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
+import styled from "styled-components";
+
+const EqpCol2 = styled(EqpCol)`margin-left: 30px`;
 
 enum VoiceCatEnum {
   H = 'H',
@@ -127,11 +132,11 @@ export const EquipmentCommTemplate: React.FC = () => {
   }
 
   return (<div>
-    <div className="options-row eqp-comm-row margin-top">
-      <div className="eqp-col eqp-comm-col">
-        <div className="eqp-template-row col-title eqp-col-title">
+    <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
+      <EqpCol2>
+        <EqpColTitle>
           VOICE CATEGORY
-        </div>
+        </EqpColTitle>
         {Object.keys(VoiceCatEnum).map((category) =>
           <EquipmentTemplateRow
             key={`voice-cat-row-${category}`}
@@ -142,11 +147,11 @@ export const EquipmentCommTemplate: React.FC = () => {
             toggleSelect={() => toggleCategory(category as VoiceCatEnum)}
           />
         )}
-      </div>
-      <div className="eqp-col eqp-comm-col">
-        <div className="eqp-template-row col-title">
+      </EqpCol2>
+      <EqpCol2>
+        <EqpColTitle>
           CPDLC CATEGORY
-        </div>
+        </EqpColTitle>
         {Object.keys(CpdlcCatEnum).map((category) =>
           <EquipmentTemplateRow
             key={`cpdlc-cat-row-${category}`}
@@ -157,11 +162,11 @@ export const EquipmentCommTemplate: React.FC = () => {
             toggleSelect={() => toggleCategory(category as CpdlcCatEnum)}
           />
         )}
-      </div>
-      <div className="eqp-col eqp-comm-col">
-        <div className="eqp-template-row col-title eqp-col-title">
+      </EqpCol2>
+      <EqpCol2>
+        <EqpColTitle>
           ACARS CATEGORY
-        </div>
+        </EqpColTitle>
         {Object.keys(AcarsCatEnum).map((category) =>
           <EquipmentTemplateRow
             key={`acars-cat-row-${category}`}
@@ -172,11 +177,11 @@ export const EquipmentCommTemplate: React.FC = () => {
             toggleSelect={() => toggleCategory(category as AcarsCatEnum)}
           />
         )}
-      </div>
-      <div className="eqp-col eqp-comm-col">
-        <div className="eqp-template-row col-title eqp-col-title">
+      </EqpCol2>
+      <EqpCol2>
+        <EqpColTitle>
           SATELLITE RTF
-        </div>
+        </EqpColTitle>
         {Object.keys(SatCatEnum).map((category) =>
           <EquipmentTemplateRow
             key={`satellite-cat-row-${category}`}
@@ -187,25 +192,29 @@ export const EquipmentCommTemplate: React.FC = () => {
             toggleSelect={() => toggleCategory(category as SatCatEnum)}
           />
         )}
-      </div>
-    </div>
-    <div className="eqp-template-row bottom-row">
+      </EqpCol2>
+    </OptionsBodyRow>
+    <EqpInputRow>
       DAT/
-      <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuComm_Dat}>
-        <input value={[...acarsCategories as string[]].concat([...satelliteCategories as string[]])
-          .sort((u,v) => u.localeCompare(v)).join('')}
-               onChange={() => {}}
-        />
+      <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuComm_Dat}>
+        <EqpInputContainer width="60%">
+          <EqpInput value={[...acarsCategories as string[]].concat([...satelliteCategories as string[]])
+            .sort((u,v) => u.localeCompare(v)).join('')}
+                    onChange={() => {}}
+          />
+        </EqpInputContainer>
       </EdstTooltip>
-    </div>
-    <div className="eqp-template-row bottom-row">
+    </EqpInputRow>
+    <EqpInputRow>
       COM/
-      <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuComm_Com}>
-        <input value={[...voiceCategories as string[]].concat([...cpdlcCategories as string[]])
-          .sort((u,v) => u.localeCompare(v)).join('')}
-               onChange={() => {}}
-        />
+      <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuComm_Com}>
+        <EqpInputContainer width="60%">
+          <EqpInput value={[...voiceCategories as string[]].concat([...cpdlcCategories as string[]])
+            .sort((u,v) => u.localeCompare(v)).join('')}
+                    onChange={() => {}}
+          />
+        </EqpInputContainer>
       </EdstTooltip>
-    </div>
+    </EqpInputRow>
   </div>);
 };

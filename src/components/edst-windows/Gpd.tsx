@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import '../../css/header-styles.scss';
+
 import {useAppSelector} from "../../redux/hooks";
 import {draggingSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";

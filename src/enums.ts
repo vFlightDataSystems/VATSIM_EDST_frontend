@@ -80,7 +80,8 @@ export enum menuEnum {
   holdMenu = "holdMenu",
   cancelHoldMenu = "cancelHoldMenu",
   templateMenu = "templateMenu",
-  equipmentTemplateMenu = "equipmentTemplateMenu"
+  equipmentTemplateMenu = "equipmentTemplateMenu",
+  gpdMapOptionsMenu = "gpdMapOptionsMenu",
 }
 
 export enum windowEnum {

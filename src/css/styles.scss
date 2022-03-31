@@ -33,82 +33,37 @@ $default-input-font-size: 16px;
 $default-cursor: default;
 $default-delete-cursor: default;
 
-$edst-background-black: #000000;
-$edst-font-grey: #ADADAD;
-$edst-font-yellow: #ADAD00;
-$edst-font-red: #AD0000;
-$edst-font-orange: #AD5700;
-$edst-font-green: #00AD00;
-$edst-font-blue: #00ADAD;
-
-$edst-window-light-cyan: #008585;
-$edst-window-dark-cyan: #005757;
-$edst-window-light-grey: #888888;
-$edst-window-dark-grey: #575757;
-$edst-window-coral: #D698A5;
-
-button {
-  font-family: $default-font-family;
-  //font-weight: bold;
-  -webkit-font-smoothing: none;
-  cursor: $default-cursor;
+.circle-icon {
+  background-image: url("../resources/images/Circle.svg");
 }
 
-input, textarea {
-  caret-color: $edst-font-grey;
-  font-family: $default-font-family;
-  -webkit-font-smoothing: none;
-  cursor: $default-cursor;
-  font-size: $default-input-font-size;
-  outline: none;
-  display: flex;
-  //overflow: hidden;
-  overflow-wrap: anywhere;
-  color: $edst-font-grey;
-  border: none;
-  caret: underscore;
-  background-color: #000000;
+.diamond-icon {
+  background-image: url("../resources/images/Diamond.svg");
 }
 
-.delete-cursor {
-  cursor: $default-delete-cursor;
+.square-icon {
+  background-image: url("../resources/images/Square.svg");
 }
 
-.no-select {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
+.aircraft-track-line {
+  background: transparent;
 
-.dragging {
-  pointer-events: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-@mixin input-container {
-  border: 1px solid transparent;
-
-  input, textarea {
-    width: calc(100% - 7px);
-    //height: calc(100% - 9px);
-    font-size: 16px;
-    outline: none;
-    display: flex;
-    overflow: hidden;
-    color: $edst-font-grey;
-    border-top: 2px solid $edst-window-dark-grey;
-    border-left: 2px solid $edst-window-dark-grey;
-    border-bottom: 2px solid $edst-window-light-grey;
-    border-right: 2px solid $edst-window-light-grey;
-    background-color: #000000;
-    resize: none;
-
-    &:hover {
-      outline: 1px solid #FFFFFF;
-    }
+  .line {
+    transform: translate(1px, -5px) rotate(-45deg);
+    height: 1px;
+    width: 30px;
+    background-color: #ADADAD;
   }
+}
+
+.vatsim-logo {
+  background-image: url(../resources/images/VATSIM-social_icon.svg);
+}
+
+.skyvector-logo {
+  background-image: url('../resources/images/glob_bright.png');
+}
+
+.flightaware-logo {
+  background-image: url('../resources/images/FA_1.png');
 }

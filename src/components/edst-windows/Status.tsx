@@ -1,16 +1,22 @@
 import React, {useContext, useRef} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, setShowSectorSelector, windowPositionSelector} from "../../redux/slices/appSlice";
 import {EdstButton} from "../resources/EdstButton";
 import {
+  FloatingWindowBodyDiv,
+  FloatingWindowDiv,
   FloatingWindowHeaderBlock,
   FloatingWindowHeaderColDiv,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
+import styled from "styled-components";
+
+const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
+  padding-top: 4px;
+  padding-left: 20px;
+`;
 
 export const Status: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,10 +25,11 @@ export const Status: React.FC = () => {
   const ref = useRef(null);
 
 
-  return pos && (<div className="floating-window status-window"
-                      ref={ref}
-                      id="edst-status"
-                      style={{left: pos.x + "px", top: pos.y + "px"}}
+  return pos && (<FloatingWindowDiv
+      width={360}
+      pos={pos}
+      ref={ref}
+      id="edst-status"
     >
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
@@ -36,17 +43,18 @@ export const Status: React.FC = () => {
           <FloatingWindowHeaderBlock width={8} height={2}/>
         </FloatingWindowHeaderColDiv>
       </FloatingWindowHeaderDiv>
-      <div className="floating-window-body status-body">
-        <EdstButton className="floating-window-outer-row" onMouseDown={() => dispatch(setShowSectorSelector(true))}>
+      <StatusBodyDiv>
+        <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>
           Change Sectors
         </EdstButton>
-        <div className="floating-window-outer-row">
+        <div>
           Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a>
         </div>
-        <div className="floating-window-outer-row">
-          <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank" rel="noreferrer">Roadmap</a>
+        <div>
+          <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank"
+             rel="noreferrer">Roadmap</a>
         </div>
-      </div>
-    </div>
+      </StatusBodyDiv>
+    </FloatingWindowDiv>
   );
 };

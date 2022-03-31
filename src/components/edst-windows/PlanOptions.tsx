@@ -1,6 +1,4 @@
 import React, {useContext, useMemo, useRef} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
@@ -16,6 +14,17 @@ import {
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
 import {useFocused} from "../../hooks";
+import {
+  FidRow,
+  OptionsBody,
+  OptionsBodyCol,
+  OptionsBodyRow,
+  OptionsMenu,
+  OptionsMenuHeader
+} from '../../styles/optionMenuStyles';
+import styled from "styled-components";
+
+const PlanOptionsBody = styled(OptionsBody)`text-indent: 4px`;
 
 export const PlanOptions: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -33,104 +42,132 @@ export const PlanOptions: React.FC = () => {
     dispatch(closeMenu(menuEnum.planOptions));
   }
 
-  return pos && (<div
-      className="options-menu plan no-select"
+  return pos && (<OptionsMenu
+      width={220}
+      pos={pos}
       ref={ref}
       id="plan-menu"
-      style={{left: pos.x, top: pos.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.planOptions)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.planOptions)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         Plan Options Menu
-      </div>
-      <div className="options-body text-indent">
-        <div className="options-row fid">
+      </OptionsMenuHeader>
+      <PlanOptionsBody>
+        <FidRow>
           {entry.cid} {entry.callsign}
-        </div>
-        <div className="options-row">
+        </FidRow>
+        <OptionsBodyRow>
+          <EdstTooltip style={{flexGrow: 1}}
+                       title={Tooltips.planOptionsAlt}
+                       onMouseDown={() => openMenu(menuEnum.altitudeMenu)}
+          >
+            <OptionsBodyCol hover={true}>
+              Altitude...
+            </OptionsBodyCol>
+          </EdstTooltip>
+        </OptionsBodyRow>
+        {!dep && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                title={Tooltips.planOptionsSpeed} // @ts-ignore
+                disabled={true}
+            >
+                <OptionsBodyCol hover={true}>
+                    Speed...
+                </OptionsBodyCol>
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        <OptionsBodyRow>
           <EdstTooltip
-            className="options-col hover"
-            content="Altitude..."
-            title={Tooltips.planOptionsAlt}
-            onMouseDown={() => openMenu(menuEnum.altitudeMenu)}
-          />
-        </div>
-        {!dep && <div className="options-row">
-          <EdstTooltip
-            className="options-col hover"
-            content="Speed..."
-            title={Tooltips.planOptionsSpeed} // @ts-ignore
-            disabled={true}
-          />
-        </div>}
-        <div className="options-row">
-          <EdstTooltip
-            className="options-col hover"
-            content="Route..."
+            style={{flexGrow: 1}}
             title={Tooltips.planOptionsRoute}
             onMouseDown={() => openMenu(menuEnum.routeMenu)}
-          />
-        </div>
-        <div className="options-row">
+          >
+            <OptionsBodyCol hover={true}>
+              Route...
+            </OptionsBodyCol>
+          </EdstTooltip>
+        </OptionsBodyRow>
+        <OptionsBodyRow>
           <EdstTooltip
-            className="options-col hover"
-            content="Previous Route"
+            style={{flexGrow: 1}}
             title={Tooltips.planOptionsPrevRoute} // @ts-ignore
             disabled={entry?.previous_route === undefined}
             onMouseDown={() => openMenu(menuEnum.prevRouteMenu)}
-          />
-        </div>
-        {!dep && <div className="options-row">
+          >
+            <OptionsBodyCol hover={true}>
+              Previous Route
+            </OptionsBodyCol>
+          </EdstTooltip>
+
+        </OptionsBodyRow>
+        {!dep && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                title={Tooltips.planOptionsStopProbe} // @ts-ignore
+                disabled={true}
+            >
+                <OptionsBodyCol hover={true}>
+                    Stop Probe...
+                </OptionsBodyCol>
+            </EdstTooltip>
+
+        </OptionsBodyRow>}
+        <OptionsBodyRow>
           <EdstTooltip
-            className="options-col hover"
-            content="Stop Probe..."
-            title={Tooltips.planOptionsStopProbe} // @ts-ignore
-            disabled={true}
-          />
-        </div>}
-        <div className="options-row">
-          <EdstTooltip
-            className="options-col hover"
-            content={`Trial ${dep ? 'Departure' : 'Restrictions'}...`}
+            style={{flexGrow: 1}}
             title={Tooltips.planOptionsTrialRestr} // @ts-ignore
             disabled={true}
-          />
-        </div>
-        {!dep && <div className="options-row">
+          >
+            <OptionsBodyCol hover={true}>
+              {`Trial ${dep ? 'Departure' : 'Restrictions'}...`}
+            </OptionsBodyCol>
+          </EdstTooltip>
+        </OptionsBodyRow>
+        {!dep && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                title={Tooltips.planOptionsPlans}
+            >
+                <OptionsBodyCol hover={true}>
+                    Plans
+                </OptionsBodyCol>
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        <OptionsBodyRow>
           <EdstTooltip
-            className="options-col hover"
-            content="Plans"
-            title={Tooltips.planOptionsPlans}
-          />
-        </div>}
-        <div className="options-row">
-          <EdstTooltip
-            className="options-col hover"
-            content="Keep"
+            style={{flexGrow: 1}}
             title={Tooltips.planOptionsKeep}
-          />
-        </div>
-        <div className="options-row">
+          >
+            <OptionsBodyCol hover={true}>
+              Keep
+            </OptionsBodyCol>
+          </EdstTooltip>
+        </OptionsBodyRow>
+        <OptionsBodyRow>
           <EdstTooltip
-            className="options-col hover delete-cursor"
-            content="Delete"
+            style={{flexGrow: 1}}
             title={Tooltips.planOptionsDelete}
             onMouseDown={() => {
-
               dispatch(asel.window === windowEnum.acl ? deleteAclEntry(asel.cid) : deleteDepEntry(asel.cid));
               dispatch(setAsel(null));
               dispatch(closeMenu(menuEnum.planOptions));
             }}
-          />
-        </div>
-        <div className="options-row bottom">
-          <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.planOptions))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          >
+            <OptionsBodyCol hover={true}>
+              Delete
+            </OptionsBodyCol>
+          </EdstTooltip>
+        </OptionsBodyRow>
+        <OptionsBodyRow margin="0">
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.planOptions))}/>
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </PlanOptionsBody>
+    </OptionsMenu>
   );
 };

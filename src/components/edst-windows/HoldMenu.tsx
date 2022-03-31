@@ -1,9 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {computeCrossingTimes, formatUtcMinutes} from "../../lib";
-import {EdstButton} from "../resources/EdstButton";
+import {EdstButton, HoldDirButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
@@ -14,6 +12,73 @@ import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType, RouteFixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {useFocused} from "../../hooks";
+import {
+  EdstInput,
+  FidRow,
+  OptionsBody,
+  OptionsBodyCol,
+  OptionsBodyRow,
+  OptionsMenu,
+  OptionsMenuHeader
+} from '../../styles/optionMenuStyles';
+import styled from "styled-components";
+import {InputContainer} from "../InputComponents";
+
+const FixContainer = styled.div`
+  padding: 4px 0;
+  border-bottom: 1px solid #ADADAD;
+`;
+
+const Row1 = styled(OptionsBodyRow)`justify-content: space-between`
+const Row2 = styled(OptionsBodyRow)`padding: 6px 0`;
+const LeftCol = styled(OptionsBodyCol)`
+  margin-left: 10px;
+  flex-grow: 0;
+  padding: 0;
+  border-bottom: 1px solid #ADADAD;
+`;
+const Col1 = styled(OptionsBodyCol)`
+  justify-content: left;
+  display: inline-flex;
+  height: 18px;
+  padding: 0 4px;
+  flex-grow: 0;
+  width: 110px;
+  margin: 0 12px;
+`;
+const Col2 = styled(OptionsBodyCol)`
+  justify-content: left;
+  flex-grow: 1;
+  margin: 5px 50px 5px 8px;
+  border-bottom: 1px solid #ADADAD;
+`;
+const Col3 = styled(OptionsBodyCol)`
+  justify-content: left;
+  margin-top: 2px;
+
+  *[disabled] {
+    pointer-events: none;
+    border-color: transparent;
+  }
+`;
+const Col5 = styled(OptionsBodyCol)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+`;
+const Col7 = styled(OptionsBodyCol)`
+  justify-content: left;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: auto;
+`;
+const EfcInputContainer = styled(InputContainer)`
+  margin-left: 20px;
+  margin-right: 0;
+  //height: 17px;
+  width: 55px;
+`;
 
 export const HoldMenu: React.FC = () => {
   const {
@@ -25,7 +90,7 @@ export const HoldMenu: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const now = new Date();
-  const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
 
   const [holdFix, setHoldFix] = useState<string | null>(null);
   const [legLength, setLegLength] = useState<string | number | null>(null);
@@ -42,7 +107,7 @@ export const HoldMenu: React.FC = () => {
     } else {
       const routeData = computeCrossingTimes(entry);
       const now = new Date();
-      const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
       setHoldFix(entry.hold_data?.hold_fix ?? 'PP');
       setLegLength(entry.hold_data?.leg_length ?? 'STD');
       setHoldDirection(entry.hold_data?.hold_direction ?? 'N');
@@ -50,7 +115,7 @@ export const HoldMenu: React.FC = () => {
       setEfc(entry.hold_data?.efc ?? utcMinutes + 30);
       setRouteData(routeData ?? null);
     } // eslint-disable-next-line
-  }, [entry]);
+  }, []);
 
   const clearedHold = () => {
     if (entry) {
@@ -66,158 +131,172 @@ export const HoldMenu: React.FC = () => {
     dispatch(closeMenu(menuEnum.holdMenu));
   };
 
-  return pos && entry && (<div
-      className="options-menu hold no-select"
+  return pos && entry && (<OptionsMenu
+      width={420}
+      pos={pos}
       ref={ref}
       id="hold-menu"
       style={{left: pos.x, top: pos.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.holdMenu)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.holdMenu)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         Hold Data Menu
-      </div>
-      <div className="options-body">
-        <div className="options-row fid">
+      </OptionsMenuHeader>
+      <OptionsBody>
+        <FidRow>
           {entry.callsign} {entry.type}/{entry.equipment}
-        </div>
-        <div className="options-row">
-          <EdstTooltip className="options-col hold-menu-left-col"
-                       title={Tooltips.holdDirection}
-                       content="Location"
-          />
-        </div>
-        <div className="options-row">
-          <div className="options-col">
+        </FidRow>
+        <OptionsBodyRow>
+          <EdstTooltip title={Tooltips.holdDirection}>
+            <LeftCol>
+              Location
+            </LeftCol>
+          </EdstTooltip>
+        </OptionsBodyRow>
+        <OptionsBodyRow>
+          <OptionsBodyCol>
             <EdstButton content="Present Position" selected={(!holdFix || holdFix === 'PP')}
                         onMouseDown={() => {
                           const now = new Date();
-                          const utcMinutes = now.getUTCHours()*60 + now.getUTCMinutes();
+                          const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
                           setHoldFix('PP');
                           setEfc(utcMinutes + 30);
                         }}>
               Present Position
             </EdstButton>
-          </div>
-        </div>
-        <div className="hold-fix-container">
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+        <FixContainer>
           {routeData && _.range(0, Math.min(routeData.length || 0, 10)).map(i =>
-            <div className="options-row" key={`hold-menu-row-${i}`}>
-              {_.range(0, ((routeData.length || 0)/10 | 0) + 1).map(j => {
-                const fixName = routeData?.[Number(i) + Number(j)*10]?.name;
-                const minutesAtFix = routeData?.[Number(i) + Number(j)*10]?.minutesAtFix;
+            <OptionsBodyRow key={`hold-menu-row-${i}`}>
+              {_.range(0, ((routeData.length || 0) / 10 | 0) + 1).map(j => {
+                const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
+                const minutesAtFix = routeData?.[Number(i) + Number(j) * 10]?.minutesAtFix;
                 return (fixName &&
-                  <div className={`options-col hold-col-1 hover ${(holdFix === fixName) ? 'selected' : ''}`}
-                       key={`hold-menu-col-${i}-${j}`}
-                       onMouseDown={() => {
-                         setHoldFix(fixName);
-                         setEfc(minutesAtFix + 30);
-                       }}
-                  >
-                    {fixName}
-                    <div className="align-right">
-                      {("0" + ((minutesAtFix/60 | 0)%24)).slice(-2) + ("0" + (minutesAtFix%60 | 0)).slice(-2)}
-                    </div>
-                  </div>);
+                    <Col1 hover={true} selected={holdFix === fixName}
+                          key={`hold-menu-col-${i}-${j}`}
+                          onMouseDown={() => {
+                            setHoldFix(fixName);
+                            setEfc(minutesAtFix + 30);
+                          }}>
+                      {fixName}
+                        <OptionsBodyCol alignRight={true} margin="0">
+                          {("0" + ((minutesAtFix / 60 | 0) % 24)).slice(-2) + ("0" + (minutesAtFix % 60 | 0)).slice(-2)}
+                        </OptionsBodyCol>
+                    </Col1>);
               })}
-            </div>)}
-        </div>
-        <div className="options-row hold-row-1">
-          <EdstTooltip className="options-col hold-col-2"
-                       content="Direction"
-                       title={Tooltips.holdDirection}
-          />
-          <EdstTooltip className="options-col hold-col-2"
-                       content="Turns"
-                       title={Tooltips.holdTurns}
-          />
-          <EdstTooltip className="options-col hold-col-2"
-                       content="Leg Lengths"
-                       title={Tooltips.holdLegLength}
-          />
-        </div>
-        <div className="options-row hold-row-1">
-          <div className="options-col hold-col-3">
-            <EdstButton content="NW" className="button-1" selected={holdDirection === 'NW'}
-                        onMouseDown={() => setHoldDirection('NW')}
+            </OptionsBodyRow>)}
+        </FixContainer>
+        <Row1>
+          <EdstTooltip title={Tooltips.holdDirection}>
+            <Col2>
+              Direction
+            </Col2>
+          </EdstTooltip>
+          <EdstTooltip title={Tooltips.holdTurns}>
+            <Col2>
+              Turns
+            </Col2>
+          </EdstTooltip>
+          <EdstTooltip title={Tooltips.holdLegLength}>
+            <Col2>
+              Leg Lengths
+            </Col2>
+          </EdstTooltip>
+        </Row1>
+        <Row1>
+          <Col3>
+            <HoldDirButton content="NW" selected={holdDirection === 'NW'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('NW')}
             />
-            <EdstButton content="N" className="button-1" selected={holdDirection === 'N'}
-                        onMouseDown={() => setHoldDirection('N')}
+            <HoldDirButton content="N" selected={holdDirection === 'N'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('N')}
             />
-            <EdstButton content="NE" className="button-1" selected={holdDirection === 'NE'}
-                        onMouseDown={() => setHoldDirection('NE')}
+            <HoldDirButton content="NE" selected={holdDirection === 'NE'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('NE')}
             />
-          </div>
-          <div className="options-col hold-col-3">
-            <EdstButton content="LT" className="button-1" selected={turns === 'LT'}
-                        onMouseDown={() => setTurns('LT')}
+          </Col3>
+          <Col3>
+            <HoldDirButton content="LT" width={20} selected={turns === 'LT'}
+                           onMouseDown={() => setTurns('LT')}
             />
-            <EdstButton content="RT" className="button-1" selected={turns === 'RT'}
-                        onMouseDown={() => setTurns('RT')}
+            <HoldDirButton content="RT" width={20} selected={turns === 'RT'}
+                           onMouseDown={() => setTurns('RT')}
             />
-          </div>
-          <div className="options-col hold-col-3">
-            <EdstButton content="STD" className="button-2" selected={!legLength || legLength === 'STD'}
-                        onMouseDown={() => setLegLength('STD')}
+          </Col3>
+          <Col3>
+            <HoldDirButton content="STD" width={50} selected={!legLength || legLength === 'STD'}
+                           onMouseDown={() => setLegLength('STD')}
             />
-            <EdstButton content="15 NM" className="button-2" selected={!legLength || legLength === 15}
-                        onMouseDown={() => setLegLength(15)}
+            <HoldDirButton content="15 NM" width={50} selected={!legLength || legLength === 15}
+                           onMouseDown={() => setLegLength(15)}
             />
-          </div>
-        </div>
-        <div className="options-row hold-row-1">
-          <div className="options-col hold-col-3">
-            <EdstButton content="W" className="button-1" selected={holdDirection === 'W'}
-                        onMouseDown={() => setHoldDirection('W')}
+          </Col3>
+        </Row1>
+        <Row1>
+          <Col3>
+            <HoldDirButton content="W" selected={holdDirection === 'W'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('W')}
             />
-            <EdstButton className="button-1" disabled={true}/>
-            <EdstButton content="E" className="button-1" selected={holdDirection === 'E'}
-                        onMouseDown={() => setHoldDirection('E')}
+            <HoldDirButton disabled={true} width={16}/>
+            <HoldDirButton content="E" selected={holdDirection === 'E'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('E')}
             />
-          </div>
-          <div className="options-col hold-col-3">
-            <EdstButton className="button-1" disabled={true}/>
-            <EdstButton className="button-1" disabled={true}/>
-          </div>
-          <div className="options-col hold-col-3">
-            <EdstButton content="5 NM" className="button-2" selected={!legLength || legLength === 5}
-                        onMouseDown={() => setLegLength(5)}
+          </Col3>
+          <Col3>
+            <HoldDirButton width={20} disabled={true}/>
+            <HoldDirButton width={20} disabled={true}/>
+          </Col3>
+          <Col3>
+            <HoldDirButton content="5 NM" width={50} selected={!legLength || legLength === 5}
+                           onMouseDown={() => setLegLength(5)}
             />
-            <EdstButton content="20 NM" className="button-2" selected={!legLength || legLength === 20}
-                        onMouseDown={() => setLegLength(20)}
+            <HoldDirButton content="20 NM" width={50} selected={!legLength || legLength === 20}
+                           onMouseDown={() => setLegLength(20)}
             />
-          </div>
-        </div>
-        <div className="options-row hold-row-1">
-          <div className="options-col hold-col-3">
-            <EdstButton content="SW" className="button-1" selected={holdDirection === 'SW'}
-                        onMouseDown={() => setHoldDirection('SW')}
+          </Col3>
+        </Row1>
+        <Row1>
+          <Col3>
+            <HoldDirButton content="SW" selected={holdDirection === 'SW'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('SW')}
             />
-            <EdstButton content="S" className="button-1" selected={holdDirection === 'S'}
-                        onMouseDown={() => setHoldDirection('S')}
+            <HoldDirButton content="S" selected={holdDirection === 'S'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('S')}
             />
-            <EdstButton content="SE" className="button-1" selected={holdDirection === 'SE'}
-                        onMouseDown={() => setHoldDirection('SE')}
+            <HoldDirButton content="SE" selected={holdDirection === 'SE'}
+                           width={16}
+                           onMouseDown={() => setHoldDirection('SE')}
             />
-          </div>
-          <div className="options-col hold-col-3">
-            <EdstButton className="button-1" disabled={true}/>
-            <EdstButton className="button-1" disabled={true}/>
-          </div>
-          <div className="options-col hold-col-3">
-            <EdstButton content="10 NM" className="button-2" selected={!legLength || legLength === 10}
-                        onMouseDown={() => setLegLength(10)}
+          </Col3>
+          <Col3>
+            <HoldDirButton width={20} disabled={true}/>
+            <HoldDirButton width={20} disabled={true}/>
+          </Col3>
+          <Col3>
+            <HoldDirButton content="10 NM" width={50} selected={!legLength || legLength === 10}
+                           onMouseDown={() => setLegLength(10)}
             />
-            <EdstButton content="25 NM" className="button-2" selected={!legLength || legLength === 25}
-                        onMouseDown={() => setLegLength(25)}
+            <HoldDirButton content="25 NM" width={50} selected={!legLength || legLength === 25}
+                           onMouseDown={() => setLegLength(25)}
             />
-          </div>
-        </div>
-        <div className="options-row hold-row-2 bottom-border">
-          <div className="options-col hold-col-4">
+          </Col3>
+        </Row1>
+        <Row2 bottomBorder={true}>
+          <Col5>
             <EdstButton
               content="Delete Hold Instructions"
+              padding="0 20px"
               onMouseDown={() => {
                 dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
                 dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
@@ -225,35 +304,35 @@ export const HoldMenu: React.FC = () => {
               }}
               title={Tooltips.holdDeleteHoldInstr}
             />
-          </div>
-        </div>
-        <div className="options-row hold-row-1">
-          <EdstTooltip className="options-col hold-col-2" title={Tooltips.holdEfc}>
-            EFC
+          </Col5>
+        </Row2>
+        <Row1>
+          <EdstTooltip title={Tooltips.holdEfc}>
+            <Col2>
+              EFC
+            </Col2>
           </EdstTooltip>
-        </div>
-        <div className="options-row"
-          // onMouseDown={() => props.openMenu(routeMenuRef.current, 'alt-menu', false)}
-        >
-          <div className="options-col hold-col-7">
-            <div className="input-container-2 efc">
-              <input value={formatUtcMinutes(efc)}
+        </Row1>
+        <OptionsBodyRow>
+          <Col7>
+            <EfcInputContainer>
+              <EdstInput value={formatUtcMinutes(efc)}
                      readOnly={true}
                 // onChange={(e) => setEfc(e.target.value)}
               />
-            </div>
-            <EdstButton content="-" onMouseDown={() => setEfc(efc - 1)}/>
-            <EdstButton content="+" onMouseDown={() => setEfc(efc + 1)}/>
-          </div>
-        </div>
-        <div className="options-row hold-row-2 bottom-border">
-          <div className="options-col hold-col-5">
-            <EdstButton content="Delete EFC" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc}/>
-          </div>
-        </div>
-        <div className="options-row bottom">
-          <div className="options-col left">
-            <EdstButton content="Hold/SPA" disabled={entry?.hold_data}
+            </EfcInputContainer>
+            <EdstButton content="-" margin="0 0 0 10px" width={24} onMouseDown={() => setEfc(efc - 1)}/>
+            <EdstButton content="+" margin="0 0 0 4px" width={24} onMouseDown={() => setEfc(efc + 1)}/>
+          </Col7>
+        </OptionsBodyRow>
+        <Row2 bottomBorder={true}>
+          <Col5>
+            <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc}/>
+          </Col5>
+        </Row2>
+        <OptionsBodyRow margin="6px 0 0 0">
+          <OptionsBodyCol>
+            <EdstButton content="Hold/SPA" margin="0 6px 0 0" padding="0 6px" disabled={entry?.hold_data}
                         onMouseDown={() => {
                           if (!entry.spa) {
                             dispatch(toggleSpa(entry.cid));
@@ -262,7 +341,7 @@ export const HoldMenu: React.FC = () => {
                         }}
                         title={Tooltips.holdHoldSpaBtn}
             />
-            <EdstButton content="Hold" onMouseDown={clearedHold} disabled={entry?.hold_data}
+            <EdstButton content="Hold" margin="0 6px 0 0" onMouseDown={clearedHold} disabled={entry?.hold_data}
                         title={Tooltips.holdHoldBtn}/>
             <EdstButton content="Cancel Hold" disabled={!entry?.hold_data}
                         onMouseDown={() => {
@@ -271,13 +350,12 @@ export const HoldMenu: React.FC = () => {
                           dispatch(closeMenu(menuEnum.holdMenu));
                         }}
             />
-          </div>
-          <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit"
-                        onMouseDown={() => dispatch(closeMenu(menuEnum.holdMenu))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.holdMenu))}/>
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </OptionsBody>
+    </OptionsMenu>
   );
 };

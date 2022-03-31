@@ -8,7 +8,7 @@ import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
 import {DraggingDiv} from "../../styles/styles";
 
-const DepStyleDiv = styled.div`
+const DepDiv = styled.div`
   white-space:nowrap;
   overflow: hidden;
   flex-flow: column;
@@ -28,8 +28,8 @@ export const Dep: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
 
-  return (<DepStyleDiv dragging={dragging} ref={ref}>
+  return (<DepDiv dragging={dragging} ref={ref}>
     <DepHeader focused={focused}/>
     <DepTable/>
-  </DepStyleDiv>);
+  </DepDiv>);
 };

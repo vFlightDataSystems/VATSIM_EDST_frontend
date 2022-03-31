@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
+
+
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, getDepString, getDestString} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
@@ -12,6 +12,81 @@ import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useFocused} from "../../hooks";
+import {
+  EdstInput,
+  EdstTextArea,
+  OptionsBody,
+  OptionsMenu,
+  OptionsMenuHeader
+} from '../../styles/optionMenuStyles';
+import styled from "styled-components";
+
+const TemplateBodyDiv = styled(OptionsBody)`padding: 10px 0 2px 0`;
+
+const TemplateRowDiv = styled.div<{ alignRight?: boolean }>`
+  padding: 2px 12px;
+  display: flex;
+  flex-grow: 1;
+  border: none;
+  overflow: hidden;
+
+  ${props => props.alignRight && {width: "auto"}};
+
+  &.left {
+    flex-grow: 1;
+  }
+`;
+
+const TemplateCol = styled.div<{ bottomRow?: boolean, alignRight?: boolean, width?: number, textIndent?: boolean }>`
+  align-items: center;
+  vertical-align: center;
+  padding: 0 2px;
+  justify-content: left;
+  display: flex;
+  flex-shrink: 0;
+  width: ${props => props.width ? props.width + "px" : "auto"};
+  ${props => props.textIndent && {"text-indent": "6px"}}
+
+  ${props => props.bottomRow && {
+    padding: "2px"
+  }}
+
+  ${props => props.alignRight && {
+    width: "auto",
+    "margin-left": "auto"
+  }}
+`;
+
+const FlexCol = styled(TemplateCol)`
+  flex-grow: 1;
+  flex-shrink: 1;
+  width: auto;
+`;
+
+type TemplateInputProps = {
+  title?: string,
+  value: string | number,
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  onFocus: () => void,
+  onBlur: () => void
+  rows?: number
+}
+
+const TemplateInput: React.FC<TemplateInputProps> = ({title, ...props}) => {
+  return <EdstTooltip title={title} style={{flexGrow: 1, width: "auto"}}>
+    <TemplateCol style={{flexGrow: 1, width: "auto", border: "1px solid transparent"}}>
+      <EdstInput {...props}/>
+    </TemplateCol>
+  </EdstTooltip>;
+}
+
+const TemplateTextArea: React.FC<TemplateInputProps> = ({title, ...props}) => {
+  return <EdstTooltip title={title} style={{flexGrow: 1, width: "auto"}}>
+    <TemplateCol style={{flexGrow: 1, width: "auto", border: "1px solid transparent"}}>
+      <EdstTextArea {...props}/>
+    </TemplateCol>
+  </EdstTooltip>;
+}
 
 export const TemplateMenu: React.FC = () => {
   const {
@@ -54,222 +129,204 @@ export const TemplateMenu: React.FC = () => {
     } // eslint-disable-next-line
   }, []);
 
-  // useEffect(() => {
-  //   const route = (asel?.window === windowEnum.dep ? entry?.route : entry?._route?.replace(/^\.*/, '')) ?? '';
-  //   const frd = entry?.reference_fix ? computeFrd(entry.reference_fix) : '';
-  //   const aidInput = entry?.callsign ?? '';
-  //   const typeInput = entry?.type ?? '';
-  //   const equipInput = entry?.equipment ?? '';
-  //   const beaconInput = entry?.beacon ?? '';
-  //   const speedInput = entry?.flightplan?.ground_speed ?? '';
-  //   const timeInput = 'EXX00';
-  //   const altInput = entry?.altitude ?? '';
-  //   const routeInput = (asel?.window === windowEnum.dep ? entry?.dep + route : (frd ? frd + '..' : '') + route) ??
-  // ''; const rmkInput = entry?.remarks ?? ''; setDisplayRawRoute(false); setRoute(route); setFrd(frd);
-  // setFrdInput(frd); setAidInput(aidInput); setNumInput(entry ? 1 : ''); setSaiInput(''); setTypeInput(typeInput);
-  // setEquipInput(equipInput); setBeaconInput(beaconInput); setSpeedInput(speedInput); setTimeInput(timeInput);
-  // setAltInput(altInput); setRouteInput(routeInput); setRmkInput(rmkInput); }, [asel, entry]);
-
-
-  return pos && (<div
-      className="options-menu template no-select"
+  return pos && (<OptionsMenu
+      width={850}
+      pos={pos}
       ref={ref}
       id="template-menu"
-      style={{left: pos.x, top: pos.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.templateMenu)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.templateMenu)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         {asel ? 'Amendment' : 'Flight Plan'} Menu
-      </div>
-      <div className="options-body template-body">
-        <div className="template-row">
-          <div className="template-col col-1 header">
+      </OptionsMenuHeader>
+      <TemplateBodyDiv>
+        <TemplateRowDiv>
+          <TemplateCol width={90} textIndent={true}>
             AID
-          </div>
-          <div className="template-col col-2 header">
+          </TemplateCol>
+          <TemplateCol width={50} textIndent={true}>
             NUM
-          </div>
-          <div className="template-col col-3 header">
+          </TemplateCol>
+          <TemplateCol width={50} textIndent={true}>
             SAI
-          </div>
-          <div className="template-col col-4 header">
+          </TemplateCol>
+          <TemplateCol width={62} textIndent={true}>
             TYP
-          </div>
-          <div className="template-col col-5">
+          </TemplateCol>
+          <TemplateCol width={66}>
             <EdstButton content="EQP..."
                         onMouseDown={() => dispatch(openMenuThunk(menuEnum.equipmentTemplateMenu, ref.current))}
                         title={Tooltips.templateMenuEqpButton}
             />
-          </div>
-          <div className="template-col col-6 header">
+          </TemplateCol>
+          <TemplateCol width={60} textIndent={true}>
             BCN
-          </div>
-          <div className="template-col col-7 header">
+          </TemplateCol>
+          <TemplateCol width={70} textIndent={true}>
             SPD
-          </div>
-          <div className="template-col col-8 header">
+          </TemplateCol>
+          <TemplateCol width={120} textIndent={true}>
             FIX
-          </div>
-          <div className="template-col col-9 header">
+          </TemplateCol>
+          <TemplateCol width={70} textIndent={true}>
             TIM
-          </div>
-          <div className="template-col col-10 header">
+          </TemplateCol>
+          <FlexCol textIndent={true}>
             ALT
-          </div>
-          <div className="template-col">
-            <EdstButton disabled={true} content="More..." title={Tooltips.templateMenuMore}/>
-          </div>
-        </div>
-        <div className="template-row">
-          <div className="template-col col-1">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuAid}>
-              <input
+          </FlexCol>
+          <TemplateCol>
+            <EdstButton margin="0 2px 0 0" disabled={true} content="More..." title={Tooltips.templateMenuMore}/>
+          </TemplateCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol width={90}>
+            <EdstTooltip title={Tooltips.templateMenuAid}>
+              <TemplateInput
                 value={aidInput}
                 onChange={(event) => setAidInput(event.target.value.toUpperCase())}
                 onFocus={() => dispatch(setInputFocused(true))}
                 onBlur={() => dispatch(setInputFocused(false))}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-2">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuNum}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={50}>
+            <EdstTooltip title={Tooltips.templateMenuNum}>
+              <TemplateInput
                 value={numInput}
                 onChange={(event) => setNumInput(event.target.value.toUpperCase())}
                 onFocus={() => dispatch(setInputFocused(true))}
                 onBlur={() => dispatch(setInputFocused(false))}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-3">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuSai}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={50}>
+            <EdstTooltip title={Tooltips.templateMenuSai}>
+              <TemplateInput
                 value={saiInput}
                 onChange={(event) => setSaiInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-4">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuTyp}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={60}>
+            <EdstTooltip title={Tooltips.templateMenuTyp}>
+              <TemplateInput
                 value={typeInput}
                 onChange={(event) => setTypeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-5">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuEqpBox}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={69}>
+            <EdstTooltip title={Tooltips.templateMenuEqpBox}>
+              <TemplateInput
                 value={equipInput}
                 onChange={(event) => setEquipInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-6">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuBcn}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={60}>
+            <EdstTooltip title={Tooltips.templateMenuBcn}>
+              <TemplateInput
                 value={beaconInput}
                 onChange={(event) => setBeaconInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-7">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuSpd}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={70}>
+            <EdstTooltip title={Tooltips.templateMenuSpd}>
+              <TemplateInput
                 value={speedInput}
                 onChange={(event) => setSpeedInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-8">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuFix}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={120}>
+            <EdstTooltip title={Tooltips.templateMenuFix}>
+              <TemplateInput
                 value={frdInput}
                 onChange={(event) => setFrdInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-9">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuTim}>
-              <input
+          </TemplateCol>
+          <TemplateCol width={70}>
+            <EdstTooltip title={Tooltips.templateMenuTim}>
+              <TemplateInput
                 value={timeInput}
                 onChange={(event) => setTimeInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-          <div className="template-col col-10">
-            <EdstTooltip className="input-container" title={Tooltips.templateMenuAlt}>
-              <input
+          </TemplateCol>
+          <FlexCol>
+            <EdstTooltip title={Tooltips.templateMenuAlt}>
+              <TemplateInput
                 value={altInput}
                 onChange={(event) => setAltInput(event.target.value.toUpperCase())}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
               />
             </EdstTooltip>
-          </div>
-        </div>
-        <div className="template-row">
-          <div className="template-col col-1 header">
+          </FlexCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol width={50} textIndent={true}>
             RTE
-          </div>
-        </div>
-        <div className="template-row">
-          <EdstTooltip className="template-col input-container" title={Tooltips.templateMenuRte}>
-            <textarea
-              value={routeInput}
-              onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
-              onFocus={() => setInputFocused(true)}
-              onBlur={() => setInputFocused(false)}
-              rows={3}
-            />
-          </EdstTooltip>
-        </div>
-        <div className="template-row">
-          <div className="template-col col-1 header">
+          </TemplateCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateTextArea
+            title={Tooltips.templateMenuRte}
+            value={routeInput}
+            onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            rows={3}
+          />
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol width={50} textIndent={true}>
             RMK
-          </div>
-          <div className="template-col right"/>
-          <div className="template-col">
+          </TemplateCol>
+          <TemplateRowDiv alignRight={true}/>
+          <TemplateCol>
             <EdstButton disabled={true} content="Create FP..." title={Tooltips.templateMenuCreateFp}/>
-          </div>
-        </div>
-        <div className="template-row">
-          <EdstTooltip className="template-col input-container" title={Tooltips.templateMenuRmk}>
-            <textarea
-              value={rmkInput}
-              onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
-              onFocus={() => setInputFocused(true)}
-              onBlur={() => setInputFocused(false)}
-              rows={3}
-            />
-          </EdstTooltip>
-        </div>
-        <div className="template-row">
-          <div className="template-col bottom">
+          </TemplateCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateTextArea
+            title={Tooltips.templateMenuRmk}
+            value={rmkInput}
+            onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            rows={3}
+          />
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol bottomRow={true}>
             <EdstButton disabled={true} content="Send" title={Tooltips.templateMenuSend}/>
-          </div>
-          <div className="template-col bottom right">
-            <EdstButton className="exit-button" content="Exit" title={Tooltips.templateMenuExit}
+          </TemplateCol>
+          <TemplateCol bottomRow={true} alignRight={true}>
+            <EdstButton content="Exit" title={Tooltips.templateMenuExit}
                         onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          </TemplateCol>
+        </TemplateRowDiv>
+      </TemplateBodyDiv>
+    </OptionsMenu>
   );
 };

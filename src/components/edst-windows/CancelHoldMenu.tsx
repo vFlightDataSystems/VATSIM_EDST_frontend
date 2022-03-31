@@ -1,6 +1,4 @@
 import React, {useContext, useRef} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
@@ -10,6 +8,13 @@ import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {useFocused} from "../../hooks";
+import {
+  FidRow, OptionsBodyCol,
+  OptionsBody,
+  OptionsBodyRow,
+  OptionsMenu,
+  OptionsMenuHeader
+} from '../../styles/optionMenuStyles';
 
 export const CancelHoldMenu: React.FC = () => {
   const {
@@ -22,35 +27,37 @@ export const CancelHoldMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
 
-  return pos && entry && (<div
-      className="options-menu cancel-hold no-select"
+  return pos && entry && (<OptionsMenu
+      width={250}
+      pos={pos}
       ref={ref}
       id="cancel-hold-menu"
-      style={{left: pos.x, top: pos.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.cancelHoldMenu)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.cancelHoldMenu)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         Cancel Hold Confirmation
-      </div>
-      <div className="options-body">
-        <div className="options-row fid">
+      </OptionsMenuHeader>
+      <OptionsBody>
+        <FidRow>
           {entry.callsign} {entry.type}/{entry.equipment}
-        </div>
-        <div className="options-row">
-          <div className="options-col left">
+        </FidRow>
+        <OptionsBodyRow>
+          <OptionsBodyCol>
             <EdstButton content="Cancel Hold" onMouseDown={() => {
               dispatch(updateEntry({cid: entry.cid, data: {aclRouteDisplay: null}}));
               dispatch(amendEntryThunk({cid: entry.cid, planData: {hold_data: null}}));
               dispatch(closeMenu(menuEnum.cancelHoldMenu))
             }}/>
-          </div>
-          <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.cancelHoldMenu))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Exit"
+                        onMouseDown={() => dispatch(closeMenu(menuEnum.cancelHoldMenu))}/>
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </OptionsBody>
+    </OptionsMenu>
   );
 }
