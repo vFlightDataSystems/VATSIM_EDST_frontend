@@ -18,7 +18,7 @@ import {
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk} from "../slices/entriesSlice";
 import {refreshSigmets} from "./weatherThunks";
-import {setNavaids, setSectorTypes, setWaypoints} from "../slices/gpdSlice";
+import {SectorTypeEnum, setNavaids, setSectorTypes, setWaypoints} from "../slices/gpdSlice";
 import {FixType} from "../../types";
 
 const DISCLAIMER_MESSAGE = `
@@ -90,7 +90,11 @@ export const initThunk = createAsyncThunk(
         .then(response => response.json())
         .then(sectorTypeData => {
           if (sectorTypeData) {
-            thunkAPI.dispatch(setSectorTypes(sectorTypeData));
+            let data: {[e: string]: SectorTypeEnum} = {}
+            for(let e of sectorTypeData) {
+              data[e.id] = e.type;
+            }
+            thunkAPI.dispatch(setSectorTypes(data));
           }
         })
     }
