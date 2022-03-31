@@ -1,4 +1,11 @@
-import {fetchFavData, fetchHighVorList, fetchLowVorList, fetchReferenceFixes} from "../../api";
+import {
+  fetchArtccNavaids,
+  fetchArtccSectorTypes, fetchArtccWaypoints,
+  fetchFavData,
+  fetchHighVorList,
+  fetchLowVorList,
+  fetchReferenceFixes
+} from "../../api";
 import {RootState} from "../store";
 import {
   setArtccId,
@@ -11,6 +18,8 @@ import {
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk} from "../slices/entriesSlice";
 import {refreshSigmets} from "./weatherThunks";
+import {setNavaids, setSectorTypes, setWaypoints} from "../slices/gpdSlice";
+import {FixType} from "../../types";
 
 const DISCLAIMER_MESSAGE = `
 !!! WARNING !!!\n
@@ -23,7 +32,9 @@ https://github.com/CaptainTux/VATSIM_EDST_frontend.\n
 export const initThunk = createAsyncThunk(
   'app/init',
   async (_args, thunkAPI) => {
-    let sectorData = (thunkAPI.getState() as RootState).sectorData;
+    const state = thunkAPI.getState() as RootState
+    let sectorData = state.sectorData;
+    let gpdData = state.gpd;
     let artccId: string;
     let sectorId: string;
 
@@ -65,7 +76,7 @@ export const initThunk = createAsyncThunk(
           }
         });
     }
-    if (!(sectorData.vorHighList.length > 0)) {
+    if (!(sectorData.vorLowList.length > 0)) {
       await fetchLowVorList(artccId)
         .then(response => response.json())
         .then(vorList => {
@@ -73,6 +84,45 @@ export const initThunk = createAsyncThunk(
             thunkAPI.dispatch(setVorLowList(vorList));
           }
         });
+    }
+    if (!(Object.keys(gpdData.sectorTypes).length > 0)) {
+      await fetchArtccSectorTypes(artccId)
+        .then(response => response.json())
+        .then(sectorTypeData => {
+          if (sectorTypeData) {
+            thunkAPI.dispatch(setSectorTypes(sectorTypeData));
+          }
+        })
+    }
+    if (!(gpdData.navaids.length > 0)) {
+      await fetchArtccNavaids(artccId)
+        .then(response => response.json())
+        .then((navaidList: FixType[]) => {
+          if (navaidList) {
+            // remove duplicates, thanks to https://stackoverflow.com/a/36744732
+            navaidList = navaidList.filter((value, index, self) =>
+                index === self.findIndex((t) => (
+                  t.waypoint_id === value.waypoint_id
+                ))
+            )
+            thunkAPI.dispatch(setNavaids(navaidList));
+          }
+        })
+    }
+    if (!(gpdData.waypoints.length > 0)) {
+      await fetchArtccWaypoints(artccId)
+        .then(response => response.json())
+        .then((waypointList: FixType[]) => {
+          if (waypointList) {
+            // remove duplicates, thanks to https://stackoverflow.com/a/36744732
+            waypointList = waypointList.filter((value, index, self) =>
+                index === self.findIndex((t) => (
+                  t.waypoint_id === value.waypoint_id
+                ))
+            )
+            thunkAPI.dispatch(setWaypoints(waypointList));
+          }
+        })
     }
     thunkAPI.dispatch(refreshSigmets());
     return thunkAPI.dispatch(refreshEntriesThunk());

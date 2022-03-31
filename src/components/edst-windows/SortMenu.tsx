@@ -1,6 +1,6 @@
 import React, {useContext, useRef, useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
+
+
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
@@ -11,12 +11,40 @@ import {setDepSort} from "../../redux/slices/depSlice";
 import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
 import {closeMenu, menuSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
+import {
+  OptionsBody, OptionsBodyCol,
+  OptionsBodyRow,
+  OptionsBottomRow,
+  OptionSelectedIndicator,
+  OptionsMenu,
+  OptionsMenuHeader
+} from '../../styles/optionMenuStyles';
+import styled from "styled-components";
+
+const SortBody = styled(OptionsBody)`padding: 4px 0`;
+
+const SectorRow = styled(OptionsBodyRow)`
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ADADAD;
+`;
+
+const SortCol = styled(OptionsBodyCol)`
+  justify-content: left;
+  align-content: center;
+  height: 20px;
+  padding: 0 6px;
+
+  &:hover {
+    border: 1px solid #ADADAD;
+  }
+`;
 
 export const SortMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const menuProps = useAppSelector(menuSelector(menuEnum.sortMenu));
-  const window = menuProps.openedBy === windowEnum.dep ? 'dep' : 'acl';
-  const sortData = useAppSelector((state) => state[window].sortData);
+  const window = menuProps.openedBy;
+  const sortData = useAppSelector((state) => state[window === windowEnum.acl ? 'acl' : 'dep'].sortData);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef(null);
@@ -24,146 +52,187 @@ export const SortMenu: React.FC = () => {
 
   let sortStateCopy = Object.assign({}, sortState);
 
-  return menuProps?.position && (<div
-      className={`options-menu no-select sort-${window}`}
+  return menuProps?.position && (<OptionsMenu
+      width={window === windowEnum.acl ? 220 : 190}
+      pos={menuProps.position}
       ref={ref}
       id="sort-menu"
-      style={{left: menuProps.position.x, top: menuProps.position.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.sortMenu)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.sortMenu)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         Sort Menu
-      </div>
-      <div className="options-body sort">
-        {window === 'acl' && <div className="options-row sector">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.sector = !sortState.sector;
-                         setSortState(sortStateCopy);
-                       }}
-                       title={Tooltips.sortAclSectorNonSector}
+      </OptionsMenuHeader>
+      <SortBody>
+        {window === windowEnum.acl && <SectorRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.sector = !sortState.sector;
+                  setSortState(sortStateCopy);
+                }}
+                title={Tooltips.sortAclSectorNonSector}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.sector}/>
+                    Sector/Non-Sector
+                </SortCol>
+            </EdstTooltip>
+        </SectorRow>}
+        <OptionsBodyRow>
+          <EdstTooltip
+            style={{flexGrow: 1}}
+            onMouseDown={() => {
+              sortStateCopy.selectedOption = sortOptionsEnum.acid;
+              setSortState(sortStateCopy);
+            }}
+            title={Tooltips.sortAcid}
           >
-            <div className={`button-indicator ${sortState.sector ? 'selected' : ''}`}/>
-            Sector/Non-Sector
+            <SortCol>
+              <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.acid} diamond={true}/>
+              ACID
+            </SortCol>
           </EdstTooltip>
-        </div>}
-        <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.acid;
-                         setSortState(sortStateCopy);
-                       }}
-                       title={Tooltips.sortAcid}
+        </OptionsBodyRow>
+        {window === windowEnum.acl && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.selectedOption = sortOptionsEnum.boundaryTime;
+                  setSortState(sortStateCopy);
+                }} // @ts-ignore
+                title={Tooltips.sortBoundaryTime}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.boundaryTime}
+                                             diamond={true}/>
+                    Boundary Time
+                </SortCol>
+
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        {window === windowEnum.acl && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.selectedOption = sortOptionsEnum.conflictStatus;
+                  setSortState(sortStateCopy);
+                }} // @ts-ignore
+                disabled={true}
+                title={Tooltips.sortConflictStatus}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.conflictStatus}
+                                             diamond={true}/>
+                    Conflict Status
+                </SortCol>
+
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        {window === windowEnum.acl && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.selectedOption = sortOptionsEnum.conflictTime;
+                  setSortState(sortStateCopy);
+                }} // @ts-ignore
+                disabled={true}
+                title={Tooltips.sortConflictTime}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.conflictTime}
+                                             diamond={true}/>
+                    Conflict Time
+                </SortCol>
+
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        <OptionsBodyRow>
+          <EdstTooltip
+            style={{flexGrow: 1}}
+            onMouseDown={() => {
+              sortStateCopy.selectedOption = sortOptionsEnum.destination;
+              setSortState(sortStateCopy);
+            }}
+            title={Tooltips.sortDestination}
           >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === 'ACID' ? 'selected' : ''}`}/>
-            ACID
+            <SortCol>
+              <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.destination}
+                                       diamond={true}/>
+              Destination
+            </SortCol>
+
           </EdstTooltip>
-        </div>
-        {window === 'acl' && <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.boundaryTime;
-                         setSortState(sortStateCopy);
-                       }} // @ts-ignore
-                       title={Tooltips.sortBoundaryTime}
-          >
-            <div className={`button-indicator diamond ${sortStateCopy?.selectedOption === sortOptionsEnum.boundaryTime ? 'selected' : ''}`}/>
-            Boundary Time
-          </EdstTooltip>
-        </div>}
-        {window === 'acl' && <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.conflictStatus;
-                         setSortState(sortStateCopy);
-                       }} // @ts-ignore
-                       disabled={true}
-                       title={Tooltips.sortConflictStatus}
-          >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.conflictStatus ? 'selected' : ''}`}/>
-            Conflict Status
-          </EdstTooltip>
-        </div>}
-        {window === 'acl' && <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.conflictTime;
-                         setSortState(sortStateCopy);
-                       }}
-            // @ts-ignore
-                       disabled={true}
-                       title={Tooltips.sortConflictTime}
-          >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.conflictTime ? 'selected' : ''}`}/>
-            Conflict Time
-          </EdstTooltip>
-        </div>}
-        <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.destination;
-                         setSortState(sortStateCopy);
-                       }}
-                       title={Tooltips.sortDestination}
-          >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.destination ? 'selected' : ''}`}/>
-            Destination
-          </EdstTooltip>
-        </div>
-        {window === 'acl' && <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.sectorBySector;
-                         setSortState(sortStateCopy);
-                       }}
-            // @ts-ignore
-                       disabled={true}
-                       title={Tooltips.sortSectorBySector}
-          >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.sectorBySector ? 'selected' : ''}`}/>
-            Sector-by-Sector
-          </EdstTooltip>
-        </div>}
-        {window === 'dep' && <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.origin;
-                         setSortState(sortStateCopy);
-                       }}
-                       title={Tooltips.sortOrigin}
-          >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.origin ? 'selected' : ''}`}/>
-            Origin
-          </EdstTooltip>
-        </div>}
-        {window === 'dep' && <div className="options-row">
-          <EdstTooltip className="options-col sort"
-                       onMouseDown={() => {
-                         sortStateCopy.selectedOption = sortOptionsEnum.pTime;
-                         setSortState(sortStateCopy);
-                       }}
-            // @ts-ignore
-                       disabled={true}
-                       title={Tooltips.sortPTime}
-          >
-            <div className={`button-indicator diamond ${sortState?.selectedOption === sortOptionsEnum.pTime ? 'selected' : ''}`}/>
-            P-Time
-          </EdstTooltip>
-        </div>}
-        <div className="options-row bottom margin-top">
-          <div className="options-col left">
+        </OptionsBodyRow>
+        {window === windowEnum.acl && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.selectedOption = sortOptionsEnum.sectorBySector;
+                  setSortState(sortStateCopy);
+                }} // @ts-ignore
+                disabled={true}
+                title={Tooltips.sortSectorBySector}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.sectorBySector}
+                                             diamond={true}/>
+                    Sector-by-Sector
+                </SortCol>
+
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        {window === windowEnum.dep && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.selectedOption = sortOptionsEnum.origin;
+                  setSortState(sortStateCopy);
+                }}
+                title={Tooltips.sortOrigin}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.origin}
+                                             diamond={true}/>
+                    Origin
+                </SortCol>
+
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        {window === windowEnum.dep && <OptionsBodyRow>
+            <EdstTooltip
+                style={{flexGrow: 1}}
+                onMouseDown={() => {
+                  sortStateCopy.selectedOption = sortOptionsEnum.pTime;
+                  setSortState(sortStateCopy);
+                }}
+                disabled={true}
+                title={Tooltips.sortPTime}
+            >
+                <SortCol>
+                    <OptionSelectedIndicator selected={sortState.selectedOption === sortOptionsEnum.pTime}
+                                             diamond={true}/>
+                    P-Time
+                </SortCol>
+            </EdstTooltip>
+        </OptionsBodyRow>}
+        <OptionsBottomRow>
+          <OptionsBodyCol>
             <EdstButton content="OK" onMouseDown={() => {
-              dispatch(window === 'acl' ? setAclSort({selectedOption: sortState.selectedOption, sector: sortState.sector}) : setDepSort(sortState.selectedOption));
+              dispatch(windowEnum.acl ? setAclSort({
+                selectedOption: sortState.selectedOption,
+                sector: sortState.sector
+              }) : setDepSort(sortState.selectedOption));
               dispatch(closeMenu(menuEnum.sortMenu));
             }}/>
-          </div>
-          <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.sortMenu))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.sortMenu))}/>
+          </OptionsBodyCol>
+        </OptionsBottomRow>
+      </SortBody>
+    </OptionsMenu>
   );
 };

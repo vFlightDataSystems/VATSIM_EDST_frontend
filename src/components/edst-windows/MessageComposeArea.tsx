@@ -1,6 +1,4 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {formatUtcMinutes, getClearedToFixRouteData} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
@@ -20,8 +18,10 @@ import {
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {printFlightStrip} from "../PrintableFlightStrip";
-import {defaultFontFamily, FloatingWindowDiv} from "../../styles/styles";
+import {defaultFontFamily, defaultFontSize} from "../../styles/styles";
 import styled from "styled-components";
+import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
+import {edstFontGrey} from "../../styles/colors";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   z-index: 1000;
@@ -41,6 +41,12 @@ const MessageComposeInputAreaDiv = styled.div`
   input {
     width: 98%;
     font-family: ${defaultFontFamily};
+    font-size: ${defaultFontSize};
+    color: ${edstFontGrey};
+    outline: none;
+    border: none;
+    caret: underscore;
+    background-color: #000000;
   }
 `
 

@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react';
-import '../../../css/windows/body-styles.scss';
 import {REMOVAL_TIMEOUT, removeDestFromRouteString} from "../../../lib";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
@@ -10,13 +9,28 @@ import {depRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {depAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
+import {BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2} from "../../../styles/bodyStyles";
+import {
+  AircraftTypeCol,
+  AltCol,
+  AltColDiv,
+  DepCol2,
+  FidCol,
+  HotBox,
+  RadioCol,
+  RouteAmendmentSpan,
+  RouteCol,
+  RouteSpan,
+  SpecialBox
+} from "./DepStyled";
+import {CodeCol} from "../acl-components/AclStyled";
 
 const SPA_INDICATOR = '\u2303';
 const COMPLETED_SYMBOL = '✓';
 
 type DepRowProps = {
   entry: LocalEdstEntryType,
-  hidden: string[],
+  hidden: depRowFieldEnum[],
   index: number,
 }
 
@@ -127,107 +141,98 @@ export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
     return asel?.window === windowEnum.dep && asel?.cid === cid && asel?.field === field;
   };
 
-  return (<div className={`body-row-container ${index%3 === 2 ? 'row-sep-border' : ''}`}
-               key={`dep-row-container-${entry.cid}`}
-               onContextMenu={(event) => event.preventDefault()}>
-    <div className={`body-row ${(now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) ? 'pending-removal' : ''}`}>
+  return (<BodyRowContainerDiv separator={index % 3 === 2}
+                               key={`dep-row-container-${entry.cid}`}
+                               onContextMenu={(event) => event.preventDefault()}>
+    <BodyRowDiv pendingRemoval={(now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT)}>
       <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
-        <div className={`body-col body-col-1 radio dep-radio ${entry.depStatus === 1 ? 'checkmark' : ''}`}
-             onMouseDown={updateStatus}
-        >
+        <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus}>
           {entry.depStatus === -1 && 'N'}{entry.depStatus === 1 && COMPLETED_SYMBOL}
-        </div>
+        </RadioCol>
       </EdstTooltip>
-      <div className="body-col body-col-2">
+      <DepCol2>
         0000
-      </div>
-      <div className={`inner-row ${entry.depHighlighted ? 'highlighted' : ''}`}
-           ref={ref}
-           style={{minWidth: entry.showFreeText ? '1200px' : 0}}
+      </DepCol2>
+      <InnerRow highlight={entry.depHighlighted} ref={ref}
+                style={{minWidth: entry.showFreeText ? '1200px' : 0}}
       >
         <EdstTooltip title={Tooltips.depFlightId}>
-          <div className={`body-col fid dep-fid hover ${isSelected(entry.cid, depRowFieldEnum.fid) ? 'selected' : ''}`}
-               onMouseDown={handleFidClick}
-               onContextMenu={(event) => event.preventDefault()}
+          <FidCol hover={true} selected={isSelected(entry.cid, depRowFieldEnum.fid)}
+                  onMouseDown={handleFidClick}
+                  onContextMenu={(event) => event.preventDefault()}
           >
             {entry.cid} {entry.callsign}{entry.voiceType === 'r' ? '/R' : entry.voiceType === 't' ? '/T' : ''}
-          </div>
+          </FidCol>
         </EdstTooltip>
-        <div className="body-col pa"/>
-        <div className={`body-col special-box ${!entry.spa ? 'special-hidden' : ''}`}>
+        <SpecialBox disabled={!entry.spa}>
           {entry.spa && SPA_INDICATOR}
-        </div>
+        </SpecialBox>
         <EdstTooltip title={Tooltips.depHotbox}>
-          <div className="body-col special-box hotbox"
-               onContextMenu={event => event.preventDefault()}
-               onMouseDown={handleHotboxMouseDown}
-          >
+          <HotBox onMouseDown={handleHotboxMouseDown}>
             {freeTextContent && '*'}
-          </div>
+          </HotBox>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depType}>
-          <div className={`body-col type hover ${hidden.includes('type') ? 'content hidden' : ''}
-        ${isSelected(entry.cid, depRowFieldEnum.type) ? 'selected' : ''}`}
-               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.type))}
+          <AircraftTypeCol contentHidden={hidden.includes(depRowFieldEnum.type)} hover={true}
+                           selected={isSelected(entry.cid, depRowFieldEnum.type)}
+                           onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.type))}
           >
             {`${entry.type}/${entry.equipment}`}
-          </div>
+          </AircraftTypeCol>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depAlt}>
-          <div className={`body-col alt`}>
-            <div className={`${isSelected(entry.cid, depRowFieldEnum.alt) ? 'selected' : ''}`}
-                 onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.alt, null, menuEnum.altitudeMenu))}
+          <AltCol>
+            <AltColDiv selected={isSelected(entry.cid, depRowFieldEnum.alt)}
+                       onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.alt, null, menuEnum.altitudeMenu))}
             >
               {entry.altitude}
-            </div>
-          </div>
+            </AltColDiv>
+          </AltCol>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depCode}>
-          <div className={`body-col code hover ${hidden.includes('code') ? 'content hidden' : ''} 
-          ${isSelected(entry.cid, depRowFieldEnum.code) ? 'selected' : ''}`}
-               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.code))}
+          <CodeCol contentHidden={hidden.includes(depRowFieldEnum.code)} hover={true}
+                   selected={isSelected(entry.cid, depRowFieldEnum.code)}
+                   onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.code))}
           >
             {entry.beacon}
-          </div>
+          </CodeCol>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.depRoute}>
-          <div className={`body-col route hover ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}
-               onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, menuEnum.routeMenu))}
+          <RouteCol hover={true} selected={isSelected(entry.cid, depRowFieldEnum.route)}
+                    onMouseDown={(event) => dispatch(depAircraftSelect(event, entry.cid, depRowFieldEnum.route, null, menuEnum.routeMenu))}
           >
-          <span>
-              <span>
+            <RouteSpan padding="0 2px">
+              <RouteSpan>
                 {/*className={`${((aarAvail && !onAar) || (adrAvail && !onAdr)) ? 'amendment-1' : ''} ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>*/}
                 {entry.dep}
-              </span>
-            {pendingAdr && !onAdr &&
-            <span className={`amendment-2 ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
-              {`[${pendingAdr}]`}
-              </span>}
-            {route}
-            {pendingAar && !onAar &&
-            <span className={`amendment-2 ${isSelected(entry.cid, depRowFieldEnum.route) ? 'selected' : ''}`}>
-              {`[${pendingAar}]`}
-              </span>}
-            {route?.slice(-1) !== '.' && '..'}{entry.dest}
-          </span>
-          </div>
+              </RouteSpan>
+              {pendingAdr && !onAdr &&
+                  <RouteAmendmentSpan selected={isSelected(entry.cid, depRowFieldEnum.route)}>
+                    {`[${pendingAdr}]`}
+                  </RouteAmendmentSpan>}
+              {route}
+              {pendingAar && !onAar &&
+                  <RouteAmendmentSpan selected={isSelected(entry.cid, depRowFieldEnum.route)}>
+                    {`[${pendingAar}]`}
+                  </RouteAmendmentSpan>}
+              {route?.slice(-1) !== '.' && '..'}{entry.dest}
+            </RouteSpan>
+          </RouteCol>
         </EdstTooltip>
-      </div>
-    </div>
-    {entry.showFreeText && <div className="body-row">
-      <div className={`body-col body-col-1 radio`}/>
-      <div className="body-col body-col-2"/>
-      <div className={`inner-row-2 ${entry.depHighlighted ? 'highlighted' : ''}`}
-           style={{minWidth: Math.max(1200, ref?.current?.clientWidth ?? 0) + 'px'}}
-      >
-        <div className="free-text-row dep-free-text-row">
-          <input
-            onFocus={() => dispatch(setInputFocused(true))}
-            onBlur={() => dispatch(setInputFocused(false))}
-            value={freeTextContent}
-            onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
-        </div>
-      </div>
-    </div>}
-  </div>);
+      </InnerRow>
+    </BodyRowDiv>
+    {entry.showFreeText && <BodyRowDiv>
+        <RadioCol disabled={true}/>
+        <DepCol2/>
+        <InnerRow2 highlight={entry.depHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
+            <FreeTextRow marginLeft={202}>
+                <input
+                    onFocus={() => dispatch(setInputFocused(true))}
+                    onBlur={() => dispatch(setInputFocused(false))}
+                    value={freeTextContent}
+                    onChange={(event) => setFreeTextContent(event.target.value.toUpperCase())}/>
+            </FreeTextRow>
+        </InnerRow2>
+    </BodyRowDiv>}
+  </BodyRowContainerDiv>);
 };

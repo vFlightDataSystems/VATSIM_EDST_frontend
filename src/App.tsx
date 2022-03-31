@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 
 import './css/styles.scss';
-import './css/header-styles.scss';
 import {EdstHeader} from "./components/EdstHeader";
 import {Acl} from "./components/edst-windows/Acl";
 import {Dep} from "./components/edst-windows/Dep";
@@ -12,8 +11,8 @@ import {AltMenu} from "./components/edst-windows/AltMenu";
 import {PlanOptions} from "./components/edst-windows/PlanOptions";
 import {SortMenu} from "./components/edst-windows/SortMenu";
 import {PlansDisplay} from "./components/edst-windows/PlansDisplay";
-import {SpeedMenu} from "./components/edst-windows/SpeedMenu";
-import {HeadingMenu} from "./components/edst-windows/HeadingMenu";
+import {SpeedMenu} from "./components/edst-windows/spd-hdg/SpeedMenu";
+import {HeadingMenu} from "./components/edst-windows/spd-hdg/HeadingMenu";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
 import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
@@ -34,7 +33,7 @@ import {
   setWindowPosition
 } from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
-import {ToolsMenu} from "./components/edst-windows/ToolsMenu";
+import {ToolsMenu} from "./components/edst-windows/tools-components/ToolsMenu";
 import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
 import {MetarWindow} from "./components/edst-windows/MetarWindow";
 import {refreshWeatherThunk} from "./redux/thunks/weatherThunks";
@@ -42,7 +41,9 @@ import {useEventListener} from "usehooks-ts";
 import {EquipmentTemplateMenu} from "./components/edst-windows/template-components/EquipmentTemplateMenu";
 import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
 import {Gpd} from "./components/edst-windows/Gpd";
-import {DraggingCursorDiv, EdstDraggingOutlineDiv, EdstDiv, EdstBodyDiv} from "./styles/edstStyles";
+import {EdstDiv, EdstBodyDiv} from "./styles/edstStyles";
+import {DraggingCursor, EdstDraggingOutline} from './styles/draggingStyles';
+import {GpdMapOptions} from "./components/edst-windows/gpd-components/GpdMapOptions";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
@@ -226,17 +227,17 @@ export const App: React.FC = () => {
   >
     <EdstHeader/>
     <div id='toPrint'/>
-    <EdstBodyDiv className={`${draggingCursorHide ? 'hide-cursor' : ''}`}
+    <EdstBodyDiv hideCursor={draggingCursorHide}
                  ref={bodyRef}
                  onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
     >
       {showSectorSelector && <SectorSelector/>}
-      <EdstDraggingOutlineDiv
+      <EdstDraggingOutline
         style={dragging ? dragPreviewStyle : {display: 'none'}}
         onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
       >
-        {draggingCursorHide && <DraggingCursorDiv/>}
-      </EdstDraggingOutlineDiv>
+        {draggingCursorHide && <DraggingCursor/>}
+      </EdstDraggingOutline>
       <EdstContext.Provider value={{
         startDrag: startDrag,
         stopDrag: stopDrag
@@ -248,6 +249,7 @@ export const App: React.FC = () => {
         {menus[menuEnum.planOptions].open && <PlanOptions/>}
         {menus[menuEnum.sortMenu].open && <SortMenu/>}
         {menus[menuEnum.toolsMenu].open && <ToolsMenu/>}
+        {menus[menuEnum.gpdMapOptionsMenu].open && <GpdMapOptions/>}
         {menus[menuEnum.routeMenu].open && <RouteMenu/>}
         {menus[menuEnum.templateMenu].open && <TemplateMenu/>}
         {menus[menuEnum.equipmentTemplateMenu].open && <EquipmentTemplateMenu/>}

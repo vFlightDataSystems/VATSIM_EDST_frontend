@@ -6,7 +6,7 @@ import {useAppSelector} from "../../../redux/hooks";
 import {entrySelector} from "../../../redux/slices/entriesSlice";
 import {trackArrowIcon, trackIcon, vorIcon} from "./LeafletIcons";
 import {GpdDataBlock} from "./GpdDataBlock";
-import {FixType, LocalEdstEntryType} from "../../../types";
+import {RouteFixType, LocalEdstEntryType} from "../../../types";
 import {getNextFix} from "../../../lib";
 import {useBoolean} from 'usehooks-ts';
 
@@ -42,7 +42,7 @@ function getRouteLine(entry: LocalEdstEntryType) {
   }
   if (routeToDisplay.length > 0 && routeDataToDisplay.length > 0) {
     const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)];
-    const nextFix = getNextFix(route, routeDataToDisplay, pos)[0] as FixType;
+    const nextFix = getNextFix(route, routeDataToDisplay, pos)[0] as RouteFixType;
     const index = fixNames.indexOf(nextFix.name);
     routeDataToDisplay = routeDataToDisplay.slice(index);
     routeDataToDisplay.unshift({name: 'ppos', pos: pos});
@@ -66,6 +66,7 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
   const [trackPos, setTrackPos] = useState<{ x: number, y: number } | null>(null);
   const {value: showDataBlock, toggle: toggleShowDataBlock} = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
+  const map = useMap();
 
   const routeLine = getRouteLine(entry);
 
@@ -76,7 +77,6 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
     }
   }, []);
 
-  const map = useMap();
   useEffect(() => {
     updateHandler();
     map.on({zoom: updateHandler});

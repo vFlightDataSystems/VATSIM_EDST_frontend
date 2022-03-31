@@ -16,6 +16,8 @@ import {
 } from "../../../redux/slices/appSlice";
 import {addAclEntryByFid} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
+import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
+import { AddFindInput } from '../../InputComponents';
 
 
 export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
@@ -44,16 +46,16 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
       }}
       text={['Aircraft List', `${sortData.sector ? 'Sector/' : ''}${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
-    <div className="edst-window-header-row-border-bottom">
+    <WindowHeaderRowDiv>
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.KeyboardEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget))}
         content="Plan Options..."
         title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton
         disabled={asel === null}
-        onMouseDown={(e: React.KeyboardEvent) => dispatch(openMenuThunk(menuEnum.holdMenu, e.currentTarget, windowEnum.acl, false, (asel as AselType).cid))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.holdMenu, e.currentTarget, windowEnum.acl, false, (asel as AselType).cid))}
         content="Hold..."
         title={Tooltips.hold}
       />
@@ -61,14 +63,14 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton
         id="acl-sort-button"
-        onMouseDown={(e: React.KeyboardEvent) => {
+        onMouseDown={(e: React.MouseEvent) => {
           dispatch(openMenuThunk(menuEnum.sortMenu, e.currentTarget, windowEnum.acl));
         }}
         content="Sort..."
         title={Tooltips.sort}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.KeyboardEvent) => {
+        onMouseDown={(e: React.MouseEvent) => {
           dispatch(closeMenu(menuEnum.toolsMenu));
           dispatch(openMenuThunk(menuEnum.toolsMenu, e.currentTarget, windowEnum.acl));
         }}
@@ -80,7 +82,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         title={Tooltips.postingMode}
       />
       <EdstWindowHeaderButton
-        onMouseDown={(e: React.KeyboardEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.acl, false, asel?.cid ?? null))}
+        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.acl, false, asel?.cid ?? null))}
         content="Template..."
         title={Tooltips.template}
       />
@@ -89,18 +91,16 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
         content="Clean Up"
         title={Tooltips.aclCleanUp}
       />
-    </div>
-    <div className="edst-window-header-row-border-bottom bottom">
+    </WindowHeaderRowDiv>
+    <WindowHeaderRowDiv bottomRow={true}>
       Add/Find
-      <div className="input-container">
-        <input
+      <AddFindInput
           onFocus={() => dispatch(setInputFocused(true))}
           onBlur={() => dispatch(setInputFocused(false))}
           value={searchStr}
           onChange={(e) => setSearchString(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
         />
-      </div>
-    </div>
+    </WindowHeaderRowDiv>
   </NoSelectDiv>);
 };

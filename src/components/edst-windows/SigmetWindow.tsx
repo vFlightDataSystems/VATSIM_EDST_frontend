@@ -1,6 +1,4 @@
 import React, {useContext, useRef, useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
@@ -13,10 +11,13 @@ import {
 } from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
+  FloatingWindowBodyDiv,
+  FloatingWindowDiv,
   FloatingWindowHeaderBlock,
   FloatingWindowHeaderColDiv,
-  FloatingWindowHeaderDiv
+  FloatingWindowHeaderDiv, FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
+import {ScrollContainer} from '../../styles/optionMenuStyles';
 
 enum sigmetOptionEnum {
   viewSuppressed = "VIEW SUPPRESS",
@@ -60,10 +61,11 @@ export const SigmetWindow: React.FC = () => {
     setShowOptions(true);
   };
 
-  return pos && (<div className="floating-window sigmet-window"
-                      ref={ref}
-                      id="edst-status"
-                      style={{left: pos.x + "px", top: pos.y + "px"}}
+  return pos && (<FloatingWindowDiv
+      width={1100}
+      pos={pos}
+      ref={ref}
+      id="edst-status"
     >
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20} onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv>
@@ -78,51 +80,56 @@ export const SigmetWindow: React.FC = () => {
         </FloatingWindowHeaderColDiv>
       </FloatingWindowHeaderDiv>
       {Object.values(sigmetList).length > 0 &&
-      <div className="floating-window-body scroll-container sigmet-scroll-container">
-        {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
-          <span className="floating-window-outer-row sigmet" key={`sigmet-list-key-${sigmetId}`}>
-            <div className={`floating-window-row ${sigmetEntry.suppressed ? 'suppressed' : ''} no-select margin ${selectedOption === sigmetId ? 'selected' : ''}`}
-                 onMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
+          <FloatingWindowBodyDiv>
+              <ScrollContainer maxHeight={500}>
+                {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
+                    <span style={{margin: "6px 0"}} key={`sigmet-list-key-${sigmetId}`}>
+            <FloatingWindowRow
+                selected={selectedOption === sigmetId}
+                suppressed={sigmetEntry.suppressed}
+                onMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
             >
               {sigmetEntry.text}
-            </div>
-            {selectedOption === sigmetId && selectedPos &&
-            <FloatingWindowOptions
-              pos={{
-                x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-                y: (ref.current as HTMLDivElement).clientTop
-              }}
-              options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
-              handleOptionClick={() => {
-                dispatch(setSigmetSuppressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
-                setSelectedOption(null);
-                setSelectedPos(null);
-              }}
-            />}
+            </FloatingWindowRow>
+                      {selectedOption === sigmetId && selectedPos &&
+                          <FloatingWindowOptions
+                              pos={{
+                                x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+                                y: (ref.current as HTMLDivElement).clientTop
+                              }}
+                              options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
+                              handleOptionClick={() => {
+                                dispatch(setSigmetSuppressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
+                                setSelectedOption(null);
+                                setSelectedPos(null);
+                              }}
+                          />}
           </span>)}
-      </div>}
+              </ScrollContainer>
+          </FloatingWindowBodyDiv>}
       {showOptions && <FloatingWindowOptions
-        pos={{
-          x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-          y: (ref.current as HTMLDivElement).clientTop
-        }}
-        header="SIGMETS"
-        closeOptions={() => setShowOptions(false)}
-        options={Object.values(sigmetOptionEnum)}
-        selectedOptions={[viewSuppressed ? sigmetOptionEnum.viewSuppressed : sigmetOptionEnum.hideSuppressed
-        ]}
-        handleOptionClick={(option) => {
-          switch (option as sigmetOptionEnum) {
-            case sigmetOptionEnum.viewSuppressed:
-              dispatch(setViewSigmetSuppressed(true));
-              break;
-            case sigmetOptionEnum.hideSuppressed:
-              dispatch(setViewSigmetSuppressed(false));
-              break;
-            default: break;
-          }
-        }}
+          pos={{
+            x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+            y: (ref.current as HTMLDivElement).clientTop
+          }}
+          header="SIGMETS"
+          closeOptions={() => setShowOptions(false)}
+          options={Object.values(sigmetOptionEnum)}
+          selectedOptions={[viewSuppressed ? sigmetOptionEnum.viewSuppressed : sigmetOptionEnum.hideSuppressed
+          ]}
+          handleOptionClick={(option) => {
+            switch (option as sigmetOptionEnum) {
+              case sigmetOptionEnum.viewSuppressed:
+                dispatch(setViewSigmetSuppressed(true));
+                break;
+              case sigmetOptionEnum.hideSuppressed:
+                dispatch(setViewSigmetSuppressed(false));
+                break;
+              default:
+                break;
+            }
+          }}
       />}
-    </div>
+    </FloatingWindowDiv>
   );
 };

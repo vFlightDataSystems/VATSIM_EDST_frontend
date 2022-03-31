@@ -10,6 +10,9 @@ import {sigmetSelector} from "../redux/slices/weatherSlice";
 import styled from "styled-components";
 import {edstFontGrey} from "../styles/colors";
 
+const YELLOW = "#A3A300";
+// const RED = "#590000";
+
 const EdstHeaderDiv = styled.div`
   width: 100vw;
   position: absolute;
@@ -22,98 +25,71 @@ const EdstHeaderRow = styled.div`
   justify-content: space-between;
   display: flex;
 `;
-const EdstHeaderCol = styled.div<{ bottom?: boolean }>`
+
+const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   margin: 1px 1px;
   display: inline-flex;
-  ${props => props.bottom && {"margin-left": '73px'}};
+  ${props => props.bottomRow && {"margin-left": '73px'}};
 
   span {
     display: inline-flex;
   }
-
-  button {
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    line-height: 13px;
-    width: 70px;
-    height: 30px;
-    margin: 0 1px;
-    border: 1px solid #ADADAD;
-    background-color: #000000;
-    color: ${edstFontGrey};
-    font-size: 13px;
-    font-weight: bolder;
-
-    &:hover {
-      border: 1px solid #FFFFFF;
-    }
-
-    &.small {
-      width: 50px;
-    }
-
-    &.tiny {
-      font-weight: normal;
-      width: 18px;
-    }
-
-    &.open {
-      background-color: #595959;
-    }
-
-    &.red-bg {
-      background-color: #590000;
-    }
-
-    &.yellow-border {
-      border: 1px solid #A3A300;
-      color: #A3A300;
-
-      &:hover {
-        border: 1px solid #FFFFFF;
-      }
-
-      &:disabled {
-        border: 1px solid #707070;
-        color: #707070;
-      }
-    }
-
-    &.yellow-background {
-      background-color: #A3A300;
-      color: #000000;
-    }
-
-    &:hover {
-      border: 1px solid #FFFFFF;
-    }
-
-    &:disabled {
-      border: 1px solid #707070;
-      color: #707070;
-    }
-  }
 `;
 
+const ColButton = styled.button<{ width?: number, height?: number, open?: boolean, fontWeight?: string, backgroundColor?: string, borderColor?: string }>`
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  line-height: 13px;
+  font-size: 13px;
+  width: ${props => props.width ? props.width + "px" : "70px"};
+  height: ${props => props.height ? props.height + "px" : "30px"};
+  margin: 0 1px;
+  border: 1px solid #ADADAD;
+  background-color: ${props => props.backgroundColor ?? "#000000"};
+  color: ${props => props.color ?? edstFontGrey};
+  font-weight: ${props => props.fontWeight ?? 'bolder'};
+
+  &:hover {
+    border: 1px solid #FFFFFF;
+  }
+  &:disabled {
+    border: 1px solid #707070;
+    color: #707070;
+  }
+
+  ${props => props.borderColor && {
+    border: `1px solid ${props.borderColor}`
+  }}
+  ${props => props.open && {
+    "background-color": "#595959"
+  }}
+  
+`;
 
 type EdstHeaderButtonProps = {
   title?: string,
-  className?: string,
+  width?: number,
   open: boolean,
+  backgroundColor?: string
+  borderColor?: string,
+  color?: string,
   disabled?: boolean,
   content?: string,
   onMouseDown?: () => void
 }
 
-const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = (props) => {
-  return (<EdstTooltip title={props.title}>
-    <button className={`${props.className} ${props.open ? 'open' : ''}`}
-            disabled={props.disabled}
-            onMouseDown={props.onMouseDown}
+const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = ({title, content, ...props}) => {
+  return (<EdstTooltip title={title}>
+    <ColButton
+      {...props}
+      open={props.open}
+      width={props.width}
+      disabled={props.disabled}
+      onMouseDown={props.onMouseDown}
     >
-      {props.content}
-    </button>
+      {content}
+    </ColButton>
   </EdstTooltip>);
 };
 
@@ -135,15 +111,15 @@ export const EdstHeader: React.FC = () => {
     <EdstHeaderDiv>
       <EdstHeaderRow>
         <EdstHeaderCol>
-          <button className="tiny" disabled={true}>
+          <ColButton width={18} fontWeight="normal" disabled={true}>
             {'\u{1F873}'}
-          </button>
-          <button className={`small ${windows[windowEnum.more].open ? 'open' : ''}`}
-                  disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.more)}
-                  onMouseDown={() => dispatch(toggleWindow(windowEnum.more))}
+          </ColButton>
+          <ColButton width={50} open={windows[windowEnum.more].open}
+                     disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.more)}
+                     onMouseDown={() => dispatch(toggleWindow(windowEnum.more))}
           >
             MORE
-          </button>
+          </ColButton>
           <EdstHeaderButton open={windows[windowEnum.acl].open}
                             content={`ACL ${aclLen.toString().padStart(2, '0')}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.acl)}
@@ -175,7 +151,8 @@ export const EdstHeader: React.FC = () => {
                             onMouseDown={() => dispatch(toggleWindow(windowEnum.metar))}
           />
           <EdstHeaderButton open={windows[windowEnum.sigmets].open}
-                            className={sigLen > 0 ? `yellow-border` : ''}
+                            borderColor={sigLen > 0 ? YELLOW : undefined}
+                            color={sigLen > 0 ? YELLOW : undefined}
                             content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, '0') : '✓'}`}
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sig)}
             // title={Tooltips.sig}
@@ -221,21 +198,23 @@ export const EdstHeader: React.FC = () => {
           />
           <Time/>
           <EdstHeaderButton open={windows[windowEnum.adsb].open}
-                            className="small"
+                            width={50}
                             content="NON-ADSB"
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.adsb)}
             // title={Tooltips.adsb}
                             onMouseDown={() => dispatch(toggleWindow(windowEnum.adsb))}
           />
           <EdstHeaderButton open={windows[windowEnum.sat].open}
-                            className="small"
+                            width={50}
                             content="SAT COMM"
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sat)}
             // title={Tooltips.sat}
                             onMouseDown={() => dispatch(toggleWindow(windowEnum.sat))}
           />
           <EdstHeaderButton open={windows[windowEnum.msg].open}
-                            className="small yellow-border"
+                            width={50}
+                            // backgroundColor={YELLOW}
+                            // borderColor={YELLOW}
                             content="MSG WAIT"
                             disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.msg)}
             // title={Tooltips.msg}
@@ -244,7 +223,7 @@ export const EdstHeader: React.FC = () => {
         </EdstHeaderCol>
       </EdstHeaderRow>
       {windows[windowEnum.more].open && <EdstHeaderRow>
-          <EdstHeaderCol bottom={true}>
+          <EdstHeaderCol bottomRow={true}>
               <EdstHeaderButton open={windows[windowEnum.wind].open}
                                 content="WIND"
                                 disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.wind)}
@@ -276,14 +255,16 @@ export const EdstHeader: React.FC = () => {
                                 onMouseDown={() => dispatch(toggleWindow(windowEnum.fel))}
               />
               <EdstHeaderButton open={windows[windowEnum.cpdlcHist].open}
-                                className="yellow-border yellow-background"
+                                backgroundColor={YELLOW}
+                                borderColor={YELLOW}
                                 content="CPDLC HIST"
                                 disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlcHist)}
                 // title={Tooltips.cpdlc_hist}
                                 onMouseDown={() => dispatch(toggleWindow(windowEnum.cpdlcHist))}
               />
               <EdstHeaderButton open={windows[windowEnum.cpdlcMsgOut].open}
-                                className="yellow-border yellow-background"
+                                backgroundColor={YELLOW}
+                                borderColor={YELLOW}
                                 content="CPDLC MSGOUT"
                                 disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.cpdlcMsgOut)}
                 // title={Tooltips.cpdlc_msg_out}

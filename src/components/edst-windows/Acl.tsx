@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import '../../css/header-styles.scss';
 import {AclHeader} from "./acl-components/AclHeader";
 import {AclTable} from "./acl-components/AclTable";
 import {useAppSelector} from "../../redux/hooks";
@@ -9,7 +8,7 @@ import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
 import {DraggingDiv} from "../../styles/styles";
 
-const AclStyleDiv = styled.div`
+const AclDiv = styled.div`
   white-space: nowrap;
   display: flex;
   flex-flow: column;
@@ -28,11 +27,11 @@ export const Acl: React.FC = () => {
   const focused = useFocused(ref);
   const dragging = useAppSelector(draggingSelector);
 
-  return (<AclStyleDiv dragging={dragging}
+  return (<AclDiv dragging={dragging}
     ref={ref}
     // style={{zIndex: props.z_index}}
   >
     <AclHeader focused={focused}/>
     <AclTable/>
-  </AclStyleDiv>);
+  </AclDiv>);
 }

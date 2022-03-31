@@ -1,6 +1,4 @@
 import React, {useContext, useRef, useState} from 'react';
-import '../../css/header-styles.scss';
-import '../../css/windows/floating-window-styles.scss';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
@@ -8,10 +6,19 @@ import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {altimeterSelector, removeAirportAltimeter} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
+  FloatingWindowBodyDiv,
+  FloatingWindowDiv,
   FloatingWindowHeaderBlock,
   FloatingWindowHeaderColDiv,
-  FloatingWindowHeaderDiv
+  FloatingWindowHeaderDiv, FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
+import styled from "styled-components";
+
+const AltimCol = styled.span<{underline?: boolean, reportingStation?: boolean}>`
+  margin: 0 4px;
+  ${props => props.reportingStation && {margin: "0 20px 0 12px"}};
+  ${props => props.underline && {"text-decoration": "underline"}};
+`;
 
 export const AltimeterWindow: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -38,10 +45,11 @@ export const AltimeterWindow: React.FC = () => {
     }
   };
 
-  return pos && (<div className="floating-window altimeter-window"
-                      ref={ref}
-                      id="edst-altimeter"
-                      style={{left: pos.x + "px", top: pos.y + "px"}}
+  return pos && (<FloatingWindowDiv
+      width={180}
+      pos={pos}
+      ref={ref}
+      id="edst-altimeter"
     >
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
@@ -55,23 +63,22 @@ export const AltimeterWindow: React.FC = () => {
           <FloatingWindowHeaderBlock width={8} height={2}/>
         </FloatingWindowHeaderColDiv>
       </FloatingWindowHeaderDiv>
-      {Object.values(altimeterList).length > 0 && <div className="floating-window-body">
+      {Object.values(altimeterList).length > 0 && <FloatingWindowBodyDiv>
         {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) => {
           const observationTime = Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2));
-          return (<span className="floating-window-outer-row" key={`altimeter-list-key-${airport}`}>
-            <div className={`floating-window-row margin no-select ${selected === airport ? 'selected' : ''}`}
-                 onMouseDown={(event) => handleMouseDown(event, airport)}
+          return (<div key={`altimeter-list-key-${airport}`}>
+            <FloatingWindowRow
+              selected={selected === airport}
+              onMouseDown={(event) => handleMouseDown(event, airport)}
+              key={`altimeter-list-key-${airport}`}
             >
-              <span className="altim-col altim-report-station-col">{airportAltimeterEntry.airport}</span>
-
-              <span
-                className={`altim-col ${(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 60 ? 'altim-underline' : ''}`}>{airportAltimeterEntry.time}</span>
+              <AltimCol reportingStation={true}>{airportAltimeterEntry.airport}</AltimCol>
+              <AltimCol underline={(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 60}>{airportAltimeterEntry.time}</AltimCol>
               {(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 120 ? '-M-' :
-                <span
-                  className={`altim-col ${Number(airportAltimeterEntry.altimeter) < 2992 ? 'altim-underline' : ''}`}>
+                <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>
                 {airportAltimeterEntry.altimeter.slice(1)}
-              </span>}
-          </div>
+              </AltimCol>}
+            </FloatingWindowRow>
             {selected === airport && selectedPos &&
                 <FloatingWindowOptions
                     pos={{
@@ -85,9 +92,9 @@ export const AltimeterWindow: React.FC = () => {
                       setSelectedPos(null);
                     }}
                 />}
-          </span>);
+          </div>);
         })}
-      </div>}
-    </div>
+      </FloatingWindowBodyDiv>}
+    </FloatingWindowDiv>
   );
 };

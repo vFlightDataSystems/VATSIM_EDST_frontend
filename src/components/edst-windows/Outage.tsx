@@ -1,11 +1,11 @@
-import '../../css/header-styles.scss';
-import '../../css/windows/floating-window-styles.scss';
 import React, {useContext, useRef} from "react";
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
 import {
+  FloatingWindowBodyDiv,
+  FloatingWindowDiv,
   FloatingWindowHeaderBlock,
   FloatingWindowHeaderColDiv,
   FloatingWindowHeaderDiv
@@ -17,10 +17,11 @@ export const Outage: React.FC = () => {
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
 
-  return pos && (<div className="floating-window outage-window"
-               ref={ref}
-               id="edst-outage"
-               style={{left: pos.x + "px", top: pos.y + "px"}}
+  return pos && (<FloatingWindowDiv
+      width={340}
+      pos={pos}
+      ref={ref}
+      id="edst-outage"
     >
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
@@ -34,9 +35,9 @@ export const Outage: React.FC = () => {
           <FloatingWindowHeaderBlock width={8} height={2}/>
         </FloatingWindowHeaderColDiv>
       </FloatingWindowHeaderDiv>
-      <div className="floating-window-body">
+      <FloatingWindowBodyDiv>
         OUTAGE TEST
-      </div>
-    </div>
+      </FloatingWindowBodyDiv>
+    </FloatingWindowDiv>
   );
 }

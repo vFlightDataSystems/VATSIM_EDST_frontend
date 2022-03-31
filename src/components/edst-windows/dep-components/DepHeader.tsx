@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import '../../../css/header-styles.scss';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
@@ -10,6 +9,8 @@ import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../r
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
+import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
+import {AddFindInput} from "../../InputComponents";
 
 type DepHeaderProps = {
   focused: boolean
@@ -40,7 +41,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
       }}
       text={['Departure List', `${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
     />
-    <div className="edst-window-header-row-border-bottom">
+    <WindowHeaderRowDiv>
       <EdstWindowHeaderButton
         disabled={asel === null}
         onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.dep))}
@@ -63,18 +64,16 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
         content="Template..."
         title={Tooltips.template}
       />
-    </div>
-    <div className="edst-window-header-row-border-bottom bottom">
+    </WindowHeaderRowDiv>
+    <WindowHeaderRowDiv bottomRow={true}>
       Add/Find
-      <div className="input-container">
-        <input
-          onFocus={() => dispatch(setInputFocused(true))}
-          onBlur={() => dispatch(setInputFocused(false))}
-          value={searchStr}
-          onChange={(e) => setSearchString(e.target.value.toUpperCase())}
-          onKeyDown={handleKeyDown}
-        />
-      </div>
-    </div>
+      <AddFindInput
+        onFocus={() => dispatch(setInputFocused(true))}
+        onBlur={() => dispatch(setInputFocused(false))}
+        value={searchStr}
+        onChange={(e) => setSearchString(e.target.value.toUpperCase())}
+        onKeyDown={handleKeyDown}
+      />
+    </WindowHeaderRowDiv>
   </NoSelectDiv>);
 }

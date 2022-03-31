@@ -3,6 +3,32 @@ import {
   FloatingWindowHeaderColDiv,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
+import styled from "styled-components";
+import {NoSelectDiv} from "../../styles/styles";
+
+const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv)<{ pos: { x: number, y: number } }>`
+  position: absolute;
+  display: flex;
+  flex-flow: column;
+  height: auto;
+  width: 140px;
+  ${props => ({left: props.pos.x + 'px', top: props.pos.y + 'px'})}
+`
+
+const FloatingWindowOptionDiv = styled.div<{ unselected?: boolean }>`
+  //position: absolute;
+  display: flex;
+  height: 18px;
+  background-color: #575757;
+  border: 1px solid #ADADAD;
+  text-indent: 4px;
+
+  ${props => props.unselected && ({"background-color": "#000000"})};
+
+  &:hover {
+    border: 1px solid #FFFFFF;
+  }
+`;
 
 type FloatingWindowOptionsProps = {
   pos: { x: number, y: number },
@@ -14,7 +40,7 @@ type FloatingWindowOptionsProps = {
 }
 
 export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({pos, ...props}) => {
-  return <div className="floating-window-options" style={{left: pos.x + "px", top: pos.y + "px"}}>
+  return <FloatingWindowOptionsBodyDiv pos={pos}>
 
     {props.header &&
         <FloatingWindowHeaderDiv>
@@ -28,11 +54,11 @@ export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({pos
             </FloatingWindowHeaderColDiv>
         </FloatingWindowHeaderDiv>}
     {props.options?.map((option) =>
-      <div className={`floating-window-option ${!(props.selectedOptions?.includes(option) ?? true) ? 'unselected' : ''}`}
-           key={`sigmet-option-${option}`}
-           onMouseDown={() => props.handleOptionClick?.(option)}
+      <FloatingWindowOptionDiv unselected={!(props.selectedOptions?.includes(option) ?? true)}
+                               key={`sigmet-option-${option}`}
+                               onMouseDown={() => props.handleOptionClick?.(option)}
       >
         {option}
-      </div>)}
-  </div>;
+      </FloatingWindowOptionDiv>)}
+  </FloatingWindowOptionsBodyDiv>;
 };

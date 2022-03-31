@@ -4,6 +4,23 @@ import {Tooltips} from "../../../tooltips";
 import {useAppSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
+import {OptionsBodyRow, OptionSelectedIndicator} from "../../../styles/optionMenuStyles";
+import styled from "styled-components";
+import {EqpInput, EqpInputContainer, EqpRow, EqpColTitle, EqpInputRow, EqpCol} from "./styled";
+
+const ContentCol = styled.div`
+  justify-content: left;
+  align-items: center;
+  display: inline-flex;
+  flex-grow: 0;
+  border: 1px solid transparent;
+  padding: 1px 6px;
+  text-indent: 0;
+  
+  &:hover {
+    border: 1px solid #ADADAD;
+  }
+`;
 
 enum TransponderCatEnum {
   A = 'A',
@@ -59,23 +76,25 @@ export const EquipmentSurvTemplate: React.FC = () => {
   const [adsbVType, setAdsbVType] = useState<AdsbVTypeEnum | null>(adsbVInitialType as AdsbVTypeEnum ?? null);
 
   return (<div>
-      <div className="options-row margin-top">
-        <div className="eqp-col">
-          <div className="eqp-template-row col-title">
+      <OptionsBodyRow margin="10px 0 0 0">
+        <EqpCol>
+          <EqpColTitle>
             TRANSPONDER CATEGORY
-          </div>
-          <div className="eqp-template-row">
-            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuSurv_NoXpdr}
+          </EqpColTitle>
+          <EqpRow>
+            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_NoXpdr}
                          onMouseDown={() => setTransponderCategory(null)}
             >
-              <div
-                className={`button-indicator circle ${transponderCategory === null ? 'selected' : ''}`}/>
-              No Transponder
+              <ContentCol>
+                <OptionSelectedIndicator selected={transponderCategory === null} circle={true}/>
+                No Transponder
+              </ContentCol>
+
             </EdstTooltip>
-          </div>
+          </EqpRow>
           {Object.keys(TransponderCatEnum).map((category) =>
             <EquipmentTemplateRow
-              buttonClassName="circle"
+              circle={true}
               key={`transponder-type-row-${category}`}
               buttonText={category}
               text={transponderCatText[category as TransponderCatEnum]}
@@ -84,13 +103,13 @@ export const EquipmentSurvTemplate: React.FC = () => {
               toggleSelect={() => setTransponderCategory(category as TransponderCatEnum)}
             />
           )}
-        </div>
-        <div className="eqp-col">
-          <div className="eqp-template-row col-title">
+        </EqpCol>
+        <EqpCol>
+          <EqpColTitle>
             ADS-B CATEGORY
-          </div>
+          </EqpColTitle>
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-no-b`}
             buttonText="No 1090"
             tooltip={Tooltips.equipmentTemplateMenuSurv_No1090}
@@ -98,7 +117,7 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbBType(null)}
           />
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-b1`}
             buttonText="B1"
             text="(1090 OUT)"
@@ -107,7 +126,7 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbBType(AdsbBTypeEnum.B1)}
           />
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-b2`}
             buttonText="B2"
             text="(1090 IN/OUT)"
@@ -116,8 +135,8 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbBType(AdsbBTypeEnum.B2)}
           />
           <EquipmentTemplateRow
-            rowClassName="margin-top"
-            buttonClassName="circle"
+            margin="10px 0 0 0"
+            circle={true}
             key={`adsb-b-type-row-no-uat`}
             buttonText="No UAT"
             tooltip={Tooltips.equipmentTemplateMenuSurv_NoUat}
@@ -125,7 +144,7 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbUType(null)}
           />
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-u1`}
             buttonText="U1"
             text="(UAT OUT)"
@@ -134,7 +153,7 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbUType(AdsbUTypeEnum.U1)}
           />
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-u2`}
             buttonText="U2"
             text="(UAT IN/OUT)"
@@ -143,8 +162,8 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbUType(AdsbUTypeEnum.U2)}
           />
           <EquipmentTemplateRow
-            rowClassName="margin-top"
-            buttonClassName="circle"
+            margin="10px 0 0 0"
+            circle={true}
             key={`adsb-b-type-row-no-vdl`}
             buttonText="No VDL"
             tooltip={Tooltips.equipmentTemplateMenuSurv_NoVdl}
@@ -152,7 +171,7 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbVType(null)}
           />
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-v1`}
             buttonText="V1"
             text="(VDL OUT)"
@@ -161,7 +180,7 @@ export const EquipmentSurvTemplate: React.FC = () => {
             toggleSelect={() => setAdsbVType(AdsbVTypeEnum.V1)}
           />
           <EquipmentTemplateRow
-            buttonClassName="circle"
+            circle={true}
             key={`adsb-b-type-row-v2`}
             buttonText="V2"
             text="(VDL IN/OUT)"
@@ -169,33 +188,40 @@ export const EquipmentSurvTemplate: React.FC = () => {
             selected={adsbVType === AdsbVTypeEnum.V2}
             toggleSelect={() => setAdsbVType(AdsbVTypeEnum.V2)}
           />
-        </div>
-        <div className="eqp-col">
-          <div className="eqp-template-row col-title">
+        </EqpCol>
+        <EqpCol>
+          <EqpColTitle>
             ADS-B<br/> CERTIFICATION
-          </div>
-          <div className="eqp-template-row margin">
-            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuSurv_260b}>
-              <div className={`button-indicator`}/>
-              260B (1090)
+          </EqpColTitle>
+          <EqpRow margin="18px 0">
+            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_260b}>
+              <ContentCol>
+                <OptionSelectedIndicator/>
+                260B (1090)
+              </ContentCol>
+
             </EdstTooltip>
-          </div>
-          <div className="eqp-template-row margin">
-            <EdstTooltip className="eqp-content-col btn" title={Tooltips.equipmentTemplateMenuSurv_262b}>
-              <div className={`button-indicator`}/>
-              282B (UAT)
+          </EqpRow>
+          <EqpRow margin="18px 0" >
+            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_262b}>
+              <ContentCol>
+                <OptionSelectedIndicator/>
+                282B (UAT)
+              </ContentCol>
             </EdstTooltip>
-          </div>
-        </div>
-      </div>
-      <div className="eqp-template-row bottom-row">
+          </EqpRow>
+        </EqpCol>
+      </OptionsBodyRow>
+      <EqpInputRow>
         SUR/
-        <EdstTooltip className="input-container flex" title={Tooltips.equipmentTemplateMenuSurv_Sur}>
-          <input value={`${transponderType ?? ''}${adsbBType ?? ''}${adsbUType ?? ''}${adsbVType ?? ''}`}
-                 onChange={() => {}}
-          />
+        <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
+          <EqpInputContainer width="60%">
+            <EqpInput value={`${transponderCategory ?? ''}${adsbBType ?? ''}${adsbUType ?? ''}${adsbVType ?? ''}`}
+                      onChange={() => {}}
+            />
+          </EqpInputContainer>
         </EdstTooltip>
-      </div>
+      </EqpInputRow>
     </div>
   );
 };

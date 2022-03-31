@@ -1,7 +1,7 @@
 import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
-import '../../css/header-styles.scss';
-import '../../css/windows/options-menu-styles.scss';
+
+
 import {EdstButton} from "../resources/EdstButton";
 import {computeFrd, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
@@ -12,6 +12,7 @@ import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
 import {useFocused} from "../../hooks";
+import {FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader} from '../../styles/optionMenuStyles';
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
@@ -27,29 +28,30 @@ export const PreviousRouteMenu: React.FC = () => {
 
   const route = removeDestFromRouteString(entry.route.slice(0), entry.dest);
 
-  return pos && entry && (<div
+  return pos && entry && (<OptionsMenu
+      width={380}
+      pos={pos}
       ref={ref}
-      className="options-menu prev-route no-select"
       id="prev-route-menu"
-      style={{left: pos.x, top: pos.y}}
     >
-      <div className={`options-menu-header ${focused ? 'focused' : ''}`}
-           onMouseDown={(event) => startDrag(event, ref, menuEnum.prevRouteMenu)}
-           onMouseUp={(event) => stopDrag(event)}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={(event) => startDrag(event, ref, menuEnum.prevRouteMenu)}
+        onMouseUp={(event) => stopDrag(event)}
       >
         Previous Route Menu
-      </div>
-      <div className="options-body">
-        <div className="options-row fid">
+      </OptionsMenuHeader>
+      <OptionsBody>
+        <FidRow>
           {entry.callsign} {entry.type}/{entry.equipment}
-        </div>
-        <div className="options-row prev-route-row">
-          <div className="options-col">
+        </FidRow>
+        <OptionsBodyRow padding="0 8px">
+          <OptionsBodyCol>
             RTE {frd ? frd : ''}{entry.previous_route}
-          </div>
-        </div>
-        <div className="options-row bottom">
-          <div className="options-col left">
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+        <OptionsBodyRow margin="0">
+          <OptionsBodyCol>
             <EdstButton
               content="Apply Previous Route"
               onMouseDown={() => {
@@ -65,13 +67,12 @@ export const PreviousRouteMenu: React.FC = () => {
                 dispatch(closeMenu(menuEnum.prevRouteMenu));
               }}
             />
-          </div>
-          <div className="options-col right">
-            <EdstButton className="exit-button" content="Exit"
-                        onMouseDown={() => dispatch(closeMenu(menuEnum.prevRouteMenu))}/>
-          </div>
-        </div>
-      </div>
-    </div>
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.prevRouteMenu))}/>
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </OptionsBody>
+    </OptionsMenu>
   );
 };

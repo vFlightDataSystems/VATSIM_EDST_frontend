@@ -10,37 +10,42 @@ const TooltipDiv = styled.div`
   padding: 2px;
   font-size: 0.85em;
   transform: translateY(32px);
-  z-index: 999;
+  z-index: 2000;
   white-space: pre-line;
 `;
 
-const TooltipContent: React.FC<{content: any}> = (props) => {
-  return (<TooltipDiv tabIndex={999}>
+const TooltipContent: React.FC<{ content: any }> = (props) => {
+  return (<TooltipDiv tabIndex={2000}>
     {props.content}
   </TooltipDiv>);
 }
 
+const TooltipBody = styled.div`
+  all: unset;
+`;
+
 type EdstTooltipProps = {
-    title?: string,
-    className?: string,
-    content?: string,
-    onMouseDown?: React.EventHandler<React.MouseEvent>,
-    onContextMenu?: React.EventHandler<React.MouseEvent>,
-    disabled?: boolean
+  title?: string,
+  content?: string,
+  onMouseDown?: React.EventHandler<React.MouseEvent>,
+  onContextMenu?: React.EventHandler<React.MouseEvent>,
+  disabled?: boolean,
+  style?: Object
 }
 
-export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, ...props}) => {
+export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, style, ...props}) => {
   const globalTooltipsEnabled = useAppSelector((state) => state.app.tooltipsEnabled);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
-  return (<span
+  return (<TooltipBody
+    style={style}
     {...props}
     onMouseEnter={(e) => e.shiftKey && setTooltipEnabled(true)}
     // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
     onMouseLeave={() => setTooltipEnabled(false)}
   >
-        {globalTooltipsEnabled && (tooltipEnabled) && title &&
+    {globalTooltipsEnabled && (tooltipEnabled) && title &&
         <TooltipContent content={title}/>}
     {content ?? props.children}
-    </span>);
+  </TooltipBody>);
 }

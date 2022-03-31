@@ -1,5 +1,4 @@
 import React, {useMemo, useState} from 'react';
-import '../../../css/windows/body-styles.scss';
 import {AclRow} from "./AclRow";
 import VCI from '../../../resources/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
@@ -11,7 +10,22 @@ import {aclRowFieldEnum, menuEnum, sortOptionsEnum} from "../../../enums";
 import {aselSelector, closeMenu, setAsel} from "../../../redux/slices/appSlice";
 import {NoSelectDiv} from "../../../styles/styles";
 import styled from "styled-components";
-import {edstFontGrey} from "../../../styles/colors";
+import {edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow} from "../../../styles/colors";
+import {ScrollContainer} from "../../../styles/optionMenuStyles";
+import {BodyRowDiv, BodyRowHeaderDiv, InnerRow} from "../../../styles/bodyStyles";
+import {
+  AclCol1,
+  AircraftTypeCol,
+  AltCol,
+  CodeCol,
+  FidCol,
+  HdgCol, HdgSpdSlashCol,
+  PointOutCol,
+  RadioCol,
+  RouteCol,
+  SpdCol,
+  SpecialBox
+} from "./AclStyled";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -19,12 +33,12 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
   flex-flow: column;
   display: flex;
   color: ${edstFontGrey};
-  
+
   img {
     width: 8px;
     object-fit: contain;
   }
-  
+
   .wifi-symbol {
     background-image: url(${VCI});
   }
@@ -108,77 +122,80 @@ export function AclTable() {
   const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntryType) => entry.spa)), [entryList]);
 
   return (<AclBodyStyleDiv>
-    <div className="body-row header" key="acl-table-header">
-      <div className="body-col radio-header green">
+    <BodyRowHeaderDiv key="acl-table-header">
+      <RadioCol header={true}>
         <img src={VCI} alt="wifi-symbol"/>
-      </div>
-      <div className="body-col body-col-1 red">
+      </RadioCol>
+      <AclCol1 color={edstFontRed}>
         R
-      </div>
-      <div className="body-col body-col-1 yellow">
+      </AclCol1>
+      <AclCol1 color={edstFontYellow}>
         Y
-      </div>
-      <div className="body-col body-col-1 orange">
+      </AclCol1>
+      <AclCol1 color={edstFontOrange}>
         A
-      </div>
-      <div className="inner-row">
-        <div className="body-col special-box special-hidden"/>
-        <div className="body-col special-box special-hidden"/>
-        <div className="body-col fid">
+      </AclCol1>
+      <InnerRow>
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={true}/>
+        <FidCol>
           Flight ID
-        </div>
-        <EdstTooltip className="body-col pa header" title={Tooltips.aclHeaderPa} content="PA"/>
-        <div className="body-col special-box special-hidden"/>
-        <div className="body-col special-box special-hidden"/>
-        <div className={`body-col type ${hiddenList.includes(aclRowFieldEnum.type) ? 'hidden' : ''}`}>
-          <div className="hover" onMouseDown={() => toggleHideColumn(aclRowFieldEnum.type)}>
+        </FidCol>
+        <EdstTooltip title={Tooltips.aclHeaderPa}>
+          <PointOutCol>
+            PA
+          </PointOutCol>
+        </EdstTooltip>
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={true}/>
+        <AircraftTypeCol hidden={hiddenList.includes(aclRowFieldEnum.type)}>
+          <div onMouseDown={() => toggleHideColumn(aclRowFieldEnum.type)}>
             T{!hiddenList.includes(aclRowFieldEnum.type) && 'ype'}
           </div>
-        </div>
-        <div className="body-col alt header hover"
-             onMouseDown={() => setAltMouseDown(true)}
-             onMouseUp={() => setAltMouseDown(false)}
+        </AircraftTypeCol>
+        <AltCol hover={true} headerCol={true}
+                onMouseDown={() => setAltMouseDown(true)}
+                onMouseUp={() => setAltMouseDown(false)}
         >
           Alt.
-        </div>
-        <div className={`body-col code hover ${hiddenList.includes(aclRowFieldEnum.code) ? 'hidden' : ''}`}
-             onMouseDown={() => toggleHideColumn(aclRowFieldEnum.code)}>
+        </AltCol>
+        <CodeCol hover={true} hidden={hiddenList.includes(aclRowFieldEnum.code)}
+                 onMouseDown={() => toggleHideColumn(aclRowFieldEnum.code)}>
           C{!hiddenList.includes(aclRowFieldEnum.code) && 'ode'}
-        </div>
-        <div className={`body-col special-box special-header`}/>
+        </CodeCol>
+        <SpecialBox disabled={true}/>
         <EdstTooltip title={Tooltips.aclHeaderHdg}>
-          <div className={`body-col hs hdg hover ${hiddenList.includes(aclRowFieldEnum.hdg) ? 'hidden' : ''}`}
-               onMouseDown={() => toggleHideColumn(aclRowFieldEnum.hdg)}>
+          <HdgCol hover={true} hidden={hiddenList.includes(aclRowFieldEnum.hdg)}
+                  onMouseDown={() => toggleHideColumn(aclRowFieldEnum.hdg)}
+          >
             {hiddenList.includes(aclRowFieldEnum.hdg) && anyAssignedHeading && '*'}H{!hiddenList.includes(aclRowFieldEnum.hdg) && 'dg'}
-          </div>
+          </HdgCol>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSlash}>
-          <div className="body-col hs-slash hover" onMouseDown={handleClickSlash}>
+          <HdgSpdSlashCol hover={true} onMouseDown={handleClickSlash}>
             /
-          </div>
+          </HdgSpdSlashCol>
         </EdstTooltip>
         <EdstTooltip title={Tooltips.aclHeaderSpd}>
-          <div className={`body-col hs spd hover ${hiddenList.includes(aclRowFieldEnum.spd) ? 'hidden' : ''}`}
-               onMouseDown={() => toggleHideColumn(aclRowFieldEnum.spd)}>
+          <SpdCol hover={true} hidden={hiddenList.includes(aclRowFieldEnum.spd)}
+                  onMouseDown={() => toggleHideColumn(aclRowFieldEnum.spd)}
+          >
             S{!hiddenList.includes(aclRowFieldEnum.spd) && 'pd'}{hiddenList.includes(aclRowFieldEnum.spd) && anyAssignedSpeed && '*'}
-          </div>
+          </SpdCol>
         </EdstTooltip>
-        <div className={`body-col special-box special-header`}/>
-        <div className={`body-col special-box special-header`}/>
-        <div className={`body-col special-box special-header`} // @ts-ignore
-             disabled={!anyHolding}>
-          H
-        </div>
-        <div className={`body-col special-box special-header`}/>
-        <div className={`body-col special-box special-header`}/>
-        <div className={`body-col special-box special-header`}/>
-        <div className={`body-col special-box special-header`}/>
-        <div className="body-col route">
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={!anyHolding}>H</SpecialBox>
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={true}/>
+        <SpecialBox disabled={true}/>
+        <RouteCol>
           Route
-        </div>
-      </div>
-    </div>
-    <div className="scroll-container">
+        </RouteCol>
+      </InnerRow>
+    </BodyRowHeaderDiv>
+    <ScrollContainer>
       {spaEntryList?.map(([i, entry]: [string, LocalEdstEntryType]) =>
         <AclRow
           key={`acl-table-row-spa-${entry.cid}-${i}`}
@@ -188,7 +205,7 @@ export function AclTable() {
           hidden={hiddenList}
           altMouseDown={altMouseDown}
         />)}
-      {spaEntryList.length > 0 && <div className="body-row separator"/>}
+      {spaEntryList.length > 0 && <BodyRowDiv separator={true}/>}
       {Object.entries(entryList?.filter((entry: LocalEdstEntryType) => (!entry.spa && ((entry.vciStatus > -1) || !manualPosting)))
         ?.sort(sortFunc))?.map(([i, entry]: [string, LocalEdstEntryType]) =>
         <AclRow
@@ -199,7 +216,7 @@ export function AclTable() {
           hidden={hiddenList}
           altMouseDown={altMouseDown}
         />)}
-      {manualPosting && <div className="body-row separator"/>}
+      {manualPosting && <BodyRowDiv separator={true}/>}
       {manualPosting && Object.entries(entryList?.filter((entry: LocalEdstEntryType) => (!entry.spa && entry.vciStatus === -1)))
         ?.map(([i, entry]: [string, LocalEdstEntryType]) =>
           <AclRow
@@ -210,6 +227,6 @@ export function AclTable() {
             hidden={hiddenList}
             altMouseDown={altMouseDown}
           />)}
-    </div>
+    </ScrollContainer>
   </AclBodyStyleDiv>);
 }
