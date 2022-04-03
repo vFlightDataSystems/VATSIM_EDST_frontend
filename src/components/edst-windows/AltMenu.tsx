@@ -103,7 +103,7 @@ const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
 const AltMenuScrollCol = styled.div<{ tempAlt?: boolean, borderHover?: boolean, selected?: boolean }>`
   display: flex;
   padding-left: 4px;
-  padding-right: 2px;
+  padding-right: 4px;
   justify-content: left;
   align-items: center;
   color: #ADADAD;
