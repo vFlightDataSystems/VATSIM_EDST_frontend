@@ -91,7 +91,7 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
             eventHandlers={{contextmenu: toggleShowDataBlock}}
     >
       {showDataBlock && <>
-          <Marker position={posLatLng} icon={trackArrowIcon}/>
+          <Marker position={posLatLng} icon={trackArrowIcon(-45)}/>
           <GpdDataBlock entry={entry} pos={trackPos}/>
       </>}
     </Marker>
