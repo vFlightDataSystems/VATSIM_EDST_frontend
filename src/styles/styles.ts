@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const defaultFontFamily = 'Consolas';
-export const defaultFontSize = '17px';
+export const defaultFontSize = '16px';
 export const defaultInputFontSize = '16px';
 
 export const NoSelectDiv = styled.div`
