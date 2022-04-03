@@ -1,7 +1,7 @@
 import {
   fetchArtccNavaids,
   fetchArtccSectorTypes, fetchArtccWaypoints,
-  fetchCtrFavData,
+  fetchCtrFavData, fetchCtrProfiles,
   fetchHighVorList,
   fetchLowVorList,
   fetchReferenceFixes
@@ -10,7 +10,7 @@ import {RootState} from "../store";
 import {
   setArtccId,
   setReferenceFixes,
-  setSectorId,
+  setSectorId, setSectorProfiles,
   setSectors,
   setVorHighList,
   setVorLowList
@@ -39,7 +39,7 @@ export const initThunk = createAsyncThunk(
     let sectorId: string;
 
     if (process.env.NODE_ENV === 'development') {
-      artccId = 'zbw';
+      artccId = 'zlc';
       // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
       sectorId = '37';
     } else {
@@ -95,6 +95,15 @@ export const initThunk = createAsyncThunk(
               data[e.id] = e.type;
             }
             thunkAPI.dispatch(setSectorTypes(data));
+          }
+        })
+    }
+    if (!(Object.keys(sectorData.profiles).length > 0)) {
+      await fetchCtrProfiles(artccId)
+        .then(response => response.json())
+        .then((profiles) => {
+          if (profiles) {
+            thunkAPI.dispatch(setSectorProfiles(profiles));
           }
         })
     }

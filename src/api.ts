@@ -33,7 +33,7 @@ export async function fetchAppFavData(artcc: string): Promise<Response> {
 }
 
 export async function fetchCtrProfiles(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/fav/${artcc}/profiles`);
+  return await fetch(`${baseurl}/edst/ctr_profiles/${artcc}`);
 }
 
 export async function fetchReferenceFixes(artcc: string): Promise<Response> {
