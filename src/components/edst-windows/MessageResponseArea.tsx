@@ -10,7 +10,7 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
   z-index: 1000;
   line-height: 1;
   padding: 0 2px;
-  height: 80px;
+  min-height: 80px;
   width: 340px;
   background-color: #000000;
   border: 1px solid #ADADAD;

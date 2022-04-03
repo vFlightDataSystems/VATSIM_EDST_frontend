@@ -134,7 +134,7 @@ export const EdstHeader: React.FC = () => {
           />
           <EdstHeaderButton open={windows[windowEnum.graphicPlanDisplay].open}
                             content="GPD"
-                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.gpd)}
+                            disabled={process.env.NODE_ENV !== 'development'}
             // title={Tooltips.gpd}
                             onMouseDown={() => dispatch(openWindow({window: windowEnum.graphicPlanDisplay}))}
           />

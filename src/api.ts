@@ -24,8 +24,16 @@ export async function fetchAarList(artcc: string, cid: string): Promise<Response
   return await fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
 }
 
-export async function fetchFavData(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/fav/${artcc}`);
+export async function fetchCtrFavData(artcc: string): Promise<Response> {
+  return await fetch(`${baseurl}/edst/fav/${artcc}/ctr`);
+}
+
+export async function fetchAppFavData(artcc: string): Promise<Response> {
+  return await fetch(`${baseurl}/edst/fav/${artcc}/app`);
+}
+
+export async function fetchCtrProfiles(artcc: string): Promise<Response> {
+  return await fetch(`${baseurl}/edst/fav/${artcc}/profiles`);
 }
 
 export async function fetchReferenceFixes(artcc: string): Promise<Response> {

@@ -57,6 +57,7 @@ export const FloatingWindowHeaderBlock = styled.span`
 
 export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean, suppressed?: boolean }>`
   justify-content: center;
+  font-size: 16px;
   padding: 0 30px 0 10px;
   border: 1px solid transparent;
   color: #919191;

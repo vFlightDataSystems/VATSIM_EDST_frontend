@@ -85,7 +85,7 @@ const AltMenuRow = styled.div<{ bgBlack?: boolean, color?: string, hover?: boole
 `;
 
 const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
-  width: 52px;
+  width: 56px;
   display: flex;
   margin: 1px 6px;
   height: 20px;

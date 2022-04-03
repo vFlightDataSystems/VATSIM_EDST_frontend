@@ -174,6 +174,7 @@ const appSlice = createSlice({
       for (let menu of Object.values(menuEnum)) {
         state.menus[menu as menuEnum].open = false;
       }
+      state.asel = null;
     },
     closeAircraftMenus(state) {
       for (let menu of AIRCRAFT_MENUS) {
