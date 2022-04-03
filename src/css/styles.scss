@@ -47,17 +47,10 @@ $default-delete-cursor: default;
 
 .aircraft-track-line {
   background: transparent;
-
-  .line {
-    transform: translate(1px, -5px) rotate(-45deg);
-    height: 1px;
-    width: 30px;
-    background-color: #ADADAD;
-  }
 }
 
 .vatsim-logo {
-  background-image: url(../resources/images/VATSIM-social_icon.svg);
+  background-image: url('../resources/images/VATSIM-social_icon.svg');
 }
 
 .skyvector-logo {

@@ -73,7 +73,7 @@ export const OptionsBodyRow = styled.div<{ padding?: string, margin?: string, ju
   justify-content: ${props => props.justifyContent ?? "left"};
   padding: ${props => props.padding ?? "0 4px"};
   border: none;
-  min-height: 20px;
+  //min-height: 20px;
   overflow: hidden;
 
   ${props => props.margin && {margin: props.margin}}
@@ -155,9 +155,10 @@ export const OptionsBodyCol = styled.div<{ selected?: boolean, alignRight?: bool
 `;
 export const UplinkCol = styled(OptionsBodyCol)`font-size: 30px`;
 export const OptionsFlexCol = styled(OptionsBodyCol)`
+  display: flex;
   justify-content: left;
   height: 22px;
-  padding: 0 6px;
+  padding: 0 5px;
 
   &:hover {
     border: 1px solid #ADADAD;

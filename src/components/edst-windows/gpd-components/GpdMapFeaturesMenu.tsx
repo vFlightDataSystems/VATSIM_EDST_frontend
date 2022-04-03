@@ -33,7 +33,6 @@ export const GpdMapFeaturesMenu: React.FC = () => {
           </EdstTooltip>
         </OptionsBodyRow>
       })}
-
       <OptionsBottomRow>
         <OptionsBodyCol>
           <EdstButton content="OK" onMouseDown={() => {
