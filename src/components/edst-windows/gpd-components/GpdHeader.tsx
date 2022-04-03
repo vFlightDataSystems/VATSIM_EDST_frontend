@@ -9,7 +9,6 @@ import {
   AselType,
   closeAllMenus, closeMenu,
   closeWindow, gpdAselSelector,
-  setAsel,
 } from "../../../redux/slices/appSlice";
 import {NoSelectDiv} from "../../../styles/styles";
 import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
@@ -42,8 +41,7 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
       focused={focused}
       closeWindow={() => {
         if (asel?.window === windowEnum.graphicPlanDisplay) {
-          dispatch(closeAllMenus);
-          dispatch(setAsel(null));
+          dispatch(closeAllMenus());
         }
         dispatch(closeWindow(windowEnum.graphicPlanDisplay));
       }}

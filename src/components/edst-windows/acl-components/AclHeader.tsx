@@ -11,7 +11,6 @@ import {
   AselType,
   closeAllMenus, closeMenu,
   closeWindow,
-  setAsel,
   setInputFocused
 } from "../../../redux/slices/appSlice";
 import {addAclEntryByFid} from "../../../redux/thunks/entriesThunks";
@@ -39,8 +38,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
       focused={focused}
       closeWindow={() => {
         if (asel?.window === windowEnum.acl) {
-          dispatch(closeAllMenus);
-          dispatch(setAsel(null));
+          dispatch(closeAllMenus());
         }
         dispatch(closeWindow(windowEnum.acl));
       }}

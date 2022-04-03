@@ -5,7 +5,7 @@ import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {setDepManualPosting} from "../../../redux/slices/depSlice";
 import {menuEnum, windowEnum} from "../../../enums";
-import {closeWindow, depAselSelector, setAsel, setInputFocused} from "../../../redux/slices/appSlice";
+import {closeAllMenus, closeWindow, depAselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
@@ -35,7 +35,7 @@ export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
       focused={focused}
       closeWindow={() => {
         if (asel?.window === windowEnum.dep) {
-          dispatch(setAsel(null));
+          dispatch(closeAllMenus());
         }
         dispatch(closeWindow(windowEnum.dep))
       }}

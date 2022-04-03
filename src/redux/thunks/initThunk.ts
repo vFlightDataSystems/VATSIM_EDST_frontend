@@ -1,7 +1,7 @@
 import {
   fetchArtccNavaids,
   fetchArtccSectorTypes, fetchArtccWaypoints,
-  fetchFavData,
+  fetchCtrFavData,
   fetchHighVorList,
   fetchLowVorList,
   fetchReferenceFixes
@@ -50,7 +50,7 @@ export const initThunk = createAsyncThunk(
     thunkAPI.dispatch(setArtccId(artccId));
     thunkAPI.dispatch(setSectorId(sectorId));
     if (Object.keys(sectorData.sectors).length === 0) {
-      await fetchFavData(artccId)
+      await fetchCtrFavData(artccId)
         .then(response => response.json())
         .then(sectors => {
           thunkAPI.dispatch(setSectors(sectors));

@@ -18,7 +18,7 @@ const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv)<{ pos: { x: number, y: 
 const FloatingWindowOptionDiv = styled.div<{ unselected?: boolean }>`
   //position: absolute;
   display: flex;
-  height: 18px;
+  font-size: 16px;
   background-color: #575757;
   border: 1px solid #ADADAD;
   text-indent: 4px;
