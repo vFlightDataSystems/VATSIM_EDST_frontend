@@ -1,7 +1,12 @@
 import React from 'react';
 import {EdstButton} from "./resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import {toggleSector} from "../redux/slices/sectorSlice";
+import {
+  sectorPolygonSelector,
+  sectorProfilesSelector,
+  setSelectedSectors,
+  toggleSector
+} from "../redux/slices/sectorSlice";
 import {setShowSectorSelector} from "../redux/slices/appSlice";
 import {refreshEntriesThunk} from "../redux/slices/entriesSlice";
 import {EdstTooltip} from "./resources/EdstTooltip";
@@ -25,7 +30,7 @@ const SectorSelectorInput = styled.input`
   &:checked {
     display: none;
   }
-  
+
   &:not(:checked) + label:before,
   &:checked + label:before {
     content: "";
@@ -85,6 +90,7 @@ const SectorSelectorLabel = styled.label`
   align-items: center;
   margin-top: 10px;
   cursor: default;
+
   ::before, ::after {
     display: flex;
     align-items: center;
@@ -93,11 +99,32 @@ const SectorSelectorLabel = styled.label`
     margin: 0 12px;
   }
 `;
+const SectorSelectorDropdown = styled.select`
+  margin-left: 5px;
+  font-size: 16px;
+  border: 1px solid #ADADAD;
+  background-color: #000000;
+  color: #FFFFFF;
+`;
 
 export const SectorSelector: React.FC = () => {
   const dispatch = useAppDispatch();
-  const sectors = useAppSelector((state) => state.sectorData.sectors);
+  const sectors = useAppSelector(sectorPolygonSelector);
+  const profiles = useAppSelector(sectorProfilesSelector);
   const selectedSectors = useAppSelector((state) => state.sectorData.selectedSectors);
+
+  const onProfileChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!event.target.value) {
+      dispatch(setSelectedSectors([]))
+    } else if (event.target.value === 'All') {
+      dispatch(setSelectedSectors(Object.keys(sectors)[0]));
+    } else {
+      let profile = profiles.find(profile => profile.id === event.target.value);
+      if (profile) {
+        dispatch(setSelectedSectors(profile.sectors));
+      }
+    }
+  }
 
   return (
     <SectorSelectorDiv>
@@ -109,13 +136,19 @@ export const SectorSelector: React.FC = () => {
         <hr style={{color: '#000000', padding: 20, border: 'none'}}/>
         <SectorSelectorH1>Pick your sectors</SectorSelectorH1>
         <SectorSelectorForm>
+          <SectorSelectorDropdown onChange={onProfileChange}>
+            <option style={{color: "#ADADAD"}} value="">Select a profile (optional)</option>
+            <option value="All">All</option>
+            {profiles.map(profile => <option value={profile.id}>{profile.id}</option>)}
+          </SectorSelectorDropdown>
           <CheckBoxBlock>
             {Object.entries(sectors).map(([id, sector]) =>
               <EdstTooltip title={sector?.properties?.name} key={`sector-selector-${id}-container`}>
                 {[<SectorSelectorInput key={`sector-selector-${id}-input`} type="checkbox"
-                       onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id} checked={selectedSectors.includes(id)}
+                                       onChange={() => dispatch(toggleSector(id))} id={id} value={id} name={id}
+                                       checked={selectedSectors.includes(id)}
                 />,
-                <SectorSelectorLabel key={`sector-selector-${id}-label`} htmlFor={id}>{id}</SectorSelectorLabel>]}
+                  <SectorSelectorLabel key={`sector-selector-${id}-label`} htmlFor={id}>{id}</SectorSelectorLabel>]}
               </EdstTooltip>)}
           </CheckBoxBlock>
         </SectorSelectorForm>

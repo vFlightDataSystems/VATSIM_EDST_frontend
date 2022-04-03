@@ -72,12 +72,13 @@ type EdstButtonProps = {
 export const EdstButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props}) => {
   return (<EdstTooltip title={props.title}>
     <EdstOuterButton // @ts-ignore
-                     disabled={props.disabled}
-                     width={props.width}
-                     height={props.height}
-                     margin={props.margin}
-                     id={id}
-                     onMouseDownCapture={onMouseDown}>
+      disabled={props.disabled}
+      width={props.width}
+      height={props.height}
+      margin={props.margin}
+      id={id}
+      onMouseDownCapture={onMouseDown}
+    >
       <EdstInnerButton selected={props.selected} // @ts-ignore
                        disabled={props.disabled}
                        padding={props.padding}
@@ -91,9 +92,9 @@ export const EdstButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props
 export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props}) => {
   return (<EdstTooltip title={props.title}>
     <EdstOuterHeaderButton // @ts-ignore
-                           disabled={props.disabled}
-                           id={id}
-                           onMouseDownCapture={onMouseDown}>
+      disabled={props.disabled}
+      id={id}
+      onMouseDownCapture={onMouseDown}>
       <EdstInnerButton selected={props.selected} // @ts-ignore
                        disabled={props.disabled}
       >
@@ -106,10 +107,10 @@ export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({onMouseDown, 
 export const HoldDirButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props}) => {
   return (<EdstTooltip title={props.title}>
     <EdstOuterButton // @ts-ignore
-                     disabled={props.disabled}
-                     margin="0 2px"
-                     id={id}
-                     onMouseDownCapture={onMouseDown}>
+      disabled={props.disabled}
+      margin="0 2px"
+      id={id}
+      onMouseDownCapture={onMouseDown}>
       <EdstInnerButton selected={props.selected} // @ts-ignore
                        disabled={props.disabled}
                        width={props.width}
