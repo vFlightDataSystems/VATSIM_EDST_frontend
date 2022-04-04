@@ -10,10 +10,6 @@ export const NoSelectDiv = styled.div`
   -moz-user-select: none;
   -ms-user-select: none;
 `;
-export const DraggingDiv = styled(NoSelectDiv)`
+export const NoPointerEventsDiv = styled(NoSelectDiv)`
   pointer-events: none;
-`;
-
-export const FocusedWindowDiv = styled.div`
-  background-color: #008585;
 `;

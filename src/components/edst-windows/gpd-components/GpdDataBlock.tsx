@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {LocalEdstEntryType} from "../../../types";
 import {aclRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
@@ -12,8 +12,12 @@ type GpdDataBlockProps = {
   pos: { x: number, y: number } | null
 }
 
-const DataBlockDiv = styled.div`
+const DataBlockDiv = styled.div<{pos: {x: number, y: number}, offset: {x: number, y: number}}>`
   z-index: 999;
+  ${props => ({
+    left: props.pos.x + props.offset.x + 24,
+    top: props.pos.y + props.offset.y - 30
+  })}
   width: auto;
   position: absolute;
   font-family: ${defaultFontFamily};
@@ -39,9 +43,14 @@ const DataBlockElement = styled.span<{ selected?: boolean }>`
 export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({entry, pos}) => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector);
+  // datablock offset after it has been dragged by the user
+  // to be implemented
+  const [offset, setOffset] = useState({x: 0, y: 0});
+
   const selectedField = asel?.cid === entry.cid && asel?.window === windowEnum.graphicPlanDisplay
     ? asel.field as aclRowFieldEnum : null;
-  return pos && (<DataBlockDiv style={{left: pos.x + 24, top: pos.y - 30}}>
+
+  return pos && (<DataBlockDiv pos={pos} offset={offset}>
     <DataBlockElement
       selected={selectedField === aclRowFieldEnum.fid}
       onMouseDown={(event) => dispatch(gpdAircraftSelect(event, entry.cid, aclRowFieldEnum.fid))}

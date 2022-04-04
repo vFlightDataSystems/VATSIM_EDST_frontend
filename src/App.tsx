@@ -88,8 +88,7 @@ export const App: React.FC = () => {
       if (weatherUpdateIntervalId) {
         clearInterval(weatherUpdateIntervalId);
       }
-    };
-    // eslint-disable-next-line
+    }; // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -112,16 +111,7 @@ export const App: React.FC = () => {
       const relX = event.pageX - bodyRef?.current.relativePos.x;
       const relY = event.pageY - bodyRef?.current.relativePos.y;
       const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
-      const window = bodyRef.current.draggingWindowName;
-      let ppos;
-      if (window in windowEnum) {
-        ppos = windows[window as windowEnum].position;
-      } else if (window in menuEnum) {
-        ppos = menus[window as menuEnum].position;
-      }
-      if (!ppos) {
-        return;
-      }
+      const ppos = bodyRef.current.ppos;
       setDragPreviewStyle({
         ...computePreviewPos(ppos.x + relX, ppos.y + relY, width, height),
         position: "absolute",
@@ -154,6 +144,7 @@ export const App: React.FC = () => {
     if (bodyRef.current) {
       bodyRef.current.windowRef = ref;
       bodyRef.current.draggingWindowName = window;
+      bodyRef.current.ppos = ppos;
       bodyRef.current.relativePos = relativePos;
       setDragPreviewStyle(style);
       setDraggingCursorHide(DRAGGING_HIDE_CURSOR.includes(window));
@@ -171,15 +162,7 @@ export const App: React.FC = () => {
       if (bodyRef?.current) {
         bodyRef.current.removeEventListener('mousemove', draggingHandler);
       }
-      let ppos;
-      if (window in windowEnum) {
-        ppos = windows[window as windowEnum].position;
-      } else if (window in menuEnum) {
-        ppos = menus[window as menuEnum].position;
-      }
-      if (!ppos) {
-        return;
-      }
+      const ppos = bodyRef.current.ppos;
       const {left: x, top: y} = computePreviewPos(ppos.x + relX, ppos.y + relY, width, height);
       if (window in windowEnum) {
         dispatch(setWindowPosition({

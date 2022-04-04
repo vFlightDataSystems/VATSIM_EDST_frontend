@@ -117,7 +117,7 @@ export const SectorSelector: React.FC = () => {
     if (!event.target.value) {
       dispatch(setSelectedSectors([]))
     } else if (event.target.value === 'All') {
-      dispatch(setSelectedSectors(Object.keys(sectors)[0]));
+      dispatch(setSelectedSectors([Object.keys(sectors)[0]]));
     } else {
       let profile = profiles.find(profile => profile.id === event.target.value);
       if (profile) {

@@ -4,17 +4,37 @@ import {Feature, Polygon, Position, Properties} from "@turf/turf";
 import L, {LatLngExpression} from "leaflet";
 import {useAppSelector} from "../../../redux/hooks";
 import {entrySelector} from "../../../redux/slices/entriesSlice";
-import {trackArrowIcon, trackIcon, vorIcon} from "./LeafletIcons";
+import {trackIcon, vorIcon} from "./LeafletIcons";
 import {GpdDataBlock} from "./GpdDataBlock";
 import {RouteFixType, LocalEdstEntryType} from "../../../types";
 import {getNextFix} from "../../../lib";
 import {useBoolean} from 'usehooks-ts';
+import styled from "styled-components";
 
 const SHOW_ROUTE = false;
 
 type GpdFixProps = {
   lat: number | string,
   lon: number | string,
+}
+
+const TrackLineDiv = styled.div<{ pos: { x: number, y: number } }>`
+  transform-origin: top left;
+  transform: rotate(-45deg);
+  position: absolute;
+  ${props => ({
+    left: props.pos.x,
+    top: props.pos.y
+  })}
+  height: 1px;
+  width: 30px;
+  background-color: #ADADAD;
+`;
+
+const TrackLine: React.FC<{ start: { x: number, y: number } | null, end?: { x: number, y: number } | null }>
+  = ({start, end}) => {
+
+  return start && <TrackLineDiv pos={start}/>;
 }
 
 function posToLatLng(pos: Position | { lat: number, lon: number }): LatLngExpression {
@@ -90,12 +110,14 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
     <Marker position={posLatLng} icon={trackIcon} opacity={1} ref={ref} riseOnHover={true}
             eventHandlers={{contextmenu: toggleShowDataBlock}}
     >
-      {showDataBlock && <>
-          <Marker position={posLatLng} icon={trackArrowIcon(-45)}/>
-          <GpdDataBlock entry={entry} pos={trackPos}/>
-      </>}
     </Marker>
-    {SHOW_ROUTE && routeLine && <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))}
-                                          pathOptions={{color: '#ADAD00', weight: 1.1}}/>}
+    {showDataBlock && <>
+        <TrackLine start={trackPos}/>
+        <GpdDataBlock entry={entry} pos={trackPos}/>
+    </>}
+    {SHOW_ROUTE && routeLine &&
+        <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))}
+                  pathOptions={{color: '#ADAD00', weight: 1.1}}
+        />}
   </>;
 };

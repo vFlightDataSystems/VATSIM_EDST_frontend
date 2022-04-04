@@ -6,9 +6,9 @@ import {draggingSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
-import {DraggingDiv} from "../../styles/styles";
+import {NoPointerEventsDiv} from "../../styles/styles";
 
-const AclDiv = styled.div`
+const AclDiv = styled.div<{ dragging?: boolean }>`
   white-space: nowrap;
   display: flex;
   flex-flow: column;
@@ -18,8 +18,8 @@ const AclDiv = styled.div`
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
-  
-  ${(props: {dragging?: boolean}) => props.dragging && `${DraggingDiv}`}
+
+  ${props => props.dragging && NoPointerEventsDiv}
 `;
 
 export const Acl: React.FC = () => {
@@ -27,10 +27,7 @@ export const Acl: React.FC = () => {
   const focused = useFocused(ref);
   const dragging = useAppSelector(draggingSelector);
 
-  return (<AclDiv dragging={dragging}
-    ref={ref}
-    // style={{zIndex: props.z_index}}
-  >
+  return (<AclDiv dragging={dragging} ref={ref}>
     <AclHeader focused={focused}/>
     <AclTable/>
   </AclDiv>);
