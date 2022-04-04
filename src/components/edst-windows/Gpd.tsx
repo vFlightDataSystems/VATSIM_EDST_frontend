@@ -7,7 +7,7 @@ import {GpdHeader} from "./gpd-components/GpdHeader";
 import {GpdBody} from "./gpd-components/GpdBody";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
-import {DraggingDiv} from "../../styles/styles";
+import {NoPointerEventsDiv} from "../../styles/styles";
 
 const GpdDiv = styled.div<{dragging?: boolean}>`
   white-space: nowrap;
@@ -19,7 +19,7 @@ const GpdDiv = styled.div<{dragging?: boolean}>`
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
-  ${props => props.dragging && DraggingDiv}
+  ${props => props.dragging && NoPointerEventsDiv}
 `;
 
 export const Gpd: React.FC = () => {

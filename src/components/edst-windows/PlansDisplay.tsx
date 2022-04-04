@@ -6,7 +6,7 @@ import {useAppSelector} from "../../redux/hooks";
 import {draggingSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
-import {DraggingDiv} from "../../styles/styles";
+import {NoPointerEventsDiv} from "../../styles/styles";
 import {edstFontGrey} from "../../styles/colors";
 
 const PlansDisplayDiv = styled.div<{dragging?: boolean}>`
@@ -20,7 +20,7 @@ const PlansDisplayDiv = styled.div<{dragging?: boolean}>`
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
   
-  ${(props: {dragging?: boolean}) => props.dragging && `${DraggingDiv}`}
+  ${(props: {dragging?: boolean}) => props.dragging && `${NoPointerEventsDiv}`}
 `;
 
 export const PlansDisplay: React.FC = () => {

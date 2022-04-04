@@ -29,8 +29,9 @@ const MapConfigurator: React.FC<MapConfiguratorProps> = ({zoomLevel}) => {
   useEffect(() => {
     map.setZoom(zoomLevel);
   }, [zoomLevel]);
-  return null
+  return null;
 }
+
 const GpdBodyDiv = styled.div`
   overflow: hidden;
   width: 100%;
@@ -47,10 +48,10 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
   const sectors = useAppSelector(sectorPolygonSelector);
   const sectorTypes = useAppSelector(gpdSectorTypesSelector);
   const selectedMapFeatureOptions = useAppSelector(gpdMapFeatureOptionsSelector);
-  const selectedAircraftDisplayOptions = useAppSelector(gpdAircraftDispalyOptionsSelector);
+  // const selectedAircraftDisplayOptions = useAppSelector(gpdAircraftDispalyOptionsSelector);
   const navaidList = useAppSelector(gpdNavaidSelector);
-  const waypointList = useAppSelector(gpdWaypointSelector);
-  const airways = useAppSelector(gpdAirwaySelector);
+  // const waypointList = useAppSelector(gpdWaypointSelector);
+  // const airways = useAppSelector(gpdAirwaySelector);
   const entries = useAppSelector(entriesSelector);
   const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay && entry.flightplan.ground_speed > 40), [entries]);
 
@@ -78,7 +79,8 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
             && sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.ultraHigh)
         ) && <GpdMapSectorPolygon sector={sector}/>
       )}
-      {selectedMapFeatureOptions[MapFeatureOptionEnum.navaid] && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.name}`} {...fix}/>)}
+      {selectedMapFeatureOptions[MapFeatureOptionEnum.navaid] && navaidList.map(fix => <GpdNavaid
+        key={`gpd-navaid-${fix.name}`} {...fix}/>)}
       {entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.cid}`} cid={entry.cid}/>)}
     </MapContainer>
   </GpdBodyDiv>);

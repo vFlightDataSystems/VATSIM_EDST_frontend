@@ -6,9 +6,9 @@ import {draggingSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
-import {DraggingDiv} from "../../styles/styles";
+import {NoPointerEventsDiv} from "../../styles/styles";
 
-const DepDiv = styled.div`
+const DepDiv = styled.div<{dragging?: boolean}>`
   white-space:nowrap;
   overflow: hidden;
   flex-flow: column;
@@ -19,8 +19,8 @@ const DepDiv = styled.div`
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
-  
-  ${(props: {dragging?: boolean}) => props.dragging && `${DraggingDiv}`}
+
+  ${props => props.dragging && NoPointerEventsDiv}
 `;
 
 export const Dep: React.FC = () => {

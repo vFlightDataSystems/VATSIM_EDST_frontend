@@ -57,8 +57,13 @@ export type GpdStateType = {
   displayData: any
 };
 
+const initialMapFeatureOptionsState = {
+  [MapFeatureOptionEnum.lowSectors]: true,
+  [MapFeatureOptionEnum.highSectors]: true
+}
+
 const initialState: GpdStateType = {
-  mapFeatureOptions: {},
+  mapFeatureOptions: initialMapFeatureOptionsState,
   sectorTypes: {},
   navaids: [],
   waypoints: [],
