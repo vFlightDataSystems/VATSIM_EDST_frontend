@@ -81,7 +81,7 @@ export const SigmetWindow: React.FC = () => {
       </FloatingWindowHeaderDiv>
       {Object.values(sigmetList).length > 0 &&
           <FloatingWindowBodyDiv>
-              <ScrollContainer maxHeight={500}>
+              <ScrollContainer maxHeight={600}>
                 {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
                     <span style={{margin: "6px 0"}} key={`sigmet-list-key-${sigmetId}`}>
             <FloatingWindowRow

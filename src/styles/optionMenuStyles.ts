@@ -206,7 +206,7 @@ export const ScrollContainer = styled.div<{ maxHeight?: number }>`
   overflow: scroll;
   scrollbar-width: none;
 
-  max-height: ${props => props.maxHeight ?? 'auto'};
+  max-height: ${props => props.maxHeight ? props.maxHeight + "px" : 'auto'};
 
   &::-webkit-scrollbar {
     display: none;
