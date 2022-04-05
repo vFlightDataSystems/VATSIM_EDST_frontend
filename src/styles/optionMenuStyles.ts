@@ -127,6 +127,7 @@ export const FidRow = styled(OptionsBodyRow)`
 export const OptionsBodyCol = styled.div<{ selected?: boolean, alignRight?: boolean, maxWidth?: number, maxHeight?: number, margin?: string, padding?: string, hover?: boolean, justifyContent?: string }>`
   flex-grow: 1;
   flex-flow: row;
+  font-size: 16px;
   justify-content: ${props => props.justifyContent ?? "center"};
   align-items: center;
   vertical-align: center;
