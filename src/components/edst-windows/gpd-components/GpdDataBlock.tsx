@@ -9,10 +9,11 @@ import {defaultFontFamily} from "../../../styles/styles";
 
 type GpdDataBlockProps = {
   entry: LocalEdstEntryType,
-  pos: { x: number, y: number } | null
+  pos: { x: number, y: number } | null,
+  toggleShowRoute(): void
 }
 
-const DataBlockDiv = styled.div<{pos: {x: number, y: number}, offset: {x: number, y: number}}>`
+const DataBlockDiv = styled.div<{ pos: { x: number, y: number }, offset: { x: number, y: number } }>`
   z-index: 999;
   ${props => ({
     left: props.pos.x + props.offset.x + 24,
@@ -40,7 +41,7 @@ const DataBlockElement = styled.span<{ selected?: boolean }>`
   }
 `;
 
-export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({entry, pos}) => {
+export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({entry, pos, toggleShowRoute}) => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector);
   // datablock offset after it has been dragged by the user
@@ -50,10 +51,23 @@ export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({entry, pos}) => {
   const selectedField = asel?.cid === entry.cid && asel?.window === windowEnum.graphicPlanDisplay
     ? asel.field as aclRowFieldEnum : null;
 
+  const onCallsignMouseDown = (event: React.MouseEvent) => {
+    switch (event.button) {
+      case 0:
+        dispatch(gpdAircraftSelect(event, entry.cid, aclRowFieldEnum.fid));
+        break;
+      case 1:
+        toggleShowRoute();
+        break;
+      default:
+        break;
+    }
+  }
+
   return pos && (<DataBlockDiv pos={pos} offset={offset}>
     <DataBlockElement
       selected={selectedField === aclRowFieldEnum.fid}
-      onMouseDown={(event) => dispatch(gpdAircraftSelect(event, entry.cid, aclRowFieldEnum.fid))}
+      onMouseDown={onCallsignMouseDown}
     >
       {entry.callsign}
     </DataBlockElement><br/>

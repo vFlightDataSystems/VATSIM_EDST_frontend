@@ -10,3 +10,8 @@ export const vorIcon = L.divIcon({
   className: 'circle-icon',
   iconSize: [12, 12]
 });
+
+export const fixIcon = L.divIcon({
+  className: 'plus-icon',
+  iconSize: [12, 12]
+});
