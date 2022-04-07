@@ -147,9 +147,13 @@ export function getRemainingRouteData(route: string, routeData: (RouteFixType & 
 export function getNextFix(route: string, routeData: RouteFixType[], pos: Position): (RouteFixType & { dist: number })[] {
   const routeDataWithDistance = getRouteDataDistance(_.cloneDeep(routeData), pos);
   if (routeDataWithDistance.length > 1) {
+    let fixNames = routeData.map((e: { name: string }) => e.name);
     const sortedRouteData = routeDataWithDistance.sort((u, v) => u.dist - v.dist);
     const closestFix = sortedRouteData[0];
-    const index = routeDataWithDistance.indexOf(closestFix);
+    const index = fixNames.indexOf(closestFix.name);
+    if (index === routeDataWithDistance.length - 1) {
+      return [closestFix];
+    }
     const followingFix = routeDataWithDistance[index + 1];
     const line = lineString([closestFix.pos, followingFix.pos]);
     const lineDistance = pointToLineDistance(pos, line, {units: 'nauticalmiles'});
