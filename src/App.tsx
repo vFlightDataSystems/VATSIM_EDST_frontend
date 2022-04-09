@@ -120,7 +120,7 @@ export const App: React.FC = () => {
         width: width
       });
     }
-  }, [windows, menus]);
+  }, []);
 
   const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum | menuEnum) => {
     const relativePos = {x: event.pageX, y: event.pageY};
@@ -215,12 +215,12 @@ export const App: React.FC = () => {
                  onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
     >
       {showSectorSelector && <SectorSelector/>}
-      <EdstDraggingOutline
-        style={dragging ? dragPreviewStyle : {display: 'none'}}
+      {dragging && <EdstDraggingOutline
+        style={dragPreviewStyle}
         onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
       >
         {draggingCursorHide && <DraggingCursor/>}
-      </EdstDraggingOutline>
+      </EdstDraggingOutline>}
       <EdstContext.Provider value={{
         startDrag: startDrag,
         stopDrag: stopDrag

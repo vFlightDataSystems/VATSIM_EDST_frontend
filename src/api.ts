@@ -48,16 +48,12 @@ export async function fetchArtccWaypoints(artcc: string): Promise<Response> {
   return await fetch(`${baseurl}/edst/gpd/${artcc}/waypoints`);
 }
 
+export async function fetchArtccAirways(artcc: string): Promise<Response> {
+  return await fetch(`${baseurl}/edst/gpd/${artcc}/airways`);
+}
+
 export async function fetchArtccSectorTypes(artcc: string): Promise<Response> {
   return await fetch(`${baseurl}/edst/gpd/${artcc}/sectors`);
-}
-
-export async function fetchHighVorList(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/navdata/${artcc}/vor/high`);
-}
-
-export async function fetchLowVorList(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/navdata/${artcc}/vor/low`);
 }
 
 export async function fetchAirportMetar(airport: string): Promise<Response> {

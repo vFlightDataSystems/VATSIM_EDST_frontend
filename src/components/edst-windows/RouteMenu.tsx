@@ -2,7 +2,13 @@ import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 import '../../css/styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
-import {computeFrd, copy, getClearedToFixRouteData, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
+import {
+  computeFrd,
+  copy,
+  getClearedToFixRouteData,
+  getClosestReferenceFix,
+  removeDestFromRouteString
+} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../resources/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../resources/images/glob_bright.png';
@@ -106,7 +112,7 @@ export const RouteMenu: React.FC = () => {
   const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
   const [append, setAppend] = useState({appendOplus: false, appendStar: false});
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
 
   const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),

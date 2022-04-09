@@ -13,7 +13,7 @@ import {
   Position
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import {EdstEntryType, RouteFixType, LocalEdstEntryType, ReferenceFixType} from "./types";
+import {EdstEntryType, RouteFixType, LocalEdstEntryType, ReferenceFixType, FixType} from "./types";
 import {toast} from "./components/toast/ToastManager";
 import * as geomag from 'geomag';
 import _ from "lodash";
@@ -321,7 +321,7 @@ export function removeDestFromRouteString(route: string, dest: string): string {
   return route;
 }
 
-export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEdstEntryType, referenceFixes: ReferenceFixType[] | null):
+export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEdstEntryType, referenceFixes: FixType[] | null):
   { route: string, route_data: RouteFixType[], cleared_direct: { frd: string | null, fix: string } } | null {
   let {_route: newRoute, _route_data: routeData, dest} = entry;
   if (newRoute && routeData) {

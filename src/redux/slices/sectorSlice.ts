@@ -1,6 +1,6 @@
 import {Feature, polygon, Polygon} from "@turf/turf";
 import {createSlice} from "@reduxjs/toolkit";
-import {NavaidType, SectorDataType} from "../../types";
+import {FixType, SectorDataType} from "../../types";
 import {RootState} from "../store";
 
 type SectorProfileType = {id: string, name: string, sectors: string[]};
@@ -9,11 +9,9 @@ export type SectorDataStateType = {
   sectors: {[id: string]: Feature<Polygon>},
   profiles: SectorProfileType[],
   selectedSectors: string[],
-  referenceFixes: any[],
+  referenceFixes: FixType[],
   sectorId: string,
   artccId: string,
-  vorHighList: NavaidType[],
-  vorLowList: NavaidType[]
 };
 
 const initialState = {
@@ -21,8 +19,6 @@ const initialState = {
   profiles: [],
   selectedSectors: [],
   referenceFixes: [],
-  vorHighList: [],
-  vorLowList: [],
   sectorId: '',
   artccId: ''
 };
@@ -59,19 +55,11 @@ const sectorSlice = createSlice({
     setReferenceFixes(state: SectorDataStateType, action) {
       state.referenceFixes = action.payload;
     },
-    setVorHighList(state: SectorDataStateType, action) {
-      state.vorHighList = action.payload;
-    },
-    setVorLowList(state: SectorDataStateType, action) {
-      state.vorLowList = action.payload;
-    }
   }
 });
 
-export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes, setVorHighList, setVorLowList, setSectorProfiles} = sectorSlice.actions
+export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes, setSectorProfiles} = sectorSlice.actions;
 export default sectorSlice.reducer;
 export const referenceFixSelector = (state: RootState) => state.sectorData.referenceFixes;
 export const sectorPolygonSelector = (state: RootState) => state.sectorData.sectors;
-export const vorHighListSelector = (state: RootState) => state.sectorData.vorHighList;
-export const vorLowListSelector = (state: RootState) => state.sectorData.vorLowList;
 export const sectorProfilesSelector = (state: RootState) => state.sectorData.profiles;

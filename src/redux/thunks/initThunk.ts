@@ -1,9 +1,8 @@
 import {
+  fetchArtccAirways,
   fetchArtccNavaids,
   fetchArtccSectorTypes, fetchArtccWaypoints,
   fetchCtrFavData, fetchCtrProfiles,
-  fetchHighVorList,
-  fetchLowVorList,
   fetchReferenceFixes
 } from "../../api";
 import {RootState} from "../store";
@@ -12,13 +11,11 @@ import {
   setReferenceFixes,
   setSectorId, setSectorProfiles,
   setSectors,
-  setVorHighList,
-  setVorLowList
 } from "../slices/sectorSlice";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {refreshEntriesThunk} from "../slices/entriesSlice";
 import {refreshSigmets} from "./weatherThunks";
-import {SectorTypeEnum, setNavaids, setSectorTypes, setWaypoints} from "../slices/gpdSlice";
+import {SectorTypeEnum, setAirways, setNavaids, setSectorTypes, setWaypoints} from "../slices/gpdSlice";
 import {FixType} from "../../types";
 
 const DISCLAIMER_MESSAGE = `
@@ -67,24 +64,6 @@ export const initThunk = createAsyncThunk(
           }
         });
     }
-    if (!(sectorData.vorHighList.length > 0)) {
-      await fetchHighVorList(artccId)
-        .then(response => response.json())
-        .then(vorList => {
-          if (vorList) {
-            thunkAPI.dispatch(setVorHighList(vorList));
-          }
-        });
-    }
-    if (!(sectorData.vorLowList.length > 0)) {
-      await fetchLowVorList(artccId)
-        .then(response => response.json())
-        .then(vorList => {
-          if (vorList) {
-            thunkAPI.dispatch(setVorLowList(vorList));
-          }
-        });
-    }
     if (!(Object.keys(gpdData.sectorTypes).length > 0)) {
       await fetchArtccSectorTypes(artccId)
         .then(response => response.json())
@@ -110,15 +89,15 @@ export const initThunk = createAsyncThunk(
     if (!(gpdData.navaids.length > 0)) {
       await fetchArtccNavaids(artccId)
         .then(response => response.json())
-        .then((navaidList: FixType[]) => {
+        .then((navaidList: (Partial<FixType> & any)[]) => {
           if (navaidList) {
             // remove duplicates, thanks to https://stackoverflow.com/a/36744732
             navaidList = navaidList.filter((value, index, self) =>
                 index === self.findIndex((t) => (
-                  t.waypoint_id === value.waypoint_id
+                  t.navaid_id === value.navaid_id
                 ))
             )
-            thunkAPI.dispatch(setNavaids(navaidList));
+            thunkAPI.dispatch(setNavaids(navaidList.map(navaid => ({...navaid, waypoint_id: navaid.navaid_id}))));
           }
         })
     }
@@ -134,6 +113,15 @@ export const initThunk = createAsyncThunk(
                 ))
             )
             thunkAPI.dispatch(setWaypoints(waypointList));
+          }
+        })
+    }
+    if (!(Object.keys(gpdData.airways).length > 0)) {
+      await fetchArtccAirways(artccId)
+        .then(response => response.json())
+        .then((aiwaySegmentList) => {
+          if (aiwaySegmentList) {
+            thunkAPI.dispatch(setAirways(aiwaySegmentList));
           }
         })
     }
