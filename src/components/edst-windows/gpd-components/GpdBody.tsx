@@ -5,7 +5,7 @@ import {useAppSelector} from "../../../redux/hooks";
 import {
   sectorPolygonSelector
 } from "../../../redux/slices/sectorSlice";
-import {GpdAircraftTrack, GpdNavaid, GpdMapSectorPolygon, GpdFix} from "./GpdMapElements";
+import {GpdAircraftTrack, GpdNavaid, GpdMapSectorPolygon, GpdFix, GpdAirwayPolyline} from "./GpdMapElements";
 import {LocalEdstEntryType} from "../../../types";
 import {entriesSelector} from "../../../redux/slices/entriesSlice";
 import styled from "styled-components";
@@ -51,7 +51,7 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
   // const selectedAircraftDisplayOptions = useAppSelector(gpdAircraftDispalyOptionsSelector);
   const navaidList = useAppSelector(gpdNavaidSelector);
   const waypointList = useAppSelector(gpdWaypointSelector);
-  // const airways = useAppSelector(gpdAirwaySelector);
+  const airways = useAppSelector(gpdAirwaySelector);
   const entries = useAppSelector(entriesSelector);
   const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay && entry.flightplan.ground_speed > 40), [entries]);
 
@@ -79,10 +79,16 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
             && sectorTypes[id] as SectorTypeEnum === SectorTypeEnum.ultraHigh)
         ) && <GpdMapSectorPolygon sector={sector} key={`gpd-sector-polygon-${id}`}/>
       )}
+      {Object.entries(airways).map(([airway, segments]) => (
+        (selectedMapFeatureOptions[MapFeatureOptionEnum.Jairways] && airway.includes('J'))
+        || (selectedMapFeatureOptions[MapFeatureOptionEnum.Qairways] && airway.includes('Q'))
+        || (selectedMapFeatureOptions[MapFeatureOptionEnum.Vairways] && airway.includes('V'))
+        || (selectedMapFeatureOptions[MapFeatureOptionEnum.Tairways] && airway.includes('T'))
+      ) && <GpdAirwayPolyline key={`gpd-airway-polyline-${airway}`} segments={segments.slice(0)}/>)}
       {selectedMapFeatureOptions[MapFeatureOptionEnum.navaid]
-        && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.name}`} {...fix}/>)}
+        && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.waypoint_id}`} {...fix}/>)}
       {selectedMapFeatureOptions[MapFeatureOptionEnum.waypoint]
-        && waypointList.map(fix => <GpdFix key={`gpd-waypoint-${fix.name}`} {...fix}/>)}
+        && waypointList.map(fix => <GpdFix key={`gpd-waypoint-${fix.waypoint_id}`} {...fix}/>)}
       {entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.cid}`} cid={entry.cid}/>)}
     </MapContainer>
   </GpdBodyDiv>);

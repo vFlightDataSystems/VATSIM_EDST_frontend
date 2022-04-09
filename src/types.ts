@@ -64,13 +64,22 @@ export type LocalEdstEntryVType = {
 export type LocalEdstEntryType = EdstEntryType & LocalEdstEntryVType;
 
 export type FixType = {
-  artcc_high: string,
-  artcc_low: string,
+  artcc_high?: string,
+  artcc_low?: string,
   lat: string | number,
   lon: string | number,
   name: string,
   type: string,
   waypoint_id: string
+}
+
+export type AirwaySegmentType = {
+  airway: string,
+  lat: string | number,
+  lon: string | number,
+  sequence: string,
+  type: string,
+  wpt: string
 }
 
 export type ReferenceFixType = {

@@ -6,11 +6,11 @@ import {useAppSelector} from "../../../redux/hooks";
 import {entrySelector} from "../../../redux/slices/entriesSlice";
 import {fixIcon, trackIcon, vorIcon} from "./LeafletIcons";
 import {GpdDataBlock} from "./GpdDataBlock";
-import {RouteFixType, LocalEdstEntryType} from "../../../types";
+import {RouteFixType, LocalEdstEntryType, AirwaySegmentType} from "../../../types";
 import {getNextFix} from "../../../lib";
 import {useBoolean} from 'usehooks-ts';
 import styled from "styled-components";
-import {edstFontGreen} from "../../../styles/colors";
+import {edstFontGreen, edstFontGrey} from "../../../styles/colors";
 
 type GpdFixProps = {
   lat: number | string,
@@ -38,11 +38,11 @@ const TrackLine: React.FC<TrackLineProps>
   return start && <TrackLineDiv pos={start} onMouseDown={(event) => event.button === 1 && toggleShowRoute()}/>;
 }
 
-function posToLatLng(pos: Position | { lat: number, lon: number }): LatLngExpression {
+function posToLatLng(pos: Position | { lat: number | string, lon: number | string }): LatLngExpression {
   if (pos instanceof Array) {
     return {lat: pos[1], lng: pos[0]};
   } else {
-    return {lat: pos.lat, lng: pos.lon};
+    return {lat: Number(pos.lat), lng: Number(pos.lon)};
   }
 }
 
@@ -86,6 +86,14 @@ export const GpdFix: React.FC<GpdFixProps> = ({lat, lon}) => {
   const posLatLng = posToLatLng([Number(lon), Number(lat)]);
   return <Marker position={posLatLng} icon={fixIcon}/>;
 };
+
+export const GpdAirwayPolyline: React.FC<{ segments: AirwaySegmentType[] }> = ({segments}) => {
+  return <Polyline
+    positions={segments.sort((u, v) => Number(u.sequence) - Number(v.sequence))
+      .map(segment => posToLatLng({lat: segment.lat, lon: segment.lon}))}
+    pathOptions={{color: edstFontGrey, weight: 0.4}}
+  />;
+}
 
 export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon, Properties> }> = ({sector}) => {
   return <GeoJSON data={sector} pathOptions={{color: '#ADADAD', weight: 1, opacity: 0.3, fill: false}}/>;

@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store";
-import {FixType} from "../../types";
+import {AirwaySegmentType, FixType} from "../../types";
 
 export enum SectorTypeEnum {
   ultraLow = "UL",
@@ -19,6 +19,10 @@ export enum MapFeatureOptionEnum {
   approachBoundaries = "Approach Control Boundaries",
   airport = "Airport",
   airportLabels = "Airport Labels",
+  Jairways = "J Airways",
+  Qairways = "Q Airways",
+  Vairways = "V Airways",
+  Tairways = "T Airways",
   navaid = "NAVAIDS",
   navaidLabels = "NAVAID Labels",
   waypoint = "Waypoints",
@@ -53,7 +57,7 @@ export type GpdStateType = {
   sectorTypes: { [key: string]: SectorTypeEnum }
   navaids: FixType[],
   waypoints: FixType[],
-  airways: any[],
+  airways: {[airway: string]: AirwaySegmentType[]},
   displayData: any
 };
 
@@ -67,7 +71,7 @@ const initialState: GpdStateType = {
   sectorTypes: {},
   navaids: [],
   waypoints: [],
-  airways: [],
+  airways: {},
   aircraftDisplayOptions: {
     [AircraftDisplayOptionsEnum.aircraftListFilter]: false,
     [AircraftDisplayOptionsEnum.altitudeFilterLimits]: false,
@@ -102,8 +106,13 @@ const gpdSlice = createSlice({
     setWaypoints(state, action: { payload: FixType[] }) {
       state.waypoints = action.payload;
     },
-    setAirways(state, action) {
-      state.airways = action.payload;
+    setAirways(state, action: {payload: AirwaySegmentType[]}) {
+      for (let segment of action.payload) {
+        if (!state.airways[segment.airway]) {
+          state.airways[segment.airway] = [];
+        }
+        state.airways[segment.airway].push(segment);
+      }
     }
   }
 });
@@ -115,6 +124,7 @@ export const {
   setSectorTypes,
   setNavaids,
   setWaypoints,
+  setAirways
 } = gpdSlice.actions;
 export default gpdSlice.reducer;
 
