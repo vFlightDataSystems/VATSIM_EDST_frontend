@@ -34,7 +34,6 @@ export const initThunk = createAsyncThunk(
     let gpdData = state.gpd;
     let artccId: string;
     let sectorId: string;
-
     if (process.env.NODE_ENV === 'development') {
       artccId = 'zbw';
       // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';

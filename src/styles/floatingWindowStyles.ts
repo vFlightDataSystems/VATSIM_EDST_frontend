@@ -9,7 +9,7 @@ export const FloatingWindowDiv = styled(NoSelectDiv)<{ width?: number, pos?: { x
   width: ${props => props.width ? props.width + "px" : "auto"};
 
   ${props => props.pos && {
-    left: props.pos.x + 'px', top: props.pos.y + 'px'
+    left: props.pos.x + "px", top: props.pos.y + "px"
   }}
 `;
 

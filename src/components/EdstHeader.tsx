@@ -64,7 +64,6 @@ const ColButton = styled.button<{ width?: number, height?: number, open?: boolea
   ${props => props.open && {
     "background-color": "#595959"
   }}
-  
 `;
 
 type EdstHeaderButtonProps = {
