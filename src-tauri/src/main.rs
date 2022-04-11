@@ -4,7 +4,7 @@
 )]
 
 #[tauri::command]
-fn set_pointer_position(window: tauri::Window, x: i32, y: i32) -> () {
+fn set_pointer_position(window: tauri::Window, x: i32, y: i32) {
   let inner_size = window.inner_size().unwrap();
   let outer_size = window.outer_size().unwrap();
   let pos = window.inner_position().unwrap();
