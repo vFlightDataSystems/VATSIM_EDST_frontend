@@ -103,7 +103,7 @@ export const App: React.FC = () => {
   const computePreviewPos = (x: number, y: number, width: number, height: number): { left: number, top: number } => {
     return {
       left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 2)),
-      top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 2))
+      top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 3))
     };
   }
 
@@ -111,7 +111,7 @@ export const App: React.FC = () => {
     if (event && bodyRef?.current?.windowRef?.current) {
       if (bodyRef.current.reposition) {
         setDragPreviewStyle((prevStyle: any) => ({
-          ...prevStyle, left: event.pageX - 1, top: event.pageY
+          ...prevStyle, left: event.pageX, top: event.pageY
         }));
       } else {
         const relX = event.pageX - bodyRef?.current.relativePos.x;
@@ -125,21 +125,24 @@ export const App: React.FC = () => {
     }
   }, []);
 
-  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum | menuEnum) => {
+  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, edstWindow: windowEnum | menuEnum) => {
     if (bodyRef.current) {
       let ppos;
-      if (window in windowEnum) {
-        ppos = windows[window as windowEnum].position;
-      } else if (window in menuEnum) {
-        ppos = menus[window as menuEnum].position;
+      if (edstWindow in windowEnum) {
+        ppos = windows[edstWindow as windowEnum].position;
+      } else if (edstWindow in menuEnum) {
+        ppos = menus[edstWindow as menuEnum].position;
       }
       if (!ppos) {
         return;
       }
-      bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(window);
-      if (DRAGGING_REPOSITION_CURSOR.includes(window)) {
+      bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
+      if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         let newCursorPos = {x: Math.round(ppos.x * devicePixelRatio), y: Math.round(ppos.y * devicePixelRatio)};
-        invoke('set_pointer_position', newCursorPos);
+        if (window.__TAURI__) {
+          // invoke('grab_cursor');
+          invoke('set_pointer_position', newCursorPos);
+        }
       } else {
         bodyRef.current.relativePos = {x: event.pageX, y: event.pageY};
       }
@@ -152,10 +155,10 @@ export const App: React.FC = () => {
         width: ref.current.clientWidth
       };
       bodyRef.current.windowRef = ref;
-      bodyRef.current.draggingWindowName = window;
+      bodyRef.current.draggingWindowName = edstWindow;
       bodyRef.current.ppos = ppos;
       setDragPreviewStyle(style);
-      setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(window));
+      setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(edstWindow));
       dispatch(setDragging(true));
       bodyRef.current.addEventListener('mousemove', draggingHandler);
     }
@@ -183,9 +186,10 @@ export const App: React.FC = () => {
       dispatch(setDragging(false));
       setDragPreviewStyle(null);
       setDraggingRepositionCursor(false);
-      if (bodyRef?.current) {
-        bodyRef.current.removeEventListener('mousemove', draggingHandler);
-      }
+      bodyRef.current.removeEventListener('mousemove', draggingHandler);
+      // if (window.__TAURI__) {
+      //   invoke('ungrab_cursor');
+      // }
     }
   };
 

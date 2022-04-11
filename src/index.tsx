@@ -6,6 +6,12 @@ import {App} from './App';
 import store from './redux/store';
 // import reportWebVitals from './reportWebVitals';
 
+declare global {
+  interface Window {
+    __TAURI__: Record<string, unknown>;
+  }
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
