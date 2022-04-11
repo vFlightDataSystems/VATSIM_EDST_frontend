@@ -17,6 +17,7 @@ import {EdstEntryType, RouteFixType, LocalEdstEntryType, ReferenceFixType, FixTy
 import {toast} from "./components/toast/ToastManager";
 import * as geomag from 'geomag';
 import _ from "lodash";
+import {clipboard} from "@tauri-apps/api";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -294,12 +295,14 @@ export function formatUtcMinutes(minutes: number): string {
 }
 
 export function copy(text: string) {
-  const input = document.createElement('textarea');
-  input.innerHTML = text;
-  document.body.appendChild(input);
-  input.select();
-  const result = document.execCommand('copy');
-  document.body.removeChild(input);
+  let result;
+  if (window.__TAURI__) {
+    result = clipboard.writeText(text)
+      .then(result => result);
+  }
+  else {
+    navigator.clipboard.writeText(text);
+  }
   toast.show({
     title: "copied to clipboard",
     content: text,
