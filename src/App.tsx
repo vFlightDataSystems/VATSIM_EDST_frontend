@@ -119,7 +119,7 @@ export const App: React.FC = () => {
         const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
         const ppos = bodyRef.current.ppos;
         setDragPreviewStyle((prevStyle: any) => ({
-          ...prevStyle, ...computePreviewPos(ppos.x + relX, ppos.y + relY + 36, width, height)
+          ...prevStyle, ...computePreviewPos(ppos.x + relX, ppos.y + relY + 35, width, height)
         }));
       }
     }
@@ -138,7 +138,7 @@ export const App: React.FC = () => {
       }
       bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
-        let newCursorPos = {x: Math.round(ppos.x * devicePixelRatio), y: Math.round(ppos.y * devicePixelRatio)};
+        let newCursorPos = {x: Math.round(ppos.x * devicePixelRatio) - 1, y: Math.round(ppos.y * devicePixelRatio) - 3};
         if (window.__TAURI__) {
           // invoke('grab_cursor');
           invoke('set_pointer_position', newCursorPos);
@@ -148,8 +148,8 @@ export const App: React.FC = () => {
       }
       const style = {
         zIndex: 1001,
-        left: ppos.x,
-        top: ppos.y + 36,
+        left: ppos.x - 1,
+        top: ppos.y + 35,
         position: "absolute",
         height: ref.current.clientHeight,
         width: ref.current.clientWidth
@@ -169,7 +169,7 @@ export const App: React.FC = () => {
       let newPos;
       const window = bodyRef.current.draggingWindowName;
       const {left: x, top: y} = dragPreviewStyle;
-      newPos = {x: x, y: y - 36};
+      newPos = {x: x + 1, y: y - 35};
       if (window in windowEnum) {
         dispatch(setWindowPosition({
           window: bodyRef.current.draggingWindowName as windowEnum,
