@@ -42,7 +42,7 @@ import {EquipmentTemplateMenu} from "./components/edst-windows/template-componen
 import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
 import {Gpd} from "./components/edst-windows/Gpd";
 import {EdstDiv, EdstBodyDiv} from "./styles/edstStyles";
-import {DraggingCursor, EdstDraggingOutline} from './styles/draggingStyles';
+import {EdstDraggingOutline} from './styles/draggingStyles';
 import {GpdMapOptions} from "./components/edst-windows/gpd-components/GpdMapOptions";
 
 // const CACHE_TIMEOUT = 300000; // ms
@@ -50,7 +50,7 @@ import {GpdMapOptions} from "./components/edst-windows/gpd-components/GpdMapOpti
 const ENTRIES_REFRESH_RATE = 20000; // 20 seconds
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
-const DRAGGING_HIDE_CURSOR: (windowEnum | menuEnum)[] = [
+const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
   windowEnum.status,
   windowEnum.outage,
   windowEnum.messageComposeArea,
@@ -68,7 +68,7 @@ export const App: React.FC = () => {
   const mcaCommandString = useAppSelector((state) => state.app.mcaCommandString);
   const inputFocused = useAppSelector((state) => state.app.inputFocused);
   const dragging = useAppSelector(draggingSelector);
-  const [draggingCursorHide, setDraggingCursorHide] = useState<boolean>(false);
+  const [draggingRepositionCursor, setDraggingRepositionCursor] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
   const altMenuRef = React.useRef<{ showInput: boolean, inputRef: React.RefObject<HTMLInputElement> | null }>({
@@ -101,83 +101,85 @@ export const App: React.FC = () => {
 
   const computePreviewPos = (x: number, y: number, width: number, height: number): { left: number, top: number } => {
     return {
-      left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 1)),
-      top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 1))
+      left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 2)),
+      top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 3))
     };
   }
 
   const draggingHandler = useCallback((event: MouseEvent) => {
     if (event && bodyRef?.current?.windowRef?.current) {
-      const relX = event.pageX - bodyRef?.current.relativePos.x;
-      const relY = event.pageY - bodyRef?.current.relativePos.y;
-      const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
-      const ppos = bodyRef.current.ppos;
-      setDragPreviewStyle({
-        ...computePreviewPos(ppos.x + relX, ppos.y + relY, width, height),
-        position: "absolute",
-        zIndex: 1001,
-        height: height,
-        width: width
-      });
+      if (bodyRef.current.reposition) {
+        setDragPreviewStyle((prevStyle: any) => ({
+          ...prevStyle, left: event.pageX, top: event.pageY
+        }));
+      } else {
+        const relX = event.pageX - bodyRef?.current.relativePos.x;
+        const relY = event.pageY - bodyRef?.current.relativePos.y;
+        const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
+        const ppos = bodyRef.current.ppos;
+        setDragPreviewStyle((prevStyle: any) => ({
+          ...prevStyle, ...computePreviewPos(ppos.x + relX, ppos.y + relY + 35, width, height)
+        }));
+      }
     }
   }, []);
 
-  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, window: windowEnum | menuEnum) => {
-    const relativePos = {x: event.pageX, y: event.pageY};
-    let ppos;
-    if (window in windowEnum) {
-      ppos = windows[window as windowEnum].position;
-    } else if (window in menuEnum) {
-      ppos = menus[window as menuEnum].position;
-    }
-    if (!ppos) {
-      return;
-    }
-    const style = {
-      zIndex: 1001,
-      left: ppos.x,
-      top: ppos.y,
-      position: "absolute",
-      height: ref.current.clientHeight,
-      width: ref.current.clientWidth
-    };
+  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, edstWindow: windowEnum | menuEnum) => {
     if (bodyRef.current) {
+      let ppos;
+      if (edstWindow in windowEnum) {
+        ppos = windows[edstWindow as windowEnum].position;
+      } else if (edstWindow in menuEnum) {
+        ppos = menus[edstWindow as menuEnum].position;
+      }
+      if (!ppos) {
+        return;
+      }
+      bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
+      if (!DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
+        bodyRef.current.relativePos = {x: event.pageX, y: event.pageY};
+      }
+      const style = {
+        zIndex: 1001,
+        left: ppos.x - 1,
+        top: ppos.y + 35,
+        position: "absolute",
+        height: ref.current.clientHeight,
+        width: ref.current.clientWidth
+      };
       bodyRef.current.windowRef = ref;
-      bodyRef.current.draggingWindowName = window;
+      bodyRef.current.draggingWindowName = edstWindow;
       bodyRef.current.ppos = ppos;
-      bodyRef.current.relativePos = relativePos;
       setDragPreviewStyle(style);
-      setDraggingCursorHide(DRAGGING_HIDE_CURSOR.includes(window));
+      setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(edstWindow));
       dispatch(setDragging(true));
       bodyRef.current.addEventListener('mousemove', draggingHandler);
     }
-  };
+  }
 
   const stopDrag = (event: React.MouseEvent<HTMLDivElement>) => {
     if (dragging && bodyRef?.current) {
-      const relX = event.pageX - bodyRef.current.relativePos.x;
-      const relY = event.pageY - bodyRef.current.relativePos.y;
-      const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
+      let newPos;
       const window = bodyRef.current.draggingWindowName;
-      if (bodyRef?.current) {
-        bodyRef.current.removeEventListener('mousemove', draggingHandler);
-      }
-      const ppos = bodyRef.current.ppos;
-      const {left: x, top: y} = computePreviewPos(ppos.x + relX, ppos.y + relY, width, height);
+      const {left: x, top: y} = dragPreviewStyle;
+      newPos = {x: x + 1, y: y - 35};
       if (window in windowEnum) {
         dispatch(setWindowPosition({
           window: bodyRef.current.draggingWindowName as windowEnum,
-          pos: {x: x, y: y}
+          pos: newPos
         }));
       } else if (window in menuEnum) {
         dispatch(setMenuPosition({
           menu: bodyRef.current.draggingWindowName as menuEnum,
-          pos: {x: x, y: y}
+          pos: newPos
         }));
       }
+      bodyRef.current.reposition = null;
+      bodyRef.current.relativePos = null;
       dispatch(setDragging(false));
       setDragPreviewStyle(null);
-      setDraggingCursorHide(false);
+      setDraggingRepositionCursor(false);
+      bodyRef.current.removeEventListener('mousemove', draggingHandler);
     }
   };
 
@@ -205,22 +207,19 @@ export const App: React.FC = () => {
   useEventListener('keydown', handleKeyDown);
 
   return <EdstDiv
+    ref={bodyRef}
     onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
     tabIndex={!(inputFocused) ? -1 : 0}
+    onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
   >
+    {dragging && <EdstDraggingOutline
+        style={dragPreviewStyle ?? {display: "none"}}
+        onMouseUp={(e) => !draggingRepositionCursor && stopDrag(e)}
+    />}
     <EdstHeader/>
     <div id='toPrint'/>
-    <EdstBodyDiv hideCursor={draggingCursorHide}
-                 ref={bodyRef}
-                 onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
-    >
+    <EdstBodyDiv>
       {showSectorSelector && <SectorSelector/>}
-      {dragging && <EdstDraggingOutline
-        style={dragPreviewStyle}
-        onMouseUp={(e) => !draggingCursorHide && stopDrag(e)}
-      >
-        {draggingCursorHide && <DraggingCursor/>}
-      </EdstDraggingOutline>}
       <EdstContext.Provider value={{
         startDrag: startDrag,
         stopDrag: stopDrag
@@ -257,4 +256,4 @@ export const App: React.FC = () => {
       </EdstContext.Provider>
     </EdstBodyDiv>
   </EdstDiv>;
-};
+}

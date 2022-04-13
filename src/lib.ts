@@ -294,12 +294,7 @@ export function formatUtcMinutes(minutes: number): string {
 }
 
 export function copy(text: string) {
-  const input = document.createElement('textarea');
-  input.innerHTML = text;
-  document.body.appendChild(input);
-  input.select();
-  const result = document.execCommand('copy');
-  document.body.removeChild(input);
+  let result = navigator.clipboard.writeText(text).then(result => result).catch(result => result);
   toast.show({
     title: "copied to clipboard",
     content: text,
