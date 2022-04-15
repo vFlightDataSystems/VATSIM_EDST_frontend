@@ -3,9 +3,9 @@ import {RootState} from "../store";
 import {Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position} from "@turf/turf";
 
 export type WeatherStateType = {
-  altimeterList: { [airport: string]: AltimeterEntryType },
-  metarList: { [airport: string]: MetarEntryType },
-  sigmetList: { [id: string]: SigmetEntryType },
+  altimeterList: Record<string, AltimeterEntryType>,
+  metarList: Record<string, MetarEntryType>,
+  sigmetList: Record<string, SigmetEntryType>,
   viewSigmetSuppressed: boolean
 }
 
@@ -26,7 +26,7 @@ export type ApiSigmetType = {
   area: Position[],
   hazard: {severity: string, type: string},
   altitude: {max_ft_msg: string, min_ft_msl: string},
-  sectorIntersects?: {[id: string]: boolean}
+  sectorIntersects?: Record<string, boolean>
 }
 
 export type SigmetEntryType = ApiSigmetType & {

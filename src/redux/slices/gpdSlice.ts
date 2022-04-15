@@ -54,10 +54,10 @@ export type aircraftDisplayOptionsType = {
 export type GpdStateType = {
   mapFeatureOptions: MapFeatureOptionsType,
   aircraftDisplayOptions: aircraftDisplayOptionsType,
-  sectorTypes: { [key: string]: SectorTypeEnum }
+  sectorTypes: Record<string, SectorTypeEnum>,
   navaids: FixType[],
   waypoints: FixType[],
-  airways: {[airway: string]: AirwaySegmentType[]},
+  airways: Record<string, AirwaySegmentType[]>,
   displayData: any
 };
 
@@ -97,7 +97,7 @@ const gpdSlice = createSlice({
     setAircraftDisplayOptions(state, action: { payload: aircraftDisplayOptionsType }) {
       state.aircraftDisplayOptions = action.payload;
     },
-    setSectorTypes(state, action: { payload: { [key: string]: SectorTypeEnum } }) {
+    setSectorTypes(state, action: { payload: Record<string, SectorTypeEnum> }) {
       state.sectorTypes = action.payload;
     },
     setNavaids(state, action: { payload: FixType[] }) {

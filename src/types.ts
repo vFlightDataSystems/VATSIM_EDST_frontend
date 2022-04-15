@@ -136,6 +136,6 @@ export type SectorDataType = {
 export type PlanDataType = {
   cid: string,
   callsign: string,
-  planData: { [key: string]: any },
+  planData: Record<string, any>,
   msg: string
 }
