@@ -6,7 +6,7 @@ import {RootState} from "../store";
 type SectorProfileType = {id: string, name: string, sectors: string[]};
 
 export type SectorDataStateType = {
-  sectors: {[id: string]: Feature<Polygon>},
+  sectors: Record<string, Feature<Polygon>>,
   profiles: SectorProfileType[],
   selectedSectors: string[],
   referenceFixes: FixType[],

@@ -8,9 +8,7 @@ import {depFilter, entryFilter} from "../../filters";
 import {equipmentIcaoToNas, getClosestReferenceFix, processAar} from "../../lib";
 import {point} from "@turf/turf";
 
-export type EntriesStateType = {
-  [cid: string]: LocalEdstEntryType
-};
+export type EntriesStateType = Record<string, LocalEdstEntryType>;
 
 const initialState = {};
 
