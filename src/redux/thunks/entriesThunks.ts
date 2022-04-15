@@ -10,7 +10,7 @@ import {setAsel} from "../slices/appSlice";
 
 export const amendEntryThunk = createAsyncThunk(
   'entries/amend',
-  async ({cid, planData}: { cid: string, planData: { [key: string]: any } }, thunkAPI) => {
+  async ({cid, planData}: { cid: string, planData: Record<string, any> }, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     const {sectors, selectedSectors, artccId} = state.sectorData;
     const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);

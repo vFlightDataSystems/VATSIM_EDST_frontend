@@ -68,7 +68,7 @@ export const initThunk = createAsyncThunk(
         .then(response => response.json())
         .then(sectorTypeData => {
           if (sectorTypeData) {
-            let data: {[e: string]: SectorTypeEnum} = {}
+            let data: Record<string, SectorTypeEnum> = {}
             for(let e of sectorTypeData) {
               data[e.id] = e.type;
             }
