@@ -138,7 +138,7 @@ export const App: React.FC = () => {
       }
       bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
-        let newCursorPos = {x: Math.round(ppos.x * devicePixelRatio) - 1, y: Math.round(ppos.y * devicePixelRatio) - 3};
+        let newCursorPos = {x: Math.round((ppos.x - 1) * devicePixelRatio), y: Math.round((ppos.y + 35) * devicePixelRatio)};
         if (window.__TAURI__) {
           // invoke('grab_cursor');
           invoke('set_pointer_position', newCursorPos);
