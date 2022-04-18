@@ -4,8 +4,8 @@
   "private": true,
   "homepage": "/",
   "engines": {
-    "node": "17.6.0",
-    "npm": "8.5.1"
+    "node": "17.9.0",
+    "npm": "8.7.0"
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.16.8",
@@ -29,7 +29,7 @@
     "eslint-plugin-react": "^7.28.0",
     "geomag": "^1.0.0",
     "leaflet": "^1.7.1",
-    "npm": "^8.5.2",
+    "npm": "^8.7.0",
     "react-leaflet": "^3.2.5",
     "react-redux": "^7.2.6",
     "react-scripts": "^5.0.0",
