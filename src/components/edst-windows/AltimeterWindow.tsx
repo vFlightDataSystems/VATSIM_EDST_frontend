@@ -2,7 +2,7 @@ import React, {useContext, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
+import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {altimeterSelector, removeAirportAltimeter} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
@@ -50,55 +50,56 @@ export const AltimeterWindow: React.FC = () => {
     width={180}
     pos={pos}
     zIndex={zStack.indexOf(windowEnum.altimeter)}
+    onMouseDown={() => zStack.indexOf(windowEnum.altimeter) > 0 && dispatch(setZStack(windowEnum.altimeter))}
     ref={ref}
-    id = "edst-altimeter"
+    id="edst-altimeter"
+  >
+  <FloatingWindowHeaderDiv>
+    <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
+    <FloatingWindowHeaderColDiv
+      flexGrow={1}
+      onMouseDown={(event) => startDrag(event, ref, windowEnum.altimeter)}
     >
-    <FloatingWindowHeaderDiv>
-      <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
-      <FloatingWindowHeaderColDiv
-        flexGrow={1}
-        onMouseDown={(event) => startDrag(event, ref, windowEnum.altimeter)}
-      >
-        ALTIM SET
-      </FloatingWindowHeaderColDiv>
-      <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.altimeter))}>
-        <FloatingWindowHeaderBlock width={8} height={2} />
-      </FloatingWindowHeaderColDiv>
-    </FloatingWindowHeaderDiv>
-  {
-    Object.values(altimeterList).length > 0 && <FloatingWindowBodyDiv>
-      {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) => {
-        const observationTime = Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2));
-        return (<div key={`altimeter-list-key-${airport}`}>
-          <FloatingWindowRow
-            selected={selected === airport}
-            onMouseDown={(event) => handleMouseDown(event, airport)}
-            key={`altimeter-list-key-${airport}`}
-          >
-            <AltimCol reportingStation={true}>{airportAltimeterEntry.airport}</AltimCol>
-            <AltimCol underline={(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 60}>{airportAltimeterEntry.time}</AltimCol>
-            {(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 120 ? '-M-' :
-              <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>
-                {airportAltimeterEntry.altimeter.slice(1)}
-              </AltimCol>}
-          </FloatingWindowRow>
-          {selected === airport && selectedPos &&
-            <FloatingWindowOptions
-              pos={{
-                x: selectedPos.x + selectedPos.w,
-                y: selectedPos.y
-              }}
-              options={[`DELETE ${airport}`]}
-              handleOptionClick={() => {
-                dispatch(removeAirportAltimeter(airport));
-                setSelected(null);
-                setSelectedPos(null);
-              }}
-            />}
-        </div>);
-      })}
-    </FloatingWindowBodyDiv>
-  }
-    </FloatingWindowDiv >
+      ALTIM SET
+    </FloatingWindowHeaderColDiv>
+    <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.altimeter))}>
+      <FloatingWindowHeaderBlock width={8} height={2} />
+    </FloatingWindowHeaderColDiv>
+  </FloatingWindowHeaderDiv>
+{
+  Object.values(altimeterList).length > 0 && <FloatingWindowBodyDiv>
+    {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) => {
+      const observationTime = Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2));
+      return (<div key={`altimeter-list-key-${airport}`}>
+        <FloatingWindowRow
+          selected={selected === airport}
+          onMouseDown={(event) => handleMouseDown(event, airport)}
+          key={`altimeter-list-key-${airport}`}
+        >
+          <AltimCol reportingStation={true}>{airportAltimeterEntry.airport}</AltimCol>
+          <AltimCol underline={(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 60}>{airportAltimeterEntry.time}</AltimCol>
+          {(((Number(utcMinutesNow) - observationTime) + 1440) % 1440) > 120 ? '-M-' :
+            <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>
+              {airportAltimeterEntry.altimeter.slice(1)}
+            </AltimCol>}
+        </FloatingWindowRow>
+        {selected === airport && selectedPos &&
+          <FloatingWindowOptions
+            pos={{
+              x: selectedPos.x + selectedPos.w,
+              y: selectedPos.y
+            }}
+            options={[`DELETE ${airport}`]}
+            handleOptionClick={() => {
+              dispatch(removeAirportAltimeter(airport));
+              setSelected(null);
+              setSelectedPos(null);
+            }}
+          />}
+      </div>);
+    })}
+  </FloatingWindowBodyDiv>
+}
+  </FloatingWindowDiv >
   );
 };

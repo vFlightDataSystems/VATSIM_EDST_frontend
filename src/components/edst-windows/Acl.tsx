@@ -1,8 +1,8 @@
 import React, {useRef, useState} from 'react';
 import {AclHeader} from "./acl-components/AclHeader";
 import {AclTable} from "./acl-components/AclTable";
-import {useAppSelector} from "../../redux/hooks";
-import {draggingSelector, zStackSelector} from "../../redux/slices/appSlice";
+import {useAppSelector, useAppDispatch} from "../../redux/hooks";
+import {draggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
@@ -30,8 +30,15 @@ export const Acl: React.FC = () => {
   const [fullscreen, setFullscreen] = useState(true);
   const dragging = useAppSelector(draggingSelector);
   const zStack = useAppSelector(zStackSelector);
+  const dispatch = useAppDispatch();
 
-  return (<AclDiv dragging={dragging} ref={ref} fullscreen={fullscreen} zIndex={zStack.indexOf(windowEnum.acl)}>
+  return (<AclDiv
+            dragging={dragging}
+            ref={ref}
+            fullscreen={fullscreen}
+            zIndex={zStack.indexOf(windowEnum.acl)}
+            onMouseDown={() => zStack.indexOf(windowEnum.acl) > 0 && dispatch(setZStack(windowEnum.acl))}
+          >
     <AclHeader focused={focused}/>
     <AclTable/>
   </AclDiv>);

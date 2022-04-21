@@ -1,7 +1,7 @@
 import React, {useContext, useRef, useState} from "react";
 import {EdstContext} from "../../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {closeMenu, menuPositionSelector, zStackSelector} from "../../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector, setZStack} from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {menuEnum} from "../../../enums";
 import {EdstButton} from "../../resources/EdstButton";
@@ -84,75 +84,76 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const focused = useFocused(ref);
 
   return pos && (<OptionsMenu
-      width={900}
-      pos={pos}
-      zIndex={zStack.indexOf(menuEnum.equipmentTemplateMenu)}
-      ref={ref}
-      id="equipment-template-menu"
+    ref={ref}
+    width={900}
+    pos={pos}
+    zIndex={zStack.indexOf(menuEnum.equipmentTemplateMenu)}
+    onMouseDown={() => zStack.indexOf(menuEnum.equipmentTemplateMenu) > 0 && dispatch(setZStack(menuEnum.equipmentTemplateMenu))}
+    id="equipment-template-menu"
+  >
+    <OptionsMenuHeader
+      focused={focused}
+      onMouseDown={(event) => startDrag(event, ref, menuEnum.equipmentTemplateMenu)}
+      onMouseUp={(event) => stopDrag(event)}
     >
-      <OptionsMenuHeader
-        focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.equipmentTemplateMenu)}
-        onMouseUp={(event) => stopDrag(event)}
-      >
-        Equipment Template
-      </OptionsMenuHeader>
-      <EqpTemplateBody>
-        <FidRow>
-          {entry && `${entry.callsign} ${entry.type}/${entry.equipment}`}
-        </FidRow>
-        <EqpTemplateRow>
-            <EdstButton
-              width={85}
-              margin="0 4px"
-              selected={selectedMenu === menuOptions.surv}
-              content="SURV"
-              onMouseDown={() => setSelectedMenu(menuOptions.surv)}
-              title={Tooltips.equipmentTemplateMenuSurv}
-            />
-            <EdstButton
-              width={85}
-              margin="0 4px"
-              selected={selectedMenu === menuOptions.nav}
-              content="NAV"
-              onMouseDown={() => setSelectedMenu(menuOptions.nav)}
-              title={Tooltips.equipmentTemplateMenuNAV}
-            />
-            <EdstButton
-              width={85}
-              margin="0 4px"
-              selected={selectedMenu === menuOptions.comm}
-              content="COMM"
-              onMouseDown={() => setSelectedMenu(menuOptions.comm)}
-              title={Tooltips.equipmentTemplateMenuComm}
-            />
-            <EdstButton
-              width={85}
-              margin="0 4px"
-              selected={selectedMenu === menuOptions.appServ}
-              content="APP/SERV"
-              onMouseDown={() => setSelectedMenu(menuOptions.appServ)}
-              title={Tooltips.equipmentTemplateMenuAppServ}
-            />
-          <OptionsBodyCol alignRight={true}>
-            <EdstButton content="Reset"/>
-          </OptionsBodyCol>
-        </EqpTemplateRow>
-        {selectedMenu === menuOptions.surv && <EquipmentSurvTemplate/>}
-        {selectedMenu === menuOptions.nav && <EquipmentNavTemplate/>}
-        {selectedMenu === menuOptions.comm && <EquipmentCommTemplate/>}
-        {selectedMenu === menuOptions.appServ && <EquipmentAppServTemplate/>}
-        <EqpTemplateBottomRow>
-          <OptionsBodyCol>
-            <EdstButton disabled={true} content="OK"/>
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight={true}>
-            <EdstButton content="Cancel"
-                        onMouseDown={() => dispatch(closeMenu(menuEnum.equipmentTemplateMenu))}
-            />
-          </OptionsBodyCol>
-        </EqpTemplateBottomRow>
-      </EqpTemplateBody>
-    </OptionsMenu>
+      Equipment Template
+    </OptionsMenuHeader>
+    <EqpTemplateBody>
+      <FidRow>
+        {entry && `${entry.callsign} ${entry.type}/${entry.equipment}`}
+      </FidRow>
+      <EqpTemplateRow>
+        <EdstButton
+          width={85}
+          margin="0 4px"
+          selected={selectedMenu === menuOptions.surv}
+          content="SURV"
+          onMouseDown={() => setSelectedMenu(menuOptions.surv)}
+          title={Tooltips.equipmentTemplateMenuSurv}
+        />
+        <EdstButton
+          width={85}
+          margin="0 4px"
+          selected={selectedMenu === menuOptions.nav}
+          content="NAV"
+          onMouseDown={() => setSelectedMenu(menuOptions.nav)}
+          title={Tooltips.equipmentTemplateMenuNAV}
+        />
+        <EdstButton
+          width={85}
+          margin="0 4px"
+          selected={selectedMenu === menuOptions.comm}
+          content="COMM"
+          onMouseDown={() => setSelectedMenu(menuOptions.comm)}
+          title={Tooltips.equipmentTemplateMenuComm}
+        />
+        <EdstButton
+          width={85}
+          margin="0 4px"
+          selected={selectedMenu === menuOptions.appServ}
+          content="APP/SERV"
+          onMouseDown={() => setSelectedMenu(menuOptions.appServ)}
+          title={Tooltips.equipmentTemplateMenuAppServ}
+        />
+        <OptionsBodyCol alignRight={true}>
+          <EdstButton content="Reset" />
+        </OptionsBodyCol>
+      </EqpTemplateRow>
+      {selectedMenu === menuOptions.surv && <EquipmentSurvTemplate />}
+      {selectedMenu === menuOptions.nav && <EquipmentNavTemplate />}
+      {selectedMenu === menuOptions.comm && <EquipmentCommTemplate />}
+      {selectedMenu === menuOptions.appServ && <EquipmentAppServTemplate />}
+      <EqpTemplateBottomRow>
+        <OptionsBodyCol>
+          <EdstButton disabled={true} content="OK" />
+        </OptionsBodyCol>
+        <OptionsBodyCol alignRight={true}>
+          <EdstButton content="Cancel"
+            onMouseDown={() => dispatch(closeMenu(menuEnum.equipmentTemplateMenu))}
+          />
+        </OptionsBodyCol>
+      </EqpTemplateBottomRow>
+    </EqpTemplateBody>
+  </OptionsMenu>
   );
 };

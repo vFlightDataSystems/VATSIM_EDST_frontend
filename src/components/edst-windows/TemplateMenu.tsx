@@ -6,7 +6,7 @@ import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSelector} from "../../redux/slices/appSlice";
+import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
@@ -130,204 +130,205 @@ export const TemplateMenu: React.FC = () => {
   }, []);
 
   return pos && (<OptionsMenu
-      width={850}
-      pos={pos}
-      zIndex={zStack.indexOf(menuEnum.templateMenu)}
-      ref={ref}
-      id="template-menu"
+    ref={ref}
+    width={850}
+    pos={pos}
+    zIndex={zStack.indexOf(menuEnum.templateMenu)}
+    onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(setZStack(menuEnum.templateMenu))}
+    id="template-menu"
+  >
+    <OptionsMenuHeader
+      focused={focused}
+      onMouseDown={(event) => startDrag(event, ref, menuEnum.templateMenu)}
+      onMouseUp={(event) => stopDrag(event)}
     >
-      <OptionsMenuHeader
-        focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.templateMenu)}
-        onMouseUp={(event) => stopDrag(event)}
-      >
-        {asel ? 'Amendment' : 'Flight Plan'} Menu
-      </OptionsMenuHeader>
-      <TemplateBodyDiv>
-        <TemplateRowDiv>
-          <TemplateCol width={90} textIndent={true}>
-            AID
-          </TemplateCol>
-          <TemplateCol width={50} textIndent={true}>
-            NUM
-          </TemplateCol>
-          <TemplateCol width={50} textIndent={true}>
-            SAI
-          </TemplateCol>
-          <TemplateCol width={62} textIndent={true}>
-            TYP
-          </TemplateCol>
-          <TemplateCol width={66}>
-            <EdstButton content="EQP..."
-                        onMouseDown={() => dispatch(openMenuThunk(menuEnum.equipmentTemplateMenu, ref.current))}
-                        title={Tooltips.templateMenuEqpButton}
+      {asel ? 'Amendment' : 'Flight Plan'} Menu
+    </OptionsMenuHeader>
+    <TemplateBodyDiv>
+      <TemplateRowDiv>
+        <TemplateCol width={90} textIndent={true}>
+          AID
+        </TemplateCol>
+        <TemplateCol width={50} textIndent={true}>
+          NUM
+        </TemplateCol>
+        <TemplateCol width={50} textIndent={true}>
+          SAI
+        </TemplateCol>
+        <TemplateCol width={62} textIndent={true}>
+          TYP
+        </TemplateCol>
+        <TemplateCol width={66}>
+          <EdstButton content="EQP..."
+            onMouseDown={() => dispatch(openMenuThunk(menuEnum.equipmentTemplateMenu, ref.current))}
+            title={Tooltips.templateMenuEqpButton}
+          />
+        </TemplateCol>
+        <TemplateCol width={60} textIndent={true}>
+          BCN
+        </TemplateCol>
+        <TemplateCol width={70} textIndent={true}>
+          SPD
+        </TemplateCol>
+        <TemplateCol width={120} textIndent={true}>
+          FIX
+        </TemplateCol>
+        <TemplateCol width={70} textIndent={true}>
+          TIM
+        </TemplateCol>
+        <FlexCol textIndent={true}>
+          ALT
+        </FlexCol>
+        <TemplateCol>
+          <EdstButton margin="0 2px 0 0" disabled={true} content="More..." title={Tooltips.templateMenuMore} />
+        </TemplateCol>
+      </TemplateRowDiv>
+      <TemplateRowDiv>
+        <TemplateCol width={90}>
+          <EdstTooltip title={Tooltips.templateMenuAid}>
+            <TemplateInput
+              value={aidInput}
+              onChange={(event) => setAidInput(event.target.value.toUpperCase())}
+              onFocus={() => dispatch(setInputFocused(true))}
+              onBlur={() => dispatch(setInputFocused(false))}
             />
-          </TemplateCol>
-          <TemplateCol width={60} textIndent={true}>
-            BCN
-          </TemplateCol>
-          <TemplateCol width={70} textIndent={true}>
-            SPD
-          </TemplateCol>
-          <TemplateCol width={120} textIndent={true}>
-            FIX
-          </TemplateCol>
-          <TemplateCol width={70} textIndent={true}>
-            TIM
-          </TemplateCol>
-          <FlexCol textIndent={true}>
-            ALT
-          </FlexCol>
-          <TemplateCol>
-            <EdstButton margin="0 2px 0 0" disabled={true} content="More..." title={Tooltips.templateMenuMore}/>
-          </TemplateCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol width={90}>
-            <EdstTooltip title={Tooltips.templateMenuAid}>
-              <TemplateInput
-                value={aidInput}
-                onChange={(event) => setAidInput(event.target.value.toUpperCase())}
-                onFocus={() => dispatch(setInputFocused(true))}
-                onBlur={() => dispatch(setInputFocused(false))}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={50}>
-            <EdstTooltip title={Tooltips.templateMenuNum}>
-              <TemplateInput
-                value={numInput}
-                onChange={(event) => setNumInput(event.target.value.toUpperCase())}
-                onFocus={() => dispatch(setInputFocused(true))}
-                onBlur={() => dispatch(setInputFocused(false))}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={50}>
-            <EdstTooltip title={Tooltips.templateMenuSai}>
-              <TemplateInput
-                value={saiInput}
-                onChange={(event) => setSaiInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={60}>
-            <EdstTooltip title={Tooltips.templateMenuTyp}>
-              <TemplateInput
-                value={typeInput}
-                onChange={(event) => setTypeInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={69}>
-            <EdstTooltip title={Tooltips.templateMenuEqpBox}>
-              <TemplateInput
-                value={equipInput}
-                onChange={(event) => setEquipInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={60}>
-            <EdstTooltip title={Tooltips.templateMenuBcn}>
-              <TemplateInput
-                value={beaconInput}
-                onChange={(event) => setBeaconInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={70}>
-            <EdstTooltip title={Tooltips.templateMenuSpd}>
-              <TemplateInput
-                value={speedInput}
-                onChange={(event) => setSpeedInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={120}>
-            <EdstTooltip title={Tooltips.templateMenuFix}>
-              <TemplateInput
-                value={frdInput}
-                onChange={(event) => setFrdInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <TemplateCol width={70}>
-            <EdstTooltip title={Tooltips.templateMenuTim}>
-              <TemplateInput
-                value={timeInput}
-                onChange={(event) => setTimeInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </TemplateCol>
-          <FlexCol>
-            <EdstTooltip title={Tooltips.templateMenuAlt}>
-              <TemplateInput
-                value={altInput}
-                onChange={(event) => setAltInput(event.target.value.toUpperCase())}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => setInputFocused(false)}
-              />
-            </EdstTooltip>
-          </FlexCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol width={50} textIndent={true}>
-            RTE
-          </TemplateCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateTextArea
-            title={Tooltips.templateMenuRte}
-            value={routeInput}
-            onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
-            rows={3}
-          />
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol width={50} textIndent={true}>
-            RMK
-          </TemplateCol>
-          <TemplateRowDiv alignRight={true}/>
-          <TemplateCol>
-            <EdstButton disabled={true} content="Create FP..." title={Tooltips.templateMenuCreateFp}/>
-          </TemplateCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateTextArea
-            title={Tooltips.templateMenuRmk}
-            value={rmkInput}
-            onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setInputFocused(false)}
-            rows={3}
-          />
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol bottomRow={true}>
-            <EdstButton disabled={true} content="Send" title={Tooltips.templateMenuSend}/>
-          </TemplateCol>
-          <TemplateCol bottomRow={true} alignRight={true}>
-            <EdstButton content="Exit" title={Tooltips.templateMenuExit}
-                        onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))}/>
-          </TemplateCol>
-        </TemplateRowDiv>
-      </TemplateBodyDiv>
-    </OptionsMenu>
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={50}>
+          <EdstTooltip title={Tooltips.templateMenuNum}>
+            <TemplateInput
+              value={numInput}
+              onChange={(event) => setNumInput(event.target.value.toUpperCase())}
+              onFocus={() => dispatch(setInputFocused(true))}
+              onBlur={() => dispatch(setInputFocused(false))}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={50}>
+          <EdstTooltip title={Tooltips.templateMenuSai}>
+            <TemplateInput
+              value={saiInput}
+              onChange={(event) => setSaiInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={60}>
+          <EdstTooltip title={Tooltips.templateMenuTyp}>
+            <TemplateInput
+              value={typeInput}
+              onChange={(event) => setTypeInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={69}>
+          <EdstTooltip title={Tooltips.templateMenuEqpBox}>
+            <TemplateInput
+              value={equipInput}
+              onChange={(event) => setEquipInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={60}>
+          <EdstTooltip title={Tooltips.templateMenuBcn}>
+            <TemplateInput
+              value={beaconInput}
+              onChange={(event) => setBeaconInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={70}>
+          <EdstTooltip title={Tooltips.templateMenuSpd}>
+            <TemplateInput
+              value={speedInput}
+              onChange={(event) => setSpeedInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={120}>
+          <EdstTooltip title={Tooltips.templateMenuFix}>
+            <TemplateInput
+              value={frdInput}
+              onChange={(event) => setFrdInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <TemplateCol width={70}>
+          <EdstTooltip title={Tooltips.templateMenuTim}>
+            <TemplateInput
+              value={timeInput}
+              onChange={(event) => setTimeInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </TemplateCol>
+        <FlexCol>
+          <EdstTooltip title={Tooltips.templateMenuAlt}>
+            <TemplateInput
+              value={altInput}
+              onChange={(event) => setAltInput(event.target.value.toUpperCase())}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </EdstTooltip>
+        </FlexCol>
+      </TemplateRowDiv>
+      <TemplateRowDiv>
+        <TemplateCol width={50} textIndent={true}>
+          RTE
+        </TemplateCol>
+      </TemplateRowDiv>
+      <TemplateRowDiv>
+        <TemplateTextArea
+          title={Tooltips.templateMenuRte}
+          value={routeInput}
+          onChange={(event) => setRouteInput(event.target.value.toUpperCase())}
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
+          rows={3}
+        />
+      </TemplateRowDiv>
+      <TemplateRowDiv>
+        <TemplateCol width={50} textIndent={true}>
+          RMK
+        </TemplateCol>
+        <TemplateRowDiv alignRight={true} />
+        <TemplateCol>
+          <EdstButton disabled={true} content="Create FP..." title={Tooltips.templateMenuCreateFp} />
+        </TemplateCol>
+      </TemplateRowDiv>
+      <TemplateRowDiv>
+        <TemplateTextArea
+          title={Tooltips.templateMenuRmk}
+          value={rmkInput}
+          onChange={(event) => setRmkInput(event.target.value.toUpperCase())}
+          onFocus={() => setInputFocused(true)}
+          onBlur={() => setInputFocused(false)}
+          rows={3}
+        />
+      </TemplateRowDiv>
+      <TemplateRowDiv>
+        <TemplateCol bottomRow={true}>
+          <EdstButton disabled={true} content="Send" title={Tooltips.templateMenuSend} />
+        </TemplateCol>
+        <TemplateCol bottomRow={true} alignRight={true}>
+          <EdstButton content="Exit" title={Tooltips.templateMenuExit}
+            onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))} />
+        </TemplateCol>
+      </TemplateRowDiv>
+    </TemplateBodyDiv>
+  </OptionsMenu>
   );
 };
