@@ -161,9 +161,8 @@ export const App: React.FC = () => {
       bodyRef.current.draggingWindowName = edstWindow;
       bodyRef.current.ppos = ppos;
       setDragPreviewStyle(style);
-      setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(edstWindow));
+      setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(edstWindow));a
       dispatch(setDragging(true));
-      dispatch(setZStack(edstWindow));
       bodyRef.current.addEventListener('mousemove', draggingHandler);
     }
   }

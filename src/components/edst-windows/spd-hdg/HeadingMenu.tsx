@@ -11,7 +11,8 @@ import {
   aselSelector,
   AselType, closeMenu,
   menuPositionSelector,
-  zStackSelector
+  zStackSelector,
+  setZStack
 } from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
@@ -79,10 +80,11 @@ export const HeadingMenu: React.FC = () => {
   };
 
   return pos && entry && (<OptionsMenu
+    ref={ref}
     width={190}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.headingMenu)}
-    ref={ref}
+    onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(setZStack(menuEnum.headingMenu))}
     id="heading-menu"
   >
     <OptionsMenuHeader
@@ -97,20 +99,20 @@ export const HeadingMenu: React.FC = () => {
         {entry.callsign} {entry.type}/{entry.equipment}
       </FidRow>
       <Row
-        // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
+      // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
       >
         <OptionsBodyCol
-          // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
+        // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
         >
           <EdstButton content="Amend" selected={amend}
-                      onMouseDown={() => setAmend(true)}
-                      title={Tooltips.aclHdgAmend}
+            onMouseDown={() => setAmend(true)}
+            title={Tooltips.aclHdgAmend}
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight={true}>
           <EdstButton content="Scratchpad" selected={!amend}
-                      onMouseDown={() => setAmend(false)}
-                      title={Tooltips.aclHdgScratchpad}
+            onMouseDown={() => setAmend(false)}
+            title={Tooltips.aclHdgScratchpad}
           />
         </OptionsBodyCol>
       </Row>
@@ -118,7 +120,7 @@ export const HeadingMenu: React.FC = () => {
         <OptionsBodyCol>
           Heading:
           <InputContainer>
-            <EdstInput value={heading} onChange={(e) => setHeading(Number(e.target.value))}/>
+            <EdstInput value={heading} onChange={(e) => setHeading(Number(e.target.value))} />
           </InputContainer>
         </OptionsBodyCol>
       </Row>
@@ -180,11 +182,11 @@ export const HeadingMenu: React.FC = () => {
                 break;
             }
             dispatch(closeMenu(menuEnum.headingMenu));
-          }}/>
+          }} />
         </Row>
         <OptionsBodyRow margin="0">
           <OptionsBodyCol alignRight={true}>
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.headingMenu))}/>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.headingMenu))} />
           </OptionsBodyCol>
         </OptionsBodyRow>
       </ScrollContainer>

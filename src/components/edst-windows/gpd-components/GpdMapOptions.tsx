@@ -5,7 +5,7 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {EdstContext} from "../../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
-import { closeMenu, menuSelector, zStackSelector } from "../../../redux/slices/appSlice";
+import {closeMenu, menuSelector, zStackSelector, setZStack} from "../../../redux/slices/appSlice";
 import {useFocused} from "../../../hooks";
 import {GpdMapFeaturesMenu} from "./GpdMapFeaturesMenu";
 import {
@@ -29,9 +29,10 @@ export const GpdMapOptions: React.FC = () => {
   const focused = useFocused(ref);
 
   return menuProps?.position && (<OptionsMenu
+    ref={ref}
       pos={menuProps.position}
     zIndex={zStack.indexOf(menuEnum.gpdMapOptionsMenu)}
-      ref={ref}
+    onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(setZStack(menuEnum.gpdMapOptionsMenu))}
       id="gpd-map-options-menu"
     >
       <OptionsMenuHeader

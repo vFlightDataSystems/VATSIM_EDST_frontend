@@ -24,7 +24,8 @@ import {
   AselType, closeMenu,
   menuPositionSelector,
   setInputFocused,
-  zStackSelector
+  zStackSelector,
+  setZStack
 } from "../../redux/slices/appSlice";
 import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
 import {LocalEdstEntryType} from "../../types";
@@ -215,166 +216,167 @@ export const RouteMenu: React.FC = () => {
   };
 
   return pos && (<OptionsMenu
-      width={570}
-      pos={pos}
-      zIndex={zStack.indexOf(menuEnum.routeMenu)}
-      ref={ref}
-      id="route-menu"
+    ref={ref}
+    width={570}
+    pos={pos}
+    zIndex={zStack.indexOf(menuEnum.routeMenu)}
+    onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(setZStack(menuEnum.routeMenu))}
+    id="route-menu"
+  >
+    <OptionsMenuHeader
+      focused={focused}
+      onMouseDown={(event) => startDrag(event, ref, menuEnum.routeMenu)}
+      onMouseUp={(event) => stopDrag(event)}
     >
-      <OptionsMenuHeader
-        focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.routeMenu)}
-        onMouseUp={(event) => stopDrag(event)}
-      >
-        Route Menu
-      </OptionsMenuHeader>
-      <OptionsBody>
-        <FidRow>
-          {entry.callsign} {entry.type}/{entry.equipment}
-        </FidRow>
-        <Row>
-          <OptionsBodyCol>
-            <EdstButton content="Trial Plan" selected={trialPlan} onMouseDown={() => setTrialPlan(true)}
-                        title={Tooltips.routeMenuPlanData}
-                        disabled={asel.window === windowEnum.dep}
+      Route Menu
+    </OptionsMenuHeader>
+    <OptionsBody>
+      <FidRow>
+        {entry.callsign} {entry.type}/{entry.equipment}
+      </FidRow>
+      <Row>
+        <OptionsBodyCol>
+          <EdstButton content="Trial Plan" selected={trialPlan} onMouseDown={() => setTrialPlan(true)}
+            title={Tooltips.routeMenuPlanData}
+            disabled={asel.window === windowEnum.dep}
+          />
+        </OptionsBodyCol>
+        <OptionsBodyCol maxWidth={24} maxHeight={24}>
+          <EdstTooltip>
+            <a href={`https://skyvector.com/?fpl=${entry.dep} ${entry.flightplan.route} ${entry.dest}`}
+              target="_blank" rel="noreferrer">
+              <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
+            </a>
+          </EdstTooltip>
+        </OptionsBodyCol>
+        <OptionsBodyCol maxWidth={24} maxHeight={24}>
+          <EdstTooltip title={Tooltips.routeMenuVatsimLogo}>
+            <img src={VATSIM_LOGO} alt="vatsim-logo"
+              onMouseDown={() => setDisplayRawRoute(!displayRawRoute)}
+              onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
             />
-          </OptionsBodyCol>
-          <OptionsBodyCol maxWidth={24} maxHeight={24}>
-            <EdstTooltip>
-              <a href={`https://skyvector.com/?fpl=${entry.dep} ${entry.flightplan.route} ${entry.dest}`}
-                 target="_blank" rel="noreferrer">
-                <img src={SKYVECTOR_LOGO} alt="skyvector-logo"/>
-              </a>
-            </EdstTooltip>
-          </OptionsBodyCol>
-          <OptionsBodyCol maxWidth={24} maxHeight={24}>
-            <EdstTooltip title={Tooltips.routeMenuVatsimLogo}>
-              <img src={VATSIM_LOGO} alt="vatsim-logo"
-                   onMouseDown={() => setDisplayRawRoute(!displayRawRoute)}
-                   onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
+          </EdstTooltip>
+        </OptionsBodyCol>
+        <OptionsBodyCol maxWidth={24} maxHeight={24}>
+          <EdstTooltip>
+            <a href={`https://flightaware.com/analysis/route.rvt?origin=${entry.dep}&destination=${entry.dest}`}
+              target="_blank" rel="noreferrer">
+              <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
+            </a>
+          </EdstTooltip>
+        </OptionsBodyCol>
+        <OptionsBodyCol alignRight={true}>
+          {entry.uplinkEligible &&
+            <EdstButton margin="2px 0 0 0" disabled={true} content={`\u{1D925}`} />}
+          <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)}
+            title={Tooltips.routeMenuAmend}
+          />
+        </OptionsBodyCol>
+      </Row>
+      <Row>
+        <OptionsBodyCol>
+          <InputContainer>
+            {!(asel.window === windowEnum.dep) && <EdstTooltip
+              title={Tooltips.routeMenuFrd}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                copy(frd);
+              }}>
+              <PposDiv>
+                {frd}..
+              </PposDiv>
+            </EdstTooltip>}
+            <EdstTooltip title={Tooltips.routeMenuRouteInput}
+              style={{ display: "flex", justifyContent: "left", flexGrow: "1" }}>
+              <Input
+                onFocus={() => dispatch(setInputFocused(true))}
+                onBlur={() => dispatch(setInputFocused(false))}
+                value={displayRawRoute ? entry.flightplan.route : routeInput}
+                onChange={(event) => !displayRawRoute && handleInputChange(event)}
+                onKeyDownCapture={(event) => !displayRawRoute && handleInputKeyDown(event)}
               />
             </EdstTooltip>
-          </OptionsBodyCol>
-          <OptionsBodyCol maxWidth={24} maxHeight={24}>
-            <EdstTooltip>
-              <a href={`https://flightaware.com/analysis/route.rvt?origin=${entry.dep}&destination=${entry.dest}`}
-                 target="_blank" rel="noreferrer">
-                <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo"/>
-              </a>
-            </EdstTooltip>
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight={true}>
-            {entry.uplinkEligible &&
-                <EdstButton margin="2px 0 0 0" disabled={true} content={`\u{1D925}`}/>}
-            <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)}
-                        title={Tooltips.routeMenuAmend}
-            />
-          </OptionsBodyCol>
-        </Row>
-        <Row>
-          <OptionsBodyCol>
-            <InputContainer>
-              {!(asel.window === windowEnum.dep) && <EdstTooltip
-                  title={Tooltips.routeMenuFrd}
-                  onContextMenu={(event) => {
-                    event.preventDefault();
-                    copy(frd);
-                  }}>
-                  <PposDiv>
-                    {frd}..
-                  </PposDiv>
-              </EdstTooltip>}
-              <EdstTooltip title={Tooltips.routeMenuRouteInput}
-                           style={{display: "flex", justifyContent: "left", flexGrow: "1"}}>
-                <Input
-                  onFocus={() => dispatch(setInputFocused(true))}
-                  onBlur={() => dispatch(setInputFocused(false))}
-                  value={displayRawRoute ? entry.flightplan.route : routeInput}
-                  onChange={(event) => !displayRawRoute && handleInputChange(event)}
-                  onKeyDownCapture={(event) => !displayRawRoute && handleInputKeyDown(event)}
-                />
-              </EdstTooltip>
-            </InputContainer>
-          </OptionsBodyCol>
-        </Row>
-        <Row topBorder={true}>
-          <EdstTooltip disabled={true} title={Tooltips.routeMenuPar}>
-            <ButtonCol hover={true}>
-              <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}/>
-              Include PAR
-            </ButtonCol>
-          </EdstTooltip>
-        </Row>
-        <Row bottomBorder={true}>
-          <EdstTooltip title={Tooltips.routeMenuAppendStar}
-                       onMouseDown={() => setAppend({appendStar: !appendStar, appendOplus: false})}
-          >
-            <ButtonCol hover={true}>
-              <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}
-                          selected={appendStar}/>
-              Append *
-            </ButtonCol>
-          </EdstTooltip>
-          <EdstTooltip
-            title={Tooltips.routeMenuAppendOplus}
-            onMouseDown={() => setAppend({appendOplus: !appendOplus, appendStar: false})}
-          >
-            <ButtonCol hover={true}>
-              <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}
-                          selected={appendOplus}/>
-              Append<span>&nbsp;{`\u2295`}</span>
-            </ButtonCol>
-          </EdstTooltip>
-        </Row>
-        <EdstTooltip title={Tooltips.routeMenuDirectFix}>
-          <UnderlineRow as={Row}>
-            Direct-To-Fix
-          </UnderlineRow>
+          </InputContainer>
+        </OptionsBodyCol>
+      </Row>
+      <Row topBorder={true}>
+        <EdstTooltip disabled={true} title={Tooltips.routeMenuPar}>
+          <ButtonCol hover={true}>
+            <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12} />
+            Include PAR
+          </ButtonCol>
         </EdstTooltip>
-        <OptionsBodyRow>
-          <DisplayRouteDiv>
-            {(asel.window === windowEnum.dep) ? entry.dep + route + entry.dest : `./.${route}${entry.dest}`}
-          </DisplayRouteDiv>
-        </OptionsBodyRow>
-        {_.range(0, Math.min(routeData?.length ?? 0, 10)).map((i) =>
-          <OptionsBodyRow key={`route-menu-row-${i}`}>
-            {_.range(0, ((routeData?.length ?? 0) / 10 | 0) + 1).map((j) => {
-              const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
-              return (fixName && <EdstTooltip key={`route-menu-col-${i}-${j}`}
-                                              onMouseDown={() => clearedToFix(fixName)}
-                                              title={Tooltips.routeMenuDirectFix}
-              >
-                  <DctCol hover={true}>
-                    {fixName}
-                  </DctCol>
-              </EdstTooltip>);
-            })}
-          </OptionsBodyRow>)}
-        {routes?.length > 0 &&
-            <PreferredRouteDisplay
-                aar={entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
-                adr={asel.window === windowEnum.dep ? entry.adr : []}
-                adar={asel.window === windowEnum.dep ? entry.adar : []}
-                dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}
-            />}
-        <OptionsBodyRow margin="14px 0 0 0" padding="">
-          <OptionsBodyCol>
-            <EdstButton disabled={true} margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData}/>
-            <EdstButton disabled={entry?.previous_route === undefined} margin="0 4px 0 0" content="Previous Route"
-                        onMouseDown={() => {
-                          dispatch(openMenuThunk(menuEnum.prevRouteMenu, ref.current, menuEnum.routeMenu, true));
-                          dispatch(closeMenu(menuEnum.routeMenu));
-                        }}
-                        title={Tooltips.routeMenuPrevRoute}
-            />
-            <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute}/>
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight={true}>
-            <EdstButton content="Exit"
-                        onMouseDown={() => dispatch(closeMenu(menuEnum.routeMenu))}/>
-          </OptionsBodyCol>
-        </OptionsBodyRow>
-      </OptionsBody>
-    </OptionsMenu>
+      </Row>
+      <Row bottomBorder={true}>
+        <EdstTooltip title={Tooltips.routeMenuAppendStar}
+          onMouseDown={() => setAppend({ appendStar: !appendStar, appendOplus: false })}
+        >
+          <ButtonCol hover={true}>
+            <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}
+              selected={appendStar} />
+            Append *
+          </ButtonCol>
+        </EdstTooltip>
+        <EdstTooltip
+          title={Tooltips.routeMenuAppendOplus}
+          onMouseDown={() => setAppend({ appendOplus: !appendOplus, appendStar: false })}
+        >
+          <ButtonCol hover={true}>
+            <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}
+              selected={appendOplus} />
+            Append<span>&nbsp;{`\u2295`}</span>
+          </ButtonCol>
+        </EdstTooltip>
+      </Row>
+      <EdstTooltip title={Tooltips.routeMenuDirectFix}>
+        <UnderlineRow as={Row}>
+          Direct-To-Fix
+        </UnderlineRow>
+      </EdstTooltip>
+      <OptionsBodyRow>
+        <DisplayRouteDiv>
+          {(asel.window === windowEnum.dep) ? entry.dep + route + entry.dest : `./.${route}${entry.dest}`}
+        </DisplayRouteDiv>
+      </OptionsBodyRow>
+      {_.range(0, Math.min(routeData?.length ?? 0, 10)).map((i) =>
+        <OptionsBodyRow key={`route-menu-row-${i}`}>
+          {_.range(0, ((routeData?.length ?? 0) / 10 | 0) + 1).map((j) => {
+            const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
+            return (fixName && <EdstTooltip key={`route-menu-col-${i}-${j}`}
+              onMouseDown={() => clearedToFix(fixName)}
+              title={Tooltips.routeMenuDirectFix}
+            >
+              <DctCol hover={true}>
+                {fixName}
+              </DctCol>
+            </EdstTooltip>);
+          })}
+        </OptionsBodyRow>)}
+      {routes?.length > 0 &&
+        <PreferredRouteDisplay
+          aar={entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
+          adr={asel.window === windowEnum.dep ? entry.adr : []}
+          adar={asel.window === windowEnum.dep ? entry.adar : []}
+          dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}
+        />}
+      <OptionsBodyRow margin="14px 0 0 0" padding="">
+        <OptionsBodyCol>
+          <EdstButton disabled={true} margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
+          <EdstButton disabled={entry?.previous_route === undefined} margin="0 4px 0 0" content="Previous Route"
+            onMouseDown={() => {
+              dispatch(openMenuThunk(menuEnum.prevRouteMenu, ref.current, menuEnum.routeMenu, true));
+              dispatch(closeMenu(menuEnum.routeMenu));
+            }}
+            title={Tooltips.routeMenuPrevRoute}
+          />
+          <EdstButton disabled={true} content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
+        </OptionsBodyCol>
+        <OptionsBodyCol alignRight={true}>
+          <EdstButton content="Exit"
+            onMouseDown={() => dispatch(closeMenu(menuEnum.routeMenu))} />
+        </OptionsBodyCol>
+      </OptionsBodyRow>
+    </OptionsBody>
+  </OptionsMenu>
   );
 };

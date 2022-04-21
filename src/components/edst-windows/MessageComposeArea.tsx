@@ -14,7 +14,8 @@ import {
   setMcaCommandString,
   setMraMessage,
   windowPositionSelector,
-  zStackSelector
+  zStackSelector,
+  setZStack
 } from "../../redux/slices/appSlice";
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
@@ -276,7 +277,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     id="edst-mca"
     pos={pos}
     zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
-    onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
+    onMouseDown={(event) => {
+      startDrag(event, ref, windowEnum.messageComposeArea)
+      if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
+        dispatch(setZStack(windowEnum.messageComposeArea));
+      }
+    }}
   // onMouseEnter={() => setInputFocus()}
   >
     <MessageComposeInputAreaDiv>
@@ -301,6 +307,6 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
       {response?.startsWith('REJECT') && <RejectCrossSpan />}
       {response}
     </MessageComposeResponseAreaDiv>
-  </MessageComposeAreaDiv>
+  </MessageComposeAreaDiv >
   );
 };

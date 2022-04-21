@@ -2,7 +2,7 @@ import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
+import {closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {EdstButton} from "../resources/EdstButton";
 import {
   FloatingWindowBodyDiv,
@@ -26,10 +26,11 @@ export const Status: React.FC = () => {
   const zStack = useAppSelector(zStackSelector);
 
   return pos && (<FloatingWindowDiv
+    ref={ref}
     width={360}
     pos={pos}
-    ref={ref}
     zIndex={zStack.indexOf(windowEnum.status)}
+    onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(setZStack(windowEnum.status))}
     id="edst-status"
   >
     <FloatingWindowHeaderDiv>

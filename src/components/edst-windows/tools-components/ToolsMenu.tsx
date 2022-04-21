@@ -5,7 +5,7 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {EdstContext} from "../../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
-import {closeMenu, menuSelector, zStackSelector} from "../../../redux/slices/appSlice";
+import {closeMenu, menuSelector, zStackSelector, setZStack} from "../../../redux/slices/appSlice";
 import {ToolsOptionsMenu} from "./ToolsOptionsMenu";
 import {useFocused} from "../../../hooks";
 import {
@@ -29,56 +29,57 @@ export const ToolsMenu: React.FC = () => {
   const focused = useFocused(ref);
 
   return menuProps?.position && (<OptionsMenu
-      pos={menuProps.position}
+    ref={ref}
+    pos={menuProps.position}
     zIndex={zStack.indexOf(menuEnum.toolsMenu)}
-      ref={ref}
-      id="tools-menu"
+    onMouseDown={() => zStack.indexOf(menuEnum.toolsMenu) > 0 && dispatch(setZStack(menuEnum.toolsMenu))}
+    id="tools-menu"
+  >
+    <OptionsMenuHeader
+      focused={focused}
+      onMouseDown={(event) => startDrag(event, ref, menuEnum.toolsMenu)}
+      onMouseUp={(event) => stopDrag(event)}
     >
-      <OptionsMenuHeader
-        focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.toolsMenu)}
-        onMouseUp={(event) => stopDrag(event)}
-      >
-        {optionsMenuOpen ? "Options" : "Tools"} Menu
-      </OptionsMenuHeader>
-      <ToolsBody>
-        {optionsMenuOpen && <ToolsOptionsMenu/>}
-        {!optionsMenuOpen && <span>
-          <OptionsBodyRow>
-          <EdstTooltip style={{flexGrow: 1}} disabled={true}>
-              <OptionsFlexCol>
-                  Airspace Status...
-              </OptionsFlexCol>
+      {optionsMenuOpen ? "Options" : "Tools"} Menu
+    </OptionsMenuHeader>
+    <ToolsBody>
+      {optionsMenuOpen && <ToolsOptionsMenu />}
+      {!optionsMenuOpen && <span>
+        <OptionsBodyRow>
+          <EdstTooltip style={{ flexGrow: 1 }} disabled={true}>
+            <OptionsFlexCol>
+              Airspace Status...
+            </OptionsFlexCol>
           </EdstTooltip>
         </OptionsBodyRow>
-          <OptionsBodyRow>
-          <EdstTooltip style={{flexGrow: 1}} disabled={true}>
-              <OptionsFlexCol>
-                  Airport Stream Filter Status...
-              </OptionsFlexCol>
+        <OptionsBodyRow>
+          <EdstTooltip style={{ flexGrow: 1 }} disabled={true}>
+            <OptionsFlexCol>
+              Airport Stream Filter Status...
+            </OptionsFlexCol>
           </EdstTooltip>
-          </OptionsBodyRow>
-          <OptionsBodyRow>
-          <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setOptionsMenuOpen(true)}>
-              <OptionsFlexCol>
-                  Options...
-              </OptionsFlexCol>
+        </OptionsBodyRow>
+        <OptionsBodyRow>
+          <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setOptionsMenuOpen(true)}>
+            <OptionsFlexCol>
+              Options...
+            </OptionsFlexCol>
           </EdstTooltip>
-          </OptionsBodyRow>
-          <OptionsBodyRow>
-          <EdstTooltip style={{flexGrow: 1}} disabled={true}>
-              <OptionsFlexCol>
-                  Restrictions...
-              </OptionsFlexCol>
+        </OptionsBodyRow>
+        <OptionsBodyRow>
+          <EdstTooltip style={{ flexGrow: 1 }} disabled={true}>
+            <OptionsFlexCol>
+              Restrictions...
+            </OptionsFlexCol>
           </EdstTooltip>
-          </OptionsBodyRow>
-          <OptionsBottomRow>
-            <OptionsBodyCol alignRight={true}>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))}/>
-            </OptionsBodyCol>
-          </OptionsBottomRow>
-        </span>}
-      </ToolsBody>
-    </OptionsMenu>
+        </OptionsBodyRow>
+        <OptionsBottomRow>
+          <OptionsBodyCol alignRight={true}>
+            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))} />
+          </OptionsBodyCol>
+        </OptionsBottomRow>
+      </span>}
+    </ToolsBody>
+  </OptionsMenu>
   );
 };

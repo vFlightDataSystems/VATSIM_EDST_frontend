@@ -2,7 +2,7 @@ import React, {useContext, useRef} from "react";
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
+import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
@@ -23,6 +23,7 @@ export const Outage: React.FC = () => {
     pos={pos}
     ref={ref}
     zIndex={zStack.indexOf(windowEnum.outage)}
+    onMouseDown={() => zStack.indexOf(windowEnum.outage) > 0 && dispatch(setZStack(windowEnum.outage))}
     id="edst-outage"
   >
     <FloatingWindowHeaderDiv>

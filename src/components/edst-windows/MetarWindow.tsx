@@ -2,7 +2,7 @@ import React, {useContext, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
+import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {metarSelector, removeAirportMetar} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
@@ -41,9 +41,9 @@ export const MetarWindow: React.FC = () => {
       width={400}
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.metar)}
+    onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(setZStack(windowEnum.metar))}
       ref={ref}
       id="edst-status"
-      style={{left: pos.x + "px", top: pos.y + "px"}}
     >
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>

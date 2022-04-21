@@ -11,7 +11,8 @@ import {
   AselType, closeMenu,
   menuPositionSelector,
   setAsel,
-  zStackSelector
+  zStackSelector,
+  setZStack
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
 import {useFocused} from "../../hooks";
@@ -48,6 +49,7 @@ export const PlanOptions: React.FC = () => {
       width={220}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.planOptions)}
+      onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(setZStack(menuEnum.planOptions))}
       ref={ref}
       id="plan-menu"
     >
