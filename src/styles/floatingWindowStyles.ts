@@ -2,8 +2,8 @@ import styled from "styled-components";
 import {NoSelectDiv} from "./styles";
 
 
-export const FloatingWindowDiv = styled(NoSelectDiv)<{ width?: number, pos?: { x: number, y: number } }>`
-  z-index: 1000;
+export const FloatingWindowDiv = styled(NoSelectDiv)<{ width?: number, pos?: { x: number, y: number }, zIndex: number }>`
+  z-index: ${props => 10000 - props.zIndex};
   position: absolute;
   color: #ADADAD;
   width: ${props => props.width ? props.width + "px" : "auto"};

@@ -1,13 +1,12 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
-
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrd, getDepString, getDestString} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {aselSelector, closeMenu, menuPositionSelector, setInputFocused} from "../../redux/slices/appSlice";
+import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSelector} from "../../redux/slices/appSlice";
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
@@ -97,6 +96,7 @@ export const TemplateMenu: React.FC = () => {
   const asel = useAppSelector(aselSelector);
   const entry = useAppSelector(aselEntrySelector);
   const pos = useAppSelector(menuPositionSelector(menuEnum.templateMenu));
+  const zStack = useAppSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
   const route = (asel?.window === windowEnum.dep
@@ -132,6 +132,7 @@ export const TemplateMenu: React.FC = () => {
   return pos && (<OptionsMenu
       width={850}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.templateMenu)}
       ref={ref}
       id="template-menu"
     >

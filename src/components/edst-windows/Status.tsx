@@ -2,7 +2,7 @@ import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, setShowSectorSelector, windowPositionSelector} from "../../redux/slices/appSlice";
+import {closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {EdstButton} from "../resources/EdstButton";
 import {
   FloatingWindowBodyDiv,
@@ -23,38 +23,39 @@ export const Status: React.FC = () => {
   const pos = useAppSelector(windowPositionSelector(windowEnum.status));
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
-
+  const zStack = useAppSelector(zStackSelector);
 
   return pos && (<FloatingWindowDiv
-      width={360}
-      pos={pos}
-      ref={ref}
-      id="edst-status"
-    >
-      <FloatingWindowHeaderDiv>
-        <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv
-          flexGrow={1}
-          onMouseDown={(event) => startDrag(event, ref, windowEnum.status)}
-        >
-          STATUS
-        </FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
-          <FloatingWindowHeaderBlock width={8} height={2}/>
-        </FloatingWindowHeaderColDiv>
-      </FloatingWindowHeaderDiv>
-      <StatusBodyDiv>
-        <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>
-          Change Sectors
-        </EdstButton>
-        <div>
-          Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a>
-        </div>
-        <div>
-          <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank"
-             rel="noreferrer">Roadmap</a>
-        </div>
-      </StatusBodyDiv>
-    </FloatingWindowDiv>
+    width={360}
+    pos={pos}
+    ref={ref}
+    zIndex={zStack.indexOf(windowEnum.status)}
+    id="edst-status"
+  >
+    <FloatingWindowHeaderDiv>
+      <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
+      <FloatingWindowHeaderColDiv
+        flexGrow={1}
+        onMouseDown={(event) => startDrag(event, ref, windowEnum.status)}
+      >
+        STATUS
+      </FloatingWindowHeaderColDiv>
+      <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
+        <FloatingWindowHeaderBlock width={8} height={2} />
+      </FloatingWindowHeaderColDiv>
+    </FloatingWindowHeaderDiv>
+    <StatusBodyDiv>
+      <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>
+        Change Sectors
+      </EdstButton>
+      <div>
+        Submit Feedback <a href={"https://forms.gle/LpzgyNMNMwa8CY8e8"} target="_blank" rel="noreferrer">here</a>
+      </div>
+      <div>
+        <a href={"https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki"} target="_blank"
+          rel="noreferrer">Roadmap</a>
+      </div>
+    </StatusBodyDiv>
+  </FloatingWindowDiv>
   );
 };

@@ -2,7 +2,7 @@ import React, {useContext, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector} from "../../redux/slices/appSlice";
+import {closeWindow, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {
   setSigmetAcknowledged,
   setSigmetSuppressionState, setViewSigmetSuppressed,
@@ -31,6 +31,7 @@ export const SigmetWindow: React.FC = () => {
   const sectorId = useAppSelector(state => state.sectorData.sectorId);
   const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
   const sigmetList = useAppSelector(sigmetSelector);
+  const zStack = useAppSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
@@ -64,6 +65,7 @@ export const SigmetWindow: React.FC = () => {
   return pos && (<FloatingWindowDiv
       width={1100}
       pos={pos}
+      zIndex={zStack.indexOf(windowEnum.sigmets)}
       ref={ref}
       id="edst-status"
     >

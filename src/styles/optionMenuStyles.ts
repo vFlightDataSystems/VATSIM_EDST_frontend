@@ -31,12 +31,12 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?:
     transform: "rotate(45deg)"
   }}
 `;
-export const OptionsMenu = styled(NoSelectDiv)<{ width?: number, pos?: { x: number, y: number } }>`
+export const OptionsMenu = styled(NoSelectDiv)<{ width?: number, pos?: { x: number, y: number }, zIndex: number }>`
+  z-index: ${props => 10000 - props.zIndex};
   overflow: hidden;
   position: absolute;
   color: #ADADAD;
   border: none;
-  z-index: 1000;
   width: ${props => props.width ? props.width + 'px' : 'auto'};
   ${props => props.pos && {
     left: props.pos.x + 'px', top: props.pos.y + 'px'

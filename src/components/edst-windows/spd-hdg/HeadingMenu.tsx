@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
-
 import _ from "lodash";
 import {EdstButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
@@ -11,7 +10,8 @@ import {menuEnum} from "../../../enums";
 import {
   aselSelector,
   AselType, closeMenu,
-  menuPositionSelector
+  menuPositionSelector,
+  zStackSelector
 } from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
@@ -37,6 +37,7 @@ export const HeadingMenu: React.FC = () => {
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.headingMenu));
+  const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
 
   const [heading, setHeading] = useState(280);
@@ -80,6 +81,7 @@ export const HeadingMenu: React.FC = () => {
   return pos && entry && (<OptionsMenu
     width={190}
     pos={pos}
+    zIndex={zStack.indexOf(menuEnum.headingMenu)}
     ref={ref}
     id="heading-menu"
   >

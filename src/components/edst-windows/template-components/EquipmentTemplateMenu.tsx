@@ -1,7 +1,7 @@
 import React, {useContext, useRef, useState} from "react";
 import {EdstContext} from "../../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {closeMenu, menuPositionSelector} from "../../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector} from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {menuEnum} from "../../../enums";
 import {EdstButton} from "../../resources/EdstButton";
@@ -77,6 +77,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(menuPositionSelector(menuEnum.equipmentTemplateMenu));
   const entry = useAppSelector(aselEntrySelector);
+  const zStack = useAppSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
 
   const ref = useRef(null);
@@ -85,6 +86,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
   return pos && (<OptionsMenu
       width={900}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.equipmentTemplateMenu)}
       ref={ref}
       id="equipment-template-menu"
     >

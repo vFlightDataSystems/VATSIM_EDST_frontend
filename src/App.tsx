@@ -31,7 +31,8 @@ import {
   setDragging,
   setMcaCommandString,
   setMenuPosition,
-  setWindowPosition
+  setWindowPosition,
+  setZStack
 } from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/tools-components/ToolsMenu";
@@ -143,11 +144,13 @@ export const App: React.FC = () => {
           // invoke('grab_cursor');
           invoke('set_pointer_position', newCursorPos);
         }
+        else {
+          ppos = {x: event.pageX + 1, y: event.pageY - 35};
+        }
       } else {
         bodyRef.current.relativePos = {x: event.pageX, y: event.pageY};
       }
       const style = {
-        zIndex: 1001,
         left: ppos.x - 1,
         top: ppos.y + 35,
         position: "absolute",
@@ -160,6 +163,7 @@ export const App: React.FC = () => {
       setDragPreviewStyle(style);
       setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(edstWindow));
       dispatch(setDragging(true));
+      dispatch(setZStack(edstWindow));
       bodyRef.current.addEventListener('mousemove', draggingHandler);
     }
   }

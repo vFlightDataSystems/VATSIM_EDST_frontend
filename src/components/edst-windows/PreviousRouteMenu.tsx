@@ -7,7 +7,7 @@ import {computeFrd, copy, getClosestReferenceFix, removeDestFromRouteString} fro
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
@@ -19,6 +19,7 @@ export const PreviousRouteMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
   const pos = useAppSelector(menuPositionSelector(menuEnum.prevRouteMenu));
+  const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
   const ref = useRef(null);
   const focused = useFocused(ref);
@@ -31,6 +32,7 @@ export const PreviousRouteMenu: React.FC = () => {
   return pos && entry && (<OptionsMenu
       width={380}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.prevRouteMenu)}
       ref={ref}
       id="prev-route-menu"
     >

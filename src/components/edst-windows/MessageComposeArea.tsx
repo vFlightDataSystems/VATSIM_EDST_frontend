@@ -13,7 +13,8 @@ import {
   setInputFocused,
   setMcaCommandString,
   setMraMessage,
-  windowPositionSelector
+  windowPositionSelector,
+  zStackSelector
 } from "../../redux/slices/appSlice";
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
@@ -24,7 +25,6 @@ import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 import {edstFontGrey} from "../../styles/colors";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
-  z-index: 1000;
   height: 84px;
   width: 400px;
   background-color: #000000;
@@ -89,6 +89,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const zStack = useAppSelector(zStackSelector);
 
   const {startDrag} = useContext(EdstContext);
 
@@ -271,34 +272,35 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   };
 
   return pos && (<MessageComposeAreaDiv
-      ref={ref}
-      id="edst-mca"
-      style={{left: pos.x + "px", top: pos.y + "px"}}
-      onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
-      // onMouseEnter={() => setInputFocus()}
-    >
-      <MessageComposeInputAreaDiv>
-        <input
-          ref={inputRef}
-          onFocus={() => {
-            dispatch(setInputFocused(true));
-            setMcaFocused(true);
-          }}
-          onBlur={() => {
-            dispatch(setInputFocused(false));
-            setMcaFocused(false);
-          }}
-          tabIndex={mcaFocused ? -1 : undefined}
-          value={mcaCommandString}
-          onChange={handleInputChange}
-          onKeyDownCapture={handleKeyDown}
-        />
-      </MessageComposeInputAreaDiv>
-      <MessageComposeResponseAreaDiv>
-        {response?.startsWith('ACCEPT') && <AcceptCheckmarkSpan/>}
-        {response?.startsWith('REJECT') && <RejectCrossSpan/>}
-        {response}
-      </MessageComposeResponseAreaDiv>
-    </MessageComposeAreaDiv>
+    ref={ref}
+    id="edst-mca"
+    pos={pos}
+    zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
+    onMouseDown={(event) => startDrag(event, ref, windowEnum.messageComposeArea)}
+  // onMouseEnter={() => setInputFocus()}
+  >
+    <MessageComposeInputAreaDiv>
+      <input
+        ref={inputRef}
+        onFocus={() => {
+          dispatch(setInputFocused(true));
+          setMcaFocused(true);
+        }}
+        onBlur={() => {
+          dispatch(setInputFocused(false));
+          setMcaFocused(false);
+        }}
+        tabIndex={mcaFocused ? -1 : undefined}
+        value={mcaCommandString}
+        onChange={handleInputChange}
+        onKeyDownCapture={handleKeyDown}
+      />
+    </MessageComposeInputAreaDiv>
+    <MessageComposeResponseAreaDiv>
+      {response?.startsWith('ACCEPT') && <AcceptCheckmarkSpan />}
+      {response?.startsWith('REJECT') && <RejectCrossSpan />}
+      {response}
+    </MessageComposeResponseAreaDiv>
+  </MessageComposeAreaDiv>
   );
 };

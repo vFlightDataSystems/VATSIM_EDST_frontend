@@ -1,15 +1,16 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {PlansDisplayHeader} from "./plans-display-components/PlansDisplayHeader";
 import {PlansDisplayTable} from "./plans-display-components/PlansDisplayTable";
 import {useAppSelector} from "../../redux/hooks";
-import {draggingSelector} from "../../redux/slices/appSlice";
+import {draggingSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {NoPointerEventsDiv} from "../../styles/styles";
 import {edstFontGrey} from "../../styles/colors";
+import { windowEnum } from "../../enums";
 
-const PlansDisplayDiv = styled.div<{dragging?: boolean}>`
+const PlansDisplayDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zIndex: number }>`
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -19,19 +20,20 @@ const PlansDisplayDiv = styled.div<{dragging?: boolean}>`
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
-  
-  ${(props: {dragging?: boolean}) => props.dragging && `${NoPointerEventsDiv}`}
+  z-index: ${props => (props.fullscreen ? 5000 : 10000) - props.zIndex};
+
+  ${(props: { dragging?: boolean }) => props.dragging && `${NoPointerEventsDiv}`};
 `;
 
 export const PlansDisplay: React.FC = () => {
-  const dragging = useAppSelector(draggingSelector);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
+  const [fullscreen, setFullscreen] = useState(true);
+  const dragging = useAppSelector(draggingSelector);
+  const zStack = useAppSelector(zStackSelector);
 
-  return (<PlansDisplayDiv dragging={dragging} ref={ref}>
-    <div>
-      <PlansDisplayHeader focused={focused}/>
-      <PlansDisplayTable/>
-    </div>
+  return (<PlansDisplayDiv dragging={dragging} ref={ref} fullscreen={fullscreen} zIndex={zStack.indexOf(windowEnum.plansDisplay)}>
+      <PlansDisplayHeader focused={focused} />
+      <PlansDisplayTable />
   </PlansDisplayDiv>);
 };

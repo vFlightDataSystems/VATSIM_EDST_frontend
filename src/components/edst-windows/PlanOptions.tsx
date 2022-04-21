@@ -10,7 +10,8 @@ import {
   aselSelector,
   AselType, closeMenu,
   menuPositionSelector,
-  setAsel
+  setAsel,
+  zStackSelector
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
 import {useFocused} from "../../hooks";
@@ -30,6 +31,7 @@ export const PlanOptions: React.FC = () => {
   const dispatch = useAppDispatch();
   const asel = useAppSelector(aselSelector) as AselType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.planOptions));
+  const zStack = useAppSelector(zStackSelector);
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef(null);
   const focused = useFocused(ref);
@@ -45,6 +47,7 @@ export const PlanOptions: React.FC = () => {
   return pos && (<OptionsMenu
       width={220}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.planOptions)}
       ref={ref}
       id="plan-menu"
     >

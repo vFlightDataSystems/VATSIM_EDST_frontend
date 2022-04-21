@@ -1,6 +1,5 @@
 import React, {useContext, useRef, useState} from 'react';
 
-
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
@@ -9,7 +8,7 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {setAclSort} from "../../redux/slices/aclSlice";
 import {setDepSort} from "../../redux/slices/depSlice";
 import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
-import {closeMenu, menuSelector} from "../../redux/slices/appSlice";
+import {closeMenu, menuSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import {
   OptionsBody, OptionsBodyCol,
@@ -45,6 +44,7 @@ export const SortMenu: React.FC = () => {
   const menuProps = useAppSelector(menuSelector(menuEnum.sortMenu));
   const window = menuProps.openedBy;
   const sortData = useAppSelector((state) => state[window === windowEnum.acl ? 'acl' : 'dep'].sortData);
+  const zStack = useAppSelector(zStackSelector);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef(null);
@@ -55,6 +55,7 @@ export const SortMenu: React.FC = () => {
   return menuProps?.position && (<OptionsMenu
       width={window === windowEnum.acl ? 220 : 190}
       pos={menuProps.position}
+      zIndex={zStack.indexOf(menuEnum.sortMenu)}
       ref={ref}
       id="sort-menu"
     >

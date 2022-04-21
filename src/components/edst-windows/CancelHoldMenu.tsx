@@ -4,7 +4,7 @@ import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
 import {menuEnum} from "../../enums";
-import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {useFocused} from "../../hooks";
@@ -23,15 +23,17 @@ export const CancelHoldMenu: React.FC = () => {
   } = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.cancelHoldMenu))
+  const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
 
   return pos && entry && (<OptionsMenu
-      width={250}
-      pos={pos}
-      ref={ref}
-      id="cancel-hold-menu"
+    width={250}
+    pos={pos}
+    zIndex={zStack.indexOf(menuEnum.cancelHoldMenu)}
+    ref={ref}
+    id="cancel-hold-menu"
     >
       <OptionsMenuHeader
         focused={focused}
@@ -58,6 +60,6 @@ export const CancelHoldMenu: React.FC = () => {
           </OptionsBodyCol>
         </OptionsBodyRow>
       </OptionsBody>
-    </OptionsMenu>
+    </OptionsMenu >
   );
 }
