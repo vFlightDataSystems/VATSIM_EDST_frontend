@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
-
 import _ from "lodash";
 import {EdstContext} from "../../../contexts/contexts";
 import {EdstButton} from "../../resources/EdstButton";
@@ -11,7 +10,8 @@ import {menuEnum} from "../../../enums";
 import {
   aselSelector,
   AselType, closeMenu,
-  menuPositionSelector
+  menuPositionSelector,
+  zStackSelector
 } from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
@@ -43,6 +43,7 @@ export const SpeedMenu: React.FC = () => {
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.speedMenu));
+  const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
@@ -92,6 +93,7 @@ export const SpeedMenu: React.FC = () => {
   return pos && entry && (<OptionsMenu
       width={190}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.speedMenu)}
       ref={ref}
       id="speed-menu"
     >

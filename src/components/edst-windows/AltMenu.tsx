@@ -19,13 +19,13 @@ import {NoSelectDiv} from "../../styles/styles";
 import {edstFontYellow} from "../../styles/colors";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number, pos: { x: number, y: number } }>`
-  z-index: 1000;
+  z-index: 11000;
   background-color: #888888;
   position: absolute;
   width: ${props => props.width ? props.width + 'px' : '100px'};
   color: #D6D6D6;
 
-  ${props => ({left: props.pos.x + 'px', top: props.pos.y + 'px'})}
+  ${props => ({ left: props.pos.x + 'px', top: props.pos.y + 'px' })}
 `;
 
 const AltMenuHeaderDiv = styled.div`

@@ -39,12 +39,13 @@ export type AppStateType = {
   inputFocused: boolean;
   windows: { [key in windowEnum]: AppWindowType },
   menus: { [key in menuEnum]: AppWindowType },
-  dragging: boolean;
-  mraMsg: string;
-  mcaCommandString: string;
-  tooltipsEnabled: boolean;
-  showSectorSelector: boolean;
-  asel: AselType | null
+  dragging: boolean,
+  mraMsg: string,
+  mcaCommandString: string,
+  tooltipsEnabled: boolean,
+  showSectorSelector: boolean,
+  asel: AselType | null,
+  zStack: (windowEnum | menuEnum)[]
 }
 
 export const DISABLED_HEADER_BUTTONS = [
@@ -94,7 +95,8 @@ const initialState: AppStateType = {
   mcaCommandString: '',
   tooltipsEnabled: true,
   showSectorSelector: true,
-  asel: null
+  asel: null,
+  zStack: []
 };
 
 const appSlice = createSlice({
@@ -103,9 +105,15 @@ const appSlice = createSlice({
   reducers: {
     toggleWindow(state, action: { payload: windowEnum }) {
       state.windows[action.payload].open = !state.windows[action.payload].open;
+      let zStack = new Set([...state.zStack]);
+      zStack.delete(action.payload);
+      state.zStack = [action.payload, ...zStack];
     },
     toggleMenu(state, action: { payload: menuEnum }) {
       state.menus[action.payload].open = !state.menus[action.payload].open;
+      let zStack = new Set([...state.zStack]);
+      zStack.delete(action.payload);
+      state.zStack = [action.payload, ...zStack];
     },
     closeWindow(state, action: { payload: windowEnum | windowEnum[] }) {
       if (action.payload instanceof Array) {
@@ -133,6 +141,9 @@ const appSlice = createSlice({
       if (action.payload.openedWithCid) {
         state.windows[action.payload.window].openedWithCid = action.payload.openedWithCid;
       }
+      let zStack = new Set([...state.zStack]);
+      zStack.delete(action.payload.window);
+      state.zStack = [action.payload.window, ...zStack];
     },
     openMenu(state, action: { payload: { menu: menuEnum, openedBy?: windowEnum | menuEnum, openedWithCid?: string | null } }) {
       state.menus[action.payload.menu].open = true;
@@ -142,6 +153,9 @@ const appSlice = createSlice({
       if (action.payload.openedWithCid) {
         state.menus[action.payload.menu].openedWithCid = action.payload.openedWithCid;
       }
+      let zStack = new Set([...state.zStack]);
+      zStack.delete(action.payload.menu);
+      state.zStack = [action.payload.menu, ...zStack];
     },
     setTooltipsEnabled(state, action: { payload: boolean }) {
       state.tooltipsEnabled = action.payload;
@@ -186,6 +200,11 @@ const appSlice = createSlice({
     },
     setDragging(state, action: { payload: boolean }) {
       state.dragging = action.payload;
+    },
+    setZStack(state, action: {payload: windowEnum | menuEnum}) {
+      let zStack = new Set([...state.zStack]);
+      zStack.delete(action.payload);
+      state.zStack = [action.payload, ...zStack];
     }
   }
 });
@@ -208,7 +227,8 @@ export const {
   closeAllMenus,
   closeAircraftMenus,
   setAsel,
-  setDragging
+  setDragging,
+  setZStack
 } = appSlice.actions;
 export default appSlice.reducer;
 
@@ -223,3 +243,4 @@ export const aclAselSelector = (state: RootState) => state.app.asel?.window === 
 export const depAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.dep ? state.app.asel : null;
 export const gpdAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.graphicPlanDisplay ? state.app.asel : null;
 export const draggingSelector = (state: RootState) => state.app.dragging;
+export const zStackSelector = (state: RootState) => state.app.zStack;

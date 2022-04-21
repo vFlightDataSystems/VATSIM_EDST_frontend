@@ -8,7 +8,7 @@ import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import _ from "lodash";
 import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
 import {menuEnum} from "../../enums";
-import {closeMenu, menuPositionSelector} from "../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType, RouteFixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {useFocused} from "../../hooks";
@@ -87,6 +87,7 @@ export const HoldMenu: React.FC = () => {
   } = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.holdMenu));
+  const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
 
   const now = new Date();
@@ -134,6 +135,7 @@ export const HoldMenu: React.FC = () => {
   return pos && entry && (<OptionsMenu
       width={420}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.holdMenu)}
       ref={ref}
       id="hold-menu"
       style={{left: pos.x, top: pos.y}}

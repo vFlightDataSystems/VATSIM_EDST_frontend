@@ -17,7 +17,7 @@ import {
   openWindow,
   setAsel,
   setMenuPosition,
-  setWindowPosition
+  setWindowPosition,
 } from "../slices/appSlice";
 import {addTrialPlan, planCleanup, PlanType, removeTrialPlan} from "../slices/planSlice";
 

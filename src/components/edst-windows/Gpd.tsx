@@ -1,15 +1,16 @@
 import React, {useRef, useState} from 'react';
 
 import {useAppSelector} from "../../redux/hooks";
-import {draggingSelector} from "../../redux/slices/appSlice";
+import {draggingSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import {GpdHeader} from "./gpd-components/GpdHeader";
 import {GpdBody} from "./gpd-components/GpdBody";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
 import {NoPointerEventsDiv} from "../../styles/styles";
+import { windowEnum } from "../../enums";
 
-const GpdDiv = styled.div<{dragging?: boolean}>`
+const GpdDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zIndex: number }>`
   white-space: nowrap;
   display: flex;
   flex-flow: column;
@@ -19,17 +20,21 @@ const GpdDiv = styled.div<{dragging?: boolean}>`
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
+  z-index: ${props => (props.fullscreen ? 5000 : 10000) - props.zIndex};
+
   ${props => props.dragging && NoPointerEventsDiv}
 `;
 
 export const Gpd: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  const dragging = useAppSelector(draggingSelector);
   const [zoomLevel, setZoomLevel] = useState(6);
+  const [fullscreen, setFullscreen] = useState(true);
+  const dragging = useAppSelector(draggingSelector);
+  const zStack = useAppSelector(zStackSelector);
 
-  return (<GpdDiv ref={ref} dragging={dragging}>
-    <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel}/>
-    <GpdBody zoomLevel={zoomLevel}/>
+  return (<GpdDiv ref={ref} dragging={dragging} fullscreen={fullscreen} zIndex={zStack.indexOf(windowEnum.graphicPlanDisplay)}>
+    <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
+    <GpdBody zoomLevel={zoomLevel} />
   </GpdDiv>);
 }

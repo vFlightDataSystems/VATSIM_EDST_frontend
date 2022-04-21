@@ -23,7 +23,8 @@ import {
   aselSelector,
   AselType, closeMenu,
   menuPositionSelector,
-  setInputFocused
+  setInputFocused,
+  zStackSelector
 } from "../../redux/slices/appSlice";
 import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
 import {LocalEdstEntryType} from "../../types";
@@ -106,6 +107,7 @@ export const RouteMenu: React.FC = () => {
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
+  const zStack = useAppSelector(zStackSelector);
 
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(removeDestFromRouteString((asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, '') ?? ''), entry.dest));
@@ -215,6 +217,7 @@ export const RouteMenu: React.FC = () => {
   return pos && (<OptionsMenu
       width={570}
       pos={pos}
+      zIndex={zStack.indexOf(menuEnum.routeMenu)}
       ref={ref}
       id="route-menu"
     >

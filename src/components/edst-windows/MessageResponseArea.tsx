@@ -2,12 +2,11 @@ import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
 import {useAppSelector} from "../../redux/hooks";
-import {mraMsgSelector, windowPositionSelector} from "../../redux/slices/appSlice";
+import {mraMsgSelector, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import styled from "styled-components";
 import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 
 const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
-  z-index: 1000;
   line-height: 1;
   padding: 0 2px;
   min-height: 80px;
@@ -22,11 +21,13 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
 export const MessageResponseArea: React.FC = () => {
   const pos = useAppSelector(windowPositionSelector(windowEnum.messageResponseArea));
   const msg = useAppSelector(mraMsgSelector);
-  const {startDrag} = useContext(EdstContext);
+  const zStack = useAppSelector(zStackSelector);
+  const { startDrag } = useContext(EdstContext);
   const ref = useRef(null);
 
   return pos && (<MessageResponseAreaDiv
       pos={pos}
+      zIndex={zStack.indexOf(windowEnum.messageResponseArea)}
       ref={ref}
       id="edst-mra"
       onMouseDown={(event) => startDrag(event, ref, windowEnum.messageResponseArea)}

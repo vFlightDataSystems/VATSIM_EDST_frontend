@@ -5,7 +5,7 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {EdstContext} from "../../../contexts/contexts";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
-import {closeMenu, menuSelector} from "../../../redux/slices/appSlice";
+import {closeMenu, menuSelector, zStackSelector} from "../../../redux/slices/appSlice";
 import {ToolsOptionsMenu} from "./ToolsOptionsMenu";
 import {useFocused} from "../../../hooks";
 import {
@@ -22,6 +22,7 @@ export const ToolsBody = styled(OptionsBody)`padding: 20px 0 4px 0;`;
 export const ToolsMenu: React.FC = () => {
   const dispatch = useAppDispatch();
   const menuProps = useAppSelector(menuSelector(menuEnum.toolsMenu));
+  const zStack = useAppSelector(zStackSelector);
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
@@ -29,6 +30,7 @@ export const ToolsMenu: React.FC = () => {
 
   return menuProps?.position && (<OptionsMenu
       pos={menuProps.position}
+    zIndex={zStack.indexOf(menuEnum.toolsMenu)}
       ref={ref}
       id="tools-menu"
     >
