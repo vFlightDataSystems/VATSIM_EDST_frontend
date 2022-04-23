@@ -10,7 +10,7 @@ import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSe
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {useFocused} from "../../hooks";
+import {useCenterCursor, useFocused} from "../../hooks";
 import {
   EdstInput,
   EdstTextArea,
@@ -120,8 +120,9 @@ export const TemplateMenu: React.FC = () => {
     ? entry.cleared_direct?.frd + '..' : '') + route) ?? '');
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? '');
 
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+  useCenterCursor(ref, [asel]);
 
   useEffect(() => {
     return () => {

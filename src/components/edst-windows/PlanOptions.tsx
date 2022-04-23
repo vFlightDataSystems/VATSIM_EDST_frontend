@@ -1,4 +1,4 @@
-import React, {useContext, useMemo, useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import {EdstButton} from "../resources/EdstButton";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
@@ -15,7 +15,7 @@ import {
   setZStack
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
-import {useFocused} from "../../hooks";
+import {useCenterCursor, useFocused} from "../../hooks";
 import {
   FidRow,
   OptionsBody,
@@ -34,11 +34,12 @@ export const PlanOptions: React.FC = () => {
   const pos = useAppSelector(menuPositionSelector(menuEnum.planOptions));
   const zStack = useAppSelector(zStackSelector);
   const {startDrag, stopDrag} = useContext(EdstContext);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   const entry = useAppSelector(state => state.entries[asel.cid]);
+  const dep = asel.window === windowEnum.dep;
 
-  const dep = useMemo(() => asel.window === windowEnum.dep, [asel.window]);
+  useCenterCursor(ref, [asel]);
 
   function openMenu(menu: menuEnum) {
     dispatch(openMenuThunk(menu, ref.current, menuEnum.planOptions, true));
@@ -46,11 +47,11 @@ export const PlanOptions: React.FC = () => {
   }
 
   return pos && (<OptionsMenu
+      ref={ref}
       width={220}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.planOptions)}
       onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(setZStack(menuEnum.planOptions))}
-      ref={ref}
       id="plan-menu"
     >
       <OptionsMenuHeader

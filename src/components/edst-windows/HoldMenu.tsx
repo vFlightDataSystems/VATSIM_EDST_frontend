@@ -11,7 +11,7 @@ import {menuEnum} from "../../enums";
 import {closeMenu, menuPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType, RouteFixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
-import {useFocused} from "../../hooks";
+import {useCenterCursor, useFocused} from "../../hooks";
 import {
   EdstInput,
   FidRow,
@@ -99,8 +99,9 @@ export const HoldMenu: React.FC = () => {
   const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utcMinutes);
   const [routeData, setRouteData] = useState<(RouteFixType & { minutesAtFix: number })[] | null>(null);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+  useCenterCursor(ref);
 
   useEffect(() => {
     if (!entry) {

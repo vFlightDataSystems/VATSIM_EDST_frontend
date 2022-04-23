@@ -11,7 +11,7 @@ import {EquipmentCommTemplate} from "./EquipmentCommTemplate";
 import {EquipmentAppServTemplate} from "./EquipmentAppServTemplate";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
-import {useFocused} from "../../../hooks";
+import {useCenterCursor, useFocused} from "../../../hooks";
 import {
   OptionsBodyCol,
   OptionsBody, OptionsBodyRow,
@@ -79,9 +79,9 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const entry = useAppSelector(aselEntrySelector);
   const zStack = useAppSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
-
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+  useCenterCursor(ref);
 
   return pos && (<OptionsMenu
     ref={ref}

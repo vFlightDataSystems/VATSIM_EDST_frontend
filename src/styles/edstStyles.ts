@@ -11,6 +11,7 @@ export const EdstDiv = styled(NoSelectDiv)`
   font-family: ${defaultFontFamily};
   font-size: ${defaultFontSize};
   caret-color: transparent;
+  scroll-behavior: auto;
   -webkit-font-smoothing: none;
 
   button, input, textarea {

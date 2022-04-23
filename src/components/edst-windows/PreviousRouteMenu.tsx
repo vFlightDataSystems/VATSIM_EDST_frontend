@@ -11,7 +11,7 @@ import {closeMenu, menuPositionSelector, zStackSelector, setZStack} from "../../
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
-import {useFocused} from "../../hooks";
+import {useCenterCursor, useFocused} from "../../hooks";
 import {FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader} from '../../styles/optionMenuStyles';
 
 export const PreviousRouteMenu: React.FC = () => {
@@ -21,8 +21,9 @@ export const PreviousRouteMenu: React.FC = () => {
   const pos = useAppSelector(menuPositionSelector(menuEnum.prevRouteMenu));
   const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+  useCenterCursor(ref);
 
   const closestReferenceFix = entry.aclDisplay ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
   const frd = closestReferenceFix ? computeFrd(closestReferenceFix) : null;

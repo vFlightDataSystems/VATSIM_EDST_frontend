@@ -17,7 +17,7 @@ import {
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
-import {useFocused} from "../../../hooks";
+import {useCenterCursor, useFocused} from "../../../hooks";
 import {
   EdstInput,
   FidRow,
@@ -44,8 +44,10 @@ export const HeadingMenu: React.FC = () => {
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [amend, setAmend] = useState(true);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+
+  useCenterCursor(ref, [asel]);
 
   useEffect(() => {
     setHeading(280);

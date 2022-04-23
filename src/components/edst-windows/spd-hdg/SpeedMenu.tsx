@@ -17,7 +17,7 @@ import {
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
-import {useFocused} from "../../../hooks";
+import {useCenterCursor, useFocused} from "../../../hooks";
 import {
   EdstInput,
   FidRow,
@@ -50,15 +50,16 @@ export const SpeedMenu: React.FC = () => {
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState<signEnum>(signEnum.none);
   const [amend, setAmend] = useState(true);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+  useCenterCursor(ref, [asel]);
 
   useEffect(() => {
     setSpeed(280);
     setDeltaY(0);
     setSign(signEnum.none);
     setAmend(true);
-  }, [asel.cid]);
+  }, [asel]);
 
   const handleScroll = (e: React.WheelEvent) => {
     const newDeltaY = Math.min(Math.max((speed - 400) * 10, deltaY + e.deltaY), (speed - 160) * 10);
