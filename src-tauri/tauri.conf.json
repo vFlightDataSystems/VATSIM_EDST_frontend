@@ -13,7 +13,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "com.vfds.vedst",
       "icon": [
         "icons/VCI_v4.ico",
         "icons/VCI_v4.png"
