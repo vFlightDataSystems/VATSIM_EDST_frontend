@@ -190,9 +190,9 @@ export const App: React.FC = () => {
       setDragPreviewStyle(null);
       setDraggingRepositionCursor(false);
       bodyRef.current.removeEventListener('mousemove', draggingHandler);
-      // if (window.__TAURI__) {
-      //   invoke('ungrab_cursor');
-      // }
+      if (window.__TAURI__) {
+        invoke('set_grab_cursor', {value: false});
+      }
     }
   };
 
