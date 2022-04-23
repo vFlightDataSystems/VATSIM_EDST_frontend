@@ -141,8 +141,8 @@ export const App: React.FC = () => {
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         let newCursorPos = {x: ppos.x - 1, y: ppos.y + 35};
         if (window.__TAURI__) {
-          // invoke('grab_cursor');
-          invoke('set_pointer_position', newCursorPos);
+          invoke('set_grab_cursor', {value: true});
+          invoke('set_cursor_position', newCursorPos);
         }
         else {
           ppos = {x: event.pageX + 1, y: event.pageY - 35};
