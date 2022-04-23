@@ -9,7 +9,7 @@ import {setAclSort} from "../../redux/slices/aclSlice";
 import {setDepSort} from "../../redux/slices/depSlice";
 import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
 import {closeMenu, menuSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
-import {useFocused} from "../../hooks";
+import {useCenterCursor, useFocused} from "../../hooks";
 import {
   OptionsBody, OptionsBodyCol,
   OptionsBodyRow,
@@ -47,8 +47,10 @@ export const SortMenu: React.FC = () => {
   const zStack = useAppSelector(zStackSelector);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
   const {startDrag, stopDrag} = useContext(EdstContext);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+
+  useCenterCursor(ref);
 
   let sortStateCopy = Object.assign({}, sortState);
 

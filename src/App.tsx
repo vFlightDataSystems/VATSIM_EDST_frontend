@@ -32,7 +32,6 @@ import {
   setMcaCommandString,
   setMenuPosition,
   setWindowPosition,
-  setZStack
 } from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/tools-components/ToolsMenu";
@@ -141,7 +140,7 @@ export const App: React.FC = () => {
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         let newCursorPos = {x: ppos.x - 1, y: ppos.y + 35};
         if (window.__TAURI__) {
-          invoke('set_grab_cursor', {value: true});
+          invoke('set_cursor_grab', {value: true});
           invoke('set_cursor_position', newCursorPos);
         }
         else {
@@ -167,18 +166,21 @@ export const App: React.FC = () => {
     }
   }
 
-  const stopDrag = (event: React.MouseEvent<HTMLDivElement>) => {
+  const stopDrag = (_event: React.MouseEvent<HTMLDivElement>) => {
     if (dragging && bodyRef?.current) {
       let newPos;
-      const window = bodyRef.current.draggingWindowName;
+      const edstWindow = bodyRef.current.draggingWindowName;
       const {left: x, top: y} = dragPreviewStyle;
       newPos = {x: x + 1, y: y - 35};
-      if (window in windowEnum) {
+      if (window.__TAURI__) {
+        invoke('set_cursor_grab', {value: false});
+      }
+      if (edstWindow in windowEnum) {
         dispatch(setWindowPosition({
           window: bodyRef.current.draggingWindowName as windowEnum,
           pos: newPos
         }));
-      } else if (window in menuEnum) {
+      } else if (edstWindow in menuEnum) {
         dispatch(setMenuPosition({
           menu: bodyRef.current.draggingWindowName as menuEnum,
           pos: newPos
@@ -190,9 +192,6 @@ export const App: React.FC = () => {
       setDragPreviewStyle(null);
       setDraggingRepositionCursor(false);
       bodyRef.current.removeEventListener('mousemove', draggingHandler);
-      if (window.__TAURI__) {
-        invoke('set_grab_cursor', {value: false});
-      }
     }
   };
 

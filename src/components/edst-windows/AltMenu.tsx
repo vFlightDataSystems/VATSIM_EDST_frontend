@@ -10,7 +10,6 @@ import {
   AselType, closeMenu,
   menuPositionSelector,
   setInputFocused,
-  setZStack
 } from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {addTrialPlanThunk} from "../../redux/thunks/thunks";
@@ -18,6 +17,7 @@ import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import styled from "styled-components";
 import {NoSelectDiv} from "../../styles/styles";
 import {edstFontYellow} from "../../styles/colors";
+import {useCenterCursor} from "../../hooks";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number, pos: { x: number, y: number } }>`
   z-index: 11000;
@@ -146,6 +146,7 @@ type AltMenuProps = {
 }
 
 export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput}) => {
+  const ref = useRef<HTMLDivElement | null>(null);
   const asel = useAppSelector(aselSelector) as AselType;
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useAppSelector(menuPositionSelector(menuEnum.altitudeMenu));
@@ -156,6 +157,8 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
   const [manualInput, setManualInput] = useState<string | null>(null);
   const [showInvalid, setShowInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useCenterCursor(ref, [asel]);
 
   useEffect(() => {
     setAltMenuInputRef(inputRef);
@@ -211,6 +214,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
   };
 
   return pos && asel && (<AltMenuDiv
+      ref={ref}
       width={manualInput !== null ? 160 : 100}
       pos={pos}
       id="alt-menu"
