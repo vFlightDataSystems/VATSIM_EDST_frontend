@@ -16,10 +16,10 @@ const YELLOW = "#A3A300";
 const EdstHeaderDiv = styled.div`
   width: 100vw;
   position: absolute;
-  z-index: 999;
 `;
 
 const EdstHeaderRow = styled.div`
+  z-index: 20001;
   height: 30px;
   margin: 2px 0;
   justify-content: space-between;
@@ -27,6 +27,7 @@ const EdstHeaderRow = styled.div`
 `;
 
 const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
+  z-index: 20001;
   margin: 1px 1px;
   display: inline-flex;
   ${props => props.bottomRow && {"margin-left": '73px'}};
@@ -37,7 +38,6 @@ const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
 `;
 
 const ColButton = styled.button<{ width?: number, height?: number, open?: boolean, fontWeight?: string, backgroundColor?: string, borderColor?: string }>`
-  z-index: 1000;
   display: flex;
   justify-content: center;
   line-height: 13px;
