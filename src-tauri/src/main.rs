@@ -6,14 +6,14 @@
 use tauri::{Position::Logical,LogicalPosition};
 
 #[tauri::command]
-fn set_cursor_position(window: tauri::Window, x: f64, y: f64) {
-  if window.set_cursor_position(Logical(LogicalPosition{x: x, y: y})).is_err() {
+fn set_cursor_position<R: tauri::Runtime>(window: tauri::Window<R>, x: f64, y: f64) {
+  if window.set_cursor_position(Logical(LogicalPosition{x, y})).is_err() {
     panic!("setting cursor failed");
   }
 }
 
 #[tauri::command]
-fn set_cursor_grab(window: tauri::Window, value: bool) {
+fn set_cursor_grab<R: tauri::Runtime>(window: tauri::Window<R>, value: bool) {
   if window.set_cursor_grab(value).is_err() {
     panic!("grabbing cursor failed");
   }
