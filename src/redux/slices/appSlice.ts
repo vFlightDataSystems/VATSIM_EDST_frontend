@@ -43,8 +43,8 @@ export type AppStateType = {
   disabledHeaderButtons: edstHeaderButtonEnum[];
   planQueue: PlanDataType[],
   inputFocused: boolean;
-  windows: { [key in windowEnum]: AppWindowType },
-  menus: { [key in menuEnum]: AppWindowType },
+  windows: Record<windowEnum, AppWindowType>,
+  menus: Record<menuEnum, AppWindowType>,
   dragging: boolean,
   mraMsg: string,
   mcaCommandString: string,
@@ -69,7 +69,7 @@ export const DISABLED_HEADER_BUTTONS = [
   edstHeaderButtonEnum.cpdlcMsgOut
 ];
 
-const defaultWindowPositions: { [key in windowEnum]?: { x: number, y: number } | null } = {
+const defaultWindowPositions: Partial<Record<windowEnum, { x: number, y: number } | null>> = {
   [windowEnum.status]: {x: 400, y: 100},
   [windowEnum.outage]: {x: 400, y: 100},
   [windowEnum.messageComposeArea]: {x: 100, y: 600},
@@ -79,17 +79,17 @@ const defaultWindowPositions: { [key in windowEnum]?: { x: number, y: number } |
   [windowEnum.sigmets]: {x: 100, y: 100}
 };
 
-const initialWindowState: { [key in windowEnum]: AppWindowType } = Object.fromEntries(Object.values(windowEnum)
+const initialWindowState: Record<windowEnum, AppWindowType> = Object.fromEntries(Object.values(windowEnum)
   .map((value) => [value as windowEnum, {
     open: false,
     position: defaultWindowPositions[value as windowEnum] ?? null
-  } as AppWindowType])) as { [key in windowEnum]: AppWindowType };
+  } as AppWindowType])) as  Record<windowEnum, AppWindowType>;
 
-const initialMenuState: { [key in menuEnum]: AppWindowType } = Object.fromEntries(Object.values(menuEnum)
+const initialMenuState: Record<menuEnum, AppWindowType> = Object.fromEntries(Object.values(menuEnum)
   .map((value) => [value as menuEnum, {
     open: false,
     position: null
-  } as AppWindowType])) as { [key in menuEnum]: AppWindowType };
+  } as AppWindowType])) as Record<menuEnum, AppWindowType>;
 
 const initialState: AppStateType = {
   disabledHeaderButtons: DISABLED_HEADER_BUTTONS,

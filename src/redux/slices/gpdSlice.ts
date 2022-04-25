@@ -39,7 +39,7 @@ export enum AircraftDisplayOptionsEnum {
   routePreviewMinutes = "routePreviewMinutes"
 }
 
-export type MapFeatureOptionsType = { [key in MapFeatureOptionEnum]?: boolean }
+export type MapFeatureOptionsType = Partial<Record<MapFeatureOptionEnum, boolean>>;
 
 export type aircraftDisplayOptionsType = {
   [AircraftDisplayOptionsEnum.aircraftListFilter]: boolean,
