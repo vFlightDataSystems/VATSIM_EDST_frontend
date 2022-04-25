@@ -31,6 +31,12 @@ type AppWindowType = {
   openedWithCid?: string | null
 };
 
+type OutageEntryType = {
+  message: string,
+  isOutageMessage: boolean, // false if a message is merely a notification that some service is back online
+  acknowledged: boolean
+};
+
 export type AselType = { cid: string, window: windowEnum, field: aclRowFieldEnum | depRowFieldEnum | planRowFieldEnum };
 
 export type AppStateType = {
@@ -45,7 +51,8 @@ export type AppStateType = {
   tooltipsEnabled: boolean,
   showSectorSelector: boolean,
   asel: AselType | null,
-  zStack: (windowEnum | menuEnum)[]
+  zStack: (windowEnum | menuEnum)[],
+  outage: OutageEntryType[]
 }
 
 export const DISABLED_HEADER_BUTTONS = [
@@ -96,7 +103,8 @@ const initialState: AppStateType = {
   tooltipsEnabled: true,
   showSectorSelector: true,
   asel: null,
-  zStack: []
+  zStack: [],
+  outage: []
 };
 
 const appSlice = createSlice({
@@ -205,6 +213,15 @@ const appSlice = createSlice({
       let zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
+    },
+    addOutageMessage(state, action: {payload: OutageEntryType}) {
+      state.outage = [...state.outage, action.payload];
+    },
+    // removes outage message at index
+    removeOutageMessage(state, action: {payload: number}) {
+      if (action.payload > -1 && action.payload < state.outage.length) {
+        state.outage.splice(action.payload, 1);
+      }
     }
   }
 });
@@ -228,7 +245,9 @@ export const {
   closeAircraftMenus,
   setAsel,
   setDragging,
-  setZStack
+  setZStack,
+  addOutageMessage,
+  removeOutageMessage
 } = appSlice.actions;
 export default appSlice.reducer;
 
@@ -244,3 +263,4 @@ export const depAselSelector = (state: RootState) => state.app.asel?.window === 
 export const gpdAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.graphicPlanDisplay ? state.app.asel : null;
 export const draggingSelector = (state: RootState) => state.app.dragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;
+export const outageSelector = (state: RootState) => state.app.outage;
