@@ -137,6 +137,9 @@ export const App: React.FC = () => {
         return;
       }
       bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
+      if (window.__TAURI__) {
+        invoke('set_cursor_grab', {value: true});
+      }
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         let newCursorPos = {x: ppos.x - 1, y: ppos.y + 35};
         if (window.__TAURI__) {
