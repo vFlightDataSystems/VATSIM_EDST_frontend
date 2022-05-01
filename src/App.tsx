@@ -26,12 +26,12 @@ import {initThunk} from "./redux/thunks/initThunk";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
 import {menuEnum, windowEnum} from "./enums";
 import {
-  draggingSelector,
+  anyDraggingSelector, inputFocusedSelector, mcaCommandStringSelector, menusSelector,
   openWindow,
   setDragging,
   setMcaCommandString,
   setMenuPosition,
-  setWindowPosition,
+  setWindowPosition, showSectorSelectorSelector, windowsSelector,
 } from "./redux/slices/appSlice";
 import {useAppDispatch, useAppSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/tools-components/ToolsMenu";
@@ -63,12 +63,12 @@ const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
 
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();
-  const windows = useAppSelector((state) => state.app.windows);
-  const menus = useAppSelector((state) => state.app.menus);
-  const showSectorSelector = useAppSelector((state) => state.app.showSectorSelector);
-  const mcaCommandString = useAppSelector((state) => state.app.mcaCommandString);
-  const inputFocused = useAppSelector((state) => state.app.inputFocused);
-  const dragging = useAppSelector(draggingSelector);
+  const windows = useAppSelector(windowsSelector);
+  const menus = useAppSelector(menusSelector);
+  const showSectorSelector = useAppSelector(showSectorSelectorSelector);
+  const mcaCommandString = useAppSelector(mcaCommandStringSelector);
+  const inputFocused = useAppSelector(inputFocusedSelector);
+  const dragging = useAppSelector(anyDraggingSelector);
   const [draggingRepositionCursor, setDraggingRepositionCursor] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
@@ -143,7 +143,6 @@ export const App: React.FC = () => {
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         let newCursorPos = {x: ppos.x - 1, y: ppos.y + 35};
         if (window.__TAURI__) {
-          invoke('set_cursor_grab', {value: true});
           invoke('set_cursor_position', newCursorPos);
         }
         else {
@@ -256,7 +255,7 @@ export const App: React.FC = () => {
         {menus[menuEnum.speedMenu].open && <SpeedMenu/>}
         {menus[menuEnum.headingMenu].open && <HeadingMenu/>}
         {menus[menuEnum.altitudeMenu].open && <AltMenu
-            setAltMenuInputRef={(ref: React.RefObject<HTMLInputElement> | null) => altMenuRef.current.inputRef = ref}
+            setAltMenuInputRef={(ref) => altMenuRef.current.inputRef = ref}
             showInput={altMenuRef.current.showInput}
         />}
         {windows[windowEnum.status].open && <Status/>}

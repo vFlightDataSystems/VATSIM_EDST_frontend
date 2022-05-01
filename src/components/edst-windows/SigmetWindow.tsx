@@ -18,6 +18,7 @@ import {
   FloatingWindowHeaderDiv, FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
 import {ScrollContainer} from '../../styles/optionMenuStyles';
+import {sectorIdSelector} from "../../redux/slices/sectorSlice";
 
 enum sigmetOptionEnum {
   viewSuppressed = "VIEW SUPPRESS",
@@ -28,7 +29,7 @@ enum sigmetOptionEnum {
 export const SigmetWindow: React.FC = () => {
   const dispatch = useAppDispatch();
   const pos = useAppSelector(windowPositionSelector(windowEnum.sigmets));
-  const sectorId = useAppSelector(state => state.sectorData.sectorId);
+  const sectorId = useAppSelector(sectorIdSelector);
   const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
   const sigmetList = useAppSelector(sigmetSelector);
   const zStack = useAppSelector(zStackSelector);

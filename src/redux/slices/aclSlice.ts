@@ -40,3 +40,5 @@ export const {
 export default aclSlice.reducer;
 
 export const toolsOptionsSelector = (state: RootState) => state.acl.toolsOptions;
+export const aclSortDataSelector = (state: RootState) => state.acl.sortData;
+export const aclManualPostingSelector = (state: RootState) => state.acl.manualPosting;

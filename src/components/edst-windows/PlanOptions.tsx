@@ -14,7 +14,7 @@ import {
   zStackSelector,
   setZStack
 } from "../../redux/slices/appSlice";
-import {deleteAclEntry, deleteDepEntry} from "../../redux/slices/entriesSlice";
+import {deleteAclEntry, deleteDepEntry, entrySelector} from "../../redux/slices/entriesSlice";
 import {useCenterCursor, useFocused} from "../../hooks";
 import {
   FidRow,
@@ -26,6 +26,7 @@ import {
 } from '../../styles/optionMenuStyles';
 import styled from "styled-components";
 
+const PlanOptionsDiv = styled(OptionsMenu)``;
 const PlanOptionsBody = styled(OptionsBody)`text-indent: 4px`;
 
 export const PlanOptions: React.FC = () => {
@@ -36,7 +37,7 @@ export const PlanOptions: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
-  const entry = useAppSelector(state => state.entries[asel.cid]);
+  const entry = useAppSelector(entrySelector(asel.cid));
   const dep = asel.window === windowEnum.dep;
 
   useCenterCursor(ref, [asel]);
@@ -46,7 +47,7 @@ export const PlanOptions: React.FC = () => {
     dispatch(closeMenu(menuEnum.planOptions));
   }
 
-  return pos && (<OptionsMenu
+  return pos && (<PlanOptionsDiv
       ref={ref}
       width={220}
       pos={pos}
@@ -78,7 +79,7 @@ export const PlanOptions: React.FC = () => {
         {!dep && <OptionsBodyRow>
             <EdstTooltip
                 style={{flexGrow: 1}}
-                title={Tooltips.planOptionsSpeed} // @ts-ignore
+                title={Tooltips.planOptionsSpeed}
                 disabled={true}
             >
                 <OptionsBodyCol hover={true}>
@@ -100,7 +101,7 @@ export const PlanOptions: React.FC = () => {
         <OptionsBodyRow>
           <EdstTooltip
             style={{flexGrow: 1}}
-            title={Tooltips.planOptionsPrevRoute} // @ts-ignore
+            title={Tooltips.planOptionsPrevRoute}
             disabled={entry?.previous_route === undefined}
             onMouseDown={() => openMenu(menuEnum.prevRouteMenu)}
           >
@@ -113,7 +114,7 @@ export const PlanOptions: React.FC = () => {
         {!dep && <OptionsBodyRow>
             <EdstTooltip
                 style={{flexGrow: 1}}
-                title={Tooltips.planOptionsStopProbe} // @ts-ignore
+                title={Tooltips.planOptionsStopProbe}
                 disabled={true}
             >
                 <OptionsBodyCol hover={true}>
@@ -125,7 +126,7 @@ export const PlanOptions: React.FC = () => {
         <OptionsBodyRow>
           <EdstTooltip
             style={{flexGrow: 1}}
-            title={Tooltips.planOptionsTrialRestr} // @ts-ignore
+            title={Tooltips.planOptionsTrialRestr}
             disabled={true}
           >
             <OptionsBodyCol hover={true}>
@@ -174,6 +175,6 @@ export const PlanOptions: React.FC = () => {
           </OptionsBodyCol>
         </OptionsBodyRow>
       </PlanOptionsBody>
-    </OptionsMenu>
+    </PlanOptionsDiv>
   );
 };

@@ -10,7 +10,7 @@ import {aclAselActionTriggerEnum, aclRowFieldEnum, menuEnum, windowEnum} from ".
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {aclAircraftSelect} from "../../../redux/thunks/thunks";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
-import {toolsOptionsSelector} from "../../../redux/slices/aclSlice";
+import {aclManualPostingSelector, toolsOptionsSelector} from "../../../redux/slices/aclSlice";
 import {BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2} from '../../../styles/bodyStyles';
 import {
   AclCol1,
@@ -48,7 +48,7 @@ export const AclRow: React.FC<AclRowProps> = (
   }) => {
   const asel = useAppSelector(aselSelector);
   const dispatch = useAppDispatch();
-  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const manualPosting = useAppSelector(aclManualPostingSelector);
   const toolOptions = useAppSelector(toolsOptionsSelector);
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);

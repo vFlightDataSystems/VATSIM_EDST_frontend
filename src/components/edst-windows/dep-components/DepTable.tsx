@@ -9,6 +9,8 @@ import {edstFontGrey} from "../../../styles/colors";
 import {ScrollContainer} from "../../../styles/optionMenuStyles";
 import {BodyRowDiv, BodyRowHeaderDiv} from "../../../styles/bodyStyles";
 import {AircraftTypeCol, AltCol, DepCol2, FidCol, RadioCol, SpecialBox, CodeCol, RouteCol} from "./DepStyled";
+import {entriesSelector} from "../../../redux/slices/entriesSlice";
+import {depManualPostingSelector, depSortDataSelector} from "../../../redux/slices/depSlice";
 
 const COMPLETED_SYMBOL = '✓';
 
@@ -21,9 +23,9 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
 `;
 
 export function DepTable() {
-  const sortData = useAppSelector((state) => state.dep.sortData);
-  const manualPosting = useAppSelector((state) => state.dep.manualPosting);
-  const entries = useAppSelector(state => state.entries);
+  const sortData = useAppSelector(depSortDataSelector);
+  const manualPosting = useAppSelector(depManualPostingSelector);
+  const entries = useAppSelector(entriesSelector);
   const [hiddenList, setHiddenList] = useState<depRowFieldEnum[]>([]);
 
   const toggleHideColumn = (field: depRowFieldEnum) => {

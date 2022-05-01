@@ -336,17 +336,12 @@ export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEds
     for (let name of fixNames.slice(0, index + 1).reverse()) {
       if (newRoute.includes(name)) {
         newRoute = newRoute.slice(newRoute.indexOf(name) + name.length);
-        if (!Number(newRoute[0])) {
-          newRoute = `..${clearedFixName}` + newRoute;
-        } else {
-          newRoute = `..${clearedFixName}.${name}${newRoute}`;
-        }
+        newRoute = `..${clearedFixName}` + newRoute;
         break;
       }
     }
     // new_route = `..${fix}` + new_route;
     newRoute = removeDestFromRouteString(newRoute.slice(0), dest);
-    // navigator.clipboard.writeText(`${!dep ? frd : ''}${new_route}`); // this only works with https or localhost
     copy(`${frd ?? ''}${newRoute}`.replace(/\.+$/, ''));
     return {
       route: newRoute,
