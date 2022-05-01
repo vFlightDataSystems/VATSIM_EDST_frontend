@@ -26,6 +26,8 @@ import {
   SpdCol,
   SpecialBox
 } from "./AclStyled";
+import {aclManualPostingSelector, aclSortDataSelector} from "../../../redux/slices/aclSlice";
+import {entriesSelector} from "../../../redux/slices/entriesSlice";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -45,8 +47,8 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
 `;
 
 export function AclTable() {
-  const sortData = useAppSelector((state) => state.acl.sortData);
-  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const sortData = useAppSelector(aclSortDataSelector);
+  const manualPosting = useAppSelector(aclManualPostingSelector);
   const dispatch = useAppDispatch();
 
   const asel = useAppSelector(aselSelector);
@@ -55,7 +57,7 @@ export function AclTable() {
   const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
   const [hiddenList, setHiddenList] = useState<aclRowFieldEnum[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
-  const entries = useAppSelector((state) => state.entries);
+  const entries = useAppSelector(entriesSelector);
 
   const toggleHideColumn = (field: aclRowFieldEnum) => {
     let hiddenCopy = hiddenList.slice(0);

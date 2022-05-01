@@ -3,7 +3,7 @@ import {EdstButton} from "./resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import {
   sectorPolygonSelector,
-  sectorProfilesSelector,
+  sectorProfilesSelector, selectedSectorsSelector,
   setSelectedSectors,
   toggleSector
 } from "../redux/slices/sectorSlice";
@@ -111,7 +111,7 @@ export const SectorSelector: React.FC = () => {
   const dispatch = useAppDispatch();
   const sectors = useAppSelector(sectorPolygonSelector);
   const profiles = useAppSelector(sectorProfilesSelector);
-  const selectedSectors = useAppSelector((state) => state.sectorData.selectedSectors);
+  const selectedSectors = useAppSelector(selectedSectorsSelector);
 
   const onProfileChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (!event.target.value) {

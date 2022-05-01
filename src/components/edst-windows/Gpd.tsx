@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {draggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {anyDraggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import {GpdHeader} from "./gpd-components/GpdHeader";
 import {GpdBody} from "./gpd-components/GpdBody";
@@ -30,7 +30,7 @@ export const Gpd: React.FC = () => {
   const focused = useFocused(ref);
   const [zoomLevel, setZoomLevel] = useState(6);
   const [fullscreen, setFullscreen] = useState(true);
-  const dragging = useAppSelector(draggingSelector);
+  const dragging = useAppSelector(anyDraggingSelector);
   const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();
 

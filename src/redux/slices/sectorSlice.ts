@@ -62,4 +62,6 @@ export const {setSectors, setSelectedSectors, toggleSector, setArtccId, setSecto
 export default sectorSlice.reducer;
 export const referenceFixSelector = (state: RootState) => state.sectorData.referenceFixes;
 export const sectorPolygonSelector = (state: RootState) => state.sectorData.sectors;
+export const sectorIdSelector = (state: RootState) => state.sectorData.sectorId
 export const sectorProfilesSelector = (state: RootState) => state.sectorData.profiles;
+export const selectedSectorsSelector = (state: RootState) => state.sectorData.selectedSectors;

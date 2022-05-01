@@ -4,11 +4,13 @@ import {EdstTooltip} from "./resources/EdstTooltip";
 import React from "react";
 import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {edstHeaderButtonEnum, windowEnum} from "../enums";
-import {openWindow, toggleWindow} from "../redux/slices/appSlice";
+import {disabledHeaderButtonsSelector, openWindow, toggleWindow, windowsSelector} from "../redux/slices/appSlice";
 import {planQueueSelector} from "../redux/slices/planSlice";
 import {sigmetSelector} from "../redux/slices/weatherSlice";
 import styled from "styled-components";
 import {edstFontGrey} from "../styles/colors";
+import {sectorIdSelector} from "../redux/slices/sectorSlice";
+import {entriesSelector} from "../redux/slices/entriesSlice";
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";
@@ -95,11 +97,11 @@ const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = ({title, content, ...p
 export const EdstHeader: React.FC = () => {
   const dispatch = useAppDispatch();
   const planQueue = useAppSelector(planQueueSelector);
-  const windows = useAppSelector((state) => state.app.windows);
-  const disabledHeaderButtons = useAppSelector((state) => state.app.disabledHeaderButtons);
+  const windows = useAppSelector(windowsSelector);
+  const disabledHeaderButtons =   useAppSelector(disabledHeaderButtonsSelector);
 
-  const sectorId = useAppSelector((state) => state.sectorData.sectorId);
-  const entries = useAppSelector(state => state.entries);
+  const sectorId = useAppSelector(sectorIdSelector);
+  const entries = useAppSelector(entriesSelector);
   const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
   const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
   const sigmets = useAppSelector(sigmetSelector);

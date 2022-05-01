@@ -44,8 +44,12 @@ import {
 } from '../../styles/optionMenuStyles';
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
+import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 
-const Row = styled(OptionsBodyRow)`padding: 4px 0`;
+const RouteMenuDiv = styled(OptionsMenu)``;
+const RouteMenuHeader = styled(OptionsMenuHeader)``;
+const RouteMenuBody = styled(OptionsBody)``;
+const RouteMenuRow = styled(OptionsBodyRow)`padding: 4px 0`;
 const InputContainer = styled.div`
   align-items: center;
   vertical-align: center;
@@ -107,7 +111,7 @@ export const RouteMenu: React.FC = () => {
     const pos = useAppSelector(menuPositionSelector(menuEnum.routeMenu));
     const asel = useAppSelector(aselSelector) as AselType;
     const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-    const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
+    const referenceFixes = useAppSelector(referenceFixSelector);
     const zStack = useAppSelector(zStackSelector);
 
     const [displayRawRoute, setDisplayRawRoute] = useState(false);
@@ -217,7 +221,7 @@ export const RouteMenu: React.FC = () => {
       }
     };
 
-    return pos && (<OptionsMenu
+    return pos && (<RouteMenuDiv
         ref={ref}
         width={570}
         pos={pos}
@@ -225,18 +229,18 @@ export const RouteMenu: React.FC = () => {
         onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(setZStack(menuEnum.routeMenu))}
         id="route-menu"
       >
-        <OptionsMenuHeader
+        <RouteMenuHeader
           focused={focused}
           onMouseDown={(event) => startDrag(event, ref, menuEnum.routeMenu)}
           onMouseUp={(event) => stopDrag(event)}
         >
           Route Menu
-        </OptionsMenuHeader>
-        <OptionsBody>
+        </RouteMenuHeader>
+        <RouteMenuBody>
           <FidRow>
             {entry.callsign} {entry.type}/{entry.equipment}
           </FidRow>
-          <Row>
+          <RouteMenuRow>
             <OptionsBodyCol>
               <EdstButton content="Trial Plan" selected={trialPlan} onMouseDown={() => setTrialPlan(true)}
                           title={Tooltips.routeMenuPlanData}
@@ -274,8 +278,8 @@ export const RouteMenu: React.FC = () => {
                           title={Tooltips.routeMenuAmend}
               />
             </OptionsBodyCol>
-          </Row>
-          <Row>
+          </RouteMenuRow>
+          <RouteMenuRow>
             <OptionsBodyCol>
               <InputContainer>
                 {!(asel.window === windowEnum.dep) && <EdstTooltip
@@ -300,16 +304,16 @@ export const RouteMenu: React.FC = () => {
                 </EdstTooltip>
               </InputContainer>
             </OptionsBodyCol>
-          </Row>
-          <Row topBorder={true}>
+          </RouteMenuRow>
+          <RouteMenuRow topBorder={true}>
             <EdstTooltip disabled={true} title={Tooltips.routeMenuPar}>
               <ButtonCol hover={true}>
                 <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}/>
                 Include PAR
               </ButtonCol>
             </EdstTooltip>
-          </Row>
-          <Row bottomBorder={true}>
+          </RouteMenuRow>
+          <RouteMenuRow bottomBorder={true}>
             <EdstTooltip title={Tooltips.routeMenuAppendStar}
                          onMouseDown={() => setAppend({appendStar: !appendStar, appendOplus: false})}
             >
@@ -329,9 +333,9 @@ export const RouteMenu: React.FC = () => {
                 Append<span>&nbsp;{`\u2295`}</span>
               </ButtonCol>
             </EdstTooltip>
-          </Row>
+          </RouteMenuRow>
           <EdstTooltip title={Tooltips.routeMenuDirectFix}>
-            <UnderlineRow as={Row}>
+            <UnderlineRow as={RouteMenuRow}>
               Direct-To-Fix
             </UnderlineRow>
           </EdstTooltip>
@@ -378,8 +382,8 @@ export const RouteMenu: React.FC = () => {
                           onMouseDown={() => dispatch(closeMenu(menuEnum.routeMenu))}/>
             </OptionsBodyCol>
           </OptionsBodyRow>
-        </OptionsBody>
-      </OptionsMenu>
+        </RouteMenuBody>
+      </RouteMenuDiv>
     );
   }
 ;

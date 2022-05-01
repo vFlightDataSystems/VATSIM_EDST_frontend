@@ -3,7 +3,7 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {setDepManualPosting} from "../../../redux/slices/depSlice";
+import {depManualPostingSelector, depSortDataSelector, setDepManualPosting} from "../../../redux/slices/depSlice";
 import {menuEnum, windowEnum} from "../../../enums";
 import {closeAllMenus, closeWindow, depAselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
@@ -18,8 +18,8 @@ type DepHeaderProps = {
 
 export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
   const asel = useAppSelector(depAselSelector);
-  const sortData = useAppSelector((state) => state.dep.sortData);
-  const manualPosting = useAppSelector((state) => state.dep.manualPosting);
+  const sortData = useAppSelector(depSortDataSelector);
+  const manualPosting = useAppSelector(depManualPostingSelector);
   const dispatch = useAppDispatch();
 
   const [searchStr, setSearchString] = useState('');

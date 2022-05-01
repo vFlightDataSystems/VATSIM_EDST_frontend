@@ -3,8 +3,8 @@ import {EdstContext} from "../../contexts/contexts";
 import {formatUtcMinutes, getClearedToFixRouteData} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {setAclManualPosting} from "../../redux/slices/aclSlice";
-import {updateEntry} from "../../redux/slices/entriesSlice";
+import {aclManualPostingSelector, setAclManualPosting} from "../../redux/slices/aclSlice";
+import {entriesSelector, updateEntry} from "../../redux/slices/entriesSlice";
 import {aclCleanup, openWindowThunk} from "../../redux/thunks/thunks";
 import {windowEnum} from "../../enums";
 import {
@@ -24,6 +24,7 @@ import {defaultFontFamily, defaultFontSize} from "../../styles/styles";
 import styled from "styled-components";
 import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 import {edstFontGrey} from "../../styles/colors";
+import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -84,9 +85,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const [mcaFocused, setMcaFocused] = useState(false);
   const mcaCommandString = useAppSelector(mcaCommandStringSelector);
   const pos = useAppSelector(windowPositionSelector(windowEnum.messageComposeArea));
-  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
-  const referenceFixes = useAppSelector(state => state.sectorData.referenceFixes);
-  const entries = useAppSelector(state => state.entries);
+  const manualPosting = useAppSelector(aclManualPostingSelector);
+  const referenceFixes = useAppSelector(referenceFixSelector);
+  const entries = useAppSelector(entriesSelector);
   const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

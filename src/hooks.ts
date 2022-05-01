@@ -9,7 +9,7 @@ export const useFocused = (element: RefObject<HTMLElement>) => {
   return focused;
 }
 
-export const useCenterCursor = (element: RefObject<HTMLDivElement>, deps: any[] = []) => {
+export const useCenterCursor = (element: RefObject<HTMLElement>, deps: any[] = []) => {
   useEffect(() => {
     if (window.__TAURI__ && element.current) {
       const rect = element.current?.getBoundingClientRect();

@@ -3,7 +3,7 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {setAclManualPosting} from "../../../redux/slices/aclSlice";
+import {aclManualPostingSelector, aclSortDataSelector, setAclManualPosting} from "../../../redux/slices/aclSlice";
 import {aclCleanup, openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, windowEnum} from "../../../enums";
 import {
@@ -17,12 +17,14 @@ import {addAclEntryByFid} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
 import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
 import { AddFindInput } from '../../InputComponents';
+import styled from "styled-components";
 
+const AclHeaderDiv = styled(NoSelectDiv)``;
 
 export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
   const asel = useAppSelector(aclAselSelector);
-  const sortData = useAppSelector((state) => state.acl.sortData);
-  const manualPosting = useAppSelector((state) => state.acl.manualPosting);
+  const sortData = useAppSelector(aclSortDataSelector);
+  const manualPosting = useAppSelector(aclManualPostingSelector);
   const dispatch = useAppDispatch();
 
   const [searchStr, setSearchString] = useState('');
@@ -33,7 +35,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
     }
   };
 
-  return (<NoSelectDiv>
+  return (<AclHeaderDiv>
     <WindowTitleBar
       focused={focused}
       closeWindow={() => {
@@ -100,5 +102,5 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
           onKeyDown={handleKeyDown}
         />
     </WindowHeaderRowDiv>
-  </NoSelectDiv>);
+  </AclHeaderDiv>);
 };

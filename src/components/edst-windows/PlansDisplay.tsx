@@ -3,7 +3,7 @@ import React, {useRef, useState} from 'react';
 import {PlansDisplayHeader} from "./plans-display-components/PlansDisplayHeader";
 import {PlansDisplayTable} from "./plans-display-components/PlansDisplayTable";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {draggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {anyDraggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {NoPointerEventsDiv} from "../../styles/styles";
@@ -30,7 +30,7 @@ export const PlansDisplay: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const [fullscreen, setFullscreen] = useState(true);
-  const dragging = useAppSelector(draggingSelector);
+  const dragging = useAppSelector(anyDraggingSelector);
   const zStack = useAppSelector(zStackSelector);
 
   return (<PlansDisplayDiv

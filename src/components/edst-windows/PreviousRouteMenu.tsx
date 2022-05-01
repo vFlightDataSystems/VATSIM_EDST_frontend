@@ -13,11 +13,12 @@ import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
 import {useCenterCursor, useFocused} from "../../hooks";
 import {FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader} from '../../styles/optionMenuStyles';
+import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
   const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const referenceFixes = useAppSelector((state) => state.sectorData.referenceFixes);
+  const referenceFixes = useAppSelector(referenceFixSelector);
   const pos = useAppSelector(menuPositionSelector(menuEnum.prevRouteMenu));
   const zStack = useAppSelector(zStackSelector);
   const dispatch = useAppDispatch();

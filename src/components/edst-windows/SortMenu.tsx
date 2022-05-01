@@ -123,7 +123,7 @@ export const SortMenu: React.FC = () => {
           onMouseDown={() => {
             sortStateCopy.selectedOption = sortOptionsEnum.conflictStatus;
             setSortState(sortStateCopy);
-          }} // @ts-ignore
+          }}
           disabled={true}
           title={Tooltips.sortConflictStatus}
         >
@@ -141,7 +141,7 @@ export const SortMenu: React.FC = () => {
           onMouseDown={() => {
             sortStateCopy.selectedOption = sortOptionsEnum.conflictTime;
             setSortState(sortStateCopy);
-          }} // @ts-ignore
+          }}
           disabled={true}
           title={Tooltips.sortConflictTime}
         >
@@ -176,7 +176,7 @@ export const SortMenu: React.FC = () => {
           onMouseDown={() => {
             sortStateCopy.selectedOption = sortOptionsEnum.sectorBySector;
             setSortState(sortStateCopy);
-          }} // @ts-ignore
+          }}
           disabled={true}
           title={Tooltips.sortSectorBySector}
         >

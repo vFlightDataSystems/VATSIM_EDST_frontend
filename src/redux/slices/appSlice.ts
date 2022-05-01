@@ -31,8 +31,16 @@ type AppWindowType = {
   openedWithCid?: string | null
 };
 
+enum OutageTypeEnum {
+  facilityDown,
+  facilityUp,
+  serviceDown,
+  serviceUp
+}
+
 type OutageEntryType = {
   message: string,
+  outageType: OutageTypeEnum,
   isOutageMessage: boolean, // false if a message is merely a notification that some service is back online
   acknowledged: boolean
 };
@@ -261,6 +269,12 @@ export const aselSelector = (state: RootState) => state.app.asel;
 export const aclAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.acl ? state.app.asel : null;
 export const depAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.dep ? state.app.asel : null;
 export const gpdAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.graphicPlanDisplay ? state.app.asel : null;
-export const draggingSelector = (state: RootState) => state.app.dragging;
+export const anyDraggingSelector = (state: RootState) => state.app.dragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outage;
+export const menusSelector = (state: RootState) => state.app.menus;
+export const windowsSelector = (state: RootState) => state.app.windows;
+export const tooltipsEnabledSelector = (state: RootState) => state.app.tooltipsEnabled;
+export const showSectorSelectorSelector = (state: RootState) => state.app.showSectorSelector;
+export const inputFocusedSelector = (state: RootState) => state.app.inputFocused;
+export const disabledHeaderButtonsSelector = (state: RootState) => state.app.disabledHeaderButtons;
