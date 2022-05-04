@@ -1,12 +1,51 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {removeDestFromRouteString} from "../../lib";
-import {updateEdstEntry} from "../../api";
+import {amendRoute, updateEdstEntry} from "../../api";
 import {refreshEntry} from "../refresh";
 import _ from "lodash";
-import {addAclEntry, addDepEntry, setEntry} from "../slices/entriesSlice";
+import {addAclEntry, addDepEntry, setEntry, updateEntry} from "../slices/entriesSlice";
 import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
 import {setAsel} from "../slices/appSlice";
+import {ReferenceFixType} from "../../types";
+
+export const amendDirectThunk = createAsyncThunk(
+  'entries/amendDirect',
+  async ({cid, fix, frd}: {cid: string, fix: string, frd: ReferenceFixType | null}, thunkAPI) => {
+    const state = thunkAPI.getState() as RootState;
+    let currentEntry = state.entries[cid];
+    amendRoute(currentEntry.callsign, {direct: fix, frd: frd})
+      .then(response => response.json())
+      .then(data => {
+        if (data.route && data.route_data) {
+          thunkAPI.dispatch(updateEntry({cid: cid, data: {_route: data.route, _route_data: data.route_data}}));
+        }
+      });
+  }
+)
+
+export const amendRouteThunk = createAsyncThunk(
+  'entries/amendRoute',
+  async ({cid, route: _route, frd}: {cid: string, route: string, frd?: string}, thunkAPI) => {
+    const state = thunkAPI.getState() as RootState;
+    let currentEntry = state.entries[cid];
+    let route = _route.slice(0);
+    if (route.match(/^[A-Z]+\d{6}/gi)) {
+      route = route.split('.', 1)[1].replace(/^\.+/gi, '');
+    }
+    let planData: Record<string, any> = {route: route}
+    if (frd) {
+      planData.frd = frd;
+    }
+    return amendRoute(currentEntry.callsign, planData)
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          thunkAPI.dispatch(updateEntry({cid: cid, data: {_route: data.route, _route_data: data.route_data}}));
+        }
+      });
+  }
+)
 
 export const amendEntryThunk = createAsyncThunk(
   'entries/amend',

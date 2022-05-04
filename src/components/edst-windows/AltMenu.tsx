@@ -18,6 +18,7 @@ import styled from "styled-components";
 import {NoSelectDiv} from "../../styles/styles";
 import {edstFontYellow} from "../../styles/colors";
 import {useCenterCursor} from "../../hooks";
+import {PlanQueryType} from "../../redux/slices/planSlice";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number, pos: { x: number, y: number } }>`
   z-index: 11000;
@@ -186,7 +187,8 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
           altitude: alt,
           interim: null
         },
-        msg: `AM ${entry.cid} ALT ${alt}`
+        queryType: PlanQueryType.alt,
+        msg: `AM ${entry.callsign} ALT ${alt}`
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
@@ -198,10 +200,13 @@ export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput})
       dispatch(amendEntryThunk({cid: entry.cid, planData: {interim: alt}}));
     } else {
       const trialPlanData = {
-        cid: entry.cid, callsign: entry.callsign, planData: {
+        cid: entry.cid,
+        callsign: entry.callsign,
+        planData: {
           interim: alt
         },
-        msg: `QQ /TT ${alt} ${entry?.cid}`
+        queryType: PlanQueryType.tempAlt,
+        msg: `QQ /TT ${alt} ${entry?.callsign}`
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }

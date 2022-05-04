@@ -3,7 +3,7 @@ import {EdstContext} from "../../contexts/contexts";
 
 
 import {EdstButton} from "../resources/EdstButton";
-import {computeFrd, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
+import {computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
@@ -27,7 +27,7 @@ export const PreviousRouteMenu: React.FC = () => {
   useCenterCursor(ref);
 
   const closestReferenceFix = entry.aclDisplay ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
-  const frd = closestReferenceFix ? computeFrd(closestReferenceFix) : null;
+  const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
 
   const route = removeDestFromRouteString(entry.route.slice(0), entry.dest);
 

@@ -2,13 +2,7 @@ import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 import '../../css/styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
-import {
-  computeFrd,
-  copy,
-  getClearedToFixRouteData,
-  getClosestReferenceFix,
-  removeDestFromRouteString
-} from "../../lib";
+import {computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
 import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../resources/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../resources/images/glob_bright.png';
@@ -21,15 +15,16 @@ import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
   aselSelector,
-  AselType, closeMenu,
+  AselType,
+  closeMenu,
   menuPositionSelector,
   setInputFocused,
-  zStackSelector,
-  setZStack
+  setZStack,
+  zStackSelector
 } from "../../redux/slices/appSlice";
 import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
 import {LocalEdstEntryType} from "../../types";
-import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
+import {amendDirectThunk, amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
 import _ from "lodash";
 import {useCenterCursor, useFocused} from "../../hooks";
@@ -45,6 +40,7 @@ import {
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
 import {referenceFixSelector} from "../../redux/slices/sectorSlice";
+import {PlanQueryType} from "../../redux/slices/planSlice";
 
 const RouteMenuDiv = styled(OptionsMenu)``;
 const RouteMenuHeader = styled(OptionsMenuHeader)``;
@@ -124,12 +120,14 @@ export const RouteMenu: React.FC = () => {
 
     const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
       [entry.flightplan.lat, entry.flightplan.lon, referenceFixes]);
-    const frd = useMemo(() => closestReferenceFix ? computeFrd(closestReferenceFix) : 'XXX000000', [closestReferenceFix]);
+    const frd = useMemo(() => closestReferenceFix ? computeFrdString(closestReferenceFix) : 'XXX000000', [closestReferenceFix]);
 
     const {appendOplus, appendStar} = useMemo(() => append, [append]);
     const currentRouteFixes: string[] = useMemo(() => entry?._route_data?.map(fix => fix.name) ?? [], [entry._route_data]);
-    const routeData = useMemo(() => (asel.window === windowEnum.dep) ? entry.route_data : entry._route_data,
-      [asel.window, entry._route_data, entry.route_data]);
+    let routeData = asel.window === windowEnum.dep ? entry.route_data : entry._route_data;
+    if (routeData?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
+      routeData = routeData?.slice(1);
+    }
 
     let routes: any[];
     if (asel.window === windowEnum.dep) {
@@ -151,8 +149,8 @@ export const RouteMenu: React.FC = () => {
       setRouteInput(dep ? entry.dep + route + entry.dest : route + entry.dest);
     }, [asel.window, entry._route, entry.dep, entry.dest, entry.flightplan.lat, entry.flightplan.lon, entry.referenceFix, entry.route, referenceFixes]);
 
-    const clearedReroute = (rerouteData: any) => {
-      let planData;
+    const clearedPrefroute = (rerouteData: Record<string, any>) => {
+      let planData: Record<string, any>;
       const dest = entry.dest;
       if (rerouteData.routeType === 'aar') {
         planData = {route: rerouteData.amended_route, route_fixes: rerouteData.amended_route_fixes};
@@ -166,7 +164,7 @@ export const RouteMenu: React.FC = () => {
       // localhost
       copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${planData.route}`);
       if (planData) {
-        const msg = `AM ${entry.cid} RTE ${planData.route}${entry.dest}`;
+        const msg = `AM ${entry.callsign} RTE ${planData.route}${entry.dest}`;
         if (!trialPlan) {
           dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
         } else {
@@ -174,6 +172,7 @@ export const RouteMenu: React.FC = () => {
             cid: entry.cid,
             callsign: entry.callsign,
             planData: planData,
+            queryType: PlanQueryType.reroute,
             msg: msg
           }));
         }
@@ -182,16 +181,18 @@ export const RouteMenu: React.FC = () => {
     };
 
     const clearedToFix = (clearedFixName: string) => {
-      const planData = getClearedToFixRouteData(clearedFixName, entry, !(asel.window === windowEnum.dep) ? referenceFixes : null);
+      const planData = {cid: entry.cid, fix: clearedFixName, frd: closestReferenceFix}
       if (planData) {
         if (!trialPlan) {
-          dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
+          dispatch(amendDirectThunk(planData))
+          // dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
         } else {
           dispatch(addTrialPlanThunk({
             cid: entry.cid,
             callsign: entry.callsign,
             planData: planData,
-            msg: `AM ${entry.cid} RTE ${!(asel.window === windowEnum.dep) && planData.cleared_direct.frd}${planData.route}${entry.dest}`
+            queryType: PlanQueryType.direct,
+            dest: entry.dest
           }));
         }
       }
@@ -205,14 +206,19 @@ export const RouteMenu: React.FC = () => {
 
     const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${route}`.replace(/\.+$/, ''));
-        const planData = {route: route};
+        let _route = route.replace(/^\.+/gi, '');
+        if (_route.match(/^[A-Z]+\d{6}/gi)) {
+          _route = _route.split('.', 1)[1].replace(/^\.+/gi, '');
+        }
+        copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${_route}`.replace(/\.+$/, ''));
+        const planData = {route: _route, frd: frd};
         if (trialPlan) {
           dispatch(addTrialPlanThunk({
             cid: entry.cid,
             callsign: entry.callsign,
             planData: planData,
-            msg: `AM ${entry.cid} RTE ${route}`
+            queryType: PlanQueryType.reroute,
+            msg: `AM ${entry.callsign} RTE ${frd}${_route}`
           }));
         } else {
           dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
@@ -363,7 +369,9 @@ export const RouteMenu: React.FC = () => {
                   aar={entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? []}
                   adr={asel.window === windowEnum.dep ? entry.adr : []}
                   adar={asel.window === windowEnum.dep ? entry.adar : []}
-                  dep={entry.dep} dest={entry.dest} clearedReroute={clearedReroute}
+                  dep={entry.dep}
+                  dest={entry.dest}
+                  clearedPrefroute={clearedPrefroute}
               />}
           <OptionsBodyRow margin="14px 0 0 0" padding="">
             <OptionsBodyCol>

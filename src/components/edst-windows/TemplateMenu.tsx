@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 
 import {EdstContext} from "../../contexts/contexts";
-import {computeFrd, getDepString, getDestString} from "../../lib";
+import {computeFrdString, getDepString, getDestString} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
@@ -103,7 +103,7 @@ export const TemplateMenu: React.FC = () => {
       ? entry?.route?.concat(getDestString(entry?.dest) ?? '')
       : entry?._route?.replace(/^\.*/, '')?.concat(getDestString(entry?.dest) ?? ''))
     ?? '';
-  const frd = entry?.referenceFix ? computeFrd(entry.referenceFix) : '';
+  const frd = entry?.referenceFix ? computeFrdString(entry.referenceFix) : '';
 
   const [aidInput, setAidInput] = useState(entry?.callsign ?? '');
   const [numInput, setNumInput] = useState(entry ? 1 : '');

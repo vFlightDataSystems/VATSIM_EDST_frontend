@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
-import {formatUtcMinutes, getClearedToFixRouteData} from "../../lib";
+import {formatUtcMinutes, getClosestReferenceFix} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {aclManualPostingSelector, setAclManualPosting} from "../../redux/slices/aclSlice";
@@ -25,6 +25,7 @@ import styled from "styled-components";
 import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 import {edstFontGrey} from "../../styles/colors";
 import {referenceFixSelector} from "../../redux/slices/sectorSlice";
+import {point} from "@turf/turf";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -149,7 +150,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     if (args.length === 2) {
       const entry = getEntryByFid(args[1]);
       if (entry && entry.aclDisplay && entry._route_data?.map(fix => fix.name).includes(args[0])) {
-        const planData = getClearedToFixRouteData(args[0], entry, referenceFixes);
+        const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
+        const planData = {cid: entry.cid, fix: args[0], frd: closestReferenceFix}
         if (planData) {
           dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
           setResponse(`ACCEPT\nCLEARED DIRECT`);

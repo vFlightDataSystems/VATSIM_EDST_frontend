@@ -19,7 +19,9 @@ import {
   setMenuPosition,
   setWindowPosition,
 } from "../slices/appSlice";
-import {addTrialPlan, planCleanup, PlanType, removeTrialPlan} from "../slices/planSlice";
+import {addTrialPlan, planCleanup, PlanQueryType, PlanType, removeTrialPlan} from "../slices/planSlice";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import {trialRoute} from "../../api";
 
 export function aclCleanup(dispatch: any, getState: () => RootState) {
   const state = getState();
@@ -139,7 +141,7 @@ export function openMenuThunk(menu: menuEnum, ref?: (EventTarget & any), trigger
         case menuEnum.routeMenu:
           menuPos = (triggeredFromWindow !== windowEnum.dep) ? {
             x: x - (plan ? 0 : 569),
-            y: plan ? ref.offsetTop : y - 3*height,
+            y: plan ? ref.offsetTop : y - 3 * height,
             w: width,
             h: height
           } : {
@@ -152,7 +154,7 @@ export function openMenuThunk(menu: menuEnum, ref?: (EventTarget & any), trigger
         case menuEnum.prevRouteMenu:
           menuPos = {
             x: x,
-            y: plan ? ref.offsetTop : y - 2*height,
+            y: plan ? ref.offsetTop : y - 2 * height,
             w: width,
             h: height
           };
@@ -185,12 +187,23 @@ export function openMenuThunk(menu: menuEnum, ref?: (EventTarget & any), trigger
   };
 }
 
-export function addTrialPlanThunk(plan: PlanType) {
-  return (dispatch: any) => {
-    dispatch(addTrialPlan(plan));
-    dispatch(openWindow({window: windowEnum.plansDisplay}));
-  };
-}
+export const addTrialPlanThunk = createAsyncThunk(
+  'plan/trial/route',
+  async (plan: PlanType, thunkAPI) => {
+    if (plan.queryType === PlanQueryType.direct) {
+      trialRoute(plan.callsign, {direct: plan.planData.fix, frd: plan.planData.frd})
+        .then(response => response.json())
+        .then(data => {
+          if (data.route) {
+            thunkAPI.dispatch(addTrialPlan({...plan, msg: `AM ${plan.callsign} RTE ${data.route}${plan.dest}`}));
+          }
+        })
+    } else {
+      thunkAPI.dispatch(addTrialPlan(plan));
+    }
+    thunkAPI.dispatch(openWindow({window: windowEnum.plansDisplay}));
+  })
+
 
 export function removeTrialPlanThunk(index: number) {
   return (dispatch: any, getState: () => RootState) => {

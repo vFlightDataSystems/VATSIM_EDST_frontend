@@ -179,15 +179,20 @@ export function getClosestReferenceFix(referenceFixes: any[], posPoint: Feature<
     }, fix);
   });
   let closestFix = fixesDistance.sort((u, v) => u.distance - v.distance)[0];
-  closestFix.bearing = (bearing(closestFix.point, posPoint) + 360) % 360;
+  const magneticVariation = geomag.field(closestFix.point.geometry.coordinates[1], closestFix.point.geometry.coordinates[0]).declination;
+  closestFix.bearing = (bearing(closestFix.point, posPoint) - magneticVariation + 360) % 360;
   return closestFix;
 }
 
 
 export function processAar(entry: Partial<LocalEdstEntryType>, aar_list: Array<any>) {
-  const {_route_data: currentRouteData, _route: currentRoute} = entry;
-  if (!currentRouteData || !currentRoute) {
+  const {_route_data: currentRouteData, _route: route} = entry;
+  if (!currentRouteData || !route) {
     return null;
+  }
+  let currentRoute = route.slice(0);
+  if (currentRoute.match(/^\.*[A-Z]+\d{6}/gi)) {
+    currentRoute = currentRoute.replace(/^\.*[A-Z]+\d{6}/gi, '')
   }
   return aar_list?.map(aar_data => {
     const {route_fixes: routeFixes, amendment} = aar_data;
@@ -279,9 +284,8 @@ export function computeCrossingTimes(entry: LocalEdstEntryType): (RouteFixType &
  * @param {{waypoint_id: string, bearing: number, distance: number}} referenceFix
  * @returns {string} - fix/radial/distance in standard format: ABC123456
  */
-export function computeFrd(referenceFix: ReferenceFixType): string {
-  const magneticVariation = geomag.field(referenceFix.point.geometry.coordinates[1], referenceFix.point.geometry.coordinates[0]).declination;
-  return referenceFix.waypoint_id + Math.round(referenceFix.bearing - magneticVariation).toString().padStart(3, '0')
+export function computeFrdString(referenceFix: ReferenceFixType): string {
+  return referenceFix.waypoint_id + Math.round(referenceFix.bearing).toString().padStart(3, '0')
     + Math.round(referenceFix.distance).toString().padStart(3, '0');
 }
 
@@ -299,8 +303,7 @@ export function copy(text: string) {
   if (window.__TAURI__) {
     result = clipboard.writeText(text)
       .then(result => result);
-  }
-  else {
+  } else {
     navigator.clipboard.writeText(text);
   }
   toast.show({
@@ -330,7 +333,7 @@ export function getClearedToFixRouteData(clearedFixName: string, entry: LocalEds
   if (newRoute && routeData) {
     let fixNames = routeData.map((e: { name: string }) => e.name);
     const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
-    const frd = closestReferenceFix ? computeFrd(closestReferenceFix) : null;
+    const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
 
     const index = fixNames.indexOf(clearedFixName);
     for (let name of fixNames.slice(0, index + 1).reverse()) {

@@ -33,7 +33,7 @@ type PreferredRouteDisplayProps = {
   adar: any[]
   dep: string,
   dest: string,
-  clearedReroute: (rerouteData: any) => void
+  clearedPrefroute: (rerouteData: Record<string, any>) => void
 }
 
 function computeRouteList(aar: any[], adr: any[], adar: any[], dep: string, dest: string): EdstPreferredRouteType[] {
@@ -60,7 +60,7 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
        adar,
        dep,
        dest,
-       clearedReroute
+       clearedPrefroute
      }) => {
   const [eligibleOnly, setEligibleOnly] = useState(false);
 
@@ -94,7 +94,7 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps>
         {Object.entries(routes).map(([i, r]: [string, EdstPreferredRouteType]) => {
           return r && (!eligibleOnly || r.eligible) && ((r.amendment?.length ?? 0) > 0) && (
             <PrefrouteRow key={`route-menu-prefroute-row-${i}`}>
-              <Col hover={true} onMouseDown={() => clearedReroute(r)}>
+              <Col hover={true} onMouseDown={() => clearedPrefroute(r)}>
                 {r.dep ?? ''}{r.amendment}{r.dest ?? ''}
               </Col>
             </PrefrouteRow>);
