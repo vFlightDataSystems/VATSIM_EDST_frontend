@@ -6,11 +6,31 @@ export async function fetchEdstEntries(): Promise<Response> {
 }
 
 export async function fetchEdstEntry(callsign: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/entry/${callsign}`);
+  return await fetch(`${baseurl}/edst/entry/get/${callsign}`);
+}
+
+export async function trialRoute(callsign: string, planData: Record<string, any>): Promise<Response> {
+  return await fetch(`${baseurl}/edst/trial/route`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({callsign: callsign, ...planData})
+  });
+}
+
+export async function amendRoute(callsign: string, planData: Record<string, any>): Promise<Response> {
+  return await fetch(`${baseurl}/edst/entry/amend/route`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({callsign: callsign, ...planData})
+  });
 }
 
 export async function updateEdstEntry(planData: any): Promise<Response> {
-  return await fetch(`${baseurl}/edst/entry/update`, {
+  return await fetch(`${baseurl}/edst/entry/amend/generic`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'

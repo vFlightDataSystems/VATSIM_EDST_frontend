@@ -3,11 +3,16 @@ import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import React from "react";
 import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {planCleanup, planQueueSelector, selectedPlanIndexSelector} from "../../../redux/slices/planSlice";
+import {
+  planCleanup,
+  PlanQueryType,
+  planQueueSelector,
+  selectedPlanIndexSelector
+} from "../../../redux/slices/planSlice";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, planRowFieldEnum, windowEnum} from "../../../enums";
 import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
-import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
+import {amendDirectThunk, amendEntryThunk, amendRouteThunk} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
 
 type PlansDisplayHeaderProps = {
@@ -19,6 +24,32 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
   const planQueue = useAppSelector(planQueueSelector);
   const selectedPlanIndex = useAppSelector(selectedPlanIndexSelector);
   const interim_disabled = selectedPlanIndex !== null ? !Object.keys(planQueue[selectedPlanIndex].planData ?? {}).includes('altitude') : true;
+
+  const handleAmendClick = () => {
+    if (selectedPlanIndex !== null) {
+      let trialPlanData = planQueue[selectedPlanIndex];
+      let planData = trialPlanData.planData
+      if (trialPlanData.queryType === PlanQueryType.direct
+        && ['cid', 'fix', 'frd'].every(key => Object.keys(planData).includes(key))
+      ) {
+        dispatch(amendDirectThunk({cid: planData.cid, fix: planData.fix, frd: planData.frd}));
+      }
+      else if (trialPlanData.queryType === PlanQueryType.reroute) {
+        dispatch(amendRouteThunk({
+          cid: planQueue[selectedPlanIndex].cid,
+          route: planData.route,
+          frd: planData.frd
+        }))
+      }
+      else {
+        dispatch(amendEntryThunk({
+          cid: planQueue[selectedPlanIndex].cid,
+          planData: {...planData}
+        }))
+      }
+    }
+  }
+
   return (<div>
     <WindowTitleBar
       focused={focused}
@@ -43,10 +74,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
       <EdstWindowHeaderButton disabled={true} content="Show"/>
       <EdstWindowHeaderButton disabled={true} content="Show ALL"/>
       <EdstWindowHeaderButton disabled={selectedPlanIndex === null} content="Amend"
-                              onMouseDown={() => selectedPlanIndex !== null && dispatch(amendEntryThunk({
-                                cid: planQueue[selectedPlanIndex].cid,
-                                planData: {...planQueue[selectedPlanIndex].planData}
-                              }))}
+                              onMouseDown={handleAmendClick}
                               title={Tooltips.plansAmend}
       />
       <EdstWindowHeaderButton disabled={interim_disabled} content="Interim"

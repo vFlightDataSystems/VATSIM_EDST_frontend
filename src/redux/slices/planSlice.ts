@@ -1,11 +1,22 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 
+export enum PlanQueryType {
+  direct = 'direct',
+  reroute = 'reroute',
+  alt = 'alt',
+  tempAlt = 'tempAlt',
+  hold = 'hold',
+  cancelHold = 'cancelHold'
+}
+
 export type PlanType = {
   cid: string,
   callsign: string,
-  planData: any,
-  msg: string
+  planData: Record<string, any>,
+  queryType: PlanQueryType,
+  msg?: string,
+  dest?: string
 }
 
 export type PlanStateType = {
