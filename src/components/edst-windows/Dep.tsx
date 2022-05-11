@@ -9,7 +9,7 @@ import {edstFontGrey} from "../../styles/colors";
 import {NoPointerEventsDiv} from "../../styles/styles";
 import {windowEnum} from "../../enums";
 
-const DepDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zIndex: number }>`
+const DepDiv = styled.div<{ dragging?: boolean, zIndex: number }>`
   white-space:nowrap;
   overflow: hidden;
   flex-flow: column;
@@ -20,6 +20,7 @@ const DepDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zIndex: num
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
+  background-color: #000000;
   z-index: ${props => 10000 - props.zIndex};
 
   ${props => props.dragging && NoPointerEventsDiv};
@@ -36,7 +37,6 @@ export const Dep: React.FC = () => {
   return (<DepDiv
     dragging={dragging}
     ref={ref}
-    fullscreen={fullscreen}
     zIndex={zStack.indexOf(windowEnum.dep)}
     onMouseDown={() => zStack.indexOf(windowEnum.dep) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.dep))}
   >

@@ -1,6 +1,5 @@
-import React, {useContext, useRef} from 'react';
+import React, {useRef} from 'react';
 import {EdstButton} from "../resources/EdstButton";
-import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
@@ -15,7 +14,7 @@ import {
   pushZStack
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry, entrySelector} from "../../redux/slices/entriesSlice";
-import {useCenterCursor, useFocused} from "../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../hooks";
 import {
   FidRow,
   OptionsBody,
@@ -25,6 +24,7 @@ import {
   OptionsMenuHeader
 } from '../../styles/optionMenuStyles';
 import styled from "styled-components";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 const PlanOptionsDiv = styled(OptionsMenu)``;
 const PlanOptionsBody = styled(OptionsBody)`text-indent: 4px`;
@@ -34,13 +34,12 @@ export const PlanOptions: React.FC = () => {
   const asel = useRootSelector(aselSelector) as AselType;
   const pos = useRootSelector(menuPositionSelector(menuEnum.planOptions));
   const zStack = useRootSelector(zStackSelector);
-  const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   const entry = useRootSelector(entrySelector(asel.cid));
   const dep = asel.window === windowEnum.dep;
-
   useCenterCursor(ref, [asel]);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.equipmentTemplateMenu);
 
   function openMenu(menu: menuEnum) {
     dispatch(openMenuThunk(menu, ref.current, menuEnum.planOptions, true));
@@ -55,10 +54,14 @@ export const PlanOptions: React.FC = () => {
       onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(pushZStack(menuEnum.planOptions))}
       id="plan-menu"
     >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
       <OptionsMenuHeader
         focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.planOptions)}
-        onMouseUp={(event) => stopDrag(event)}
+        onMouseDown={startDrag}
+        onMouseUp={stopDrag}
       >
         Plan Options Menu
       </OptionsMenuHeader>

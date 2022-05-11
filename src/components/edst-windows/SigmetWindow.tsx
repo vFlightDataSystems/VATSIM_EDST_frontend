@@ -1,11 +1,11 @@
-import React, {useContext, useRef, useState} from 'react';
-import {EdstContext} from "../../contexts/contexts";
+import React, {useRef, useState} from 'react';
 import {windowEnum} from "../../enums";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
+import {closeWindow, pushZStack, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {
   setSigmetAcknowledged,
-  setSigmetSuppressionState, setViewSigmetSuppressed,
+  setSigmetSuppressionState,
+  setViewSigmetSuppressed,
   sigmetSelector,
   viewSigmetSuppressedSelector
 } from "../../redux/slices/weatherSlice";
@@ -15,10 +15,13 @@ import {
   FloatingWindowDiv,
   FloatingWindowHeaderBlock,
   FloatingWindowHeaderColDiv,
-  FloatingWindowHeaderDiv, FloatingWindowRow
+  FloatingWindowHeaderDiv,
+  FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
 import {ScrollContainer} from '../../styles/optionMenuStyles';
 import {sectorIdSelector} from "../../redux/slices/sectorSlice";
+import {useDragging} from "../../hooks";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 enum sigmetOptionEnum {
   viewSuppressed = "VIEW SUPPRESS",
@@ -36,8 +39,8 @@ export const SigmetWindow: React.FC = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
-  const {startDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement>(null);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.sigmets);
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
@@ -64,76 +67,80 @@ export const SigmetWindow: React.FC = () => {
   };
 
   return pos && (<FloatingWindowDiv
-    ref={ref}
-    width={1100}
-    pos={pos}
-    zIndex={zStack.indexOf(windowEnum.sigmets)}
-    onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(pushZStack(windowEnum.sigmets))}
-    id="edst-status"
-  >
-    <FloatingWindowHeaderDiv>
-      <FloatingWindowHeaderColDiv width={20} onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv>
-      <FloatingWindowHeaderColDiv
-        flexGrow={1}
-        onMouseDown={(event) => startDrag(event, ref, windowEnum.sigmets)}
-      >
-        SIGMETS SECTOR {sectorId}
-      </FloatingWindowHeaderColDiv>
-      <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
-        <FloatingWindowHeaderBlock width={8} height={2} />
-      </FloatingWindowHeaderColDiv>
-    </FloatingWindowHeaderDiv>
-    {Object.values(sigmetList).length > 0 &&
-      <FloatingWindowBodyDiv>
-        <ScrollContainer maxHeight={600}>
-          {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
-            <span style={{ margin: "6px 0" }} key={`sigmet-list-key-${sigmetId}`}>
+      ref={ref}
+      width={1100}
+      pos={pos}
+      zIndex={zStack.indexOf(windowEnum.sigmets)}
+      onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(pushZStack(windowEnum.sigmets))}
+      id="edst-status"
+    >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
+      <FloatingWindowHeaderDiv>
+        <FloatingWindowHeaderColDiv width={20} onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv>
+        <FloatingWindowHeaderColDiv
+          flexGrow={1}
+          onMouseDown={startDrag}
+        >
+          SIGMETS SECTOR {sectorId}
+        </FloatingWindowHeaderColDiv>
+        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
+          <FloatingWindowHeaderBlock width={8} height={2}/>
+        </FloatingWindowHeaderColDiv>
+      </FloatingWindowHeaderDiv>
+      {Object.values(sigmetList).length > 0 &&
+          <FloatingWindowBodyDiv>
+              <ScrollContainer maxHeight={600}>
+                {Object.entries(sigmetList).map(([sigmetId, sigmetEntry]) => (!sigmetEntry.suppressed || viewSuppressed) &&
+                    <span style={{margin: "6px 0"}} key={`sigmet-list-key-${sigmetId}`}>
               <FloatingWindowRow
-                selected={selectedOption === sigmetId}
-                suppressed={sigmetEntry.suppressed}
-                onMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
+                  selected={selectedOption === sigmetId}
+                  suppressed={sigmetEntry.suppressed}
+                  onMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
               >
                 {sigmetEntry.text}
               </FloatingWindowRow>
-              {selectedOption === sigmetId && selectedPos &&
-                <FloatingWindowOptions
-                  pos={{
-                    x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-                    y: (ref.current as HTMLDivElement).clientTop
-                  }}
-                  options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
-                  handleOptionClick={() => {
-                    dispatch(setSigmetSuppressionState({ id: sigmetId, value: !sigmetEntry.suppressed }));
-                    setSelectedOption(null);
-                    setSelectedPos(null);
-                  }}
-                />}
+                      {selectedOption === sigmetId && selectedPos &&
+                          <FloatingWindowOptions
+                              pos={{
+                                x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+                                y: (ref.current as HTMLDivElement).clientTop
+                              }}
+                              options={[!sigmetEntry.suppressed ? 'SUPPRESS' : 'RESTORE']}
+                              handleOptionClick={() => {
+                                dispatch(setSigmetSuppressionState({id: sigmetId, value: !sigmetEntry.suppressed}));
+                                setSelectedOption(null);
+                                setSelectedPos(null);
+                              }}
+                          />}
             </span>)}
-        </ScrollContainer>
-      </FloatingWindowBodyDiv>}
-    {showOptions && <FloatingWindowOptions
-      pos={{
-        x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-        y: (ref.current as HTMLDivElement).clientTop
-      }}
-      header="SIGMETS"
-      closeOptions={() => setShowOptions(false)}
-      options={Object.values(sigmetOptionEnum)}
-      selectedOptions={[viewSuppressed ? sigmetOptionEnum.viewSuppressed : sigmetOptionEnum.hideSuppressed
-      ]}
-      handleOptionClick={(option) => {
-        switch (option as sigmetOptionEnum) {
-          case sigmetOptionEnum.viewSuppressed:
-            dispatch(setViewSigmetSuppressed(true));
-            break;
-          case sigmetOptionEnum.hideSuppressed:
-            dispatch(setViewSigmetSuppressed(false));
-            break;
-          default:
-            break;
-        }
-      }}
-    />}
-  </FloatingWindowDiv>
+              </ScrollContainer>
+          </FloatingWindowBodyDiv>}
+      {showOptions && <FloatingWindowOptions
+          pos={{
+            x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
+            y: (ref.current as HTMLDivElement).clientTop
+          }}
+          header="SIGMETS"
+          closeOptions={() => setShowOptions(false)}
+          options={Object.values(sigmetOptionEnum)}
+          selectedOptions={[viewSuppressed ? sigmetOptionEnum.viewSuppressed : sigmetOptionEnum.hideSuppressed
+          ]}
+          handleOptionClick={(option) => {
+            switch (option as sigmetOptionEnum) {
+              case sigmetOptionEnum.viewSuppressed:
+                dispatch(setViewSigmetSuppressed(true));
+                break;
+              case sigmetOptionEnum.hideSuppressed:
+                dispatch(setViewSigmetSuppressed(false));
+                break;
+              default:
+                break;
+            }
+          }}
+      />}
+    </FloatingWindowDiv>
   );
 };

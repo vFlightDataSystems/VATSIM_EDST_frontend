@@ -68,7 +68,7 @@ export function routeWillEnterAirspace(route: string, routeData: RouteFixType[] 
   if (routeData === null || route.length === 0) {
     return false;
   }
-  route = route.replace(/^\.*\[XXX\]\.*/g, '');
+  route = route.replace(/^\.*\[XXX]\.*/g, '');
   const indexToSplit = route.indexOf('[XXX]');
   const routeToProcess = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, '') : route;
   let fixNames = routeData.map((e: { name: string }) => e.name);

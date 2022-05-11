@@ -75,7 +75,7 @@ function filterRemarks(remarks: string): string {
   remarks = removeRemark(remarks, 'EET');
   remarks = removeRemark(remarks, 'REG');
 
-  var index = remarks.indexOf('RALT');
+  let index = remarks.indexOf('RALT');
   remarks = index !== -1 ? remarks.slice(0, index) + remarks.slice(index + 9) : remarks;
 
   index = remarks.indexOf('/TCAS SIMBRIEF');

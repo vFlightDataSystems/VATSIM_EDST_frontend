@@ -1,7 +1,5 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-
+import React, {useEffect, useRef, useState} from 'react';
 import _ from "lodash";
-import {EdstContext} from "../../../contexts/contexts";
 import {EdstButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
@@ -17,7 +15,7 @@ import {
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
-import {useCenterCursor, useFocused} from "../../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../../hooks";
 import {
   EdstInput,
   FidRow,
@@ -27,8 +25,9 @@ import {
   OptionsMenu,
   OptionsMenuHeader
 } from '../../../styles/optionMenuStyles';
-import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from './styled';
+import {Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3} from './styled';
 import {InputContainer} from "../../InputComponents";
+import {EdstDraggingOutline} from "../../../styles/draggingStyles";
 
 enum signEnum {
   more = '+',
@@ -37,10 +36,6 @@ enum signEnum {
 }
 
 export const SpeedMenu: React.FC = () => {
-  const {
-    startDrag,
-    stopDrag
-  } = useContext(EdstContext);
   const asel = useRootSelector(aselSelector) as AselType;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useRootSelector(menuPositionSelector(menuEnum.speedMenu));
@@ -53,6 +48,7 @@ export const SpeedMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.speedMenu);
 
   useEffect(() => {
     setSpeed(280);
@@ -93,80 +89,83 @@ export const SpeedMenu: React.FC = () => {
   };
 
   return pos && entry && (<OptionsMenu
-    ref={ref}
-    width={190}
-    pos={pos}
-    zIndex={zStack.indexOf(menuEnum.speedMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(pushZStack(menuEnum.speedMenu))}
-    id="speed-menu"
-  >
-    <OptionsMenuHeader
-      focused={focused}
-      onMouseDown={(event) => startDrag(event, ref, menuEnum.speedMenu)}
-      onMouseUp={(event) => stopDrag(event)}
+      ref={ref}
+      width={190}
+      pos={pos}
+      zIndex={zStack.indexOf(menuEnum.speedMenu)}
+      onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(pushZStack(menuEnum.speedMenu))}
+      id="speed-menu"
     >
-      Speed Information
-    </OptionsMenuHeader>
-    <OptionsBody>
-      <FidRow>
-        {entry.callsign} {entry.type}/{entry.equipment}
-      </FidRow>
-      <Row>
-        <OptionsBodyCol>
-          <EdstButton content="Amend" selected={amend}
-            onMouseDown={() => setAmend(true)}
-            title={Tooltips.aclSpdAmend}
-          />
-        </OptionsBodyCol>
-        <OptionsBodyCol alignRight={true}>
-          <EdstButton content="Scratchpad" selected={!amend}
-            onMouseDown={() => setAmend(false)}
-            title={Tooltips.aclSpdScratchpad}
-          />
-        </OptionsBodyCol>
-      </Row>
-      <OptionsBodyRow>
-        <OptionsBodyCol>
-          Speed:
-          <InputContainer>
-            <EdstInput value={speed} onChange={(e) => setSpeed(Number(e.target.value))} />
-          </InputContainer>
-        </OptionsBodyCol>
-      </OptionsBodyRow>
-      <Row3 topBorder={true} />
-      <Row3 bottomBorder={true}>
-        <EdstTooltip content="KNOTS" title={Tooltips.aclSpdKnots} />
-        <EdstButton width={20} height={20} margin="0 2px 0 22px" content="+" selected={sign === signEnum.more}
-          onMouseDown={() => setSign(sign === signEnum.more ? signEnum.none : signEnum.more)}
-        />
-        <EdstButton width={20} height={20} margin="0 16px 0 2px" content="-" selected={sign === signEnum.less}
-          onMouseDown={() => setSign(sign === signEnum.less ? signEnum.none : signEnum.less)}
-        />
-        <EdstTooltip content="MACH" title={Tooltips.aclSpdMach} />
-      </Row3>
-      <ScrollContainer onWheel={handleScroll}>
-        {_.range(5, -6, -1).map(i => {
-          const centerSpd = speed - (deltaY / 100 | 0) * 10 + i * 10;
-          const centerMach = 0.79 - (deltaY / 100 | 0) / 100 + i / 100;
-          return <ScrollRow key={`speed-menu-${i}`}>
-            <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerSpd)}>
-              {String(centerSpd).padStart(3, '0')}{sign}
-            </ScrollCol>
-            <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerSpd + 5)}>
-              {String(centerSpd + 5).padStart(3, '0')}{sign}
-            </ScrollCol>
-            <ScrollCol3 onMouseDown={(e) => handleMouseDown(e, centerMach, true)}>
-              {String(centerMach.toFixed(2)).slice(1)}{sign}
-            </ScrollCol3>
-          </ScrollRow>;
-        })}
-        <OptionsBodyRow margin="0">
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
+      <OptionsMenuHeader
+        focused={focused}
+        onMouseDown={startDrag}
+      >
+        Speed Information
+      </OptionsMenuHeader>
+      <OptionsBody>
+        <FidRow>
+          {entry.callsign} {entry.type}/{entry.equipment}
+        </FidRow>
+        <Row>
+          <OptionsBodyCol>
+            <EdstButton content="Amend" selected={amend}
+                        onMouseDown={() => setAmend(true)}
+                        title={Tooltips.aclSpdAmend}
+            />
+          </OptionsBodyCol>
           <OptionsBodyCol alignRight={true}>
-            <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.speedMenu))} />
+            <EdstButton content="Scratchpad" selected={!amend}
+                        onMouseDown={() => setAmend(false)}
+                        title={Tooltips.aclSpdScratchpad}
+            />
+          </OptionsBodyCol>
+        </Row>
+        <OptionsBodyRow>
+          <OptionsBodyCol>
+            Speed:
+            <InputContainer>
+              <EdstInput value={speed} onChange={(e) => setSpeed(Number(e.target.value))}/>
+            </InputContainer>
           </OptionsBodyCol>
         </OptionsBodyRow>
-      </ScrollContainer>
-    </OptionsBody>
-  </OptionsMenu>
+        <Row3 topBorder={true}/>
+        <Row3 bottomBorder={true}>
+          <EdstTooltip content="KNOTS" title={Tooltips.aclSpdKnots}/>
+          <EdstButton width={20} height={20} margin="0 2px 0 22px" content="+" selected={sign === signEnum.more}
+                      onMouseDown={() => setSign(sign === signEnum.more ? signEnum.none : signEnum.more)}
+          />
+          <EdstButton width={20} height={20} margin="0 16px 0 2px" content="-" selected={sign === signEnum.less}
+                      onMouseDown={() => setSign(sign === signEnum.less ? signEnum.none : signEnum.less)}
+          />
+          <EdstTooltip content="MACH" title={Tooltips.aclSpdMach}/>
+        </Row3>
+        <ScrollContainer onWheel={handleScroll}>
+          {_.range(5, -6, -1).map(i => {
+            const centerSpd = speed - (deltaY / 100 | 0) * 10 + i * 10;
+            const centerMach = 0.79 - (deltaY / 100 | 0) / 100 + i / 100;
+            return <ScrollRow key={`speed-menu-${i}`}>
+              <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerSpd)}>
+                {String(centerSpd).padStart(3, '0')}{sign}
+              </ScrollCol>
+              <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerSpd + 5)}>
+                {String(centerSpd + 5).padStart(3, '0')}{sign}
+              </ScrollCol>
+              <ScrollCol3 onMouseDown={(e) => handleMouseDown(e, centerMach, true)}>
+                {String(centerMach.toFixed(2)).slice(1)}{sign}
+              </ScrollCol3>
+            </ScrollRow>;
+          })}
+          <OptionsBodyRow margin="0">
+            <OptionsBodyCol alignRight={true}>
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.speedMenu))}/>
+            </OptionsBodyCol>
+          </OptionsBodyRow>
+        </ScrollContainer>
+      </OptionsBody>
+    </OptionsMenu>
   );
 };

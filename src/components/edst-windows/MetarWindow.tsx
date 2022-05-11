@@ -1,8 +1,7 @@
-import React, {useContext, useRef, useState} from 'react';
-import {EdstContext} from "../../contexts/contexts";
+import React, {useRef, useState} from 'react';
 import {windowEnum} from "../../enums";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
+import {closeWindow, pushZStack, windowPositionSelector, zStackSelector} from "../../redux/slices/appSlice";
 import {metarSelector, removeAirportMetar} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
@@ -10,8 +9,11 @@ import {
   FloatingWindowDiv,
   FloatingWindowHeaderBlock,
   FloatingWindowHeaderColDiv,
-  FloatingWindowHeaderDiv, FloatingWindowRow
+  FloatingWindowHeaderDiv,
+  FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
+import {useDragging} from "../../hooks";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 export const MetarWindow: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -20,8 +22,8 @@ export const MetarWindow: React.FC = () => {
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const metarList = useRootSelector(metarSelector);
   const zStack = useRootSelector(zStackSelector);
-  const { startDrag } = useContext(EdstContext);
   const ref = useRef(null);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.metar);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selected !== airport) {
@@ -41,15 +43,19 @@ export const MetarWindow: React.FC = () => {
       width={400}
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.metar)}
-    onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(pushZStack(windowEnum.metar))}
+      onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(pushZStack(windowEnum.metar))}
       ref={ref}
       id="edst-status"
     >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseDown={stopDrag}
+      />}
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
         <FloatingWindowHeaderColDiv
           flexGrow={1}
-          onMouseDown={(event) => startDrag(event, ref, windowEnum.metar)}
+          onMouseDown={startDrag}
         >
           WX
         </FloatingWindowHeaderColDiv>

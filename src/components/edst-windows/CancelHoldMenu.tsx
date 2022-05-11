@@ -1,5 +1,4 @@
-import React, {useContext, useRef} from 'react';
-import {EdstContext} from "../../contexts/contexts";
+import React, {useRef} from 'react';
 import {EdstButton} from "../resources/EdstButton";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {aselEntrySelector, updateEntry} from "../../redux/slices/entriesSlice";
@@ -7,7 +6,7 @@ import {menuEnum} from "../../enums";
 import {closeMenu, menuPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
-import {useCenterCursor, useFocused} from "../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../hooks";
 import {
   FidRow, OptionsBodyCol,
   OptionsBody,
@@ -15,12 +14,9 @@ import {
   OptionsMenu,
   OptionsMenuHeader
 } from '../../styles/optionMenuStyles';
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 export const CancelHoldMenu: React.FC = () => {
-  const {
-    startDrag,
-    stopDrag
-  } = useContext(EdstContext);
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useRootSelector(menuPositionSelector(menuEnum.cancelHoldMenu))
   const zStack = useRootSelector(zStackSelector);
@@ -28,6 +24,7 @@ export const CancelHoldMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.cancelHoldMenu);
 
   return pos && entry && (<OptionsMenu
       ref={ref}
@@ -37,10 +34,14 @@ export const CancelHoldMenu: React.FC = () => {
       onMouseDown={() => zStack.indexOf(menuEnum.cancelHoldMenu) > 0 && dispatch(pushZStack(menuEnum.cancelHoldMenu))}
       id="cancel-hold-menu"
     >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
       <OptionsMenuHeader
         focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.cancelHoldMenu)}
-        onMouseUp={(event) => stopDrag(event)}
+        onMouseDown={startDrag}
+        onMouseUp={stopDrag}
       >
         Cancel Hold Confirmation
       </OptionsMenuHeader>

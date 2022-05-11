@@ -24,16 +24,14 @@ export const EdstDiv = styled(NoSelectDiv)`
   }
 `;
 
-export const EdstBodyDiv = styled.div<{hideCursor?: boolean}>`
+export const EdstBodyDiv = styled.div`
   overflow: hidden;
   flex-flow: column;
   position: absolute;
   top: 36px;
   left: 0;
-  height: calc(100vh - 36px);
-  width: 100vw;
+  height: calc(100% - 36px);
+  width: 100%;
   flex-grow: 1;
   display: flex;
-  
-  ${props => props.hideCursor && {cursor: "none"}};
 `;

@@ -9,7 +9,7 @@ import {edstFontGrey} from "../../styles/colors";
 import {NoPointerEventsDiv} from "../../styles/styles";
 import {windowEnum} from "../../enums";
 
-const AclDiv = styled.div<{ anyDragging?: boolean, fullscreen: boolean, zIndex: number }>`
+const AclDiv = styled.div<{ anyDragging?: boolean, zIndex: number }>`
   white-space: nowrap;
   display: flex;
   flex-flow: column;
@@ -19,6 +19,7 @@ const AclDiv = styled.div<{ anyDragging?: boolean, fullscreen: boolean, zIndex: 
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
+  background-color: #000000;
   z-index: ${props => 10000 - props.zIndex};
 
   ${props => props.anyDragging && NoPointerEventsDiv};
@@ -35,7 +36,6 @@ export const Acl: React.FC = () => {
   return (<AclDiv
     anyDragging={anyDragging}
     ref={ref}
-    fullscreen={fullscreen}
     zIndex={zStack.indexOf(windowEnum.acl)}
     onMouseDown={() => zStack.indexOf(windowEnum.acl) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.acl))}
   >
