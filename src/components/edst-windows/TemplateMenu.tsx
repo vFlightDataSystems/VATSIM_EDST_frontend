@@ -3,10 +3,10 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {computeFrdString, getDepString, getDestString} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
@@ -92,11 +92,11 @@ export const TemplateMenu: React.FC = () => {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const dispatch = useAppDispatch();
-  const asel = useAppSelector(aselSelector);
-  const entry = useAppSelector(aselEntrySelector);
-  const pos = useAppSelector(menuPositionSelector(menuEnum.templateMenu));
-  const zStack = useAppSelector(zStackSelector);
+  const dispatch = useRootDispatch();
+  const asel = useRootSelector(aselSelector);
+  const entry = useRootSelector(aselEntrySelector);
+  const pos = useRootSelector(menuPositionSelector(menuEnum.templateMenu));
+  const zStack = useRootSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
   const route = (asel?.window === windowEnum.dep
@@ -135,7 +135,7 @@ export const TemplateMenu: React.FC = () => {
     width={850}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.templateMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(setZStack(menuEnum.templateMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(pushZStack(menuEnum.templateMenu))}
     id="template-menu"
   >
     <OptionsMenuHeader

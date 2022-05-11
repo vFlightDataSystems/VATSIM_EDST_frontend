@@ -1,8 +1,8 @@
 import React, {useContext, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {closeWindow, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {altimeterSelector, removeAirportAltimeter} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
@@ -21,12 +21,12 @@ const AltimCol = styled.span<{underline?: boolean, reportingStation?: boolean}>`
 `;
 
 export const AltimeterWindow: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.altimeter));
+  const dispatch = useRootDispatch();
+  const pos = useRootSelector(windowPositionSelector(windowEnum.altimeter));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
-  const altimeterList = useAppSelector(altimeterSelector);
-  const zStack = useAppSelector(zStackSelector);
+  const altimeterList = useRootSelector(altimeterSelector);
+  const zStack = useRootSelector(zStackSelector);
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
   const now = new Date();
@@ -50,7 +50,7 @@ export const AltimeterWindow: React.FC = () => {
     width={180}
     pos={pos}
     zIndex={zStack.indexOf(windowEnum.altimeter)}
-    onMouseDown={() => zStack.indexOf(windowEnum.altimeter) > 0 && dispatch(setZStack(windowEnum.altimeter))}
+    onMouseDown={() => zStack.indexOf(windowEnum.altimeter) > 0 && dispatch(pushZStack(windowEnum.altimeter))}
     ref={ref}
     id="edst-altimeter"
   >

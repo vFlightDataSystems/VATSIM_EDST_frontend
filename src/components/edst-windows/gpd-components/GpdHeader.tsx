@@ -2,7 +2,7 @@ import React from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, windowEnum} from "../../../enums";
 import {
@@ -12,6 +12,7 @@ import {
 } from "../../../redux/slices/appSlice";
 import {NoSelectDiv} from "../../../styles/styles";
 import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
+import {gpdSuppressedSelector, toggleSuppressed} from "../../../redux/slices/gpdSlice";
 
 type GpdHeaderProps = {
   focused: boolean,
@@ -20,8 +21,9 @@ type GpdHeaderProps = {
 }
 
 export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoomLevel}) => {
-  const asel = useAppSelector(gpdAselSelector);
-  const dispatch = useAppDispatch();
+  const asel = useRootSelector(gpdAselSelector);
+  const suppressed = useRootSelector(gpdSuppressedSelector);
+  const dispatch = useRootDispatch();
 
   const handleRangeClick = (event: React.MouseEvent) => {
     switch (event.button) {
@@ -34,6 +36,10 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
       default:
         break;
     }
+  }
+
+  const handleSuppressClick = () => {
+    dispatch(toggleSuppressed());
   }
 
   return (<NoSelectDiv>
@@ -84,7 +90,7 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
         title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton disabled={true} onMouseDown={handleRangeClick} content={`Range`}/>
-      <EdstWindowHeaderButton disabled={true} content="Suppress"/>
+      <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width={74}/>
       <EdstWindowHeaderButton
         onMouseDown={(e: React.MouseEvent) => {
           dispatch(closeMenu(menuEnum.gpdMapOptionsMenu));

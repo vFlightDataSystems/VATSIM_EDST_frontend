@@ -4,7 +4,7 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
 import {deleteDepEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {depRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
 import {depAircraftSelect} from "../../../redux/thunks/thunks";
@@ -35,8 +35,8 @@ type DepRowProps = {
 }
 
 export const DepRow: React.FC<DepRowProps> = ({entry, hidden, index}) => {
-  const dispatch = useAppDispatch();
-  const asel = useAppSelector(aselSelector);
+  const dispatch = useRootDispatch();
+  const asel = useRootSelector(aselSelector);
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);
   const [adrAvail, setAdrAvail] = useState(false);

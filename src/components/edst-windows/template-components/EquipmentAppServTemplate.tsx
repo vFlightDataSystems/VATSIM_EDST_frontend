@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Tooltips} from "../../../tooltips";
-import {useAppSelector} from "../../../redux/hooks";
+import {useRootSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
@@ -18,7 +18,7 @@ enum AppCategoryEnum {
 }
 
 export const EquipmentAppServTemplate: React.FC = () => {
-  const entry = useAppSelector(aselEntrySelector);
+  const entry = useRootSelector(aselEntrySelector);
   const field10a = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]?.split('-')?.[1]?.match(/[A-Z]\d?/g);
   const appCats = field10a?.[0]?.split('')?.filter(s => Object.keys(AppCategoryEnum).includes(s)) as AppCategoryEnum[];
   const [appCategories, setAppCategories] = useState<AppCategoryEnum[]>(appCats ?? []);

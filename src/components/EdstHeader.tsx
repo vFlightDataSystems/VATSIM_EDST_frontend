@@ -2,7 +2,7 @@ import {Time} from "./Time";
 import {Tooltips} from "../tooltips";
 import {EdstTooltip} from "./resources/EdstTooltip";
 import React from "react";
-import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import {useRootDispatch, useRootSelector} from '../redux/hooks';
 import {edstHeaderButtonEnum, windowEnum} from "../enums";
 import {disabledHeaderButtonsSelector, openWindow, toggleWindow, windowsSelector} from "../redux/slices/appSlice";
 import {planQueueSelector} from "../redux/slices/planSlice";
@@ -95,16 +95,16 @@ const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = ({title, content, ...p
 };
 
 export const EdstHeader: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const planQueue = useAppSelector(planQueueSelector);
-  const windows = useAppSelector(windowsSelector);
-  const disabledHeaderButtons =   useAppSelector(disabledHeaderButtonsSelector);
+  const dispatch = useRootDispatch();
+  const planQueue = useRootSelector(planQueueSelector);
+  const windows = useRootSelector(windowsSelector);
+  const disabledHeaderButtons =   useRootSelector(disabledHeaderButtonsSelector);
 
-  const sectorId = useAppSelector(sectorIdSelector);
-  const entries = useAppSelector(entriesSelector);
+  const sectorId = useRootSelector(sectorIdSelector);
+  const entries = useRootSelector(entriesSelector);
   const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
   const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
-  const sigmets = useAppSelector(sigmetSelector);
+  const sigmets = useRootSelector(sigmetSelector);
   const sigLen = Object.values(sigmets).filter(sigmetEntry => !sigmetEntry.acknowledged).length;
   const notLen = 0, giLen = 0;
 

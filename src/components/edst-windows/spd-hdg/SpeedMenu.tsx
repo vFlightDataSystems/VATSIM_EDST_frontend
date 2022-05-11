@@ -5,14 +5,14 @@ import {EdstContext} from "../../../contexts/contexts";
 import {EdstButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
 import {
   aselSelector,
   AselType, closeMenu,
   menuPositionSelector,
   zStackSelector,
-  setZStack
+  pushZStack
 } from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
@@ -41,11 +41,11 @@ export const SpeedMenu: React.FC = () => {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const asel = useAppSelector(aselSelector) as AselType;
-  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(menuPositionSelector(menuEnum.speedMenu));
-  const zStack = useAppSelector(zStackSelector);
-  const dispatch = useAppDispatch();
+  const asel = useRootSelector(aselSelector) as AselType;
+  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
+  const pos = useRootSelector(menuPositionSelector(menuEnum.speedMenu));
+  const zStack = useRootSelector(zStackSelector);
+  const dispatch = useRootDispatch();
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState<signEnum>(signEnum.none);
@@ -97,7 +97,7 @@ export const SpeedMenu: React.FC = () => {
     width={190}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.speedMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(setZStack(menuEnum.speedMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(pushZStack(menuEnum.speedMenu))}
     id="speed-menu"
   >
     <OptionsMenuHeader

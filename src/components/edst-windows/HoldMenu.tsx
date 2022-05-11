@@ -4,11 +4,11 @@ import {computeCrossingTimes, formatUtcMinutes} from "../../lib";
 import {EdstButton, HoldDirButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import _ from "lodash";
 import {aselEntrySelector, toggleSpa, updateEntry} from "../../redux/slices/entriesSlice";
 import {menuEnum} from "../../enums";
-import {closeMenu, menuPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType, RouteFixType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {useCenterCursor, useFocused} from "../../hooks";
@@ -85,10 +85,10 @@ export const HoldMenu: React.FC = () => {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(menuPositionSelector(menuEnum.holdMenu));
-  const zStack = useAppSelector(zStackSelector);
-  const dispatch = useAppDispatch();
+  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
+  const pos = useRootSelector(menuPositionSelector(menuEnum.holdMenu));
+  const zStack = useRootSelector(zStackSelector);
+  const dispatch = useRootDispatch();
 
   const now = new Date();
   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -138,7 +138,7 @@ export const HoldMenu: React.FC = () => {
     width={420}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.holdMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.holdMenu) > 0 && dispatch(setZStack(menuEnum.holdMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.holdMenu) > 0 && dispatch(pushZStack(menuEnum.holdMenu))}
     id="hold-menu"
   >
     <OptionsMenuHeader

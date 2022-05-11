@@ -14,7 +14,7 @@ export const amendDirectThunk = createAsyncThunk(
   async ({cid, fix, frd}: {cid: string, fix: string, frd: ReferenceFixType | null}, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     let currentEntry = state.entries[cid];
-    amendRoute(currentEntry.callsign, {direct: fix, frd: frd})
+    amendRoute(currentEntry.callsign, {direct_fix: fix, route: currentEntry.route, route_data: currentEntry.route_data, frd: frd})
       .then(response => response.json())
       .then(data => {
         if (data.route && data.route_data) {

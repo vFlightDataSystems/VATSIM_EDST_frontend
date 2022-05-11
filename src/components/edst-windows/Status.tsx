@@ -1,8 +1,8 @@
 import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {EdstButton} from "../resources/EdstButton";
 import {
   FloatingWindowBodyDiv,
@@ -19,18 +19,18 @@ const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
 `;
 
 export const Status: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.status));
+  const dispatch = useRootDispatch();
+  const pos = useRootSelector(windowPositionSelector(windowEnum.status));
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
-  const zStack = useAppSelector(zStackSelector);
+  const zStack = useRootSelector(zStackSelector);
 
   return pos && (<FloatingWindowDiv
     ref={ref}
     width={360}
     pos={pos}
     zIndex={zStack.indexOf(windowEnum.status)}
-    onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(setZStack(windowEnum.status))}
+    onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(pushZStack(windowEnum.status))}
     id="edst-status"
   >
     <FloatingWindowHeaderDiv>

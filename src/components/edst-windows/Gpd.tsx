@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {anyDraggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import {GpdHeader} from "./gpd-components/GpdHeader";
 import {GpdBody} from "./gpd-components/GpdBody";
@@ -30,18 +30,18 @@ export const Gpd: React.FC = () => {
   const focused = useFocused(ref);
   const [zoomLevel, setZoomLevel] = useState(6);
   const [fullscreen, setFullscreen] = useState(true);
-  const dragging = useAppSelector(anyDraggingSelector);
-  const zStack = useAppSelector(zStackSelector);
-  const dispatch = useAppDispatch();
+  const dragging = useRootSelector(anyDraggingSelector);
+  const zStack = useRootSelector(zStackSelector);
+  const dispatch = useRootDispatch();
 
   return (<GpdDiv
     ref={ref}
     dragging={dragging}
     fullscreen={fullscreen}
     zIndex={zStack.indexOf(windowEnum.graphicPlanDisplay)}
-    onMouseDown={() => zStack.indexOf(windowEnum.graphicPlanDisplay) > 0 && dispatch(setZStack(windowEnum.graphicPlanDisplay))}
+    onMouseDown={() => zStack.indexOf(windowEnum.graphicPlanDisplay) > 0 && dispatch(pushZStack(windowEnum.graphicPlanDisplay))}
   >
-    <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
-    <GpdBody zoomLevel={zoomLevel} />
+    <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel}/>
+    <GpdBody zoomLevel={zoomLevel}/>
   </GpdDiv>);
 }

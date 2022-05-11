@@ -1,8 +1,8 @@
 import React, {useContext, useRef} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {mraMsgSelector, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {mraMsgSelector, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import styled from "styled-components";
 import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 
@@ -19,11 +19,11 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
 `;
 
 export const MessageResponseArea: React.FC = () => {
-  const pos = useAppSelector(windowPositionSelector(windowEnum.messageResponseArea));
-  const msg = useAppSelector(mraMsgSelector);
-  const zStack = useAppSelector(zStackSelector);
+  const pos = useRootSelector(windowPositionSelector(windowEnum.messageResponseArea));
+  const msg = useRootSelector(mraMsgSelector);
+  const zStack = useRootSelector(zStackSelector);
   const { startDrag } = useContext(EdstContext);
-  const dispatch = useAppDispatch();
+  const dispatch = useRootDispatch();
   const ref = useRef(null);
 
   return pos && (<MessageResponseAreaDiv
@@ -34,7 +34,7 @@ export const MessageResponseArea: React.FC = () => {
     onMouseDown={(event) => {
       startDrag(event, ref, windowEnum.messageResponseArea);
       if (zStack.indexOf(windowEnum.messageResponseArea) > 0) {
-        dispatch(setZStack(windowEnum.messageResponseArea));
+        dispatch(pushZStack(windowEnum.messageResponseArea));
       }
     }}
   >

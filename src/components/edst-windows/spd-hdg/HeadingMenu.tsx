@@ -5,14 +5,14 @@ import {EdstButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {EdstContext} from "../../../contexts/contexts";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
 import {
   aselSelector,
   AselType, closeMenu,
   menuPositionSelector,
   zStackSelector,
-  setZStack
+  pushZStack
 } from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
@@ -35,11 +35,11 @@ export const HeadingMenu: React.FC = () => {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const asel = useAppSelector(aselSelector) as AselType;
-  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(menuPositionSelector(menuEnum.headingMenu));
-  const zStack = useAppSelector(zStackSelector);
-  const dispatch = useAppDispatch();
+  const asel = useRootSelector(aselSelector) as AselType;
+  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
+  const pos = useRootSelector(menuPositionSelector(menuEnum.headingMenu));
+  const zStack = useRootSelector(zStackSelector);
+  const dispatch = useRootDispatch();
 
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
@@ -86,7 +86,7 @@ export const HeadingMenu: React.FC = () => {
     width={190}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.headingMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(setZStack(menuEnum.headingMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(pushZStack(menuEnum.headingMenu))}
     id="heading-menu"
   >
     <OptionsMenuHeader

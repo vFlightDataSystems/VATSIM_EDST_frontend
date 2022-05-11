@@ -1,6 +1,6 @@
 import React from 'react';
 import {EdstButton} from "./resources/EdstButton";
-import {useAppDispatch, useAppSelector} from "../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../redux/hooks";
 import {
   sectorPolygonSelector,
   sectorProfilesSelector, selectedSectorsSelector,
@@ -108,10 +108,10 @@ const SectorSelectorDropdown = styled.select`
 `;
 
 export const SectorSelector: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const sectors = useAppSelector(sectorPolygonSelector);
-  const profiles = useAppSelector(sectorProfilesSelector);
-  const selectedSectors = useAppSelector(selectedSectorsSelector);
+  const dispatch = useRootDispatch();
+  const sectors = useRootSelector(sectorPolygonSelector);
+  const profiles = useRootSelector(sectorProfilesSelector);
+  const selectedSectors = useRootSelector(selectedSectorsSelector);
 
   const onProfileChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (!event.target.value) {

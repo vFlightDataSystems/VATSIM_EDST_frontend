@@ -1,8 +1,8 @@
 import React, {useContext, useRef} from "react";
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {closeWindow, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
@@ -12,18 +12,18 @@ import {
 } from "../../styles/floatingWindowStyles";
 
 export const Outage: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.outage));
+  const dispatch = useRootDispatch();
+  const pos = useRootSelector(windowPositionSelector(windowEnum.outage));
   const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
-  const zStack = useAppSelector(zStackSelector);
+  const zStack = useRootSelector(zStackSelector);
 
   return pos && (<FloatingWindowDiv
     width={340}
     pos={pos}
     ref={ref}
     zIndex={zStack.indexOf(windowEnum.outage)}
-    onMouseDown={() => zStack.indexOf(windowEnum.outage) > 0 && dispatch(setZStack(windowEnum.outage))}
+    onMouseDown={() => zStack.indexOf(windowEnum.outage) > 0 && dispatch(pushZStack(windowEnum.outage))}
     id="edst-outage"
   >
     <FloatingWindowHeaderDiv>

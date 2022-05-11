@@ -2,7 +2,7 @@ import {GeoJSON, Marker, Polyline, useMap} from "react-leaflet";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Feature, Polygon, Position, Properties} from "@turf/turf";
 import L, {LatLngExpression} from "leaflet";
-import {useAppSelector} from "../../../redux/hooks";
+import {useRootSelector} from "../../../redux/hooks";
 import {entrySelector} from "../../../redux/slices/entriesSlice";
 import {fixIcon, trackIcon, vorIcon} from "./LeafletIcons";
 import {GpdDataBlock} from "./GpdDataBlock";
@@ -54,6 +54,9 @@ function getRouteLine(entry: LocalEdstEntryType) {
   let fixNames = routeData.map((e) => e.name);
   const lastFixIndex = fixNames.indexOf(routeToDisplay.split(/\.+/g).pop() as string);
   const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)];
+  if (fixNames.length === 0) {
+    return null;
+  }
   if (entry.dest_info) {
     fixNames = fixNames.slice(0, lastFixIndex);
     let routeDataToDisplay = routeData.slice(0, lastFixIndex);
@@ -100,7 +103,7 @@ export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon, Properties
 };
 
 export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
-  const entry = useAppSelector(entrySelector(cid));
+  const entry = useRootSelector(entrySelector(cid));
   const posLatLng = useMemo(() => posToLatLng({...entry.flightplan}), [entry.flightplan]);
   const [trackPos, setTrackPos] = useState<{ x: number, y: number } | null>(null);
   const {value: showRoute, toggle: toggleShowRoute} = useBoolean(false);
@@ -119,7 +122,7 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
 
   useEffect(() => {
     updateHandler();
-    map.on({zoom: updateHandler});
+    map.on({zoom: updateHandler}); // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -144,3 +147,12 @@ export const GpdAircraftTrack: React.FC<{ cid: string }> = ({cid}) => {
         />}
   </>;
 };
+
+// TODO: give this component a better name...
+export const GpdPlanDisplay : React.FC<{displayData: Record<string, any>[]}> = ({displayData}) => {
+  // TODO: implement component
+
+  return <>
+    {displayData.map((planRecord) => <></>)}
+  </>;
+}

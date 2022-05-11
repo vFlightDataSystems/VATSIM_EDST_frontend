@@ -25,13 +25,13 @@ export const AIRCRAFT_MENUS = [
 
 type AppWindowType = {
   open: boolean,
-  window: windowEnum,
+  window: windowEnum | menuEnum,
   position: WindowPositionType | null,
   openedBy?: windowEnum | menuEnum,
-  openedWithCid?: string | null
+  openedWithCid?: string | null // @deprecated
 };
 
-enum OutageTypeEnum {
+enum outageTypeEnum {
   facilityDown,
   facilityUp,
   serviceDown,
@@ -40,8 +40,8 @@ enum OutageTypeEnum {
 
 type OutageEntryType = {
   message: string,
-  outageType: OutageTypeEnum,
-  isOutageMessage: boolean, // false if a message is merely a notification that some service is back online
+  outageType: outageTypeEnum,
+  canDelete: boolean,
   acknowledged: boolean
 };
 
@@ -217,7 +217,7 @@ const appSlice = createSlice({
     setDragging(state, action: { payload: boolean }) {
       state.dragging = action.payload;
     },
-    setZStack(state, action: {payload: windowEnum | menuEnum}) {
+    pushZStack(state, action: {payload: windowEnum | menuEnum}) {
       let zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
@@ -253,7 +253,7 @@ export const {
   closeAircraftMenus,
   setAsel,
   setDragging,
-  setZStack,
+  pushZStack,
   addOutageMessage,
   removeOutageMessage
 } = appSlice.actions;

@@ -4,11 +4,11 @@ import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {EdstContext} from "../../contexts/contexts";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {setAclSort} from "../../redux/slices/aclSlice";
 import {setDepSort} from "../../redux/slices/depSlice";
 import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
-import {closeMenu, menuSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {closeMenu, menuSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {useCenterCursor, useFocused} from "../../hooks";
 import {
   OptionsBody, OptionsBodyCol,
@@ -20,6 +20,8 @@ import {
 } from '../../styles/optionMenuStyles';
 import styled from "styled-components";
 
+const SortDiv = styled(OptionsMenu)``;
+const SortHeader = styled(OptionsMenuHeader)``;
 const SortBody = styled(OptionsBody)`padding: 4px 0`;
 
 const SectorRow = styled(OptionsBodyRow)`
@@ -40,11 +42,11 @@ const SortCol = styled(OptionsBodyCol)`
 `;
 
 export const SortMenu: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const menuProps = useAppSelector(menuSelector(menuEnum.sortMenu));
+  const dispatch = useRootDispatch();
+  const menuProps = useRootSelector(menuSelector(menuEnum.sortMenu));
   const window = menuProps.openedBy;
-  const sortData = useAppSelector((state) => state[window === windowEnum.acl ? 'acl' : 'dep'].sortData);
-  const zStack = useAppSelector(zStackSelector);
+  const sortData = useRootSelector((state) => state[window === windowEnum.acl ? 'acl' : 'dep'].sortData);
+  const zStack = useRootSelector(zStackSelector);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -54,21 +56,21 @@ export const SortMenu: React.FC = () => {
 
   let sortStateCopy = Object.assign({}, sortState);
 
-  return menuProps?.position && (<OptionsMenu
+  return menuProps?.position && (<SortDiv
     ref={ref}
     width={window === windowEnum.acl ? 220 : 190}
     pos={menuProps.position}
     zIndex={zStack.indexOf(menuEnum.sortMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.sortMenu) > 0 && dispatch(setZStack(menuEnum.sortMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.sortMenu) > 0 && dispatch(pushZStack(menuEnum.sortMenu))}
     id="sort-menu"
   >
-    <OptionsMenuHeader
+    <SortHeader
       focused={focused}
       onMouseDown={(event) => startDrag(event, ref, menuEnum.sortMenu)}
       onMouseUp={(event) => stopDrag(event)}
     >
       Sort Menu
-    </OptionsMenuHeader>
+    </SortHeader>
     <SortBody>
       {window === windowEnum.acl && <SectorRow>
         <EdstTooltip
@@ -237,6 +239,6 @@ export const SortMenu: React.FC = () => {
         </OptionsBodyCol>
       </OptionsBottomRow>
     </SortBody>
-  </OptionsMenu>
+  </SortDiv>
   );
 };

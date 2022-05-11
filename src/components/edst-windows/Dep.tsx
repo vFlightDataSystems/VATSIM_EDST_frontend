@@ -1,8 +1,8 @@
 import React, {useRef, useState} from 'react';
 import {DepHeader} from "./dep-components/DepHeader";
 import {DepTable} from "./dep-components/DepTable";
-import {useAppSelector, useAppDispatch} from "../../redux/hooks";
-import {anyDraggingSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootSelector, useRootDispatch} from "../../redux/hooks";
+import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
@@ -20,7 +20,7 @@ const DepDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zIndex: num
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
-  z-index: ${props => (props.fullscreen ? 5000 : 10000) - props.zIndex};
+  z-index: ${props => 10000 - props.zIndex};
 
   ${props => props.dragging && NoPointerEventsDiv};
 `;
@@ -29,16 +29,16 @@ export const Dep: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const [fullscreen, setFullscreen] = useState(true);
-  const dragging = useAppSelector(anyDraggingSelector);
-  const zStack = useAppSelector(zStackSelector);
-  const dispatch = useAppDispatch();
+  const dragging = useRootSelector(anyDraggingSelector);
+  const zStack = useRootSelector(zStackSelector);
+  const dispatch = useRootDispatch();
 
   return (<DepDiv
     dragging={dragging}
     ref={ref}
     fullscreen={fullscreen}
     zIndex={zStack.indexOf(windowEnum.dep)}
-    onMouseDown={() => zStack.indexOf(windowEnum.dep) > 0 && dispatch(setZStack(windowEnum.dep))}
+    onMouseDown={() => zStack.indexOf(windowEnum.dep) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.dep))}
   >
     <DepHeader focused={focused} />
     <DepTable />

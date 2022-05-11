@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {depManualPostingSelector, depSortDataSelector, setDepManualPosting} from "../../../redux/slices/depSlice";
 import {menuEnum, windowEnum} from "../../../enums";
 import {closeAllMenus, closeWindow, depAselSelector, setInputFocused} from "../../../redux/slices/appSlice";
@@ -17,10 +17,10 @@ type DepHeaderProps = {
 }
 
 export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
-  const asel = useAppSelector(depAselSelector);
-  const sortData = useAppSelector(depSortDataSelector);
-  const manualPosting = useAppSelector(depManualPostingSelector);
-  const dispatch = useAppDispatch();
+  const asel = useRootSelector(depAselSelector);
+  const sortData = useRootSelector(depSortDataSelector);
+  const manualPosting = useRootSelector(depManualPostingSelector);
+  const dispatch = useRootDispatch();
 
   const [searchStr, setSearchString] = useState('');
   const handleKeyDown = (event: React.KeyboardEvent) => {

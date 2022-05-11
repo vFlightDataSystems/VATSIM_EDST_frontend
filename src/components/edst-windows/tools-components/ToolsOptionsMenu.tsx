@@ -4,7 +4,7 @@ import {EdstButton} from "../../resources/EdstButton";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {menuEnum} from "../../../enums";
 import {closeMenu} from "../../../redux/slices/appSlice";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {toolsOptionsSelector, updateToolsOptions} from "../../../redux/slices/aclSlice";
 import {
   OptionsBodyCol,
@@ -14,8 +14,8 @@ import {
 } from "../../../styles/optionMenuStyles";
 
 export const ToolsOptionsMenu: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const toolsOptions = useAppSelector(toolsOptionsSelector);
+  const dispatch = useRootDispatch();
+  const toolsOptions = useRootSelector(toolsOptionsSelector);
   const [displayCoordinationColumn, setDisplayCoordinationColumn] = useState(toolsOptions.displayCoordinationColumn);
   const [dropTrackDelete, setDropTrackDelete] = useState(toolsOptions.dropTrackDelete);
   const [iafDofManual, setIafDofManual] = useState(toolsOptions.iafDofManual);

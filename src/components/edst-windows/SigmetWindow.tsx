@@ -1,8 +1,8 @@
 import React, {useContext, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {closeWindow, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {
   setSigmetAcknowledged,
   setSigmetSuppressionState, setViewSigmetSuppressed,
@@ -27,12 +27,12 @@ enum sigmetOptionEnum {
 }
 
 export const SigmetWindow: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.sigmets));
-  const sectorId = useAppSelector(sectorIdSelector);
-  const viewSuppressed = useAppSelector(viewSigmetSuppressedSelector);
-  const sigmetList = useAppSelector(sigmetSelector);
-  const zStack = useAppSelector(zStackSelector);
+  const dispatch = useRootDispatch();
+  const pos = useRootSelector(windowPositionSelector(windowEnum.sigmets));
+  const sectorId = useRootSelector(sectorIdSelector);
+  const viewSuppressed = useRootSelector(viewSigmetSuppressedSelector);
+  const sigmetList = useRootSelector(sigmetSelector);
+  const zStack = useRootSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
@@ -68,7 +68,7 @@ export const SigmetWindow: React.FC = () => {
     width={1100}
     pos={pos}
     zIndex={zStack.indexOf(windowEnum.sigmets)}
-    onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(setZStack(windowEnum.sigmets))}
+    onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(pushZStack(windowEnum.sigmets))}
     id="edst-status"
   >
     <FloatingWindowHeaderDiv>

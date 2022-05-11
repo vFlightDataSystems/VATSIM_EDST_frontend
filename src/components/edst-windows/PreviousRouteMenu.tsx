@@ -4,10 +4,10 @@ import {EdstContext} from "../../contexts/contexts";
 
 import {EdstButton} from "../resources/EdstButton";
 import {computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {menuEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {closeMenu, menuPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {closeMenu, menuPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {LocalEdstEntryType} from "../../types";
 import {amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
@@ -17,11 +17,11 @@ import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 
 export const PreviousRouteMenu: React.FC = () => {
   const {startDrag, stopDrag} = useContext(EdstContext);
-  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const referenceFixes = useAppSelector(referenceFixSelector);
-  const pos = useAppSelector(menuPositionSelector(menuEnum.prevRouteMenu));
-  const zStack = useAppSelector(zStackSelector);
-  const dispatch = useAppDispatch();
+  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
+  const referenceFixes = useRootSelector(referenceFixSelector);
+  const pos = useRootSelector(menuPositionSelector(menuEnum.prevRouteMenu));
+  const zStack = useRootSelector(zStackSelector);
+  const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
@@ -36,7 +36,7 @@ export const PreviousRouteMenu: React.FC = () => {
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.prevRouteMenu)}
     ref={ref}
-    onMouseDown={() => zStack.indexOf(menuEnum.prevRouteMenu) > 0 && dispatch(setZStack(menuEnum.prevRouteMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.prevRouteMenu) > 0 && dispatch(pushZStack(menuEnum.prevRouteMenu))}
     id="prev-route-menu"
   >
     <OptionsMenuHeader
