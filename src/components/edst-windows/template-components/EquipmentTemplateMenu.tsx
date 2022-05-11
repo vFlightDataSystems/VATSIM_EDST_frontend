@@ -1,7 +1,7 @@
 import React, {useContext, useRef, useState} from "react";
 import {EdstContext} from "../../../contexts/contexts";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
-import {closeMenu, menuPositionSelector, zStackSelector, setZStack} from "../../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
+import {closeMenu, menuPositionSelector, zStackSelector, pushZStack} from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {menuEnum} from "../../../enums";
 import {EdstButton} from "../../resources/EdstButton";
@@ -50,12 +50,11 @@ export type EquipmentTemplateRowProps = {
   selected: boolean,
   tooltip: string,
   text?: string,
-  key?: string,
-  toggleSelect: () => void
+  toggleSelect(): void
 };
 
 export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = (props) => {
-  return <EqpRow margin={props.margin} key={props.key}>
+  return <EqpRow margin={props.margin}>
     <EdstTooltip title={props.tooltip}
                  onMouseDown={props.toggleSelect}
     >
@@ -74,10 +73,10 @@ export const EquipmentTemplateMenu: React.FC = () => {
     startDrag,
     stopDrag
   } = useContext(EdstContext);
-  const dispatch = useAppDispatch();
-  const pos = useAppSelector(menuPositionSelector(menuEnum.equipmentTemplateMenu));
-  const entry = useAppSelector(aselEntrySelector);
-  const zStack = useAppSelector(zStackSelector);
+  const dispatch = useRootDispatch();
+  const pos = useRootSelector(menuPositionSelector(menuEnum.equipmentTemplateMenu));
+  const entry = useRootSelector(aselEntrySelector);
+  const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
@@ -88,7 +87,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
     width={900}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.equipmentTemplateMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.equipmentTemplateMenu) > 0 && dispatch(setZStack(menuEnum.equipmentTemplateMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.equipmentTemplateMenu) > 0 && dispatch(pushZStack(menuEnum.equipmentTemplateMenu))}
     id="equipment-template-menu"
   >
     <OptionsMenuHeader

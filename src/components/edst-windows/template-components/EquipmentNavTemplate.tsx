@@ -1,7 +1,7 @@
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import React, {useState} from "react";
 import {Tooltips} from "../../../tooltips";
-import {useAppSelector} from "../../../redux/hooks";
+import {useRootSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
 import {EdstInput, OptionsBodyRow, OptionSelectedIndicator} from "../../../styles/optionMenuStyles";
@@ -46,7 +46,7 @@ const rnavCatText = {
 }
 
 export const EquipmentNavTemplate: React.FC = () => {
-  const entry = useAppSelector(aselEntrySelector);
+  const entry = useRootSelector(aselEntrySelector);
   const field10a = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]?.split('-')?.[1]?.match(/[A-Z]\d?/g);
   const navaidCats = field10a?.filter(s => Object.keys(NavCatEnum).includes(s)) as NavCatEnum[];
   const [navCategories, setNavCategories] = useState<NavCatEnum[]>(navaidCats ?? []);

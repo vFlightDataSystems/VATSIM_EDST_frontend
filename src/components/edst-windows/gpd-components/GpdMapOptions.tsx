@@ -3,9 +3,9 @@ import React, {useContext, useRef, useState} from 'react';
 import {EdstButton} from "../../resources/EdstButton";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {EdstContext} from "../../../contexts/contexts";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
-import {closeMenu, menuSelector, zStackSelector, setZStack} from "../../../redux/slices/appSlice";
+import {closeMenu, menuSelector, zStackSelector, pushZStack} from "../../../redux/slices/appSlice";
 import {useFocused} from "../../../hooks";
 import {GpdMapFeaturesMenu} from "./GpdMapFeaturesMenu";
 import {
@@ -19,9 +19,9 @@ import {
 } from '../../../styles/optionMenuStyles';
 
 export const GpdMapOptions: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const menuProps = useAppSelector(menuSelector(menuEnum.gpdMapOptionsMenu));
-  const zStack = useAppSelector(zStackSelector);
+  const dispatch = useRootDispatch();
+  const menuProps = useRootSelector(menuSelector(menuEnum.gpdMapOptionsMenu));
+  const zStack = useRootSelector(zStackSelector);
   const {startDrag, stopDrag} = useContext(EdstContext);
   const [mapFeaturesMenuOpen, setMapFeaturesMenuOpen] = useState(false);
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);
@@ -32,7 +32,7 @@ export const GpdMapOptions: React.FC = () => {
     ref={ref}
       pos={menuProps.position}
     zIndex={zStack.indexOf(menuEnum.gpdMapOptionsMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(setZStack(menuEnum.gpdMapOptionsMenu))}
+    onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(menuEnum.gpdMapOptionsMenu))}
       id="gpd-map-options-menu"
     >
       <OptionsMenuHeader

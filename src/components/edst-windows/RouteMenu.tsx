@@ -10,7 +10,7 @@ import FLIGHTAWARE_LOGO from '../../resources/images/FA_1.png';
 import {EdstButton} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
@@ -19,7 +19,7 @@ import {
   closeMenu,
   menuPositionSelector,
   setInputFocused,
-  setZStack,
+  pushZStack,
   zStackSelector
 } from "../../redux/slices/appSlice";
 import {addTrialPlanThunk, openMenuThunk} from "../../redux/thunks/thunks";
@@ -103,12 +103,12 @@ export const RouteMenu: React.FC = () => {
       startDrag,
       stopDrag
     } = useContext(EdstContext);
-    const dispatch = useAppDispatch();
-    const pos = useAppSelector(menuPositionSelector(menuEnum.routeMenu));
-    const asel = useAppSelector(aselSelector) as AselType;
-    const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-    const referenceFixes = useAppSelector(referenceFixSelector);
-    const zStack = useAppSelector(zStackSelector);
+    const dispatch = useRootDispatch();
+    const pos = useRootSelector(menuPositionSelector(menuEnum.routeMenu));
+    const asel = useRootSelector(aselSelector) as AselType;
+    const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
+    const referenceFixes = useRootSelector(referenceFixSelector);
+    const zStack = useRootSelector(zStackSelector);
 
     const [displayRawRoute, setDisplayRawRoute] = useState(false);
     const [route, setRoute] = useState<string>(removeDestFromRouteString((asel.window === windowEnum.dep ? entry.route : entry._route?.replace(/^\.*/, '') ?? ''), entry.dest));
@@ -123,7 +123,7 @@ export const RouteMenu: React.FC = () => {
     const frd = useMemo(() => closestReferenceFix ? computeFrdString(closestReferenceFix) : 'XXX000000', [closestReferenceFix]);
 
     const {appendOplus, appendStar} = useMemo(() => append, [append]);
-    const currentRouteFixes: string[] = useMemo(() => entry?._route_data?.map(fix => fix.name) ?? [], [entry._route_data]);
+    const currentRouteFixes: string[] = entry?._route_data?.map(fix => fix.name) ?? [];
     let routeData = asel.window === windowEnum.dep ? entry.route_data : entry._route_data;
     if (routeData?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
       routeData = routeData?.slice(1);
@@ -160,8 +160,6 @@ export const RouteMenu: React.FC = () => {
         planData = {route: rerouteData.route, route_data: rerouteData.route_data};
       }
       planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
-      // navigator.clipboard.writeText(`${!dep ? frd + '..' : ''}${plan_data.route}`); // this only works with https or
-      // localhost
       copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${planData.route}`);
       if (planData) {
         const msg = `AM ${entry.callsign} RTE ${planData.route}${entry.dest}`;
@@ -232,7 +230,7 @@ export const RouteMenu: React.FC = () => {
         width={570}
         pos={pos}
         zIndex={zStack.indexOf(menuEnum.routeMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(setZStack(menuEnum.routeMenu))}
+        onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(pushZStack(menuEnum.routeMenu))}
         id="route-menu"
       >
         <RouteMenuHeader

@@ -1,5 +1,5 @@
 import React from "react";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {
   planQueueSelector,
   selectedPlanIndexSelector,
@@ -48,9 +48,9 @@ const Col1 = styled(Col)`
 `;
 
 export const PlansDisplayTable: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const planQueue = useAppSelector(planQueueSelector);
-  const selectedPlanIndex = useAppSelector(selectedPlanIndexSelector);
+  const dispatch = useRootDispatch();
+  const planQueue = useRootSelector(planQueueSelector);
+  const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
 
   const handleMouseDown = (event: React.MouseEvent, index: number) => {
     event.preventDefault();

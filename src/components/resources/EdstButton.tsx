@@ -97,6 +97,7 @@ export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({onMouseDown, 
       onMouseDownCapture={onMouseDown}>
       <EdstInnerButton selected={props.selected} // @ts-ignore
                        disabled={props.disabled}
+                       width={props.width}
       >
         {props.content ?? props.children}
       </EdstInnerButton>

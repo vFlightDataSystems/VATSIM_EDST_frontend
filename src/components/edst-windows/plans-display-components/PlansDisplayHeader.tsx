@@ -2,7 +2,7 @@ import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import React from "react";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {
   planCleanup,
   PlanQueryType,
@@ -20,9 +20,9 @@ type PlansDisplayHeaderProps = {
 }
 
 export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused}) => {
-  const dispatch = useAppDispatch();
-  const planQueue = useAppSelector(planQueueSelector);
-  const selectedPlanIndex = useAppSelector(selectedPlanIndexSelector);
+  const dispatch = useRootDispatch();
+  const planQueue = useRootSelector(planQueueSelector);
+  const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
   const interim_disabled = selectedPlanIndex !== null ? !Object.keys(planQueue[selectedPlanIndex].planData ?? {}).includes('altitude') : true;
 
   const handleAmendClick = () => {

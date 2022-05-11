@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {formatUtcMinutes, getClosestReferenceFix} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {useRootDispatch, useRootSelector} from '../../redux/hooks';
 import {aclManualPostingSelector, setAclManualPosting} from "../../redux/slices/aclSlice";
 import {entriesSelector, updateEntry} from "../../redux/slices/entriesSlice";
 import {aclCleanup, openWindowThunk} from "../../redux/thunks/thunks";
@@ -15,7 +15,7 @@ import {
   setMraMessage,
   windowPositionSelector,
   zStackSelector,
-  setZStack
+  pushZStack
 } from "../../redux/slices/appSlice";
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
@@ -84,15 +84,15 @@ const RejectCrossSpan = styled.span`
 export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
   const [response, setResponse] = useState<string | null>(null);
   const [mcaFocused, setMcaFocused] = useState(false);
-  const mcaCommandString = useAppSelector(mcaCommandStringSelector);
-  const pos = useAppSelector(windowPositionSelector(windowEnum.messageComposeArea));
-  const manualPosting = useAppSelector(aclManualPostingSelector);
-  const referenceFixes = useAppSelector(referenceFixSelector);
-  const entries = useAppSelector(entriesSelector);
-  const dispatch = useAppDispatch();
+  const mcaCommandString = useRootSelector(mcaCommandStringSelector);
+  const pos = useRootSelector(windowPositionSelector(windowEnum.messageComposeArea));
+  const manualPosting = useRootSelector(aclManualPostingSelector);
+  const referenceFixes = useRootSelector(referenceFixSelector);
+  const entries = useRootSelector(entriesSelector);
+  const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const zStack = useAppSelector(zStackSelector);
+  const zStack = useRootSelector(zStackSelector);
 
   const {startDrag} = useContext(EdstContext);
 
@@ -141,7 +141,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
         + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
         + ` ${entry.altitude} ${entry.dep}./.`
         + `${entry.cleared_direct?.fix && entry._route?.startsWith(entry.cleared_direct?.fix) ? entry.cleared_direct?.frd + '..' : ''}`
-        + `${entry._route?.replace(/^\.+/, '')}`;
+        + `${entry._route?.replace(/^\.+/, '')}`
+        + `${entry.dest ?? ''}`;
       dispatch(setMraMessage(msg));
     }
   };
@@ -283,7 +284,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     onMouseDown={(event) => {
       startDrag(event, ref, windowEnum.messageComposeArea)
       if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
-        dispatch(setZStack(windowEnum.messageComposeArea));
+        dispatch(pushZStack(windowEnum.messageComposeArea));
       }
     }}
   // onMouseEnter={() => setInputFocus()}

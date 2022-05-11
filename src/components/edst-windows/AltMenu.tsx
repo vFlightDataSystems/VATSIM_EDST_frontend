@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import _ from 'lodash';
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
 import {
@@ -148,10 +148,10 @@ type AltMenuProps = {
 
 export const AltMenu: React.FC<AltMenuProps> = ({setAltMenuInputRef, showInput}) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const asel = useAppSelector(aselSelector) as AselType;
-  const entry = useAppSelector(aselEntrySelector) as LocalEdstEntryType;
-  const pos = useAppSelector(menuPositionSelector(menuEnum.altitudeMenu));
-  const dispatch = useAppDispatch();
+  const asel = useRootSelector(aselSelector) as AselType;
+  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
+  const pos = useRootSelector(menuPositionSelector(menuEnum.altitudeMenu));
+  const dispatch = useRootDispatch();
   const [selected, setSelected] = useState(asel.window !== windowEnum.dep ? 'trial' : 'amend');
   const [tempAltHover, setTempAltHover] = useState<number | null>(null);
   const [deltaY, setDeltaY] = useState(0);

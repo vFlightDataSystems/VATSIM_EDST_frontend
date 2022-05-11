@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store";
 import {AirwaySegmentType, FixType} from "../../types";
 
-export enum SectorTypeEnum {
+export enum sectorTypeEnum {
   ultraLow = "UL",
   low = "L",
   high = "H",
@@ -10,7 +10,7 @@ export enum SectorTypeEnum {
   lowHigh = "LH"
 }
 
-export enum MapFeatureOptionEnum {
+export enum mapFeatureOptionEnum {
   ultraLowSectors = "Ultra Low",
   lowSectors = "Low",
   highSectors = "High",
@@ -29,41 +29,32 @@ export enum MapFeatureOptionEnum {
   waypointLabels = "Waypoint Labels"
 }
 
-export enum AircraftDisplayOptionsEnum {
-  aircraftListFilter = "Aircraft List Filter",
-  altitudeFilterLimits = "Altitude Filter Limits",
-  filterAbove = "filterAbove",
-  filterBelow = "filterBelow",
-  autoDataBlockOffset = "Auto Datablock Offset",
-  mspLabels = "MSP/MEP Labels",
-  routePreviewMinutes = "routePreviewMinutes"
-}
+export type MapFeatureOptionsType = Partial<Record<mapFeatureOptionEnum, boolean>>;
 
-export type MapFeatureOptionsType = Partial<Record<MapFeatureOptionEnum, boolean>>;
-
-export type aircraftDisplayOptionsType = {
-  [AircraftDisplayOptionsEnum.aircraftListFilter]: boolean,
-  [AircraftDisplayOptionsEnum.altitudeFilterLimits]: boolean,
-  [AircraftDisplayOptionsEnum.filterAbove]: number | null,
-  [AircraftDisplayOptionsEnum.filterBelow]: number | null,
-  [AircraftDisplayOptionsEnum.autoDataBlockOffset]: boolean,
-  [AircraftDisplayOptionsEnum.mspLabels]: boolean,
-  [AircraftDisplayOptionsEnum.routePreviewMinutes]: number
-}
+export type AircraftDisplayOptionsType = {
+  aircraftListFilter: ["Aircraft List Filter", boolean],
+  altitudeFilterLimits: ["Altitude Filter Limits", boolean],
+  filterAbove: ["Filter Above", number | null],
+  filterBelow: ["Filter Below", number | null],
+  autoDatablockOffset: ["Auto Datablock Offset", boolean],
+  mspLabels: ["MSP/MEP Labels", boolean],
+  routePreviewMinutes: ["Route Preview (minutes)", number]
+};
 
 export type GpdStateType = {
   mapFeatureOptions: MapFeatureOptionsType,
-  aircraftDisplayOptions: aircraftDisplayOptionsType,
-  sectorTypes: Record<string,SectorTypeEnum>,
+  aircraftDisplayOptions: AircraftDisplayOptionsType,
+  sectorTypes: Record<string,sectorTypeEnum>,
   navaids: FixType[],
   waypoints: FixType[],
   airways: Record<string,AirwaySegmentType[]>,
-  displayData: any
+  suppressed: boolean,
+  planData: Record<string, any>[]
 };
 
 const initialMapFeatureOptionsState = {
-  [MapFeatureOptionEnum.lowSectors]: true,
-  [MapFeatureOptionEnum.highSectors]: true
+  [mapFeatureOptionEnum.lowSectors]: true,
+  [mapFeatureOptionEnum.highSectors]: true
 }
 
 const initialState: GpdStateType = {
@@ -73,31 +64,37 @@ const initialState: GpdStateType = {
   waypoints: [],
   airways: {},
   aircraftDisplayOptions: {
-    [AircraftDisplayOptionsEnum.aircraftListFilter]: false,
-    [AircraftDisplayOptionsEnum.altitudeFilterLimits]: false,
-    [AircraftDisplayOptionsEnum.filterAbove]: null,
-    [AircraftDisplayOptionsEnum.filterBelow]: null,
-    [AircraftDisplayOptionsEnum.autoDataBlockOffset]: false,
-    [AircraftDisplayOptionsEnum.mspLabels]: false,
-    [AircraftDisplayOptionsEnum.routePreviewMinutes]: 0
+    aircraftListFilter: ["Aircraft List Filter", false],
+    altitudeFilterLimits: ["Altitude Filter Limits", false],
+    filterAbove: ["Filter Above", null],
+    filterBelow: ["Filter Below", null],
+    autoDatablockOffset: ["Auto Datablock Offset", false],
+    mspLabels: ["MSP/MEP Labels", false],
+    routePreviewMinutes: ["Route Preview (minutes)", 0]
   },
-  displayData: null
+  suppressed: false,
+  planData: []
 };
 
 const gpdSlice = createSlice({
   name: 'gpd',
   initialState: initialState as GpdStateType,
   reducers: {
-    setGpdDisplayData(state, action) {
-      state.displayData = action.payload;
+    addGpdPlanData(state, action: {payload: Record<string, any>}) {
+      state.planData.push(action.payload);
+    },
+    removeGpdPlanData(state, action: {payload: number}) {
+      if (action.payload < state.planData.length - 1 && action.payload >= 0) {
+        state.planData.splice(action.payload);
+      }
     },
     setMapFeatureOptions(state, action: { payload: MapFeatureOptionsType }) {
       state.mapFeatureOptions = action.payload;
     },
-    setAircraftDisplayOptions(state, action: { payload: aircraftDisplayOptionsType }) {
+    setAircraftDisplayOptions(state, action: { payload: AircraftDisplayOptionsType }) {
       state.aircraftDisplayOptions = action.payload;
     },
-    setSectorTypes(state, action: { payload: Record<string, SectorTypeEnum> }) {
+    setSectorTypes(state, action: { payload: Record<string, sectorTypeEnum> }) {
       state.sectorTypes = action.payload;
     },
     setNavaids(state, action: { payload: FixType[] }) {
@@ -113,24 +110,35 @@ const gpdSlice = createSlice({
         }
         state.airways[segment.airway].push(segment);
       }
+    },
+    setSuppressed(state, action: {payload: boolean}) {
+      state.suppressed = action.payload;
+    },
+    toggleSuppressed(state, action: {payload?: any}) {
+      state.suppressed = !state.suppressed;
     }
   }
 });
 
 export const {
-  setGpdDisplayData,
+  addGpdPlanData,
+  removeGpdPlanData,
   setMapFeatureOptions,
   setAircraftDisplayOptions,
   setSectorTypes,
   setNavaids,
   setWaypoints,
-  setAirways
+  setAirways,
+  setSuppressed,
+  toggleSuppressed
 } = gpdSlice.actions;
 export default gpdSlice.reducer;
 
 export const gpdMapFeatureOptionsSelector = (state: RootState) => state.gpd.mapFeatureOptions;
-export const gpdAircraftDispalyOptionsSelector = (state: RootState) => state.gpd.aircraftDisplayOptions;
+export const gpdSuppressedSelector = (state: RootState) => state.gpd.suppressed;
+export const gpdAircraftDisplayOptionsSelector = (state: RootState) => state.gpd.aircraftDisplayOptions;
 export const gpdSectorTypesSelector = (state: RootState) => state.gpd.sectorTypes;
 export const gpdNavaidSelector = (state: RootState) => state.gpd.navaids;
 export const gpdWaypointSelector = (state: RootState) => state.gpd.waypoints;
 export const gpdAirwaySelector = (state: RootState) => state.gpd.airways;
+export const gpdPlanDataSelector = (state: RootState) => state.gpd.planData;

@@ -4,7 +4,7 @@ import VCI from '../../../resources/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {deleteAclEntry, toggleSpa, updateEntry} from "../../../redux/slices/entriesSlice";
 import {aclAselActionTriggerEnum, aclRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
 import {aselSelector, setInputFocused} from "../../../redux/slices/appSlice";
@@ -46,10 +46,10 @@ export const AclRow: React.FC<AclRowProps> = (
     index,
     anyHolding
   }) => {
-  const asel = useAppSelector(aselSelector);
-  const dispatch = useAppDispatch();
-  const manualPosting = useAppSelector(aclManualPostingSelector);
-  const toolOptions = useAppSelector(toolsOptionsSelector);
+  const asel = useRootSelector(aselSelector);
+  const dispatch = useRootDispatch();
+  const manualPosting = useRootSelector(aclManualPostingSelector);
+  const toolOptions = useRootSelector(toolsOptionsSelector);
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);
 

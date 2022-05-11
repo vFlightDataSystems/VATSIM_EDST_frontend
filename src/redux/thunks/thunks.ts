@@ -190,8 +190,10 @@ export function openMenuThunk(menu: menuEnum, ref?: (EventTarget & any), trigger
 export const addTrialPlanThunk = createAsyncThunk(
   'plan/trial/route',
   async (plan: PlanType, thunkAPI) => {
+    const state = thunkAPI.getState() as RootState;
+    let currentEntry = state.entries[plan.cid];
     if (plan.queryType === PlanQueryType.direct) {
-      trialRoute(plan.callsign, {direct: plan.planData.fix, frd: plan.planData.frd})
+      trialRoute(plan.callsign, {direct_fix: plan.planData.fix, route: currentEntry.route, route_data: currentEntry.route_data, frd: plan.planData.frd})
         .then(response => response.json())
         .then(data => {
           if (data.route) {

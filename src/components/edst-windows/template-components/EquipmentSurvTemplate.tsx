@@ -1,7 +1,7 @@
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import React, {useState} from "react";
 import {Tooltips} from "../../../tooltips";
-import {useAppSelector} from "../../../redux/hooks";
+import {useRootSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
 import {OptionsBodyRow, OptionSelectedIndicator} from "../../../styles/optionMenuStyles";
@@ -62,7 +62,7 @@ enum AdsbVTypeEnum {
 }
 
 export const EquipmentSurvTemplate: React.FC = () => {
-  const entry = useAppSelector(aselEntrySelector);
+  const entry = useRootSelector(aselEntrySelector);
   const field10b = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(2)?.[0]?.match(/[A-Z]\d?/g);
 
   const transponderType = field10b?.[0];

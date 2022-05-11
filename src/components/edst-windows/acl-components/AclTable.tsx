@@ -4,7 +4,7 @@ import VCI from '../../../resources/images/VCI_v4.png';
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {Tooltips} from "../../../tooltips";
 import {LocalEdstEntryType} from "../../../types";
-import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
+import {useRootDispatch, useRootSelector} from '../../../redux/hooks';
 import {anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector} from "../../../redux/selectors";
 import {aclRowFieldEnum, menuEnum, sortOptionsEnum} from "../../../enums";
 import {aselSelector, closeMenu, setAsel} from "../../../redux/slices/appSlice";
@@ -47,17 +47,17 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
 `;
 
 export function AclTable() {
-  const sortData = useAppSelector(aclSortDataSelector);
-  const manualPosting = useAppSelector(aclManualPostingSelector);
-  const dispatch = useAppDispatch();
+  const sortData = useRootSelector(aclSortDataSelector);
+  const manualPosting = useRootSelector(aclManualPostingSelector);
+  const dispatch = useRootDispatch();
 
-  const asel = useAppSelector(aselSelector);
-  const anyHolding = useAppSelector(anyHoldingSelector);
-  const anyAssignedHeading = useAppSelector(anyAssignedHdgSelector);
-  const anyAssignedSpeed = useAppSelector(anyAssignedSpdSelector);
+  const asel = useRootSelector(aselSelector);
+  const anyHolding = useRootSelector(anyHoldingSelector);
+  const anyAssignedHeading = useRootSelector(anyAssignedHdgSelector);
+  const anyAssignedSpeed = useRootSelector(anyAssignedSpdSelector);
   const [hiddenList, setHiddenList] = useState<aclRowFieldEnum[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
-  const entries = useAppSelector(entriesSelector);
+  const entries = useRootSelector(entriesSelector);
 
   const toggleHideColumn = (field: aclRowFieldEnum) => {
     let hiddenCopy = hiddenList.slice(0);

@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {DepRow} from "./DepRow";
 import {LocalEdstEntryType} from "../../../types";
-import {useAppSelector} from '../../../redux/hooks';
+import {useRootSelector} from '../../../redux/hooks';
 import {depRowFieldEnum, sortOptionsEnum} from "../../../enums";
 import {NoSelectDiv} from "../../../styles/styles";
 import styled from "styled-components";
@@ -23,9 +23,9 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
 `;
 
 export function DepTable() {
-  const sortData = useAppSelector(depSortDataSelector);
-  const manualPosting = useAppSelector(depManualPostingSelector);
-  const entries = useAppSelector(entriesSelector);
+  const sortData = useRootSelector(depSortDataSelector);
+  const manualPosting = useRootSelector(depManualPostingSelector);
+  const entries = useRootSelector(entriesSelector);
   const [hiddenList, setHiddenList] = useState<depRowFieldEnum[]>([]);
 
   const toggleHideColumn = (field: depRowFieldEnum) => {

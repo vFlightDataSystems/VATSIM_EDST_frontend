@@ -3,7 +3,7 @@ import {EdstButton} from "../resources/EdstButton";
 import {EdstContext} from "../../contexts/contexts";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {
@@ -12,7 +12,7 @@ import {
   menuPositionSelector,
   setAsel,
   zStackSelector,
-  setZStack
+  pushZStack
 } from "../../redux/slices/appSlice";
 import {deleteAclEntry, deleteDepEntry, entrySelector} from "../../redux/slices/entriesSlice";
 import {useCenterCursor, useFocused} from "../../hooks";
@@ -30,14 +30,14 @@ const PlanOptionsDiv = styled(OptionsMenu)``;
 const PlanOptionsBody = styled(OptionsBody)`text-indent: 4px`;
 
 export const PlanOptions: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const asel = useAppSelector(aselSelector) as AselType;
-  const pos = useAppSelector(menuPositionSelector(menuEnum.planOptions));
-  const zStack = useAppSelector(zStackSelector);
+  const dispatch = useRootDispatch();
+  const asel = useRootSelector(aselSelector) as AselType;
+  const pos = useRootSelector(menuPositionSelector(menuEnum.planOptions));
+  const zStack = useRootSelector(zStackSelector);
   const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
-  const entry = useAppSelector(entrySelector(asel.cid));
+  const entry = useRootSelector(entrySelector(asel.cid));
   const dep = asel.window === windowEnum.dep;
 
   useCenterCursor(ref, [asel]);
@@ -52,7 +52,7 @@ export const PlanOptions: React.FC = () => {
       width={220}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.planOptions)}
-      onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(setZStack(menuEnum.planOptions))}
+      onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(pushZStack(menuEnum.planOptions))}
       id="plan-menu"
     >
       <OptionsMenuHeader

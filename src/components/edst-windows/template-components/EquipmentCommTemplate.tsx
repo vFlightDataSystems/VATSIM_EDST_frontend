@@ -2,7 +2,7 @@ import {EdstTooltip} from "../../resources/EdstTooltip";
 import React, {useState} from "react";
 import {Tooltips} from "../../../tooltips";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
-import {useAppSelector} from "../../../redux/hooks";
+import {useRootSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EqpCol, EqpColTitle, EqpInput, EqpInputContainer, EqpInputRow} from "./styled";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
@@ -69,7 +69,7 @@ const satCatText = {
 }
 
 export const EquipmentCommTemplate: React.FC = () => {
-  const entry = useAppSelector(aselEntrySelector);
+  const entry = useRootSelector(aselEntrySelector);
   const field10a = (entry?.flightplan?.aircraft as string)?.split('/')?.slice(1)?.[0]
     ?.split('-')?.[1]?.match(/[A-Z]\d?/g);
   const voiceCat = field10a?.[0]?.split('')?.filter(s => Object.keys(VoiceCatEnum).includes(s)) as VoiceCatEnum[];

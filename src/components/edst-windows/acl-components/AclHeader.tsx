@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {WindowTitleBar} from "../WindowTitleBar";
 import {EdstWindowHeaderButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {aclManualPostingSelector, aclSortDataSelector, setAclManualPosting} from "../../../redux/slices/aclSlice";
 import {aclCleanup, openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, windowEnum} from "../../../enums";
@@ -16,16 +16,16 @@ import {
 import {addAclEntryByFid} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
 import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
-import { AddFindInput } from '../../InputComponents';
+import {AddFindInput} from '../../InputComponents';
 import styled from "styled-components";
 
 const AclHeaderDiv = styled(NoSelectDiv)``;
 
 export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
-  const asel = useAppSelector(aclAselSelector);
-  const sortData = useAppSelector(aclSortDataSelector);
-  const manualPosting = useAppSelector(aclManualPostingSelector);
-  const dispatch = useAppDispatch();
+  const asel = useRootSelector(aclAselSelector);
+  const sortData = useRootSelector(aclSortDataSelector);
+  const manualPosting = useRootSelector(aclManualPostingSelector);
+  const dispatch = useRootDispatch();
 
   const [searchStr, setSearchString] = useState('');
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -95,12 +95,12 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({focused}) => {
     <WindowHeaderRowDiv bottomRow={true}>
       Add/Find
       <AddFindInput
-          onFocus={() => dispatch(setInputFocused(true))}
-          onBlur={() => dispatch(setInputFocused(false))}
-          value={searchStr}
-          onChange={(e) => setSearchString(e.target.value.toUpperCase())}
-          onKeyDown={handleKeyDown}
-        />
+        onFocus={() => dispatch(setInputFocused(true))}
+        onBlur={() => dispatch(setInputFocused(false))}
+        value={searchStr}
+        onChange={(e) => setSearchString(e.target.value.toUpperCase())}
+        onKeyDown={handleKeyDown}
+      />
     </WindowHeaderRowDiv>
   </AclHeaderDiv>);
 };

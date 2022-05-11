@@ -33,7 +33,7 @@ import {
   setMenuPosition,
   setWindowPosition, showSectorSelectorSelector, windowsSelector,
 } from "./redux/slices/appSlice";
-import {useAppDispatch, useAppSelector} from "./redux/hooks";
+import {useRootDispatch, useRootSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/tools-components/ToolsMenu";
 import {AltimeterWindow} from "./components/edst-windows/AltimeterWindow";
 import {MetarWindow} from "./components/edst-windows/MetarWindow";
@@ -62,13 +62,13 @@ const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
 ];
 
 export const App: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const windows = useAppSelector(windowsSelector);
-  const menus = useAppSelector(menusSelector);
-  const showSectorSelector = useAppSelector(showSectorSelectorSelector);
-  const mcaCommandString = useAppSelector(mcaCommandStringSelector);
-  const inputFocused = useAppSelector(inputFocusedSelector);
-  const dragging = useAppSelector(anyDraggingSelector);
+  const dispatch = useRootDispatch();
+  const windows = useRootSelector(windowsSelector);
+  const menus = useRootSelector(menusSelector);
+  const showSectorSelector = useRootSelector(showSectorSelectorSelector);
+  const mcaCommandString = useRootSelector(mcaCommandStringSelector);
+  const inputFocused = useRootSelector(inputFocusedSelector);
+  const dragging = useRootSelector(anyDraggingSelector);
   const [draggingRepositionCursor, setDraggingRepositionCursor] = useState<boolean>(false);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useAppSelector} from "../../redux/hooks";
+import {useRootSelector} from "../../redux/hooks";
 import styled from "styled-components";
 import {tooltipsEnabledSelector} from "../../redux/slices/appSlice";
 
@@ -35,7 +35,7 @@ type EdstTooltipProps = {
 }
 
 export const EdstTooltip: React.FC<EdstTooltipProps> = ({title, content, style, ...props}) => {
-  const globalTooltipsEnabled = useAppSelector(tooltipsEnabledSelector);
+  const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
   return (<TooltipBody

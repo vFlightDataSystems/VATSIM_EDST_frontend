@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import styled from "styled-components";
 import {LocalEdstEntryType} from "../../../types";
 import {aclRowFieldEnum, menuEnum, windowEnum} from "../../../enums";
-import {useAppDispatch, useAppSelector} from "../../../redux/hooks";
+import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {gpdAircraftSelect} from "../../../redux/thunks/thunks";
 import {aselSelector} from "../../../redux/slices/appSlice";
 import {defaultFontFamily} from "../../../styles/styles";
@@ -42,8 +42,8 @@ const DataBlockElement = styled.span<{ selected?: boolean }>`
 `;
 
 export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({entry, pos, toggleShowRoute}) => {
-  const dispatch = useAppDispatch();
-  const asel = useAppSelector(aselSelector);
+  const dispatch = useRootDispatch();
+  const asel = useRootSelector(aselSelector);
   // datablock offset after it has been dragged by the user
   // to be implemented
   const [offset, setOffset] = useState({x: 0, y: 0});

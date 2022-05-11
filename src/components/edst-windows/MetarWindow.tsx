@@ -1,8 +1,8 @@
 import React, {useContext, useRef, useState} from 'react';
 import {EdstContext} from "../../contexts/contexts";
 import {windowEnum} from "../../enums";
-import {useAppDispatch, useAppSelector} from "../../redux/hooks";
-import {closeWindow, windowPositionSelector, zStackSelector, setZStack} from "../../redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "../../redux/hooks";
+import {closeWindow, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {metarSelector, removeAirportMetar} from "../../redux/slices/weatherSlice";
 import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
@@ -14,12 +14,12 @@ import {
 } from "../../styles/floatingWindowStyles";
 
 export const MetarWindow: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const pos = useAppSelector(windowPositionSelector(windowEnum.metar));
+  const dispatch = useRootDispatch();
+  const pos = useRootSelector(windowPositionSelector(windowEnum.metar));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
-  const metarList = useAppSelector(metarSelector);
-  const zStack = useAppSelector(zStackSelector);
+  const metarList = useRootSelector(metarSelector);
+  const zStack = useRootSelector(zStackSelector);
   const { startDrag } = useContext(EdstContext);
   const ref = useRef(null);
 
@@ -41,7 +41,7 @@ export const MetarWindow: React.FC = () => {
       width={400}
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.metar)}
-    onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(setZStack(windowEnum.metar))}
+    onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(pushZStack(windowEnum.metar))}
       ref={ref}
       id="edst-status"
     >
