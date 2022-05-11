@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {EdstContext} from "../../contexts/contexts";
+import React, {useEffect, useRef, useState} from 'react';
 import {formatUtcMinutes, getClosestReferenceFix} from "../../lib";
 import {LocalEdstEntryType} from "../../types";
 import {useRootDispatch, useRootSelector} from '../../redux/hooks';
@@ -10,12 +9,12 @@ import {windowEnum} from "../../enums";
 import {
   closeAllWindows,
   mcaCommandStringSelector,
+  pushZStack,
   setInputFocused,
   setMcaCommandString,
   setMraMessage,
   windowPositionSelector,
-  zStackSelector,
-  pushZStack
+  zStackSelector
 } from "../../redux/slices/appSlice";
 import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
 import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
@@ -26,6 +25,8 @@ import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
 import {edstFontGrey} from "../../styles/colors";
 import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 import {point} from "@turf/turf";
+import {useDragging} from "../../hooks";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -93,8 +94,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const zStack = useRootSelector(zStackSelector);
-
-  const {startDrag} = useContext(EdstContext);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.messageComposeArea);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -277,40 +277,44 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   };
 
   return pos && (<MessageComposeAreaDiv
-    ref={ref}
-    id="edst-mca"
-    pos={pos}
-    zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
-    onMouseDown={(event) => {
-      startDrag(event, ref, windowEnum.messageComposeArea)
-      if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
-        dispatch(pushZStack(windowEnum.messageComposeArea));
-      }
-    }}
-  // onMouseEnter={() => setInputFocus()}
-  >
-    <MessageComposeInputAreaDiv>
-      <input
-        ref={inputRef}
-        onFocus={() => {
-          dispatch(setInputFocused(true));
-          setMcaFocused(true);
-        }}
-        onBlur={() => {
-          dispatch(setInputFocused(false));
-          setMcaFocused(false);
-        }}
-        tabIndex={mcaFocused ? -1 : undefined}
-        value={mcaCommandString}
-        onChange={handleInputChange}
-        onKeyDownCapture={handleKeyDown}
-      />
-    </MessageComposeInputAreaDiv>
-    <MessageComposeResponseAreaDiv>
-      {response?.startsWith('ACCEPT') && <AcceptCheckmarkSpan />}
-      {response?.startsWith('REJECT') && <RejectCrossSpan />}
-      {response}
-    </MessageComposeResponseAreaDiv>
-  </MessageComposeAreaDiv >
+      ref={ref}
+      id="edst-mca"
+      pos={pos}
+      zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
+      onMouseDown={(event) => {
+        startDrag(event)
+        if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
+          dispatch(pushZStack(windowEnum.messageComposeArea));
+        }
+      }}
+      // onMouseEnter={() => setInputFocus()}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseDown={stopDrag}
+      />}
+      <MessageComposeInputAreaDiv>
+        <input
+          ref={inputRef}
+          onFocus={() => {
+            dispatch(setInputFocused(true));
+            setMcaFocused(true);
+          }}
+          onBlur={() => {
+            dispatch(setInputFocused(false));
+            setMcaFocused(false);
+          }}
+          tabIndex={mcaFocused ? -1 : undefined}
+          value={mcaCommandString}
+          onChange={handleInputChange}
+          onKeyDownCapture={handleKeyDown}
+        />
+      </MessageComposeInputAreaDiv>
+      <MessageComposeResponseAreaDiv>
+        {response?.startsWith('ACCEPT') && <AcceptCheckmarkSpan/>}
+        {response?.startsWith('REJECT') && <RejectCrossSpan/>}
+        {response}
+      </MessageComposeResponseAreaDiv>
+    </MessageComposeAreaDiv>
   );
 };

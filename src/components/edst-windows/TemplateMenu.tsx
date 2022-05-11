@@ -1,24 +1,24 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-
-import {EdstContext} from "../../contexts/contexts";
+import React, {useEffect, useRef, useState} from 'react';
 import {computeFrdString, getDepString, getDestString} from "../../lib";
 import {EdstButton} from "../resources/EdstButton";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {menuEnum, windowEnum} from "../../enums";
 import {aselEntrySelector} from "../../redux/slices/entriesSlice";
-import {aselSelector, closeMenu, menuPositionSelector, setInputFocused, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
+import {
+  aselSelector,
+  closeMenu,
+  menuPositionSelector,
+  pushZStack,
+  setInputFocused,
+  zStackSelector
+} from "../../redux/slices/appSlice";
 import {openMenuThunk} from "../../redux/thunks/thunks";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {useCenterCursor, useFocused} from "../../hooks";
-import {
-  EdstInput,
-  EdstTextArea,
-  OptionsBody,
-  OptionsMenu,
-  OptionsMenuHeader
-} from '../../styles/optionMenuStyles';
+import {useCenterCursor, useDragging, useFocused} from "../../hooks";
+import {EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader} from '../../styles/optionMenuStyles';
 import styled from "styled-components";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 const TemplateBodyDiv = styled(OptionsBody)`padding: 10px 0 2px 0`;
 
@@ -88,10 +88,6 @@ const TemplateTextArea: React.FC<TemplateInputProps> = ({title, ...props}) => {
 }
 
 export const TemplateMenu: React.FC = () => {
-  const {
-    startDrag,
-    stopDrag
-  } = useContext(EdstContext);
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
   const entry = useRootSelector(aselEntrySelector);
@@ -124,6 +120,8 @@ export const TemplateMenu: React.FC = () => {
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
 
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.templateMenu);
+
   useEffect(() => {
     return () => {
       dispatch(setInputFocused(false));
@@ -138,10 +136,14 @@ export const TemplateMenu: React.FC = () => {
     onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(pushZStack(menuEnum.templateMenu))}
     id="template-menu"
   >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseDown={(e) => stopDrag(e)}
+          onMouseUp={stopDrag}
+      />}
     <OptionsMenuHeader
       focused={focused}
-      onMouseDown={(event) => startDrag(event, ref, menuEnum.templateMenu)}
-      onMouseUp={(event) => stopDrag(event)}
+      onMouseDown={startDrag}
     >
       {asel ? 'Amendment' : 'Flight Plan'} Menu
     </OptionsMenuHeader>

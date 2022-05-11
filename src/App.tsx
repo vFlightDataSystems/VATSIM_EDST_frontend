@@ -1,5 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {invoke} from "@tauri-apps/api/tauri";
+import React, {useEffect, useState} from 'react';
 
 import './css/styles.scss';
 import {EdstHeader} from "./components/EdstHeader";
@@ -17,7 +16,6 @@ import {HeadingMenu} from "./components/edst-windows/spd-hdg/HeadingMenu";
 import {PreviousRouteMenu} from "./components/edst-windows/PreviousRouteMenu";
 import {HoldMenu} from "./components/edst-windows/HoldMenu";
 import {CancelHoldMenu} from "./components/edst-windows/CancelHoldMenu";
-import {EdstContext} from "./contexts/contexts";
 import {MessageComposeArea} from "./components/edst-windows/MessageComposeArea";
 import {MessageResponseArea} from "./components/edst-windows/MessageResponseArea";
 import {TemplateMenu} from "./components/edst-windows/TemplateMenu";
@@ -26,12 +24,10 @@ import {initThunk} from "./redux/thunks/initThunk";
 import {refreshEntriesThunk} from "./redux/slices/entriesSlice";
 import {menuEnum, windowEnum} from "./enums";
 import {
-  anyDraggingSelector, inputFocusedSelector, mcaCommandStringSelector, menusSelector,
+  inputFocusedSelector, mcaCommandStringSelector, menusSelector,
   openWindow,
-  setDragging,
   setMcaCommandString,
-  setMenuPosition,
-  setWindowPosition, showSectorSelectorSelector, windowsSelector,
+  showSectorSelectorSelector, windowsSelector,
 } from "./redux/slices/appSlice";
 import {useRootDispatch, useRootSelector} from "./redux/hooks";
 import {ToolsMenu} from "./components/edst-windows/tools-components/ToolsMenu";
@@ -43,23 +39,12 @@ import {EquipmentTemplateMenu} from "./components/edst-windows/template-componen
 import {SigmetWindow} from "./components/edst-windows/SigmetWindow";
 import {Gpd} from "./components/edst-windows/Gpd";
 import {EdstDiv, EdstBodyDiv} from "./styles/edstStyles";
-import {EdstDraggingOutline} from './styles/draggingStyles';
 import {GpdMapOptions} from "./components/edst-windows/gpd-components/GpdMapOptions";
 
 // const CACHE_TIMEOUT = 300000; // ms
 
 const ENTRIES_REFRESH_RATE = 20000; // 20 seconds
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
-
-const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
-  windowEnum.status,
-  windowEnum.outage,
-  windowEnum.messageComposeArea,
-  windowEnum.messageResponseArea,
-  windowEnum.altimeter,
-  windowEnum.metar,
-  windowEnum.sigmets
-];
 
 export const App: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -68,9 +53,6 @@ export const App: React.FC = () => {
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const inputFocused = useRootSelector(inputFocusedSelector);
-  const dragging = useRootSelector(anyDraggingSelector);
-  const [draggingRepositionCursor, setDraggingRepositionCursor] = useState<boolean>(false);
-  const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
   const altMenuRef = React.useRef<{ showInput: boolean, inputRef: React.RefObject<HTMLInputElement> | null }>({
     showInput: false,
@@ -100,103 +82,6 @@ export const App: React.FC = () => {
     }
   }, [altMenuRef.current.inputRef]);
 
-  const computePreviewPos = (x: number, y: number, width: number, height: number): { left: number, top: number } => {
-    return {
-      left: Math.max(0, Math.min(x, bodyRef.current.clientWidth - width - 2)),
-      top: Math.max(0, Math.min(y, bodyRef.current.clientHeight - height - 3))
-    };
-  }
-
-  const draggingHandler = useCallback((event: MouseEvent) => {
-    if (event && bodyRef?.current?.windowRef?.current) {
-      if (bodyRef.current.reposition) {
-        setDragPreviewStyle((prevStyle: any) => ({
-          ...prevStyle, left: event.pageX, top: event.pageY
-        }));
-      } else {
-        const relX = event.pageX - bodyRef?.current.relativePos.x;
-        const relY = event.pageY - bodyRef?.current.relativePos.y;
-        const {clientWidth: width, clientHeight: height} = bodyRef.current.windowRef.current;
-        const ppos = bodyRef.current.ppos;
-        setDragPreviewStyle((prevStyle: any) => ({
-          ...prevStyle, ...computePreviewPos(ppos.x + relX, ppos.y + relY + 35, width, height)
-        }));
-      }
-    }
-  }, []);
-
-  const startDrag = (event: React.MouseEvent<HTMLDivElement>, ref: React.RefObject<any>, edstWindow: windowEnum | menuEnum) => {
-    if (bodyRef.current) {
-      let ppos;
-      if (edstWindow in windowEnum) {
-        ppos = windows[edstWindow as windowEnum].position;
-      } else if (edstWindow in menuEnum) {
-        ppos = menus[edstWindow as menuEnum].position;
-      }
-      if (!ppos) {
-        return;
-      }
-      bodyRef.current.reposition = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
-      if (window.__TAURI__) {
-        invoke('set_cursor_grab', {value: true});
-      }
-      if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
-        let newCursorPos = {x: ppos.x - 1, y: ppos.y + 35};
-        if (window.__TAURI__) {
-          invoke('set_cursor_position', newCursorPos);
-        }
-        else {
-          ppos = {x: event.pageX + 1, y: event.pageY - 35};
-        }
-      } else {
-        bodyRef.current.relativePos = {x: event.pageX, y: event.pageY};
-      }
-      const style = {
-        left: ppos.x - 1,
-        top: ppos.y + 35,
-        position: "absolute",
-        height: ref.current.clientHeight,
-        width: ref.current.clientWidth
-      };
-      bodyRef.current.windowRef = ref;
-      bodyRef.current.draggingWindowName = edstWindow;
-      bodyRef.current.ppos = ppos;
-      setDragPreviewStyle(style);
-      setDraggingRepositionCursor(DRAGGING_REPOSITION_CURSOR.includes(edstWindow));
-      dispatch(setDragging(true));
-      bodyRef.current.addEventListener('mousemove', draggingHandler);
-    }
-  }
-
-  const stopDrag = (_event: React.MouseEvent<HTMLDivElement>) => {
-    if (dragging && bodyRef?.current) {
-      let newPos;
-      const edstWindow = bodyRef.current.draggingWindowName;
-      const {left: x, top: y} = dragPreviewStyle;
-      newPos = {x: x + 1, y: y - 35};
-      if (window.__TAURI__) {
-        invoke('set_cursor_grab', {value: false});
-      }
-      if (edstWindow in windowEnum) {
-        dispatch(setWindowPosition({
-          window: bodyRef.current.draggingWindowName as windowEnum,
-          pos: newPos
-        }));
-      } else if (edstWindow in menuEnum) {
-        dispatch(setMenuPosition({
-          menu: bodyRef.current.draggingWindowName as menuEnum,
-          pos: newPos
-        }));
-      }
-      bodyRef.current.reposition = null;
-      bodyRef.current.relativePos = null;
-      dispatch(setDragging(false));
-      setDragPreviewStyle(null);
-      setDraggingRepositionCursor(false);
-      bodyRef.current.removeEventListener('mousemove', draggingHandler);
-    }
-  };
-
   const handleKeyDown = (event: KeyboardEvent) => {
     // event.preventDefault();
     if (!inputFocused) {
@@ -224,20 +109,11 @@ export const App: React.FC = () => {
     ref={bodyRef}
     onContextMenu={(event) => process.env.NODE_ENV !== 'development' && event.preventDefault()}
     tabIndex={!(inputFocused) ? -1 : 0}
-    onMouseDown={(e) => (dragging && e.button === 0 && stopDrag(e))}
   >
-    {dragging && <EdstDraggingOutline
-        style={dragPreviewStyle ?? {display: "none"}}
-        onMouseUp={(e) => !draggingRepositionCursor && stopDrag(e)}
-    />}
     <EdstHeader/>
     <div id='toPrint'/>
     <EdstBodyDiv>
       {showSectorSelector && <SectorSelector/>}
-      <EdstContext.Provider value={{
-        startDrag: startDrag,
-        stopDrag: stopDrag
-      }}>
         {windows[windowEnum.acl].open && <Acl/>}
         {windows[windowEnum.dep].open && <Dep/>}
         {windows[windowEnum.graphicPlanDisplay].open && <Gpd/>}
@@ -267,7 +143,6 @@ export const App: React.FC = () => {
             setMcaInputRef={setMcaInputRef}
         />}
         {windows[windowEnum.messageResponseArea].open && <MessageResponseArea/>}
-      </EdstContext.Provider>
     </EdstBodyDiv>
   </EdstDiv>;
 }

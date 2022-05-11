@@ -1,12 +1,11 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {EdstButton} from "../../resources/EdstButton";
 import {EdstTooltip} from "../../resources/EdstTooltip";
-import {EdstContext} from "../../../contexts/contexts";
 import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
 import {closeMenu, menuSelector, zStackSelector, pushZStack} from "../../../redux/slices/appSlice";
-import {useFocused} from "../../../hooks";
+import {useDragging, useFocused} from "../../../hooks";
 import {GpdMapFeaturesMenu} from "./GpdMapFeaturesMenu";
 import {
   OptionsBodyCol,
@@ -17,28 +16,34 @@ import {
   OptionsMenu,
   OptionsMenuHeader
 } from '../../../styles/optionMenuStyles';
+import {EdstDraggingOutline} from "../../../styles/draggingStyles";
 
 export const GpdMapOptions: React.FC = () => {
   const dispatch = useRootDispatch();
   const menuProps = useRootSelector(menuSelector(menuEnum.gpdMapOptionsMenu));
   const zStack = useRootSelector(zStackSelector);
-  const {startDrag, stopDrag} = useContext(EdstContext);
   const [mapFeaturesMenuOpen, setMapFeaturesMenuOpen] = useState(false);
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.gpdMapOptionsMenu);
+
 
   return menuProps?.position && (<OptionsMenu
-    ref={ref}
+      ref={ref}
       pos={menuProps.position}
-    zIndex={zStack.indexOf(menuEnum.gpdMapOptionsMenu)}
-    onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(menuEnum.gpdMapOptionsMenu))}
+      zIndex={zStack.indexOf(menuEnum.gpdMapOptionsMenu)}
+      onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(menuEnum.gpdMapOptionsMenu))}
       id="gpd-map-options-menu"
     >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
       <OptionsMenuHeader
         focused={focused}
-        onMouseDown={(event) => startDrag(event, ref, menuEnum.gpdMapOptionsMenu)}
-        onMouseUp={(event) => stopDrag(event)}
+        onMouseDown={startDrag}
+        onMouseUp={stopDrag}
       >
         {aircraftDisplayMenuIsOpen && "Aircraft Display"}
         {mapFeaturesMenuOpen && "Map Features"}

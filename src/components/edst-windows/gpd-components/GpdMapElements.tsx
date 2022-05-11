@@ -1,6 +1,6 @@
 import {GeoJSON, Marker, Polyline, useMap} from "react-leaflet";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {Feature, Polygon, Position, Properties} from "@turf/turf";
+import {Feature, Polygon, Position} from "@turf/turf";
 import L, {LatLngExpression} from "leaflet";
 import {useRootSelector} from "../../../redux/hooks";
 import {entrySelector} from "../../../redux/slices/entriesSlice";
@@ -48,7 +48,7 @@ function posToLatLng(pos: Position | { lat: number | string, lon: number | strin
 
 function getRouteLine(entry: LocalEdstEntryType) {
   let {route, route_data: routeData} = entry;
-  route = route.replace(/^\.*\[XXX\]\.*/g, '');
+  route = route.replace(/^\.*\[XXX]\.*/g, '');
   const indexToSplit = route.indexOf('[XXX]');
   const routeToDisplay = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/\.+$/g, '') : route.replace(/\.+$/g, '');
   let fixNames = routeData.map((e) => e.name);
@@ -98,7 +98,7 @@ export const GpdAirwayPolyline: React.FC<{ segments: AirwaySegmentType[] }> = ({
   />;
 }
 
-export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon, Properties> }> = ({sector}) => {
+export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon> }> = ({sector}) => {
   return <GeoJSON data={sector} pathOptions={{color: '#ADADAD', weight: 1, opacity: 0.3, fill: false}}/>;
 };
 

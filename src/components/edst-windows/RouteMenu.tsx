@@ -1,9 +1,8 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 
 import '../../css/styles.scss';
 import {PreferredRouteDisplay} from "./PreferredRouteDisplay";
 import {computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteString} from "../../lib";
-import {EdstContext} from "../../contexts/contexts";
 import VATSIM_LOGO from '../../resources/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../resources/images/glob_bright.png';
 import FLIGHTAWARE_LOGO from '../../resources/images/FA_1.png';
@@ -27,7 +26,7 @@ import {LocalEdstEntryType} from "../../types";
 import {amendDirectThunk, amendEntryThunk} from "../../redux/thunks/entriesThunks";
 import {point} from "@turf/turf";
 import _ from "lodash";
-import {useCenterCursor, useFocused} from "../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../hooks";
 import {
   FidRow,
   OptionsBody,
@@ -41,6 +40,7 @@ import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
 import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 import {PlanQueryType} from "../../redux/slices/planSlice";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 const RouteMenuDiv = styled(OptionsMenu)``;
 const RouteMenuHeader = styled(OptionsMenuHeader)``;
@@ -99,10 +99,6 @@ const DctCol = styled(OptionsBodyCol)`
 `;
 
 export const RouteMenu: React.FC = () => {
-    const {
-      startDrag,
-      stopDrag
-    } = useContext(EdstContext);
     const dispatch = useRootDispatch();
     const pos = useRootSelector(menuPositionSelector(menuEnum.routeMenu));
     const asel = useRootSelector(aselSelector) as AselType;
@@ -117,8 +113,11 @@ export const RouteMenu: React.FC = () => {
     const [append, setAppend] = useState({appendOplus: false, appendStar: false});
     const ref = useRef<HTMLDivElement>(null);
     const focused = useFocused(ref);
+    useCenterCursor(ref, [asel]);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.routeMenu);
 
-    const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
+
+  const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
       [entry.flightplan.lat, entry.flightplan.lon, referenceFixes]);
     const frd = useMemo(() => closestReferenceFix ? computeFrdString(closestReferenceFix) : 'XXX000000', [closestReferenceFix]);
 
@@ -135,8 +134,6 @@ export const RouteMenu: React.FC = () => {
     } else {
       routes = entry._aarList?.filter(aar_data => currentRouteFixes.includes(aar_data.tfix)) ?? [];
     }
-
-    useCenterCursor(ref, [asel]);
 
     useEffect(() => {
       const dep = asel.window === windowEnum.dep;
@@ -233,10 +230,14 @@ export const RouteMenu: React.FC = () => {
         onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(pushZStack(menuEnum.routeMenu))}
         id="route-menu"
       >
+        {dragPreviewStyle && <EdstDraggingOutline
+            style={dragPreviewStyle}
+            onMouseUp={stopDrag}
+        />}
         <RouteMenuHeader
           focused={focused}
-          onMouseDown={(event) => startDrag(event, ref, menuEnum.routeMenu)}
-          onMouseUp={(event) => stopDrag(event)}
+          onMouseDown={startDrag}
+          onMouseUp={stopDrag}
         >
           Route Menu
         </RouteMenuHeader>

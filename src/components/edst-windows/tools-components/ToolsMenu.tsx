@@ -1,21 +1,23 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {EdstButton} from "../../resources/EdstButton";
 import {EdstTooltip} from "../../resources/EdstTooltip";
-import {EdstContext} from "../../../contexts/contexts";
 import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
-import {closeMenu, menuSelector, zStackSelector, pushZStack} from "../../../redux/slices/appSlice";
+import {closeMenu, menuSelector, pushZStack, zStackSelector} from "../../../redux/slices/appSlice";
 import {ToolsOptionsMenu} from "./ToolsOptionsMenu";
-import {useFocused} from "../../../hooks";
+import {useDragging, useFocused} from "../../../hooks";
 import {
   OptionsBody,
   OptionsBodyCol,
-  OptionsBodyRow, OptionsBottomRow, OptionsFlexCol,
+  OptionsBodyRow,
+  OptionsBottomRow,
+  OptionsFlexCol,
   OptionsMenu,
   OptionsMenuHeader
 } from '../../../styles/optionMenuStyles';
 import styled from "styled-components";
+import {EdstDraggingOutline} from "../../../styles/draggingStyles";
 
 export const ToolsBody = styled(OptionsBody)`padding: 20px 0 4px 0;`;
 
@@ -23,10 +25,10 @@ export const ToolsMenu: React.FC = () => {
   const dispatch = useRootDispatch();
   const menuProps = useRootSelector(menuSelector(menuEnum.toolsMenu));
   const zStack = useRootSelector(zStackSelector);
-  const {startDrag, stopDrag} = useContext(EdstContext);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.toolsMenu);
 
   return menuProps?.position && (<OptionsMenu
     ref={ref}
@@ -35,10 +37,14 @@ export const ToolsMenu: React.FC = () => {
     onMouseDown={() => zStack.indexOf(menuEnum.toolsMenu) > 0 && dispatch(pushZStack(menuEnum.toolsMenu))}
     id="tools-menu"
   >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={(e) => stopDrag(e)}
+      />}
     <OptionsMenuHeader
       focused={focused}
-      onMouseDown={(event) => startDrag(event, ref, menuEnum.toolsMenu)}
-      onMouseUp={(event) => stopDrag(event)}
+      onMouseDown={startDrag}
+      onMouseUp={stopDrag}
     >
       {optionsMenuOpen ? "Options" : "Tools"} Menu
     </OptionsMenuHeader>

@@ -1,15 +1,14 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 import {EdstButton} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
-import {EdstContext} from "../../contexts/contexts";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {setAclSort} from "../../redux/slices/aclSlice";
 import {setDepSort} from "../../redux/slices/depSlice";
 import {menuEnum, sortOptionsEnum, windowEnum} from "../../enums";
 import {closeMenu, menuSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
-import {useCenterCursor, useFocused} from "../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../hooks";
 import {
   OptionsBody, OptionsBodyCol,
   OptionsBodyRow,
@@ -19,6 +18,7 @@ import {
   OptionsMenuHeader
 } from '../../styles/optionMenuStyles';
 import styled from "styled-components";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
 const SortDiv = styled(OptionsMenu)``;
 const SortHeader = styled(OptionsMenuHeader)``;
@@ -48,11 +48,10 @@ export const SortMenu: React.FC = () => {
   const sortData = useRootSelector((state) => state[window === windowEnum.acl ? 'acl' : 'dep'].sortData);
   const zStack = useRootSelector(zStackSelector);
   const [sortState, setSortState] = useState(Object.assign({}, sortData));
-  const {startDrag, stopDrag} = useContext(EdstContext);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
-
   useCenterCursor(ref);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.sortMenu);
 
   let sortStateCopy = Object.assign({}, sortState);
 
@@ -64,10 +63,14 @@ export const SortMenu: React.FC = () => {
     onMouseDown={() => zStack.indexOf(menuEnum.sortMenu) > 0 && dispatch(pushZStack(menuEnum.sortMenu))}
     id="sort-menu"
   >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
     <SortHeader
       focused={focused}
-      onMouseDown={(event) => startDrag(event, ref, menuEnum.sortMenu)}
-      onMouseUp={(event) => stopDrag(event)}
+      onMouseDown={startDrag}
+      onMouseUp={stopDrag}
     >
       Sort Menu
     </SortHeader>

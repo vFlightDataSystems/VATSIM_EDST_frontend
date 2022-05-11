@@ -1,6 +1,17 @@
-import {RefObject, useEffect, useState} from "react";
+import React, {RefObject, useCallback, useEffect, useState} from "react";
 import {useEventListener} from "usehooks-ts";
 import {invoke} from "@tauri-apps/api/tauri";
+import {menuEnum, windowEnum} from "./enums";
+import {
+  anyDraggingSelector,
+  menusSelector,
+  setDragging,
+  setMenuPosition,
+  setWindowPosition,
+  windowsSelector
+} from "./redux/slices/appSlice";
+import {useRootDispatch, useRootSelector} from "./redux/hooks";
+import {WindowPositionType} from "./types";
 
 export const useFocused = (element: RefObject<HTMLElement>) => {
   const [focused, setFocused] = useState(false);
@@ -12,9 +23,107 @@ export const useFocused = (element: RefObject<HTMLElement>) => {
 export const useCenterCursor = (element: RefObject<HTMLElement>, deps: any[] = []) => {
   useEffect(() => {
     if (window.__TAURI__ && element.current) {
-      const rect = element.current?.getBoundingClientRect();
+      const rect = element.current.getBoundingClientRect();
       const newCursorPos = {x: rect.left + rect.width / 2, y: rect.top + rect.height / 2};
       invoke('set_cursor_position', newCursorPos);
     } // eslint-disable-next-line
   }, deps);
+}
+
+const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
+  windowEnum.status,
+  windowEnum.outage,
+  windowEnum.messageComposeArea,
+  windowEnum.messageResponseArea,
+  windowEnum.altimeter,
+  windowEnum.metar,
+  windowEnum.sigmets
+];
+
+export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowEnum | menuEnum) => {
+  const dispatch = useRootDispatch();
+  const dragging = useRootSelector(anyDraggingSelector);
+  const windows = useRootSelector(windowsSelector);
+  const menus = useRootSelector(menusSelector);
+  const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
+  const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
+  let ppos: WindowPositionType | null = null;
+  if (edstWindow in windowEnum) {
+    ppos = windows[edstWindow as windowEnum].position;
+  } else if (edstWindow in menuEnum) {
+    ppos = menus[edstWindow as menuEnum].position;
+  }
+
+  const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number, top: number } => {
+    return {
+      left: x,
+      top: y
+    };
+  }
+
+  const draggingHandler = useCallback((event: MouseEvent) => {
+    if (event && element.current) {
+      if (repositionCursor) {
+        setDragPreviewStyle((prevStyle: any) => ({
+          ...prevStyle, left: event.clientX, top: event.clientY
+        }));
+      } else {
+        const {clientWidth: width, clientHeight: height} = element.current;
+        setDragPreviewStyle((prevStyle: any) => ({
+          ...prevStyle, ...computePreviewPos(prevStyle.left + event.movementX, prevStyle.top + event.movementY, width, height)
+        }));
+      }
+    } // eslint-disable-next-line
+  }, []);
+
+  const startDrag = (_event: React.MouseEvent<HTMLDivElement>) => {
+    if (element.current && ppos && !dragging) {
+      let previewPos = {x: ppos.x - 1, y: ppos.y + 35};
+      if (window.__TAURI__) {
+        invoke('set_cursor_grab', {value: true});
+      }
+      if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
+        if (window.__TAURI__) {
+          invoke('set_cursor_position', previewPos);
+        }
+      }
+      const style = {
+        left: previewPos.x,
+        top: previewPos.y,
+        position: "fixed",
+        height: element.current.clientHeight,
+        width: element.current.clientWidth
+      };
+      setDragPreviewStyle(style);
+      dispatch(setDragging(true));
+      window.addEventListener('mousemove', draggingHandler);
+    }
+  }
+
+  const stopDrag = (_event: React.MouseEvent<HTMLDivElement>) => {
+    if (dragging && element?.current) {
+      let newPos;
+      const {left: x, top: y} = dragPreviewStyle;
+      newPos = {x: x + 1, y: y - 35};
+      if (window.__TAURI__) {
+        invoke('set_cursor_grab', {value: false});
+      }
+      if (edstWindow in windowEnum) {
+        dispatch(setWindowPosition({
+          window: edstWindow as windowEnum,
+          pos: newPos
+        }));
+      } else if (edstWindow in menuEnum) {
+        dispatch(setMenuPosition({
+          menu: edstWindow as menuEnum,
+          pos: newPos
+        }));
+      }
+      dispatch(setDragging(false));
+      setDragPreviewStyle(null);
+      window.removeEventListener('mousemove', draggingHandler);
+    }
+  };
+
+  return {startDrag: startDrag, stopDrag: stopDrag, dragPreviewStyle: dragPreviewStyle};
 }

@@ -36,6 +36,7 @@ export const OptionsMenu = styled(NoSelectDiv)<{ width?: number, pos?: { x: numb
   overflow: hidden;
   position: absolute;
   color: #ADADAD;
+  background-color: #000000;
   border: none;
   width: ${props => props.width ? props.width + 'px' : 'auto'};
   ${props => props.pos && {

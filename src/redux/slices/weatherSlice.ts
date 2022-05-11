@@ -55,9 +55,9 @@ const weatherSlice = createSlice({
     },
     addSigmets(state, action: { payload: ApiSigmetType[] }) {
       for (let s of action.payload) {
-        if (!Object.keys(state.sigmetList).includes(btoa(s.text)) && /\sSIG\w?\s/.test(s.text)) {
+        if (!Object.keys(state.sigmetList).includes(s.text) && /\sSIG\w?\s/.test(s.text)) {
           const polygons = lineToPolygon(lineString(s.area));
-          state.sigmetList[btoa(s.text)] = {suppressed: false, acknowledged: false, polygons: polygons, ...s};
+          state.sigmetList[s.text] = {suppressed: false, acknowledged: false, polygons: polygons, ...s};
         }
       }
     },

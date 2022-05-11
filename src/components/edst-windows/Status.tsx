@@ -1,5 +1,4 @@
-import React, {useContext, useRef} from 'react';
-import {EdstContext} from "../../contexts/contexts";
+import React, {useRef} from 'react';
 import {windowEnum} from "../../enums";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
@@ -12,6 +11,8 @@ import {
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
 import styled from "styled-components";
+import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import {useDragging} from "../../hooks";
 
 const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
   padding-top: 4px;
@@ -21,8 +22,8 @@ const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
 export const Status: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(windowEnum.status));
-  const {startDrag} = useContext(EdstContext);
   const ref = useRef(null);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.status);
   const zStack = useRootSelector(zStackSelector);
 
   return pos && (<FloatingWindowDiv
@@ -33,11 +34,15 @@ export const Status: React.FC = () => {
     onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(pushZStack(windowEnum.status))}
     id="edst-status"
   >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseDown={(e) => stopDrag(e)}
+      />}
     <FloatingWindowHeaderDiv>
       <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
       <FloatingWindowHeaderColDiv
         flexGrow={1}
-        onMouseDown={(event) => startDrag(event, ref, windowEnum.status)}
+        onMouseDown={startDrag}
       >
         STATUS
       </FloatingWindowHeaderColDiv>

@@ -1,5 +1,4 @@
-import React, {useContext, useRef, useState} from "react";
-import {EdstContext} from "../../../contexts/contexts";
+import React, {useRef, useState} from "react";
 import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {closeMenu, menuPositionSelector, zStackSelector, pushZStack} from "../../../redux/slices/appSlice";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
@@ -11,7 +10,7 @@ import {EquipmentCommTemplate} from "./EquipmentCommTemplate";
 import {EquipmentAppServTemplate} from "./EquipmentAppServTemplate";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
-import {useCenterCursor, useFocused} from "../../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../../hooks";
 import {
   OptionsBodyCol,
   OptionsBody, OptionsBodyRow,
@@ -22,6 +21,7 @@ import {
 } from "../../../styles/optionMenuStyles";
 import styled from "styled-components";
 import {EqpContentCol, EqpRow} from "./styled";
+import {EdstDraggingOutline} from "../../../styles/draggingStyles";
 
 const EqpTemplateBody = styled(OptionsBody)`height: 100%`;
 const EqpTemplateRow = styled(OptionsBodyRow)`
@@ -69,10 +69,6 @@ export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = (props)
 }
 
 export const EquipmentTemplateMenu: React.FC = () => {
-  const {
-    startDrag,
-    stopDrag
-  } = useContext(EdstContext);
   const dispatch = useRootDispatch();
   const pos = useRootSelector(menuPositionSelector(menuEnum.equipmentTemplateMenu));
   const entry = useRootSelector(aselEntrySelector);
@@ -81,6 +77,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.equipmentTemplateMenu);
 
   return pos && (<OptionsMenu
     ref={ref}
@@ -90,10 +87,14 @@ export const EquipmentTemplateMenu: React.FC = () => {
     onMouseDown={() => zStack.indexOf(menuEnum.equipmentTemplateMenu) > 0 && dispatch(pushZStack(menuEnum.equipmentTemplateMenu))}
     id="equipment-template-menu"
   >
+      {dragPreviewStyle && <EdstDraggingOutline
+          style={dragPreviewStyle}
+          onMouseUp={stopDrag}
+      />}
     <OptionsMenuHeader
       focused={focused}
-      onMouseDown={(event) => startDrag(event, ref, menuEnum.equipmentTemplateMenu)}
-      onMouseUp={(event) => stopDrag(event)}
+      onMouseDown={startDrag}
+      onMouseUp={stopDrag}
     >
       Equipment Template
     </OptionsMenuHeader>

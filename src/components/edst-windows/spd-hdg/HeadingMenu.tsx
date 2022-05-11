@@ -1,10 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import _ from "lodash";
 import {EdstButton} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
-import {EdstContext} from "../../../contexts/contexts";
 import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
 import {menuEnum} from "../../../enums";
 import {
@@ -17,7 +16,7 @@ import {
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {LocalEdstEntryType} from "../../../types";
 import {amendEntryThunk} from "../../../redux/thunks/entriesThunks";
-import {useCenterCursor, useFocused} from "../../../hooks";
+import {useCenterCursor, useDragging, useFocused} from "../../../hooks";
 import {
   EdstInput,
   FidRow,
@@ -29,12 +28,9 @@ import {
 } from '../../../styles/optionMenuStyles';
 import {Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2} from './styled';
 import { InputContainer } from '../../InputComponents';
+import {EdstDraggingOutline} from "../../../styles/draggingStyles";
 
 export const HeadingMenu: React.FC = () => {
-  const {
-    startDrag,
-    stopDrag
-  } = useContext(EdstContext);
   const asel = useRootSelector(aselSelector) as AselType;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
   const pos = useRootSelector(menuPositionSelector(menuEnum.headingMenu));
@@ -46,8 +42,8 @@ export const HeadingMenu: React.FC = () => {
   const [amend, setAmend] = useState(true);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
-
   useCenterCursor(ref, [asel]);
+  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.headingMenu);
 
   useEffect(() => {
     setHeading(280);
@@ -89,10 +85,14 @@ export const HeadingMenu: React.FC = () => {
     onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(pushZStack(menuEnum.headingMenu))}
     id="heading-menu"
   >
+    {dragPreviewStyle && <EdstDraggingOutline
+        style={dragPreviewStyle}
+        onMouseUp={stopDrag}
+    />}
     <OptionsMenuHeader
       focused={focused}
-      onMouseDown={(event) => startDrag(event, ref, menuEnum.headingMenu)}
-      onMouseUp={(event) => stopDrag(event)}
+      onMouseDown={startDrag}
+      onMouseUp={stopDrag}
     >
       Heading Information
     </OptionsMenuHeader>
