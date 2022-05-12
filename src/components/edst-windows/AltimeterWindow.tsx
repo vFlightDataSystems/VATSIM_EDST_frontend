@@ -16,6 +16,10 @@ import styled from "styled-components";
 import {useDragging} from "../../hooks";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
+const AltimeterDiv = styled(FloatingWindowDiv)`
+  width: 180px
+`;
+
 const AltimCol = styled.span<{ underline?: boolean, reportingStation?: boolean }>`
   margin: 0 4px;
   ${props => props.reportingStation && {margin: "0 20px 0 12px"}};
@@ -49,8 +53,7 @@ export const AltimeterWindow: React.FC = () => {
     }
   };
 
-  return pos && (<FloatingWindowDiv
-      width={180}
+  return pos && (<AltimeterDiv
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.altimeter)}
       onMouseDown={() => zStack.indexOf(windowEnum.altimeter) > 0 && dispatch(pushZStack(windowEnum.altimeter))}
@@ -108,6 +111,6 @@ export const AltimeterWindow: React.FC = () => {
           })}
           </FloatingWindowBodyDiv>
       }
-    </FloatingWindowDiv>
+    </AltimeterDiv>
   );
 };

@@ -39,7 +39,7 @@ export const ToolsMenu: React.FC = () => {
   >
       {dragPreviewStyle && <EdstDraggingOutline
           style={dragPreviewStyle}
-          onMouseUp={(e) => stopDrag(e)}
+          onMouseUp={stopDrag}
       />}
     <OptionsMenuHeader
       focused={focused}

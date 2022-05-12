@@ -14,6 +14,10 @@ import styled from "styled-components";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 import {useDragging} from "../../hooks";
 
+const StatusDiv = styled(FloatingWindowDiv)`
+  width: 360px
+`
+
 const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
   padding-top: 4px;
   padding-left: 20px;
@@ -26,9 +30,8 @@ export const Status: React.FC = () => {
   const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.status);
   const zStack = useRootSelector(zStackSelector);
 
-  return pos && (<FloatingWindowDiv
+  return pos && (<StatusDiv
     ref={ref}
-    width={360}
     pos={pos}
     zIndex={zStack.indexOf(windowEnum.status)}
     onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(pushZStack(windowEnum.status))}
@@ -36,7 +39,7 @@ export const Status: React.FC = () => {
   >
       {dragPreviewStyle && <EdstDraggingOutline
           style={dragPreviewStyle}
-          onMouseDown={(e) => stopDrag(e)}
+          onMouseDown={stopDrag}
       />}
     <FloatingWindowHeaderDiv>
       <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
@@ -62,6 +65,6 @@ export const Status: React.FC = () => {
           rel="noreferrer">Roadmap</a>
       </div>
     </StatusBodyDiv>
-  </FloatingWindowDiv>
+  </StatusDiv>
   );
 };

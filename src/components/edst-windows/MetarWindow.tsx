@@ -14,6 +14,11 @@ import {
 } from "../../styles/floatingWindowStyles";
 import {useDragging} from "../../hooks";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import styled from "styled-components";
+
+const MetarDiv = styled(FloatingWindowDiv)`
+  width: 400px
+`;
 
 export const MetarWindow: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -39,8 +44,7 @@ export const MetarWindow: React.FC = () => {
     }
   }
 
-  return pos && (<FloatingWindowDiv
-      width={400}
+  return pos && (<MetarDiv
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.metar)}
       onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(pushZStack(windowEnum.metar))}
@@ -87,6 +91,6 @@ export const MetarWindow: React.FC = () => {
                 />}
           </span>)}
       </FloatingWindowBodyDiv>}
-    </FloatingWindowDiv>
+    </MetarDiv>
   );
 };
