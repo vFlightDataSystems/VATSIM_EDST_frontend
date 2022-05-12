@@ -27,13 +27,13 @@ const WindowTitleBarCol = styled.div<{ middle?: boolean, focused?: boolean }>`
   }
 `;
 const TitleBarText = styled.div`margin: 0 12px;`;
-const Block = styled.button<{ focused?: boolean, width?: number, height?: number, flexGrow?: number }>`
+const Block = styled.button<{ focused?: boolean, flexGrow?: number }>`
   flex-grow: ${props => props.flexGrow ?? 0};
   vertical-align: center;
   background-color: #888888;
   
-  width: ${props => props.width ? props.width + 'px' : '24px'};
-  height: ${props => props.height ? props.height + 'px' : 'auto'};
+  width: 24px;
+  height: auto;
 
   ${props => props.focused && {
     "background-color": "#008585"
@@ -54,33 +54,44 @@ const Block = styled.button<{ focused?: boolean, width?: number, height?: number
     border-left: 1px solid ${props => props.focused ? "#005757" : "#575757"};
   }
 `;
+const Block33 = styled(Block)`
+  width: 3px;
+  height: 3px;
+`;
+const Block83 = styled(Block)`
+  width: 8px;
+  height: 3px;
+`;
 const InvertedBlock = styled(Block)`
   border-top: 1px solid ${props => props.focused ? "#005757" : "#575757"};
   border-left: 1px solid ${props => props.focused ? "#005757" : "#575757"};
   border-bottom: 1px solid #ADADAD;
   border-right: 1px solid #ADADAD;
 `;
-const Div = styled.div``;
+const InvertedBlock88 = styled(InvertedBlock)`
+  width: 8px;
+  height: 8px;
+`;
 
 export const WindowTitleBar: React.FC<{ focused: boolean, closeWindow: () => void, text: string[] }>
   = ({focused, text, closeWindow}) => {
   return (<WindowTitleBarDiv>
     <WindowTitleBarCol focused={focused}>
       <Block>
-        <Block as={Div} width={8} height={3} focused={focused}/>
+        <Block83 as="div" focused={focused}/>
       </Block>
     </WindowTitleBarCol>
     <WindowTitleBarCol middle={true} focused={focused}>
-      <Block as={Div} flexGrow={1}>
+      <Block as="div" flexGrow={1}>
         {text.map(s => <TitleBarText key={s}>{s}</TitleBarText>)}
       </Block>
     </WindowTitleBarCol>
     <WindowTitleBarCol focused={focused}>
       <Block onClick={closeWindow}>
-        <Block as={Div} width={3} height={3} focused={focused}/>
+        <Block33 as="div" focused={focused}/>
       </Block>
       <Block focused={focused}>
-        <InvertedBlock as={Div} width={8} height={8} focused={focused}/>
+        <InvertedBlock88 as="div" focused={focused}/>
       </Block>
     </WindowTitleBarCol>
   </WindowTitleBarDiv>);
