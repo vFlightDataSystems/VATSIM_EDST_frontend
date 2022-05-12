@@ -214,7 +214,7 @@ const appSlice = createSlice({
     setAsel(state, action: { payload: AselType | null }) {
       state.asel = action.payload;
     },
-    setDragging(state, action: { payload: boolean }) {
+    setAnyDragging(state, action: { payload: boolean }) {
       state.dragging = action.payload;
     },
     pushZStack(state, action: {payload: windowEnum | menuEnum}) {
@@ -252,7 +252,7 @@ export const {
   closeAllMenus,
   closeAircraftMenus,
   setAsel,
-  setDragging,
+  setAnyDragging,
   pushZStack,
   addOutageMessage,
   removeOutageMessage

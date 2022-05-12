@@ -138,7 +138,7 @@ export const TemplateMenu: React.FC = () => {
   >
       {dragPreviewStyle && <EdstDraggingOutline
           style={dragPreviewStyle}
-          onMouseDown={(e) => stopDrag(e)}
+          onMouseDown={stopDrag}
           onMouseUp={stopDrag}
       />}
     <OptionsMenuHeader

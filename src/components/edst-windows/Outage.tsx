@@ -11,6 +11,11 @@ import {
 } from "../../styles/floatingWindowStyles";
 import {useDragging} from "../../hooks";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import styled from "styled-components";
+
+const OutageDiv = styled(FloatingWindowDiv)`
+  width: 340px
+`;
 
 export const Outage: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -19,8 +24,7 @@ export const Outage: React.FC = () => {
   const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.outage);
   const zStack = useRootSelector(zStackSelector);
 
-  return pos && (<FloatingWindowDiv
-      width={340}
+  return pos && (<OutageDiv
       pos={pos}
       ref={ref}
       zIndex={zStack.indexOf(windowEnum.outage)}
@@ -29,7 +33,7 @@ export const Outage: React.FC = () => {
     >
       {dragPreviewStyle && <EdstDraggingOutline
           style={dragPreviewStyle}
-          onMouseDown={(e) => stopDrag(e)}
+          onMouseDown={stopDrag}
       />}
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
@@ -46,6 +50,6 @@ export const Outage: React.FC = () => {
       <FloatingWindowBodyDiv>
         OUTAGE TEST
       </FloatingWindowBodyDiv>
-    </FloatingWindowDiv>
+    </OutageDiv>
   );
 }

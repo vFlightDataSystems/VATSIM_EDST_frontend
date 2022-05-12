@@ -5,7 +5,7 @@ import {menuEnum, windowEnum} from "./enums";
 import {
   anyDraggingSelector,
   menusSelector,
-  setDragging,
+  setAnyDragging,
   setMenuPosition,
   setWindowPosition,
   windowsSelector
@@ -42,7 +42,8 @@ const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
 
 export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowEnum | menuEnum) => {
   const dispatch = useRootDispatch();
-  const dragging = useRootSelector(anyDraggingSelector);
+  const anyDragging = useRootSelector(anyDraggingSelector);
+  const [dragging, setDragging] = useState(false);
   const windows = useRootSelector(windowsSelector);
   const menus = useRootSelector(menusSelector);
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
@@ -53,6 +54,12 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
   } else if (edstWindow in menuEnum) {
     ppos = menus[edstWindow as menuEnum].position;
   }
+
+  useEffect(() => {
+    return () => {
+      dispatch(setAnyDragging(false));
+    } // eslint-disable-next-line
+  }, []);
 
   const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number, top: number } => {
     return {
@@ -76,8 +83,8 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
     } // eslint-disable-next-line
   }, []);
 
-  const startDrag = (_event: React.MouseEvent<HTMLDivElement>) => {
-    if (element.current && ppos && !dragging) {
+  const startDrag = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (element.current && ppos && !anyDragging) {
       let previewPos = {x: ppos.x - 1, y: ppos.y + 35};
       if (window.__TAURI__) {
         invoke('set_cursor_grab', {value: true});
@@ -86,16 +93,19 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
         if (window.__TAURI__) {
           invoke('set_cursor_position', previewPos);
         }
+        else {
+          previewPos = {x: event.pageX, y: event.pageY};
+        }
       }
       const style = {
         left: previewPos.x,
         top: previewPos.y,
-        position: "fixed",
         height: element.current.clientHeight,
         width: element.current.clientWidth
       };
       setDragPreviewStyle(style);
-      dispatch(setDragging(true));
+      setDragging(true);
+      dispatch(setAnyDragging(true));
       window.addEventListener('mousemove', draggingHandler);
     }
   }
@@ -119,7 +129,8 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
           pos: newPos
         }));
       }
-      dispatch(setDragging(false));
+      dispatch(setAnyDragging(false));
+      setDragging(false);
       setDragPreviewStyle(null);
       window.removeEventListener('mousemove', draggingHandler);
     }

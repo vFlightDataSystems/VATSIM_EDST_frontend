@@ -6,10 +6,10 @@ import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slice
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {edstFontGrey} from "../../styles/colors";
-import {NoPointerEventsDiv} from "../../styles/styles";
+import {DraggableDiv} from "../../styles/styles";
 import {windowEnum} from "../../enums";
 
-const AclDiv = styled.div<{ anyDragging?: boolean, zIndex: number }>`
+const AclDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;
   display: flex;
   flex-flow: column;
@@ -21,8 +21,6 @@ const AclDiv = styled.div<{ anyDragging?: boolean, zIndex: number }>`
   color: ${edstFontGrey};
   background-color: #000000;
   z-index: ${props => 10000 - props.zIndex};
-
-  ${props => props.anyDragging && NoPointerEventsDiv};
 `;
 
 export const Acl: React.FC = () => {

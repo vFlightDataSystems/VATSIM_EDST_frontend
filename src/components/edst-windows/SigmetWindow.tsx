@@ -22,12 +22,17 @@ import {ScrollContainer} from '../../styles/optionMenuStyles';
 import {sectorIdSelector} from "../../redux/slices/sectorSlice";
 import {useDragging} from "../../hooks";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import styled from "styled-components";
 
 enum sigmetOptionEnum {
   viewSuppressed = "VIEW SUPPRESS",
   hideSuppressed = "HIDE SUPPRESS",
   printAll = "PRINT ALL"
 }
+
+const SigmetDiv = styled(FloatingWindowDiv)`
+  width: 1100px
+`;
 
 export const SigmetWindow: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -66,9 +71,8 @@ export const SigmetWindow: React.FC = () => {
     setShowOptions(true);
   };
 
-  return pos && (<FloatingWindowDiv
+  return pos && (<SigmetDiv
       ref={ref}
-      width={1100}
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.sigmets)}
       onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(pushZStack(windowEnum.sigmets))}
@@ -141,6 +145,6 @@ export const SigmetWindow: React.FC = () => {
             }
           }}
       />}
-    </FloatingWindowDiv>
+    </SigmetDiv>
   );
 };

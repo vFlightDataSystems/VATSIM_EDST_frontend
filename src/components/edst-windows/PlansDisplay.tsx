@@ -6,11 +6,11 @@ import {useRootDispatch, useRootSelector} from "../../redux/hooks";
 import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
-import {NoPointerEventsDiv} from "../../styles/styles";
+import {DraggableDiv} from "../../styles/styles";
 import {edstFontGrey} from "../../styles/colors";
-import { windowEnum } from "../../enums";
+import {windowEnum} from "../../enums";
 
-const PlansDisplayDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zIndex: number }>`
+const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -20,9 +20,7 @@ const PlansDisplayDiv = styled.div<{ dragging?: boolean, fullscreen: boolean, zI
   border: 3px solid #888888;
   outline: 1px solid #ADADAD;
   color: ${edstFontGrey};
-  z-index: ${props => 10000- props.zIndex};
-
-  ${(props: { dragging?: boolean }) => props.dragging && `${NoPointerEventsDiv}`};
+  z-index: ${props => 10000 - props.zIndex};
 `;
 
 export const PlansDisplay: React.FC = () => {
@@ -30,17 +28,16 @@ export const PlansDisplay: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const [fullscreen, setFullscreen] = useState(true);
-  const dragging = useRootSelector(anyDraggingSelector);
+  const anyDragging = useRootSelector(anyDraggingSelector);
   const zStack = useRootSelector(zStackSelector);
 
   return (<PlansDisplayDiv
-    dragging={dragging}
+    anyDragging={anyDragging}
     ref={ref}
-    fullscreen={fullscreen}
     zIndex={zStack.indexOf(windowEnum.plansDisplay)}
     onMouseDown={() => zStack.indexOf(windowEnum.plansDisplay) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.plansDisplay))}
   >
-    <PlansDisplayHeader focused={focused} />
-    <PlansDisplayTable />
+    <PlansDisplayHeader focused={focused}/>
+    <PlansDisplayTable/>
   </PlansDisplayDiv>);
 };

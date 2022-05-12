@@ -10,6 +10,6 @@ export const NoSelectDiv = styled.div`
   -moz-user-select: none;
   -ms-user-select: none;
 `;
-export const NoPointerEventsDiv = styled(NoSelectDiv)`
-  pointer-events: none;
-`;
+
+// TODO: rename this div
+export const DraggableDiv = styled(NoSelectDiv)<{anyDragging?: boolean}>(props => props.anyDragging && {"pointer-events": "none"});
