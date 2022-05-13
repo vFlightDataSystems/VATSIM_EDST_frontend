@@ -304,7 +304,7 @@ export function copy(text: string) {
     result = clipboard.writeText(text)
       .then(result => result);
   } else {
-    navigator.clipboard.writeText(text);
+    result = navigator.clipboard.writeText(text);
   }
   toast.show({
     title: "copied to clipboard",

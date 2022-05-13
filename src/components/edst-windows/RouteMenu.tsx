@@ -157,7 +157,7 @@ export const RouteMenu: React.FC = () => {
         planData = {route: rerouteData.route, route_data: rerouteData.route_data};
       }
       planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
-      copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${planData.route}`);
+      copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${planData.route}`).then();
       if (planData) {
         const msg = `AM ${entry.callsign} RTE ${planData.route}${entry.dest}`;
         if (!trialPlan) {
@@ -205,7 +205,7 @@ export const RouteMenu: React.FC = () => {
         if (_route.match(/^[A-Z]+\d{6}/gi)) {
           _route = _route.split('.', 1)[1].replace(/^\.+/gi, '');
         }
-        copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${_route}`.replace(/\.+$/, ''));
+        copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${_route}`.replace(/\.+$/, '')).then();
         const planData = {route: _route, frd: frd};
         if (trialPlan) {
           dispatch(addTrialPlanThunk({
@@ -291,7 +291,7 @@ export const RouteMenu: React.FC = () => {
                     title={Tooltips.routeMenuFrd}
                     onContextMenu={(event) => {
                       event.preventDefault();
-                      copy(frd);
+                      copy(frd).then();
                     }}>
                     <PposDiv>
                       {frd}..
