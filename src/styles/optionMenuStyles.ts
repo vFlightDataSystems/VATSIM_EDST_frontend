@@ -31,14 +31,13 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?:
     transform: "rotate(45deg)"
   }}
 `;
-export const OptionsMenu = styled(NoSelectDiv)<{ width?: number, pos?: { x: number, y: number }, zIndex: number }>`
+export const OptionsMenu = styled(NoSelectDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
   overflow: hidden;
   position: absolute;
   color: #ADADAD;
   background-color: #000000;
   border: none;
-  width: ${props => props.width ? props.width + 'px' : 'auto'};
   ${props => props.pos && {
     left: props.pos.x + 'px', top: props.pos.y + 'px'
   }}
@@ -77,7 +76,7 @@ export const OptionsBodyRow = styled.div<{ padding?: string, margin?: string, ju
   //min-height: 20px;
   overflow: hidden;
 
-  ${props => props.margin && {margin: props.margin}}
+  ${props => props.margin && {margin: props.margin}};
   * a {
     height: auto;
   }
@@ -143,8 +142,8 @@ export const OptionsBodyCol = styled.div<{ selected?: boolean, alignRight?: bool
   ${props => props.padding && {padding: props.padding}};
   ${props => props.margin && {margin: props.margin}};
 
-  ${props => props.selected && {color: "#000000"}}
-  ${props => props.selected && {"background-color": "#ADADAD"}}
+  ${props => props.selected && {color: "#000000"}};
+  ${props => props.selected && {"background-color": "#ADADAD"}};
   &:disabled {
     all: inherit;
   }
@@ -155,7 +154,7 @@ export const OptionsBodyCol = styled.div<{ selected?: boolean, alignRight?: bool
     "margin-left": "auto"
   }}
 `;
-export const UplinkCol = styled(OptionsBodyCol)`font-size: 30px`;
+// export const UplinkCol = styled(OptionsBodyCol)`font-size: 30px`;
 export const OptionsFlexCol = styled(OptionsBodyCol)`
   display: flex;
   justify-content: left;

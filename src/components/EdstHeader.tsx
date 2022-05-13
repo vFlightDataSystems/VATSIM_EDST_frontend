@@ -55,6 +55,7 @@ const ColButton = styled.button<{ width?: number, height?: number, open?: boolea
   &:hover {
     border: 1px solid #FFFFFF;
   }
+
   &:disabled {
     border: 1px solid #707070;
     color: #707070;
@@ -80,25 +81,25 @@ type EdstHeaderButtonProps = {
   onMouseDown?: () => void
 }
 
-const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = ({title, content, ...props}) => {
-  return (<EdstTooltip title={title}>
-    <ColButton
-      {...props}
-      open={props.open}
-      width={props.width}
-      disabled={props.disabled}
-      onMouseDown={props.onMouseDown}
-    >
-      {content}
-    </ColButton>
-  </EdstTooltip>);
-};
+const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = ({title, content, ...props}) => (<EdstTooltip title={title}>
+  <ColButton
+    {...props}
+    open={props.open}
+    width={props.width}
+    disabled={props.disabled}
+    onMouseDown={props.onMouseDown}
+  >
+    {content}
+  </ColButton>
+</EdstTooltip>);
+const EdstHeaderButton50: React.FC<EdstHeaderButtonProps> = (props) => <EdstHeaderButton width={50} {...props}/>;
+
 
 export const EdstHeader: React.FC = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const windows = useRootSelector(windowsSelector);
-  const disabledHeaderButtons =   useRootSelector(disabledHeaderButtonsSelector);
+  const disabledHeaderButtons = useRootSelector(disabledHeaderButtonsSelector);
 
   const sectorId = useRootSelector(sectorIdSelector);
   const entries = useRootSelector(entriesSelector);
@@ -198,28 +199,25 @@ export const EdstHeader: React.FC = () => {
                             onMouseDown={() => dispatch(toggleWindow(windowEnum.outage))}
           />
           <Time/>
-          <EdstHeaderButton open={windows[windowEnum.adsb].open}
-                            width={50}
-                            content="NON-ADSB"
-                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.adsb)}
+          <EdstHeaderButton50 open={windows[windowEnum.adsb].open}
+                              content="NON-ADSB"
+                              disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.adsb)}
             // title={Tooltips.adsb}
-                            onMouseDown={() => dispatch(toggleWindow(windowEnum.adsb))}
+                              onMouseDown={() => dispatch(toggleWindow(windowEnum.adsb))}
           />
-          <EdstHeaderButton open={windows[windowEnum.sat].open}
-                            width={50}
-                            content="SAT COMM"
-                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sat)}
+          <EdstHeaderButton50 open={windows[windowEnum.sat].open}
+                              content="SAT COMM"
+                              disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.sat)}
             // title={Tooltips.sat}
-                            onMouseDown={() => dispatch(toggleWindow(windowEnum.sat))}
+                              onMouseDown={() => dispatch(toggleWindow(windowEnum.sat))}
           />
-          <EdstHeaderButton open={windows[windowEnum.msg].open}
-                            width={50}
-                            // backgroundColor={YELLOW}
-                            // borderColor={YELLOW}
-                            content="MSG WAIT"
-                            disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.msg)}
+          <EdstHeaderButton50 open={windows[windowEnum.msg].open}
+            // backgroundColor={YELLOW}
+            // borderColor={YELLOW}
+                              content="MSG WAIT"
+                              disabled={disabledHeaderButtons.includes(edstHeaderButtonEnum.msg)}
             // title={Tooltips.msg}
-                            onMouseDown={() => dispatch(toggleWindow(windowEnum.msg))}
+                              onMouseDown={() => dispatch(toggleWindow(windowEnum.msg))}
           />
         </EdstHeaderCol>
       </EdstHeaderRow>

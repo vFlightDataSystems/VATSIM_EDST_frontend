@@ -14,7 +14,7 @@ const EdstOuterButton = styled.div<{ width?: number, height?: number, margin?: s
 
   ${props => props.margin && {
     margin: props.margin
-  }}
+  }};
   &:hover {
     border: 1px solid #FFFFFF;
   }
@@ -51,9 +51,6 @@ const EdstInnerButton = styled.div<{ selected?: boolean, flexGrow?: number, widt
     pointer-events: none;
     color: #707070;
   }
-
-  width: ${props => props.width ? props.width + "px" : "auto"};
-  height: ${props => props.height ? props.height + "px" : "auto"};
 `;
 
 type EdstButtonProps = {
@@ -88,6 +85,10 @@ export const EdstButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props
     </EdstOuterButton>
   </EdstTooltip>);
 };
+export const EdstButton12x12: React.FC<EdstButtonProps> = (props) => <EdstButton width={12} height={12} {...props}/>;
+export const EdstButton20x20: React.FC<EdstButtonProps> = (props) => <EdstButton width={20} height={20} {...props}/>;
+export const EdstRouteButton12x12: React.FC<EdstButtonProps> = (props) => <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props}/>;
+export const EdstTemplateButton85: React.FC<EdstButtonProps> = (props) => <EdstButton width={85} margin="0 4px" {...props}/>;
 
 export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props}) => {
   return (<EdstTooltip title={props.title}>
@@ -105,20 +106,22 @@ export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({onMouseDown, 
   </EdstTooltip>);
 };
 
-export const HoldDirButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props}) => {
-  return (<EdstTooltip title={props.title}>
-    <EdstOuterButton // @ts-ignore
-      disabled={props.disabled}
-      margin="0 2px"
-      id={id}
-      onMouseDownCapture={onMouseDown}>
-      <EdstInnerButton selected={props.selected} // @ts-ignore
-                       disabled={props.disabled}
-                       width={props.width}
-                       flexGrow={0}
-      >
-        {props.content ?? props.children}
-      </EdstInnerButton>
-    </EdstOuterButton>
-  </EdstTooltip>);
-};
+const HoldDirButton: React.FC<EdstButtonProps> = ({onMouseDown, id, ...props}) => <EdstTooltip
+  title={props.title}>
+  <EdstOuterButton // @ts-ignore
+    disabled={props.disabled}
+    margin="0 2px"
+    id={id}
+    onMouseDownCapture={onMouseDown}>
+    <EdstInnerButton selected={props.selected} // @ts-ignore
+                     disabled={props.disabled}
+                     width={props.width}
+                     flexGrow={0}
+    >
+      {props.content ?? props.children}
+    </EdstInnerButton>
+  </EdstOuterButton>
+</EdstTooltip>;
+export const HoldDirButton16: React.FC<EdstButtonProps> = (props) => <HoldDirButton width={16} {...props}/>
+export const HoldDirButton20: React.FC<EdstButtonProps> = (props) => <HoldDirButton width={20} {...props}/>
+export const HoldDirButton50: React.FC<EdstButtonProps> = (props) => <HoldDirButton width={50} {...props}/>

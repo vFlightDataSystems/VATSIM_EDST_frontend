@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import _ from "lodash";
-import {EdstButton} from "../../resources/EdstButton";
+import {EdstButton, EdstButton20x20} from "../../resources/EdstButton";
 import {Tooltips} from "../../../tooltips";
 import {EdstTooltip} from "../../resources/EdstTooltip";
 import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
@@ -28,12 +28,15 @@ import {
 import {Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3} from './styled';
 import {InputContainer} from "../../InputComponents";
 import {EdstDraggingOutline} from "../../../styles/draggingStyles";
+import styled from "styled-components";
 
 enum signEnum {
   more = '+',
   less = '-',
   none = ''
 }
+
+const SpeedDiv = styled(OptionsMenu)`width: 190px`;
 
 export const SpeedMenu: React.FC = () => {
   const asel = useRootSelector(aselSelector) as AselType;
@@ -88,9 +91,8 @@ export const SpeedMenu: React.FC = () => {
     dispatch(closeMenu(menuEnum.speedMenu));
   };
 
-  return pos && entry && (<OptionsMenu
+  return pos && entry && (<SpeedDiv
       ref={ref}
-      width={190}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.speedMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(pushZStack(menuEnum.speedMenu))}
@@ -135,11 +137,11 @@ export const SpeedMenu: React.FC = () => {
         <Row3 topBorder={true}/>
         <Row3 bottomBorder={true}>
           <EdstTooltip content="KNOTS" title={Tooltips.aclSpdKnots}/>
-          <EdstButton width={20} height={20} margin="0 2px 0 22px" content="+" selected={sign === signEnum.more}
-                      onMouseDown={() => setSign(sign === signEnum.more ? signEnum.none : signEnum.more)}
+          <EdstButton20x20 margin="0 2px 0 22px" content="+" selected={sign === signEnum.more}
+                           onMouseDown={() => setSign(sign === signEnum.more ? signEnum.none : signEnum.more)}
           />
-          <EdstButton width={20} height={20} margin="0 16px 0 2px" content="-" selected={sign === signEnum.less}
-                      onMouseDown={() => setSign(sign === signEnum.less ? signEnum.none : signEnum.less)}
+          <EdstButton20x20 margin="0 16px 0 2px" content="-" selected={sign === signEnum.less}
+                           onMouseDown={() => setSign(sign === signEnum.less ? signEnum.none : signEnum.less)}
           />
           <EdstTooltip content="MACH" title={Tooltips.aclSpdMach}/>
         </Row3>
@@ -166,6 +168,6 @@ export const SpeedMenu: React.FC = () => {
           </OptionsBodyRow>
         </ScrollContainer>
       </OptionsBody>
-    </OptionsMenu>
+    </SpeedDiv>
   );
 };

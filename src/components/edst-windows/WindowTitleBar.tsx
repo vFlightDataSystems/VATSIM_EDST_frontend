@@ -12,7 +12,7 @@ const WindowTitleBarCol = styled.div<{ middle?: boolean, focused?: boolean }>`
   ${props => props.middle && {
     color: "#000000",
     "flex-grow": "1"
-  }}
+  }};
   > div, button {
     vertical-align: center;
     background-color: #888888;
@@ -54,11 +54,11 @@ const Block = styled.div<{ focused?: boolean, flexGrow?: number }>`
     border-left: 1px solid ${props => props.focused ? "#005757" : "#575757"};
   }
 `;
-const Block33 = styled(Block)`
+const Block3x3 = styled(Block)`
   width: 3px;
   height: 3px;
 `;
-const Block83 = styled(Block)`
+const Block8x3 = styled(Block)`
   width: 8px;
   height: 3px;
 `;
@@ -68,7 +68,7 @@ const InvertedBlock = styled(Block)`
   border-bottom: 1px solid #ADADAD;
   border-right: 1px solid #ADADAD;
 `;
-const InvertedBlock88 = styled(InvertedBlock)`
+const InvertedBlock8x8 = styled(InvertedBlock)`
   width: 8px;
   height: 8px;
 `;
@@ -78,7 +78,7 @@ export const WindowTitleBar: React.FC<{ focused: boolean, closeWindow: () => voi
   return (<WindowTitleBarDiv>
     <WindowTitleBarCol focused={focused}>
       <Block as="button">
-        <Block83 focused={focused}/>
+        <Block8x3 focused={focused}/>
       </Block>
     </WindowTitleBarCol>
     <WindowTitleBarCol middle={true} focused={focused}>
@@ -88,10 +88,10 @@ export const WindowTitleBar: React.FC<{ focused: boolean, closeWindow: () => voi
     </WindowTitleBarCol>
     <WindowTitleBarCol focused={focused}>
       <Block as="button" onClick={closeWindow}>
-        <Block33 focused={focused}/>
+        <Block3x3 focused={focused}/>
       </Block>
       <Block as="button" focused={focused}>
-        <InvertedBlock88 focused={focused}/>
+        <InvertedBlock8x8 focused={focused}/>
       </Block>
     </WindowTitleBarCol>
   </WindowTitleBarDiv>);

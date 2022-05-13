@@ -20,6 +20,7 @@ import {EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader} fr
 import styled from "styled-components";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
+const TemplateDiv = styled(OptionsMenu)`width: 850px`;
 const TemplateBodyDiv = styled(OptionsBody)`padding: 10px 0 2px 0`;
 
 const TemplateRowDiv = styled.div<{ alignRight?: boolean }>`
@@ -128,9 +129,8 @@ export const TemplateMenu: React.FC = () => {
     } // eslint-disable-next-line
   }, []);
 
-  return pos && (<OptionsMenu
+  return pos && (<TemplateDiv
     ref={ref}
-    width={850}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.templateMenu)}
     onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(pushZStack(menuEnum.templateMenu))}
@@ -332,6 +332,6 @@ export const TemplateMenu: React.FC = () => {
         </TemplateCol>
       </TemplateRowDiv>
     </TemplateBodyDiv>
-  </OptionsMenu>
+  </TemplateDiv>
   );
 };

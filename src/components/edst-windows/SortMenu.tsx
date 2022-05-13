@@ -20,7 +20,7 @@ import {
 import styled from "styled-components";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
-const SortDiv = styled(OptionsMenu)``;
+const SortDiv = styled(OptionsMenu)<{width: number}>(props => ({width: props.width + 'px'}));
 const SortHeader = styled(OptionsMenuHeader)``;
 const SortBody = styled(OptionsBody)`padding: 4px 0`;
 

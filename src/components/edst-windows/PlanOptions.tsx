@@ -26,7 +26,7 @@ import {
 import styled from "styled-components";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
-const PlanOptionsDiv = styled(OptionsMenu)``;
+const PlanOptionsDiv = styled(OptionsMenu)`width: 220px`;
 const PlanOptionsBody = styled(OptionsBody)`text-indent: 4px`;
 
 export const PlanOptions: React.FC = () => {

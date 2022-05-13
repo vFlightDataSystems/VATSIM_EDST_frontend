@@ -4,7 +4,7 @@ import {Tooltips} from "../../../tooltips";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
 import {useRootSelector} from "../../../redux/hooks";
 import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
-import {EqpCol, EqpColTitle, EqpInput, EqpInputContainer, EqpInputRow} from "./styled";
+import {EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow} from "./styled";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 import styled from "styled-components";
 
@@ -197,23 +197,23 @@ export const EquipmentCommTemplate: React.FC = () => {
     <EqpInputRow>
       DAT/
       <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuComm_Dat}>
-        <EqpInputContainer width="60%">
+        <EqpInputContainer60>
           <EqpInput value={[...acarsCategories as string[]].concat([...satelliteCategories as string[]])
             .sort((u,v) => u.localeCompare(v)).join('')}
                     onChange={() => {}}
           />
-        </EqpInputContainer>
+        </EqpInputContainer60>
       </EdstTooltip>
     </EqpInputRow>
     <EqpInputRow>
       COM/
       <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuComm_Com}>
-        <EqpInputContainer width="60%">
+        <EqpInputContainer60>
           <EqpInput value={[...voiceCategories as string[]].concat([...cpdlcCategories as string[]])
             .sort((u,v) => u.localeCompare(v)).join('')}
                     onChange={() => {}}
           />
-        </EqpInputContainer>
+        </EqpInputContainer60>
       </EdstTooltip>
     </EqpInputRow>
   </div>);

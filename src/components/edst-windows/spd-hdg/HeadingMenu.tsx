@@ -29,6 +29,9 @@ import {
 import {Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2} from './styled';
 import { InputContainer } from '../../InputComponents';
 import {EdstDraggingOutline} from "../../../styles/draggingStyles";
+import styled from "styled-components";
+
+const HeadingDiv = styled(OptionsMenu)`width: 190px`;
 
 export const HeadingMenu: React.FC = () => {
   const asel = useRootSelector(aselSelector) as AselType;
@@ -77,9 +80,8 @@ export const HeadingMenu: React.FC = () => {
     dispatch(closeMenu(menuEnum.headingMenu));
   };
 
-  return pos && entry && (<OptionsMenu
+  return pos && entry && (<HeadingDiv
     ref={ref}
-    width={190}
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.headingMenu)}
     onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(pushZStack(menuEnum.headingMenu))}
@@ -193,5 +195,5 @@ export const HeadingMenu: React.FC = () => {
         </OptionsBodyRow>
       </ScrollContainer>
     </OptionsBody>
-  </OptionsMenu>);
+  </HeadingDiv>);
 }
