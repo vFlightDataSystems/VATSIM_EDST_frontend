@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {edstFontGrey} from "./colors";
+import {edstFontGrey, stripHighlightColor, stripPendingRemovalColor} from "./colors";
 import {defaultFontSize} from "./styles";
 
 
@@ -19,7 +19,7 @@ export const BodyRowDiv = styled.div<{pendingRemoval?: boolean, separator?: bool
   min-height: 2px;
   //flex-grow: 2;
   padding: 0 10px;
-  ${props => props.pendingRemoval && {color: "#595959"}};
+  ${props => props.pendingRemoval && {color: stripPendingRemovalColor}};
   ${props => props.separator && {
     height: 0,
     "border-bottom": "2px solid #AA8800"
@@ -31,9 +31,9 @@ export const InnerRow = styled.div<{ highlight?: boolean }>`
   min-height: 20px;
   border-bottom: 1px solid transparent;
   ${props => props.highlight && {
-    outline: "1px solid #414141",
-    "border-bottom": "1px solid #414141",
-    "background-color": "#414141"
+    outline: `1px solid ${stripHighlightColor}`,
+    "border-bottom": `1px solid ${stripHighlightColor}`,
+    "background-color": stripHighlightColor
   }}
 `;
 export const InnerRow2 = styled(InnerRow)<{minWidth: number}>`

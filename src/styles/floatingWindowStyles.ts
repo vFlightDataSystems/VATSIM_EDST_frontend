@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {NoSelectDiv} from "./styles";
 
+const floatingWindowTitleBackgroundColor = '#575757';
 
 export const FloatingWindowDiv = styled(NoSelectDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
@@ -23,7 +24,7 @@ export const FloatingWindowBodyDiv = styled.div`
 `;
 
 export const FloatingWindowHeaderDiv = styled.div`
-  background-color: #575757;
+  background-color: ${floatingWindowTitleBackgroundColor};
   justify-content: space-between;
   display: flex;
   height: 20px;
@@ -33,7 +34,7 @@ const FloatingWindowHeaderColDiv = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  background-color: #575757;
+  background-color: ${floatingWindowTitleBackgroundColor};
   border: 1px solid #ADADAD;
 
   &:hover {
@@ -52,7 +53,7 @@ const FloatingWindowHeaderBlock = styled.span`
 `;
 export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
   width: 8px;
-  height: 2px
+  height: 2px;
 `;
 
 

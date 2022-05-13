@@ -5,7 +5,7 @@ import {useRootSelector, useRootDispatch} from "../../redux/hooks";
 import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
-import {edstFontGrey} from "../../styles/colors";
+import {edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor} from "../../styles/colors";
 import {DraggableDiv} from "../../styles/styles";
 import {windowEnum} from "../../enums";
 
@@ -16,8 +16,8 @@ const AclDiv = styled(DraggableDiv)<{ zIndex: number }>`
   overflow: hidden;
   margin: 2px;
   flex-grow: 1;
-  border: 3px solid #888888;
-  outline: 1px solid #ADADAD;
+  border: 3px solid ${edstWindowBorderColor};
+  outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
   z-index: ${props => 10000 - props.zIndex};

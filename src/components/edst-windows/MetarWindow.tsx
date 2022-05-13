@@ -15,9 +15,7 @@ import {useDragging} from "../../hooks";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 import styled from "styled-components";
 
-const MetarDiv = styled(FloatingWindowDiv)`
-  width: 400px
-`;
+const MetarDiv = styled(FloatingWindowDiv)`width: 400px`;
 
 export const MetarWindow: React.FC = () => {
   const dispatch = useRootDispatch();
