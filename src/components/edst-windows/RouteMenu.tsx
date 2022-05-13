@@ -114,10 +114,10 @@ export const RouteMenu: React.FC = () => {
     const ref = useRef<HTMLDivElement>(null);
     const focused = useFocused(ref);
     useCenterCursor(ref, [asel]);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.routeMenu);
+    const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.routeMenu);
 
 
-  const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
+    const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
       [entry.flightplan.lat, entry.flightplan.lon, referenceFixes]);
     const frd = useMemo(() => closestReferenceFix ? computeFrdString(closestReferenceFix) : 'XXX000000', [closestReferenceFix]);
 
@@ -150,13 +150,14 @@ export const RouteMenu: React.FC = () => {
       let planData: Record<string, any>;
       const dest = entry.dest;
       if (rerouteData.routeType === 'aar') {
-        planData = {route: rerouteData.amended_route, route_fixes: rerouteData.amended_route_fixes};
+        planData = {route: rerouteData.amended_route, route_fixes: rerouteData.amended_route_fix_names};
       } else if (rerouteData.routeType === 'adr') {
-        planData = {route: rerouteData.amendment + rerouteData.route, route_fixes: rerouteData.amended_route_fixes};
+        planData = {route: rerouteData.amendment + rerouteData.route, route_fixes: rerouteData.amended_route_fix_names};
       } else {
         planData = {route: rerouteData.route, route_data: rerouteData.route_data};
       }
       planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
+      planData.dest = dest;
       copy(`${!(asel.window === windowEnum.dep) ? frd : ''}${planData.route}`).then();
       if (planData) {
         const msg = `AM ${entry.callsign} RTE ${planData.route}${entry.dest}`;
@@ -176,7 +177,11 @@ export const RouteMenu: React.FC = () => {
     };
 
     const clearedToFix = (clearedFixName: string) => {
-      const planData = {cid: entry.cid, fix: clearedFixName, frd: closestReferenceFix}
+      const planData = {
+        cid: entry.cid,
+        fix: clearedFixName,
+        frd: asel.window !== windowEnum.dep ? closestReferenceFix : null
+      }
       if (planData) {
         if (!trialPlan) {
           dispatch(amendDirectThunk(planData))
@@ -312,7 +317,7 @@ export const RouteMenu: React.FC = () => {
           <RouteMenuRow topBorder={true}>
             <EdstTooltip disabled={true} title={Tooltips.routeMenuPar}>
               <ButtonCol hover={true}>
-                <EdstRouteButton12x12  disabled={true}/>
+                <EdstRouteButton12x12 disabled={true}/>
                 Include PAR
               </ButtonCol>
             </EdstTooltip>
