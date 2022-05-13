@@ -70,7 +70,7 @@ export const PreviousRouteMenu: React.FC = () => {
             <EdstButton
               content="Apply Previous Route"
               onMouseDown={() => {
-                copy(route.replace(/\.+$/, ''));
+                copy(route.replace(/\.+$/, '')).then();
                 dispatch(amendEntryThunk({
                   cid: entry.cid,
                   planData: {

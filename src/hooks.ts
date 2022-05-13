@@ -87,11 +87,11 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
     if (element.current && ppos && !anyDragging) {
       let previewPos = {x: ppos.x - 1, y: ppos.y + 35};
       if (window.__TAURI__) {
-        invoke('set_cursor_grab', {value: true});
+        invoke('set_cursor_grab', {value: true}).then();
       }
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         if (window.__TAURI__) {
-          invoke('set_cursor_position', previewPos);
+          invoke('set_cursor_position', previewPos).then();
         }
         else {
           previewPos = {x: event.pageX, y: event.pageY};
@@ -116,7 +116,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
       const {left: x, top: y} = dragPreviewStyle;
       newPos = {x: x + 1, y: y - 35};
       if (window.__TAURI__) {
-        invoke('set_cursor_grab', {value: false});
+        invoke('set_cursor_grab', {value: false}).then();
       }
       if (edstWindow in windowEnum) {
         dispatch(setWindowPosition({
