@@ -20,6 +20,9 @@ import {
 } from '../../styles/optionMenuStyles';
 import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import styled from "styled-components";
+
+const PrevRouteMenuDiv = styled(OptionsMenu)`width: 380px`;
 
 export const PreviousRouteMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
@@ -37,11 +40,10 @@ export const PreviousRouteMenu: React.FC = () => {
 
   const route = removeDestFromRouteString(entry.route.slice(0), entry.dest);
 
-  return pos && entry && (<OptionsMenu
-      width={380}
+  return pos && entry && (<PrevRouteMenuDiv
+      ref={ref}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.prevRouteMenu)}
-      ref={ref}
       onMouseDown={() => zStack.indexOf(menuEnum.prevRouteMenu) > 0 && dispatch(pushZStack(menuEnum.prevRouteMenu))}
       id="prev-route-menu"
     >
@@ -88,6 +90,6 @@ export const PreviousRouteMenu: React.FC = () => {
           </OptionsBodyCol>
         </OptionsBodyRow>
       </OptionsBody>
-    </OptionsMenu>
+    </PrevRouteMenuDiv>
   );
 };

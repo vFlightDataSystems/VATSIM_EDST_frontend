@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import {
-  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderColDiv14, FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
 import styled from "styled-components";
@@ -55,7 +55,7 @@ export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({pos
       }
       if (rect) {
         const newCursorPos = {x: rect.left + rect.width / 2, y: rect.top + rect.height / 2};
-        invoke('set_cursor_position', newCursorPos);
+        invoke('set_cursor_position', newCursorPos).then();
       }
     }
   }, []);
@@ -63,14 +63,12 @@ export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({pos
   return <FloatingWindowOptionsBodyDiv pos={pos} ref={ref}>
     {props.header &&
         <FloatingWindowHeaderDiv ref={headerRef}>
-            <FloatingWindowHeaderColDiv
-                flexGrow={1}
-            >
+            <FloatingWindowHeaderColDivFlex>
               {props.header}
-            </FloatingWindowHeaderColDiv>
-            <FloatingWindowHeaderColDiv width={14} onMouseDown={props.closeOptions} ref={xRef}>
+            </FloatingWindowHeaderColDivFlex>
+            <FloatingWindowHeaderColDiv14 onMouseDown={props.closeOptions} ref={xRef}>
                 X
-            </FloatingWindowHeaderColDiv>
+            </FloatingWindowHeaderColDiv14>
         </FloatingWindowHeaderDiv>}
     {props.options?.map((option) =>
       <FloatingWindowOptionDiv unselected={!(props.selectedOptions?.includes(option) ?? true)}

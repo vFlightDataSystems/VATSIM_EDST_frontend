@@ -7,8 +7,7 @@ import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
-  FloatingWindowHeaderBlock,
-  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderBlock8x2, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderColDiv20,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
@@ -56,16 +55,13 @@ export const MetarWindow: React.FC = () => {
           onMouseDown={stopDrag}
       />}
       <FloatingWindowHeaderDiv>
-        <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv
-          flexGrow={1}
-          onMouseDown={startDrag}
-        >
+        <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+        <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>
           WX
-        </FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.metar))}>
-          <FloatingWindowHeaderBlock width={8} height={2}/>
-        </FloatingWindowHeaderColDiv>
+        </FloatingWindowHeaderColDivFlex>
+        <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.metar))}>
+          <FloatingWindowHeaderBlock8x2/>
+        </FloatingWindowHeaderColDiv20>
       </FloatingWindowHeaderDiv>
       {Object.values(metarList).length > 0 && <FloatingWindowBodyDiv>
         {Object.entries(metarList).map(([airport, airportMetarEntry]) =>

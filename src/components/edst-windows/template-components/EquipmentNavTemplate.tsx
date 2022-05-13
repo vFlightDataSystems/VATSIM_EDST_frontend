@@ -11,7 +11,7 @@ import {
   EqpContentCol,
   EqpContentRow,
   EqpInput,
-  EqpInputContainer,
+  EqpInputContainer, EqpInputContainer60,
   EqpInputRow
 } from "./styled";
 
@@ -196,12 +196,12 @@ export const EquipmentNavTemplate: React.FC = () => {
     <EqpInputRow>
       NAV/
       <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
-        <EqpInputContainer width="60%">
+        <EqpInputContainer60 width="60%">
           <EqpInput value={[...navCategories as string[]].concat([...rnavCategories as string[]])
             .sort((u,v) => u.localeCompare(v)).join('') + (rvsm ? 'W' : '')}
                  onChange={() => {}}
           />
-        </EqpInputContainer>
+        </EqpInputContainer60>
       </EdstTooltip>
     </EqpInputRow>
   </div>);

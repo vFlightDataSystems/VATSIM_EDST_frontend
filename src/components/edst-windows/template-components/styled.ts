@@ -21,6 +21,9 @@ export const EqpInputContainer = styled.div<{width?: string}>`
   border: 1px solid transparent;
   max-width: ${props => props.width ?? "50px"};
 `;
+export const EqpInputContainer60 = styled(EqpInputContainer)`
+  max-width: 60%;
+`;
 export const EqpInput = styled(EdstInput)`
   cursor: default;
   font-size: 16px;

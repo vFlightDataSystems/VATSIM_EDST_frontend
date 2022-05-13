@@ -6,7 +6,7 @@ import {aselEntrySelector} from "../../../redux/slices/entriesSlice";
 import {EquipmentTemplateRow} from "./EquipmentTemplateMenu";
 import {OptionsBodyRow, OptionSelectedIndicator} from "../../../styles/optionMenuStyles";
 import styled from "styled-components";
-import {EqpInput, EqpInputContainer, EqpRow, EqpColTitle, EqpInputRow, EqpCol} from "./styled";
+import {EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60} from "./styled";
 
 const ContentCol = styled.div`
   justify-content: left;
@@ -215,11 +215,11 @@ export const EquipmentSurvTemplate: React.FC = () => {
       <EqpInputRow>
         SUR/
         <EdstTooltip style={{display: "flex", justifyContent: "left", flexGrow: "1"}} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
-          <EqpInputContainer width="60%">
+          <EqpInputContainer60>
             <EqpInput value={`${transponderCategory ?? ''}${adsbBType ?? ''}${adsbUType ?? ''}${adsbVType ?? ''}`}
                       onChange={() => {}}
             />
-          </EqpInputContainer>
+          </EqpInputContainer60>
         </EdstTooltip>
       </EqpInputRow>
     </div>

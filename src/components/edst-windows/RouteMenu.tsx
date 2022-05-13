@@ -6,7 +6,7 @@ import {computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteStrin
 import VATSIM_LOGO from '../../resources/images/VATSIM-social_icon.svg';
 import SKYVECTOR_LOGO from '../../resources/images/glob_bright.png';
 import FLIGHTAWARE_LOGO from '../../resources/images/FA_1.png';
-import {EdstButton} from "../resources/EdstButton";
+import {EdstButton, EdstRouteButton12x12} from "../resources/EdstButton";
 import {Tooltips} from "../../tooltips";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
@@ -42,7 +42,7 @@ import {referenceFixSelector} from "../../redux/slices/sectorSlice";
 import {PlanQueryType} from "../../redux/slices/planSlice";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
-const RouteMenuDiv = styled(OptionsMenu)``;
+const RouteMenuDiv = styled(OptionsMenu)`width: 570px`;
 const RouteMenuHeader = styled(OptionsMenuHeader)``;
 const RouteMenuBody = styled(OptionsBody)``;
 const RouteMenuRow = styled(OptionsBodyRow)`padding: 4px 0`;
@@ -224,7 +224,6 @@ export const RouteMenu: React.FC = () => {
 
     return pos && (<RouteMenuDiv
         ref={ref}
-        width={570}
         pos={pos}
         zIndex={zStack.indexOf(menuEnum.routeMenu)}
         onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(pushZStack(menuEnum.routeMenu))}
@@ -313,7 +312,7 @@ export const RouteMenu: React.FC = () => {
           <RouteMenuRow topBorder={true}>
             <EdstTooltip disabled={true} title={Tooltips.routeMenuPar}>
               <ButtonCol hover={true}>
-                <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}/>
+                <EdstRouteButton12x12  disabled={true}/>
                 Include PAR
               </ButtonCol>
             </EdstTooltip>
@@ -323,8 +322,7 @@ export const RouteMenu: React.FC = () => {
                          onMouseDown={() => setAppend({appendStar: !appendStar, appendOplus: false})}
             >
               <ButtonCol hover={true}>
-                <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}
-                            selected={appendStar}/>
+                <EdstRouteButton12x12 disabled={true} selected={appendStar}/>
                 Append *
               </ButtonCol>
             </EdstTooltip>
@@ -333,8 +331,7 @@ export const RouteMenu: React.FC = () => {
               onMouseDown={() => setAppend({appendOplus: !appendOplus, appendStar: false})}
             >
               <ButtonCol hover={true}>
-                <EdstButton padding="0 4px" margin="0 5px 0 0" disabled={true} width={12} height={12}
-                            selected={appendOplus}/>
+                <EdstRouteButton12x12 disabled={true} selected={appendOplus}/>
                 Append<span>&nbsp;{`\u2295`}</span>
               </ButtonCol>
             </EdstTooltip>

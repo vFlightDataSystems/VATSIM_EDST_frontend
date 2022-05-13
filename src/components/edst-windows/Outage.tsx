@@ -5,8 +5,7 @@ import {closeWindow, pushZStack, windowPositionSelector, zStackSelector} from ".
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
-  FloatingWindowHeaderBlock,
-  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderBlock8x2, FloatingWindowHeaderColDiv20, FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
 import {useDragging} from "../../hooks";
@@ -36,16 +35,13 @@ export const Outage: React.FC = () => {
           onMouseDown={stopDrag}
       />}
       <FloatingWindowHeaderDiv>
-        <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv
-          flexGrow={1}
-          onMouseDown={startDrag}
-        >
+        <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+        <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>
           OUTAGE
-        </FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.outage))}>
-          <FloatingWindowHeaderBlock width={8} height={2}/>
-        </FloatingWindowHeaderColDiv>
+        </FloatingWindowHeaderColDivFlex>
+        <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.outage))}>
+          <FloatingWindowHeaderBlock8x2/>
+        </FloatingWindowHeaderColDiv20>
       </FloatingWindowHeaderDiv>
       <FloatingWindowBodyDiv>
         OUTAGE TEST

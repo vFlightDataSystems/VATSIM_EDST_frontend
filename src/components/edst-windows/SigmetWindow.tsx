@@ -13,8 +13,7 @@ import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
-  FloatingWindowHeaderBlock,
-  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderBlock8x2, FloatingWindowHeaderColDiv20, FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
@@ -83,16 +82,13 @@ export const SigmetWindow: React.FC = () => {
           onMouseUp={stopDrag}
       />}
       <FloatingWindowHeaderDiv>
-        <FloatingWindowHeaderColDiv width={20} onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv
-          flexGrow={1}
-          onMouseDown={startDrag}
-        >
+        <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>
+        <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>
           SIGMETS SECTOR {sectorId}
-        </FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
-          <FloatingWindowHeaderBlock width={8} height={2}/>
-        </FloatingWindowHeaderColDiv>
+        </FloatingWindowHeaderColDivFlex>
+        <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
+          <FloatingWindowHeaderBlock8x2/>
+        </FloatingWindowHeaderColDiv20>
       </FloatingWindowHeaderDiv>
       {Object.values(sigmetList).length > 0 &&
           <FloatingWindowBodyDiv>

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {computeCrossingTimes, formatUtcMinutes} from "../../lib";
-import {EdstButton, HoldDirButton} from "../resources/EdstButton";
+import {EdstButton, HoldDirButton16, HoldDirButton20, HoldDirButton50} from "../resources/EdstButton";
 import {EdstTooltip} from "../resources/EdstTooltip";
 import {Tooltips} from "../../tooltips";
 import {useRootDispatch, useRootSelector} from "../../redux/hooks";
@@ -24,6 +24,7 @@ import styled from "styled-components";
 import {InputContainer} from "../InputComponents";
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
 
+const HoldDiv = styled(OptionsMenu)`width: 420px`;
 const FixContainer = styled.div`
   padding: 4px 0;
   border-bottom: 1px solid #ADADAD;
@@ -130,9 +131,8 @@ export const HoldMenu: React.FC = () => {
     dispatch(closeMenu(menuEnum.holdMenu));
   };
 
-  return pos && entry && (<OptionsMenu
+  return pos && entry && (<HoldDiv
       ref={ref}
-      width={420}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.holdMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.holdMenu) > 0 && dispatch(pushZStack(menuEnum.holdMenu))}
@@ -213,86 +213,78 @@ export const HoldMenu: React.FC = () => {
         </Row1>
         <Row1>
           <Col3>
-            <HoldDirButton content="NW" selected={holdDirection === 'NW'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('NW')}
+            <HoldDirButton16 content="NW" selected={holdDirection === 'NW'}
+                             onMouseDown={() => setHoldDirection('NW')}
             />
-            <HoldDirButton content="N" selected={holdDirection === 'N'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('N')}
+            <HoldDirButton16 content="N" selected={holdDirection === 'N'}
+                             onMouseDown={() => setHoldDirection('N')}
             />
-            <HoldDirButton content="NE" selected={holdDirection === 'NE'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('NE')}
+            <HoldDirButton16 content="NE" selected={holdDirection === 'NE'}
+                             onMouseDown={() => setHoldDirection('NE')}
             />
           </Col3>
           <Col3>
-            <HoldDirButton content="LT" width={20} selected={turns === 'LT'}
-                           onMouseDown={() => setTurns('LT')}
+            <HoldDirButton20 content="LT" selected={turns === 'LT'}
+                             onMouseDown={() => setTurns('LT')}
             />
-            <HoldDirButton content="RT" width={20} selected={turns === 'RT'}
-                           onMouseDown={() => setTurns('RT')}
+            <HoldDirButton20 content="RT" selected={turns === 'RT'}
+                             onMouseDown={() => setTurns('RT')}
             />
           </Col3>
           <Col3>
-            <HoldDirButton content="STD" width={50} selected={!legLength || legLength === 'STD'}
-                           onMouseDown={() => setLegLength('STD')}
+            <HoldDirButton50 content="STD" selected={!legLength || legLength === 'STD'}
+                             onMouseDown={() => setLegLength('STD')}
             />
-            <HoldDirButton content="15 NM" width={50} selected={!legLength || legLength === 15}
-                           onMouseDown={() => setLegLength(15)}
+            <HoldDirButton50 content="15 NM" selected={!legLength || legLength === 15}
+                             onMouseDown={() => setLegLength(15)}
             />
           </Col3>
         </Row1>
         <Row1>
           <Col3>
-            <HoldDirButton content="W" selected={holdDirection === 'W'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('W')}
+            <HoldDirButton16 content="W" selected={holdDirection === 'W'}
+                             onMouseDown={() => setHoldDirection('W')}
             />
-            <HoldDirButton disabled={true} width={16}/>
-            <HoldDirButton content="E" selected={holdDirection === 'E'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('E')}
+            <HoldDirButton16 disabled={true}/>
+            <HoldDirButton16 content="E" selected={holdDirection === 'E'}
+                             onMouseDown={() => setHoldDirection('E')}
             />
           </Col3>
           <Col3>
-            <HoldDirButton width={20} disabled={true}/>
-            <HoldDirButton width={20} disabled={true}/>
+            <HoldDirButton20 disabled={true}/>
+            <HoldDirButton20 disabled={true}/>
           </Col3>
           <Col3>
-            <HoldDirButton content="5 NM" width={50} selected={!legLength || legLength === 5}
-                           onMouseDown={() => setLegLength(5)}
+            <HoldDirButton50 content="5 NM" selected={!legLength || legLength === 5}
+                             onMouseDown={() => setLegLength(5)}
             />
-            <HoldDirButton content="20 NM" width={50} selected={!legLength || legLength === 20}
-                           onMouseDown={() => setLegLength(20)}
+            <HoldDirButton50 content="20 NM" selected={!legLength || legLength === 20}
+                             onMouseDown={() => setLegLength(20)}
             />
           </Col3>
         </Row1>
         <Row1>
           <Col3>
-            <HoldDirButton content="SW" selected={holdDirection === 'SW'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('SW')}
+            <HoldDirButton16 content="SW" selected={holdDirection === 'SW'}
+                             onMouseDown={() => setHoldDirection('SW')}
             />
-            <HoldDirButton content="S" selected={holdDirection === 'S'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('S')}
+            <HoldDirButton16 content="S" selected={holdDirection === 'S'}
+                             onMouseDown={() => setHoldDirection('S')}
             />
-            <HoldDirButton content="SE" selected={holdDirection === 'SE'}
-                           width={16}
-                           onMouseDown={() => setHoldDirection('SE')}
+            <HoldDirButton16 content="SE" selected={holdDirection === 'SE'}
+                             onMouseDown={() => setHoldDirection('SE')}
             />
           </Col3>
           <Col3>
-            <HoldDirButton width={20} disabled={true}/>
-            <HoldDirButton width={20} disabled={true}/>
+            <HoldDirButton20 disabled={true}/>
+            <HoldDirButton20 disabled={true}/>
           </Col3>
           <Col3>
-            <HoldDirButton content="10 NM" width={50} selected={!legLength || legLength === 10}
-                           onMouseDown={() => setLegLength(10)}
+            <HoldDirButton50 content="10 NM" selected={!legLength || legLength === 10}
+                             onMouseDown={() => setLegLength(10)}
             />
-            <HoldDirButton content="25 NM" width={50} selected={!legLength || legLength === 25}
-                           onMouseDown={() => setLegLength(25)}
+            <HoldDirButton50 content="25 NM" selected={!legLength || legLength === 25}
+                             onMouseDown={() => setLegLength(25)}
             />
           </Col3>
         </Row1>
@@ -360,6 +352,6 @@ export const HoldMenu: React.FC = () => {
           </OptionsBodyCol>
         </OptionsBodyRow>
       </OptionsBody>
-    </OptionsMenu>
+    </HoldDiv>
   );
 };

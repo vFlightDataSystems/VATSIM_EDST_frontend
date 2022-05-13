@@ -29,12 +29,10 @@ export const FloatingWindowHeaderDiv = styled.div`
   height: 20px;
 `;
 
-export const FloatingWindowHeaderColDiv = styled.div<{ width?: number, flexGrow?: number }>`
+const FloatingWindowHeaderColDiv = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  ${props => props.width && ({width: props.width})}
-  flex-grow: ${props => props.flexGrow ?? 0};
   background-color: #575757;
   border: 1px solid #ADADAD;
 
@@ -42,17 +40,21 @@ export const FloatingWindowHeaderColDiv = styled.div<{ width?: number, flexGrow?
     border: 1px solid #FFFFFF;
   }
 `;
+export const FloatingWindowHeaderColDiv14 = styled(FloatingWindowHeaderColDiv)`width: 14px`;
+export const FloatingWindowHeaderColDiv20 = styled(FloatingWindowHeaderColDiv)`width: 20px`;
+export const FloatingWindowHeaderColDivFlex = styled(FloatingWindowHeaderColDiv)`flex-grow: 1`;
 
-export const FloatingWindowHeaderBlock = styled.span`
-  ${(props: { width: number, height: number }) => ({
-    width: props.width + 'px',
-    height: props.height + 'px'
-  })}
+const FloatingWindowHeaderBlock = styled.span`
   background-color: #ADADAD;
   border: none;
   outline: none;
   pointer-events: none;
 `;
+export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
+  width: 8px;
+  height: 2px
+`;
+
 
 export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean, suppressed?: boolean }>`
   justify-content: center;
@@ -65,12 +67,10 @@ export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean, suppr
   ${props => props.selected && {
     "background-color": "#919191",
     color: "#000000"
-  }}
-  
+  }};
   ${props => props.suppressed && {
     color: "#575757"
-  }}
-
+  }};
   &:hover {
     border: 1px solid #FFFFFF;
   }

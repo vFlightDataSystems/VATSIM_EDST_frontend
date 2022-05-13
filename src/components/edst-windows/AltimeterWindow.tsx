@@ -7,8 +7,9 @@ import {FloatingWindowOptions} from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
-  FloatingWindowHeaderBlock,
-  FloatingWindowHeaderColDiv,
+  FloatingWindowHeaderBlock8x2,
+  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
@@ -65,16 +66,13 @@ export const AltimeterWindow: React.FC = () => {
           onMouseDown={stopDrag}
       />}
       <FloatingWindowHeaderDiv>
-        <FloatingWindowHeaderColDiv width={20}>M</FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv
-          flexGrow={1}
-          onMouseDown={startDrag}
-        >
+        <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+        <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>
           ALTIM SET
-        </FloatingWindowHeaderColDiv>
-        <FloatingWindowHeaderColDiv width={20} onMouseDown={() => dispatch(closeWindow(windowEnum.altimeter))}>
-          <FloatingWindowHeaderBlock width={8} height={2}/>
-        </FloatingWindowHeaderColDiv>
+        </FloatingWindowHeaderColDivFlex>
+        <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.altimeter))}>
+          <FloatingWindowHeaderBlock8x2/>
+        </FloatingWindowHeaderColDiv20>
       </FloatingWindowHeaderDiv>
       {
         Object.values(altimeterList).length > 0 && <FloatingWindowBodyDiv>

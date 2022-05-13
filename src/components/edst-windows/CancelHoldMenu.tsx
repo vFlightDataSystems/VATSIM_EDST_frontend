@@ -15,6 +15,9 @@ import {
   OptionsMenuHeader
 } from '../../styles/optionMenuStyles';
 import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import styled from "styled-components";
+
+const CancelHoldDiv = styled(OptionsMenu)`width: 250px`;
 
 export const CancelHoldMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntryType;
@@ -26,9 +29,8 @@ export const CancelHoldMenu: React.FC = () => {
   useCenterCursor(ref);
   const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.cancelHoldMenu);
 
-  return pos && entry && (<OptionsMenu
+  return pos && entry && (<CancelHoldDiv
       ref={ref}
-      width={250}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.cancelHoldMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.cancelHoldMenu) > 0 && dispatch(pushZStack(menuEnum.cancelHoldMenu))}
@@ -63,6 +65,6 @@ export const CancelHoldMenu: React.FC = () => {
           </OptionsBodyCol>
         </OptionsBodyRow>
       </OptionsBody>
-    </OptionsMenu>
+    </CancelHoldDiv>
   );
 }
