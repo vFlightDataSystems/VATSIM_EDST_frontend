@@ -12,7 +12,7 @@ import {
 import {openMenuThunk} from "../../../redux/thunks/thunks";
 import {menuEnum, planRowFieldEnum, windowEnum} from "../../../enums";
 import {closeWindow, setAsel} from "../../../redux/slices/appSlice";
-import {amendDirectThunk, amendEntryThunk, amendRouteThunk} from "../../../redux/thunks/entriesThunks";
+import {amendDirectThunk, amendEntryThunk} from "../../../redux/thunks/entriesThunks";
 import {NoSelectDiv} from "../../../styles/styles";
 
 type PlansDisplayHeaderProps = {
@@ -35,10 +35,9 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({focused})
         dispatch(amendDirectThunk({cid: planData.cid, fix: planData.fix, frd: planData.frd}));
       }
       else if (trialPlanData.queryType === PlanQueryType.reroute) {
-        dispatch(amendRouteThunk({
+        dispatch(amendEntryThunk({
           cid: planQueue[selectedPlanIndex].cid,
-          route: planData.route,
-          frd: planData.frd
+          planData: {...planData}
         }))
       }
       else {
