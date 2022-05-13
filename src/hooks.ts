@@ -80,10 +80,10 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
           ...prevStyle, ...computePreviewPos(prevStyle.left + event.movementX, prevStyle.top + event.movementY, width, height)
         }));
       }
-    } // eslint-disable-next-line
-  }, []);
+    }
+  }, [element, repositionCursor]);
 
-  const startDrag = (event: React.MouseEvent<HTMLDivElement>) => {
+  const startDrag = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     if (element.current && ppos && !anyDragging) {
       let previewPos = {x: ppos.x - 1, y: ppos.y + 35};
       if (window.__TAURI__) {
@@ -108,9 +108,9 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
       dispatch(setAnyDragging(true));
       window.addEventListener('mousemove', draggingHandler);
     }
-  }
+  }, [anyDragging, dispatch, draggingHandler, edstWindow, element, ppos]);
 
-  const stopDrag = (_event: React.MouseEvent<HTMLDivElement>) => {
+  const stopDrag = useCallback((_event: React.MouseEvent<HTMLElement>) => {
     if (dragging && element?.current) {
       let newPos;
       const {left: x, top: y} = dragPreviewStyle;
@@ -134,7 +134,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
       setDragPreviewStyle(null);
       window.removeEventListener('mousemove', draggingHandler);
     }
-  };
+  }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, element]);
 
   return {startDrag: startDrag, stopDrag: stopDrag, dragPreviewStyle: dragPreviewStyle};
 }
