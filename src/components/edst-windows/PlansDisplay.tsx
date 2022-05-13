@@ -7,7 +7,7 @@ import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slice
 import {useFocused} from "../../hooks";
 import styled from "styled-components";
 import {DraggableDiv} from "../../styles/styles";
-import {edstFontGrey} from "../../styles/colors";
+import {edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor} from "../../styles/colors";
 import {windowEnum} from "../../enums";
 
 const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
@@ -17,8 +17,8 @@ const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
   min-height: 400px;
   margin: 2px;
   flex-grow: 1;
-  border: 3px solid #888888;
-  outline: 1px solid #ADADAD;
+  border: 3px solid ${edstWindowBorderColor};
+  outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   z-index: ${props => 10000 - props.zIndex};
 `;
