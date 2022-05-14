@@ -5,7 +5,7 @@ const floatingWindowTitleBackgroundColor = '#575757';
 
 export const FloatingWindowDiv = styled(NoSelectDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
-  position: absolute;
+  position: fixed;
   color: #ADADAD;
 
   ${props => props.pos && {

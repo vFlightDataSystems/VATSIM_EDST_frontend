@@ -34,7 +34,7 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?:
 export const OptionsMenu = styled(NoSelectDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
   overflow: hidden;
-  position: absolute;
+  position: fixed;
   color: #ADADAD;
   background-color: #000000;
   border: none;

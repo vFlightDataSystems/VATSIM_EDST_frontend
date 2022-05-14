@@ -77,7 +77,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
       } else {
         const {clientWidth: width, clientHeight: height} = element.current;
         setDragPreviewStyle((prevStyle: any) => ({
-          ...prevStyle, ...computePreviewPos(prevStyle.left + event.movementX, prevStyle.top + event.movementY, width, height)
+          ...prevStyle, ...computePreviewPos(event.pageX + prevStyle.relX, event.pageY + prevStyle.relY, width, height)
         }));
       }
     }
@@ -85,21 +85,31 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
 
   const startDrag = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     if (element.current && ppos && !anyDragging) {
-      let previewPos = {x: ppos.x - 1, y: ppos.y + 35};
+      let previewPos;
+      let relX = 0, relY = 0;
       if (window.__TAURI__) {
         invoke('set_cursor_grab', {value: true}).then();
       }
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         if (window.__TAURI__) {
-          invoke('set_cursor_position', previewPos).then();
+          previewPos = { x: ppos.x, y: ppos.y };
+          let cursorPos = {x: ppos.x, y: ppos.y + 26}
+          invoke('set_cursor_position', cursorPos).then();
         }
         else {
-          previewPos = {x: event.pageX, y: event.pageY};
+          previewPos = { x: event.pageX, y: event.pageY };
         }
       }
+      else {
+        previewPos = { x: event.pageX, y: event.pageY };
+        relX = ppos.x - event.pageX;
+        relY = ppos.y - event.pageY;
+      }
       const style = {
-        left: previewPos.x,
-        top: previewPos.y,
+        left: previewPos.x + relX,
+        top: previewPos.y + relY,
+        relX: relX,
+        relY: relY,
         height: element.current.clientHeight,
         width: element.current.clientWidth
       };
@@ -114,7 +124,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
     if (dragging && element?.current) {
       let newPos;
       const {left: x, top: y} = dragPreviewStyle;
-      newPos = {x: x + 1, y: y - 35};
+      newPos = { x: x + 1, y: y};
       if (window.__TAURI__) {
         invoke('set_cursor_grab', {value: false}).then();
       }
