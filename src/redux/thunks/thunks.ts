@@ -113,10 +113,11 @@ export function planCleanupThunk() {
 export function openWindowThunk(window: windowEnum, ref?: (EventTarget & any), triggeredFromWindow?: windowEnum, plan: boolean = false, openedWithCid?: string | null) {
   return (dispatch: any) => {
     if (ref) {
+      const {x,y} = ref.getBoundingClientRect();
       let windowPos: WindowPositionType;
       windowPos = {
-        x: ref.offsetLeft,
-        y: ref.offsetTop + ref.offsetHeight
+        x: x,
+        y: y + ref.offsetHeight
       };
       dispatch(setWindowPosition({window: window, pos: windowPos}));
     }
@@ -177,8 +178,8 @@ export function openMenuThunk(menu: menuEnum, ref?: (EventTarget & any), trigger
           break;
         default:
           menuPos = {
-            x: ref.offsetLeft,
-            y: ref.offsetTop + ref.offsetHeight
+            x: x,
+            y: y + ref.offsetHeight
           };
       }
       dispatch(setMenuPosition({menu: menu, pos: menuPos}));
