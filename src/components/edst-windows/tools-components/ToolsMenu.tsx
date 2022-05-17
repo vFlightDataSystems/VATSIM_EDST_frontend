@@ -28,13 +28,14 @@ export const ToolsMenu: React.FC = () => {
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.toolsMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.toolsMenu);
 
   return menuProps?.position && (<OptionsMenu
     ref={ref}
     pos={menuProps.position}
     zIndex={zStack.indexOf(menuEnum.toolsMenu)}
     onMouseDown={() => zStack.indexOf(menuEnum.toolsMenu) > 0 && dispatch(pushZStack(menuEnum.toolsMenu))}
+    anyDragging={anyDragging}
     id="tools-menu"
   >
       {dragPreviewStyle && <EdstDraggingOutline

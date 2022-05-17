@@ -63,7 +63,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
 
   const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number, top: number } => {
     return {
-      left: x,
+      left: x - 1,
       top: y
     };
   }
@@ -93,8 +93,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
       if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
         if (window.__TAURI__) {
           previewPos = { x: ppos.x, y: ppos.y };
-          let cursorPos = {x: ppos.x, y: ppos.y + 26}
-          invoke('set_cursor_position', cursorPos).then();
+          invoke('set_cursor_position', previewPos).then();
         }
         else {
           previewPos = { x: event.pageX, y: event.pageY };
@@ -106,7 +105,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
         relY = ppos.y - event.pageY;
       }
       const style = {
-        left: previewPos.x + relX,
+        left: previewPos.x + relX - 1,
         top: previewPos.y + relY,
         relX: relX,
         relY: relY,
@@ -146,5 +145,5 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
     }
   }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, element]);
 
-  return {startDrag: startDrag, stopDrag: stopDrag, dragPreviewStyle: dragPreviewStyle};
+  return {startDrag: startDrag, stopDrag: stopDrag, dragPreviewStyle: dragPreviewStyle, anyDragging: anyDragging};
 }

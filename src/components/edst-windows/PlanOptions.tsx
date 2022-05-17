@@ -39,7 +39,7 @@ export const PlanOptions: React.FC = () => {
   const entry = useRootSelector(entrySelector(asel.cid));
   const dep = asel.window === windowEnum.dep;
   useCenterCursor(ref, [asel]);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.planOptions);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.planOptions);
 
   function openMenu(menu: menuEnum) {
     dispatch(openMenuThunk(menu, ref.current, menuEnum.planOptions, true));
@@ -51,6 +51,7 @@ export const PlanOptions: React.FC = () => {
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.planOptions)}
       onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(pushZStack(menuEnum.planOptions))}
+      anyDragging={anyDragging}
       id="plan-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

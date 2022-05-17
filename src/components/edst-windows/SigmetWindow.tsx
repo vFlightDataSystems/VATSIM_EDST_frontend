@@ -44,7 +44,7 @@ export const SigmetWindow: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number, y: number, w: number } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.sigmets);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.sigmets);
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
@@ -75,11 +75,12 @@ export const SigmetWindow: React.FC = () => {
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.sigmets)}
       onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(pushZStack(windowEnum.sigmets))}
+      anyDragging={anyDragging}
       id="edst-status"
     >
       {dragPreviewStyle && <EdstDraggingOutline
           style={dragPreviewStyle}
-          onMouseUp={stopDrag}
+          onMouseDown={stopDrag}
       />}
       <FloatingWindowHeaderDiv>
         <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>

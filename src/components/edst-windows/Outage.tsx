@@ -20,7 +20,7 @@ export const Outage: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(windowEnum.outage));
   const ref = useRef(null);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.outage);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.outage);
   const zStack = useRootSelector(zStackSelector);
 
   return pos && (<OutageDiv
@@ -28,6 +28,7 @@ export const Outage: React.FC = () => {
       ref={ref}
       zIndex={zStack.indexOf(windowEnum.outage)}
       onMouseDown={() => zStack.indexOf(windowEnum.outage) > 0 && dispatch(pushZStack(windowEnum.outage))}
+      anyDragging={anyDragging}
       id="edst-outage"
     >
       {dragPreviewStyle && <EdstDraggingOutline

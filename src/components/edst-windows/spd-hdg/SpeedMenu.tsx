@@ -51,7 +51,7 @@ export const SpeedMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.speedMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.speedMenu);
 
   useEffect(() => {
     setSpeed(280);
@@ -96,6 +96,7 @@ export const SpeedMenu: React.FC = () => {
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.speedMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(pushZStack(menuEnum.speedMenu))}
+      anyDragging={anyDragging}
       id="speed-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

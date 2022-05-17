@@ -78,13 +78,14 @@ export const EquipmentTemplateMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.equipmentTemplateMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.equipmentTemplateMenu);
 
   return pos && (<EqpTemplateDiv
       ref={ref}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.equipmentTemplateMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.equipmentTemplateMenu) > 0 && dispatch(pushZStack(menuEnum.equipmentTemplateMenu))}
+      anyDragging={anyDragging}
       id="equipment-template-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

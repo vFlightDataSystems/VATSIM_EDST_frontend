@@ -63,9 +63,8 @@ export type LocalEdstEntryVType = {
 // type for a single EDST entry
 export type LocalEdstEntryType = EdstEntryType & LocalEdstEntryVType;
 
+// TODO: make type an enum
 export type FixType = {
-  artcc_high?: string,
-  artcc_low?: string,
   lat: string | number,
   lon: string | number,
   name: string,
@@ -73,6 +72,7 @@ export type FixType = {
   waypoint_id: string
 }
 
+// TODO: make type an enum
 export type AirwaySegmentType = {
   airway: string,
   lat: string | number,

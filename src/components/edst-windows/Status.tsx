@@ -33,7 +33,7 @@ export const Status: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(windowEnum.status));
   const ref = useRef(null);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.status);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.status);
   const zStack = useRootSelector(zStackSelector);
 
   return pos && (<StatusDiv
@@ -41,6 +41,7 @@ export const Status: React.FC = () => {
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.status)}
       onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(pushZStack(windowEnum.status))}
+      anyDragging={anyDragging}
       id="edst-status"
     >
       {dragPreviewStyle && <EdstDraggingOutline

@@ -94,7 +94,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.messageComposeArea);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.messageComposeArea);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -278,6 +278,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
 
   return pos && (<MessageComposeAreaDiv
       ref={ref}
+      anyDragging={anyDragging}
       id="edst-mca"
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
