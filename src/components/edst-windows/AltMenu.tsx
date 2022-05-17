@@ -23,7 +23,7 @@ import {PlanQueryType} from "../../redux/slices/planSlice";
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number, pos: { x: number, y: number } }>`
   z-index: 11000;
   background-color: #888888;
-  position: absolute;
+  position: fixed;
   width: ${props => props.width ? props.width + 'px' : '100px'};
   color: #D6D6D6;
 
