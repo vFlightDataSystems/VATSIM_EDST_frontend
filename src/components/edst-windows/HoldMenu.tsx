@@ -99,7 +99,7 @@ export const HoldMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.speedMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.speedMenu);
 
   useEffect(() => {
     if (!entry) {
@@ -136,6 +136,7 @@ export const HoldMenu: React.FC = () => {
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.holdMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.holdMenu) > 0 && dispatch(pushZStack(menuEnum.holdMenu))}
+      anyDragging={anyDragging}
       id="hold-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

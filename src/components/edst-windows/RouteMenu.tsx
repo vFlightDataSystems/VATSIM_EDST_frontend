@@ -114,7 +114,7 @@ export const RouteMenu: React.FC = () => {
     const ref = useRef<HTMLDivElement>(null);
     const focused = useFocused(ref);
     useCenterCursor(ref, [asel]);
-    const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.routeMenu);
+    const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.routeMenu);
 
 
     const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])),
@@ -232,6 +232,7 @@ export const RouteMenu: React.FC = () => {
         pos={pos}
         zIndex={zStack.indexOf(menuEnum.routeMenu)}
         onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(pushZStack(menuEnum.routeMenu))}
+        anyDragging={anyDragging}
         id="route-menu"
       >
         {dragPreviewStyle && <EdstDraggingOutline

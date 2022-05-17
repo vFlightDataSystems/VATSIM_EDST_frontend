@@ -51,7 +51,7 @@ export const SortMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.sortMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.sortMenu);
 
   let sortStateCopy = Object.assign({}, sortState);
 
@@ -61,6 +61,7 @@ export const SortMenu: React.FC = () => {
     pos={menuProps.position}
     zIndex={zStack.indexOf(menuEnum.sortMenu)}
     onMouseDown={() => zStack.indexOf(menuEnum.sortMenu) > 0 && dispatch(pushZStack(menuEnum.sortMenu))}
+    anyDragging={anyDragging}
     id="sort-menu"
   >
       {dragPreviewStyle && <EdstDraggingOutline

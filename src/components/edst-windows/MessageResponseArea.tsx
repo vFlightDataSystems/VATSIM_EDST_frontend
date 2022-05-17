@@ -25,13 +25,14 @@ export const MessageResponseArea: React.FC = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef(null);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.messageResponseArea);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.messageResponseArea);
 
 
   return pos && (<MessageResponseAreaDiv
       pos={pos}
       zIndex={zStack.indexOf(windowEnum.messageResponseArea)}
       ref={ref}
+      anyDragging={anyDragging}
       id="edst-mra"
       onMouseDown={(event) => {
         startDrag(event);

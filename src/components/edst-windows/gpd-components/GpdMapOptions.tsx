@@ -26,7 +26,7 @@ export const GpdMapOptions: React.FC = () => {
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.gpdMapOptionsMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.gpdMapOptionsMenu);
 
 
   return menuProps?.position && (<OptionsMenu
@@ -34,6 +34,7 @@ export const GpdMapOptions: React.FC = () => {
       pos={menuProps.position}
       zIndex={zStack.indexOf(menuEnum.gpdMapOptionsMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(menuEnum.gpdMapOptionsMenu))}
+      anyDragging={anyDragging}
       id="gpd-map-options-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

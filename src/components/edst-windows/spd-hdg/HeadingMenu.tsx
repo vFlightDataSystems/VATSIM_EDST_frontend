@@ -46,7 +46,7 @@ export const HeadingMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.headingMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.headingMenu);
 
   useEffect(() => {
     setHeading(280);
@@ -85,6 +85,7 @@ export const HeadingMenu: React.FC = () => {
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.headingMenu)}
     onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(pushZStack(menuEnum.headingMenu))}
+    anyDragging={anyDragging}
     id="heading-menu"
   >
     {dragPreviewStyle && <EdstDraggingOutline

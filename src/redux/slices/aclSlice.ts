@@ -2,12 +2,12 @@ import {createSlice} from "@reduxjs/toolkit";
 import {sortOptionsEnum} from "../../enums";
 import {RootState} from "../store";
 
-type toolsOptionsType = { displayCoordinationColumn: boolean, dropTrackDelete: boolean, iafDofManual: boolean, nonRvsmIndicator: boolean };
+type ToolsOptionsType = { displayCoordinationColumn: boolean, dropTrackDelete: boolean, iafDofManual: boolean, nonRvsmIndicator: boolean };
 
 export type AclStateType = {
   sortData: { selectedOption: sortOptionsEnum, sector: boolean },
   manualPosting: boolean,
-  toolsOptions: toolsOptionsType
+  toolsOptions: ToolsOptionsType
 };
 
 const initialState = {
@@ -26,7 +26,7 @@ const aclSlice = createSlice({
     setAclManualPosting(state, action: { payload: boolean }) {
       state.manualPosting = action.payload;
     },
-    updateToolsOptions(state, action: { payload: toolsOptionsType }) {
+    updateToolsOptions(state, action: { payload: ToolsOptionsType }) {
       state.toolsOptions = action.payload;
     }
   }

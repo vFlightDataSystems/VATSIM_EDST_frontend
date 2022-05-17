@@ -31,11 +31,15 @@ export const Acl: React.FC = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
+  function onMouseDownHandler() {
+    zStack.indexOf(windowEnum.acl) > 0 && fullscreen && dispatch(pushZStack(windowEnum.acl));
+  }
+
   return (<AclDiv
     anyDragging={anyDragging}
     ref={ref}
     zIndex={zStack.indexOf(windowEnum.acl)}
-    onMouseDown={() => zStack.indexOf(windowEnum.acl) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.acl))}
+    onMouseDown={onMouseDownHandler}
   >
     <AclHeader focused={focused}/>
     <AclTable/>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {NoSelectDiv} from "./styles";
+import {DraggableDiv} from "./styles";
 import {edstFontGrey} from "./colors";
 
 export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?: boolean, diamond?: boolean }>`
@@ -31,7 +31,7 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?:
     transform: "rotate(45deg)"
   }}
 `;
-export const OptionsMenu = styled(NoSelectDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
+export const OptionsMenu = styled(DraggableDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
   overflow: hidden;
   position: fixed;

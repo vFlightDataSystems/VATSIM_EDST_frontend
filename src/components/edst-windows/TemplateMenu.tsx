@@ -121,7 +121,7 @@ export const TemplateMenu: React.FC = () => {
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
 
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.templateMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.templateMenu);
 
   useEffect(() => {
     return () => {
@@ -134,6 +134,7 @@ export const TemplateMenu: React.FC = () => {
     pos={pos}
     zIndex={zStack.indexOf(menuEnum.templateMenu)}
     onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(pushZStack(menuEnum.templateMenu))}
+    anyDragging={anyDragging}
     id="template-menu"
   >
       {dragPreviewStyle && <EdstDraggingOutline

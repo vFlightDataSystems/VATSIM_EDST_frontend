@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import {NoSelectDiv} from "./styles";
+import {DraggableDiv, NoSelectDiv} from "./styles";
 
 const floatingWindowTitleBackgroundColor = '#575757';
 
-export const FloatingWindowDiv = styled(NoSelectDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
+export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
   position: fixed;
   color: #ADADAD;

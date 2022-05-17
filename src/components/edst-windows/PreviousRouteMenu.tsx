@@ -33,7 +33,7 @@ export const PreviousRouteMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.equipmentTemplateMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.equipmentTemplateMenu);
 
   const closestReferenceFix = entry.aclDisplay ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
   const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
@@ -45,6 +45,7 @@ export const PreviousRouteMenu: React.FC = () => {
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.prevRouteMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.prevRouteMenu) > 0 && dispatch(pushZStack(menuEnum.prevRouteMenu))}
+      anyDragging={anyDragging}
       id="prev-route-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

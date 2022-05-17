@@ -35,7 +35,7 @@ export const AltimeterWindow: React.FC = () => {
   const altimeterList = useRootSelector(altimeterSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, windowEnum.altimeter);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.altimeter);
 
   const now = new Date();
   const utcMinutesNow = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -59,6 +59,7 @@ export const AltimeterWindow: React.FC = () => {
       zIndex={zStack.indexOf(windowEnum.altimeter)}
       onMouseDown={() => zStack.indexOf(windowEnum.altimeter) > 0 && dispatch(pushZStack(windowEnum.altimeter))}
       ref={ref}
+      anyDragging={anyDragging}
       id="edst-altimeter"
     >
       {dragPreviewStyle && <EdstDraggingOutline

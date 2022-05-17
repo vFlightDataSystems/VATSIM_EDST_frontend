@@ -27,13 +27,14 @@ export const CancelHoldMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const {startDrag, stopDrag, dragPreviewStyle} = useDragging(ref, menuEnum.cancelHoldMenu);
+  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, menuEnum.cancelHoldMenu);
 
   return pos && entry && (<CancelHoldDiv
       ref={ref}
       pos={pos}
       zIndex={zStack.indexOf(menuEnum.cancelHoldMenu)}
       onMouseDown={() => zStack.indexOf(menuEnum.cancelHoldMenu) > 0 && dispatch(pushZStack(menuEnum.cancelHoldMenu))}
+      anyDragging={anyDragging}
       id="cancel-hold-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline

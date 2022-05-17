@@ -90,7 +90,7 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({focused, zoomLevel, setZoom
         title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton disabled={true} onMouseDown={handleRangeClick} content={`Range`}/>
-      <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width={74}/>
+      <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width={84}/>
       <EdstWindowHeaderButton
         onMouseDown={(e: React.MouseEvent) => {
           dispatch(closeMenu(menuEnum.gpdMapOptionsMenu));
