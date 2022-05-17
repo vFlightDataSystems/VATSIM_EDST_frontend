@@ -20,6 +20,7 @@ const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
   border: 3px solid ${edstWindowBorderColor};
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
+  background-color: #000000;
   z-index: ${props => 10000 - props.zIndex};
 `;
 
