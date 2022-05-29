@@ -1,34 +1,31 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {sortOptionsEnum} from "../../enums";
-import {RootState} from "../store";
+import { createSlice } from "@reduxjs/toolkit";
+import { sortOptions } from "../../enums";
+import { RootState } from "../store";
 
-export type DepStateType = {
-  sortData: { selectedOption: sortOptionsEnum, sector: boolean },
-  manualPosting: boolean
+export type DepState = {
+  sortData: { selectedOption: sortOptions; sector: boolean };
+  manualPosting: boolean;
 };
 
 const initialState = {
-  sortData: {selectedOption: sortOptionsEnum.acid, sector: false},
+  sortData: { selectedOption: sortOptions.acid, sector: false },
   manualPosting: true
 };
 
 const depSlice = createSlice({
-  name: 'dep',
-  initialState: initialState as DepStateType,
+  name: "dep",
+  initialState: initialState as DepState,
   reducers: {
-    setDepSort(state: DepStateType, action: { payload: sortOptionsEnum }) {
+    setDepSort(state: DepState, action: { payload: sortOptions }) {
       state.sortData.selectedOption = action.payload;
     },
-    setDepManualPosting(state: DepStateType, action) {
+    setDepManualPosting(state: DepState, action) {
       state.manualPosting = action.payload;
     }
   }
 });
 
-export const {
-  setDepSort,
-  setDepManualPosting,
-} = depSlice.actions;
+export const { setDepSort, setDepManualPosting } = depSlice.actions;
 export default depSlice.reducer;
 export const depSortDataSelector = (state: RootState) => state.dep.sortData;
 export const depManualPostingSelector = (state: RootState) => state.dep.manualPosting;

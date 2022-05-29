@@ -1,14 +1,7 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {PlanDataType, WindowPositionType} from "../../types";
-import {
-  aclRowFieldEnum,
-  depRowFieldEnum,
-  edstHeaderButtonEnum,
-  menuEnum,
-  planRowFieldEnum,
-  windowEnum
-} from "../../enums";
-import {RootState} from "../store";
+import { createSlice } from "@reduxjs/toolkit";
+import { PlanDataType, WindowPosition } from "../../types";
+import { aclRowField, depRowField, edstHeaderButton, menuEnum, planRowField, windowEnum } from "../../enums";
+import { RootState } from "../store";
 
 export const AIRCRAFT_MENUS = [
   menuEnum.planOptions,
@@ -24,11 +17,10 @@ export const AIRCRAFT_MENUS = [
 ];
 
 type AppWindowType = {
-  open: boolean,
-  window: windowEnum | menuEnum,
-  position: WindowPositionType | null,
-  openedBy?: windowEnum | menuEnum,
-  openedWithCid?: string | null // @deprecated
+  open: boolean;
+  window: windowEnum | menuEnum;
+  position: WindowPosition | null;
+  openedBy?: windowEnum | menuEnum;
 };
 
 enum outageTypeEnum {
@@ -39,75 +31,83 @@ enum outageTypeEnum {
 }
 
 type OutageEntryType = {
-  message: string,
-  outageType: outageTypeEnum,
-  canDelete: boolean,
-  acknowledged: boolean
+  message: string;
+  outageType: outageTypeEnum;
+  canDelete: boolean;
+  acknowledged: boolean;
 };
 
-export type AselType = { cid: string, window: windowEnum, field: aclRowFieldEnum | depRowFieldEnum | planRowFieldEnum };
+export type Asel = { cid: string; window: windowEnum; field: aclRowField | depRowField | planRowField };
 
-export type AppStateType = {
-  disabledHeaderButtons: edstHeaderButtonEnum[];
-  planQueue: PlanDataType[],
+export type AppState = {
+  disabledHeaderButtons: edstHeaderButton[];
+  planQueue: PlanDataType[];
   inputFocused: boolean;
-  windows: Record<windowEnum, AppWindowType>,
-  menus: Record<menuEnum, AppWindowType>,
-  dragging: boolean,
-  mraMsg: string,
-  mcaCommandString: string,
-  tooltipsEnabled: boolean,
-  showSectorSelector: boolean,
-  asel: AselType | null,
-  zStack: (windowEnum | menuEnum)[],
-  outage: OutageEntryType[]
-}
+  windows: Record<windowEnum, AppWindowType>;
+  menus: Record<menuEnum, AppWindowType>;
+  dragging: boolean;
+  mraMsg: string;
+  mcaCommandString: string;
+  tooltipsEnabled: boolean;
+  showSectorSelector: boolean;
+  asel: Asel | null;
+  zStack: (windowEnum | menuEnum)[];
+  outage: OutageEntryType[];
+};
 
 export const DISABLED_HEADER_BUTTONS = [
-  edstHeaderButtonEnum.not,
-  edstHeaderButtonEnum.gi,
-  edstHeaderButtonEnum.ua,
-  edstHeaderButtonEnum.keep,
-  edstHeaderButtonEnum.adsb,
-  edstHeaderButtonEnum.sat,
-  edstHeaderButtonEnum.msg,
-  edstHeaderButtonEnum.wind,
-  edstHeaderButtonEnum.fel,
-  edstHeaderButtonEnum.cpdlcHist,
-  edstHeaderButtonEnum.cpdlcMsgOut
+  edstHeaderButton.not,
+  edstHeaderButton.gi,
+  edstHeaderButton.ua,
+  edstHeaderButton.keep,
+  edstHeaderButton.adsb,
+  edstHeaderButton.sat,
+  edstHeaderButton.msg,
+  edstHeaderButton.wind,
+  edstHeaderButton.fel,
+  edstHeaderButton.cpdlcHist,
+  edstHeaderButton.cpdlcMsgOut
 ];
 
-const defaultWindowPositions: Partial<Record<windowEnum, { x: number, y: number } | null>> = {
-  [windowEnum.status]: {x: 400, y: 100},
-  [windowEnum.outage]: {x: 400, y: 100},
-  [windowEnum.messageComposeArea]: {x: 100, y: 600},
-  [windowEnum.messageResponseArea]: {x: 100, y: 100},
-  [windowEnum.altimeter]: {x: 100, y: 100},
-  [windowEnum.metar]: {x: 100, y: 100},
-  [windowEnum.sigmets]: {x: 100, y: 100}
+const defaultWindowPositions: Partial<Record<windowEnum, { x: number; y: number } | null>> = {
+  [windowEnum.status]: { x: 400, y: 100 },
+  [windowEnum.outage]: { x: 400, y: 100 },
+  [windowEnum.messageComposeArea]: { x: 100, y: 600 },
+  [windowEnum.messageResponseArea]: { x: 100, y: 100 },
+  [windowEnum.altimeter]: { x: 100, y: 100 },
+  [windowEnum.metar]: { x: 100, y: 100 },
+  [windowEnum.sigmets]: { x: 100, y: 100 }
 };
 
-const initialWindowState: Record<windowEnum, AppWindowType> = Object.fromEntries(Object.values(windowEnum)
-  .map((value) => [value as windowEnum, {
-    open: false,
-    position: defaultWindowPositions[value as windowEnum] ?? null
-  } as AppWindowType])) as  Record<windowEnum, AppWindowType>;
+const initialWindowState: Record<windowEnum, AppWindowType> = Object.fromEntries(
+  Object.values(windowEnum).map(value => [
+    value as windowEnum,
+    {
+      open: false,
+      position: defaultWindowPositions[value as windowEnum] ?? null
+    } as AppWindowType
+  ])
+) as Record<windowEnum, AppWindowType>;
 
-const initialMenuState: Record<menuEnum, AppWindowType> = Object.fromEntries(Object.values(menuEnum)
-  .map((value) => [value as menuEnum, {
-    open: false,
-    position: null
-  } as AppWindowType])) as Record<menuEnum, AppWindowType>;
+const initialMenuState: Record<menuEnum, AppWindowType> = Object.fromEntries(
+  Object.values(menuEnum).map(value => [
+    value as menuEnum,
+    {
+      open: false,
+      position: null
+    } as AppWindowType
+  ])
+) as Record<menuEnum, AppWindowType>;
 
-const initialState: AppStateType = {
+const initialState: AppState = {
   disabledHeaderButtons: DISABLED_HEADER_BUTTONS,
   planQueue: [],
   inputFocused: false,
   windows: initialWindowState,
   menus: initialMenuState,
   dragging: false,
-  mraMsg: '',
-  mcaCommandString: '',
+  mraMsg: "",
+  mcaCommandString: "",
   tooltipsEnabled: true,
   showSectorSelector: true,
   asel: null,
@@ -116,60 +116,54 @@ const initialState: AppStateType = {
 };
 
 const appSlice = createSlice({
-  name: 'app',
-  initialState: initialState as AppStateType,
+  name: "app",
+  initialState: initialState as AppState,
   reducers: {
     toggleWindow(state, action: { payload: windowEnum }) {
       state.windows[action.payload].open = !state.windows[action.payload].open;
-      let zStack = new Set([...state.zStack]);
+      const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
     },
     toggleMenu(state, action: { payload: menuEnum }) {
       state.menus[action.payload].open = !state.menus[action.payload].open;
-      let zStack = new Set([...state.zStack]);
+      const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
     },
     closeWindow(state, action: { payload: windowEnum | windowEnum[] }) {
       if (action.payload instanceof Array) {
-        for (const window of action.payload) {
+        action.payload.forEach(window => {
           state.windows[window].open = false;
-        }
+        });
       } else {
         state.windows[action.payload].open = false;
       }
     },
     closeMenu(state, action: { payload: menuEnum | menuEnum[] }) {
       if (action.payload instanceof Array) {
-        for (const menu of action.payload) {
+        action.payload.forEach(menu => {
           state.menus[menu].open = false;
-        }
+        });
       } else {
         state.menus[action.payload].open = false;
       }
     },
-    openWindow(state, action: { payload: { window: windowEnum, openedBy?: windowEnum, openedWithCid?: string | null } }) {
+    openWindow(state, action: { payload: { window: windowEnum; openedBy?: windowEnum } }) {
       state.windows[action.payload.window].open = true;
       if (action.payload.openedBy) {
         state.windows[action.payload.window].openedBy = action.payload.openedBy;
       }
-      if (action.payload.openedWithCid) {
-        state.windows[action.payload.window].openedWithCid = action.payload.openedWithCid;
-      }
-      let zStack = new Set([...state.zStack]);
+      const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload.window);
       state.zStack = [action.payload.window, ...zStack];
     },
-    openMenu(state, action: { payload: { menu: menuEnum, openedBy?: windowEnum | menuEnum, openedWithCid?: string | null } }) {
+    openMenu(state, action: { payload: { menu: menuEnum; openedBy?: windowEnum | menuEnum } }) {
       state.menus[action.payload.menu].open = true;
       if (action.payload.openedBy) {
         state.menus[action.payload.menu].openedBy = action.payload.openedBy;
       }
-      if (action.payload.openedWithCid) {
-        state.menus[action.payload.menu].openedWithCid = action.payload.openedWithCid;
-      }
-      let zStack = new Set([...state.zStack]);
+      const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload.menu);
       state.zStack = [action.payload.menu, ...zStack];
     },
@@ -179,10 +173,10 @@ const appSlice = createSlice({
     setShowSectorSelector(state, action: { payload: boolean }) {
       state.showSectorSelector = action.payload;
     },
-    setWindowPosition(state, action: { payload: { window: windowEnum, pos: { x: number, y: number, w?: number, h?: number } | null } }) {
+    setWindowPosition(state, action: { payload: { window: windowEnum; pos: { x: number; y: number; w?: number; h?: number } | null } }) {
       state.windows[action.payload.window].position = action.payload.pos;
     },
-    setMenuPosition(state, action: { payload: { menu: menuEnum, pos: { x: number, y: number, w?: number, h?: number } | null } }) {
+    setMenuPosition(state, action: { payload: { menu: menuEnum; pos: { x: number; y: number; w?: number; h?: number } | null } }) {
       state.menus[action.payload.menu].position = action.payload.pos;
     },
     setMraMessage(state, action: { payload: string }) {
@@ -196,37 +190,37 @@ const appSlice = createSlice({
       state.inputFocused = action.payload;
     },
     closeAllWindows(state) {
-      for (let window of Object.values(windowEnum)) {
+      Object.values(windowEnum).forEach(window => {
         state.windows[window as windowEnum].open = false;
-      }
+      });
     },
     closeAllMenus(state) {
-      for (let menu of Object.values(menuEnum)) {
+      Object.values(menuEnum).forEach(menu => {
         state.menus[menu as menuEnum].open = false;
-      }
+      });
       state.asel = null;
     },
     closeAircraftMenus(state) {
-      for (let menu of AIRCRAFT_MENUS) {
+      AIRCRAFT_MENUS.forEach(menu => {
         state.menus[menu as menuEnum].open = false;
-      }
+      });
     },
-    setAsel(state, action: { payload: AselType | null }) {
+    setAsel(state, action: { payload: Asel | null }) {
       state.asel = action.payload;
     },
     setAnyDragging(state, action: { payload: boolean }) {
       state.dragging = action.payload;
     },
-    pushZStack(state, action: {payload: windowEnum | menuEnum}) {
-      let zStack = new Set([...state.zStack]);
+    pushZStack(state, action: { payload: windowEnum | menuEnum }) {
+      const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
     },
-    addOutageMessage(state, action: {payload: OutageEntryType}) {
+    addOutageMessage(state, action: { payload: OutageEntryType }) {
       state.outage = [...state.outage, action.payload];
     },
     // removes outage message at index
-    removeOutageMessage(state, action: {payload: number}) {
+    removeOutageMessage(state, action: { payload: number }) {
       if (action.payload > -1 && action.payload < state.outage.length) {
         state.outage.splice(action.payload, 1);
       }
@@ -266,9 +260,9 @@ export const menuSelector = (menu: menuEnum) => (state: RootState) => state.app.
 export const windowPositionSelector = (window: windowEnum) => (state: RootState) => state.app.windows[window].position;
 export const menuPositionSelector = (menu: menuEnum) => (state: RootState) => state.app.menus[menu].position;
 export const aselSelector = (state: RootState) => state.app.asel;
-export const aclAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.acl ? state.app.asel : null;
-export const depAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.dep ? state.app.asel : null;
-export const gpdAselSelector = (state: RootState) => state.app.asel?.window === windowEnum.graphicPlanDisplay ? state.app.asel : null;
+export const aclAselSelector = (state: RootState) => (state.app.asel?.window === windowEnum.acl ? state.app.asel : null);
+export const depAselSelector = (state: RootState) => (state.app.asel?.window === windowEnum.dep ? state.app.asel : null);
+export const gpdAselSelector = (state: RootState) => (state.app.asel?.window === windowEnum.graphicPlanDisplay ? state.app.asel : null);
 export const anyDraggingSelector = (state: RootState) => state.app.dragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outage;

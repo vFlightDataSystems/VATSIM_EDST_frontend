@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {defaultFontFamily, defaultFontSize, NoSelectDiv} from "./styles";
+import { defaultFontFamily, defaultFontSize, NoSelectDiv } from "./styles";
 
 export const EdstDiv = styled(NoSelectDiv)`
   display: flex;
@@ -14,7 +14,9 @@ export const EdstDiv = styled(NoSelectDiv)`
   scroll-behavior: auto;
   -webkit-font-smoothing: none;
 
-  button, input, textarea {
+  button,
+  input,
+  textarea {
     font-family: ${defaultFontFamily};
     //font-weight: bold;
     -webkit-font-smoothing: none;

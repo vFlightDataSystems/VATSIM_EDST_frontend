@@ -1,6 +1,6 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {RootState} from "../store";
-import {AirwaySegmentType, FixType} from "../../types";
+import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { AirwayFix, Fix } from "../../types";
 
 export enum sectorTypeEnum {
   ultraLow = "UL",
@@ -10,7 +10,7 @@ export enum sectorTypeEnum {
   lowHigh = "LH"
 }
 
-export enum mapFeatureOptionEnum {
+export enum mapFeatureOption {
   ultraLowSectors = "Ultra Low",
   lowSectors = "Low",
   highSectors = "High",
@@ -29,35 +29,35 @@ export enum mapFeatureOptionEnum {
   waypointLabels = "Waypoint Labels"
 }
 
-export type MapFeatureOptionsType = Partial<Record<mapFeatureOptionEnum, boolean>>;
+export type MapFeatureOptions = Partial<Record<mapFeatureOption, boolean>>;
 
-export type AircraftDisplayOptionsType = {
-  aircraftListFilter: ["Aircraft List Filter", boolean],
-  altitudeFilterLimits: ["Altitude Filter Limits", boolean],
-  filterAbove: ["Filter Above", number | null],
-  filterBelow: ["Filter Below", number | null],
-  autoDatablockOffset: ["Auto Datablock Offset", boolean],
-  mspLabels: ["MSP/MEP Labels", boolean],
-  routePreviewMinutes: ["Route Preview (minutes)", number]
+export type AircraftDisplayOptions = {
+  aircraftListFilter: ["Aircraft List Filter", boolean];
+  altitudeFilterLimits: ["Altitude Filter Limits", boolean];
+  filterAbove: ["Filter Above", number | null];
+  filterBelow: ["Filter Below", number | null];
+  autoDatablockOffset: ["Auto Datablock Offset", boolean];
+  mspLabels: ["MSP/MEP Labels", boolean];
+  routePreviewMinutes: ["Route Preview (minutes)", number];
 };
 
-export type GpdStateType = {
-  mapFeatureOptions: MapFeatureOptionsType,
-  aircraftDisplayOptions: AircraftDisplayOptionsType,
-  sectorTypes: Record<string,sectorTypeEnum>,
-  navaids: FixType[],
-  waypoints: FixType[],
-  airways: Record<string,AirwaySegmentType[]>,
-  suppressed: boolean,
-  planData: Record<string, any>[]
+export type GpdState = {
+  mapFeatureOptions: MapFeatureOptions;
+  aircraftDisplayOptions: AircraftDisplayOptions;
+  sectorTypes: Record<string, sectorTypeEnum>;
+  navaids: Fix[];
+  waypoints: Fix[];
+  airways: Record<string, AirwayFix[]>;
+  suppressed: boolean;
+  planData: Record<string, any>[];
 };
 
 const initialMapFeatureOptionsState = {
-  [mapFeatureOptionEnum.lowSectors]: true,
-  [mapFeatureOptionEnum.highSectors]: true
-}
+  [mapFeatureOption.lowSectors]: true,
+  [mapFeatureOption.highSectors]: true
+};
 
-const initialState: GpdStateType = {
+const initialState: GpdState = {
   mapFeatureOptions: initialMapFeatureOptionsState,
   sectorTypes: {},
   navaids: [],
@@ -77,44 +77,45 @@ const initialState: GpdStateType = {
 };
 
 const gpdSlice = createSlice({
-  name: 'gpd',
-  initialState: initialState as GpdStateType,
+  name: "gpd",
+  initialState: initialState as GpdState,
   reducers: {
-    addGpdPlanData(state, action: {payload: Record<string, any>}) {
+    addGpdPlanData(state, action: { payload: Record<string, any> }) {
       state.planData.push(action.payload);
     },
-    removeGpdPlanData(state, action: {payload: number}) {
+    removeGpdPlanData(state, action: { payload: number }) {
       if (action.payload < state.planData.length - 1 && action.payload >= 0) {
         state.planData.splice(action.payload);
       }
     },
-    setMapFeatureOptions(state, action: { payload: MapFeatureOptionsType }) {
+    setMapFeatureOptions(state, action: { payload: MapFeatureOptions }) {
       state.mapFeatureOptions = action.payload;
     },
-    setAircraftDisplayOptions(state, action: { payload: AircraftDisplayOptionsType }) {
+    setAircraftDisplayOptions(state, action: { payload: AircraftDisplayOptions }) {
       state.aircraftDisplayOptions = action.payload;
     },
     setSectorTypes(state, action: { payload: Record<string, sectorTypeEnum> }) {
       state.sectorTypes = action.payload;
     },
-    setNavaids(state, action: { payload: FixType[] }) {
+    setNavaids(state, action: { payload: Fix[] }) {
       state.navaids = action.payload;
     },
-    setWaypoints(state, action: { payload: FixType[] }) {
+    setWaypoints(state, action: { payload: Fix[] }) {
       state.waypoints = action.payload;
     },
-    setAirways(state, action: {payload: AirwaySegmentType[]}) {
-      for (let segment of action.payload) {
+    setAirways(state, action: { payload: AirwayFix[] }) {
+      action.payload.forEach(segment => {
         if (!state.airways[segment.airway]) {
           state.airways[segment.airway] = [];
         }
         state.airways[segment.airway].push(segment);
-      }
+      });
     },
-    setSuppressed(state, action: {payload: boolean}) {
+    setSuppressed(state, action: { payload: boolean }) {
       state.suppressed = action.payload;
     },
-    toggleSuppressed(state, action: {payload?: any}) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toggleSuppressed(state, action: { payload?: any }) {
       state.suppressed = !state.suppressed;
     }
   }

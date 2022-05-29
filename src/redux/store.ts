@@ -1,12 +1,12 @@
-import {configureStore} from "@reduxjs/toolkit";
-import aclReducer from './slices/aclSlice';
-import depReducer from './slices/depSlice';
-import gpdReducer from './slices/gpdSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import aclReducer from "./slices/aclSlice";
+import depReducer from "./slices/depSlice";
+import gpdReducer from "./slices/gpdSlice";
 import sectorReducer from "./slices/sectorSlice";
 import entriesReducer from "./slices/entriesSlice";
-import planReducer from './slices/planSlice';
-import appReducer from './slices/appSlice';
-import weatherReducer from './slices/weatherSlice';
+import planReducer from "./slices/planSlice";
+import appReducer from "./slices/appSlice";
+import weatherReducer from "./slices/weatherSlice";
 
 const store = configureStore({
   reducer: {
@@ -19,7 +19,7 @@ const store = configureStore({
     entries: entriesReducer,
     weather: weatherReducer
   },
-  middleware: (getDefaultMiddleware => getDefaultMiddleware({serializableCheck: false}))
+  middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false })
 });
 export default store;
 

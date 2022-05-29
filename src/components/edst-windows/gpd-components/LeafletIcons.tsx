@@ -1,17 +1,17 @@
 import L from "leaflet";
-import '../../../css/styles.scss';
+import "../../../css/styles.scss";
 
 export const trackIcon = L.divIcon({
-  className: 'diamond-icon',
+  className: "diamond-icon",
   iconSize: [10, 10]
 });
 
 export const vorIcon = L.divIcon({
-  className: 'circle-icon',
+  className: "circle-icon",
   iconSize: [12, 12]
 });
 
 export const fixIcon = L.divIcon({
-  className: 'plus-icon',
+  className: "plus-icon",
   iconSize: [12, 12]
 });

@@ -1,13 +1,13 @@
-import React, {useRef, useState} from 'react';
-import {AclHeader} from "./acl-components/AclHeader";
-import {AclTable} from "./acl-components/AclTable";
-import {useRootSelector, useRootDispatch} from "../../redux/hooks";
-import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
-import {useFocused} from "../../hooks";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import {edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor} from "../../styles/colors";
-import {DraggableDiv} from "../../styles/styles";
-import {windowEnum} from "../../enums";
+import { AclHeader } from "./acl-components/AclHeader";
+import { AclTable } from "./acl-components/AclTable";
+import { useRootSelector, useRootDispatch } from "../../redux/hooks";
+import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
+import { useFocused } from "../../hooks";
+import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
+import { DraggableDiv } from "../../styles/styles";
+import { windowEnum } from "../../enums";
 
 const AclDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;
@@ -31,17 +31,16 @@ export const Acl: React.FC = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
-  function onMouseDownHandler() {
-    zStack.indexOf(windowEnum.acl) > 0 && fullscreen && dispatch(pushZStack(windowEnum.acl));
-  }
+  const onMouseDownHandler = () => {
+    if (zStack.indexOf(windowEnum.acl) > 0 && !fullscreen) {
+      dispatch(pushZStack(windowEnum.acl));
+    }
+  };
 
-  return (<AclDiv
-    anyDragging={anyDragging}
-    ref={ref}
-    zIndex={zStack.indexOf(windowEnum.acl)}
-    onMouseDown={onMouseDownHandler}
-  >
-    <AclHeader focused={focused}/>
-    <AclTable/>
-  </AclDiv>);
-}
+  return (
+    <AclDiv anyDragging={anyDragging} ref={ref} zIndex={zStack.indexOf(windowEnum.acl)} onMouseDown={onMouseDownHandler}>
+      <AclHeader focused={focused} />
+      <AclTable />
+    </AclDiv>
+  );
+};

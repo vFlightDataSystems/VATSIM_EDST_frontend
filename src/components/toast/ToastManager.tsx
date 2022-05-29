@@ -1,17 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Toast, {ToastProps} from "./Toast";
-import '../../css/toast.scss';
+import Toast, { ToastProps } from "./Toast";
+import "../../css/toast.scss";
 
 type ToastOptions = {
-  id?: string,
-  title: string,
-  content: string,
-  duration?: number
-}
+  id?: string;
+  title: string;
+  content: string;
+  duration?: number;
+};
 
 export class ToastManager {
   private readonly containerRef: HTMLDivElement;
+
   private toasts: ToastProps[] = [];
 
   constructor() {
@@ -23,11 +24,13 @@ export class ToastManager {
   }
 
   public show(options: ToastOptions): void {
-    const toastId = Math.random().toString(36).slice(2, 9);
+    const toastId = Math.random()
+      .toString(36)
+      .slice(2, 9);
     const toast: ToastProps = {
       id: toastId,
       ...options, // if id is passed within options, it will overwrite the auto-generated one
-      destroy: () => this.destroy(options.id ?? toastId),
+      destroy: () => this.destroy(options.id ?? toastId)
     };
 
     this.toasts = [toast, ...this.toasts];
@@ -40,9 +43,7 @@ export class ToastManager {
   }
 
   private render(): void {
-    const toastsList = this.toasts.map((toastProps: ToastProps) => (
-      <Toast key={toastProps.id} {...toastProps} />
-    ));
+    const toastsList = this.toasts.map((toastProps: ToastProps) => <Toast key={toastProps.id} {...toastProps} />);
     ReactDOM.render(toastsList, this.containerRef);
   }
 }

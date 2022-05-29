@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import {DraggableDiv} from "./styles";
-import {edstFontGrey} from "./colors";
+import { DraggableDiv } from "./styles";
+import { edstFontGrey } from "./colors";
 
-export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?: boolean, diamond?: boolean }>`
+export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?: boolean; diamond?: boolean }>`
   display: inline-flex;
   border-bottom: 2px solid #575757;
   border-right: 2px solid #575757;
@@ -12,45 +12,50 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean, circle?:
   height: 8px;
   margin-right: 8px;
 
-  ${props => props.selected && {
-    "background-color": "#ADADAD",
-    "border-bottom": "2px solid #888888",
-    "border-right": "2px solid #888888",
-    "border-top": "2px solid #575757",
-    "border-left": "2px solid #575757"
-  }}
+  ${props =>
+    props.selected && {
+      "background-color": "#ADADAD",
+      "border-bottom": "2px solid #888888",
+      "border-right": "2px solid #888888",
+      "border-top": "2px solid #575757",
+      "border-left": "2px solid #575757"
+    }}
 
-  ${props => props.circle && {
-    "border-radius": "50%",
-    border: "2px solid #888888"
-  }}
+  ${props =>
+    props.circle && {
+      "border-radius": "50%",
+      border: "2px solid #888888"
+    }}
 
-  ${props => props.diamond && {
-    width: "6px",
-    height: "6px",
-    transform: "rotate(45deg)"
-  }}
+  ${props =>
+    props.diamond && {
+      width: "6px",
+      height: "6px",
+      transform: "rotate(45deg)"
+    }}
 `;
-export const OptionsMenu = styled(DraggableDiv)<{ pos?: { x: number, y: number }, zIndex: number }>`
+export const OptionsMenu = styled(DraggableDiv)<{ pos?: { x: number; y: number }; zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
   overflow: hidden;
   position: fixed;
-  color: #ADADAD;
+  color: #adadad;
   background-color: #000000;
   border: none;
-  ${props => props.pos && {
-    left: props.pos.x + 'px', top: props.pos.y + 'px'
-  }}
+  ${props =>
+    props.pos && {
+      left: `${props.pos.x}px`,
+      top: `${props.pos.y}px`
+    }}
 `;
 export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${props => props.focused ? '#008585' : '#888888'};
+  background-color: ${props => (props.focused ? "#008585" : "#888888")};
   color: #000000;
   height: 17px;
-  border-top: 1px solid #ADADAD;
-  border-left: 1px solid #ADADAD;
+  border-top: 1px solid #adadad;
+  border-left: 1px solid #adadad;
   border-bottom: 1px solid #575757;
   border-right: 1px solid #575757;
 `;
@@ -67,7 +72,7 @@ export const OptionsBody = styled.div`
     color: #575757;
   }
 `;
-export const OptionsBodyRow = styled.div<{ padding?: string, margin?: string, justifyContent?: string, bottomBorder?: boolean, topBorder?: boolean }>`
+export const OptionsBodyRow = styled.div<{ padding?: string; margin?: string; justifyContent?: string; bottomBorder?: boolean; topBorder?: boolean }>`
   display: flex;
   flex-grow: 1;
   justify-content: ${props => props.justifyContent ?? "left"};
@@ -76,7 +81,7 @@ export const OptionsBodyRow = styled.div<{ padding?: string, margin?: string, ju
   //min-height: 20px;
   overflow: hidden;
 
-  ${props => props.margin && {margin: props.margin}};
+  ${props => props.margin && { margin: props.margin }};
   * a {
     height: auto;
   }
@@ -87,13 +92,15 @@ export const OptionsBodyRow = styled.div<{ padding?: string, margin?: string, ju
     //transform: scale(0.2);
   }
 
-  ${props => props.topBorder && {
-    "border-top": "1px solid #ADADAD"
-  }}
+  ${props =>
+    props.topBorder && {
+      "border-top": "1px solid #ADADAD"
+    }}
 
-  ${props => props.bottomBorder && {
-    "border-bottom": "1px solid #ADADAD"
-  }}
+  ${props =>
+    props.bottomBorder && {
+      "border-bottom": "1px solid #ADADAD"
+    }}
 `;
 export const OptionsBottomRow = styled(OptionsBodyRow)`
   overflow: unset;
@@ -101,7 +108,7 @@ export const OptionsBottomRow = styled(OptionsBodyRow)`
   white-space: unset;
   margin-top: 10px;
   margin-bottom: 6px;
-  flex-grow: 1
+  flex-grow: 1;
 `;
 export const UnderlineRow = styled(OptionsBodyRow)`
   pointer-events: none;
@@ -115,7 +122,7 @@ export const UnderlineRow = styled(OptionsBodyRow)`
     width: 18%;
     height: 30px;
     left: 41%;
-    border-bottom: 1px solid #ADADAD;
+    border-bottom: 1px solid #adadad;
   }
 `;
 export const FidRow = styled(OptionsBodyRow)`
@@ -124,7 +131,16 @@ export const FidRow = styled(OptionsBodyRow)`
   align-items: center;
   height: 40px;
 `;
-export const OptionsBodyCol = styled.div<{ selected?: boolean, alignRight?: boolean, maxWidth?: number, maxHeight?: number, margin?: string, padding?: string, hover?: boolean, justifyContent?: string }>`
+export const OptionsBodyCol = styled.div<{
+  selected?: boolean;
+  alignRight?: boolean;
+  maxWidth?: number;
+  maxHeight?: number;
+  margin?: string;
+  padding?: string;
+  hover?: boolean;
+  justifyContent?: string;
+}>`
   flex-grow: 1;
   flex-flow: row;
   font-size: 16px;
@@ -135,24 +151,25 @@ export const OptionsBodyCol = styled.div<{ selected?: boolean, alignRight?: bool
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  margin: ${props => props.margin ?? '0 4px'};
-  max-width: ${props => props.maxWidth ? props.maxWidth + 'px' : 'auto'};
-  max-height: ${props => props.maxHeight ? props.maxHeight + 'px' : 'auto'};
-  ${props => props.hover && {"&:hover": {border: "1px solid #F0F0F0"}}}
-  ${props => props.padding && {padding: props.padding}};
-  ${props => props.margin && {margin: props.margin}};
+  margin: ${props => props.margin ?? "0 4px"};
+  max-width: ${props => (props.maxWidth ? `${props.maxWidth}px` : "auto")};
+  max-height: ${props => (props.maxHeight ? `${props.maxHeight}px` : "auto")};
+  ${props => props.hover && { "&:hover": { border: "1px solid #F0F0F0" } }}
+  ${props => props.padding && { padding: props.padding }};
+  ${props => props.margin && { margin: props.margin }};
 
-  ${props => props.selected && {color: "#000000"}};
-  ${props => props.selected && {"background-color": "#ADADAD"}};
+  ${props => props.selected && { color: "#000000" }};
+  ${props => props.selected && { "background-color": "#ADADAD" }};
   &:disabled {
     all: inherit;
   }
 
-  ${props => props.alignRight && {
-    "justify-content": "right",
-    "display": "flex",
-    "margin-left": "auto"
-  }}
+  ${props =>
+    props.alignRight && {
+      "justify-content": "right",
+      display: "flex",
+      "margin-left": "auto"
+    }}
 `;
 // export const UplinkCol = styled(OptionsBodyCol)`font-size: 30px`;
 export const OptionsFlexCol = styled(OptionsBodyCol)`
@@ -162,11 +179,11 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
   padding: 0 5px;
 
   &:hover {
-    border: 1px solid #ADADAD;
+    border: 1px solid #adadad;
   }
 `;
 export const EdstInput = styled.input<{ width?: number }>`
-  width: ${props => props.width ? props.width + "px" : "calc(100% - 7px)"};
+  width: ${props => (props.width ? `${props.width}px` : "calc(100% - 7px)")};
   font-size: 16px;
   outline: none;
   display: flex;
@@ -180,7 +197,7 @@ export const EdstInput = styled.input<{ width?: number }>`
   resize: none;
 
   &:hover {
-    outline: 1px solid #FFFFFF;
+    outline: 1px solid #ffffff;
   }
 `;
 export const EdstTextArea = styled.textarea`
@@ -198,7 +215,7 @@ export const EdstTextArea = styled.textarea`
   resize: none;
 
   &:hover {
-    outline: 1px solid #FFFFFF;
+    outline: 1px solid #ffffff;
   }
 `;
 export const ScrollContainer = styled.div<{ maxHeight?: number }>`
@@ -207,7 +224,7 @@ export const ScrollContainer = styled.div<{ maxHeight?: number }>`
   overflow: scroll;
   scrollbar-width: none;
 
-  max-height: ${props => props.maxHeight ? props.maxHeight + "px" : 'auto'};
+  max-height: ${props => (props.maxHeight ? `${props.maxHeight}px` : "auto")};
 
   &::-webkit-scrollbar {
     display: none;

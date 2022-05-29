@@ -1,4 +1,4 @@
-export enum aclRowFieldEnum {
+export enum aclRowField {
   fid,
   pa,
   type,
@@ -10,7 +10,7 @@ export enum aclRowFieldEnum {
   route
 }
 
-export enum depRowFieldEnum {
+export enum depRowField {
   pTime,
   fid,
   type,
@@ -19,11 +19,11 @@ export enum depRowFieldEnum {
   route
 }
 
-export enum planRowFieldEnum {
+export enum planRowField {
   fid
 }
 
-export enum sortOptionsEnum {
+export enum sortOptions {
   acid = "ACID",
   boundaryTime = "Boundary Time",
   conflictStatus = "Conflict Status",
@@ -34,16 +34,16 @@ export enum sortOptionsEnum {
   pTime = "P Time"
 }
 
-export enum aclAselActionTriggerEnum {
+export enum aclAselActionTrigger {
   setVciNeutral,
   toggleHoldInfo
 }
 
-export enum depAselActionTriggerEnum {
+export enum depAselActionTrigger {
   setDepStatusNeutral
 }
 
-export enum edstHeaderButtonEnum {
+export enum edstHeaderButton {
   more,
   acl,
   dep,
@@ -81,7 +81,7 @@ export enum menuEnum {
   cancelHoldMenu = "cancelHoldMenu",
   templateMenu = "templateMenu",
   equipmentTemplateMenu = "equipmentTemplateMenu",
-  gpdMapOptionsMenu = "gpdMapOptionsMenu",
+  gpdMapOptionsMenu = "gpdMapOptionsMenu"
 }
 
 export enum windowEnum {

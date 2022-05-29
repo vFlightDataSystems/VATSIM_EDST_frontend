@@ -1,14 +1,14 @@
-import React, {useRef, useState} from 'react';
+import React, { useRef, useState } from "react";
 
-import {useRootDispatch, useRootSelector} from "../../redux/hooks";
-import {anyDraggingSelector, zStackSelector, pushZStack} from "../../redux/slices/appSlice";
-import {useFocused} from "../../hooks";
-import {GpdHeader} from "./gpd-components/GpdHeader";
-import {GpdBody} from "./gpd-components/GpdBody";
 import styled from "styled-components";
-import {edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor} from "../../styles/colors";
-import {DraggableDiv} from "../../styles/styles";
-import {windowEnum} from "../../enums";
+import { useRootDispatch, useRootSelector } from "../../redux/hooks";
+import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
+import { useFocused } from "../../hooks";
+import { GpdHeader } from "./gpd-components/GpdHeader";
+import { GpdBody } from "./gpd-components/GpdBody";
+import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
+import { DraggableDiv } from "../../styles/styles";
+import { windowEnum } from "../../enums";
 
 const GpdDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;
@@ -33,13 +33,13 @@ export const Gpd: React.FC = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
-  return (<GpdDiv
-    ref={ref}
-    anyDragging={anyDragging}
-    zIndex={zStack.indexOf(windowEnum.graphicPlanDisplay)}
-    onMouseDown={() => zStack.indexOf(windowEnum.graphicPlanDisplay) > 0 && dispatch(pushZStack(windowEnum.graphicPlanDisplay))}
-  >
-    <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel}/>
-    <GpdBody zoomLevel={zoomLevel}/>
-  </GpdDiv>);
-}
+  const onMouseDownHandler = () =>
+    zStack.indexOf(windowEnum.graphicPlanDisplay) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.graphicPlanDisplay));
+
+  return (
+    <GpdDiv ref={ref} anyDragging={anyDragging} zIndex={zStack.indexOf(windowEnum.graphicPlanDisplay)} onMouseDown={onMouseDownHandler}>
+      <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
+      <GpdBody zoomLevel={zoomLevel} />
+    </GpdDiv>
+  );
+};

@@ -1,39 +1,39 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {RootState} from "../store";
-import {removeDestFromRouteString} from "../../lib";
-import {amendRoute, updateEdstEntry} from "../../api";
-import {refreshEntry} from "../refresh";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import _ from "lodash";
-import {addAclEntry, addDepEntry, setEntry, updateEntry} from "../slices/entriesSlice";
-import {aclRowFieldEnum, depRowFieldEnum, windowEnum} from "../../enums";
-import {setAsel} from "../slices/appSlice";
-import {ReferenceFixType} from "../../types";
+import { RootState } from "../store";
+import { removeDestFromRouteString } from "../../lib";
+import { amendRoute, updateEdstEntry } from "../../api";
+import { refreshEntry } from "../refresh";
+import { addAclEntry, addDepEntry, setEntry, updateEntry } from "../slices/entriesSlice";
+import { aclRowField, depRowField, windowEnum } from "../../enums";
+import { setAsel } from "../slices/appSlice";
+import { ReferenceFix } from "../../types";
 
 export const amendDirectThunk = createAsyncThunk(
-  'entries/amendDirect',
-  async ({cid, fix, frd}: {cid: string, fix: string, frd: ReferenceFixType | null}, thunkAPI) => {
+  "entries/amendDirect",
+  async ({ cid, fix, frd }: { cid: string; fix: string; frd: ReferenceFix | null }, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
-    let currentEntry = state.entries[cid];
-    amendRoute(currentEntry.callsign, {direct_fix: fix, route: currentEntry.route, route_data: currentEntry.route_data, frd: frd})
+    const currentEntry = state.entries[cid];
+    amendRoute(currentEntry.callsign, { direct_fix: fix, route: currentEntry.route, route_data: currentEntry.route_data, frd })
       .then(response => response.json())
       .then(data => {
         if (data.route && data.route_data) {
-          thunkAPI.dispatch(updateEntry({cid: cid, data: {_route: data.route, _route_data: data.route_data}}));
+          thunkAPI.dispatch(updateEntry({ cid, data: { currentRoute: data.route, currentRoute_data: data.route_data } }));
         }
       });
   }
-)
+);
 
 export const amendRouteThunk = createAsyncThunk(
-  'entries/amendRoute',
-  async ({cid, route: _route, frd}: {cid: string, route: string, frd?: string}, thunkAPI) => {
+  "entries/amendRoute",
+  async ({ cid, route: _route, frd }: { cid: string; route: string; frd?: string }, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
-    let currentEntry = state.entries[cid];
+    const currentEntry = state.entries[cid];
     let route = _route.slice(0);
     if (route.match(/^[A-Z]+\d{6}/gi)) {
-      route = route.split('.', 1)[1].replace(/^\.+/gi, '');
+      route = route.split(".", 1)[1].replace(/^\.+/gi, "");
     }
-    let planData: Record<string, any> = {route: route}
+    const planData: Record<string, any> = { route };
     if (frd) {
       planData.frd = frd;
     }
@@ -41,27 +41,27 @@ export const amendRouteThunk = createAsyncThunk(
       .then(response => response.json())
       .then(data => {
         if (data) {
-          thunkAPI.dispatch(updateEntry({cid: cid, data: {_route: data.route, _route_data: data.route_data}}));
+          thunkAPI.dispatch(updateEntry({ cid, data: { currentRoute: data.route, currentRoute_data: data.route_data } }));
         }
       });
   }
-)
+);
 
 export const amendEntryThunk = createAsyncThunk(
-  'entries/amend',
-  async ({cid, planData}: { cid: string, planData: Record<string, any> }, thunkAPI) => {
+  "entries/amend",
+  async ({ cid, planData }: { cid: string; planData: Record<string, any> }, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
-    const {sectors, selectedSectors, artccId} = state.sectorData;
+    const { sectors, selectedSectors, artccId } = state.sectorData;
     const polygons = selectedSectors ? selectedSectors.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
-    let currentEntry = state.entries[cid];
-    if (Object.keys(planData).includes('altitude')) {
+    const currentEntry = state.entries[cid];
+    if (Object.keys(planData).includes("altitude")) {
       planData.interim = null;
     }
-    if (Object.keys(planData).includes('route')) {
-      const dest = currentEntry.dest;
+    if (Object.keys(planData).includes("route")) {
+      const { dest } = currentEntry;
       planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
-      planData.previous_route = currentEntry.depDisplay ? currentEntry.route : currentEntry._route;
-      planData.previous_route_data = currentEntry.depDisplay ? currentEntry.route_data : currentEntry._route_data;
+      planData.previous_route = currentEntry.depDisplay ? currentEntry.route : currentEntry.currentRoute;
+      planData.previous_route_data = currentEntry.depDisplay ? currentEntry.route_data : currentEntry.currentRoute_data;
     }
     planData.callsign = currentEntry.callsign;
     return updateEdstEntry(planData)
@@ -80,17 +80,17 @@ export const amendEntryThunk = createAsyncThunk(
 
 function addEntryThunk(fid: string, window: windowEnum) {
   return (dispatch: any, getState: () => RootState) => {
-    const entries = getState().entries;
-    let cid = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid)?.cid;
+    const { entries } = getState();
+    const cid = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid)?.cid;
     if (cid) {
       switch (window) {
         case windowEnum.acl:
           dispatch(addAclEntry(cid));
-          dispatch(setAsel({cid: cid, field: aclRowFieldEnum.fid, window: windowEnum.acl}));
+          dispatch(setAsel({ cid, field: aclRowField.fid, window: windowEnum.acl }));
           break;
         case windowEnum.dep:
           dispatch(addDepEntry(cid));
-          dispatch(setAsel({cid: cid, field: depRowFieldEnum.fid, window: windowEnum.dep}));
+          dispatch(setAsel({ cid, field: depRowField.fid, window: windowEnum.dep }));
           break;
         default:
           break;

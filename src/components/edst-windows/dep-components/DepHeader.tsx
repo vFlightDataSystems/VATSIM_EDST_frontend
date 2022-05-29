@@ -1,79 +1,81 @@
-import React, {useState} from 'react';
-import {WindowTitleBar} from "../WindowTitleBar";
-import {EdstWindowHeaderButton} from "../../resources/EdstButton";
-import {Tooltips} from "../../../tooltips";
-import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
-import {depManualPostingSelector, depSortDataSelector, setDepManualPosting} from "../../../redux/slices/depSlice";
-import {menuEnum, windowEnum} from "../../../enums";
-import {closeAllMenus, closeWindow, depAselSelector, setInputFocused} from "../../../redux/slices/appSlice";
-import {openMenuThunk} from "../../../redux/thunks/thunks";
-import {addDepEntryByFid} from "../../../redux/thunks/entriesThunks";
-import {NoSelectDiv} from "../../../styles/styles";
-import {WindowHeaderRowDiv} from "../../../styles/edstWindowStyles";
-import {AddFindInput} from "../../InputComponents";
+import React, { useState } from "react";
+import { WindowTitleBar } from "../WindowTitleBar";
+import { EdstWindowHeaderButton } from "../../resources/EdstButton";
+import { Tooltips } from "../../../tooltips";
+import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
+import { depManualPostingSelector, depSortDataSelector, setDepManualPosting } from "../../../redux/slices/depSlice";
+import { menuEnum, windowEnum } from "../../../enums";
+import { closeAllMenus, closeWindow, depAselSelector, setInputFocused } from "../../../redux/slices/appSlice";
+import { openMenuThunk } from "../../../redux/thunks/thunks";
+import { addDepEntryByFid } from "../../../redux/thunks/entriesThunks";
+import { NoSelectDiv } from "../../../styles/styles";
+import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
+import { AddFindInput } from "../../InputComponents";
 
 type DepHeaderProps = {
-  focused: boolean
-}
+  focused: boolean;
+};
 
-export const DepHeader: React.FC<DepHeaderProps> = ({focused}) => {
+export const DepHeader: React.FC<DepHeaderProps> = ({ focused }) => {
   const asel = useRootSelector(depAselSelector);
   const sortData = useRootSelector(depSortDataSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
   const dispatch = useRootDispatch();
 
-  const [searchStr, setSearchString] = useState('');
+  const [searchStr, setSearchString] = useState("");
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       dispatch(addDepEntryByFid(searchStr));
-      setSearchString('');
+      setSearchString("");
     }
   };
 
-  return (<NoSelectDiv>
-    <WindowTitleBar
-      focused={focused}
-      closeWindow={() => {
-        if (asel?.window === windowEnum.dep) {
-          dispatch(closeAllMenus());
-        }
-        dispatch(closeWindow(windowEnum.dep))
-      }}
-      text={['Departure List', `${sortData.selectedOption}`, `${manualPosting ? 'Manual' : 'Automatic'}`]}
-    />
-    <WindowHeaderRowDiv>
-      <EdstWindowHeaderButton
-        disabled={asel === null}
-        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.dep))}
-        content="Plan Options..."
-        title={Tooltips.planOptions}
+  return (
+    <NoSelectDiv>
+      <WindowTitleBar
+        focused={focused}
+        closeWindow={() => {
+          if (asel?.window === windowEnum.dep) {
+            dispatch(closeAllMenus());
+          }
+          dispatch(closeWindow(windowEnum.dep));
+        }}
+        text={["Departure List", `${sortData.selectedOption}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
-      <EdstWindowHeaderButton
-        id="dep-sort-button"
-        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.sortMenu, e.currentTarget, windowEnum.dep))}
-        content="Sort..."
-        title={Tooltips.sort}
-      />
-      <EdstWindowHeaderButton
-        onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))}
-        content="Posting Mode"
-        title={Tooltips.postingMode}
-      />
-      <EdstWindowHeaderButton
-        onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.dep))}
-        content="Template..."
-        title={Tooltips.template}
-      />
-    </WindowHeaderRowDiv>
-    <WindowHeaderRowDiv bottomRow={true}>
-      Add/Find
-      <AddFindInput
-        onFocus={() => dispatch(setInputFocused(true))}
-        onBlur={() => dispatch(setInputFocused(false))}
-        value={searchStr}
-        onChange={(e) => setSearchString(e.target.value.toUpperCase())}
-        onKeyDown={handleKeyDown}
-      />
-    </WindowHeaderRowDiv>
-  </NoSelectDiv>);
-}
+      <WindowHeaderRowDiv>
+        <EdstWindowHeaderButton
+          disabled={asel === null}
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.dep))}
+          content="Plan Options..."
+          title={Tooltips.planOptions}
+        />
+        <EdstWindowHeaderButton
+          id="dep-sort-button"
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.sortMenu, e.currentTarget, windowEnum.dep))}
+          content="Sort..."
+          title={Tooltips.sort}
+        />
+        <EdstWindowHeaderButton
+          onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))}
+          content="Posting Mode"
+          title={Tooltips.postingMode}
+        />
+        <EdstWindowHeaderButton
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.dep))}
+          content="Template..."
+          title={Tooltips.template}
+        />
+      </WindowHeaderRowDiv>
+      <WindowHeaderRowDiv bottomRow>
+        Add/Find
+        <AddFindInput
+          onFocus={() => dispatch(setInputFocused(true))}
+          onBlur={() => dispatch(setInputFocused(false))}
+          value={searchStr}
+          onChange={e => setSearchString(e.target.value.toUpperCase())}
+          onKeyDown={handleKeyDown}
+        />
+      </WindowHeaderRowDiv>
+    </NoSelectDiv>
+  );
+};
