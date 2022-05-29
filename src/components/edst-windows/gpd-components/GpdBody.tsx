@@ -1,44 +1,38 @@
-import React, {useEffect, useMemo} from "react";
-import {MapContainer, useMap} from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import {useRootSelector} from "../../../redux/hooks";
-import {
-  sectorPolygonSelector
-} from "../../../redux/slices/sectorSlice";
-import {
-  GpdAircraftTrack,
-  GpdNavaid,
-  GpdMapSectorPolygon,
-  GpdFix,
-  GpdAirwayPolyline,
-  GpdPlanDisplay
-} from "./GpdMapElements";
-import {LocalEdstEntryType} from "../../../types";
-import {entriesSelector} from "../../../redux/slices/entriesSlice";
+import React, { useEffect, useMemo } from "react";
+import { MapContainer, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import styled from "styled-components";
+import { useRootSelector } from "../../../redux/hooks";
+import { sectorPolygonSelector } from "../../../redux/slices/sectorSlice";
+import { GpdAircraftTrack, GpdNavaid, GpdMapSectorPolygon, GpdFix, GpdAirwayPolyline, GpdPlanDisplay } from "./GpdMapElements";
+import { LocalEdstEntry } from "../../../types";
+import { entriesSelector } from "../../../redux/slices/entriesSlice";
 import {
   gpdAircraftDisplayOptionsSelector,
-  gpdAirwaySelector, gpdPlanDataSelector,
+  gpdAirwaySelector,
+  gpdPlanDataSelector,
   gpdMapFeatureOptionsSelector,
   gpdNavaidSelector,
-  gpdSectorTypesSelector, gpdSuppressedSelector,
+  gpdSectorTypesSelector,
+  gpdSuppressedSelector,
   gpdWaypointSelector,
-  mapFeatureOptionEnum, sectorTypeEnum
+  mapFeatureOption,
+  sectorTypeEnum
 } from "../../../redux/slices/gpdSlice";
 
-const center = {lat: 42.362944444444445, lng: -71.00638888888889};
+const center = { lat: 42.362944444444445, lng: -71.00638888888889 };
 
 type MapConfiguratorProps = {
-  zoomLevel: number
-}
+  zoomLevel: number;
+};
 
-const MapConfigurator: React.FC<MapConfiguratorProps> = ({zoomLevel}) => {
+const MapConfigurator: React.FC<MapConfiguratorProps> = ({ zoomLevel }) => {
   const map = useMap();
   useEffect(() => {
     map.setZoom(zoomLevel); // eslint-disable-next-line
   }, [zoomLevel]);
   return null;
-}
+};
 
 const GpdBodyDiv = styled.div`
   overflow: hidden;
@@ -52,7 +46,7 @@ const GpdBodyDiv = styled.div`
   }
 `;
 
-export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
+export const GpdBody: React.FC<{ zoomLevel: number }> = ({ zoomLevel }) => {
   const sectors = useRootSelector(sectorPolygonSelector);
   const sectorTypes = useRootSelector(gpdSectorTypesSelector);
   const selectedMapFeatureOptions = useRootSelector(gpdMapFeatureOptionsSelector);
@@ -64,44 +58,49 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({zoomLevel}) => {
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
 
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntryType) => entry.aclDisplay && entry.flightplan.ground_speed > 40), [entries]);
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.aclDisplay && entry.flightplan.ground_speed > 40), [
+    entries
+  ]);
 
-  return (<GpdBodyDiv>
-    <MapContainer
-      center={center}
-      doubleClickZoom={false}
-      zoom={6}
-      dragging={false}
-      placeholder={true}
-      zoomControl={false}
-      zoomAnimation={false}
-      maxZoom={10}
-      minZoom={5}
-    >
-      <MapConfigurator zoomLevel={zoomLevel}/>
-      {Object.entries(sectors).map(([id, sector]) =>
-        ((selectedMapFeatureOptions[mapFeatureOptionEnum.ultraLowSectors]
-            && sectorTypes[id] as sectorTypeEnum === sectorTypeEnum.ultraLow)
-          || (selectedMapFeatureOptions[mapFeatureOptionEnum.lowSectors]
-            && (sectorTypes[id] as sectorTypeEnum === sectorTypeEnum.low || sectorTypes[id] as sectorTypeEnum === sectorTypeEnum.lowHigh))
-          || (selectedMapFeatureOptions[mapFeatureOptionEnum.highSectors]
-            && (sectorTypes[id] as sectorTypeEnum === sectorTypeEnum.high || sectorTypes[id] as sectorTypeEnum === sectorTypeEnum.lowHigh))
-          || (selectedMapFeatureOptions[mapFeatureOptionEnum.ultraHighSectors]
-            && sectorTypes[id] as sectorTypeEnum === sectorTypeEnum.ultraHigh)
-        ) && <GpdMapSectorPolygon sector={sector} key={`gpd-sector-polygon-${id}`}/>
-      )}
-      {Object.entries(airways).map(([airway, segments]) => (
-        (selectedMapFeatureOptions[mapFeatureOptionEnum.Jairways] && airway.includes('J'))
-        || (selectedMapFeatureOptions[mapFeatureOptionEnum.Qairways] && airway.includes('Q'))
-        || (selectedMapFeatureOptions[mapFeatureOptionEnum.Vairways] && airway.includes('V'))
-        || (selectedMapFeatureOptions[mapFeatureOptionEnum.Tairways] && airway.includes('T'))
-      ) && <GpdAirwayPolyline key={`gpd-airway-polyline-${airway}`} segments={segments.slice(0)}/>)}
-      {selectedMapFeatureOptions[mapFeatureOptionEnum.navaid]
-        && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.waypoint_id}`} {...fix}/>)}
-      {selectedMapFeatureOptions[mapFeatureOptionEnum.waypoint]
-        && waypointList.map(fix => <GpdFix key={`gpd-waypoint-${fix.waypoint_id}`} {...fix}/>)}
-      {!suppressed && entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.cid}`} cid={entry.cid}/>)}
-      {displayData && <GpdPlanDisplay displayData={displayData}/>}
-    </MapContainer>
-  </GpdBodyDiv>);
-}
+  return (
+    <GpdBodyDiv>
+      <MapContainer
+        center={center}
+        doubleClickZoom={false}
+        zoom={6}
+        dragging={false}
+        placeholder
+        zoomControl={false}
+        zoomAnimation={false}
+        maxZoom={10}
+        minZoom={5}
+      >
+        <MapConfigurator zoomLevel={zoomLevel} />
+        {Object.entries(sectors).map(
+          ([id, sector]) =>
+            ((selectedMapFeatureOptions[mapFeatureOption.ultraLowSectors] && (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.ultraLow) ||
+              (selectedMapFeatureOptions[mapFeatureOption.lowSectors] &&
+                ((sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.low || (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.lowHigh)) ||
+              (selectedMapFeatureOptions[mapFeatureOption.highSectors] &&
+                ((sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.high || (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.lowHigh)) ||
+              (selectedMapFeatureOptions[mapFeatureOption.ultraHighSectors] && (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.ultraHigh)) && (
+              <GpdMapSectorPolygon sector={sector} key={`gpd-sector-polygon-${id}`} />
+            )
+        )}
+        {Object.entries(airways).map(
+          ([airway, segments]) =>
+            ((selectedMapFeatureOptions[mapFeatureOption.Jairways] && airway.includes("J")) ||
+              (selectedMapFeatureOptions[mapFeatureOption.Qairways] && airway.includes("Q")) ||
+              (selectedMapFeatureOptions[mapFeatureOption.Vairways] && airway.includes("V")) ||
+              (selectedMapFeatureOptions[mapFeatureOption.Tairways] && airway.includes("T"))) && (
+              <GpdAirwayPolyline key={`gpd-airway-polyline-${airway}`} segments={segments.slice(0)} />
+            )
+        )}
+        {selectedMapFeatureOptions[mapFeatureOption.navaid] && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.waypoint_id}`} {...fix} />)}
+        {selectedMapFeatureOptions[mapFeatureOption.waypoint] && waypointList.map(fix => <GpdFix key={`gpd-waypoint-${fix.waypoint_id}`} {...fix} />)}
+        {!suppressed && entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.cid}`} cid={entry.cid} />)}
+        {displayData && <GpdPlanDisplay displayData={displayData} />}
+      </MapContainer>
+    </GpdBodyDiv>
+  );
+};

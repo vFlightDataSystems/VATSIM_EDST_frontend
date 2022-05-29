@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import {edstFontGrey} from "../styles/colors";
+import { edstFontGrey } from "../styles/colors";
 
 const TimeStyle = styled.div`
   display: inline-flex;
@@ -21,11 +21,12 @@ export function Time() {
   const [dateState, setDateState] = useState(new Date());
   useEffect(() => {
     const interval = setInterval(() => setDateState(new Date()), 1000);
-    return () => clearInterval(interval)
+    return () => clearInterval(interval);
   }, []);
   return (
     <TimeStyle>
-        {("0"+dateState.getUTCHours()).slice(-2)}{("0"+dateState.getUTCMinutes()).slice(-2)} {("0"+dateState.getUTCSeconds()).slice(-2)}
+      {`0${dateState.getUTCHours()}`.slice(-2)}
+      {`0${dateState.getUTCMinutes()}`.slice(-2)} {`0${dateState.getUTCSeconds()}`.slice(-2)}
     </TimeStyle>
   );
 }

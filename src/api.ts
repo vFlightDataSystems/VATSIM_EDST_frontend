@@ -1,84 +1,84 @@
 // const baseurl: string = 'http://localhost:5000/backend';
-const baseurl: string = 'https://tdls.oakartcc.org/backend';
+const baseurl = "https://tdls.oakartcc.org/backend";
 
 export async function fetchEdstEntries(): Promise<Response> {
-  return await fetch(`${baseurl}/edst/all`);
+  return fetch(`${baseurl}/edst/all`);
 }
 
 export async function fetchEdstEntry(callsign: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/entry/get/${callsign}`);
+  return fetch(`${baseurl}/edst/entry/get/${callsign}`);
 }
 
 export async function trialRoute(callsign: string, planData: Record<string, any>): Promise<Response> {
-  return await fetch(`${baseurl}/edst/trial/route`, {
-    method: 'post',
+  return fetch(`${baseurl}/edst/trial/route`, {
+    method: "post",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({callsign: callsign, ...planData})
+    body: JSON.stringify({ callsign, ...planData })
   });
 }
 
 export async function amendRoute(callsign: string, planData: Record<string, any>): Promise<Response> {
-  return await fetch(`${baseurl}/edst/entry/amend/route`, {
-    method: 'post',
+  return fetch(`${baseurl}/edst/entry/amend/route`, {
+    method: "post",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({callsign: callsign, ...planData})
+    body: JSON.stringify({ callsign, ...planData })
   });
 }
 
 export async function updateEdstEntry(planData: any): Promise<Response> {
-  return await fetch(`${baseurl}/edst/entry/amend/generic`, {
-    method: 'post',
+  return fetch(`${baseurl}/edst/entry/amend/generic`, {
+    method: "post",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body: JSON.stringify(planData)
   });
 }
 
 export async function fetchAarList(artcc: string, cid: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
+  return fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
 }
 
 export async function fetchCtrFavData(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/fav/${artcc}/ctr`);
+  return fetch(`${baseurl}/edst/fav/${artcc}/ctr`);
 }
 
 export async function fetchAppFavData(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/fav/${artcc}/app`);
+  return fetch(`${baseurl}/edst/fav/${artcc}/app`);
 }
 
 export async function fetchCtrProfiles(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/ctr_profiles/${artcc}`);
+  return fetch(`${baseurl}/edst/ctr_profiles/${artcc}`);
 }
 
 export async function fetchReferenceFixes(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/reference_fixes/${artcc}`);
+  return fetch(`${baseurl}/edst/reference_fixes/${artcc}`);
 }
 
 export async function fetchArtccNavaids(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/gpd/${artcc}/navaids`);
+  return fetch(`${baseurl}/edst/gpd/${artcc}/navaids`);
 }
 
 export async function fetchArtccWaypoints(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/gpd/${artcc}/waypoints`);
+  return fetch(`${baseurl}/edst/gpd/${artcc}/waypoints`);
 }
 
 export async function fetchArtccAirways(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/gpd/${artcc}/airways`);
+  return fetch(`${baseurl}/edst/gpd/${artcc}/airways`);
 }
 
 export async function fetchArtccSectorTypes(artcc: string): Promise<Response> {
-  return await fetch(`${baseurl}/edst/gpd/${artcc}/sectors`);
+  return fetch(`${baseurl}/edst/gpd/${artcc}/sectors`);
 }
 
 export async function fetchAirportMetar(airport: string): Promise<Response> {
-  return await fetch(`${baseurl}/weather/metar/airport/${airport}`);
+  return fetch(`${baseurl}/weather/metar/airport/${airport}`);
 }
 
 export async function fetchSigmets(): Promise<Response> {
-  return await fetch(`${baseurl}/weather/sigmets`);
+  return fetch(`${baseurl}/weather/sigmets`);
 }

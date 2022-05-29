@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export const defaultFontFamily = 'Consolas';
-export const defaultFontSize = '16px';
-export const defaultInputFontSize = '16px';
+export const defaultFontFamily = "Consolas";
+export const defaultFontSize = "16px";
+export const defaultInputFontSize = "16px";
 
 export const NoSelectDiv = styled.div`
   -webkit-touch-callout: none;
@@ -12,4 +12,4 @@ export const NoSelectDiv = styled.div`
 `;
 
 // TODO: rename this div
-export const DraggableDiv = styled(NoSelectDiv)<{anyDragging?: boolean}>(props => props.anyDragging && {"pointer-events": "none"});
+export const DraggableDiv = styled(NoSelectDiv)<{ anyDragging?: boolean }>(props => props.anyDragging && { "pointer-events": "none" });

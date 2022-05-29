@@ -1,14 +1,18 @@
 import styled from "styled-components";
-import {OptionsBodyRow} from "../../../styles/optionMenuStyles";
+import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 
-export const Row = styled(OptionsBodyRow)`padding: 4px 0`;
+export const Row = styled(OptionsBodyRow)`
+  padding: 4px 0;
+`;
 export const Row2 = styled(OptionsBodyRow)`
   padding: 6px;
   min-height: 4px;
   display: flex;
   align-items: center;
 `;
-export const Row3 = styled(Row2)`justify-content: left`;
+export const Row3 = styled(Row2)`
+  justify-content: left;
+`;
 export const Col1 = styled.div`
   margin-right: auto;
   display: flex;
@@ -31,19 +35,19 @@ export const ScrollRow = styled.div`
   display: flex;
   margin: 1px 6px;
   height: 20px;
-  color: #ADADAD;
+  color: #adadad;
   border: 1px solid #000000;
 `;
 export const ScrollCol = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #ADADAD;
+  color: #adadad;
   border: 1px solid transparent;
   width: 42px;
 
   &:hover {
-    border: 1px solid #F0F0F0;
+    border: 1px solid #f0f0f0;
   }
 `;
 export const ScrollCol2 = styled(ScrollCol)`

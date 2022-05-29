@@ -1,34 +1,38 @@
-import React, {useEffect} from "react";
-import '../../css/toast.scss';
+import React, { useEffect } from "react";
+import "../../css/toast.scss";
 
 export type ToastProps = {
-  id: string,
-  destroy: () => void,
-  title: string,
-  content: string,
-  duration?: number
-}
+  id: string;
+  destroy: () => void;
+  title: string;
+  content: string;
+  duration?: number;
+};
 
-const Toast: React.FC<ToastProps> = (props) => {
-  const {destroy, content, title, duration = 0, id} = props;
+const Toast: React.FC<ToastProps> = props => {
+  const { destroy, content, title, duration = 0, id } = props;
 
+  // noinspection FunctionWithInconsistentReturnsJS
   useEffect(() => {
     if (!duration) return;
-
     const timer = setTimeout(() => {
       destroy();
     }, duration);
-
-    return () => clearTimeout(timer);
+    // eslint-disable-next-line consistent-return
+    return () => {
+      clearTimeout(timer);
+    };
   }, [destroy, duration]);
 
   return (
     <div>
-      <div className={"toast-header"} id={id}>
+      <div className="toast-header" id={id}>
         <div>{title}</div>
-        <button onClick={destroy}>X</button>
+        <button type="button" onClick={destroy}>
+          X
+        </button>
       </div>
-      <div className={"toast-body"}>{content}</div>
+      <div className="toast-body">{content}</div>
     </div>
   );
 };

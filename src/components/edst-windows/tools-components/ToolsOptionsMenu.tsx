@@ -1,17 +1,12 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 
-import {EdstButton} from "../../resources/EdstButton";
-import {EdstTooltip} from "../../resources/EdstTooltip";
-import {menuEnum} from "../../../enums";
-import {closeMenu} from "../../../redux/slices/appSlice";
-import {useRootDispatch, useRootSelector} from "../../../redux/hooks";
-import {toolsOptionsSelector, updateToolsOptions} from "../../../redux/slices/aclSlice";
-import {
-  OptionsBodyCol,
-  OptionsBodyRow,
-  OptionsBottomRow,
-  OptionSelectedIndicator, OptionsFlexCol
-} from "../../../styles/optionMenuStyles";
+import { EdstButton } from "../../resources/EdstButton";
+import { EdstTooltip } from "../../resources/EdstTooltip";
+import { menuEnum } from "../../../enums";
+import { closeMenu } from "../../../redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
+import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/aclSlice";
+import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
 
 export const ToolsOptionsMenu: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -21,54 +16,60 @@ export const ToolsOptionsMenu: React.FC = () => {
   const [iafDofManual, setIafDofManual] = useState(toolsOptions.iafDofManual);
   const [nonRvsmIndicator, setNonRvsmIndicator] = useState(toolsOptions.nonRvsmIndicator);
 
-  return (<>
+  return (
+    <>
       <OptionsBodyRow>
-        <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}>
+        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}>
           <OptionsFlexCol>
-            <OptionSelectedIndicator selected={displayCoordinationColumn}/>
+            <OptionSelectedIndicator selected={displayCoordinationColumn} />
             Display Coordination Column
           </OptionsFlexCol>
         </EdstTooltip>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}>
+        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}>
           <OptionsFlexCol>
-            <OptionSelectedIndicator selected={dropTrackDelete}/>
+            <OptionSelectedIndicator selected={dropTrackDelete} />
             Drop Track Delete
           </OptionsFlexCol>
         </EdstTooltip>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setIafDofManual(!iafDofManual)}>
+        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setIafDofManual(!iafDofManual)}>
           <OptionsFlexCol>
-            <OptionSelectedIndicator selected={iafDofManual}/>
+            <OptionSelectedIndicator selected={iafDofManual} />
             IAFDOF Manual
           </OptionsFlexCol>
         </EdstTooltip>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <EdstTooltip style={{flexGrow: 1}} onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}>
+        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}>
           <OptionsFlexCol>
-            <OptionSelectedIndicator selected={nonRvsmIndicator}/>
+            <OptionSelectedIndicator selected={nonRvsmIndicator} />
             Non-RVSM Indicator
           </OptionsFlexCol>
         </EdstTooltip>
       </OptionsBodyRow>
       <OptionsBottomRow>
         <OptionsBodyCol>
-          <EdstButton content="OK" onMouseDown={() => {
-            // set data when OK is pressed
-            dispatch(updateToolsOptions({
-              displayCoordinationColumn: displayCoordinationColumn,
-              dropTrackDelete: dropTrackDelete,
-              iafDofManual: iafDofManual,
-              nonRvsmIndicator: nonRvsmIndicator
-            }));
-            dispatch(closeMenu(menuEnum.toolsMenu));
-          }}/>
+          <EdstButton
+            content="OK"
+            onMouseDown={() => {
+              // set data when OK is pressed
+              dispatch(
+                updateToolsOptions({
+                  displayCoordinationColumn,
+                  dropTrackDelete,
+                  iafDofManual,
+                  nonRvsmIndicator
+                })
+              );
+              dispatch(closeMenu(menuEnum.toolsMenu));
+            }}
+          />
         </OptionsBodyCol>
-        <OptionsBodyCol alignRight={true}>
-          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))}/>
+        <OptionsBodyCol alignRight>
+          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

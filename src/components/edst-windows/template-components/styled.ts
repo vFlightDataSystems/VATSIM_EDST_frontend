@@ -1,12 +1,14 @@
 import styled from "styled-components";
-import {EdstInput, OptionsBodyRow} from "../../../styles/optionMenuStyles";
-import {edstFontGrey} from "../../../styles/colors";
+import { EdstInput, OptionsBodyRow } from "../../../styles/optionMenuStyles";
+import { edstFontGrey } from "../../../styles/colors";
 
 export const EqpRow = styled(OptionsBodyRow)`
   display: flex;
   align-items: center;
 `;
-export const EqpInputRow = styled(EqpRow)`margin: 6px 20px`;
+export const EqpInputRow = styled(EqpRow)`
+  margin: 6px 20px;
+`;
 export const EqpContentRow = styled(EqpRow)`
   align-items: center;
   float: left;
@@ -14,7 +16,7 @@ export const EqpContentRow = styled(EqpRow)`
   text-indent: 6px;
 `;
 
-export const EqpInputContainer = styled.div<{width?: string}>`
+export const EqpInputContainer = styled.div<{ width?: string }>`
   display: flex;
   flex-grow: 1;
   //max-width: 57%;
@@ -54,7 +56,7 @@ export const EqpColRow = styled(EqpRow)`
 export const EqpColTitle = styled(EqpCol)`
   text-indent: 0;
   margin: 5px auto 5px 10px;
-  border-bottom: 1px solid #ADADAD;
+  border-bottom: 1px solid #adadad;
   text-align: center;
 `;
 
@@ -66,8 +68,8 @@ export const EqpContentCol = styled.div`
   border: 1px solid transparent;
   padding: 1px 6px;
   text-indent: 0;
-  
+
   &:hover {
-    border: 1px solid #ADADAD;
+    border: 1px solid #adadad;
   }
 `;

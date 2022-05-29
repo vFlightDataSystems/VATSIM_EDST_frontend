@@ -1,11 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {formatUtcMinutes, getClosestReferenceFix} from "../../lib";
-import {LocalEdstEntryType} from "../../types";
-import {useRootDispatch, useRootSelector} from '../../redux/hooks';
-import {aclManualPostingSelector, setAclManualPosting} from "../../redux/slices/aclSlice";
-import {entriesSelector, updateEntry} from "../../redux/slices/entriesSlice";
-import {aclCleanup, openWindowThunk} from "../../redux/thunks/thunks";
-import {windowEnum} from "../../enums";
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import { point } from "@turf/turf";
+import { formatUtcMinutes, getClosestReferenceFix } from "../../lib";
+import { LocalEdstEntry } from "../../types";
+import { useRootDispatch, useRootSelector } from "../../redux/hooks";
+import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
+import { entriesSelector, updateEntry } from "../../redux/slices/entriesSlice";
+import { aclCleanup, openWindowThunk } from "../../redux/thunks/thunks";
+import { windowEnum } from "../../enums";
 import {
   closeAllWindows,
   mcaCommandStringSelector,
@@ -16,23 +18,21 @@ import {
   windowPositionSelector,
   zStackSelector
 } from "../../redux/slices/appSlice";
-import {toggleAltimeterThunk, toggleMetarThunk} from "../../redux/thunks/weatherThunks";
-import {addAclEntryByFid, amendEntryThunk} from "../../redux/thunks/entriesThunks";
-import {printFlightStrip} from "../PrintableFlightStrip";
-import {defaultFontFamily, defaultFontSize} from "../../styles/styles";
-import styled from "styled-components";
-import {FloatingWindowDiv} from "../../styles/floatingWindowStyles";
-import {edstFontGrey} from "../../styles/colors";
-import {referenceFixSelector} from "../../redux/slices/sectorSlice";
-import {point} from "@turf/turf";
-import {useDragging} from "../../hooks";
-import {EdstDraggingOutline} from "../../styles/draggingStyles";
+import { toggleAltimeterThunk, toggleMetarThunk } from "../../redux/thunks/weatherThunks";
+import { addAclEntryByFid, amendEntryThunk } from "../../redux/thunks/entriesThunks";
+import { printFlightStrip } from "../PrintableFlightStrip";
+import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
+import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
+import { edstFontGrey } from "../../styles/colors";
+import { referenceFixSelector } from "../../redux/slices/sectorSlice";
+import { useDragging } from "../../hooks";
+import { EdstDraggingOutline } from "../../styles/draggingStyles";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
   width: 400px;
   background-color: #000000;
-  border: 1px solid #ADADAD;
+  border: 1px solid #adadad;
   font-family: ${defaultFontFamily};
 `;
 
@@ -40,7 +40,7 @@ const MessageComposeInputAreaDiv = styled.div`
   line-height: 1;
   width: 100%;
   height: 40%;
-  border-bottom: 1px solid #ADADAD;
+  border-bottom: 1px solid #adadad;
 
   input {
     width: 98%;
@@ -52,7 +52,7 @@ const MessageComposeInputAreaDiv = styled.div`
     caret: underscore;
     background-color: #000000;
   }
-`
+`;
 
 const MessageComposeResponseAreaDiv = styled.div`
   line-height: 0.95;
@@ -63,11 +63,11 @@ const MessageComposeResponseAreaDiv = styled.div`
 `;
 
 type MessageComposeAreaProps = {
-  setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void
-}
+  setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void;
+};
 
 const AcceptCheckmarkSpan = styled.span`
-  color: #00AD00;
+  color: #00ad00;
 
   ::before {
     content: "✓";
@@ -75,14 +75,14 @@ const AcceptCheckmarkSpan = styled.span`
 `;
 
 const RejectCrossSpan = styled.span`
-  color: #AD0000;
+  color: #ad0000;
 
   ::before {
     content: "X"; // apparently this is literally just the character X (xray)
   }
 `;
 
-export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInputRef}) => {
+export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaInputRef }) => {
   const [response, setResponse] = useState<string | null>(null);
   const [mcaFocused, setMcaFocused] = useState(false);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
@@ -94,7 +94,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const {startDrag, stopDrag, dragPreviewStyle, anyDragging} = useDragging(ref, windowEnum.messageComposeArea);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.messageComposeArea);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -103,46 +103,50 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   }, []);
 
   const toggleVci = (fid: string) => {
-    const entry: LocalEdstEntryType | any = Object.values(entries ?? {})
-      ?.find((e: LocalEdstEntryType) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid);
+    const entry: LocalEdstEntry | any = Object.values(entries ?? {})?.find(
+      (e: LocalEdstEntry) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid
+    );
     if (entry) {
       if (entry.vciStatus < 1) {
-        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 1}}));
+        dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 1 } }));
       } else {
-        dispatch(updateEntry({cid: entry.cid, data: {vciStatus: 0}}));
+        dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 0 } }));
       }
     }
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: LocalEdstEntryType | any = Object.values(entries ?? {})
-      ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
+    const entry: LocalEdstEntry | any = Object.values(entries ?? {})?.find(
+      (entry: LocalEdstEntry) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid
+    );
     if (entry) {
       if (entry.aclDisplay) {
-        dispatch(updateEntry({cid: entry.cid, data: {aclHighlighted: !entry.aclHighlighted}}));
+        dispatch(updateEntry({ cid: entry.cid, data: { aclHighlighted: !entry.aclHighlighted } }));
       }
       if (entry.depDisplay) {
-        dispatch(updateEntry({cid: entry.cid, data: {depHighlighted: !entry.depHighlighted}}));
+        dispatch(updateEntry({ cid: entry.cid, data: { depHighlighted: !entry.depHighlighted } }));
       }
     }
   };
 
-  const getEntryByFid = (fid: string): LocalEdstEntryType | undefined => {
-    return Object.values(entries ?? {})
-      ?.find((entry: LocalEdstEntryType) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid);
-  }
+  const getEntryByFid = (fid: string): LocalEdstEntry | undefined => {
+    return Object.values(entries ?? {})?.find(
+      (entry: LocalEdstEntry) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid
+    );
+  };
 
   const flightplanReadout = (fid: string) => {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry: LocalEdstEntryType | undefined = getEntryByFid(fid);
+    const entry: LocalEdstEntry | undefined = getEntryByFid(fid);
     if (entry) {
-      let msg = formatUtcMinutes(utcMinutes) + '\n'
-        + `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00`
-        + ` ${entry.altitude} ${entry.dep}./.`
-        + `${entry.cleared_direct?.fix && entry._route?.startsWith(entry.cleared_direct?.fix) ? entry.cleared_direct?.frd + '..' : ''}`
-        + `${entry._route?.replace(/^\.+/, '')}`
-        + `${entry.dest ?? ''}`;
+      const msg =
+        `${formatUtcMinutes(utcMinutes)}\n` +
+        `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00` +
+        ` ${entry.altitude} ${entry.dep}./.` +
+        `${entry.cleared_direct?.fix && entry.currentRoute?.startsWith(entry.cleared_direct?.fix) ? `${entry.cleared_direct?.frd}..` : ""}` +
+        `${entry.currentRoute?.replace(/^\.+/, "")}` +
+        `${entry.dest ?? ""}`;
       dispatch(setMraMessage(msg));
     }
   };
@@ -150,18 +154,20 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
   const parseQU = (args: string[]) => {
     if (args.length === 2) {
       const entry = getEntryByFid(args[1]);
-      if (entry && entry.aclDisplay && entry._route_data?.map(fix => fix.name).includes(args[0])) {
-        const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
-        const planData = {cid: entry.cid, fix: args[0], frd: closestReferenceFix}
+      if (entry && entry.aclDisplay && entry.currentRoute_data?.map(fix => fix.name).includes(args[0])) {
+        const closestReferenceFix = referenceFixes
+          ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]))
+          : null;
+        const planData = { cid: entry.cid, fix: args[0], frd: closestReferenceFix };
         if (planData) {
-          dispatch(amendEntryThunk({cid: entry.cid, planData: planData}));
+          dispatch(amendEntryThunk({ cid: entry.cid, planData }));
           setResponse(`ACCEPT\nCLEARED DIRECT`);
           return;
         }
       }
     }
     setResponse(`REJECT\nFORMAT`);
-  }
+  };
 
   const parseCommand = () => {
     // TODO: rename command variable
@@ -173,11 +179,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
     } else {
       // TODO: break down switch cases into functions (parseUU, parseFR, ...)
       switch (command) {
-        case '//': // should turn vci on/off for a CID
+        case "//": // should turn vci on/off for a CID
           toggleVci(args[0]);
           setResponse(`ACCEPT\nD POS KEYBD`);
-          break;//end case //
-        case 'UU':
+          break; // end case //
+        case "UU":
           switch (args.length) {
             case 0:
               dispatch(openWindowThunk(windowEnum.acl));
@@ -185,17 +191,17 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
               break;
             case 1:
               switch (args[0]) {
-                case 'C':
+                case "C":
                   dispatch(aclCleanup);
                   break;
-                case 'D':
+                case "D":
                   dispatch(openWindowThunk(windowEnum.dep));
                   break;
-                case 'P':
+                case "P":
                   dispatch(openWindowThunk(windowEnum.acl));
                   dispatch(setAclManualPosting(!manualPosting));
                   break;
-                case 'X':
+                case "X":
                   dispatch(setInputFocused(false));
                   dispatch(closeAllWindows());
                   break;
@@ -206,49 +212,51 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
               setResponse(`ACCEPT\nD POS KEYBD`);
               break;
             case 2:
-              if (args[0] === 'H') {
+              if (args[0] === "H") {
                 toggleHighlightEntry(args[1]);
                 setResponse(`ACCEPT\nD POS KEYBD`);
               } else {
                 setResponse(`REJECT\n${mcaCommandString}`);
               }
               break;
-            default: // TODO: give error msg
+            default:
+              // TODO: give error msg
               setResponse(`REJECT\n${mcaCommandString}`);
           }
-          break;//end case UU
-        case 'QU': // cleared direct to fix: QU <fix> <fid>
+          break; // end case UU
+        case "QU": // cleared direct to fix: QU <fix> <fid>
           parseQU(args);
-          break; //end case QU
-        case 'QD': // altimeter request: QD <station>
+          break; // end case QU
+        case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));
           dispatch(openWindowThunk(windowEnum.altimeter));
           setResponse(`ACCEPT\nALTIMETER REQ`);
-          break; //end case QD
-        case 'WR': // weather request: WR <station>
+          break; // end case QD
+        case "WR": // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
           dispatch(openWindowThunk(windowEnum.metar));
           setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
-          break; //end case WR
-        case 'FR': // flightplan readout: FR <fid>
+          break; // end case WR
+        case "FR": // flightplan readout: FR <fid>
           if (args.length === 1) {
             flightplanReadout(args[0]);
             setResponse(`ACCEPT\nREADOUT\n${mcaCommandString}`);
           } else {
             setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
-          break; //end case FR
-        case 'SR':
+          break; // end case FR
+        case "SR":
           if (args.length === 1) {
             printFlightStrip(getEntryByFid(args[0]));
             setResponse(`ACCEPT\nD POS KEYBD`);
           }
           break;
-        default: // TODO: give better error msg
+        default:
+          // TODO: give better error msg
           setResponse(`REJECT\n\n${mcaCommandString}`);
       }
     }
-    dispatch(setMcaCommandString(''));
+    dispatch(setMcaCommandString(""));
   };
 
   const handleInputChange = (event: React.ChangeEvent<any>) => {
@@ -265,57 +273,57 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({setMcaInp
         if (mcaCommandString.length > 0) {
           parseCommand();
         } else {
-          setResponse('');
+          setResponse("");
         }
         break;
       case "Escape":
-        setMcaCommandString('');
+        setMcaCommandString("");
         break;
       default:
         break;
     }
   };
 
-  return pos && (<MessageComposeAreaDiv
-      ref={ref}
-      anyDragging={anyDragging}
-      id="edst-mca"
-      pos={pos}
-      zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
-      onMouseDown={(event) => {
-        startDrag(event)
-        if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
-          dispatch(pushZStack(windowEnum.messageComposeArea));
-        }
-      }}
-      // onMouseEnter={() => setInputFocus()}
-    >
-      {dragPreviewStyle && <EdstDraggingOutline
-          style={dragPreviewStyle}
-          onMouseDown={stopDrag}
-      />}
-      <MessageComposeInputAreaDiv>
-        <input
-          ref={inputRef}
-          onFocus={() => {
-            dispatch(setInputFocused(true));
-            setMcaFocused(true);
-          }}
-          onBlur={() => {
-            dispatch(setInputFocused(false));
-            setMcaFocused(false);
-          }}
-          tabIndex={mcaFocused ? -1 : undefined}
-          value={mcaCommandString}
-          onChange={handleInputChange}
-          onKeyDownCapture={handleKeyDown}
-        />
-      </MessageComposeInputAreaDiv>
-      <MessageComposeResponseAreaDiv>
-        {response?.startsWith('ACCEPT') && <AcceptCheckmarkSpan/>}
-        {response?.startsWith('REJECT') && <RejectCrossSpan/>}
-        {response}
-      </MessageComposeResponseAreaDiv>
-    </MessageComposeAreaDiv>
+  return (
+    pos && (
+      <MessageComposeAreaDiv
+        ref={ref}
+        anyDragging={anyDragging}
+        id="edst-mca"
+        pos={pos}
+        zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
+        onMouseDown={event => {
+          startDrag(event);
+          if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
+            dispatch(pushZStack(windowEnum.messageComposeArea));
+          }
+        }}
+        // onMouseEnter={() => setInputFocus()}
+      >
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        <MessageComposeInputAreaDiv>
+          <input
+            ref={inputRef}
+            onFocus={() => {
+              dispatch(setInputFocused(true));
+              setMcaFocused(true);
+            }}
+            onBlur={() => {
+              dispatch(setInputFocused(false));
+              setMcaFocused(false);
+            }}
+            tabIndex={mcaFocused ? -1 : undefined}
+            value={mcaCommandString}
+            onChange={handleInputChange}
+            onKeyDownCapture={handleKeyDown}
+          />
+        </MessageComposeInputAreaDiv>
+        <MessageComposeResponseAreaDiv>
+          {response?.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
+          {response?.startsWith("REJECT") && <RejectCrossSpan />}
+          {response}
+        </MessageComposeResponseAreaDiv>
+      </MessageComposeAreaDiv>
+    )
   );
 };
