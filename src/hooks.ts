@@ -1,7 +1,7 @@
 import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { useEventListener } from "usehooks-ts";
 import { invoke } from "@tauri-apps/api/tauri";
-import { menuEnum, windowEnum } from "./enums";
+import { EdstMenu, EdstWindow } from "./enums";
 import { anyDraggingSelector, menusSelector, setAnyDragging, setMenuPosition, setWindowPosition, windowsSelector } from "./redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "./redux/hooks";
 import { WindowPosition } from "./types";
@@ -24,17 +24,17 @@ export const useCenterCursor = (element: RefObject<HTMLElement>, deps: any[] = [
   }, deps);
 };
 
-const DRAGGING_REPOSITION_CURSOR: (windowEnum | menuEnum)[] = [
-  windowEnum.status,
-  windowEnum.outage,
-  windowEnum.messageComposeArea,
-  windowEnum.messageResponseArea,
-  windowEnum.altimeter,
-  windowEnum.metar,
-  windowEnum.sigmets
+const DRAGGING_REPOSITION_CURSOR: (EdstWindow | EdstMenu)[] = [
+  EdstWindow.status,
+  EdstWindow.outage,
+  EdstWindow.messageComposeArea,
+  EdstWindow.messageResponseArea,
+  EdstWindow.altimeter,
+  EdstWindow.metar,
+  EdstWindow.sigmets
 ];
 
-export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowEnum | menuEnum) => {
+export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow | EdstMenu) => {
   const dispatch = useRootDispatch();
   const anyDragging = useRootSelector(anyDraggingSelector);
   const [dragging, setDragging] = useState(false);
@@ -43,10 +43,10 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   let ppos: WindowPosition | null = null;
-  if (edstWindow in windowEnum) {
-    ppos = windows[edstWindow as windowEnum].position;
-  } else if (edstWindow in menuEnum) {
-    ppos = menus[edstWindow as menuEnum].position;
+  if (edstWindow in EdstWindow) {
+    ppos = windows[edstWindow as EdstWindow].position;
+  } else if (edstWindow in EdstMenu) {
+    ppos = menus[edstWindow as EdstMenu].position;
   }
 
   useEffect(() => {
@@ -132,17 +132,17 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: windowE
       if (window.__TAURI__) {
         invoke("set_cursor_grab", { value: false }).then();
       }
-      if (edstWindow in windowEnum) {
+      if (edstWindow in EdstWindow) {
         dispatch(
           setWindowPosition({
-            window: edstWindow as windowEnum,
+            window: edstWindow as EdstWindow,
             pos: newPos
           })
         );
-      } else if (edstWindow in menuEnum) {
+      } else if (edstWindow in EdstMenu) {
         dispatch(
           setMenuPosition({
-            menu: edstWindow as menuEnum,
+            menu: edstWindow as EdstMenu,
             pos: newPos
           })
         );

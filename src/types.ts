@@ -36,7 +36,7 @@ export type EdstEntry = {
 // local data for a single EDST entry
 export type LocalVEdstEntry = {
   currentRoute?: string; // shortened route string, starting at the next inbound fix
-  currentRoute_data?: (RouteFix & { dist: number })[];
+  currentRouteData?: (RouteFix & { dist: number })[];
   aarList?: any[]; // preferred arrival routes
   currentAarList?: any[] | null; // preferred arrival routes processed by the frontend
   vciStatus: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
@@ -132,7 +132,7 @@ export type SectorData = {
   };
 };
 
-export type PlanDataType = {
+export type PlanQuery = {
   cid: string;
   callsign: string;
   planData: Record<string, any>;

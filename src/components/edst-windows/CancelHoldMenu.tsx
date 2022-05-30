@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, updateEntry } from "../../redux/slices/entriesSlice";
-import { menuEnum } from "../../enums";
+import { EdstMenu } from "../../enums";
 import { closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { LocalEdstEntry } from "../../types";
 import { amendEntryThunk } from "../../redux/thunks/entriesThunks";
@@ -17,13 +17,13 @@ const CancelHoldDiv = styled(OptionsMenu)`
 
 export const CancelHoldMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(menuEnum.cancelHoldMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.cancelHoldMenu));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.cancelHoldMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.cancelHoldMenu);
 
   return (
     pos &&
@@ -31,8 +31,8 @@ export const CancelHoldMenu: React.FC = () => {
       <CancelHoldDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.cancelHoldMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.cancelHoldMenu) > 0 && dispatch(pushZStack(menuEnum.cancelHoldMenu))}
+        zIndex={zStack.indexOf(EdstMenu.cancelHoldMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.cancelHoldMenu) > 0 && dispatch(pushZStack(EdstMenu.cancelHoldMenu))}
         anyDragging={anyDragging}
         id="cancel-hold-menu"
       >
@@ -51,12 +51,12 @@ export const CancelHoldMenu: React.FC = () => {
                 onMouseDown={() => {
                   dispatch(updateEntry({ cid: entry.cid, data: { aclRouteDisplay: null } }));
                   dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: null } }));
-                  dispatch(closeMenu(menuEnum.cancelHoldMenu));
+                  dispatch(closeMenu(EdstMenu.cancelHoldMenu));
                 }}
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.cancelHoldMenu))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.cancelHoldMenu))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </OptionsBody>

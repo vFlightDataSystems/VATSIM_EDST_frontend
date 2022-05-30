@@ -1,11 +1,12 @@
 import React from "react";
+import styled from "styled-components";
 import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { openMenuThunk } from "../../../redux/thunks/thunks";
-import { menuEnum, windowEnum } from "../../../enums";
-import { Asel, closeAllMenus, closeMenu, closeWindow, gpdAselSelector } from "../../../redux/slices/appSlice";
+import { EdstMenu, EdstWindow } from "../../../enums";
+import { closeAllMenus, closeMenu, closeWindow, gpdAselSelector } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { gpdSuppressedSelector, toggleSuppressed } from "../../../redux/slices/gpdSlice";
@@ -15,6 +16,8 @@ type GpdHeaderProps = {
   zoomLevel: number;
   setZoomLevel: React.Dispatch<React.SetStateAction<number>>;
 };
+
+const GpdDiv = styled(NoSelectDiv)``;
 
 export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, zoomLevel, setZoomLevel }) => {
   const asel = useRootSelector(gpdAselSelector);
@@ -39,29 +42,27 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, zoomLevel, setZoo
   };
 
   return (
-    <NoSelectDiv>
+    <GpdDiv>
       <WindowTitleBar
         focused={focused}
         closeWindow={() => {
-          if (asel?.window === windowEnum.graphicPlanDisplay) {
+          if (asel?.window === EdstWindow.graphicPlanDisplay) {
             dispatch(closeAllMenus());
           }
-          dispatch(closeWindow(windowEnum.graphicPlanDisplay));
+          dispatch(closeWindow(EdstWindow.graphicPlanDisplay));
         }}
         text={["Graphic Plan Display - Current Time"]}
       />
       <div>
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget))}
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.planOptions, e.currentTarget))}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) =>
-            dispatch(openMenuThunk(menuEnum.holdMenu, e.currentTarget, windowEnum.graphicPlanDisplay, false, (asel as Asel).cid))
-          }
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.holdMenu, e.currentTarget, EdstWindow.graphicPlanDisplay, false))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -69,9 +70,7 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, zoomLevel, setZoo
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton disabled content="Graphic..." />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) =>
-            dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.graphicPlanDisplay, false, asel?.cid ?? null))
-          }
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.templateMenu, e.currentTarget, EdstWindow.graphicPlanDisplay, false))}
           content="Template..."
           title={Tooltips.template}
         />
@@ -87,20 +86,20 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, zoomLevel, setZoo
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width={84} />
         <EdstWindowHeaderButton
           onMouseDown={(e: React.MouseEvent) => {
-            dispatch(closeMenu(menuEnum.gpdMapOptionsMenu));
-            dispatch(openMenuThunk(menuEnum.gpdMapOptionsMenu, e.currentTarget, windowEnum.graphicPlanDisplay));
+            dispatch(closeMenu(EdstMenu.gpdMapOptionsMenu));
+            dispatch(openMenuThunk(EdstMenu.gpdMapOptionsMenu, e.currentTarget, EdstWindow.graphicPlanDisplay));
           }}
           content="Map Options..."
         />
         <EdstWindowHeaderButton
           onMouseDown={(e: React.MouseEvent) => {
-            dispatch(closeMenu(menuEnum.toolsMenu));
-            dispatch(openMenuThunk(menuEnum.toolsMenu, e.currentTarget, windowEnum.graphicPlanDisplay));
+            dispatch(closeMenu(EdstMenu.toolsMenu));
+            dispatch(openMenuThunk(EdstMenu.toolsMenu, e.currentTarget, EdstWindow.graphicPlanDisplay));
           }}
           content="Tools..."
         />
         <EdstWindowHeaderButton disabled content="Saved Map" />
       </WindowHeaderRowDiv>
-    </NoSelectDiv>
+    </GpdDiv>
   );
 };

@@ -7,7 +7,7 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entriesSlice";
 import { aclCleanup, openWindowThunk } from "../../redux/thunks/thunks";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import {
   closeAllWindows,
   mcaCommandStringSelector,
@@ -86,7 +86,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const [response, setResponse] = useState<string | null>(null);
   const [mcaFocused, setMcaFocused] = useState(false);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
-  const pos = useRootSelector(windowPositionSelector(windowEnum.messageComposeArea));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.messageComposeArea));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const referenceFixes = useRootSelector(referenceFixSelector);
   const entries = useRootSelector(entriesSelector);
@@ -94,7 +94,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.messageComposeArea);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.messageComposeArea);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -154,7 +154,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const parseQU = (args: string[]) => {
     if (args.length === 2) {
       const entry = getEntryByFid(args[1]);
-      if (entry && entry.aclDisplay && entry.currentRoute_data?.map(fix => fix.name).includes(args[0])) {
+      if (entry && entry.aclDisplay && entry.currentRouteData?.map(fix => fix.name).includes(args[0])) {
         const closestReferenceFix = referenceFixes
           ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]))
           : null;
@@ -186,7 +186,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         case "UU":
           switch (args.length) {
             case 0:
-              dispatch(openWindowThunk(windowEnum.acl));
+              dispatch(openWindowThunk(EdstWindow.acl));
               setResponse(`ACCEPT\nD POS KEYBD`);
               break;
             case 1:
@@ -195,10 +195,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
                   dispatch(aclCleanup);
                   break;
                 case "D":
-                  dispatch(openWindowThunk(windowEnum.dep));
+                  dispatch(openWindowThunk(EdstWindow.dep));
                   break;
                 case "P":
-                  dispatch(openWindowThunk(windowEnum.acl));
+                  dispatch(openWindowThunk(EdstWindow.acl));
                   dispatch(setAclManualPosting(!manualPosting));
                   break;
                 case "X":
@@ -229,12 +229,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
           break; // end case QU
         case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));
-          dispatch(openWindowThunk(windowEnum.altimeter));
+          dispatch(openWindowThunk(EdstWindow.altimeter));
           setResponse(`ACCEPT\nALTIMETER REQ`);
           break; // end case QD
         case "WR": // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
-          dispatch(openWindowThunk(windowEnum.metar));
+          dispatch(openWindowThunk(EdstWindow.metar));
           setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
@@ -291,11 +291,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         anyDragging={anyDragging}
         id="edst-mca"
         pos={pos}
-        zIndex={zStack.indexOf(windowEnum.messageComposeArea)}
+        zIndex={zStack.indexOf(EdstWindow.messageComposeArea)}
         onMouseDown={event => {
           startDrag(event);
-          if (zStack.indexOf(windowEnum.messageComposeArea) > 0) {
-            dispatch(pushZStack(windowEnum.messageComposeArea));
+          if (zStack.indexOf(EdstWindow.messageComposeArea) > 0) {
+            dispatch(pushZStack(EdstWindow.messageComposeArea));
           }
         }}
         // onMouseEnter={() => setInputFocus()}

@@ -8,7 +8,7 @@ import { GpdHeader } from "./gpd-components/GpdHeader";
 import { GpdBody } from "./gpd-components/GpdBody";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { DraggableDiv } from "../../styles/styles";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 
 const GpdDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;
@@ -34,10 +34,10 @@ export const Gpd: React.FC = () => {
   const dispatch = useRootDispatch();
 
   const onMouseDownHandler = () =>
-    zStack.indexOf(windowEnum.graphicPlanDisplay) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.graphicPlanDisplay));
+    zStack.indexOf(EdstWindow.graphicPlanDisplay) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.graphicPlanDisplay));
 
   return (
-    <GpdDiv ref={ref} anyDragging={anyDragging} zIndex={zStack.indexOf(windowEnum.graphicPlanDisplay)} onMouseDown={onMouseDownHandler}>
+    <GpdDiv ref={ref} anyDragging={anyDragging} zIndex={zStack.indexOf(EdstWindow.graphicPlanDisplay)} onMouseDown={onMouseDownHandler}>
       <GpdHeader focused={focused} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
       <GpdBody zoomLevel={zoomLevel} />
     </GpdDiv>

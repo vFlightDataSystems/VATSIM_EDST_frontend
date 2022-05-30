@@ -6,8 +6,8 @@ import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "../../../redux/slices/aclSlice";
 import { aclCleanup, openMenuThunk } from "../../../redux/thunks/thunks";
-import { menuEnum, windowEnum } from "../../../enums";
-import { aclAselSelector, Asel, closeAllMenus, closeMenu, closeWindow, setInputFocused } from "../../../redux/slices/appSlice";
+import { EdstMenu, EdstWindow } from "../../../enums";
+import { aclAselSelector, closeAllMenus, closeMenu, closeWindow, setInputFocused } from "../../../redux/slices/appSlice";
 import { addAclEntryByFid } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
@@ -34,25 +34,23 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({ focused }) => {
       <WindowTitleBar
         focused={focused}
         closeWindow={() => {
-          if (asel?.window === windowEnum.acl) {
+          if (asel?.window === EdstWindow.acl) {
             dispatch(closeAllMenus());
           }
-          dispatch(closeWindow(windowEnum.acl));
+          dispatch(closeWindow(EdstWindow.acl));
         }}
         text={["Aircraft List", `${sortData.sector ? "Sector/" : ""}${sortData.selectedOption}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget))}
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.planOptions, e.currentTarget))}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) =>
-            dispatch(openMenuThunk(menuEnum.holdMenu, e.currentTarget, windowEnum.acl, false, (asel as Asel).cid))
-          }
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.holdMenu, e.currentTarget, EdstWindow.acl, false))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -61,15 +59,15 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({ focused }) => {
         <EdstWindowHeaderButton
           id="acl-sort-button"
           onMouseDown={(e: React.MouseEvent) => {
-            dispatch(openMenuThunk(menuEnum.sortMenu, e.currentTarget, windowEnum.acl));
+            dispatch(openMenuThunk(EdstMenu.sortMenu, e.currentTarget, EdstWindow.acl));
           }}
           content="Sort..."
           title={Tooltips.sort}
         />
         <EdstWindowHeaderButton
           onMouseDown={(e: React.MouseEvent) => {
-            dispatch(closeMenu(menuEnum.toolsMenu));
-            dispatch(openMenuThunk(menuEnum.toolsMenu, e.currentTarget, windowEnum.acl));
+            dispatch(closeMenu(EdstMenu.toolsMenu));
+            dispatch(openMenuThunk(EdstMenu.toolsMenu, e.currentTarget, EdstWindow.acl));
           }}
           content="Tools..."
         />
@@ -79,9 +77,7 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({ focused }) => {
           title={Tooltips.postingMode}
         />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) =>
-            dispatch(openMenuThunk(menuEnum.templateMenu, e.currentTarget, windowEnum.acl, false, asel?.cid ?? null))
-          }
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.templateMenu, e.currentTarget, EdstWindow.acl, false))}
           content="Template..."
           title={Tooltips.template}
         />

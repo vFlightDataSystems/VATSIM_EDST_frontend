@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { LocalEdstEntry } from "../../../types";
-import { aclRowField, menuEnum, windowEnum } from "../../../enums";
+import { AclRowField, EdstMenu, EdstWindow } from "../../../enums";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdAircraftSelect } from "../../../redux/thunks/thunks";
 import { aselSelector } from "../../../redux/slices/appSlice";
@@ -48,12 +48,12 @@ export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({ entry, pos, toggleSh
   // to be implemented
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const selectedField = asel?.cid === entry.cid && asel?.window === windowEnum.graphicPlanDisplay ? (asel.field as aclRowField) : null;
+  const selectedField = asel?.cid === entry.cid && asel?.window === EdstWindow.graphicPlanDisplay ? (asel.field as AclRowField) : null;
 
   const onCallsignMouseDown = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
-        dispatch(gpdAircraftSelect(event, entry.cid, aclRowField.fid));
+        dispatch(gpdAircraftSelect(event, entry.cid, AclRowField.fid));
         break;
       case 1:
         toggleShowRoute();
@@ -66,26 +66,26 @@ export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({ entry, pos, toggleSh
   return (
     pos && (
       <DataBlockDiv pos={pos} offset={offset}>
-        <DataBlockElement selected={selectedField === aclRowField.fid} onMouseDown={onCallsignMouseDown}>
+        <DataBlockElement selected={selectedField === AclRowField.fid} onMouseDown={onCallsignMouseDown}>
           {entry.callsign}
         </DataBlockElement>
         <br />
         <DataBlockElement
-          selected={selectedField === aclRowField.alt}
-          onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.cid, aclRowField.alt, null, menuEnum.altitudeMenu))}
+          selected={selectedField === AclRowField.alt}
+          onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.cid, AclRowField.alt, null, EdstMenu.altitudeMenu))}
         >
           {entry.interim ? `${entry.interim}T${entry.altitude}` : `${entry.altitude}C`}
         </DataBlockElement>
         <br />
         <DataBlockElement
-          selected={selectedField === aclRowField.route}
-          onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.cid, aclRowField.route, null, menuEnum.routeMenu))}
+          selected={selectedField === AclRowField.route}
+          onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.cid, AclRowField.route, null, EdstMenu.routeMenu))}
         >
           {entry.dest}
         </DataBlockElement>
         <DataBlockElement
-          selected={selectedField === aclRowField.spd}
-          onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.cid, aclRowField.spd))}
+          selected={selectedField === AclRowField.spd}
+          onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.cid, AclRowField.spd))}
         >
           {entry.flightplan.ground_speed}
         </DataBlockElement>

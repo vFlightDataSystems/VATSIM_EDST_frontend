@@ -6,7 +6,7 @@ import { EdstButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { aselSelector, Asel, closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
 import { LocalEdstEntry } from "../../../types";
@@ -24,7 +24,7 @@ const HeadingDiv = styled(OptionsMenu)`
 export const HeadingMenu: React.FC = () => {
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(menuEnum.headingMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.headingMenu));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -34,7 +34,7 @@ export const HeadingMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.headingMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.headingMenu);
 
   useEffect(() => {
     setHeading(280);
@@ -70,7 +70,7 @@ export const HeadingMenu: React.FC = () => {
       default:
         break;
     }
-    dispatch(closeMenu(menuEnum.headingMenu));
+    dispatch(closeMenu(EdstMenu.headingMenu));
   };
 
   return (
@@ -79,8 +79,8 @@ export const HeadingMenu: React.FC = () => {
       <HeadingDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.headingMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.headingMenu) > 0 && dispatch(pushZStack(menuEnum.headingMenu))}
+        zIndex={zStack.indexOf(EdstMenu.headingMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.headingMenu) > 0 && dispatch(pushZStack(EdstMenu.headingMenu))}
         anyDragging={anyDragging}
         id="heading-menu"
       >
@@ -165,13 +165,13 @@ export const HeadingMenu: React.FC = () => {
                     default:
                       break;
                   }
-                  dispatch(closeMenu(menuEnum.headingMenu));
+                  dispatch(closeMenu(EdstMenu.headingMenu));
                 }}
               />
             </Row>
             <OptionsBodyRow margin="0">
               <OptionsBodyCol alignRight>
-                <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.headingMenu))} />
+                <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.headingMenu))} />
               </OptionsBodyCol>
             </OptionsBodyRow>
           </ScrollContainer>

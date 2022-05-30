@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { EdstButton } from "../resources/EdstButton";
@@ -26,9 +26,9 @@ const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
 
 export const Status: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(windowEnum.status));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.status));
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.status);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.status);
   const zStack = useRootSelector(zStackSelector);
 
   return (
@@ -36,8 +36,8 @@ export const Status: React.FC = () => {
       <StatusDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(windowEnum.status)}
-        onMouseDown={() => zStack.indexOf(windowEnum.status) > 0 && dispatch(pushZStack(windowEnum.status))}
+        zIndex={zStack.indexOf(EdstWindow.status)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.status) > 0 && dispatch(pushZStack(EdstWindow.status))}
         anyDragging={anyDragging}
         id="edst-status"
       >
@@ -45,7 +45,7 @@ export const Status: React.FC = () => {
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>STATUS</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.status))}>
+          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.status))}>
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>

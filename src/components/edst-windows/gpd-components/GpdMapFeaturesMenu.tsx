@@ -4,7 +4,7 @@ import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicat
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { EdstButton } from "../../resources/EdstButton";
 import { closeMenu } from "../../../redux/slices/appSlice";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdMapFeatureOptionsSelector, mapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";
 
@@ -37,12 +37,12 @@ export const GpdMapFeaturesMenu: React.FC = () => {
             onMouseDown={() => {
               // set data when OK is pressed
               dispatch(setMapFeatureOptions(currentOptions));
-              dispatch(closeMenu(menuEnum.gpdMapOptionsMenu));
+              dispatch(closeMenu(EdstMenu.gpdMapOptionsMenu));
             }}
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.gpdMapOptionsMenu))} />
+          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.gpdMapOptionsMenu))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

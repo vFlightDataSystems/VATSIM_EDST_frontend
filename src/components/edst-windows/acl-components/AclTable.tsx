@@ -7,7 +7,7 @@ import { Tooltips } from "../../../tooltips";
 import { LocalEdstEntry } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "../../../redux/selectors";
-import { aclRowField, menuEnum, sortOptions } from "../../../enums";
+import { AclRowField, EdstMenu, SortOptions } from "../../../enums";
 import { aselSelector, closeMenu, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow } from "../../../styles/colors";
@@ -56,11 +56,11 @@ export function AclTable() {
   const anyHolding = useRootSelector(anyHoldingSelector);
   const anyAssignedHeading = useRootSelector(anyAssignedHdgSelector);
   const anyAssignedSpeed = useRootSelector(anyAssignedSpdSelector);
-  const [hiddenList, setHiddenList] = useState<aclRowField[]>([]);
+  const [hiddenList, setHiddenList] = useState<AclRowField[]>([]);
   const [altMouseDown, setAltMouseDown] = useState(false);
   const entries = useRootSelector(entriesSelector);
 
-  const toggleHideColumn = (field: aclRowField) => {
+  const toggleHideColumn = (field: AclRowField) => {
     const hiddenCopy = hiddenList.slice(0);
     const index = hiddenCopy.indexOf(field);
     if (index > -1) {
@@ -76,31 +76,31 @@ export function AclTable() {
 
   const handleClickSlash = () => {
     const hiddenCopy = hiddenList.slice(0);
-    if (hiddenCopy.includes(aclRowField.spd) && hiddenCopy.includes(aclRowField.hdg)) {
-      hiddenCopy.splice(hiddenCopy.indexOf(aclRowField.spd), 1);
-      hiddenCopy.splice(hiddenCopy.indexOf(aclRowField.hdg), 1);
-      if ((asel?.field as aclRowField) === aclRowField.spd) {
-        dispatch(closeMenu(menuEnum.speedMenu));
+    if (hiddenCopy.includes(AclRowField.spd) && hiddenCopy.includes(AclRowField.hdg)) {
+      hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.spd), 1);
+      hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.hdg), 1);
+      if ((asel?.field as AclRowField) === AclRowField.spd) {
+        dispatch(closeMenu(EdstMenu.speedMenu));
         dispatch(setAsel(null));
       }
-      if ((asel?.field as aclRowField) === aclRowField.hdg) {
-        dispatch(closeMenu(menuEnum.headingMenu));
+      if ((asel?.field as AclRowField) === AclRowField.hdg) {
+        dispatch(closeMenu(EdstMenu.headingMenu));
         dispatch(setAsel(null));
       }
     } else {
-      if (!hiddenCopy.includes(aclRowField.hdg)) {
-        hiddenCopy.push(aclRowField.hdg);
-        if ((asel?.field as aclRowField) === aclRowField.hdg) {
-          dispatch(closeMenu(menuEnum.headingMenu));
+      if (!hiddenCopy.includes(AclRowField.hdg)) {
+        hiddenCopy.push(AclRowField.hdg);
+        if ((asel?.field as AclRowField) === AclRowField.hdg) {
+          dispatch(closeMenu(EdstMenu.headingMenu));
           dispatch(setAsel(null));
         }
       }
-      if (!hiddenCopy.includes(aclRowField.spd)) {
-        if ((asel?.field as aclRowField) === aclRowField.spd) {
-          dispatch(closeMenu(menuEnum.speedMenu));
+      if (!hiddenCopy.includes(AclRowField.spd)) {
+        if ((asel?.field as AclRowField) === AclRowField.spd) {
+          dispatch(closeMenu(EdstMenu.speedMenu));
           dispatch(setAsel(null));
         }
-        hiddenCopy.push(aclRowField.spd);
+        hiddenCopy.push(AclRowField.spd);
       }
     }
     setHiddenList(hiddenCopy);
@@ -108,13 +108,13 @@ export function AclTable() {
 
   const sortFunc = (u: LocalEdstEntry, v: LocalEdstEntry) => {
     switch (sortData.selectedOption) {
-      case sortOptions.acid:
+      case SortOptions.acid:
         return u.callsign.localeCompare(v.callsign);
-      case sortOptions.destination:
+      case SortOptions.destination:
         return u.dest.localeCompare(v.dest);
-      case sortOptions.origin:
+      case SortOptions.origin:
         return u.dep.localeCompare(v.dep);
-      case sortOptions.boundaryTime:
+      case SortOptions.boundaryTime:
         return u.boundaryTime - v.boundaryTime;
       default:
         return u.callsign.localeCompare(v.callsign);
@@ -142,19 +142,19 @@ export function AclTable() {
           </EdstTooltip>
           <SpecialBox disabled />
           <SpecialBox disabled />
-          <AircraftTypeCol hidden={hiddenList.includes(aclRowField.type)}>
-            <div onMouseDown={() => toggleHideColumn(aclRowField.type)}>T{!hiddenList.includes(aclRowField.type) && "ype"}</div>
+          <AircraftTypeCol hidden={hiddenList.includes(AclRowField.type)}>
+            <div onMouseDown={() => toggleHideColumn(AclRowField.type)}>T{!hiddenList.includes(AclRowField.type) && "ype"}</div>
           </AircraftTypeCol>
           <AltCol hover headerCol onMouseDown={() => setAltMouseDown(true)} onMouseUp={() => setAltMouseDown(false)}>
             Alt.
           </AltCol>
-          <CodeCol hover hidden={hiddenList.includes(aclRowField.code)} onMouseDown={() => toggleHideColumn(aclRowField.code)}>
-            C{!hiddenList.includes(aclRowField.code) && "ode"}
+          <CodeCol hover hidden={hiddenList.includes(AclRowField.code)} onMouseDown={() => toggleHideColumn(AclRowField.code)}>
+            C{!hiddenList.includes(AclRowField.code) && "ode"}
           </CodeCol>
           <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclHeaderHdg}>
-            <HdgCol hover hidden={hiddenList.includes(aclRowField.hdg)} onMouseDown={() => toggleHideColumn(aclRowField.hdg)}>
-              {hiddenList.includes(aclRowField.hdg) && anyAssignedHeading && "*"}H{!hiddenList.includes(aclRowField.hdg) && "dg"}
+            <HdgCol hover hidden={hiddenList.includes(AclRowField.hdg)} onMouseDown={() => toggleHideColumn(AclRowField.hdg)}>
+              {hiddenList.includes(AclRowField.hdg) && anyAssignedHeading && "*"}H{!hiddenList.includes(AclRowField.hdg) && "dg"}
             </HdgCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclHeaderSlash}>
@@ -163,9 +163,9 @@ export function AclTable() {
             </HdgSpdSlashCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclHeaderSpd}>
-            <SpdCol hover hidden={hiddenList.includes(aclRowField.spd)} onMouseDown={() => toggleHideColumn(aclRowField.spd)}>
-              S{!hiddenList.includes(aclRowField.spd) && "pd"}
-              {hiddenList.includes(aclRowField.spd) && anyAssignedSpeed && "*"}
+            <SpdCol hover hidden={hiddenList.includes(AclRowField.spd)} onMouseDown={() => toggleHideColumn(AclRowField.spd)}>
+              S{!hiddenList.includes(AclRowField.spd) && "pd"}
+              {hiddenList.includes(AclRowField.spd) && anyAssignedSpeed && "*"}
             </SpdCol>
           </EdstTooltip>
           <SpecialBox disabled />

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { EdstButton } from "../resources/EdstButton";
 import { computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteString } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { menuEnum } from "../../enums";
+import { EdstMenu } from "../../enums";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { LocalEdstEntry } from "../../types";
@@ -22,13 +22,13 @@ const PrevRouteMenuDiv = styled(OptionsMenu)`
 export const PreviousRouteMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
   const referenceFixes = useRootSelector(referenceFixSelector);
-  const pos = useRootSelector(menuPositionSelector(menuEnum.prevRouteMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.prevRouteMenu));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.equipmentTemplateMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.equipmentTemplateMenu);
 
   const closestReferenceFix = entry.aclDisplay ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
   const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
@@ -41,8 +41,8 @@ export const PreviousRouteMenu: React.FC = () => {
       <PrevRouteMenuDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.prevRouteMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.prevRouteMenu) > 0 && dispatch(pushZStack(menuEnum.prevRouteMenu))}
+        zIndex={zStack.indexOf(EdstMenu.prevRouteMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.prevRouteMenu) > 0 && dispatch(pushZStack(EdstMenu.prevRouteMenu))}
         anyDragging={anyDragging}
         id="prev-route-menu"
       >
@@ -76,12 +76,12 @@ export const PreviousRouteMenu: React.FC = () => {
                       }
                     })
                   );
-                  dispatch(closeMenu(menuEnum.prevRouteMenu));
+                  dispatch(closeMenu(EdstMenu.prevRouteMenu));
                 }}
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.prevRouteMenu))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.prevRouteMenu))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </OptionsBody>

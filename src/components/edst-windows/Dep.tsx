@@ -7,7 +7,7 @@ import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/sli
 import { useFocused } from "../../hooks";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { DraggableDiv } from "../../styles/styles";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 
 const DepDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;
@@ -36,8 +36,8 @@ export const Dep: React.FC = () => {
     <DepDiv
       anyDragging={anyDragging}
       ref={ref}
-      zIndex={zStack.indexOf(windowEnum.dep)}
-      onMouseDown={() => zStack.indexOf(windowEnum.dep) > 0 && !fullscreen && dispatch(pushZStack(windowEnum.dep))}
+      zIndex={zStack.indexOf(EdstWindow.dep)}
+      onMouseDown={() => zStack.indexOf(EdstWindow.dep) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.dep))}
     >
       <DepHeader focused={focused} />
       <DepTable />

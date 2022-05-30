@@ -20,9 +20,7 @@ export const depFilter = (entry: EdstEntry, artccId: string) => {
 export const entryFilter = (entry: Partial<LocalEdstEntry>, polygons: Feature<Polygon>[]) => {
   const pos: Position = [entry.flightplan.lon, entry.flightplan.lat];
   const willEnterAirspace =
-    entry.currentRoute_data && entry.currentRoute
-      ? routeWillEnterAirspace(entry.currentRoute, entry.currentRoute_data.slice(0), polygons, pos)
-      : false;
+    entry.currentRouteData && entry.currentRoute ? routeWillEnterAirspace(entry.currentRoute, entry.currentRouteData.slice(0), polygons, pos) : false;
   return (
     (entry.boundaryTime ?? Infinity) < BOUNDARY_TIME_FILTER &&
     willEnterAirspace &&

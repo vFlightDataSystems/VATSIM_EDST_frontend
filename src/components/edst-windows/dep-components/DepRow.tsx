@@ -5,7 +5,7 @@ import { Tooltips } from "../../../tooltips";
 import { LocalEdstEntry } from "../../../types";
 import { deleteDepEntry, toggleSpa, updateEntry } from "../../../redux/slices/entriesSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { depRowField, menuEnum, windowEnum } from "../../../enums";
+import { DepRowField, EdstMenu, EdstWindow } from "../../../enums";
 import { aselSelector, setInputFocused } from "../../../redux/slices/appSlice";
 import { depAircraftSelect } from "../../../redux/thunks/thunks";
 import { amendEntryThunk } from "../../../redux/thunks/entriesThunks";
@@ -30,7 +30,7 @@ const COMPLETED_SYMBOL = "✓";
 
 type DepRowProps = {
   entry: LocalEdstEntry;
-  hidden: depRowField[];
+  hidden: DepRowField[];
   index: number;
 };
 
@@ -62,7 +62,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
   }, [entry.aarList, entry.adr, entry.route_data, route]);
 
   const checkAarReroutePending = () => {
-    const currentFixNames = (entry.currentRoute_data ?? entry.route_data).map(fix => fix.name);
+    const currentFixNames = (entry.currentRouteData ?? entry.route_data).map(fix => fix.name);
     const eligibleAar = entry.currentAarList?.filter(aar => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
@@ -129,13 +129,13 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
         }
         break;
       default:
-        dispatch(depAircraftSelect(event, entry.cid, depRowField.fid));
+        dispatch(depAircraftSelect(event, entry.cid, DepRowField.fid));
         break;
     }
   };
 
-  const isSelected = (cid: string, field: depRowField): boolean => {
-    return asel?.window === windowEnum.dep && asel?.cid === cid && asel?.field === field;
+  const isSelected = (cid: string, field: DepRowField): boolean => {
+    return asel?.window === EdstWindow.dep && asel?.cid === cid && asel?.field === field;
   };
 
   return (
@@ -152,7 +152,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           <EdstTooltip title={Tooltips.depFlightId}>
             <FidCol
               hover
-              selected={isSelected(entry.cid, depRowField.fid)}
+              selected={isSelected(entry.cid, DepRowField.fid)}
               onMouseDown={handleFidClick}
               onContextMenu={event => event.preventDefault()}
             >
@@ -167,10 +167,10 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depType}>
             <AircraftTypeCol
-              contentHidden={hidden.includes(depRowField.type)}
+              contentHidden={hidden.includes(DepRowField.type)}
               hover
-              selected={isSelected(entry.cid, depRowField.type)}
-              onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, depRowField.type))}
+              selected={isSelected(entry.cid, DepRowField.type)}
+              onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, DepRowField.type))}
             >
               {`${entry.type}/${entry.equipment}`}
             </AircraftTypeCol>
@@ -178,8 +178,8 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           <EdstTooltip title={Tooltips.depAlt}>
             <AltCol>
               <AltColDiv
-                selected={isSelected(entry.cid, depRowField.alt)}
-                onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, depRowField.alt, null, menuEnum.altitudeMenu))}
+                selected={isSelected(entry.cid, DepRowField.alt)}
+                onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, DepRowField.alt, null, EdstMenu.altitudeMenu))}
               >
                 {entry.altitude}
               </AltColDiv>
@@ -187,10 +187,10 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depCode}>
             <CodeCol
-              contentHidden={hidden.includes(depRowField.code)}
+              contentHidden={hidden.includes(DepRowField.code)}
               hover
-              selected={isSelected(entry.cid, depRowField.code)}
-              onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, depRowField.code))}
+              selected={isSelected(entry.cid, DepRowField.code)}
+              onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, DepRowField.code))}
             >
               {entry.beacon}
             </CodeCol>
@@ -198,8 +198,8 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           <EdstTooltip title={Tooltips.depRoute}>
             <RouteCol
               hover
-              selected={isSelected(entry.cid, depRowField.route)}
-              onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, depRowField.route, null, menuEnum.routeMenu))}
+              selected={isSelected(entry.cid, DepRowField.route)}
+              onMouseDown={event => dispatch(depAircraftSelect(event, entry.cid, DepRowField.route, null, EdstMenu.routeMenu))}
             >
               <RouteSpan padding="0 2px">
                 <RouteSpan>
@@ -207,11 +207,11 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
                   {entry.dep}
                 </RouteSpan>
                 {pendingAdr && !onAdr && (
-                  <RouteAmendmentSpan selected={isSelected(entry.cid, depRowField.route)}>{`[${pendingAdr}]`}</RouteAmendmentSpan>
+                  <RouteAmendmentSpan selected={isSelected(entry.cid, DepRowField.route)}>{`[${pendingAdr}]`}</RouteAmendmentSpan>
                 )}
                 {route}
                 {pendingAar && !onAar && (
-                  <RouteAmendmentSpan selected={isSelected(entry.cid, depRowField.route)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
+                  <RouteAmendmentSpan selected={isSelected(entry.cid, DepRowField.route)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
                 )}
                 {route?.slice(-1) !== "." && ".."}
                 {entry.dest}

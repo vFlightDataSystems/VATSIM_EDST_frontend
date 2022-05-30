@@ -12,7 +12,7 @@ import { RootState } from "../store";
 import { setArtccId, setReferenceFixes, setSectorId, setSectorProfiles, setSectors } from "../slices/sectorSlice";
 import { refreshEntriesThunk } from "../slices/entriesSlice";
 import { refreshSigmets } from "./weatherThunks";
-import { sectorTypeEnum, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
+import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
 import { Fix } from "../../types";
 
 const DISCLAIMER_MESSAGE = `
@@ -68,7 +68,7 @@ export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) =>
       .then(response => response.json())
       .then(sectorTypeData => {
         if (sectorTypeData) {
-          const data: Record<string, sectorTypeEnum> = {};
+          const data: Record<string, SectorType> = {};
           sectorTypeData.forEach((elem: any) => {
             data[elem.id] = elem.type;
           });

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { AirwayFix, Fix } from "../../types";
 
-export enum sectorTypeEnum {
+export enum SectorType {
   ultraLow = "UL",
   low = "L",
   high = "H",
@@ -44,7 +44,7 @@ export type AircraftDisplayOptions = {
 export type GpdState = {
   mapFeatureOptions: MapFeatureOptions;
   aircraftDisplayOptions: AircraftDisplayOptions;
-  sectorTypes: Record<string, sectorTypeEnum>;
+  sectorTypes: Record<string, SectorType>;
   navaids: Fix[];
   waypoints: Fix[];
   airways: Record<string, AirwayFix[]>;
@@ -94,7 +94,7 @@ const gpdSlice = createSlice({
     setAircraftDisplayOptions(state, action: { payload: AircraftDisplayOptions }) {
       state.aircraftDisplayOptions = action.payload;
     },
-    setSectorTypes(state, action: { payload: Record<string, sectorTypeEnum> }) {
+    setSectorTypes(state, action: { payload: Record<string, SectorType> }) {
       state.sectorTypes = action.payload;
     },
     setNavaids(state, action: { payload: Fix[] }) {

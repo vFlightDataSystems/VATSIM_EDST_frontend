@@ -5,7 +5,7 @@ import { EdstButton, EdstButton20x20 } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { aselSelector, Asel, closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
 import { LocalEdstEntry } from "../../../types";
@@ -29,7 +29,7 @@ const SpeedDiv = styled(OptionsMenu)`
 export const SpeedMenu: React.FC = () => {
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(menuEnum.speedMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.speedMenu));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const [speed, setSpeed] = useState(280);
@@ -39,7 +39,7 @@ export const SpeedMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.speedMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.speedMenu);
 
   useEffect(() => {
     setSpeed(280);
@@ -81,7 +81,7 @@ export const SpeedMenu: React.FC = () => {
       default:
         break;
     }
-    dispatch(closeMenu(menuEnum.speedMenu));
+    dispatch(closeMenu(EdstMenu.speedMenu));
   };
 
   return (
@@ -90,8 +90,8 @@ export const SpeedMenu: React.FC = () => {
       <SpeedDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.speedMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.speedMenu) > 0 && dispatch(pushZStack(menuEnum.speedMenu))}
+        zIndex={zStack.indexOf(EdstMenu.speedMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.speedMenu) > 0 && dispatch(pushZStack(EdstMenu.speedMenu))}
         anyDragging={anyDragging}
         id="speed-menu"
       >
@@ -159,7 +159,7 @@ export const SpeedMenu: React.FC = () => {
             })}
             <OptionsBodyRow margin="0">
               <OptionsBodyCol alignRight>
-                <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.speedMenu))} />
+                <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.speedMenu))} />
               </OptionsBodyCol>
             </OptionsBodyRow>
           </ScrollContainer>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { closeMenu } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/aclSlice";
@@ -64,12 +64,12 @@ export const ToolsOptionsMenu: React.FC = () => {
                   nonRvsmIndicator
                 })
               );
-              dispatch(closeMenu(menuEnum.toolsMenu));
+              dispatch(closeMenu(EdstMenu.toolsMenu));
             }}
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))} />
+          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.toolsMenu))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

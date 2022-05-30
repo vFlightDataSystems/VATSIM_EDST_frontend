@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { altimeterSelector, removeAirportAltimeter } from "../../redux/slices/weatherSlice";
@@ -29,13 +29,13 @@ const AltimCol = styled.span<{ underline?: boolean; reportingStation?: boolean }
 
 export const AltimeterWindow: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(windowEnum.altimeter));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.altimeter));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number; y: number; w: number } | null>(null);
   const altimeterList = useRootSelector(altimeterSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.altimeter);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.altimeter);
 
   const now = new Date();
   const utcMinutesNow = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -58,8 +58,8 @@ export const AltimeterWindow: React.FC = () => {
     pos && (
       <AltimeterDiv
         pos={pos}
-        zIndex={zStack.indexOf(windowEnum.altimeter)}
-        onMouseDown={() => zStack.indexOf(windowEnum.altimeter) > 0 && dispatch(pushZStack(windowEnum.altimeter))}
+        zIndex={zStack.indexOf(EdstWindow.altimeter)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.altimeter) > 0 && dispatch(pushZStack(EdstWindow.altimeter))}
         ref={ref}
         anyDragging={anyDragging}
         id="edst-altimeter"
@@ -68,7 +68,7 @@ export const AltimeterWindow: React.FC = () => {
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>ALTIM SET</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.altimeter))}>
+          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.altimeter))}>
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>
