@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { mraMsgSelector, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -20,25 +20,25 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
 `;
 
 export const MessageResponseArea: React.FC = () => {
-  const pos = useRootSelector(windowPositionSelector(windowEnum.messageResponseArea));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.messageResponseArea));
   const msg = useRootSelector(mraMsgSelector);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.messageResponseArea);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.messageResponseArea);
 
   return (
     pos && (
       <MessageResponseAreaDiv
         pos={pos}
-        zIndex={zStack.indexOf(windowEnum.messageResponseArea)}
+        zIndex={zStack.indexOf(EdstWindow.messageResponseArea)}
         ref={ref}
         anyDragging={anyDragging}
         id="edst-mra"
         onMouseDown={event => {
           startDrag(event);
-          if (zStack.indexOf(windowEnum.messageResponseArea) > 0) {
-            dispatch(pushZStack(windowEnum.messageResponseArea));
+          if (zStack.indexOf(EdstWindow.messageResponseArea) > 0) {
+            dispatch(pushZStack(EdstWindow.messageResponseArea));
           }
         }}
       >

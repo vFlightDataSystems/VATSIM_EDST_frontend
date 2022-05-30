@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import {
@@ -37,7 +37,7 @@ const SigmetDiv = styled(FloatingWindowDiv)`
 
 export const SigmetWindow: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(windowEnum.sigmets));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.sigmets));
   const sectorId = useRootSelector(sectorIdSelector);
   const viewSuppressed = useRootSelector(viewSigmetSuppressedSelector);
   const sigmetList = useRootSelector(sigmetSelector);
@@ -46,7 +46,7 @@ export const SigmetWindow: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number; y: number; w: number } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.sigmets);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.sigmets);
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
@@ -77,8 +77,8 @@ export const SigmetWindow: React.FC = () => {
       <SigmetDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(windowEnum.sigmets)}
-        onMouseDown={() => zStack.indexOf(windowEnum.sigmets) > 0 && dispatch(pushZStack(windowEnum.sigmets))}
+        zIndex={zStack.indexOf(EdstWindow.sigmets)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.sigmets) > 0 && dispatch(pushZStack(EdstWindow.sigmets))}
         anyDragging={anyDragging}
         id="edst-status"
       >
@@ -86,7 +86,7 @@ export const SigmetWindow: React.FC = () => {
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>SIGMETS SECTOR {sectorId}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.sigmets))}>
+          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.sigmets))}>
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>

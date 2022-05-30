@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { metarSelector, removeAirportMetar } from "../../redux/slices/weatherSlice";
@@ -23,13 +23,13 @@ const MetarDiv = styled(FloatingWindowDiv)`
 
 export const MetarWindow: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(windowEnum.metar));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.metar));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<{ x: number; y: number; w: number } | null>(null);
   const metarList = useRootSelector(metarSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.metar);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.metar);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selected !== airport) {
@@ -49,8 +49,8 @@ export const MetarWindow: React.FC = () => {
     pos && (
       <MetarDiv
         pos={pos}
-        zIndex={zStack.indexOf(windowEnum.metar)}
-        onMouseDown={() => zStack.indexOf(windowEnum.metar) > 0 && dispatch(pushZStack(windowEnum.metar))}
+        zIndex={zStack.indexOf(EdstWindow.metar)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.metar) > 0 && dispatch(pushZStack(EdstWindow.metar))}
         ref={ref}
         anyDragging={anyDragging}
         id="edst-status"
@@ -59,7 +59,7 @@ export const MetarWindow: React.FC = () => {
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>WX</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.metar))}>
+          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.metar))}>
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>

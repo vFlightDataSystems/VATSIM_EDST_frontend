@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import {
@@ -20,9 +20,9 @@ const OutageDiv = styled(FloatingWindowDiv)`
 
 export const Outage: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(windowEnum.outage));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.outage));
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, windowEnum.outage);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.outage);
   const zStack = useRootSelector(zStackSelector);
 
   return (
@@ -30,8 +30,8 @@ export const Outage: React.FC = () => {
       <OutageDiv
         pos={pos}
         ref={ref}
-        zIndex={zStack.indexOf(windowEnum.outage)}
-        onMouseDown={() => zStack.indexOf(windowEnum.outage) > 0 && dispatch(pushZStack(windowEnum.outage))}
+        zIndex={zStack.indexOf(EdstWindow.outage)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.outage) > 0 && dispatch(pushZStack(EdstWindow.outage))}
         anyDragging={anyDragging}
         id="edst-outage"
       >
@@ -39,7 +39,7 @@ export const Outage: React.FC = () => {
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>OUTAGE</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(windowEnum.outage))}>
+          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.outage))}>
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>

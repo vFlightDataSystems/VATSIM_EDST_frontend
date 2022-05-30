@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { aclAselActionTrigger, aclRowField, depAselActionTrigger, depRowField, menuEnum, windowEnum } from "../../enums";
+import { AclAselActionTrigger, AclRowField, DepAselActionTrigger, DepRowField, EdstMenu, EdstWindow } from "../../enums";
 import { REMOVAL_TIMEOUT } from "../../lib";
 import { deleteAclEntry, updateEntry } from "../slices/entriesSlice";
 import { WindowPosition } from "../../types";
 import { closeAircraftMenus, closeWindow, openMenu, openWindow, setAsel, setMenuPosition, setWindowPosition } from "../slices/appSlice";
-import { addTrialPlan, planCleanup, PlanQuery, Plan, removeTrialPlan } from "../slices/planSlice";
+import { addTrialPlan, PlanQuery, Plan, removeTrialPlan } from "../slices/planSlice";
 import { trialRoute } from "../../api";
 
 export function aclCleanup(dispatch: any, getState: () => RootState) {
@@ -20,12 +20,12 @@ export function aclCleanup(dispatch: any, getState: () => RootState) {
 
 function aircraftSelect(
   event: Event & any,
-  window: windowEnum | null,
+  window: EdstWindow | null,
   cid: string,
-  field: aclRowField | depRowField,
+  field: AclRowField | DepRowField,
   // eslint-disable-next-line default-param-last
-  aselAction: aclAselActionTrigger | depAselActionTrigger | null = null,
-  triggerOpenWindow?: windowEnum | menuEnum | null
+  aselAction: AclAselActionTrigger | DepAselActionTrigger | null = null,
+  triggerOpenWindow?: EdstWindow | EdstMenu | null
 ) {
   return (dispatch: any, getState: () => RootState) => {
     const state = getState();
@@ -38,42 +38,42 @@ function aircraftSelect(
     } else {
       const entry = state.entries[cid];
       switch (window) {
-        case windowEnum.dep:
+        case EdstWindow.dep:
           if (
             !state.dep.manualPosting &&
-            field === depRowField.fid &&
-            aselAction === depAselActionTrigger.setDepStatusNeutral &&
+            field === DepRowField.fid &&
+            aselAction === DepAselActionTrigger.setDepStatusNeutral &&
             entry.depStatus === -1
           ) {
             dispatch(updateEntry({ cid, data: { vciStatus: 0 } }));
           }
-          dispatch(setAsel({ cid, field: field as depRowField, window: windowEnum.dep }));
+          dispatch(setAsel({ cid, field: field as DepRowField, window: EdstWindow.dep }));
           if (triggerOpenWindow) {
-            if (triggerOpenWindow in windowEnum) {
-              dispatch(openWindowThunk(triggerOpenWindow as windowEnum, event.currentTarget, windowEnum.dep));
+            if (triggerOpenWindow in EdstWindow) {
+              dispatch(openWindowThunk(triggerOpenWindow as EdstWindow, event.currentTarget, EdstWindow.dep));
             }
-            if (triggerOpenWindow in menuEnum) {
-              dispatch(openMenuThunk(triggerOpenWindow as menuEnum, event.currentTarget, windowEnum.dep, false));
+            if (triggerOpenWindow in EdstMenu) {
+              dispatch(openMenuThunk(triggerOpenWindow as EdstMenu, event.currentTarget, EdstWindow.dep, false));
             }
           }
           break;
-        case windowEnum.graphicPlanDisplay:
-          if (triggerOpenWindow && triggerOpenWindow in menuEnum) {
-            dispatch(openMenuThunk(triggerOpenWindow as menuEnum, event.currentTarget, windowEnum.graphicPlanDisplay, false));
+        case EdstWindow.graphicPlanDisplay:
+          if (triggerOpenWindow && triggerOpenWindow in EdstMenu) {
+            dispatch(openMenuThunk(triggerOpenWindow as EdstMenu, event.currentTarget, EdstWindow.graphicPlanDisplay, false));
           }
-          dispatch(setAsel({ cid, field: field as aclRowField, window: windowEnum.graphicPlanDisplay }));
+          dispatch(setAsel({ cid, field: field as AclRowField, window: EdstWindow.graphicPlanDisplay }));
           break;
         default:
-          if (!state.acl.manualPosting && field === aclRowField.fid && aselAction === aclAselActionTrigger.setVciNeutral && entry?.vciStatus === -1) {
+          if (!state.acl.manualPosting && field === AclRowField.fid && aselAction === AclAselActionTrigger.setVciNeutral && entry?.vciStatus === -1) {
             dispatch(updateEntry({ cid, data: { vciStatus: 0 } }));
           }
-          dispatch(setAsel({ cid, field: field as aclRowField, window: windowEnum.acl }));
+          dispatch(setAsel({ cid, field: field as AclRowField, window: EdstWindow.acl }));
           if (triggerOpenWindow) {
-            if (triggerOpenWindow in windowEnum) {
-              dispatch(openWindowThunk(triggerOpenWindow as windowEnum, event.currentTarget, windowEnum.acl));
+            if (triggerOpenWindow in EdstWindow) {
+              dispatch(openWindowThunk(triggerOpenWindow as EdstWindow, event.currentTarget, EdstWindow.acl));
             }
-            if (triggerOpenWindow in menuEnum) {
-              dispatch(openMenuThunk(triggerOpenWindow as menuEnum, event.currentTarget, windowEnum.acl, false));
+            if (triggerOpenWindow in EdstMenu) {
+              dispatch(openMenuThunk(triggerOpenWindow as EdstMenu, event.currentTarget, EdstWindow.acl, false));
             }
           }
           break;
@@ -85,31 +85,31 @@ function aircraftSelect(
 export function gpdAircraftSelect(
   event: Event & any,
   cid: string,
-  field: aclRowField,
-  aselAction?: aclAselActionTrigger | null,
-  triggerOpenWindow?: windowEnum | menuEnum | null
+  field: AclRowField,
+  aselAction?: AclAselActionTrigger | null,
+  triggerOpenWindow?: EdstWindow | EdstMenu | null
 ) {
-  return aircraftSelect(event, windowEnum.graphicPlanDisplay, cid, field, aselAction, triggerOpenWindow);
+  return aircraftSelect(event, EdstWindow.graphicPlanDisplay, cid, field, aselAction, triggerOpenWindow);
 }
 
 export function aclAircraftSelect(
   event: Event & any,
   cid: string,
-  field: aclRowField,
-  aselAction?: aclAselActionTrigger | null,
-  triggerOpenWindow?: windowEnum | menuEnum | null
+  field: AclRowField,
+  aselAction?: AclAselActionTrigger | null,
+  triggerOpenWindow?: EdstWindow | EdstMenu | null
 ) {
-  return aircraftSelect(event, windowEnum.acl, cid, field, aselAction, triggerOpenWindow);
+  return aircraftSelect(event, EdstWindow.acl, cid, field, aselAction, triggerOpenWindow);
 }
 
 export function depAircraftSelect(
   event: any & Event,
   cid: string,
-  field: depRowField,
-  aselAction?: depAselActionTrigger | null,
-  triggerOpenWindow?: windowEnum | menuEnum | null
+  field: DepRowField,
+  aselAction?: DepAselActionTrigger | null,
+  triggerOpenWindow?: EdstWindow | EdstMenu | null
 ) {
-  return aircraftSelect(event, windowEnum.dep, cid, field, aselAction, triggerOpenWindow);
+  return aircraftSelect(event, EdstWindow.dep, cid, field, aselAction, triggerOpenWindow);
 }
 
 // export function planCleanupThunk() {
@@ -118,7 +118,7 @@ export function depAircraftSelect(
 //   };
 // }
 
-export function openWindowThunk(window: windowEnum, ref?: EventTarget & any, triggeredFromWindow?: windowEnum) {
+export function openWindowThunk(window: EdstWindow, ref?: EventTarget & any, triggeredFromWindow?: EdstWindow) {
   return (dispatch: any) => {
     if (ref) {
       const { x, y } = ref.getBoundingClientRect();
@@ -132,13 +132,13 @@ export function openWindowThunk(window: windowEnum, ref?: EventTarget & any, tri
   };
 }
 
-export function openMenuThunk(menu: menuEnum, ref?: EventTarget & any, triggeredFromWindow?: windowEnum | menuEnum, plan = false) {
+export function openMenuThunk(menu: EdstMenu, ref?: EventTarget & any, triggeredFromWindow?: EdstWindow | EdstMenu, plan = false) {
   return (dispatch: any) => {
     if (ref) {
       let menuPos: WindowPosition;
       const { x, y, height, width } = ref.getBoundingClientRect();
       switch (menu) {
-        case menuEnum.altitudeMenu:
+        case EdstMenu.altitudeMenu:
           menuPos = {
             x: x + (plan ? 0 : width),
             y: plan ? ref.offsetTop : y - 76,
@@ -146,9 +146,9 @@ export function openMenuThunk(menu: menuEnum, ref?: EventTarget & any, triggered
             h: height
           };
           break;
-        case menuEnum.routeMenu:
+        case EdstMenu.routeMenu:
           menuPos =
-            triggeredFromWindow !== windowEnum.dep
+            triggeredFromWindow !== EdstWindow.dep
               ? {
                   x: x - (plan ? 0 : 569),
                   y: plan ? ref.offsetTop : y - 3 * height,
@@ -162,7 +162,7 @@ export function openMenuThunk(menu: menuEnum, ref?: EventTarget & any, triggered
                   h: height
                 };
           break;
-        case menuEnum.prevRouteMenu:
+        case EdstMenu.prevRouteMenu:
           menuPos = {
             x,
             y: plan ? ref.offsetTop : y - 2 * height,
@@ -170,7 +170,7 @@ export function openMenuThunk(menu: menuEnum, ref?: EventTarget & any, triggered
             h: height
           };
           break;
-        case menuEnum.speedMenu:
+        case EdstMenu.speedMenu:
           menuPos = {
             x: x + width,
             y: 200,
@@ -178,7 +178,7 @@ export function openMenuThunk(menu: menuEnum, ref?: EventTarget & any, triggered
             h: height
           };
           break;
-        case menuEnum.headingMenu:
+        case EdstMenu.headingMenu:
           menuPos = {
             x: x + width,
             y: 200,
@@ -217,14 +217,14 @@ export const addTrialPlanThunk = createAsyncThunk("plan/trial/route", async (pla
   } else {
     thunkAPI.dispatch(addTrialPlan(plan));
   }
-  thunkAPI.dispatch(openWindow({ window: windowEnum.plansDisplay }));
+  thunkAPI.dispatch(openWindow({ window: EdstWindow.plansDisplay }));
 });
 
 export function removeTrialPlanThunk(index: number) {
   return (dispatch: any, getState: () => RootState) => {
     dispatch(removeTrialPlan(index));
     if (getState().plan.planQueue.length === 0) {
-      dispatch(closeWindow(windowEnum.plansDisplay));
+      dispatch(closeWindow(EdstWindow.plansDisplay));
     }
   };
 }

@@ -5,6 +5,7 @@ import "./index.css";
 import "./css/styles.scss";
 import { App } from "./App";
 import store from "./redux/store";
+import { HubProvider } from "./hub";
 // import reportWebVitals from './reportWebVitals';
 
 declare global {
@@ -16,7 +17,9 @@ declare global {
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <HubProvider>
+        <App />
+      </HubProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

@@ -5,7 +5,7 @@ import { removeDestFromRouteString } from "../../lib";
 import { amendRoute, updateEdstEntry } from "../../api";
 import { refreshEntry } from "../refresh";
 import { addAclEntry, addDepEntry, setEntry, updateEntry } from "../slices/entriesSlice";
-import { aclRowField, depRowField, windowEnum } from "../../enums";
+import { AclRowField, DepRowField, EdstWindow } from "../../enums";
 import { setAsel } from "../slices/appSlice";
 import { ReferenceFix } from "../../types";
 
@@ -18,7 +18,7 @@ export const amendDirectThunk = createAsyncThunk(
       .then(response => response.json())
       .then(data => {
         if (data.route && data.route_data) {
-          thunkAPI.dispatch(updateEntry({ cid, data: { currentRoute: data.route, currentRoute_data: data.route_data } }));
+          thunkAPI.dispatch(updateEntry({ cid, data: { currentRoute: data.route, currentRouteData: data.route_data } }));
         }
       });
   }
@@ -26,10 +26,10 @@ export const amendDirectThunk = createAsyncThunk(
 
 export const amendRouteThunk = createAsyncThunk(
   "entries/amendRoute",
-  async ({ cid, route: _route, frd }: { cid: string; route: string; frd?: string }, thunkAPI) => {
+  async ({ cid, route: currentRoute, frd }: { cid: string; route: string; frd?: string }, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     const currentEntry = state.entries[cid];
-    let route = _route.slice(0);
+    let route = currentRoute.slice(0);
     if (route.match(/^[A-Z]+\d{6}/gi)) {
       route = route.split(".", 1)[1].replace(/^\.+/gi, "");
     }
@@ -41,7 +41,7 @@ export const amendRouteThunk = createAsyncThunk(
       .then(response => response.json())
       .then(data => {
         if (data) {
-          thunkAPI.dispatch(updateEntry({ cid, data: { currentRoute: data.route, currentRoute_data: data.route_data } }));
+          thunkAPI.dispatch(updateEntry({ cid, data: { currentRoute: data.route, currentRouteData: data.route_data } }));
         }
       });
   }
@@ -61,7 +61,7 @@ export const amendEntryThunk = createAsyncThunk(
       const { dest } = currentEntry;
       planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
       planData.previous_route = currentEntry.depDisplay ? currentEntry.route : currentEntry.currentRoute;
-      planData.previous_route_data = currentEntry.depDisplay ? currentEntry.route_data : currentEntry.currentRoute_data;
+      planData.previous_route_data = currentEntry.depDisplay ? currentEntry.route_data : currentEntry.currentRouteData;
     }
     planData.callsign = currentEntry.callsign;
     return updateEdstEntry(planData)
@@ -78,19 +78,19 @@ export const amendEntryThunk = createAsyncThunk(
   }
 );
 
-function addEntryThunk(fid: string, window: windowEnum) {
+function addEntryThunk(fid: string, window: EdstWindow) {
   return (dispatch: any, getState: () => RootState) => {
     const { entries } = getState();
     const cid = Object.values(entries ?? {})?.find(e => String(e?.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid)?.cid;
     if (cid) {
       switch (window) {
-        case windowEnum.acl:
+        case EdstWindow.acl:
           dispatch(addAclEntry(cid));
-          dispatch(setAsel({ cid, field: aclRowField.fid, window: windowEnum.acl }));
+          dispatch(setAsel({ cid, field: AclRowField.fid, window: EdstWindow.acl }));
           break;
-        case windowEnum.dep:
+        case EdstWindow.dep:
           dispatch(addDepEntry(cid));
-          dispatch(setAsel({ cid, field: depRowField.fid, window: windowEnum.dep }));
+          dispatch(setAsel({ cid, field: DepRowField.fid, window: EdstWindow.dep }));
           break;
         default:
           break;
@@ -100,9 +100,9 @@ function addEntryThunk(fid: string, window: windowEnum) {
 }
 
 export function addAclEntryByFid(fid: string) {
-  return addEntryThunk(fid, windowEnum.acl);
+  return addEntryThunk(fid, EdstWindow.acl);
 }
 
 export function addDepEntryByFid(fid: string) {
-  return addEntryThunk(fid, windowEnum.dep);
+  return addEntryThunk(fid, EdstWindow.dep);
 }

@@ -22,9 +22,9 @@ export function refreshEntry(
     });
   }
   newEntry.route = removeDestFromRouteString(newEntry.route.slice(0), newEntry.dest);
-  if (currentEntry.route_data === newEntry.route_data && currentEntry.currentRoute_data) {
+  if (currentEntry.route_data === newEntry.route_data && currentEntry.currentRouteData) {
     // if route_data has not changed
-    newEntry.currentRoute_data = getRouteDataDistance(currentEntry.currentRoute_data, pos);
+    newEntry.currentRouteData = getRouteDataDistance(currentEntry.currentRouteData, pos);
     // // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
     // if (currentEntry.aarList?.length) {
     //   newEntry._aarList = processAar(currentEntry, currentEntry.aarList);
@@ -32,19 +32,19 @@ export function refreshEntry(
   } else {
     // if route_data has changed
     if (newEntry.route_data) {
-      newEntry.currentRoute_data = getRouteDataDistance(newEntry.route_data, pos);
+      newEntry.currentRouteData = getRouteDataDistance(newEntry.route_data, pos);
     }
     // recompute aar (aircraft might have passed a tfix, so the AAR doesn't apply anymore)
     if (currentEntry.aarList) {
       newEntry.currentAarList = processAar(currentEntry, currentEntry.aarList);
     }
   }
-  if (newEntry.currentRoute_data) {
-    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry.currentRoute_data.slice(0), pos, dest, polygons));
+  if (newEntry.currentRouteData) {
+    _.assign(newEntry, getRemainingRouteData(newEntry.route, newEntry.currentRouteData.slice(0), pos, dest, polygons));
   }
   if (
     newEntry.update_time === currentEntry.update_time ||
-    ((newEntry.currentRoute_data?.[-1]?.dist ?? Infinity) < 15 && newEntry.dest_info) ||
+    ((newEntry.currentRouteData?.[-1]?.dist ?? Infinity) < 15 && newEntry.dest_info) ||
     !(entryFilter(newEntry, polygons) || depFilter(newEntry, artccId))
   ) {
     newEntry.pendingRemoval = currentEntry.pendingRemoval ?? new Date().getTime();

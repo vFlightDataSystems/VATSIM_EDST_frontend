@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { EdstButton, EdstTemplateButton85 } from "../../resources/EdstButton";
 import { EquipmentNavTemplate } from "./EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "./EquipmentSurvTemplate";
@@ -84,22 +84,22 @@ export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = ({
 
 export const EquipmentTemplateMenu: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(menuPositionSelector(menuEnum.equipmentTemplateMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.equipmentTemplateMenu));
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.equipmentTemplateMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.equipmentTemplateMenu);
 
   return (
     pos && (
       <EqpTemplateDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.equipmentTemplateMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.equipmentTemplateMenu) > 0 && dispatch(pushZStack(menuEnum.equipmentTemplateMenu))}
+        zIndex={zStack.indexOf(EdstMenu.equipmentTemplateMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.equipmentTemplateMenu) > 0 && dispatch(pushZStack(EdstMenu.equipmentTemplateMenu))}
         anyDragging={anyDragging}
         id="equipment-template-menu"
       >
@@ -147,7 +147,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
               <EdstButton disabled content="OK" />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Cancel" onMouseDown={() => dispatch(closeMenu(menuEnum.equipmentTemplateMenu))} />
+              <EdstButton content="Cancel" onMouseDown={() => dispatch(closeMenu(EdstMenu.equipmentTemplateMenu))} />
             </OptionsBodyCol>
           </EqpTemplateBottomRow>
         </EqpTemplateBody>

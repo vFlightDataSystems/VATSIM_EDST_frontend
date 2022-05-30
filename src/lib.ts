@@ -120,7 +120,7 @@ export function getRemainingRouteData(
   pos: Position,
   dest: string,
   polygons?: Feature<Polygon>[]
-): { _route: string; _route_data: RouteFix[] } {
+): { currentRoute: string; currentRouteData: RouteFix[] } {
   if (routeData.length > 1) {
     const fixNames = routeData.map(e => e.name);
     if (fixNames.slice(-1)[0] === dest) {
@@ -152,7 +152,7 @@ export function getRemainingRouteData(
     }
     routeData = routeData.slice(routeData.indexOf(firstFixToShow));
   }
-  return { _route: route, _route_data: routeData };
+  return { currentRoute: route, currentRouteData: routeData };
 }
 
 export function getNextFix(route: string, routeData: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
@@ -191,7 +191,7 @@ export function getClosestReferenceFix(referenceFixes: any[], posPoint: Feature<
 }
 
 export function processAar(entry: Partial<LocalEdstEntry>, aarList: any[]) {
-  const { currentRoute_data: currentRouteData, currentRoute: route } = entry;
+  const { currentRouteData, currentRoute: route } = entry;
   if (!currentRouteData || !route) {
     return null;
   }
@@ -270,13 +270,13 @@ export function computeBoundaryTime(entry: EdstEntry, polygons: Feature<Polygon>
  */
 export function computeCrossingTimes(entry: LocalEdstEntry): (RouteFix & { minutesAtFix: number })[] {
   const newRouteData: (RouteFix & { minutesAtFix: number })[] = [];
-  if (entry.currentRoute_data) {
+  if (entry.currentRouteData) {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const groundspeed = Number(entry.flightplan?.ground_speed);
-    if (entry.currentRoute_data.length > 0 && groundspeed > 0) {
+    if (entry.currentRouteData.length > 0 && groundspeed > 0) {
       const lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
-      entry.currentRoute_data.forEach(fix => {
+      entry.currentRouteData.forEach(fix => {
         lineData.push(fix.pos);
         newRouteData.push({
           ...fix,
@@ -354,7 +354,7 @@ export function getClearedToFixRouteData(
   referenceFixes: Fix[] | null
 ): { route: string; route_data: RouteFix[]; cleared_direct: { frd: string | null; fix: string } } | null {
   let newRoute = entry.currentRoute;
-  const { currentRoute_data: routeData, dest } = entry;
+  const { currentRouteData: routeData, dest } = entry;
   if (newRoute && routeData) {
     const fixNames = routeData.map((e: { name: string }) => e.name);
     const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;

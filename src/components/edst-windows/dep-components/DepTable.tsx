@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { DepRow } from "./DepRow";
 import { LocalEdstEntry } from "../../../types";
 import { useRootSelector } from "../../../redux/hooks";
-import { depRowField, sortOptions } from "../../../enums";
+import { DepRowField, SortOptions } from "../../../enums";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
@@ -26,9 +26,9 @@ export function DepTable() {
   const sortData = useRootSelector(depSortDataSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
-  const [hiddenList, setHiddenList] = useState<depRowField[]>([]);
+  const [hiddenList, setHiddenList] = useState<DepRowField[]>([]);
 
-  const toggleHideColumn = (field: depRowField) => {
+  const toggleHideColumn = (field: DepRowField) => {
     const hiddenCopy = hiddenList.slice(0);
     const index = hiddenCopy.indexOf(field);
     if (index > -1) {
@@ -41,11 +41,11 @@ export function DepTable() {
 
   const sortFunc = (u: LocalEdstEntry, v: LocalEdstEntry) => {
     switch (sortData.selectedOption) {
-      case sortOptions.acid:
+      case SortOptions.acid:
         return u.callsign.localeCompare(v.callsign);
-      case sortOptions.destination:
+      case SortOptions.destination:
         return u.dest.localeCompare(v.dest);
-      case sortOptions.origin:
+      case SortOptions.origin:
         return u.dep?.localeCompare(v.dep);
       default:
         return u.callsign.localeCompare(v.callsign);
@@ -63,12 +63,12 @@ export function DepTable() {
         <FidCol>Flight ID</FidCol>
         <SpecialBox />
         <SpecialBox />
-        <AircraftTypeCol hidden={hiddenList.includes(depRowField.type)}>
-          <div onMouseDown={() => toggleHideColumn(depRowField.type)}>T{!hiddenList.includes(depRowField.type) && "ype"}</div>
+        <AircraftTypeCol hidden={hiddenList.includes(DepRowField.type)}>
+          <div onMouseDown={() => toggleHideColumn(DepRowField.type)}>T{!hiddenList.includes(DepRowField.type) && "ype"}</div>
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>
-        <CodeCol hover hidden={hiddenList.includes(depRowField.code)} onMouseDown={() => toggleHideColumn(depRowField.code)}>
-          C{!hiddenList.includes(depRowField.code) && "ode"}
+        <CodeCol hover hidden={hiddenList.includes(DepRowField.code)} onMouseDown={() => toggleHideColumn(DepRowField.code)}>
+          C{!hiddenList.includes(DepRowField.code) && "ode"}
         </CodeCol>
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>

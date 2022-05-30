@@ -4,7 +4,7 @@ import { EdstButton } from "../resources/EdstButton";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { menuEnum, windowEnum } from "../../enums";
+import { EdstMenu, EdstWindow } from "../../enums";
 import { openMenuThunk } from "../../redux/thunks/thunks";
 import { aselSelector, Asel, closeMenu, menuPositionSelector, setAsel, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { deleteAclEntry, deleteDepEntry, entrySelector } from "../../redux/slices/entriesSlice";
@@ -22,18 +22,18 @@ const PlanOptionsBody = styled(OptionsBody)`
 export const PlanOptions: React.FC = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector) as Asel;
-  const pos = useRootSelector(menuPositionSelector(menuEnum.planOptions));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.planOptions));
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   const entry = useRootSelector(entrySelector(asel.cid));
-  const dep = asel.window === windowEnum.dep;
+  const dep = asel.window === EdstWindow.dep;
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.planOptions);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.planOptions);
 
-  function openMenu(menu: menuEnum) {
-    dispatch(openMenuThunk(menu, ref.current, menuEnum.planOptions, true));
-    dispatch(closeMenu(menuEnum.planOptions));
+  function openMenu(menu: EdstMenu) {
+    dispatch(openMenuThunk(menu, ref.current, EdstMenu.planOptions, true));
+    dispatch(closeMenu(EdstMenu.planOptions));
   }
 
   return (
@@ -41,8 +41,8 @@ export const PlanOptions: React.FC = () => {
       <PlanOptionsDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.planOptions)}
-        onMouseDown={() => zStack.indexOf(menuEnum.planOptions) > 0 && dispatch(pushZStack(menuEnum.planOptions))}
+        zIndex={zStack.indexOf(EdstMenu.planOptions)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.planOptions) > 0 && dispatch(pushZStack(EdstMenu.planOptions))}
         anyDragging={anyDragging}
         id="plan-menu"
       >
@@ -55,7 +55,7 @@ export const PlanOptions: React.FC = () => {
             {entry.cid} {entry.callsign}
           </FidRow>
           <OptionsBodyRow>
-            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsAlt} onMouseDown={() => openMenu(menuEnum.altitudeMenu)}>
+            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsAlt} onMouseDown={() => openMenu(EdstMenu.altitudeMenu)}>
               <OptionsBodyCol hover>Altitude...</OptionsBodyCol>
             </EdstTooltip>
           </OptionsBodyRow>
@@ -67,7 +67,7 @@ export const PlanOptions: React.FC = () => {
             </OptionsBodyRow>
           )}
           <OptionsBodyRow>
-            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsRoute} onMouseDown={() => openMenu(menuEnum.routeMenu)}>
+            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsRoute} onMouseDown={() => openMenu(EdstMenu.routeMenu)}>
               <OptionsBodyCol hover>Route...</OptionsBodyCol>
             </EdstTooltip>
           </OptionsBodyRow>
@@ -76,7 +76,7 @@ export const PlanOptions: React.FC = () => {
               style={{ flexGrow: 1 }}
               title={Tooltips.planOptionsPrevRoute}
               disabled={entry?.previous_route === undefined}
-              onMouseDown={() => openMenu(menuEnum.prevRouteMenu)}
+              onMouseDown={() => openMenu(EdstMenu.prevRouteMenu)}
             >
               <OptionsBodyCol hover>Previous Route</OptionsBodyCol>
             </EdstTooltip>
@@ -110,9 +110,9 @@ export const PlanOptions: React.FC = () => {
               style={{ flexGrow: 1 }}
               title={Tooltips.planOptionsDelete}
               onMouseDown={() => {
-                dispatch(asel.window === windowEnum.acl ? deleteAclEntry(asel.cid) : deleteDepEntry(asel.cid));
+                dispatch(asel.window === EdstWindow.acl ? deleteAclEntry(asel.cid) : deleteDepEntry(asel.cid));
                 dispatch(setAsel(null));
-                dispatch(closeMenu(menuEnum.planOptions));
+                dispatch(closeMenu(EdstMenu.planOptions));
               }}
             >
               <OptionsBodyCol hover>Delete</OptionsBodyCol>
@@ -120,7 +120,7 @@ export const PlanOptions: React.FC = () => {
           </OptionsBodyRow>
           <OptionsBodyRow margin="0">
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.planOptions))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.planOptions))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </PlanOptionsBody>

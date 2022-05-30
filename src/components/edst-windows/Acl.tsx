@@ -7,7 +7,7 @@ import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/sli
 import { useFocused } from "../../hooks";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { DraggableDiv } from "../../styles/styles";
-import { windowEnum } from "../../enums";
+import { EdstWindow } from "../../enums";
 
 const AclDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;
@@ -32,13 +32,13 @@ export const Acl: React.FC = () => {
   const dispatch = useRootDispatch();
 
   const onMouseDownHandler = () => {
-    if (zStack.indexOf(windowEnum.acl) > 0 && !fullscreen) {
-      dispatch(pushZStack(windowEnum.acl));
+    if (zStack.indexOf(EdstWindow.acl) > 0 && !fullscreen) {
+      dispatch(pushZStack(EdstWindow.acl));
     }
   };
 
   return (
-    <AclDiv anyDragging={anyDragging} ref={ref} zIndex={zStack.indexOf(windowEnum.acl)} onMouseDown={onMouseDownHandler}>
+    <AclDiv anyDragging={anyDragging} ref={ref} zIndex={zStack.indexOf(EdstWindow.acl)} onMouseDown={onMouseDownHandler}>
       <AclHeader focused={focused} />
       <AclTable />
     </AclDiv>

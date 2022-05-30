@@ -1,4 +1,4 @@
-export enum aclRowField {
+export enum AclRowField {
   fid,
   pa,
   type,
@@ -10,7 +10,7 @@ export enum aclRowField {
   route
 }
 
-export enum depRowField {
+export enum DepRowField {
   pTime,
   fid,
   type,
@@ -19,11 +19,11 @@ export enum depRowField {
   route
 }
 
-export enum planRowField {
+export enum PlanRowField {
   fid
 }
 
-export enum sortOptions {
+export enum SortOptions {
   acid = "ACID",
   boundaryTime = "Boundary Time",
   conflictStatus = "Conflict Status",
@@ -34,12 +34,12 @@ export enum sortOptions {
   pTime = "P Time"
 }
 
-export enum aclAselActionTrigger {
+export enum AclAselActionTrigger {
   setVciNeutral,
   toggleHoldInfo
 }
 
-export enum depAselActionTrigger {
+export enum DepAselActionTrigger {
   setDepStatusNeutral
 }
 
@@ -68,7 +68,7 @@ export enum edstHeaderButton {
   cpdlcMsgOut
 }
 
-export enum menuEnum {
+export enum EdstMenu {
   planOptions = "planOptions",
   sortMenu = "sortMenu",
   toolsMenu = "toolsMenu",
@@ -84,7 +84,7 @@ export enum menuEnum {
   gpdMapOptionsMenu = "gpdMapOptionsMenu"
 }
 
-export enum windowEnum {
+export enum EdstWindow {
   more = "more",
   acl = "acl",
   dep = "dep",
@@ -98,7 +98,7 @@ export enum windowEnum {
   ua = "ua",
   sigmets = "sigmets",
   notams = "notams",
-  generalInfo = "generalInfo", // general info
+  generalInfo = "generalInfo",
   adsb = "adsb",
   sat = "sat",
   msg = "msg",

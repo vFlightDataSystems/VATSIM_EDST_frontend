@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { closeMenu, menuSelector, pushZStack, zStackSelector } from "../../../redux/slices/appSlice";
 import { ToolsOptionsMenu } from "./ToolsOptionsMenu";
 import { useDragging, useFocused } from "../../../hooks";
@@ -25,20 +25,20 @@ export const ToolsBody = styled(OptionsBody)`
 
 export const ToolsMenu: React.FC = () => {
   const dispatch = useRootDispatch();
-  const menuProps = useRootSelector(menuSelector(menuEnum.toolsMenu));
+  const menuProps = useRootSelector(menuSelector(EdstMenu.toolsMenu));
   const zStack = useRootSelector(zStackSelector);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.toolsMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.toolsMenu);
 
   return (
     menuProps?.position && (
       <OptionsMenu
         ref={ref}
         pos={menuProps.position}
-        zIndex={zStack.indexOf(menuEnum.toolsMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.toolsMenu) > 0 && dispatch(pushZStack(menuEnum.toolsMenu))}
+        zIndex={zStack.indexOf(EdstMenu.toolsMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.toolsMenu) > 0 && dispatch(pushZStack(EdstMenu.toolsMenu))}
         anyDragging={anyDragging}
         id="tools-menu"
       >
@@ -72,7 +72,7 @@ export const ToolsMenu: React.FC = () => {
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>
-                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.toolsMenu))} />
+                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.toolsMenu))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
             </span>

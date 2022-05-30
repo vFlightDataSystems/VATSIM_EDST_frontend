@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { menuEnum } from "../../../enums";
+import { EdstMenu } from "../../../enums";
 import { closeMenu, menuSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { useDragging, useFocused } from "../../../hooks";
 import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";
@@ -20,21 +20,21 @@ import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 
 export const GpdMapOptions: React.FC = () => {
   const dispatch = useRootDispatch();
-  const menuProps = useRootSelector(menuSelector(menuEnum.gpdMapOptionsMenu));
+  const menuProps = useRootSelector(menuSelector(EdstMenu.gpdMapOptionsMenu));
   const zStack = useRootSelector(zStackSelector);
   const [mapFeaturesMenuOpen, setMapFeaturesMenuOpen] = useState(false);
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.gpdMapOptionsMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.gpdMapOptionsMenu);
 
   return (
     menuProps?.position && (
       <OptionsMenu
         ref={ref}
         pos={menuProps.position}
-        zIndex={zStack.indexOf(menuEnum.gpdMapOptionsMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(menuEnum.gpdMapOptionsMenu))}
+        zIndex={zStack.indexOf(EdstMenu.gpdMapOptionsMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(EdstMenu.gpdMapOptionsMenu))}
         anyDragging={anyDragging}
         id="gpd-map-options-menu"
       >
@@ -66,7 +66,7 @@ export const GpdMapOptions: React.FC = () => {
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>
-                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.gpdMapOptionsMenu))} />
+                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.gpdMapOptionsMenu))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
             </span>

@@ -27,12 +27,13 @@ export const refreshEntriesThunk: any = createAsyncThunk("entries/entriesRefresh
 
   const newEntries: EntriesState = {};
   let newEntryList: any[] = [];
-  fetchEdstEntries()
+  await fetchEdstEntries()
     .then(response => response.json())
     .then((data: any[]) => {
       newEntryList = data;
     });
-  newEntryList.forEach(newEntry => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const newEntry of newEntryList) {
     const state = thunkAPI.getState() as RootState;
     let currentEntry = _.assign({}, state.entries[newEntry.cid] ?? currentEntryFallbackValue);
     currentEntry = _.assign(currentEntry, refreshEntry(newEntry, polygons, artccId, currentEntry));
@@ -41,7 +42,8 @@ export const refreshEntriesThunk: any = createAsyncThunk("entries/entriesRefresh
         if (!currentEntry.depDisplay) {
           currentEntry.depDisplay = true;
           if (currentEntry.aarList === undefined) {
-            fetchAarList(state.sectorData.artccId, currentEntry.cid)
+            // eslint-disable-next-line no-await-in-loop
+            await fetchAarList(state.sectorData.artccId, currentEntry.cid)
               .then(response => response.json())
               .then(aarList => {
                 currentEntry.aarList = aarList;
@@ -61,7 +63,8 @@ export const refreshEntriesThunk: any = createAsyncThunk("entries/entriesRefresh
           currentEntry.depDeleted = true;
           currentEntry.depDisplay = false;
           if (currentEntry.aarList === undefined) {
-            fetchAarList(state.sectorData.artccId, currentEntry.cid)
+            // eslint-disable-next-line no-await-in-loop
+            await fetchAarList(state.sectorData.artccId, currentEntry.cid)
               .then(response => response.json())
               .then(aarList => {
                 currentEntry.aarList = aarList;
@@ -81,7 +84,7 @@ export const refreshEntriesThunk: any = createAsyncThunk("entries/entriesRefresh
     }
     // thunkAPI.dispatch(setEntry(currentEntry));
     newEntries[newEntry.cid] = _.assign({}, currentEntry);
-  });
+  }
   return new Promise<EntriesState>(resolve => {
     resolve(newEntries);
   });

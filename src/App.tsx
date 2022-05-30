@@ -22,7 +22,7 @@ import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
 import { initThunk } from "./redux/thunks/initThunk";
 import { refreshEntriesThunk } from "./redux/slices/entriesSlice";
-import { menuEnum, windowEnum } from "./enums";
+import { EdstMenu, EdstWindow } from "./enums";
 import {
   inputFocusedSelector,
   mcaCommandStringSelector,
@@ -87,13 +87,13 @@ export const App: React.FC = () => {
   const handleKeyDown = (event: KeyboardEvent) => {
     // event.preventDefault();
     if (!inputFocused) {
-      if (menus[menuEnum.altitudeMenu].open) {
+      if (menus[EdstMenu.altitudeMenu].open) {
         altMenuRef.current.showInput = true;
         if (altMenuRef.current.inputRef?.current) {
           altMenuRef.current?.inputRef.current.focus();
         }
       } else if (!mcaInputRef?.current) {
-        dispatch(openWindow({ window: windowEnum.messageComposeArea }));
+        dispatch(openWindow({ window: EdstWindow.messageComposeArea }));
         if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
           dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
         }
@@ -115,23 +115,23 @@ export const App: React.FC = () => {
       <div id="toPrint" />
       <EdstBodyDiv>
         {showSectorSelector && <SectorSelector />}
-        {windows[windowEnum.acl].open && <Acl />}
-        {windows[windowEnum.dep].open && <Dep />}
-        {windows[windowEnum.graphicPlanDisplay].open && <Gpd />}
-        {windows[windowEnum.plansDisplay].open && <PlansDisplay />}
-        {menus[menuEnum.planOptions].open && <PlanOptions />}
-        {menus[menuEnum.sortMenu].open && <SortMenu />}
-        {menus[menuEnum.toolsMenu].open && <ToolsMenu />}
-        {menus[menuEnum.gpdMapOptionsMenu].open && <GpdMapOptions />}
-        {menus[menuEnum.routeMenu].open && <RouteMenu />}
-        {menus[menuEnum.templateMenu].open && <TemplateMenu />}
-        {menus[menuEnum.equipmentTemplateMenu].open && <EquipmentTemplateMenu />}
-        {menus[menuEnum.holdMenu].open && <HoldMenu />}
-        {menus[menuEnum.cancelHoldMenu].open && <CancelHoldMenu />}
-        {menus[menuEnum.prevRouteMenu].open && <PreviousRouteMenu />}
-        {menus[menuEnum.speedMenu].open && <SpeedMenu />}
-        {menus[menuEnum.headingMenu].open && <HeadingMenu />}
-        {menus[menuEnum.altitudeMenu].open && (
+        {windows[EdstWindow.acl].open && <Acl />}
+        {windows[EdstWindow.dep].open && <Dep />}
+        {windows[EdstWindow.graphicPlanDisplay].open && <Gpd />}
+        {windows[EdstWindow.plansDisplay].open && <PlansDisplay />}
+        {menus[EdstMenu.planOptions].open && <PlanOptions />}
+        {menus[EdstMenu.sortMenu].open && <SortMenu />}
+        {menus[EdstMenu.toolsMenu].open && <ToolsMenu />}
+        {menus[EdstMenu.gpdMapOptionsMenu].open && <GpdMapOptions />}
+        {menus[EdstMenu.routeMenu].open && <RouteMenu />}
+        {menus[EdstMenu.templateMenu].open && <TemplateMenu />}
+        {menus[EdstMenu.equipmentTemplateMenu].open && <EquipmentTemplateMenu />}
+        {menus[EdstMenu.holdMenu].open && <HoldMenu />}
+        {menus[EdstMenu.cancelHoldMenu].open && <CancelHoldMenu />}
+        {menus[EdstMenu.prevRouteMenu].open && <PreviousRouteMenu />}
+        {menus[EdstMenu.speedMenu].open && <SpeedMenu />}
+        {menus[EdstMenu.headingMenu].open && <HeadingMenu />}
+        {menus[EdstMenu.altitudeMenu].open && (
           <AltMenu
             setAltMenuInputRef={ref => {
               altMenuRef.current.inputRef = ref;
@@ -139,13 +139,13 @@ export const App: React.FC = () => {
             showInput={altMenuRef.current.showInput}
           />
         )}
-        {windows[windowEnum.status].open && <Status />}
-        {windows[windowEnum.outage].open && <Outage />}
-        {windows[windowEnum.altimeter].open && <AltimeterWindow />}
-        {windows[windowEnum.metar].open && <MetarWindow />}
-        {windows[windowEnum.sigmets].open && <SigmetWindow />}
-        {windows[windowEnum.messageComposeArea].open && <MessageComposeArea setMcaInputRef={setMcaInputRef} />}
-        {windows[windowEnum.messageResponseArea].open && <MessageResponseArea />}
+        {windows[EdstWindow.status].open && <Status />}
+        {windows[EdstWindow.outage].open && <Outage />}
+        {windows[EdstWindow.altimeter].open && <AltimeterWindow />}
+        {windows[EdstWindow.metar].open && <MetarWindow />}
+        {windows[EdstWindow.sigmets].open && <SigmetWindow />}
+        {windows[EdstWindow.messageComposeArea].open && <MessageComposeArea setMcaInputRef={setMcaInputRef} />}
+        {windows[EdstWindow.messageResponseArea].open && <MessageResponseArea />}
       </EdstBodyDiv>
     </EdstDiv>
   );

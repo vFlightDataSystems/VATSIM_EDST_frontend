@@ -7,7 +7,7 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entriesSlice";
-import { menuEnum } from "../../enums";
+import { EdstMenu } from "../../enums";
 import { closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { LocalEdstEntry, RouteFix } from "../../types";
 import { amendEntryThunk } from "../../redux/thunks/entriesThunks";
@@ -81,7 +81,7 @@ const EfcInputContainer = styled(InputContainer)`
 
 export const HoldMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(menuEnum.holdMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.holdMenu));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -97,11 +97,11 @@ export const HoldMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.holdMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.holdMenu);
 
   useEffect(() => {
     if (!entry) {
-      dispatch(closeMenu(menuEnum.holdMenu));
+      dispatch(closeMenu(EdstMenu.holdMenu));
     } else {
       const routeData = computeCrossingTimes(entry);
       const now = new Date();
@@ -126,7 +126,7 @@ export const HoldMenu: React.FC = () => {
       };
       dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: holdData } }));
     }
-    dispatch(closeMenu(menuEnum.holdMenu));
+    dispatch(closeMenu(EdstMenu.holdMenu));
   };
 
   return (
@@ -135,8 +135,8 @@ export const HoldMenu: React.FC = () => {
       <HoldDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.holdMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.holdMenu) > 0 && dispatch(pushZStack(menuEnum.holdMenu))}
+        zIndex={zStack.indexOf(EdstMenu.holdMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.holdMenu) > 0 && dispatch(pushZStack(EdstMenu.holdMenu))}
         anyDragging={anyDragging}
         id="hold-menu"
       >
@@ -262,7 +262,7 @@ export const HoldMenu: React.FC = () => {
                 onMouseDown={() => {
                   dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: null } }));
                   dispatch(updateEntry({ cid: entry.cid, data: { aclRouteDisplay: null } }));
-                  dispatch(closeMenu(menuEnum.holdMenu));
+                  dispatch(closeMenu(EdstMenu.holdMenu));
                 }}
                 title={Tooltips.holdDeleteHoldInstr}
               />
@@ -313,12 +313,12 @@ export const HoldMenu: React.FC = () => {
                 onMouseDown={() => {
                   dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: null } }));
                   dispatch(updateEntry({ cid: entry.cid, data: { aclRouteDisplay: null } }));
-                  dispatch(closeMenu(menuEnum.holdMenu));
+                  dispatch(closeMenu(EdstMenu.holdMenu));
                 }}
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.holdMenu))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.holdMenu))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </OptionsBody>

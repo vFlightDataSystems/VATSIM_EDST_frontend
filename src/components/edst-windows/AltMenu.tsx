@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { menuEnum, windowEnum } from "../../enums";
+import { EdstMenu, EdstWindow } from "../../enums";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { aselSelector, Asel, closeMenu, menuPositionSelector, setInputFocused } from "../../redux/slices/appSlice";
 import { LocalEdstEntry } from "../../types";
@@ -150,9 +150,9 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
   const ref = useRef<HTMLDivElement | null>(null);
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(menuEnum.altitudeMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.altitudeMenu));
   const dispatch = useRootDispatch();
-  const [selected, setSelected] = useState(asel.window !== windowEnum.dep ? "trial" : "amend");
+  const [selected, setSelected] = useState(asel.window !== EdstWindow.dep ? "trial" : "amend");
   const [tempAltHover, setTempAltHover] = useState<number | null>(null);
   const [deltaY, setDeltaY] = useState(0);
   const [manualInput, setManualInput] = useState<string | null>(null);
@@ -192,7 +192,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
-    dispatch(closeMenu(menuEnum.altitudeMenu));
+    dispatch(closeMenu(EdstMenu.altitudeMenu));
   };
 
   const handleTempAltClick = (alt: number) => {
@@ -210,7 +210,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
-    dispatch(closeMenu(menuEnum.altitudeMenu));
+    dispatch(closeMenu(EdstMenu.altitudeMenu));
   };
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -224,7 +224,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
       <AltMenuDiv ref={ref} width={manualInput !== null ? 160 : 100} pos={pos} id="alt-menu">
         <AltMenuHeaderDiv>
           <AltMenuHeaderCol flexGrow={1}>{entry?.callsign}</AltMenuHeaderCol>
-          <AltMenuHeaderCol width={20} onMouseDown={() => dispatch(closeMenu(menuEnum.altitudeMenu))}>
+          <AltMenuHeaderCol width={20} onMouseDown={() => dispatch(closeMenu(EdstMenu.altitudeMenu))}>
             X
           </AltMenuHeaderCol>
         </AltMenuHeaderDiv>
@@ -264,7 +264,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
         {manualInput === null && (
           <span>
             <EdstTooltip title={Tooltips.altMenuPlanData}>
-              <AltMenuRow hover selected={selected === "trial"} onMouseDown={() => setSelected("trial")} disabled={asel.window === windowEnum.dep}>
+              <AltMenuRow hover selected={selected === "trial"} onMouseDown={() => setSelected("trial")} disabled={asel.window === EdstWindow.dep}>
                 TRIAL PLAN
               </AltMenuRow>
             </EdstTooltip>
@@ -273,7 +273,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
                 AMEND
               </AltMenuRow>
             </EdstTooltip>
-            <AltMenuRow disabled>{asel.window !== windowEnum.dep ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
+            <AltMenuRow disabled>{asel.window !== EdstWindow.dep ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>
               {_.range(30, -40, -10).map(i => {
                 const centerAlt = Number(entry.altitude) - Math.round(deltaY / 100) * 10 + i;
@@ -282,7 +282,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
                     <AltMenuScrollCol selected={centerAlt === Number(entry.altitude)} onMouseDown={() => handleAltClick(centerAlt)}>
                       {String(centerAlt).padStart(3, "0")}
                     </AltMenuScrollCol>
-                    {asel.window !== windowEnum.dep && (
+                    {asel.window !== EdstWindow.dep && (
                       <EdstTooltip title={Tooltips.altMenuT}>
                         <AltMenuScrollTempAltCol
                           disabled={!(selected === "amend")}

@@ -17,7 +17,7 @@ import {
   gpdSuppressedSelector,
   gpdWaypointSelector,
   mapFeatureOption,
-  sectorTypeEnum
+  SectorType
 } from "../../../redux/slices/gpdSlice";
 
 const center = { lat: 42.362944444444445, lng: -71.00638888888889 };
@@ -78,12 +78,12 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({ zoomLevel }) => {
         <MapConfigurator zoomLevel={zoomLevel} />
         {Object.entries(sectors).map(
           ([id, sector]) =>
-            ((selectedMapFeatureOptions[mapFeatureOption.ultraLowSectors] && (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.ultraLow) ||
+            ((selectedMapFeatureOptions[mapFeatureOption.ultraLowSectors] && (sectorTypes[id] as SectorType) === SectorType.ultraLow) ||
               (selectedMapFeatureOptions[mapFeatureOption.lowSectors] &&
-                ((sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.low || (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.lowHigh)) ||
+                ((sectorTypes[id] as SectorType) === SectorType.low || (sectorTypes[id] as SectorType) === SectorType.lowHigh)) ||
               (selectedMapFeatureOptions[mapFeatureOption.highSectors] &&
-                ((sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.high || (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.lowHigh)) ||
-              (selectedMapFeatureOptions[mapFeatureOption.ultraHighSectors] && (sectorTypes[id] as sectorTypeEnum) === sectorTypeEnum.ultraHigh)) && (
+                ((sectorTypes[id] as SectorType) === SectorType.high || (sectorTypes[id] as SectorType) === SectorType.lowHigh)) ||
+              (selectedMapFeatureOptions[mapFeatureOption.ultraHighSectors] && (sectorTypes[id] as SectorType) === SectorType.ultraHigh)) && (
               <GpdMapSectorPolygon sector={sector} key={`gpd-sector-polygon-${id}`} />
             )
         )}

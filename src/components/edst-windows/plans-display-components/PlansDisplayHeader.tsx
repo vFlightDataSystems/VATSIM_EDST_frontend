@@ -5,7 +5,7 @@ import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planCleanup, PlanQuery, planQueueSelector, selectedPlanIndexSelector } from "../../../redux/slices/planSlice";
 import { openMenuThunk } from "../../../redux/thunks/thunks";
-import { menuEnum, planRowField, windowEnum } from "../../../enums";
+import { EdstMenu, PlanRowField, EdstWindow } from "../../../enums";
 import { closeWindow, setAsel } from "../../../redux/slices/appSlice";
 import { amendDirectThunk, amendEntryThunk } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
@@ -46,7 +46,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused 
 
   return (
     <div>
-      <WindowTitleBar focused={focused} closeWindow={() => dispatch(closeWindow(windowEnum.plansDisplay))} text={["Plans Display"]} />
+      <WindowTitleBar focused={focused} closeWindow={() => dispatch(closeWindow(EdstWindow.plansDisplay))} text={["Plans Display"]} />
       <NoSelectDiv>
         <EdstWindowHeaderButton
           disabled={selectedPlanIndex === null}
@@ -55,11 +55,11 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused 
               dispatch(
                 setAsel({
                   cid: planQueue[selectedPlanIndex].cid,
-                  window: windowEnum.plansDisplay,
-                  field: planRowField.fid
+                  window: EdstWindow.plansDisplay,
+                  field: PlanRowField.fid
                 })
               );
-              dispatch(openMenuThunk(menuEnum.planOptions, e.currentTarget, windowEnum.plansDisplay));
+              dispatch(openMenuThunk(EdstMenu.planOptions, e.currentTarget, EdstWindow.plansDisplay));
             }
           }}
           content="Plan Options..."
@@ -86,7 +86,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused 
         />
         <EdstWindowHeaderButton disabled content="Tools..." />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(menuEnum.templateMenu, e.target, windowEnum.plansDisplay))}
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstMenu.templateMenu, e.target, EdstWindow.plansDisplay))}
           content="Template..."
           title={Tooltips.template}
         />
@@ -94,7 +94,7 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused 
         <EdstWindowHeaderButton
           onMouseDown={() => {
             dispatch(planCleanup());
-            dispatch(closeWindow(windowEnum.plansDisplay));
+            dispatch(closeWindow(EdstWindow.plansDisplay));
           }}
           content="Clean Up"
           title={Tooltips.plansCleanUp}

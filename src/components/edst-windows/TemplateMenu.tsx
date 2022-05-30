@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { computeFrdString, getDepString, getDestString } from "../../lib";
 import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { menuEnum, windowEnum } from "../../enums";
+import { EdstMenu, EdstWindow } from "../../enums";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { aselSelector, closeMenu, menuPositionSelector, pushZStack, setInputFocused, zStackSelector } from "../../redux/slices/appSlice";
 import { openMenuThunk } from "../../redux/thunks/thunks";
@@ -94,12 +94,12 @@ export const TemplateMenu: React.FC = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
   const entry = useRootSelector(aselEntrySelector);
-  const pos = useRootSelector(menuPositionSelector(menuEnum.templateMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.templateMenu));
   const zStack = useRootSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
   const route =
-    (asel?.window === windowEnum.dep
+    (asel?.window === EdstWindow.dep
       ? entry?.route?.concat(getDestString(entry?.dest) ?? "")
       : entry?.currentRoute?.replace(/^\.*/, "")?.concat(getDestString(entry?.dest) ?? "")) ?? "";
   const frd = entry?.referenceFix ? computeFrdString(entry.referenceFix) : "";
@@ -115,7 +115,7 @@ export const TemplateMenu: React.FC = () => {
   const [timeInput, setTimeInput] = useState("EXX00");
   const [altInput, setAltInput] = useState(entry?.altitude ?? "");
   const [routeInput, setRouteInput] = useState(
-    (asel?.window === windowEnum.dep
+    (asel?.window === EdstWindow.dep
       ? (getDepString(entry?.dep) ?? "") + route
       : (entry?.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix) ? `${entry.cleared_direct?.frd}..` : "") + route) ?? ""
   );
@@ -125,7 +125,7 @@ export const TemplateMenu: React.FC = () => {
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
 
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.templateMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.templateMenu);
 
   useEffect(() => {
     return () => {
@@ -138,8 +138,8 @@ export const TemplateMenu: React.FC = () => {
       <TemplateDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.templateMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.templateMenu) > 0 && dispatch(pushZStack(menuEnum.templateMenu))}
+        zIndex={zStack.indexOf(EdstMenu.templateMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.templateMenu) > 0 && dispatch(pushZStack(EdstMenu.templateMenu))}
         anyDragging={anyDragging}
         id="template-menu"
       >
@@ -164,7 +164,7 @@ export const TemplateMenu: React.FC = () => {
             <TemplateCol width={66}>
               <EdstButton
                 content="EQP..."
-                onMouseDown={() => dispatch(openMenuThunk(menuEnum.equipmentTemplateMenu, ref.current))}
+                onMouseDown={() => dispatch(openMenuThunk(EdstMenu.equipmentTemplateMenu, ref.current))}
                 title={Tooltips.templateMenuEqpButton}
               />
             </TemplateCol>
@@ -326,7 +326,7 @@ export const TemplateMenu: React.FC = () => {
               <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
             </TemplateCol>
             <TemplateCol bottomRow alignRight>
-              <EdstButton content="Exit" title={Tooltips.templateMenuExit} onMouseDown={() => dispatch(closeMenu(menuEnum.templateMenu))} />
+              <EdstButton content="Exit" title={Tooltips.templateMenuExit} onMouseDown={() => dispatch(closeMenu(EdstMenu.templateMenu))} />
             </TemplateCol>
           </TemplateRowDiv>
         </TemplateBodyDiv>

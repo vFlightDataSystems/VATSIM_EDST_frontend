@@ -13,7 +13,7 @@ import { EdstButton, EdstRouteButton12x12 } from "../resources/EdstButton";
 import { Tooltips } from "../../tooltips";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { menuEnum, windowEnum } from "../../enums";
+import { EdstMenu, EdstWindow } from "../../enums";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { aselSelector, Asel, closeMenu, menuPositionSelector, setInputFocused, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { addTrialPlanThunk, openMenuThunk } from "../../redux/thunks/thunks";
@@ -88,7 +88,7 @@ const DctCol = styled(OptionsBodyCol)`
 
 export const RouteMenu: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(menuPositionSelector(menuEnum.routeMenu));
+  const pos = useRootSelector(menuPositionSelector(EdstMenu.routeMenu));
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
   const referenceFixes = useRootSelector(referenceFixSelector);
@@ -96,15 +96,15 @@ export const RouteMenu: React.FC = () => {
 
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(
-    removeDestFromRouteString(asel.window === windowEnum.dep ? entry.route : entry.currentRoute?.replace(/^\.*/, "") ?? "", entry.dest)
+    removeDestFromRouteString(asel.window === EdstWindow.dep ? entry.route : entry.currentRoute?.replace(/^\.*/, "") ?? "", entry.dest)
   );
-  const [routeInput, setRouteInput] = useState<string>(asel.window === windowEnum.dep ? entry.dep + route + entry.dest : route + entry.dest);
-  const [trialPlan, setTrialPlan] = useState(!(asel.window === windowEnum.dep));
+  const [routeInput, setRouteInput] = useState<string>(asel.window === EdstWindow.dep ? entry.dep + route + entry.dest : route + entry.dest);
+  const [trialPlan, setTrialPlan] = useState(!(asel.window === EdstWindow.dep));
   const [append, setAppend] = useState({ appendOplus: false, appendStar: false });
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuEnum.routeMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.routeMenu);
 
   const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])), [
     entry.flightplan.lat,
@@ -114,21 +114,21 @@ export const RouteMenu: React.FC = () => {
   const frd = useMemo(() => (closestReferenceFix ? computeFrdString(closestReferenceFix) : "XXX000000"), [closestReferenceFix]);
 
   const { appendOplus, appendStar } = useMemo(() => append, [append]);
-  const currentRouteFixes: string[] = entry?.currentRoute_data?.map(fix => fix.name) ?? [];
-  let routeData = asel.window === windowEnum.dep ? entry.route_data : entry.currentRoute_data;
+  const currentRouteFixes: string[] = entry?.currentRouteData?.map(fix => fix.name) ?? [];
+  let routeData = asel.window === EdstWindow.dep ? entry.route_data : entry.currentRouteData;
   if (routeData?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
     routeData = routeData?.slice(1);
   }
 
   let routes: any[];
-  if (asel.window === windowEnum.dep) {
+  if (asel.window === EdstWindow.dep) {
     routes = entry.adar.concat(entry.adr).concat(entry.aarList ?? []);
   } else {
     routes = entry.currentAarList?.filter(aarData => currentRouteFixes.includes(aarData.tfix)) ?? [];
   }
 
   useEffect(() => {
-    const dep = asel.window === windowEnum.dep;
+    const dep = asel.window === EdstWindow.dep;
     let route = dep ? entry.route : entry.currentRoute?.replace(/^\.*/, "");
     route = removeDestFromRouteString(route ?? "", entry.dest);
     if (dep) {
@@ -160,7 +160,7 @@ export const RouteMenu: React.FC = () => {
     }
     planData.route = removeDestFromRouteString(planData.route.slice(0), dest);
     planData.dest = dest;
-    copy(`${!(asel.window === windowEnum.dep) ? frd : ""}${planData.route}`).then();
+    copy(`${!(asel.window === EdstWindow.dep) ? frd : ""}${planData.route}`).then();
     if (planData) {
       const msg = `AM ${entry.callsign} RTE ${planData.route}${entry.dest}`;
       if (!trialPlan) {
@@ -177,14 +177,14 @@ export const RouteMenu: React.FC = () => {
         );
       }
     }
-    dispatch(closeMenu(menuEnum.routeMenu));
+    dispatch(closeMenu(EdstMenu.routeMenu));
   };
 
   const clearedToFix = (clearedFixName: string) => {
     const planData = {
       cid: entry.cid,
       fix: clearedFixName,
-      frd: asel.window !== windowEnum.dep ? closestReferenceFix : null
+      frd: asel.window !== EdstWindow.dep ? closestReferenceFix : null
     };
     if (planData) {
       if (!trialPlan) {
@@ -202,7 +202,7 @@ export const RouteMenu: React.FC = () => {
         );
       }
     }
-    dispatch(closeMenu(menuEnum.routeMenu));
+    dispatch(closeMenu(EdstMenu.routeMenu));
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,7 +216,7 @@ export const RouteMenu: React.FC = () => {
       if (newRoute.match(/^[A-Z]+\d{6}/gi)) {
         newRoute = newRoute.split(".", 1)[1].replace(/^\.+/gi, "");
       }
-      copy(`${!(asel.window === windowEnum.dep) ? frd : ""}${newRoute}`.replace(/\.+$/, "")).then();
+      copy(`${!(asel.window === EdstWindow.dep) ? frd : ""}${newRoute}`.replace(/\.+$/, "")).then();
       const planData = { route: newRoute, frd };
       if (trialPlan) {
         dispatch(
@@ -231,7 +231,7 @@ export const RouteMenu: React.FC = () => {
       } else {
         dispatch(amendEntryThunk({ cid: entry.cid, planData }));
       }
-      dispatch(closeMenu(menuEnum.routeMenu));
+      dispatch(closeMenu(EdstMenu.routeMenu));
     }
   };
 
@@ -240,8 +240,8 @@ export const RouteMenu: React.FC = () => {
       <RouteMenuDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(menuEnum.routeMenu)}
-        onMouseDown={() => zStack.indexOf(menuEnum.routeMenu) > 0 && dispatch(pushZStack(menuEnum.routeMenu))}
+        zIndex={zStack.indexOf(EdstMenu.routeMenu)}
+        onMouseDown={() => zStack.indexOf(EdstMenu.routeMenu) > 0 && dispatch(pushZStack(EdstMenu.routeMenu))}
         anyDragging={anyDragging}
         id="route-menu"
       >
@@ -260,7 +260,7 @@ export const RouteMenu: React.FC = () => {
                 selected={trialPlan}
                 onMouseDown={() => setTrialPlan(true)}
                 title={Tooltips.routeMenuPlanData}
-                disabled={asel.window === windowEnum.dep}
+                disabled={asel.window === EdstWindow.dep}
               />
             </OptionsBodyCol>
             <OptionsBodyCol maxWidth={24} maxHeight={24}>
@@ -296,7 +296,7 @@ export const RouteMenu: React.FC = () => {
           <RouteMenuRow>
             <OptionsBodyCol>
               <InputContainer>
-                {!(asel.window === windowEnum.dep) && (
+                {!(asel.window === EdstWindow.dep) && (
                   <EdstTooltip
                     title={Tooltips.routeMenuFrd}
                     onContextMenu={event => {
@@ -345,7 +345,7 @@ export const RouteMenu: React.FC = () => {
             <UnderlineRow as={RouteMenuRow}>Direct-To-Fix</UnderlineRow>
           </EdstTooltip>
           <OptionsBodyRow>
-            <DisplayRouteDiv>{asel.window === windowEnum.dep ? entry.dep + route + entry.dest : `./.${route}${entry.dest}`}</DisplayRouteDiv>
+            <DisplayRouteDiv>{asel.window === EdstWindow.dep ? entry.dep + route + entry.dest : `./.${route}${entry.dest}`}</DisplayRouteDiv>
           </OptionsBodyRow>
           {_.range(0, Math.min(routeData?.length ?? 0, 10)).map(i => (
             <OptionsBodyRow key={`route-menu-row-${i}`}>
@@ -364,8 +364,8 @@ export const RouteMenu: React.FC = () => {
           {routes?.length > 0 && (
             <PreferredRouteDisplay
               aar={entry.currentAarList?.filter(aarData => currentRouteFixes.includes(aarData.tfix)) ?? []}
-              adr={asel.window === windowEnum.dep ? entry.adr : []}
-              adar={asel.window === windowEnum.dep ? entry.adar : []}
+              adr={asel.window === EdstWindow.dep ? entry.adr : []}
+              adar={asel.window === EdstWindow.dep ? entry.adar : []}
               dep={entry.dep}
               dest={entry.dest}
               clearedPrefroute={clearedPrefroute}
@@ -379,15 +379,15 @@ export const RouteMenu: React.FC = () => {
                 margin="0 4px 0 0"
                 content="Previous Route"
                 onMouseDown={() => {
-                  dispatch(openMenuThunk(menuEnum.prevRouteMenu, ref.current, menuEnum.routeMenu, true));
-                  dispatch(closeMenu(menuEnum.routeMenu));
+                  dispatch(openMenuThunk(EdstMenu.prevRouteMenu, ref.current, EdstMenu.routeMenu, true));
+                  dispatch(closeMenu(EdstMenu.routeMenu));
                 }}
                 title={Tooltips.routeMenuPrevRoute}
               />
               <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(menuEnum.routeMenu))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.routeMenu))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </RouteMenuBody>
