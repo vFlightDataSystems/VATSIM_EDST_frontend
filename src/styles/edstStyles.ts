@@ -12,14 +12,13 @@ export const EdstDiv = styled(NoSelectDiv)`
   font-size: ${defaultFontSize};
   caret-color: transparent;
   scroll-behavior: auto;
-  -webkit-font-smoothing: none;
+  -webkit-font-smoothing: subpixel-antialiased;
 
   button,
   input,
   textarea {
     font-family: ${defaultFontFamily};
     //font-weight: bold;
-    -webkit-font-smoothing: none;
     cursor: default;
     overflow-wrap: anywhere;
     caret: underscore;

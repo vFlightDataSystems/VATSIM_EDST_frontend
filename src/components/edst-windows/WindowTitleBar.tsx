@@ -36,6 +36,7 @@ const Block = styled.div<{ focused?: boolean; flexGrow?: number }>`
   flex-grow: ${props => props.flexGrow ?? 0};
   vertical-align: center;
   background-color: #888888;
+  margin: 0;
 
   width: 24px;
   height: auto;

@@ -10,7 +10,10 @@
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.16.8",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@microsoft/signalr": "^6.0.5",
     "@reduxjs/toolkit": "^1.7.2",
+    "@tauri-apps/api": "^1.0.0-rc.6",
+    "@tauri-apps/cli": "^1.0.0-rc.13",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -40,8 +43,6 @@
     "tsdx": "^0.14.1",
     "typescript": "^4.5.5",
     "usehooks-ts": "^2.4.1",
-    "@tauri-apps/api": "^1.0.0-rc.3",
-    "@tauri-apps/cli": "^1.0.0-rc.8",
     "web-vitals": "^1.1.2"
   },
   "scripts": {

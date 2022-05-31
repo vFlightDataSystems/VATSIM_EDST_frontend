@@ -23,15 +23,16 @@
   src: url('../resources/fonts/TerminusTTF-Bold-4.49.1.ttf');
 }
 
+@font-face {
+  font-family: CONSOLAS;
+  src: url('../resources/fonts/Consolas.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
 $eram-cursor: url("src/resources/cursors/ERAMCursor2.cur"), default;
 $eram-delete-cursor: url("src/resources/cursors/ERAMDeletionCursor.cur"), default;
 
-$default-font-family: TERMINUS;
-$default-font-size: 17px;
-$default-input-font-size: 16px;
-
-$default-cursor: default;
-$default-delete-cursor: default;
 
 .circle-icon {
   background-image: url("../resources/images/Circle.svg");

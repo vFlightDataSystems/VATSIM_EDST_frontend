@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const defaultFontFamily = "Consolas";
+export const defaultFontFamily = "CONSOLAS";
 export const defaultFontSize = "16px";
 export const defaultInputFontSize = "16px";
 
