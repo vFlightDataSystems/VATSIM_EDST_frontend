@@ -28,7 +28,7 @@
     "eslint-plugin-react": "^7.28.0",
     "geomag": "^1.0.0",
     "leaflet": "^1.7.1",
-    "npm": "^8.5.2",
+    "npm": "^8.11.0",
     "react-leaflet": "^3.2.5",
     "react-redux": "^7.2.6",
     "react-scripts": "^5.0.0",
