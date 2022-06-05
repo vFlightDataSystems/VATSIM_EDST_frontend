@@ -7,8 +7,7 @@ import { Tooltips } from "../../../tooltips";
 import { LocalEdstEntry } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "../../../redux/selectors";
-import { AclRowField, EdstMenu, SortOptions } from "../../../enums";
-import { aselSelector, closeMenu, setAsel } from "../../../redux/slices/appSlice";
+import { aselSelector, closeWindow, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
@@ -29,6 +28,7 @@ import {
 } from "./AclStyled";
 import { aclManualPostingSelector, aclSortDataSelector } from "../../../redux/slices/aclSlice";
 import { entriesSelector } from "../../../redux/slices/entriesSlice";
+import { EdstWindow, AclRowField, SortOptions } from "../../../namespaces";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -76,31 +76,31 @@ export function AclTable() {
 
   const handleClickSlash = () => {
     const hiddenCopy = hiddenList.slice(0);
-    if (hiddenCopy.includes(AclRowField.spd) && hiddenCopy.includes(AclRowField.hdg)) {
-      hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.spd), 1);
-      hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.hdg), 1);
-      if ((asel?.field as AclRowField) === AclRowField.spd) {
-        dispatch(closeMenu(EdstMenu.speedMenu));
+    if (hiddenCopy.includes(AclRowField.SPD) && hiddenCopy.includes(AclRowField.HDG)) {
+      hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.SPD), 1);
+      hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.HDG), 1);
+      if ((asel?.field as AclRowField) === AclRowField.SPD) {
+        dispatch(closeWindow(EdstWindow.SORT_MENU));
         dispatch(setAsel(null));
       }
-      if ((asel?.field as AclRowField) === AclRowField.hdg) {
-        dispatch(closeMenu(EdstMenu.headingMenu));
+      if ((asel?.field as AclRowField) === AclRowField.HDG) {
+        dispatch(closeWindow(EdstWindow.HEADING_MENU));
         dispatch(setAsel(null));
       }
     } else {
-      if (!hiddenCopy.includes(AclRowField.hdg)) {
-        hiddenCopy.push(AclRowField.hdg);
-        if ((asel?.field as AclRowField) === AclRowField.hdg) {
-          dispatch(closeMenu(EdstMenu.headingMenu));
+      if (!hiddenCopy.includes(AclRowField.HDG)) {
+        hiddenCopy.push(AclRowField.HDG);
+        if ((asel?.field as AclRowField) === AclRowField.HDG) {
+          dispatch(closeWindow(EdstWindow.HEADING_MENU));
           dispatch(setAsel(null));
         }
       }
-      if (!hiddenCopy.includes(AclRowField.spd)) {
-        if ((asel?.field as AclRowField) === AclRowField.spd) {
-          dispatch(closeMenu(EdstMenu.speedMenu));
+      if (!hiddenCopy.includes(AclRowField.SPD)) {
+        if ((asel?.field as AclRowField) === AclRowField.SPD) {
+          dispatch(closeWindow(EdstWindow.SPEED_MENU));
           dispatch(setAsel(null));
         }
-        hiddenCopy.push(AclRowField.spd);
+        hiddenCopy.push(AclRowField.SPD);
       }
     }
     setHiddenList(hiddenCopy);
@@ -108,19 +108,18 @@ export function AclTable() {
 
   const sortFunc = (u: LocalEdstEntry, v: LocalEdstEntry) => {
     switch (sortData.selectedOption) {
-      case SortOptions.acid:
-        return u.callsign.localeCompare(v.callsign);
-      case SortOptions.destination:
-        return u.dest.localeCompare(v.dest);
-      case SortOptions.origin:
-        return u.dep.localeCompare(v.dep);
-      case SortOptions.boundaryTime:
+      case SortOptions.ACID:
+        return u.aircraftId.localeCompare(v.aircraftId);
+      case SortOptions.DESTINATION:
+        return u.destination.localeCompare(v.destination);
+      case SortOptions.ORIGIN:
+        return u.departure.localeCompare(v.departure);
+      case SortOptions.BOUNDARY_TIME:
         return u.boundaryTime - v.boundaryTime;
       default:
-        return u.callsign.localeCompare(v.callsign);
+        return u.aircraftId.localeCompare(v.aircraftId);
     }
   };
-
   const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.aclDisplay), [entries]);
   const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntry) => entry.spa)), [entryList]);
 
@@ -142,19 +141,19 @@ export function AclTable() {
           </EdstTooltip>
           <SpecialBox disabled />
           <SpecialBox disabled />
-          <AircraftTypeCol hidden={hiddenList.includes(AclRowField.type)}>
-            <div onMouseDown={() => toggleHideColumn(AclRowField.type)}>T{!hiddenList.includes(AclRowField.type) && "ype"}</div>
+          <AircraftTypeCol hidden={hiddenList.includes(AclRowField.TYPE)}>
+            <div onMouseDown={() => toggleHideColumn(AclRowField.TYPE)}>T{!hiddenList.includes(AclRowField.TYPE) && "ype"}</div>
           </AircraftTypeCol>
           <AltCol hover headerCol onMouseDown={() => setAltMouseDown(true)} onMouseUp={() => setAltMouseDown(false)}>
             Alt.
           </AltCol>
-          <CodeCol hover hidden={hiddenList.includes(AclRowField.code)} onMouseDown={() => toggleHideColumn(AclRowField.code)}>
-            C{!hiddenList.includes(AclRowField.code) && "ode"}
+          <CodeCol hover hidden={hiddenList.includes(AclRowField.CODE)} onMouseDown={() => toggleHideColumn(AclRowField.CODE)}>
+            C{!hiddenList.includes(AclRowField.CODE) && "ode"}
           </CodeCol>
           <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclHeaderHdg}>
-            <HdgCol hover hidden={hiddenList.includes(AclRowField.hdg)} onMouseDown={() => toggleHideColumn(AclRowField.hdg)}>
-              {hiddenList.includes(AclRowField.hdg) && anyAssignedHeading && "*"}H{!hiddenList.includes(AclRowField.hdg) && "dg"}
+            <HdgCol hover hidden={hiddenList.includes(AclRowField.HDG)} onMouseDown={() => toggleHideColumn(AclRowField.HDG)}>
+              {hiddenList.includes(AclRowField.HDG) && anyAssignedHeading && "*"}H{!hiddenList.includes(AclRowField.HDG) && "dg"}
             </HdgCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclHeaderSlash}>
@@ -163,9 +162,9 @@ export function AclTable() {
             </HdgSpdSlashCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclHeaderSpd}>
-            <SpdCol hover hidden={hiddenList.includes(AclRowField.spd)} onMouseDown={() => toggleHideColumn(AclRowField.spd)}>
-              S{!hiddenList.includes(AclRowField.spd) && "pd"}
-              {hiddenList.includes(AclRowField.spd) && anyAssignedSpeed && "*"}
+            <SpdCol hover hidden={hiddenList.includes(AclRowField.SPD)} onMouseDown={() => toggleHideColumn(AclRowField.SPD)}>
+              S{!hiddenList.includes(AclRowField.SPD) && "pd"}
+              {hiddenList.includes(AclRowField.SPD) && anyAssignedSpeed && "*"}
             </SpdCol>
           </EdstTooltip>
           <SpecialBox disabled />
@@ -181,7 +180,7 @@ export function AclTable() {
       <ScrollContainer>
         {spaEntryList?.map(([i, entry]: [string, LocalEdstEntry]) => (
           <AclRow
-            key={`acl-table-row-spa-${entry.cid}-${i}`}
+            key={`acl-table-row-spa-${entry.aircraftId}-${i}`}
             index={Number(i)}
             entry={entry}
             anyHolding={anyHolding}
@@ -193,7 +192,7 @@ export function AclTable() {
         {Object.entries(entryList?.filter((entry: LocalEdstEntry) => !entry.spa && (entry.vciStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
           ([i, entry]: [string, LocalEdstEntry]) => (
             <AclRow
-              key={`acl-table-row-ack-${entry.cid}-${i}`}
+              key={`acl-table-row-ack-${entry.aircraftId}-${i}`}
               index={Number(i)}
               entry={entry}
               anyHolding={anyHolding}
@@ -208,7 +207,7 @@ export function AclTable() {
             entryList?.filter((entry: LocalEdstEntry) => !entry.spa && entry.vciStatus === -1)
           )?.map(([i, entry]: [string, LocalEdstEntry]) => (
             <AclRow
-              key={`acl-table-row-no-ack-${entry.cid}-${i}`}
+              key={`acl-table-row-no-ack-${entry.aircraftId}-${i}`}
               index={Number(i)}
               entry={entry}
               anyHolding={anyHolding}

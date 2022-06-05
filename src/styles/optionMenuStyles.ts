@@ -195,6 +195,7 @@ export const EdstInput = styled.input<{ width?: number }>`
   border-right: 2px solid #888888;
   background-color: #000000;
   resize: none;
+  text-transform: uppercase;
 
   &:hover {
     outline: 1px solid #ffffff;

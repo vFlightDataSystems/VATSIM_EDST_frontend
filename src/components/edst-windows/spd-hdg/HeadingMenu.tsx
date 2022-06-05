@@ -6,16 +6,21 @@ import { EdstButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { EdstMenu } from "../../../enums";
-import { aselSelector, Asel, closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
+import {
+  aselSelector,
+  Asel,
+  zStackSelector,
+  pushZStack,
+  windowPositionSelector, closeWindow
+} from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
 import { LocalEdstEntry } from "../../../types";
-import { amendEntryThunk } from "../../../redux/thunks/entriesThunks";
 import { useCenterCursor, useDragging, useFocused } from "../../../hooks";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstWindow } from "../../../namespaces";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 190px;
@@ -24,7 +29,7 @@ const HeadingDiv = styled(OptionsMenu)`
 export const HeadingMenu: React.FC = () => {
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(EdstMenu.headingMenu));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.HEADING_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -34,7 +39,7 @@ export const HeadingMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.headingMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HEADING_MENU);
 
   useEffect(() => {
     setHeading(280);
@@ -47,30 +52,13 @@ export const HeadingMenu: React.FC = () => {
 
     switch (event.button) {
       case 0:
-        dispatch(
-          amendEntryThunk({
-            cid: entry.cid,
-            planData: {
-              [amend ? "hdg" : "scratchHdg"]: valueStr,
-              [!amend ? "hdg" : "scratchHdg"]: null
-            }
-          })
-        );
         break;
       case 1:
-        dispatch(
-          amendEntryThunk({
-            cid: entry.cid,
-            planData: {
-              [amend ? "hdg" : "scratchHdg"]: valueStr
-            }
-          })
-        );
         break;
       default:
         break;
     }
-    dispatch(closeMenu(EdstMenu.headingMenu));
+    dispatch(closeWindow(EdstWindow.HEADING_MENU));
   };
 
   return (
@@ -79,8 +67,8 @@ export const HeadingMenu: React.FC = () => {
       <HeadingDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(EdstMenu.headingMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.headingMenu) > 0 && dispatch(pushZStack(EdstMenu.headingMenu))}
+        zIndex={zStack.indexOf(EdstWindow.HEADING_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.HEADING_MENU) > 0 && dispatch(pushZStack(EdstWindow.HEADING_MENU))}
         anyDragging={anyDragging}
         id="heading-menu"
       >
@@ -90,7 +78,7 @@ export const HeadingMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.callsign} {entry.type}/{entry.equipment}
+            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
           </FidRow>
           <Row
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
@@ -142,36 +130,19 @@ export const HeadingMenu: React.FC = () => {
                 onMouseDown={event => {
                   switch (event.button) {
                     case 0:
-                      dispatch(
-                        amendEntryThunk({
-                          cid: entry.cid,
-                          planData: {
-                            [amend ? "hdg" : "scratchHdg"]: "PH",
-                            [!amend ? "hdg" : "scratchHdg"]: null
-                          }
-                        })
-                      );
                       break;
                     case 1:
-                      dispatch(
-                        amendEntryThunk({
-                          cid: entry.cid,
-                          planData: {
-                            [amend ? "hdg" : "scratchHdg"]: "PH"
-                          }
-                        })
-                      );
                       break;
                     default:
                       break;
                   }
-                  dispatch(closeMenu(EdstMenu.headingMenu));
+                  dispatch(closeWindow(EdstWindow.HEADING_MENU));
                 }}
               />
             </Row>
             <OptionsBodyRow margin="0">
               <OptionsBodyCol alignRight>
-                <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.headingMenu))} />
+                <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.HEADING_MENU))} />
               </OptionsBodyCol>
             </OptionsBodyRow>
           </ScrollContainer>

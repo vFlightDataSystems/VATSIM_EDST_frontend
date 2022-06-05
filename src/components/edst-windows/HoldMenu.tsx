@@ -7,14 +7,14 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entriesSlice";
-import { EdstMenu } from "../../enums";
-import { closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { LocalEdstEntry, RouteFix } from "../../types";
-import { amendEntryThunk } from "../../redux/thunks/entriesThunks";
+import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
+import { AircraftTrack, LocalEdstEntry, RouteFix } from "../../types";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
+import { EdstWindow } from "../../namespaces";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;
@@ -81,7 +81,8 @@ const EfcInputContainer = styled(InputContainer)`
 
 export const HoldMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(EdstMenu.holdMenu));
+  const track = useRootSelector(aselTrackSelector) as AircraftTrack;
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.HOLD_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -97,20 +98,20 @@ export const HoldMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.holdMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU);
 
   useEffect(() => {
     if (!entry) {
-      dispatch(closeMenu(EdstMenu.holdMenu));
+      dispatch(closeWindow(EdstWindow.HOLD_MENU));
     } else {
-      const routeData = computeCrossingTimes(entry);
+      const routeData = computeCrossingTimes(entry, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      setHoldFix(entry.hold_data?.hold_fix ?? "PP");
-      setLegLength(entry.hold_data?.leg_length ?? "STD");
-      setHoldDirection(entry.hold_data?.hold_direction ?? "N");
-      setTurns(entry.hold_data?.turns ?? "RT");
-      setEfc(entry.hold_data?.efc ?? utcMinutes + 30);
+      setHoldFix(entry.holdData?.holdFix ?? "PP");
+      setLegLength(entry.holdData?.legLength ?? "STD");
+      setHoldDirection(entry.holdData?.holdDirection ?? "N");
+      setTurns(entry.holdData?.turns ?? "RT");
+      setEfc(entry.holdData?.efc ?? utcMinutes + 30);
       setRouteData(routeData ?? null);
     } // eslint-disable-next-line
   }, []);
@@ -118,15 +119,14 @@ export const HoldMenu: React.FC = () => {
   const clearedHold = () => {
     if (entry) {
       const holdData = {
-        hold_fix: holdFix,
-        leg_length: legLength,
-        hold_direction: holdDirection,
+        holdFix,
+        legLength,
+        holdDirection,
         turns,
         efc
       };
-      dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: holdData } }));
     }
-    dispatch(closeMenu(EdstMenu.holdMenu));
+    dispatch(closeWindow(EdstWindow.HOLD_MENU));
   };
 
   return (
@@ -135,8 +135,8 @@ export const HoldMenu: React.FC = () => {
       <HoldDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(EdstMenu.holdMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.holdMenu) > 0 && dispatch(pushZStack(EdstMenu.holdMenu))}
+        zIndex={zStack.indexOf(EdstWindow.HOLD_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) > 0 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
         anyDragging={anyDragging}
         id="hold-menu"
       >
@@ -146,7 +146,7 @@ export const HoldMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.callsign} {entry.type}/{entry.equipment}
+            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
           </FidRow>
           <OptionsBodyRow>
             <EdstTooltip title={Tooltips.holdDirection}>
@@ -260,9 +260,8 @@ export const HoldMenu: React.FC = () => {
                 content="Delete Hold Instructions"
                 padding="0 20px"
                 onMouseDown={() => {
-                  dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: null } }));
-                  dispatch(updateEntry({ cid: entry.cid, data: { aclRouteDisplay: null } }));
-                  dispatch(closeMenu(EdstMenu.holdMenu));
+                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclRouteDisplay: null } }));
+                  dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}
                 title={Tooltips.holdDeleteHoldInstr}
               />
@@ -297,28 +296,27 @@ export const HoldMenu: React.FC = () => {
                 content="Hold/SPA"
                 margin="0 6px 0 0"
                 padding="0 6px"
-                disabled={entry?.hold_data}
+                disabled={!!entry?.holdData}
                 onMouseDown={() => {
                   if (!entry.spa) {
-                    dispatch(toggleSpa(entry.cid));
+                    dispatch(toggleSpa(entry.aircraftId));
                   }
                   clearedHold();
                 }}
                 title={Tooltips.holdHoldSpaBtn}
               />
-              <EdstButton content="Hold" margin="0 6px 0 0" onMouseDown={clearedHold} disabled={entry?.hold_data} title={Tooltips.holdHoldBtn} />
+              <EdstButton content="Hold" margin="0 6px 0 0" onMouseDown={clearedHold} disabled={!!entry?.holdData} title={Tooltips.holdHoldBtn} />
               <EdstButton
                 content="Cancel Hold"
-                disabled={!entry?.hold_data}
+                disabled={!entry?.holdData}
                 onMouseDown={() => {
-                  dispatch(amendEntryThunk({ cid: entry.cid, planData: { hold_data: null } }));
-                  dispatch(updateEntry({ cid: entry.cid, data: { aclRouteDisplay: null } }));
-                  dispatch(closeMenu(EdstMenu.holdMenu));
+                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclRouteDisplay: null } }));
+                  dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.holdMenu))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.HOLD_MENU))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </OptionsBody>

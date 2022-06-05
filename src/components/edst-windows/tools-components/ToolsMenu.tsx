@@ -4,8 +4,7 @@ import styled from "styled-components";
 import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { EdstMenu } from "../../../enums";
-import { closeMenu, menuSelector, pushZStack, zStackSelector } from "../../../redux/slices/appSlice";
+import { closeWindow, pushZStack, windowSelector, zStackSelector } from "../../../redux/slices/appSlice";
 import { ToolsOptionsMenu } from "./ToolsOptionsMenu";
 import { useDragging, useFocused } from "../../../hooks";
 import {
@@ -18,6 +17,7 @@ import {
   OptionsMenuHeader
 } from "../../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstWindow } from "../../../namespaces";
 
 export const ToolsBody = styled(OptionsBody)`
   padding: 20px 0 4px 0;
@@ -25,20 +25,20 @@ export const ToolsBody = styled(OptionsBody)`
 
 export const ToolsMenu: React.FC = () => {
   const dispatch = useRootDispatch();
-  const menuProps = useRootSelector(menuSelector(EdstMenu.toolsMenu));
+  const windowProps = useRootSelector(windowSelector(EdstWindow.TOOLS_MENU));
   const zStack = useRootSelector(zStackSelector);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.toolsMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TOOLS_MENU);
 
   return (
-    menuProps?.position && (
+    windowProps?.position && (
       <OptionsMenu
         ref={ref}
-        pos={menuProps.position}
-        zIndex={zStack.indexOf(EdstMenu.toolsMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.toolsMenu) > 0 && dispatch(pushZStack(EdstMenu.toolsMenu))}
+        pos={windowProps.position}
+        zIndex={zStack.indexOf(EdstWindow.TOOLS_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.TOOLS_MENU) > 0 && dispatch(pushZStack(EdstWindow.TOOLS_MENU))}
         anyDragging={anyDragging}
         id="tools-menu"
       >
@@ -72,7 +72,7 @@ export const ToolsMenu: React.FC = () => {
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>
-                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.toolsMenu))} />
+                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
             </span>

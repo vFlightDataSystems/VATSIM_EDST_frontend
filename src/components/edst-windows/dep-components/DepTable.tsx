@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { DepRow } from "./DepRow";
 import { LocalEdstEntry } from "../../../types";
 import { useRootSelector } from "../../../redux/hooks";
-import { DepRowField, SortOptions } from "../../../enums";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
@@ -11,6 +10,7 @@ import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
 import { AircraftTypeCol, AltCol, DepCol2, FidCol, RadioCol, SpecialBox, CodeCol, RouteCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entriesSlice";
 import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
+import { DepRowField, SortOptions } from "../../../namespaces";
 
 const COMPLETED_SYMBOL = "✓";
 
@@ -41,14 +41,14 @@ export function DepTable() {
 
   const sortFunc = (u: LocalEdstEntry, v: LocalEdstEntry) => {
     switch (sortData.selectedOption) {
-      case SortOptions.acid:
-        return u.callsign.localeCompare(v.callsign);
-      case SortOptions.destination:
-        return u.dest.localeCompare(v.dest);
-      case SortOptions.origin:
-        return u.dep?.localeCompare(v.dep);
+      case SortOptions.ACID:
+        return u.aircraftId.localeCompare(v.aircraftId);
+      case SortOptions.DESTINATION:
+        return u.destination.localeCompare(v.destination);
+      case SortOptions.ORIGIN:
+        return u.departure?.localeCompare(v.departure);
       default:
-        return u.callsign.localeCompare(v.callsign);
+        return u.aircraftId.localeCompare(v.aircraftId);
     }
   };
 
@@ -63,23 +63,23 @@ export function DepTable() {
         <FidCol>Flight ID</FidCol>
         <SpecialBox />
         <SpecialBox />
-        <AircraftTypeCol hidden={hiddenList.includes(DepRowField.type)}>
-          <div onMouseDown={() => toggleHideColumn(DepRowField.type)}>T{!hiddenList.includes(DepRowField.type) && "ype"}</div>
+        <AircraftTypeCol hidden={hiddenList.includes(DepRowField.TYPE)}>
+          <div onMouseDown={() => toggleHideColumn(DepRowField.TYPE)}>T{!hiddenList.includes(DepRowField.TYPE) && "ype"}</div>
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>
-        <CodeCol hover hidden={hiddenList.includes(DepRowField.code)} onMouseDown={() => toggleHideColumn(DepRowField.code)}>
-          C{!hiddenList.includes(DepRowField.code) && "ode"}
+        <CodeCol hover hidden={hiddenList.includes(DepRowField.CODE)} onMouseDown={() => toggleHideColumn(DepRowField.CODE)}>
+          C{!hiddenList.includes(DepRowField.CODE) && "ode"}
         </CodeCol>
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
         {spaEntryList?.map(([i, entry]: [string, LocalEdstEntry]) => (
-          <DepRow key={`dep-row-spa-${entry.cid}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
+          <DepRow key={`dep-row-spa-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
         {Object.entries(entryList?.filter((entry: LocalEdstEntry) => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
           ([i, entry]: [string, LocalEdstEntry]) => (
-            <DepRow key={`dep-row-ack-${entry.cid}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
+            <DepRow key={`dep-row-ack-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
           )
         )}
         {manualPosting && <BodyRowDiv separator />}
@@ -87,7 +87,7 @@ export function DepTable() {
           Object.entries(
             entryList?.filter((entry: LocalEdstEntry) => !entry.spa && entry.depStatus === -1)
           )?.map(([i, entry]: [string, LocalEdstEntry]) => (
-            <DepRow key={`dep-row-no-ack-${entry.cid}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
+            <DepRow key={`dep-row-no-ack-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
           ))}
       </ScrollContainer>
     </DepBodyStyleDiv>

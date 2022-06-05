@@ -1,20 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { SortOptions } from "../../enums";
 import { RootState } from "../store";
+import { SortOptions } from "../../namespaces";
 
 export type DepState = {
   sortData: { selectedOption: SortOptions; sector: boolean };
   manualPosting: boolean;
 };
 
-const initialState = {
-  sortData: { selectedOption: SortOptions.acid, sector: false },
+const initialState: DepState = {
+  sortData: { selectedOption: SortOptions.ACID, sector: false },
   manualPosting: true
 };
 
 const depSlice = createSlice({
   name: "dep",
-  initialState: initialState as DepState,
+  initialState,
   reducers: {
     setDepSort(state: DepState, action: { payload: SortOptions }) {
       state.sortData.selectedOption = action.payload;

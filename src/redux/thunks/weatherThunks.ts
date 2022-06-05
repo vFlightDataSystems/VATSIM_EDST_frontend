@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { RootState, RootThunkAction } from "../store";
 import { addSigmets, ApiSigmet, removeAirportAltimeter, removeAirportMetar, setAirportAltimeter, setAirportMetar } from "../slices/weatherSlice";
 import { fetchAirportMetar, fetchSigmets } from "../../api";
 
@@ -25,7 +25,7 @@ const setMetarThunk = createAsyncThunk("weather/setMetar", async (airports: stri
       });
   }
 
-  if (airports instanceof Array) {
+  if (Array.isArray(airports)) {
     airports.forEach(airport => {
       dispatchFetch(airport);
     });
@@ -47,7 +47,7 @@ export const toggleMetarThunk = createAsyncThunk("weather/toggleMetar", async (a
     return thunkAPI.dispatch(setMetarThunk(airport));
   }
 
-  if (airports instanceof Array) {
+  if (Array.isArray(airports)) {
     airports.forEach(airport => {
       dispatchAirportAddMetar(airport);
     });
@@ -73,7 +73,7 @@ const setAltimeterThunk = createAsyncThunk("weather/setAltimeter", async (airpor
       });
   }
 
-  if (airports instanceof Array) {
+  if (Array.isArray(airports)) {
     airports.forEach(airport => {
       dispatchFetch(airport);
     });
@@ -96,7 +96,7 @@ export const toggleAltimeterThunk = createAsyncThunk("weather/toggleAltimeter", 
     }
   }
 
-  if (airports instanceof Array) {
+  if (Array.isArray(airports)) {
     airports.forEach(airport => {
       dispatchAirportAddAltimeter(airport);
     });
@@ -120,7 +120,7 @@ export const refreshSigmets = createAsyncThunk("weather/refreshSigmets", async (
     });
 });
 
-export function refreshWeatherThunk(dispatch: any, getState: () => RootState) {
+export const refreshWeatherThunk: RootThunkAction = (dispatch, getState) => {
   const weatherState = getState().weather;
   const altimeterAirports = Object.keys(weatherState.altimeterList);
   const metarAirports = Object.keys(weatherState.metarList);
@@ -131,4 +131,4 @@ export function refreshWeatherThunk(dispatch: any, getState: () => RootState) {
     dispatch(setMetarThunk(metarAirports));
   }
   dispatch(refreshSigmets());
-}
+};

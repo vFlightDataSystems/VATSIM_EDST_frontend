@@ -35,11 +35,11 @@ export type SigmetEntry = ApiSigmet & {
   polygons: Feature<Polygon | MultiPolygon>;
 };
 
-const initialState = { altimeterList: {}, metarList: {}, sigmetList: {}, viewSigmetSuppressed: true };
+const initialState: WeatherState = { altimeterList: {}, metarList: {}, sigmetList: {}, viewSigmetSuppressed: true };
 
 const weatherSlice = createSlice({
   name: "weather",
-  initialState: initialState as WeatherState,
+  initialState,
   reducers: {
     setAirportMetar(state, action: { payload: MetarEntry }) {
       state.metarList[action.payload.airport] = action.payload;

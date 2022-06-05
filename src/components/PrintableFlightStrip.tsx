@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Position } from "@turf/turf";
-import { RouteFix, LocalEdstEntry } from "../types";
-import { computeCrossingTimes, formatUtcMinutes, getNextFix } from "../lib";
+import { LocalEdstEntry } from "../types";
+import { convertBeaconCodeToString, formatUtcMinutes } from "../lib";
 
 function getRouteString(entry: LocalEdstEntry) {
-  const route =
-    (entry.currentRoute?.length ? entry?.route?.concat(entry?.dest ?? "") : entry?.currentRoute?.replace(/^\.*/, "")?.concat(entry?.dest ?? "")) ??
-    "";
-  return (entry.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix) ? `${entry.cleared_direct?.frd}..` : entry?.dep ?? "") + route;
+  return (
+    (entry.currentRoute?.length
+      ? entry?.route?.concat(entry?.destination ?? "")
+      : entry?.currentRoute?.replace(/^\.*/, "")?.concat(entry?.destination ?? "")) ?? ""
+  );
 }
 
 export function printFlightStrip(entry?: LocalEdstEntry) {
@@ -17,17 +17,18 @@ export function printFlightStrip(entry?: LocalEdstEntry) {
     if (printDoc) {
       ReactDOM.unmountComponentAtNode(printDoc);
     }
-    const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)] as Position;
-    const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (RouteFix & { minutesAtFix: number })[];
+    // const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)] as Position;
+    // const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (RouteFix & { minutesAtFix: number })[];
+    const [nextFix, prevFix]: [any, any] = [null, null];
     ReactDOM.render(
       <PrintableFlightStrip
         fs={{
-          callsign: entry.callsign, // callsign
-          type: entry.type, // weight, type, equipment suffix
+          callsign: entry.aircraftId, // callsign
+          type: entry.equipment, // weight, type, equipment suffix
           tas: "TXXX", // true airspeed
           sect: "XX", // current sector
-          cid: entry.cid, // cid
-          estGs: `G${entry.flightplan.ground_speed}`, // filed ground speed
+          aircraftId: entry.aircraftId, // cid
+          estGs: `G${entry.speed}`, // filed ground speed
           stripReqOrig: "XXX", // strip request origin
           stripNum: "1", // strip number
           prev: prevFix?.name ?? "", // previous fix
@@ -49,8 +50,8 @@ export function printFlightStrip(entry?: LocalEdstEntry) {
             .split(".")
             .filter(x => x !== "")
             .join(" "), // route
-          remarks: filterRemarks(entry.flightplan.remarks), // remarks
-          squawk: entry.beacon, // squawk code
+          remarks: filterRemarks(entry.remarks), // remarks
+          squawk: convertBeaconCodeToString(entry.assignedBeaconCode), // squawk code
           misc: "", // miscellaneous info
           trans1: "", // transfer of control info
           trans2: "" // transfer of control info

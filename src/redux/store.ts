@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, ThunkAction } from "@reduxjs/toolkit";
 import aclReducer from "./slices/aclSlice";
 import depReducer from "./slices/depSlice";
 import gpdReducer from "./slices/gpdSlice";
@@ -6,6 +6,7 @@ import sectorReducer from "./slices/sectorSlice";
 import entriesReducer from "./slices/entriesSlice";
 import planReducer from "./slices/planSlice";
 import appReducer from "./slices/appSlice";
+import aircraftTrackReducer from "./slices/aircraftTrackSlice";
 import weatherReducer from "./slices/weatherSlice";
 
 const store = configureStore({
@@ -17,6 +18,7 @@ const store = configureStore({
     plan: planReducer,
     sectorData: sectorReducer,
     entries: entriesReducer,
+    aircraftTracks: aircraftTrackReducer,
     weather: weatherReducer
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false })
@@ -25,4 +27,5 @@ export default store;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootDispatch = typeof store.dispatch;
+export type RootThunkAction = ThunkAction<void, RootState, any, any>;

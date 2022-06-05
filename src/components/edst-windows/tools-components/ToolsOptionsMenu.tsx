@@ -2,11 +2,11 @@ import React, { useState } from "react";
 
 import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
-import { EdstMenu } from "../../../enums";
-import { closeMenu } from "../../../redux/slices/appSlice";
+import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/aclSlice";
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
+import { EdstWindow } from "../../../namespaces";
 
 export const ToolsOptionsMenu: React.FC = () => {
   const dispatch = useRootDispatch();
@@ -64,12 +64,12 @@ export const ToolsOptionsMenu: React.FC = () => {
                   nonRvsmIndicator
                 })
               );
-              dispatch(closeMenu(EdstMenu.toolsMenu));
+              dispatch(closeWindow(EdstWindow.TOOLS_MENU));
             }}
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.toolsMenu))} />
+          <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

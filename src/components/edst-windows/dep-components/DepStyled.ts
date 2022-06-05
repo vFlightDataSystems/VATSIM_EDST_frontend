@@ -124,9 +124,9 @@ export const AltCol = styled(Col)<{ headerCol?: boolean }>`
       "padding-left": "4px"
     }}
 `;
-export const AltColDiv = styled(Col)<{ interim?: boolean; headerMouseDown?: boolean }>`
+export const AltColDiv = styled(Col)<{ interimAltitude?: boolean; headerMouseDown?: boolean }>`
   border: 1px solid transparent;
-  ${props => props.interim && { width: "75px" }};
+  ${props => props.interimAltitude && { width: "75px" }};
 
   ${props => props.headerMouseDown && { border: "1px solid #AD3636" }}
   &:hover {

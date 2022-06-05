@@ -78,7 +78,7 @@ const initialState: GpdState = {
 
 const gpdSlice = createSlice({
   name: "gpd",
-  initialState: initialState as GpdState,
+  initialState,
   reducers: {
     addGpdPlanData(state, action: { payload: Record<string, any> }) {
       state.planData.push(action.payload);
@@ -114,8 +114,7 @@ const gpdSlice = createSlice({
     setSuppressed(state, action: { payload: boolean }) {
       state.suppressed = action.payload;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toggleSuppressed(state, action: { payload?: any }) {
+    toggleSuppressed(state) {
       state.suppressed = !state.suppressed;
     }
   }

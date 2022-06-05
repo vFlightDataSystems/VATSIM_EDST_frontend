@@ -8,8 +8,6 @@ type InputProps = {
   value: string | number;
   onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onKeyDown: (event: React.KeyboardEvent) => void;
-  onFocus: () => void;
-  onBlur: () => void;
   rows?: number;
 };
 

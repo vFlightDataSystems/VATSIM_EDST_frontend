@@ -17,7 +17,7 @@ import * as geomag from "geomag";
 import _ from "lodash";
 import { clipboard } from "@tauri-apps/api";
 import { toast } from "./components/toast/ToastManager";
-import { EdstEntry, RouteFix, LocalEdstEntry, ReferenceFix, Fix } from "./types";
+import { RouteFix, LocalEdstEntry, ReferenceFix, Fix, AircraftTrack } from "./types";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -82,8 +82,8 @@ export function routeWillEnterAirspace(route: string, routeData: RouteFix[] | nu
     routeDataToProcess = routeDataToProcess.slice(index);
     routeDataToProcess.unshift({ name: "ppos", pos });
     const lines = lineString(routeDataToProcess.map(e => e.pos));
-    // eslint-disable-next-line no-restricted-syntax
-    for (const poly of polygons) {
+    for (let i = 0; i < polygons.length; i++) {
+      const poly = polygons[i];
       if (booleanIntersects(lines, poly)) {
         return true;
       }
@@ -99,10 +99,9 @@ export function routeWillEnterAirspace(route: string, routeData: RouteFix[] | nu
  * @returns {RouteFix[]} - original routeData, but each item will have a `distance` attribute
  */
 export function getRouteDataDistance(routeData: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
-  return routeData.map(fix => {
-    fix.dist = distance(point(fix.pos), point(pos), { units: "nauticalmiles" });
-    return fix;
-  }) as (RouteFix & { dist: number })[];
+  return routeData.map(fix => ({ ...fix, dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" }) })) as (RouteFix & {
+    dist: number;
+  })[];
 }
 
 /**
@@ -112,7 +111,7 @@ export function getRouteDataDistance(routeData: RouteFix[], pos: Position): (Rou
  * @param {Position} pos - lon/lat pair, current position
  * @param {Feature<Polygon>[]} polygons - airspace defining polygons
  * @param {string} dest - ICAO string of destination airport
- * @returns {{_route: string, _route_data: RouteFix[]}}
+ * @returns {currentRoute: string, currentRouteData: RouteFix[]}
  */
 export function getRemainingRouteData(
   route: string,
@@ -120,7 +119,8 @@ export function getRemainingRouteData(
   pos: Position,
   dest: string,
   polygons?: Feature<Polygon>[]
-): { currentRoute: string; currentRouteData: RouteFix[] } {
+): { currentRoute: string; currentRouteData: (RouteFix & { dist: number })[] } {
+  route = route.slice(0);
   if (routeData.length > 1) {
     const fixNames = routeData.map(e => e.name);
     if (fixNames.slice(-1)[0] === dest) {
@@ -128,8 +128,8 @@ export function getRemainingRouteData(
     }
     let firstFixToShow = routeData[0];
     if (polygons) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const fix of routeData) {
+      for (let i = 0; i < routeData.length; i++) {
+        const fix = routeData[i];
         if (polygons.filter(polygon => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
           break;
         }
@@ -137,8 +137,8 @@ export function getRemainingRouteData(
       }
     }
     // compute route string starting from firstFixToShow
-    // eslint-disable-next-line no-restricted-syntax
-    for (const name of fixNames.slice(0, fixNames.indexOf(firstFixToShow.name) + 1).reverse()) {
+    for (let i = 0; i < fixNames.slice(0, fixNames.indexOf(firstFixToShow.name) + 1).reverse().length; i++) {
+      const name = fixNames.slice(0, fixNames.indexOf(firstFixToShow.name) + 1).reverse()[i];
       const index = route.lastIndexOf(name);
       if (index > -1) {
         route = route.slice(index + name.length);
@@ -237,7 +237,7 @@ export function processAar(entry: Partial<LocalEdstEntry>, aarList: any[]) {
         aar_amendment_route_string: aarAmendmentRouteString,
         amended_route: amendedRouteString,
         amended_route_fix_names: remainingFixNames,
-        dest: entry.dest,
+        destination: entry.destination,
         tfix,
         tfix_info: tfixInfo,
         eligible: amendment.eligible,
@@ -251,36 +251,37 @@ export function processAar(entry: Partial<LocalEdstEntry>, aarList: any[]) {
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
  * @param {LocalEdstEntry} entry - an EDST entry
+ * @param track
  * @param {Feature<Polygon>[]} polygons - airspace boundaries
  * @returns {number} - minutes until the aircraft enters the airspace
  */
-export function computeBoundaryTime(entry: EdstEntry, polygons: Feature<Polygon>[]): number {
-  const pos = [entry.flightplan.lon, entry.flightplan.lat];
+export function computeBoundaryTime(entry: LocalEdstEntry, track: AircraftTrack, polygons: Feature<Polygon>[]): number {
+  const pos = [track.location.lon, track.location.lat];
   const posPoint = point(pos);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const sdist = getSignedStratumDistancePointToPolygons(posPoint, polygons, entry.flightplan.altitude, entry.interim);
-  return (sdist * 60) / entry.flightplan.ground_speed;
+  const sdist = getSignedStratumDistancePointToPolygons(posPoint, polygons, Number(entry.flightplan.altitude), entry.interimAltitude);
+  return (sdist * 60) / track.groundSpeed;
 }
 
 /**
  *
  * @param {LocalEdstEntry} entry
+ * @param track
  * @returns {RouteFix[]}
  */
-export function computeCrossingTimes(entry: LocalEdstEntry): (RouteFix & { minutesAtFix: number })[] {
+export function computeCrossingTimes(entry: LocalEdstEntry, track: AircraftTrack): (RouteFix & { minutesAtFix: number })[] {
   const newRouteData: (RouteFix & { minutesAtFix: number })[] = [];
   if (entry.currentRouteData) {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const groundspeed = Number(entry.flightplan?.ground_speed);
-    if (entry.currentRouteData.length > 0 && groundspeed > 0) {
-      const lineData = [[entry.flightplan?.lon, entry.flightplan?.lat]];
+    if (entry.currentRouteData.length > 0 && track.groundSpeed > 0) {
+      const lineData = [[track.location.lon, track.location.lat]];
       entry.currentRouteData.forEach(fix => {
         lineData.push(fix.pos);
         newRouteData.push({
           ...fix,
-          minutesAtFix: utcMinutes + (60 * length(lineString(lineData), { units: "nauticalmiles" })) / groundspeed
+          minutesAtFix: utcMinutes + (60 * length(lineString(lineData), { units: "nauticalmiles" })) / track.groundSpeed
         });
       });
     }
@@ -351,31 +352,39 @@ export function removeDestFromRouteString(route: string, dest: string): string {
 export function getClearedToFixRouteData(
   clearedFixName: string,
   entry: LocalEdstEntry,
+  location: { lat: number; lon: number },
   referenceFixes: Fix[] | null
-): { route: string; route_data: RouteFix[]; cleared_direct: { frd: string | null; fix: string } } | null {
+): { route: string; routeData: RouteFix[] } | null {
   let newRoute = entry.currentRoute;
-  const { currentRouteData: routeData, dest } = entry;
+  const { currentRouteData: routeData, destination } = entry;
   if (newRoute && routeData) {
     const fixNames = routeData.map((e: { name: string }) => e.name);
-    const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat])) : null;
+    const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([location.lon, location.lat])) : null;
     const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
 
     const index = fixNames.indexOf(clearedFixName);
-    // eslint-disable-next-line no-restricted-syntax
-    for (const name of fixNames.slice(0, index + 1).reverse()) {
-      if (newRoute.includes(name)) {
-        newRoute = newRoute.slice(newRoute.indexOf(name) + name.length);
-        newRoute = `..${clearedFixName}${newRoute}`;
+    const relevantFixNames = fixNames.slice(0, index + 1).reverse();
+    for (let i = 0; i < relevantFixNames.length; i++) {
+      const name = relevantFixNames[i];
+      const fixIndex = newRoute.indexOf(name);
+      if (fixIndex >= 0) {
+        if (newRoute[fixIndex + name.length].match(/\d/)) {
+          newRoute = newRoute.slice(fixIndex);
+          newRoute = `${frd ? `..${frd}` : ""}..${clearedFixName}.${newRoute}`;
+        } else {
+          newRoute = newRoute.slice(fixIndex + name.length);
+          newRoute = `${frd ? `..${frd}` : ""}..${clearedFixName}${newRoute}`;
+        }
         break;
       }
     }
     // new_route = `..${fix}` + new_route;
-    newRoute = removeDestFromRouteString(newRoute.slice(0), dest);
-    copy(`${frd ?? ""}${newRoute}`.replace(/\.+$/, "")).then();
+    newRoute = removeDestFromRouteString(newRoute.slice(0), destination);
+    copy(`${newRoute}`.replace(/\.+$/, "")).then();
+    // console.log(newRoute, routeData);
     return {
       route: newRoute,
-      route_data: routeData.slice(index),
-      cleared_direct: { frd: frd ?? null, fix: clearedFixName }
+      routeData: routeData.slice(index)
     };
   }
   return null;
@@ -443,4 +452,12 @@ export function getDepString(dep?: string): string | null {
 
 export function getDestString(dest?: string): string | null {
   return dest ? `${dest}\u{2193}` : null;
+}
+
+export function convertBeaconCodeToString(code?: number | null): string {
+  return String(code ?? 0).padStart(4, "0");
+}
+
+export function formatAltitude(alt: string): string {
+  return String(Number(alt) / 100).padStart(3, "0");
 }

@@ -7,8 +7,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { setAclSort } from "../../redux/slices/aclSlice";
 import { setDepSort } from "../../redux/slices/depSlice";
-import { EdstMenu, SortOptions, EdstWindow } from "../../enums";
-import { closeMenu, menuSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
+import { closeWindow, zStackSelector, pushZStack, windowSelector } from "../../redux/slices/appSlice";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks";
 import {
   OptionsBody,
@@ -20,6 +19,7 @@ import {
   OptionsMenuHeader
 } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstWindow, SortOptions } from "../../namespaces";
 
 const SortDiv = styled(OptionsMenu)<{ width: number }>(props => ({ width: `${props.width}px` }));
 const SortHeader = styled(OptionsMenuHeader)``;
@@ -46,26 +46,26 @@ const SortCol = styled(OptionsBodyCol)`
 
 export const SortMenu: React.FC = () => {
   const dispatch = useRootDispatch();
-  const menuProps = useRootSelector(menuSelector(EdstMenu.sortMenu));
-  const window = menuProps.openedBy;
-  const sortData = useRootSelector(state => state[window === EdstWindow.acl ? "acl" : "dep"].sortData);
+  const windowProps = useRootSelector(windowSelector(EdstWindow.SORT_MENU));
+  const window = windowProps.openedBy;
+  const sortData = useRootSelector(state => state[window === EdstWindow.ACL ? "acl" : "dep"].sortData);
   const zStack = useRootSelector(zStackSelector);
   const [sortState, setSortState] = useState({ ...sortData });
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.sortMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SORT_MENU);
 
   const sortStateCopy = { ...sortState };
 
   return (
-    menuProps?.position && (
+    windowProps?.position && (
       <SortDiv
         ref={ref}
-        width={window === EdstWindow.acl ? 220 : 190}
-        pos={menuProps.position}
-        zIndex={zStack.indexOf(EdstMenu.sortMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.sortMenu) > 0 && dispatch(pushZStack(EdstMenu.sortMenu))}
+        width={window === EdstWindow.ACL ? 220 : 190}
+        pos={windowProps.position}
+        zIndex={zStack.indexOf(EdstWindow.SORT_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.SORT_MENU) > 0 && dispatch(pushZStack(EdstWindow.SORT_MENU))}
         anyDragging={anyDragging}
         id="sort-menu"
       >
@@ -74,7 +74,7 @@ export const SortMenu: React.FC = () => {
           Sort Menu
         </SortHeader>
         <SortBody>
-          {window === EdstWindow.acl && (
+          {window === EdstWindow.ACL && (
             <SectorRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
@@ -95,65 +95,65 @@ export const SortMenu: React.FC = () => {
             <EdstTooltip
               style={{ flexGrow: 1 }}
               onMouseDown={() => {
-                sortStateCopy.selectedOption = SortOptions.acid;
+                sortStateCopy.selectedOption = SortOptions.ACID;
                 setSortState(sortStateCopy);
               }}
               title={Tooltips.sortAcid}
             >
               <SortCol>
-                <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.acid} diamond />
+                <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.ACID} diamond />
                 ACID
               </SortCol>
             </EdstTooltip>
           </OptionsBodyRow>
-          {window === EdstWindow.acl && (
+          {window === EdstWindow.ACL && (
             <OptionsBodyRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
                 onMouseDown={() => {
-                  sortStateCopy.selectedOption = SortOptions.boundaryTime;
+                  sortStateCopy.selectedOption = SortOptions.BOUNDARY_TIME;
                   setSortState(sortStateCopy);
                 }}
                 title={Tooltips.sortBoundaryTime}
               >
                 <SortCol>
-                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.boundaryTime} diamond />
+                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.BOUNDARY_TIME} diamond />
                   Boundary Time
                 </SortCol>
               </EdstTooltip>
             </OptionsBodyRow>
           )}
-          {window === EdstWindow.acl && (
+          {window === EdstWindow.ACL && (
             <OptionsBodyRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
                 onMouseDown={() => {
-                  sortStateCopy.selectedOption = SortOptions.conflictStatus;
+                  sortStateCopy.selectedOption = SortOptions.CONFLICT_STATUS;
                   setSortState(sortStateCopy);
                 }}
                 disabled
                 title={Tooltips.sortConflictStatus}
               >
                 <SortCol>
-                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.conflictStatus} diamond />
+                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.CONFLICT_STATUS} diamond />
                   Conflict Status
                 </SortCol>
               </EdstTooltip>
             </OptionsBodyRow>
           )}
-          {window === EdstWindow.acl && (
+          {window === EdstWindow.ACL && (
             <OptionsBodyRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
                 onMouseDown={() => {
-                  sortStateCopy.selectedOption = SortOptions.conflictTime;
+                  sortStateCopy.selectedOption = SortOptions.CONFLICT_TIME;
                   setSortState(sortStateCopy);
                 }}
                 disabled
                 title={Tooltips.sortConflictTime}
               >
                 <SortCol>
-                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.conflictTime} diamond />
+                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.CONFLICT_TIME} diamond />
                   Conflict Time
                 </SortCol>
               </EdstTooltip>
@@ -163,65 +163,65 @@ export const SortMenu: React.FC = () => {
             <EdstTooltip
               style={{ flexGrow: 1 }}
               onMouseDown={() => {
-                sortStateCopy.selectedOption = SortOptions.destination;
+                sortStateCopy.selectedOption = SortOptions.DESTINATION;
                 setSortState(sortStateCopy);
               }}
               title={Tooltips.sortDestination}
             >
               <SortCol>
-                <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.destination} diamond />
+                <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.DESTINATION} diamond />
                 Destination
               </SortCol>
             </EdstTooltip>
           </OptionsBodyRow>
-          {window === EdstWindow.acl && (
+          {window === EdstWindow.ACL && (
             <OptionsBodyRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
                 onMouseDown={() => {
-                  sortStateCopy.selectedOption = SortOptions.sectorBySector;
+                  sortStateCopy.selectedOption = SortOptions.SECTOR_BY_SECTOR;
                   setSortState(sortStateCopy);
                 }}
                 disabled
                 title={Tooltips.sortSectorBySector}
               >
                 <SortCol>
-                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.sectorBySector} diamond />
+                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.SECTOR_BY_SECTOR} diamond />
                   Sector-by-Sector
                 </SortCol>
               </EdstTooltip>
             </OptionsBodyRow>
           )}
-          {window === EdstWindow.dep && (
+          {window === EdstWindow.DEP && (
             <OptionsBodyRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
                 onMouseDown={() => {
-                  sortStateCopy.selectedOption = SortOptions.origin;
+                  sortStateCopy.selectedOption = SortOptions.ORIGIN;
                   setSortState(sortStateCopy);
                 }}
                 title={Tooltips.sortOrigin}
               >
                 <SortCol>
-                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.origin} diamond />
+                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.ORIGIN} diamond />
                   Origin
                 </SortCol>
               </EdstTooltip>
             </OptionsBodyRow>
           )}
-          {window === EdstWindow.dep && (
+          {window === EdstWindow.DEP && (
             <OptionsBodyRow>
               <EdstTooltip
                 style={{ flexGrow: 1 }}
                 onMouseDown={() => {
-                  sortStateCopy.selectedOption = SortOptions.pTime;
+                  sortStateCopy.selectedOption = SortOptions.P_TIME;
                   setSortState(sortStateCopy);
                 }}
                 disabled
                 title={Tooltips.sortPTime}
               >
                 <SortCol>
-                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.pTime} diamond />
+                  <OptionSelectedIndicator selected={sortState.selectedOption === SortOptions.P_TIME} diamond />
                   P-Time
                 </SortCol>
               </EdstTooltip>
@@ -233,19 +233,19 @@ export const SortMenu: React.FC = () => {
                 content="OK"
                 onMouseDown={() => {
                   dispatch(
-                    EdstWindow.acl
+                    EdstWindow.ACL
                       ? setAclSort({
                           selectedOption: sortState.selectedOption,
                           sector: sortState.sector
                         })
                       : setDepSort(sortState.selectedOption)
                   );
-                  dispatch(closeMenu(EdstMenu.sortMenu));
+                  dispatch(closeWindow(EdstWindow.SORT_MENU));
                 }}
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.sortMenu))} />
+              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.SORT_MENU))} />
             </OptionsBodyCol>
           </OptionsBottomRow>
         </SortBody>
