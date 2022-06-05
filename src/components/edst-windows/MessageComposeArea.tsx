@@ -1,25 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { point } from "@turf/turf";
-import { formatUtcMinutes, getClosestReferenceFix } from "../../lib";
-import { LocalEdstEntry } from "../../types";
+import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteData } from "../../lib";
+import { Flightplan, LocalEdstEntry } from "../../types";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entriesSlice";
 import { aclCleanup, openWindowThunk } from "../../redux/thunks/thunks";
-import { EdstWindow } from "../../enums";
+import { EdstWindow } from "../../namespaces";
 import {
   closeAllWindows,
   mcaCommandStringSelector,
   pushZStack,
-  setInputFocused,
   setMcaCommandString,
   setMraMessage,
   windowPositionSelector,
   zStackSelector
 } from "../../redux/slices/appSlice";
 import { toggleAltimeterThunk, toggleMetarThunk } from "../../redux/thunks/weatherThunks";
-import { addAclEntryByFid, amendEntryThunk } from "../../redux/thunks/entriesThunks";
+import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -27,6 +25,8 @@ import { edstFontGrey } from "../../styles/colors";
 import { referenceFixSelector } from "../../redux/slices/sectorSlice";
 import { useDragging } from "../../hooks";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { aircraftTracksSelector } from "../../redux/slices/aircraftTrackSlice";
+import { useHub } from "../../hub";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -49,8 +49,9 @@ const MessageComposeInputAreaDiv = styled.div`
     color: ${edstFontGrey};
     outline: none;
     border: none;
-    caret: underscore;
+    //caret: underscore;
     background-color: #000000;
+    text-transform: uppercase;
   }
 `;
 
@@ -84,17 +85,19 @@ const RejectCrossSpan = styled.span`
 
 export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaInputRef }) => {
   const [response, setResponse] = useState<string | null>(null);
-  const [mcaFocused, setMcaFocused] = useState(false);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.messageComposeArea));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const referenceFixes = useRootSelector(referenceFixSelector);
   const entries = useRootSelector(entriesSelector);
+  const aircraftTracks = useRootSelector(aircraftTracksSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.messageComposeArea);
+  const [mcaInputValue, setMcaInputValue] = useState(mcaCommandString);
+  const hubConnection = useHub();
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA);
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -103,35 +106,36 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   }, []);
 
   const toggleVci = (fid: string) => {
-    const entry: LocalEdstEntry | any = Object.values(entries ?? {})?.find(
-      (e: LocalEdstEntry) => String(e.cid) === fid || String(e.callsign) === fid || String(e.beacon) === fid
+    const entry: LocalEdstEntry | any = Object.values(entries)?.find(
+      e => String(e.cid) === fid || String(e.aircraftId) === fid || String(e.assignedBeaconCode ?? 0).padStart(4, "0") === fid
     );
     if (entry) {
       if (entry.vciStatus < 1) {
-        dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 1 } }));
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 1 } }));
       } else {
-        dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 0 } }));
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
       }
     }
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: LocalEdstEntry | any = Object.values(entries ?? {})?.find(
-      (entry: LocalEdstEntry) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid
+    const entry: LocalEdstEntry | any = Object.values(entries)?.find(
+      entry => String(entry?.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
     if (entry) {
       if (entry.aclDisplay) {
-        dispatch(updateEntry({ cid: entry.cid, data: { aclHighlighted: !entry.aclHighlighted } }));
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclHighlighted: !entry.aclHighlighted } }));
       }
       if (entry.depDisplay) {
-        dispatch(updateEntry({ cid: entry.cid, data: { depHighlighted: !entry.depHighlighted } }));
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { depHighlighted: !entry.depHighlighted } }));
       }
     }
   };
 
   const getEntryByFid = (fid: string): LocalEdstEntry | undefined => {
     return Object.values(entries ?? {})?.find(
-      (entry: LocalEdstEntry) => String(entry?.cid) === fid || String(entry.callsign) === fid || String(entry.beacon) === fid
+      (entry: LocalEdstEntry) =>
+        String(entry.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
   };
 
@@ -140,29 +144,35 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry: LocalEdstEntry | undefined = getEntryByFid(fid);
     if (entry) {
+      // TODO: put speed instead of groundspeed
       const msg =
         `${formatUtcMinutes(utcMinutes)}\n` +
-        `${entry.cid} ${entry.callsign} ${entry.type}/${entry.equipment} ${entry.beacon} ${entry.flightplan.ground_speed} EXX00` +
-        ` ${entry.altitude} ${entry.dep}./.` +
-        `${entry.cleared_direct?.fix && entry.currentRoute?.startsWith(entry.cleared_direct?.fix) ? `${entry.cleared_direct?.frd}..` : ""}` +
+        `${entry.aircraftId} ${entry.aircraftId} ${entry.equipment} ${convertBeaconCodeToString(entry.assignedBeaconCode)} ${entry.speed} EXX00` +
+        ` ${entry.altitude} ${entry.departure}./.` +
         `${entry.currentRoute?.replace(/^\.+/, "")}` +
-        `${entry.dest ?? ""}`;
+        `${entry.destination ?? ""}`;
       dispatch(setMraMessage(msg));
     }
   };
 
   const parseQU = (args: string[]) => {
-    if (args.length === 2) {
+    if (args.length === 2 && hubConnection) {
       const entry = getEntryByFid(args[1]);
       if (entry && entry.aclDisplay && entry.currentRouteData?.map(fix => fix.name).includes(args[0])) {
-        const closestReferenceFix = referenceFixes
-          ? getClosestReferenceFix(referenceFixes, point([entry.flightplan.lon, entry.flightplan.lat]))
-          : null;
-        const planData = { cid: entry.cid, fix: args[0], frd: closestReferenceFix };
-        if (planData) {
-          dispatch(amendEntryThunk({ cid: entry.cid, planData }));
-          setResponse(`ACCEPT\nCLEARED DIRECT`);
-          return;
+        const aircraftTrack = aircraftTracks[entry.aircraftId];
+        const route = getClearedToFixRouteData(args[0], entry, aircraftTrack.location, referenceFixes)?.route;
+        if (route) {
+          const amendmentFlightplan: Flightplan = {
+            ...entry,
+            route: route
+              .split(/\.+/g)
+              .join(" ")
+              .trim()
+          };
+          hubConnection
+            .invoke("AmendFlightPlan", amendmentFlightplan)
+            .then(() => setResponse(`ACCEPT\nCLEARED DIRECT`))
+            .catch((error: any) => console.log("error amending flightplan:", error));
         }
       }
     }
@@ -186,7 +196,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         case "UU":
           switch (args.length) {
             case 0:
-              dispatch(openWindowThunk(EdstWindow.acl));
+              dispatch(openWindowThunk(EdstWindow.ACL));
               setResponse(`ACCEPT\nD POS KEYBD`);
               break;
             case 1:
@@ -195,14 +205,13 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
                   dispatch(aclCleanup);
                   break;
                 case "D":
-                  dispatch(openWindowThunk(EdstWindow.dep));
+                  dispatch(openWindowThunk(EdstWindow.DEP));
                   break;
                 case "P":
-                  dispatch(openWindowThunk(EdstWindow.acl));
+                  dispatch(openWindowThunk(EdstWindow.ACL));
                   dispatch(setAclManualPosting(!manualPosting));
                   break;
                 case "X":
-                  dispatch(setInputFocused(false));
                   dispatch(closeAllWindows());
                   break;
                 default:
@@ -229,12 +238,12 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
           break; // end case QU
         case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));
-          dispatch(openWindowThunk(EdstWindow.altimeter));
+          dispatch(openWindowThunk(EdstWindow.ALTIMETER));
           setResponse(`ACCEPT\nALTIMETER REQ`);
           break; // end case QD
         case "WR": // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
-          dispatch(openWindowThunk(EdstWindow.metar));
+          dispatch(openWindowThunk(EdstWindow.METAR));
           setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
@@ -256,17 +265,19 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
           setResponse(`REJECT\n\n${mcaCommandString}`);
       }
     }
+    setMcaInputValue("");
     dispatch(setMcaCommandString(""));
   };
 
   const handleInputChange = (event: React.ChangeEvent<any>) => {
     event.preventDefault();
-    dispatch(setMcaCommandString(event.target.value.toUpperCase()));
+    setMcaInputValue(event.target.value);
+    dispatch(setMcaCommandString(event.target.value));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
-    if (event.shiftKey) {
-      (inputRef.current as HTMLInputElement).blur();
+    if (event.shiftKey && inputRef.current) {
+      inputRef.current.blur();
     }
     switch (event.key) {
       case "Enter":
@@ -277,6 +288,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         }
         break;
       case "Escape":
+        setMcaInputValue("");
         setMcaCommandString("");
         break;
       default:
@@ -291,11 +303,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         anyDragging={anyDragging}
         id="edst-mca"
         pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.messageComposeArea)}
+        zIndex={zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA)}
         onMouseDown={event => {
           startDrag(event);
-          if (zStack.indexOf(EdstWindow.messageComposeArea) > 0) {
-            dispatch(pushZStack(EdstWindow.messageComposeArea));
+          if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) > 0) {
+            dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
           }
         }}
         // onMouseEnter={() => setInputFocus()}
@@ -304,16 +316,8 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         <MessageComposeInputAreaDiv>
           <input
             ref={inputRef}
-            onFocus={() => {
-              dispatch(setInputFocused(true));
-              setMcaFocused(true);
-            }}
-            onBlur={() => {
-              dispatch(setInputFocused(false));
-              setMcaFocused(false);
-            }}
-            tabIndex={mcaFocused ? -1 : undefined}
-            value={mcaCommandString}
+            tabIndex={document.activeElement === inputRef.current ? -1 : undefined}
+            value={mcaInputValue}
             onChange={handleInputChange}
             onKeyDownCapture={handleKeyDown}
           />
@@ -321,7 +325,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         <MessageComposeResponseAreaDiv>
           {response?.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
           {response?.startsWith("REJECT") && <RejectCrossSpan />}
-          {response}
+          {response?.toUpperCase()}
         </MessageComposeResponseAreaDiv>
       </MessageComposeAreaDiv>
     )

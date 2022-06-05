@@ -8,24 +8,24 @@ type SectorProfile = { id: string; name: string; sectors: string[] };
 export type SectorDataState = {
   sectors: Record<string, Feature<Polygon>>;
   profiles: SectorProfile[];
-  selectedSectors: string[];
+  selectedSectorIds: string[];
   referenceFixes: Fix[];
   sectorId: string;
   artccId: string;
 };
 
-const initialState = {
+const initialState: SectorDataState = {
   sectors: {},
   profiles: [],
-  selectedSectors: [],
+  selectedSectorIds: [],
   referenceFixes: [],
   sectorId: "",
-  artccId: ""
+  artccId: process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? ""
 };
 
 const sectorSlice = createSlice({
   name: "sectorData",
-  initialState: initialState as SectorDataState,
+  initialState,
   reducers: {
     setSectors(state: SectorDataState, action) {
       state.sectors = Object.fromEntries(
@@ -33,15 +33,15 @@ const sectorSlice = createSlice({
       );
     },
     setSelectedSectors(state: SectorDataState, action) {
-      state.selectedSectors = action.payload;
+      state.selectedSectorIds = action.payload;
     },
     toggleSector(state: SectorDataState, action) {
-      if (state.selectedSectors.includes(action.payload)) {
-        const selectedSectorsSet = new Set(state.selectedSectors);
+      if (state.selectedSectorIds.includes(action.payload)) {
+        const selectedSectorsSet = new Set(state.selectedSectorIds);
         selectedSectorsSet.delete(action.payload);
-        state.selectedSectors = [...selectedSectorsSet];
+        state.selectedSectorIds = [...selectedSectorsSet];
       } else {
-        state.selectedSectors = [...state.selectedSectors, action.payload];
+        state.selectedSectorIds = [...state.selectedSectorIds, action.payload];
       }
     },
     setArtccId(state: SectorDataState, action) {
@@ -65,4 +65,4 @@ export const referenceFixSelector = (state: RootState) => state.sectorData.refer
 export const sectorPolygonSelector = (state: RootState) => state.sectorData.sectors;
 export const sectorIdSelector = (state: RootState) => state.sectorData.sectorId;
 export const sectorProfilesSelector = (state: RootState) => state.sectorData.profiles;
-export const selectedSectorsSelector = (state: RootState) => state.sectorData.selectedSectors;
+export const selectedSectorsSelector = (state: RootState) => state.sectorData.selectedSectorIds;

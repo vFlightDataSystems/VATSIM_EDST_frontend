@@ -63,7 +63,7 @@ enum AdsbV {
 
 export const EquipmentSurvTemplate: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10b = (entry?.flightplan?.aircraft as string)
+  const field10b = entry?.equipment
     ?.split("/")
     ?.slice(2)?.[0]
     ?.match(/[A-Z]\d?/g);

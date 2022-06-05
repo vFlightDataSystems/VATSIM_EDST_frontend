@@ -1,10 +1,10 @@
 import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { useEventListener } from "usehooks-ts";
 import { invoke } from "@tauri-apps/api/tauri";
-import { EdstMenu, EdstWindow } from "./enums";
-import { anyDraggingSelector, menusSelector, setAnyDragging, setMenuPosition, setWindowPosition, windowsSelector } from "./redux/slices/appSlice";
+import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "./redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "./redux/hooks";
 import { WindowPosition } from "./types";
+import { EdstWindow } from "./namespaces";
 
 export const useFocused = (element: RefObject<HTMLElement>) => {
   const [focused, setFocused] = useState(false);
@@ -24,30 +24,25 @@ export const useCenterCursor = (element: RefObject<HTMLElement>, deps: any[] = [
   }, deps);
 };
 
-const DRAGGING_REPOSITION_CURSOR: (EdstWindow | EdstMenu)[] = [
-  EdstWindow.status,
-  EdstWindow.outage,
-  EdstWindow.messageComposeArea,
-  EdstWindow.messageResponseArea,
-  EdstWindow.altimeter,
-  EdstWindow.metar,
-  EdstWindow.sigmets
+const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
+  EdstWindow.STATUS,
+  EdstWindow.OUTAGE,
+  EdstWindow.MESSAGE_COMPOSE_AREA,
+  EdstWindow.MESSAGE_RESPONSE_AREA,
+  EdstWindow.ALTIMETER,
+  EdstWindow.METAR,
+  EdstWindow.SIGMETS
 ];
 
-export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow | EdstMenu) => {
+export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
   const anyDragging = useRootSelector(anyDraggingSelector);
   const [dragging, setDragging] = useState(false);
   const windows = useRootSelector(windowsSelector);
-  const menus = useRootSelector(menusSelector);
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
   let ppos: WindowPosition | null = null;
-  if (edstWindow in EdstWindow) {
-    ppos = windows[edstWindow as EdstWindow].position;
-  } else if (edstWindow in EdstMenu) {
-    ppos = menus[edstWindow as EdstMenu].position;
-  }
+  ppos = windows[edstWindow as EdstWindow].position;
 
   useEffect(() => {
     return () => {
@@ -132,21 +127,12 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
       if (window.__TAURI__) {
         invoke("set_cursor_grab", { value: false }).then();
       }
-      if (edstWindow in EdstWindow) {
-        dispatch(
-          setWindowPosition({
-            window: edstWindow as EdstWindow,
-            pos: newPos
-          })
-        );
-      } else if (edstWindow in EdstMenu) {
-        dispatch(
-          setMenuPosition({
-            menu: edstWindow as EdstMenu,
-            pos: newPos
-          })
-        );
-      }
+      dispatch(
+        setWindowPosition({
+          window: edstWindow as EdstWindow,
+          pos: newPos
+        })
+      );
       dispatch(setAnyDragging(false));
       setDragging(false);
       setDragPreviewStyle(null);

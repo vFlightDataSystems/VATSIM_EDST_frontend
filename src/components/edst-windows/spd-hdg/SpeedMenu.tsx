@@ -5,18 +5,17 @@ import { EdstButton, EdstButton20x20 } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { EdstMenu } from "../../../enums";
-import { aselSelector, Asel, closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
+import { aselSelector, Asel, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
 import { LocalEdstEntry } from "../../../types";
-import { amendEntryThunk } from "../../../redux/thunks/entriesThunks";
 import { useCenterCursor, useDragging, useFocused } from "../../../hooks";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstWindow } from "../../../namespaces";
 
-enum signEnum {
+enum Sign {
   more = "+",
   less = "-",
   none = ""
@@ -29,22 +28,22 @@ const SpeedDiv = styled(OptionsMenu)`
 export const SpeedMenu: React.FC = () => {
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(EdstMenu.speedMenu));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.SPEED_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
-  const [sign, setSign] = useState<signEnum>(signEnum.none);
+  const [sign, setSign] = useState<Sign>(Sign.none);
   const [amend, setAmend] = useState(true);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.speedMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SPEED_MENU);
 
   useEffect(() => {
     setSpeed(280);
     setDeltaY(0);
-    setSign(signEnum.none);
+    setSign(Sign.none);
     setAmend(true);
   }, [asel]);
 
@@ -55,33 +54,16 @@ export const SpeedMenu: React.FC = () => {
 
   const handleMouseDown = (event: any, value: number, mach = false) => {
     event.preventDefault();
-    const valueStr = !mach ? `${amend && sign === signEnum.none ? "S" : ""}${value}${sign}` : `M${Math.round(value * 100)}${sign}`;
+    const valueStr = !mach ? `${amend && sign === Sign.none ? "S" : ""}${value}${sign}` : `M${Math.round(value * 100)}${sign}`;
     switch (event.button) {
       case 0:
-        dispatch(
-          amendEntryThunk({
-            cid: entry.cid,
-            planData: {
-              [amend ? "spd" : "scratchSpd"]: valueStr,
-              [!amend ? "spd" : "scratchSpd"]: null
-            }
-          })
-        );
         break;
       case 1:
-        dispatch(
-          amendEntryThunk({
-            cid: entry.cid,
-            planData: {
-              [amend ? "spd" : "scratchSpd"]: valueStr
-            }
-          })
-        );
         break;
       default:
         break;
     }
-    dispatch(closeMenu(EdstMenu.speedMenu));
+    dispatch(closeWindow(EdstWindow.SPEED_MENU));
   };
 
   return (
@@ -90,8 +72,8 @@ export const SpeedMenu: React.FC = () => {
       <SpeedDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(EdstMenu.speedMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.speedMenu) > 0 && dispatch(pushZStack(EdstMenu.speedMenu))}
+        zIndex={zStack.indexOf(EdstWindow.SPEED_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.SPEED_MENU) > 0 && dispatch(pushZStack(EdstWindow.SPEED_MENU))}
         anyDragging={anyDragging}
         id="speed-menu"
       >
@@ -101,7 +83,7 @@ export const SpeedMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.callsign} {entry.type}/{entry.equipment}
+            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
           </FidRow>
           <Row>
             <OptionsBodyCol>
@@ -125,14 +107,14 @@ export const SpeedMenu: React.FC = () => {
             <EdstButton20x20
               margin="0 2px 0 22px"
               content="+"
-              selected={sign === signEnum.more}
-              onMouseDown={() => setSign(sign === signEnum.more ? signEnum.none : signEnum.more)}
+              selected={sign === Sign.more}
+              onMouseDown={() => setSign(sign === Sign.more ? Sign.none : Sign.more)}
             />
             <EdstButton20x20
               margin="0 16px 0 2px"
               content="-"
-              selected={sign === signEnum.less}
-              onMouseDown={() => setSign(sign === signEnum.less ? signEnum.none : signEnum.less)}
+              selected={sign === Sign.less}
+              onMouseDown={() => setSign(sign === Sign.less ? Sign.none : Sign.less)}
             />
             <EdstTooltip content="MACH" title={Tooltips.aclSpdMach} />
           </Row3>
@@ -159,7 +141,7 @@ export const SpeedMenu: React.FC = () => {
             })}
             <OptionsBodyRow margin="0">
               <OptionsBodyCol alignRight>
-                <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.speedMenu))} />
+                <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.SPEED_MENU))} />
               </OptionsBodyCol>
             </OptionsBodyRow>
           </ScrollContainer>

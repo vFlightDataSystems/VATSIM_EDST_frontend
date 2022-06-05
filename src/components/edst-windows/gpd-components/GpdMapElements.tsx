@@ -8,9 +8,10 @@ import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entriesSlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { RouteFix, LocalEdstEntry, AirwayFix } from "../../../types";
+import { RouteFix, LocalEdstEntry, AirwayFix, AircraftTrack } from "../../../types";
 import { getNextFix } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
+import { aircraftTrackSelector } from "../../../redux/slices/aircraftTrackSlice";
 
 type GpdFixProps = {
   lat: number | string;
@@ -37,30 +38,30 @@ const TrackLine: React.FC<TrackLineProps> = ({ start, end, toggleShowRoute }) =>
 };
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): LatLngExpression {
-  if (pos instanceof Array) {
+  if (Array.isArray(pos)) {
     return { lat: pos[1], lng: pos[0] };
   }
   return { lat: Number(pos.lat), lng: Number(pos.lon) };
 }
 
-function getRouteLine(entry: LocalEdstEntry) {
+function getRouteLine(entry: LocalEdstEntry, track: AircraftTrack) {
   let { route } = entry;
-  const routeData = entry.route_data;
+  const { routeData } = entry;
   route = route.replace(/^\.*\[XXX]\.*/g, "");
   const indexToSplit = route.indexOf("[XXX]");
   const routeToDisplay = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/\.+$/g, "") : route.replace(/\.+$/g, "");
   let fixNames = routeData.map(e => e.name);
   const lastFixIndex = fixNames.indexOf(routeToDisplay.split(/\.+/g).pop() as string);
-  const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)];
+  const pos = [Number(track.location.lon), Number(track.location.lat)];
   if (fixNames.length === 0) {
     return null;
   }
-  if (entry.dest_info) {
+  if (entry.destInfo) {
     fixNames = fixNames.slice(0, lastFixIndex);
     let routeDataToDisplay = routeData.slice(0, lastFixIndex);
     routeDataToDisplay.push({
-      name: entry.dest_info.icao,
-      pos: [Number(entry.dest_info.lon), Number(entry.dest_info.lat)]
+      name: entry.destInfo.icao,
+      pos: [Number(entry.destInfo.lon), Number(entry.destInfo.lat)]
     });
     const [nextFix] = getNextFix(route, routeDataToDisplay, pos) as RouteFix[];
     const index = fixNames.indexOf(nextFix.name);
@@ -71,7 +72,7 @@ function getRouteLine(entry: LocalEdstEntry) {
   fixNames = fixNames.slice(0, lastFixIndex + 1);
   let routeDataToDisplay = routeData.slice(0, lastFixIndex + 1);
   const [nextFix] = getNextFix(route, routeDataToDisplay, pos) as RouteFix[];
-  const index = fixNames.indexOf(nextFix.name);
+  const index = fixNames.indexOf(nextFix?.name);
   routeDataToDisplay = routeDataToDisplay.slice(index);
   routeDataToDisplay.unshift({ name: "ppos", pos });
   return routeDataToDisplay;
@@ -100,16 +101,17 @@ export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon> }> = ({ se
   return <GeoJSON data={sector} pathOptions={{ color: "#ADADAD", weight: 1, opacity: 0.3, fill: false }} />;
 };
 
-export const GpdAircraftTrack: React.FC<{ cid: string }> = ({ cid }) => {
-  const entry = useRootSelector(entrySelector(cid));
-  const posLatLng = useMemo(() => posToLatLng({ ...entry.flightplan }), [entry.flightplan]);
+export const GpdAircraftTrack: React.FC<{ aircraftId: string }> = ({ aircraftId }) => {
+  const entry = useRootSelector(entrySelector(aircraftId));
+  const track = useRootSelector(aircraftTrackSelector(aircraftId));
+  const posLatLng = useMemo(() => posToLatLng({ ...track.location }), [track.location]);
   const [trackPos, setTrackPos] = useState<{ x: number; y: number } | null>(null);
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
   const map = useMap();
 
-  const routeLine = getRouteLine(entry);
+  const routeLine = getRouteLine(entry, track);
 
   const updateHandler = useCallback(() => {
     const element: HTMLElement & any = ref.current?.getElement();

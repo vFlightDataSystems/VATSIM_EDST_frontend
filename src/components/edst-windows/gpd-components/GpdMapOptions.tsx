@@ -3,8 +3,7 @@ import React, { useRef, useState } from "react";
 import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { EdstMenu } from "../../../enums";
-import { closeMenu, menuSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
+import { zStackSelector, pushZStack, windowSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { useDragging, useFocused } from "../../../hooks";
 import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";
 import {
@@ -17,24 +16,25 @@ import {
   OptionsMenuHeader
 } from "../../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstWindow } from "../../../namespaces";
 
 export const GpdMapOptions: React.FC = () => {
   const dispatch = useRootDispatch();
-  const menuProps = useRootSelector(menuSelector(EdstMenu.gpdMapOptionsMenu));
+  const windowProps = useRootSelector(windowSelector(EdstWindow.GPD_MAP_OPTIONS_MENU));
   const zStack = useRootSelector(zStackSelector);
   const [mapFeaturesMenuOpen, setMapFeaturesMenuOpen] = useState(false);
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.gpdMapOptionsMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD_MAP_OPTIONS_MENU);
 
   return (
-    menuProps?.position && (
+    windowProps?.position && (
       <OptionsMenu
         ref={ref}
-        pos={menuProps.position}
-        zIndex={zStack.indexOf(EdstMenu.gpdMapOptionsMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.gpdMapOptionsMenu) > 0 && dispatch(pushZStack(EdstMenu.gpdMapOptionsMenu))}
+        pos={windowProps.position}
+        zIndex={zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU) > 0 && dispatch(pushZStack(EdstWindow.GPD_MAP_OPTIONS_MENU))}
         anyDragging={anyDragging}
         id="gpd-map-options-menu"
       >
@@ -66,7 +66,7 @@ export const GpdMapOptions: React.FC = () => {
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>
-                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeMenu(EdstMenu.gpdMapOptionsMenu))} />
+                  <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
             </span>

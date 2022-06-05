@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { planQueueSelector, selectedPlanIndexSelector, Plan, setSelectedTrialPlanIndex } from "../../../redux/slices/planSlice";
+import { planQueueSelector, selectedPlanIndexSelector, TrialPlan, setSelectedTrialPlanIndex } from "../../../redux/slices/planSlice";
 import { removeTrialPlanThunk } from "../../../redux/thunks/thunks";
 import { BodyRowDiv } from "../../../styles/bodyStyles";
 import { NoSelectDiv } from "../../../styles/styles";
@@ -64,13 +64,13 @@ export const PlansDisplayTable: React.FC = () => {
 
   return (
     <PlansDisplayBody>
-      {planQueue?.map((p: Plan, i) => (
+      {planQueue?.map((p: TrialPlan, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <BodyRowDiv key={`plans-display-body-${p.cid}-${p.msg}-${i}`}>
+        <BodyRowDiv key={`plans-display-body-${p.aircraftId}-${i}`}>
           <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
-            {p.cid} {p.callsign}
+            {p.aircraftId} {p.callsign}
           </Col1>
-          <Col>{p.msg}</Col>
+          <Col>{p.commandString}</Col>
         </BodyRowDiv>
       ))}
     </PlansDisplayBody>

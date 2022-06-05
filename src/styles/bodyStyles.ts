@@ -58,7 +58,8 @@ export const FreeTextRow = styled(BodyRowDiv)<{ marginLeft: number }>`
     outline: none;
     border: none;
     color: ${edstFontGrey};
-    //caret: #FFFFFF;
+    caret: #ffffff;
+    text-transform: uppercase;
   }
 
   &:hover {

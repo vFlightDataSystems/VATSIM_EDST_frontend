@@ -58,9 +58,7 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({ zoomLevel }) => {
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
 
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.aclDisplay && entry.flightplan.ground_speed > 40), [
-    entries
-  ]);
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.aclDisplay), [entries]);
 
   return (
     <GpdBodyDiv>
@@ -98,7 +96,7 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({ zoomLevel }) => {
         )}
         {selectedMapFeatureOptions[mapFeatureOption.navaid] && navaidList.map(fix => <GpdNavaid key={`gpd-navaid-${fix.waypoint_id}`} {...fix} />)}
         {selectedMapFeatureOptions[mapFeatureOption.waypoint] && waypointList.map(fix => <GpdFix key={`gpd-waypoint-${fix.waypoint_id}`} {...fix} />)}
-        {!suppressed && entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.cid}`} cid={entry.cid} />)}
+        {!suppressed && entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.aircraftId}`} aircraftId={entry.aircraftId} />)}
         {displayData && <GpdPlanDisplay displayData={displayData} />}
       </MapContainer>
     </GpdBodyDiv>

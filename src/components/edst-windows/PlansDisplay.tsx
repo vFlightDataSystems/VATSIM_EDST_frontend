@@ -8,7 +8,7 @@ import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/sli
 import { useFocused } from "../../hooks";
 import { DraggableDiv } from "../../styles/styles";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
-import { EdstWindow } from "../../enums";
+import { EdstWindow } from "../../namespaces";
 
 const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
   display: block;
@@ -36,8 +36,8 @@ export const PlansDisplay: React.FC = () => {
     <PlansDisplayDiv
       anyDragging={anyDragging}
       ref={ref}
-      zIndex={zStack.indexOf(EdstWindow.plansDisplay)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.plansDisplay) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.plansDisplay))}
+      zIndex={zStack.indexOf(EdstWindow.PLANS_DISPLAY)}
+      onMouseDown={() => zStack.indexOf(EdstWindow.PLANS_DISPLAY) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.PLANS_DISPLAY))}
     >
       <PlansDisplayHeader focused={focused} />
       <PlansDisplayTable />

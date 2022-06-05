@@ -35,7 +35,7 @@ type PreferredRouteDisplayProps = {
   adar: any[];
   dep: string;
   dest: string;
-  clearedPrefroute: (rerouteData: Record<string, any>) => void;
+  clearedPrefroute: (routeString: string) => void;
 };
 
 function computeRouteList(aar: any[], adr: any[], adar: any[], dep: string, dest: string): EdstPreferredRoute[] {
@@ -100,10 +100,10 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps> = ({ aa
             (!eligibleOnly || r.eligible) &&
             (r.amendment?.length ?? 0) > 0 && (
               <PrefrouteRow key={`route-menu-prefroute-row-${i}`}>
-                <Col hover onMouseDown={() => clearedPrefroute(r)}>
-                  {r.dep ?? ""}
+                <Col hover onMouseDown={() => r.amendment && clearedPrefroute(r.amendment)}>
+                  {r.departure ?? ""}
                   {r.amendment}
-                  {r.dest ?? ""}
+                  {r.destination ?? ""}
                 </Col>
               </PrefrouteRow>
             )

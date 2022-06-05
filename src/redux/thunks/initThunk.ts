@@ -10,7 +10,6 @@ import {
 } from "../../api";
 import { RootState } from "../store";
 import { setArtccId, setReferenceFixes, setSectorId, setSectorProfiles, setSectors } from "../slices/sectorSlice";
-import { refreshEntriesThunk } from "../slices/entriesSlice";
 import { refreshSigmets } from "./weatherThunks";
 import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
 import { Fix } from "../../types";
@@ -19,8 +18,8 @@ const DISCLAIMER_MESSAGE = `
 !!! WARNING !!!\n
 This vEDST project is not considered “usable” by the developers at this time.\n
 Features may not always work as intended and at times will stop working completely.\n
-If you wish to contribute to this project, please checkout the GitHub Repo 
-https://github.com/CaptainTux/VATSIM_EDST_frontend.\n
+If you wish to contribute to this project, please checkout the GitHub Repository 
+https://github.com/vFlightDataSystems/VATSIM_EDST_frontend.\n
 `;
 
 export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) => {
@@ -30,7 +29,7 @@ export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) =>
   let artccId: string;
   let sectorId: string;
   if (process.env.NODE_ENV === "development") {
-    artccId = "zbw";
+    artccId = process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? "zbw";
     // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
     sectorId = "37";
   } else {
@@ -117,5 +116,4 @@ export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) =>
       });
   }
   thunkAPI.dispatch(refreshSigmets());
-  return thunkAPI.dispatch(refreshEntriesThunk());
 });

@@ -21,13 +21,11 @@ import { MessageResponseArea } from "./components/edst-windows/MessageResponseAr
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
 import { initThunk } from "./redux/thunks/initThunk";
-import { refreshEntriesThunk } from "./redux/slices/entriesSlice";
-import { EdstMenu, EdstWindow } from "./enums";
+import { EdstWindow } from "./namespaces";
 import {
-  inputFocusedSelector,
   mcaCommandStringSelector,
-  menusSelector,
   openWindow,
+  pushZStack,
   setMcaCommandString,
   showSectorSelectorSelector,
   windowsSelector
@@ -45,16 +43,13 @@ import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOp
 
 // const CACHE_TIMEOUT = 300000; // ms
 
-const ENTRIES_REFRESH_RATE = 20000; // 20 seconds
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
 export const App: React.FC = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
-  const menus = useRootSelector(menusSelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
-  const inputFocused = useRootSelector(inputFocusedSelector);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
   const altMenuRef = React.useRef<{ showInput: boolean; inputRef: React.RefObject<HTMLInputElement> | null }>({
     showInput: false,
@@ -64,12 +59,8 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     dispatch(initThunk());
-    const entriesUpdateIntervalId = setInterval(() => dispatch(refreshEntriesThunk()), ENTRIES_REFRESH_RATE);
     const weatherUpdateIntervalId = setInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
     return () => {
-      if (entriesUpdateIntervalId) {
-        clearInterval(entriesUpdateIntervalId);
-      }
       if (weatherUpdateIntervalId) {
         clearInterval(weatherUpdateIntervalId);
       }
@@ -85,19 +76,21 @@ export const App: React.FC = () => {
   }, [altMenuRef.current.inputRef]);
 
   const handleKeyDown = (event: KeyboardEvent) => {
+    // console.log(document.activeElement?.localName);
     // event.preventDefault();
-    if (!inputFocused) {
-      if (menus[EdstMenu.altitudeMenu].open) {
+    if (document.activeElement?.localName !== "input") {
+      if (windows[EdstWindow.ALTITUDE_MENU].open) {
         altMenuRef.current.showInput = true;
         if (altMenuRef.current.inputRef?.current) {
           altMenuRef.current?.inputRef.current.focus();
         }
       } else if (!mcaInputRef?.current) {
-        dispatch(openWindow({ window: EdstWindow.messageComposeArea }));
+        dispatch(openWindow({ window: EdstWindow.MESSAGE_COMPOSE_AREA }));
         if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
           dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
         }
       } else {
+        dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
         mcaInputRef.current.focus();
       }
     }
@@ -109,29 +102,29 @@ export const App: React.FC = () => {
     <EdstDiv
       ref={bodyRef}
       onContextMenu={event => process.env.NODE_ENV !== "development" && event.preventDefault()}
-      tabIndex={!inputFocused ? -1 : 0}
+      tabIndex={document.activeElement?.localName !== "input" ? -1 : 0}
     >
       <EdstHeader />
       <div id="toPrint" />
       <EdstBodyDiv>
         {showSectorSelector && <SectorSelector />}
-        {windows[EdstWindow.acl].open && <Acl />}
-        {windows[EdstWindow.dep].open && <Dep />}
-        {windows[EdstWindow.graphicPlanDisplay].open && <Gpd />}
-        {windows[EdstWindow.plansDisplay].open && <PlansDisplay />}
-        {menus[EdstMenu.planOptions].open && <PlanOptions />}
-        {menus[EdstMenu.sortMenu].open && <SortMenu />}
-        {menus[EdstMenu.toolsMenu].open && <ToolsMenu />}
-        {menus[EdstMenu.gpdMapOptionsMenu].open && <GpdMapOptions />}
-        {menus[EdstMenu.routeMenu].open && <RouteMenu />}
-        {menus[EdstMenu.templateMenu].open && <TemplateMenu />}
-        {menus[EdstMenu.equipmentTemplateMenu].open && <EquipmentTemplateMenu />}
-        {menus[EdstMenu.holdMenu].open && <HoldMenu />}
-        {menus[EdstMenu.cancelHoldMenu].open && <CancelHoldMenu />}
-        {menus[EdstMenu.prevRouteMenu].open && <PreviousRouteMenu />}
-        {menus[EdstMenu.speedMenu].open && <SpeedMenu />}
-        {menus[EdstMenu.headingMenu].open && <HeadingMenu />}
-        {menus[EdstMenu.altitudeMenu].open && (
+        {windows[EdstWindow.ACL].open && <Acl />}
+        {windows[EdstWindow.DEP].open && <Dep />}
+        {windows[EdstWindow.GPD].open && <Gpd />}
+        {windows[EdstWindow.PLANS_DISPLAY].open && <PlansDisplay />}
+        {windows[EdstWindow.PLAN_OPTIONS].open && <PlanOptions />}
+        {windows[EdstWindow.SORT_MENU].open && <SortMenu />}
+        {windows[EdstWindow.TOOLS_MENU].open && <ToolsMenu />}
+        {windows[EdstWindow.GPD_MAP_OPTIONS_MENU].open && <GpdMapOptions />}
+        {windows[EdstWindow.ROUTE_MENU].open && <RouteMenu />}
+        {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
+        {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
+        {windows[EdstWindow.HOLD_MENU].open && <HoldMenu />}
+        {windows[EdstWindow.CANCEL_HOLD_MENU].open && <CancelHoldMenu />}
+        {windows[EdstWindow.PREV_ROUTE_MENU].open && <PreviousRouteMenu />}
+        {windows[EdstWindow.SPEED_MENU].open && <SpeedMenu />}
+        {windows[EdstWindow.HEADING_MENU].open && <HeadingMenu />}
+        {windows[EdstWindow.ALTITUDE_MENU].open && (
           <AltMenu
             setAltMenuInputRef={ref => {
               altMenuRef.current.inputRef = ref;
@@ -139,13 +132,13 @@ export const App: React.FC = () => {
             showInput={altMenuRef.current.showInput}
           />
         )}
-        {windows[EdstWindow.status].open && <Status />}
-        {windows[EdstWindow.outage].open && <Outage />}
-        {windows[EdstWindow.altimeter].open && <AltimeterWindow />}
-        {windows[EdstWindow.metar].open && <MetarWindow />}
-        {windows[EdstWindow.sigmets].open && <SigmetWindow />}
-        {windows[EdstWindow.messageComposeArea].open && <MessageComposeArea setMcaInputRef={setMcaInputRef} />}
-        {windows[EdstWindow.messageResponseArea].open && <MessageResponseArea />}
+        {windows[EdstWindow.STATUS].open && <Status />}
+        {windows[EdstWindow.OUTAGE].open && <Outage />}
+        {windows[EdstWindow.ALTIMETER].open && <AltimeterWindow />}
+        {windows[EdstWindow.METAR].open && <MetarWindow />}
+        {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
+        {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea setMcaInputRef={setMcaInputRef} />}
+        {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
       </EdstBodyDiv>
     </EdstDiv>
   );

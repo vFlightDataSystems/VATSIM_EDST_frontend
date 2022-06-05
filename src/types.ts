@@ -1,42 +1,67 @@
 import { Feature, Point, Position } from "@turf/turf";
 
-// backend data for a single EDST entry
-export type EdstEntry = {
-  cid: string; // 3 character unique identifier within EDST
-  callsign: string; // aircraft callsign
-  route: string; // route string parsed by EDST
-  routes?: any[];
-  route_data: RouteFix[];
-  previous_route?: string;
-  previous_route_data?: RouteFix[]; // fixes for latest previous route
+// flightplan data
+export type Flightplan = {
+  aircraftId: string;
+  cid: string;
   altitude: string;
-  interim?: number;
-  type: string;
+  assignedBeaconCode: number | null;
+  departure: string;
+  destination: string;
+  alternate: string;
+  route: string;
   equipment: string;
-  flightplan: any; // VATSIM flightplan data plus ground speed and position (lon/lat)
-  dep: string; // departure airport ICAO code
-  dest: string; // destination airport ICAO code
-  dep_info?: any; // additional data about departure airport like local code, lon/lat, ARTCC of jurisdiction (if
-  // available)
-  dest_info?: any; // additional data about destination airport like local code, lon/lat, ARTCC of jurisdiction (if
-  // available)
-  adr: any[]; // adapted departure routes proposed by EDST
-  adar: any[]; // adapted departure-arrival routes proposed by EDST
-  beacon: string; // assigned beacon code
-  remarks: string; // remarks string
-  spd?: string; // assigned speed
-  hdg?: string; // assigned heading
-  update_time: number; // last time the entry was updated in EDST
-  hold_data?: any; // assigned hold instructions
-  free_text_content?: string; // free text content
-  cleared_direct?: { frd: string; fix: string }; // if cleared direct to somewhere, this will contain the FRD and the
-  // fix the aircraft was cleared to
+  estimatedDepartureTime: number;
+  actualDepartureTime: number;
+  fuelHours: number;
+  fuelMinutes: number;
+  hoursEnroute: number;
+  minutesEnroute: number;
+  isIfr: boolean;
+  pilotCid: string;
+  remarks: string;
+  revision: string;
+  speed: number;
 };
 
+export type DerivedFlightplanData = {
+  formattedRoute: string; // formatted route string
+  routeData: RouteFix[];
+  currentRoute: string; // shortened route string, starting at the next inbound fix
+  currentRouteData?: RouteFix[];
+};
+
+export type AircraftTrack = {
+  aircraftId: string;
+  altitudeAgl: number;
+  altitudeTrue: number;
+  groundSpeed: number;
+  location: {
+    lat: number;
+    lon: number;
+  };
+  typeCode: string;
+  interimAltitude?: number;
+  lastUpdated?: number;
+};
+
+export type AirportInfo = {
+  artcc: string;
+  code: string;
+  icao: string;
+  lat: number;
+  lon: number;
+};
+
+// TODO: type all `any` types
 // local data for a single EDST entry
 export type LocalVEdstEntry = {
-  currentRoute?: string; // shortened route string, starting at the next inbound fix
-  currentRouteData?: (RouteFix & { dist: number })[];
+  depInfo: AirportInfo | null;
+  destInfo: AirportInfo | null;
+  nasSuffix: string | null;
+  adr?: any[];
+  adar?: any[];
+  freeTextContent: string;
   aarList?: any[]; // preferred arrival routes
   currentAarList?: any[] | null; // preferred arrival routes processed by the frontend
   vciStatus: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
@@ -58,10 +83,15 @@ export type LocalVEdstEntry = {
   depDisplay: boolean;
   depDeleted: boolean;
   uplinkEligible?: boolean;
+  holdData: Record<string, any> | null;
+  assignedSpeed?: string;
+  assignedHeading?: string;
+  interimAltitude?: number;
+  previousRoute?: string;
 };
 
 // type for a single EDST entry
-export type LocalEdstEntry = EdstEntry & LocalVEdstEntry;
+export type LocalEdstEntry = Flightplan & DerivedFlightplanData & LocalVEdstEntry;
 
 // TODO: make type an enum
 export type Fix = {
@@ -112,8 +142,8 @@ export type EdstPreferredRoute = {
   route?: string;
   route_data?: RouteFix[];
   amendment?: string;
-  dep?: string;
-  dest?: string;
+  departure?: string;
+  destination?: string;
 };
 
 export type WindowPosition = {
@@ -132,8 +162,8 @@ export type SectorData = {
   };
 };
 
-export type PlanQuery = {
-  cid: string;
+export type Plan = {
+  aircraftId: string;
   callsign: string;
   planData: Record<string, any>;
   msg: string;

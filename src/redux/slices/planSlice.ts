@@ -1,39 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
+import { Flightplan } from "../../types";
 
-export enum PlanQuery {
-  direct = "direct",
-  reroute = "reroute",
-  alt = "alt",
-  tempAlt = "tempAlt",
-  hold = "hold",
-  cancelHold = "cancelHold"
-}
-
-export type Plan = {
-  cid: string;
+export type TrialPlan = {
+  aircraftId: string;
   callsign: string;
-  planData: Record<string, any>;
-  queryType: PlanQuery;
-  msg?: string;
-  dest?: string;
+  amendedFlightplan: Flightplan;
+  commandString: string;
 };
 
 export type PlanState = {
-  planQueue: Plan[];
+  planQueue: TrialPlan[];
   selectedPlanIndex: number | null;
 };
 
-const initialState = {
+const initialState: PlanState = {
   planQueue: [],
   selectedPlanIndex: null
 };
 
 const planSlice = createSlice({
   name: "plan",
-  initialState: initialState as PlanState,
+  initialState,
   reducers: {
-    addTrialPlan(state, action: { payload: Plan }) {
+    addTrialPlan(state, action: { payload: TrialPlan }) {
       state.planQueue.unshift(action.payload);
       state.selectedPlanIndex = 0;
     },

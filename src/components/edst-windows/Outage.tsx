@@ -1,6 +1,5 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
-import { EdstWindow } from "../../enums";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import {
@@ -13,6 +12,7 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { useDragging } from "../../hooks";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstWindow } from "../../namespaces";
 
 const OutageDiv = styled(FloatingWindowDiv)`
   width: 340px;
@@ -20,9 +20,9 @@ const OutageDiv = styled(FloatingWindowDiv)`
 
 export const Outage: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.outage));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.OUTAGE));
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.outage);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.OUTAGE);
   const zStack = useRootSelector(zStackSelector);
 
   return (
@@ -30,8 +30,8 @@ export const Outage: React.FC = () => {
       <OutageDiv
         pos={pos}
         ref={ref}
-        zIndex={zStack.indexOf(EdstWindow.outage)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.outage) > 0 && dispatch(pushZStack(EdstWindow.outage))}
+        zIndex={zStack.indexOf(EdstWindow.OUTAGE)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.OUTAGE) > 0 && dispatch(pushZStack(EdstWindow.OUTAGE))}
         anyDragging={anyDragging}
         id="edst-outage"
       >
@@ -39,7 +39,7 @@ export const Outage: React.FC = () => {
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>OUTAGE</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.outage))}>
+          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.OUTAGE))}>
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>

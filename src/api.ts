@@ -1,12 +1,58 @@
 // const baseurl: string = 'http://localhost:5000/backend';
 const baseurl = "https://tdls.oakartcc.org/backend";
 
-export async function fetchEdstEntries(): Promise<Response> {
-  return fetch(`${baseurl}/edst/all`);
+export async function fetchAar(artcc: string, route: string, aircraft: string, dest: string, alt: string): Promise<Response> {
+  return fetch(`${baseurl}/route/aar/${artcc}`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ route, aircraft, dest, alt })
+  });
 }
 
-export async function fetchEdstEntry(callsign: string): Promise<Response> {
-  return fetch(`${baseurl}/edst/entry/get/${callsign}`);
+export async function fetchAdr(artcc: string, route: string, aircraft: string, dep: string, dest: string, alt: string): Promise<Response> {
+  return fetch(`${baseurl}/route/adr/${artcc}`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ route, aircraft, dep, dest, alt })
+  });
+}
+
+export async function fetchAdar(artcc: string, aircraft: string, dep: string, dest: string): Promise<Response> {
+  return fetch(`${baseurl}/route/adar/${artcc}`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ aircraft, dep, dest })
+  });
+}
+
+export async function fetchRouteData(route: string, dep: string, dest: string): Promise<Response> {
+  return fetch(`${baseurl}/route/get_route_data`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ route, dep, dest })
+  });
+}
+
+export async function fetchFormatRoute(route: string, dep: string, dest: string): Promise<Response> {
+  return fetch(`${baseurl}/route/format_route`, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ route, dep, dest })
+  });
+}
+
+export async function fetchAirportInfo(apt: string): Promise<Response> {
+  return fetch(`${baseurl}/navdata/airport/${apt}`);
 }
 
 export async function trialRoute(callsign: string, planData: Record<string, any>): Promise<Response> {
@@ -17,30 +63,6 @@ export async function trialRoute(callsign: string, planData: Record<string, any>
     },
     body: JSON.stringify({ callsign, ...planData })
   });
-}
-
-export async function amendRoute(callsign: string, planData: Record<string, any>): Promise<Response> {
-  return fetch(`${baseurl}/edst/entry/amend/route`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ callsign, ...planData })
-  });
-}
-
-export async function updateEdstEntry(planData: any): Promise<Response> {
-  return fetch(`${baseurl}/edst/entry/amend/generic`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(planData)
-  });
-}
-
-export async function fetchAarList(artcc: string, cid: string): Promise<Response> {
-  return fetch(`${baseurl}/edst/aar/${artcc}/${cid}`);
 }
 
 export async function fetchCtrFavData(artcc: string): Promise<Response> {

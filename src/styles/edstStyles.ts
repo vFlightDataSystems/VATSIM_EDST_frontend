@@ -10,18 +10,19 @@ export const EdstDiv = styled(NoSelectDiv)`
   background-color: #000000;
   font-family: ${defaultFontFamily};
   font-size: ${defaultFontSize};
-  caret-color: transparent;
-  scroll-behavior: auto;
+  //caret-color: transparent;
+  //scroll-behavior: auto;
   -webkit-font-smoothing: subpixel-antialiased;
 
   button,
   input,
   textarea {
     font-family: ${defaultFontFamily};
+    text-transform: uppercase;
     //font-weight: bold;
     cursor: default;
     overflow-wrap: anywhere;
-    caret: underscore;
+    //caret: underscore;
   }
 `;
 

@@ -7,7 +7,7 @@ import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EdstInput, OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
 import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./styled";
 
-enum NavCatEnum {
+enum NavCat {
   F = "F",
   O = "O",
   D = "D",
@@ -21,7 +21,7 @@ const navCatText = {
   T: "(TACAN)"
 };
 
-enum RnavCatEnum {
+enum RnavCat {
   G = "G",
   I = "I",
   C = "C",
@@ -39,35 +39,35 @@ const rnavCatText = {
 
 export const EquipmentNavTemplate: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10a = (entry?.flightplan?.aircraft as string)
+  const field10a = entry?.equipment
     ?.split("/")
     ?.slice(1)?.[0]
     ?.split("-")?.[1]
     ?.match(/[A-Z]\d?/g);
-  const navaidCats = field10a?.filter(s => Object.keys(NavCatEnum).includes(s)) as NavCatEnum[];
-  const [navCategories, setNavCategories] = useState<NavCatEnum[]>(navaidCats ?? []);
+  const navaidCats = field10a?.filter(s => Object.keys(NavCat).includes(s)) as NavCat[];
+  const [navCategories, setNavCategories] = useState<NavCat[]>(navaidCats ?? []);
 
-  const rnavCats = field10a?.filter(s => Object.keys(RnavCatEnum).includes(s)) as RnavCatEnum[];
-  const [rnavCategories, setRnavCategories] = useState<RnavCatEnum[]>(rnavCats ?? []);
+  const rnavCats = field10a?.filter(s => Object.keys(RnavCat).includes(s)) as RnavCat[];
+  const [rnavCategories, setRnavCategories] = useState<RnavCat[]>(rnavCats ?? []);
 
   const initialRvsm = !!field10a?.includes("W");
   const [rvsm, setRvsm] = useState<boolean>(initialRvsm);
 
-  const toggleCategory = (cat: NavCatEnum | RnavCatEnum) => {
-    if (Object.keys(NavCatEnum).includes(cat)) {
+  const toggleCategory = (cat: NavCat | RnavCat) => {
+    if (Object.keys(NavCat).includes(cat)) {
       const navCats = [...navCategories];
-      const index = navCats.indexOf(cat as NavCatEnum);
+      const index = navCats.indexOf(cat as NavCat);
       if (index < 0) {
-        setNavCategories([...navCats, cat as NavCatEnum]);
+        setNavCategories([...navCats, cat as NavCat]);
       } else {
         navCats.splice(index, 1);
         setNavCategories(navCats);
       }
-    } else if (Object.keys(RnavCatEnum).includes(cat)) {
+    } else if (Object.keys(RnavCat).includes(cat)) {
       const rnavCats = [...rnavCategories];
-      const index = rnavCats.indexOf(cat as RnavCatEnum);
+      const index = rnavCats.indexOf(cat as RnavCat);
       if (index < 0) {
-        setRnavCategories([...rnavCats, cat as RnavCatEnum]);
+        setRnavCategories([...rnavCats, cat as RnavCat]);
       } else {
         rnavCats.splice(index, 1);
         setRnavCategories(rnavCats);
@@ -80,27 +80,27 @@ export const EquipmentNavTemplate: React.FC = () => {
       <OptionsBodyRow margin="10px 0 0 0" padding="4px 0 0 0">
         <EqpCol>
           <EqpColTitle>NAVAIDS</EqpColTitle>
-          {Object.keys(NavCatEnum).map(category => (
+          {Object.keys(NavCat).map(category => (
             <EquipmentTemplateRow
               key={`nav-cat-row-${category}`}
               buttonText={category}
-              text={navCatText[category as NavCatEnum]}
-              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category as NavCatEnum}`]}
-              selected={navCategories.includes(category as NavCatEnum)}
-              toggleSelect={() => toggleCategory(category as NavCatEnum)}
+              text={navCatText[category as NavCat]}
+              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category as NavCat}`]}
+              selected={navCategories.includes(category as NavCat)}
+              toggleSelect={() => toggleCategory(category as NavCat)}
             />
           ))}
         </EqpCol>
         <EqpCol>
           <EqpColTitle>RNAV</EqpColTitle>
-          {Object.keys(RnavCatEnum).map(category => (
+          {Object.keys(RnavCat).map(category => (
             <EquipmentTemplateRow
               key={`rnav-cat-row-${category}`}
               buttonText={category}
-              text={rnavCatText[category as RnavCatEnum]}
-              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category as RnavCatEnum}`]}
-              selected={rnavCategories.includes(category as RnavCatEnum)}
-              toggleSelect={() => toggleCategory(category as RnavCatEnum)}
+              text={rnavCatText[category as RnavCat]}
+              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category as RnavCat}`]}
+              selected={rnavCategories.includes(category as RnavCat)}
+              toggleSelect={() => toggleCategory(category as RnavCat)}
             />
           ))}
         </EqpCol>

@@ -1,15 +1,13 @@
 import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
-import { formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
+import { convertBeaconCodeToString, formatAltitude, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import VCI from "../../../resources/images/VCI_v4.png";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { LocalEdstEntry } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { deleteAclEntry, toggleSpa, updateEntry } from "../../../redux/slices/entriesSlice";
-import { AclAselActionTrigger, AclRowField, EdstMenu, EdstWindow } from "../../../enums";
-import { aselSelector, setInputFocused } from "../../../redux/slices/appSlice";
+import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclAircraftSelect } from "../../../redux/thunks/thunks";
-import { amendEntryThunk } from "../../../redux/thunks/entriesThunks";
 import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import {
@@ -35,6 +33,7 @@ import {
   VoiceTypeSpan
 } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
+import { EdstWindow, AclRowField, AclAselActionTrigger } from "../../../namespaces";
 
 const SPA_INDICATOR = "\u2303";
 
@@ -54,40 +53,33 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const [aarAvail, setAarAvail] = useState(false);
   const [onAar, setOnAar] = useState(false);
 
-  useEffect(
-    () => () => {
-      if (freeTextContent !== (entry.free_text_content ?? "")) {
-        dispatch(amendEntryThunk({ cid: entry.cid, planData: { free_text_content: freeTextContent } }));
-      } // eslint-disable-next-line
-  }, []);
-
   useEffect(() => {
-    const currentFixNames = (entry.currentRouteData ?? entry.route_data).map(fix => fix.name);
+    const currentFixNames = (entry.currentRouteData ?? entry.routeData).map(fix => fix.name);
     const aarAvail =
       entry.aarList?.filter(aar => aar.eligible && currentFixNames.includes(aar.tfix)) && !entry.currentAarList?.filter(aar => aar.onEligibleAar);
     const onAar = !!entry.currentAarList?.filter(aar => aar.onEligibleAar)?.length;
     setAarAvail(aarAvail ?? false);
     setOnAar(onAar);
-  }, [entry.currentAarList, entry.currentRouteData, entry.aarList, entry.route_data]);
+  }, [entry.currentAarList, entry.currentRouteData, entry.aarList, entry.routeData]);
 
-  const holdData = useMemo(() => entry.hold_data, [entry.hold_data]);
+  const holdData = useMemo(() => entry.holdData, [entry.holdData]);
   const route = useMemo(() => {
-    const route = entry.currentRoute?.replace(/^\.+/, "") ?? entry.route;
-    return removeDestFromRouteString(route.slice(0), entry.dest);
+    const route = entry.currentRoute?.replace(/^\.+/, "") ?? entry.formattedRoute;
+    return removeDestFromRouteString(route.slice(0), entry.destination);
   }, [entry]);
 
   const now = new Date().getTime();
 
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
-  const [freeTextContent, setFreeTextContent] = useState(entry.free_text_content ?? "");
+  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
   const ref = useRef<HTMLDivElement | null>(null);
 
-  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM capable
-  const showCoralBox = !entry.equipment.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
+  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
+  const showCoralBox = entry.nasSuffix && !entry.nasSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
 
   const checkAarReroutePending = () => {
-    const currentFixNames = (entry.currentRouteData ?? entry.route_data).map(fix => fix.name);
+    const currentFixNames = (entry.currentRouteData ?? entry.routeData).map(fix => fix.name);
     const eligibleAar = entry?.currentAarList?.filter(aar => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
@@ -102,43 +94,42 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     if (event.button === 0) {
-      dispatch(updateEntry({ cid: entry.cid, data: { showFreeText: !entry.showFreeText } }));
-      dispatch(amendEntryThunk({ cid: entry.cid, planData: { free_text_content: freeTextContent } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { showFreeText: !entry.showFreeText } }));
     }
     if (event.button === 1) {
-      dispatch(toggleSpa(entry.cid));
+      dispatch(toggleSpa(entry.aircraftId));
     }
     if (event.button === 2) {
-      dispatch(updateEntry({ cid: entry.cid, data: { aclHighlighted: !entry.aclHighlighted } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclHighlighted: !entry.aclHighlighted } }));
     }
   };
 
   const updateVci = () => {
     if (entry.vciStatus === -1 && manualPosting) {
-      dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     } else if (entry.vciStatus < 1) {
-      dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: entry.vciStatus + 1 } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: entry.vciStatus + 1 } }));
     } else {
-      dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     }
   };
 
   const handleHoldClick = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
-        if (!entry.hold_data) {
-          dispatch(aclAircraftSelect(event, entry.cid, AclRowField.hold, null, EdstMenu.holdMenu));
+        if (!entry.holdData) {
+          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.HOLD_MENU));
         } else {
           dispatch(
             updateEntry({
-              cid: entry.cid,
+              aircraftId: entry.aircraftId,
               data: { aclRouteDisplay: !entry.aclRouteDisplay ? "hold_data" : null }
             })
           );
         }
         break;
       case 1:
-        dispatch(aclAircraftSelect(event, entry.cid, AclRowField.hold, AclAselActionTrigger.toggleHoldInfo));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, AclAselActionTrigger.TOGGLE_HOLD_INFO));
         break;
       default:
         break;
@@ -147,13 +138,13 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
 
   const handleRemarksClick = (event: React.MouseEvent) => {
     if (entry.vciStatus === -1 && !manualPosting) {
-      dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     }
     switch (event.button) {
       case 0:
         dispatch(
           updateEntry({
-            cid: entry.cid,
+            aircraftId: entry.aircraftId,
             data: {
               aclRouteDisplay: !(entry.aclRouteDisplay === "remarks") && entry.remarks.length > 0 ? "remarks" : null,
               remarksChecked: true
@@ -164,7 +155,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
       case 2:
         dispatch(
           updateEntry({
-            cid: entry.cid,
+            aircraftId: entry.aircraftId,
             data: { aclRouteDisplay: !(entry.aclRouteDisplay === "raw_route") ? "raw_route" : null }
           })
         );
@@ -179,14 +170,14 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(deleteAclEntry(entry.cid));
+          dispatch(deleteAclEntry(entry.aircraftId));
         }
         break;
       default:
         if (!manualPosting && event.detail === 2 && entry.vciStatus < 0) {
-          dispatch(updateEntry({ cid: entry.cid, data: { vciStatus: 0 } }));
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
         }
-        dispatch(aclAircraftSelect(event, entry.cid, AclRowField.fid));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.FID));
         break;
     }
   };
@@ -195,21 +186,14 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.cid, AclRowField.hdg, null, EdstMenu.headingMenu));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HDG, null, EdstWindow.HEADING_MENU));
         break;
       case 1:
-        if (entry.scratchHdg && (displayScratchHdg || entry.hdg === null)) {
+        if (entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null)) {
           const promotedHdg = "LRH".includes(entry.scratchHdg.slice(-1)) ? entry.scratchHdg : `H${entry.scratchHdg}`;
-          dispatch(amendEntryThunk({ cid: entry.cid, planData: { hdg: promotedHdg, scratchHdg: null } }));
         }
         break;
       case 2:
-        dispatch(
-          amendEntryThunk({
-            cid: entry.cid,
-            planData: { [(displayScratchHdg || !entry.hdg) && entry.scratchHdg ? "scratchHdg" : "hdg"]: null }
-          })
-        );
         break;
       default:
         break;
@@ -220,33 +204,26 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.cid, AclRowField.spd, null, EdstMenu.speedMenu));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.SPD, null, EdstWindow.SPEED_MENU));
         break;
       case 1:
-        if (entry.scratchSpd && (displayScratchSpd || entry.spd === null)) {
+        if (entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null)) {
           const promotedSpd = entry.scratchSpd.slice(0, 1) === "M" ? entry.scratchSpd : `S${entry.scratchSpd}`;
-          dispatch(amendEntryThunk({ cid: entry.cid, planData: { spd: promotedSpd, scratchSpd: null } }));
         }
         break;
       case 2:
-        dispatch(
-          amendEntryThunk({
-            cid: entry.cid,
-            planData: { [(displayScratchSpd || !entry.spd) && entry.scratchSpd ? "scratchSpd" : "spd"]: null }
-          })
-        );
         break;
       default:
         break;
     }
   };
 
-  const isSelected = (cid: string, field: AclRowField): boolean => {
-    return asel?.window === EdstWindow.acl && asel?.cid === cid && asel?.field === field;
+  const isSelected = (aircraftId: string, field: AclRowField): boolean => {
+    return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
   };
 
   return (
-    <BodyRowContainerDiv separator={index % 3 === 2} key={`acl-row-container-${entry.cid}`} onContextMenu={event => event.preventDefault()}>
+    <BodyRowContainerDiv separator={index % 3 === 2} key={`acl-row-container-${entry.aircraftId}`} onContextMenu={event => event.preventDefault()}>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.aclNAndVciBtn}>
           <RadioCol hoverGreen={entry.vciStatus === 1} onMouseDown={updateVci}>
@@ -261,8 +238,8 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
         <SpecialBox disabled />
         <InnerRow highlight={entry.aclHighlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.aclFlightId} onMouseDown={handleFidClick}>
-            <FidCol hover selected={isSelected(entry.cid, AclRowField.fid)}>
-              {entry.cid} {entry.callsign}
+            <FidCol hover selected={isSelected(entry.aircraftId, AclRowField.FID)}>
+              {entry.cid} {entry.aircraftId}
               {/* eslint-disable-next-line no-nested-ternary */}
               <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
             </FidCol>
@@ -274,81 +251,81 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclType}>
             <AircraftTypeCol
-              contentHidden={hidden.includes(AclRowField.type)}
+              contentHidden={hidden.includes(AclRowField.TYPE)}
               hover
-              selected={isSelected(entry.cid, AclRowField.type)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.cid, AclRowField.type))}
+              selected={isSelected(entry.aircraftId, AclRowField.TYPE)}
+              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
             >
-              {`${entry.type}/${entry.equipment}`}
+              {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
             </AircraftTypeCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclAlt}>
             <AltCol>
               <AltColDiv
-                interim={!!entry.interim}
+                interimAltitude={!!entry.interimAltitude}
                 headerMouseDown={altMouseDown}
-                selected={isSelected(entry.cid, AclRowField.alt)}
-                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.cid, AclRowField.alt, null, EdstMenu.altitudeMenu))}
+                selected={isSelected(entry.aircraftId, AclRowField.ALT)}
+                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
               >
-                {entry.altitude}
-                {entry.interim && `T${entry.interim}`}
+                {formatAltitude(entry.altitude)}
+                {entry.interimAltitude && `T${entry.interimAltitude}`}
               </AltColDiv>
               {showCoralBox && <CoralBox />}
             </AltCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclCode}>
             <CodeCol
-              contentHidden={hidden.includes(AclRowField.code)}
+              contentHidden={hidden.includes(AclRowField.CODE)}
               hover
-              selected={isSelected(entry.cid, AclRowField.code)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.cid, AclRowField.code))}
+              selected={isSelected(entry.aircraftId, AclRowField.CODE)}
+              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
             >
-              {entry.beacon}
+              {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
           </EdstTooltip>
-          <SpecialBox onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.hdg && entry.scratchHdg)}>
-            {entry.hdg && entry.scratchHdg && "*"}
+          <SpecialBox onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchHdg)}>
+            {entry.assignedHeading && entry.scratchHdg && "*"}
           </SpecialBox>
           <EdstTooltip title={Tooltips.aclHdg}>
             <HdgCol
               hover
-              contentHidden={hidden.includes(AclRowField.hdg)}
-              selected={isSelected(entry.cid, AclRowField.hdg)}
+              contentHidden={hidden.includes(AclRowField.HDG)}
+              selected={isSelected(entry.aircraftId, AclRowField.HDG)}
               onMouseDown={handleHeadingClick}
-              scratchpad={!!entry.scratchHdg && (displayScratchHdg || entry.hdg === null)}
+              scratchpad={!!entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null)}
             >
-              {entry.scratchHdg && (displayScratchHdg || entry.hdg === null) ? entry.scratchHdg : entry.hdg}
+              {entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchHdg : entry.assignedHeading}
             </HdgCol>
           </EdstTooltip>
           <HdgSpdSlashCol>/</HdgSpdSlashCol>
           <EdstTooltip title={Tooltips.aclSpd}>
             <SpdCol
               hover
-              contentHidden={hidden.includes(AclRowField.spd)}
-              selected={isSelected(entry.cid, AclRowField.spd)}
+              contentHidden={hidden.includes(AclRowField.SPD)}
+              selected={isSelected(entry.aircraftId, AclRowField.SPD)}
               onMouseDown={handleSpeedClick}
-              scratchpad={!!entry.scratchSpd && (displayScratchSpd || entry.spd === null)}
+              scratchpad={!!entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null)}
             >
-              {entry.scratchSpd && (displayScratchSpd || entry.spd === null) ? entry.scratchSpd : entry.spd}
+              {entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchSpd : entry.assignedSpeed}
             </SpdCol>
           </EdstTooltip>
-          <SpecialBox onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.spd && entry.scratchSpd)}>
-            {entry.spd && entry.scratchSpd && "*"}
+          <SpecialBox onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchSpd)}>
+            {entry.assignedSpeed && entry.scratchSpd && "*"}
           </SpecialBox>
           <SpecialBox disabled />
           <SpecialBox
             color={edstFontBrown}
-            selected={isSelected(entry.cid, AclRowField.hold)}
+            selected={isSelected(entry.aircraftId, AclRowField.HOLD)}
             onMouseDown={handleHoldClick}
             onContextMenu={event => {
               event.preventDefault();
-              if (entry?.hold_data) {
-                dispatch(aclAircraftSelect(event, entry.cid, AclRowField.hold, null, EdstMenu.cancelHoldMenu));
+              if (entry?.holdData) {
+                dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
               }
             }}
             disabled={!anyHolding}
           >
-            {entry.hold_data ? "H" : ""}
+            {entry.holdData ? "H" : ""}
           </SpecialBox>
           <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclRemarksBtn}>
@@ -361,28 +338,27 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           <EdstTooltip title={Tooltips.aclRoute}>
             <RouteCol
               hover
-              selected={isSelected(entry.cid, AclRowField.route)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.cid, AclRowField.route, null, EdstMenu.routeMenu))}
+              selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}
+              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
             >
               {entry.aclRouteDisplay === "hold_data" &&
                 holdData &&
                 `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}
-              {entry.aclRouteDisplay === "remarks" && <span>{entry.flightplan.remarks}</span>}
-              {entry.aclRouteDisplay === "raw_route" && <span>{entry.flightplan.route}</span>}
+              {entry.aclRouteDisplay === "remarks" && <span>{entry.remarks}</span>}
+              {entry.aclRouteDisplay === "raw_route" && <span>{entry.route}</span>}
               {!entry.aclRouteDisplay && (
                 <RouteSpan padding="0 2px">
-                  <RouteDepSpan amendmentPending={aarAvail && !onAar} selected={isSelected(entry.cid, AclRowField.route)}>
-                    {entry.dep}
+                  <RouteDepSpan amendmentPending={aarAvail && !onAar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
+                    {entry.departure}
                   </RouteDepSpan>
                   ./.
-                  {entry.cleared_direct?.fix && route.startsWith(entry.cleared_direct?.fix) && `${entry.cleared_direct?.frd}..`}
                   {/* {entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''} */}
                   {route}
                   {!route.endsWith(".") && route.length > 0 && `.`}
                   {pendingAar && !onAar && (
-                    <RouteAmendmentSpan selected={isSelected(entry.cid, AclRowField.route)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
+                    <RouteAmendmentSpan selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
                   )}
-                  {entry.dest}
+                  {entry.destination}
                 </RouteSpan>
               )}
             </RouteCol>
@@ -399,12 +375,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           <SpecialBox disabled />
           <InnerRow2 highlight={entry.aclHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={214}>
-              <input
-                onFocus={() => dispatch(setInputFocused(true))}
-                onBlur={() => dispatch(setInputFocused(false))}
-                value={freeTextContent}
-                onChange={event => setFreeTextContent(event.target.value.toUpperCase())}
-              />
+              <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value)} />
             </FreeTextRow>
           </InnerRow2>
         </BodyRowDiv>

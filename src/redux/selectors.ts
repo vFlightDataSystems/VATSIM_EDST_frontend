@@ -4,7 +4,7 @@ import { entriesSelector } from "./slices/entriesSlice";
 export const anyHoldingSelector = createSelector([entriesSelector], entries => {
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of Object.values(entries)) {
-    if (entry?.hold_data && entry?.aclDisplay) {
+    if (entry?.holdData && entry?.aclDisplay) {
       return true;
     }
   }
@@ -17,7 +17,7 @@ export const anyHoldingSelector = createSelector([entriesSelector], entries => {
 export const anyAssignedHdgSelector = createSelector([entriesSelector], entries => {
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of Object.values(entries)) {
-    if ((entry?.hdg || entry?.scratchHdg) && entry.aclDisplay) {
+    if ((entry?.assignedHeading || entry?.scratchHdg) && entry.aclDisplay) {
       return true;
     }
   }
@@ -27,7 +27,7 @@ export const anyAssignedHdgSelector = createSelector([entriesSelector], entries 
 export const anyAssignedSpdSelector = createSelector([entriesSelector], entries => {
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of Object.values(entries)) {
-    if ((entry?.spd || entry?.scratchSpd) && entry.aclDisplay) {
+    if ((entry?.assignedSpeed || entry?.scratchSpd) && entry.aclDisplay) {
       return true;
     }
   }

@@ -10,7 +10,6 @@ import {
   toggleSector
 } from "../redux/slices/sectorSlice";
 import { setShowSectorSelector } from "../redux/slices/appSlice";
-import { refreshEntriesThunk } from "../redux/slices/entriesSlice";
 import { EdstTooltip } from "./resources/EdstTooltip";
 
 const SectorSelectorDiv = styled.div`
@@ -174,7 +173,6 @@ export const SectorSelector: React.FC = () => {
         <EdstButton
           content="Save"
           onMouseDown={() => {
-            dispatch(refreshEntriesThunk());
             dispatch(setShowSectorSelector(false));
           }}
         />

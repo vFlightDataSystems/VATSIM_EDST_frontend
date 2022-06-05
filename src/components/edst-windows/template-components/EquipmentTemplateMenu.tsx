@@ -1,9 +1,8 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { closeMenu, menuPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
+import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
-import { EdstMenu } from "../../../enums";
 import { EdstButton, EdstTemplateButton85 } from "../../resources/EdstButton";
 import { EquipmentNavTemplate } from "./EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "./EquipmentSurvTemplate";
@@ -23,6 +22,7 @@ import {
 } from "../../../styles/optionMenuStyles";
 import { EqpContentCol, EqpRow } from "./styled";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstWindow } from "../../../namespaces";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
   width: 900px;
@@ -84,22 +84,22 @@ export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = ({
 
 export const EquipmentTemplateMenu: React.FC = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(menuPositionSelector(EdstMenu.equipmentTemplateMenu));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.EQUIPMENT_TEMPLATE_MENU));
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstMenu.equipmentTemplateMenu);
+  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.EQUIPMENT_TEMPLATE_MENU);
 
   return (
     pos && (
       <EqpTemplateDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(EdstMenu.equipmentTemplateMenu)}
-        onMouseDown={() => zStack.indexOf(EdstMenu.equipmentTemplateMenu) > 0 && dispatch(pushZStack(EdstMenu.equipmentTemplateMenu))}
+        zIndex={zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU)}
+        onMouseDown={() => zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU) > 0 && dispatch(pushZStack(EdstWindow.EQUIPMENT_TEMPLATE_MENU))}
         anyDragging={anyDragging}
         id="equipment-template-menu"
       >
@@ -108,7 +108,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
           Equipment Template
         </OptionsMenuHeader>
         <EqpTemplateBody>
-          <FidRow>{entry && `${entry.callsign} ${entry.type}/${entry.equipment}`}</FidRow>
+          <FidRow>{entry && `${entry.aircraftId} ${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}</FidRow>
           <EqpTemplateRow>
             <EdstTemplateButton85
               selected={selectedMenu === menuOptions.surv}
@@ -147,7 +147,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
               <EdstButton disabled content="OK" />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Cancel" onMouseDown={() => dispatch(closeMenu(EdstMenu.equipmentTemplateMenu))} />
+              <EdstButton content="Cancel" onMouseDown={() => dispatch(closeWindow(EdstWindow.EQUIPMENT_TEMPLATE_MENU))} />
             </OptionsBodyCol>
           </EqpTemplateBottomRow>
         </EqpTemplateBody>

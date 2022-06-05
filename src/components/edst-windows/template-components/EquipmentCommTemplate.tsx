@@ -12,7 +12,7 @@ const EqpCol2 = styled(EqpCol)`
   margin-left: 30px;
 `;
 
-enum VoiceCatEnum {
+enum VoiceCat {
   H = "H",
   V = "V",
   U = "U",
@@ -26,7 +26,7 @@ const voiceCatText = {
   Y: "(8.33 kHZ)"
 };
 
-enum CpdlcCatEnum {
+enum CpdlcCat {
   J1 = "J1",
   J2 = "J2",
   J3 = "J3",
@@ -46,7 +46,7 @@ const cpdlcCatText = {
   J7: "(FANS1/A IRIDIUM)"
 };
 
-enum AcarsCatEnum {
+enum AcarsCat {
   E1 = "E1",
   E2 = "E2",
   E3 = "E3"
@@ -58,7 +58,7 @@ const acarsCatText = {
   E3: "(PDC)"
 };
 
-enum SatCatEnum {
+enum SatCat {
   M1 = "M1",
   M2 = "M2",
   M3 = "M3"
@@ -72,56 +72,56 @@ const satCatText = {
 
 export const EquipmentCommTemplate: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10a = (entry?.flightplan?.aircraft as string)
+  const field10a = entry?.equipment
     ?.split("/")
     ?.slice(1)?.[0]
     ?.split("-")?.[1]
     ?.match(/[A-Z]\d?/g);
-  const voiceCat = field10a?.[0]?.split("")?.filter(s => Object.keys(VoiceCatEnum).includes(s)) as VoiceCatEnum[];
-  const [voiceCategories, setVoiceCategories] = useState<VoiceCatEnum[]>(voiceCat ?? []);
+  const voiceCat = field10a?.[0]?.split("")?.filter(s => Object.keys(VoiceCat).includes(s)) as VoiceCat[];
+  const [voiceCategories, setVoiceCategories] = useState<VoiceCat[]>(voiceCat ?? []);
 
-  const cpdlcCats = field10a?.filter(s => Object.keys(CpdlcCatEnum).includes(s)) as CpdlcCatEnum[];
-  const [cpdlcCategories, setCpdlcCategories] = useState<CpdlcCatEnum[]>(cpdlcCats ?? []);
+  const cpdlcCats = field10a?.filter(s => Object.keys(CpdlcCat).includes(s)) as CpdlcCat[];
+  const [cpdlcCategories, setCpdlcCategories] = useState<CpdlcCat[]>(cpdlcCats ?? []);
 
-  const acarsCats = field10a?.filter(s => Object.keys(AcarsCatEnum).includes(s)) as AcarsCatEnum[];
-  const [acarsCategories, setAcarsCategories] = useState<AcarsCatEnum[]>(acarsCats ?? []);
+  const acarsCats = field10a?.filter(s => Object.keys(AcarsCat).includes(s)) as AcarsCat[];
+  const [acarsCategories, setAcarsCategories] = useState<AcarsCat[]>(acarsCats ?? []);
 
-  const satCats = field10a?.filter(s => Object.keys(SatCatEnum).includes(s)) as SatCatEnum[];
-  const [satelliteCategories, setSatelliteCategories] = useState<SatCatEnum[]>(satCats ?? []);
+  const satCats = field10a?.filter(s => Object.keys(SatCat).includes(s)) as SatCat[];
+  const [satelliteCategories, setSatelliteCategories] = useState<SatCat[]>(satCats ?? []);
 
-  const toggleCategory = (cat: CpdlcCatEnum | AcarsCatEnum | SatCatEnum | VoiceCatEnum) => {
-    if (Object.keys(CpdlcCatEnum).includes(cat)) {
+  const toggleCategory = (cat: CpdlcCat | AcarsCat | SatCat | VoiceCat) => {
+    if (Object.keys(CpdlcCat).includes(cat)) {
       const cpdlcCats = [...cpdlcCategories];
-      const index = cpdlcCats.indexOf(cat as CpdlcCatEnum);
+      const index = cpdlcCats.indexOf(cat as CpdlcCat);
       if (index < 0) {
-        setCpdlcCategories([...cpdlcCats, cat as CpdlcCatEnum]);
+        setCpdlcCategories([...cpdlcCats, cat as CpdlcCat]);
       } else {
         cpdlcCats.splice(index, 1);
         setCpdlcCategories(cpdlcCats);
       }
-    } else if (Object.keys(AcarsCatEnum).includes(cat)) {
+    } else if (Object.keys(AcarsCat).includes(cat)) {
       const acarsCats = [...acarsCategories];
-      const index = acarsCats.indexOf(cat as AcarsCatEnum);
+      const index = acarsCats.indexOf(cat as AcarsCat);
       if (index < 0) {
-        setAcarsCategories([...acarsCats, cat as AcarsCatEnum]);
+        setAcarsCategories([...acarsCats, cat as AcarsCat]);
       } else {
         acarsCats.splice(index, 1);
         setAcarsCategories(acarsCats);
       }
-    } else if (Object.keys(SatCatEnum).includes(cat)) {
+    } else if (Object.keys(SatCat).includes(cat)) {
       const satCats = [...satelliteCategories];
-      const index = satCats.indexOf(cat as SatCatEnum);
+      const index = satCats.indexOf(cat as SatCat);
       if (index < 0) {
-        setSatelliteCategories([...satCats, cat as SatCatEnum]);
+        setSatelliteCategories([...satCats, cat as SatCat]);
       } else {
         satCats.splice(index, 1);
         setSatelliteCategories(satCats);
       }
-    } else if (Object.keys(VoiceCatEnum).includes(cat)) {
+    } else if (Object.keys(VoiceCat).includes(cat)) {
       const voiceCats = [...voiceCategories];
-      const index = voiceCats.indexOf(cat as VoiceCatEnum);
+      const index = voiceCats.indexOf(cat as VoiceCat);
       if (index < 0) {
-        setVoiceCategories([...voiceCats, cat as VoiceCatEnum]);
+        setVoiceCategories([...voiceCats, cat as VoiceCat]);
       } else {
         voiceCats.splice(index, 1);
         setVoiceCategories(voiceCats);
@@ -134,53 +134,53 @@ export const EquipmentCommTemplate: React.FC = () => {
       <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
         <EqpCol2>
           <EqpColTitle>VOICE CATEGORY</EqpColTitle>
-          {Object.keys(VoiceCatEnum).map(category => (
+          {Object.keys(VoiceCat).map(category => (
             <EquipmentTemplateRow
               key={`voice-cat-row-${category}`}
               buttonText={category}
-              text={voiceCatText[category as VoiceCatEnum]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as VoiceCatEnum}`]}
-              selected={voiceCategories.includes(category as VoiceCatEnum)}
-              toggleSelect={() => toggleCategory(category as VoiceCatEnum)}
+              text={voiceCatText[category as VoiceCat]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as VoiceCat}`]}
+              selected={voiceCategories.includes(category as VoiceCat)}
+              toggleSelect={() => toggleCategory(category as VoiceCat)}
             />
           ))}
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>CPDLC CATEGORY</EqpColTitle>
-          {Object.keys(CpdlcCatEnum).map(category => (
+          {Object.keys(CpdlcCat).map(category => (
             <EquipmentTemplateRow
               key={`cpdlc-cat-row-${category}`}
               buttonText={category}
-              text={cpdlcCatText[category as CpdlcCatEnum]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as CpdlcCatEnum}`]}
-              selected={cpdlcCategories.includes(category as CpdlcCatEnum)}
-              toggleSelect={() => toggleCategory(category as CpdlcCatEnum)}
+              text={cpdlcCatText[category as CpdlcCat]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as CpdlcCat}`]}
+              selected={cpdlcCategories.includes(category as CpdlcCat)}
+              toggleSelect={() => toggleCategory(category as CpdlcCat)}
             />
           ))}
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>ACARS CATEGORY</EqpColTitle>
-          {Object.keys(AcarsCatEnum).map(category => (
+          {Object.keys(AcarsCat).map(category => (
             <EquipmentTemplateRow
               key={`acars-cat-row-${category}`}
               buttonText={category}
-              text={acarsCatText[category as AcarsCatEnum]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as AcarsCatEnum}`]}
-              selected={acarsCategories.includes(category as AcarsCatEnum)}
-              toggleSelect={() => toggleCategory(category as AcarsCatEnum)}
+              text={acarsCatText[category as AcarsCat]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as AcarsCat}`]}
+              selected={acarsCategories.includes(category as AcarsCat)}
+              toggleSelect={() => toggleCategory(category as AcarsCat)}
             />
           ))}
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>SATELLITE RTF</EqpColTitle>
-          {Object.keys(SatCatEnum).map(category => (
+          {Object.keys(SatCat).map(category => (
             <EquipmentTemplateRow
               key={`satellite-cat-row-${category}`}
               buttonText={category}
-              text={satCatText[category as SatCatEnum]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as SatCatEnum}`]}
-              selected={satelliteCategories.includes(category as SatCatEnum)}
-              toggleSelect={() => toggleCategory(category as SatCatEnum)}
+              text={satCatText[category as SatCat]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as SatCat}`]}
+              selected={satelliteCategories.includes(category as SatCat)}
+              toggleSelect={() => toggleCategory(category as SatCat)}
             />
           ))}
         </EqpCol2>

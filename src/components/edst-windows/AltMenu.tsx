@@ -4,16 +4,17 @@ import styled from "styled-components";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { EdstMenu, EdstWindow } from "../../enums";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
-import { aselSelector, Asel, closeMenu, menuPositionSelector, setInputFocused } from "../../redux/slices/appSlice";
-import { LocalEdstEntry } from "../../types";
+import { Asel, aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
+import { Flightplan, LocalEdstEntry } from "../../types";
 import { addTrialPlanThunk } from "../../redux/thunks/thunks";
-import { amendEntryThunk } from "../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../styles/styles";
 import { edstFontYellow } from "../../styles/colors";
 import { useCenterCursor } from "../../hooks";
-import { PlanQuery } from "../../redux/slices/planSlice";
+import { TrialPlan } from "../../redux/slices/planSlice";
+import { formatAltitude } from "../../lib";
+import { useHub } from "../../hub";
+import { EdstWindow } from "../../namespaces";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: { x: number; y: number } }>`
   z-index: 11000;
@@ -150,21 +151,21 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
   const ref = useRef<HTMLDivElement | null>(null);
   const asel = useRootSelector(aselSelector) as Asel;
   const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const pos = useRootSelector(menuPositionSelector(EdstMenu.altitudeMenu));
+  const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTITUDE_MENU));
   const dispatch = useRootDispatch();
-  const [selected, setSelected] = useState(asel.window !== EdstWindow.dep ? "trial" : "amend");
+  const [selected, setSelected] = useState(asel.window !== EdstWindow.DEP ? "trial" : "amend");
   const [tempAltHover, setTempAltHover] = useState<number | null>(null);
   const [deltaY, setDeltaY] = useState(0);
   const [manualInput, setManualInput] = useState<string | null>(null);
   const [showInvalid, setShowInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hubConnection = useHub();
 
   useCenterCursor(ref, [asel]);
 
   useEffect(() => {
     setAltMenuInputRef(inputRef);
     return () => {
-      dispatch(setInputFocused(false));
       setAltMenuInputRef(null);
     }; // eslint-disable-next-line
   }, []);
@@ -172,49 +173,41 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
   useEffect(() => {
     if (manualInput === null && showInput) {
       setManualInput("");
-      dispatch(setInputFocused(true));
     } // eslint-disable-next-line
   }, [showInput]);
 
   const handleAltClick = (alt: string | number) => {
+    const amendedFlightplan: Flightplan = { ...entry, altitude: String(Number(alt) * 100) };
     if (selected === "amend") {
-      dispatch(amendEntryThunk({ cid: entry.cid, planData: { altitude: alt } }));
+      if (hubConnection) {
+        hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
+      }
     } else {
-      const trialPlanData = {
-        cid: entry.cid,
-        callsign: entry.callsign,
-        planData: {
-          altitude: alt,
-          interim: null
-        },
-        queryType: PlanQuery.alt,
-        msg: `AM ${entry.callsign} ALT ${alt}`
+      const trialPlanData: TrialPlan = {
+        aircraftId: entry.aircraftId,
+        callsign: entry.aircraftId,
+        amendedFlightplan,
+        commandString: `QQ ${alt} ${entry.aircraftId}`
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
-    dispatch(closeMenu(EdstMenu.altitudeMenu));
+    dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
   };
 
   const handleTempAltClick = (alt: number) => {
+    // eslint-disable-next-line no-empty
     if (selected === "amend") {
-      dispatch(amendEntryThunk({ cid: entry.cid, planData: { interim: alt } }));
     } else {
-      const trialPlanData = {
-        cid: entry.cid,
-        callsign: entry.callsign,
-        planData: {
-          interim: alt
-        },
-        queryType: PlanQuery.tempAlt,
-        msg: `QQ /TT ${alt} ${entry?.callsign}`
-      };
-      dispatch(addTrialPlanThunk(trialPlanData));
+      // dispatch(addTrialPlanThunk(trialPlanData));
     }
-    dispatch(closeMenu(EdstMenu.altitudeMenu));
+    dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
   };
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    const newDeltaY = Math.min(Math.max((Number(entry.altitude) - 560) * 10, deltaY + e.deltaY), (Number(entry.altitude) - 40) * 10);
+    const newDeltaY = Math.min(
+      Math.max((Number(formatAltitude(entry.altitude)) - 560) * 10, deltaY + e.deltaY),
+      (Number(formatAltitude(entry.altitude)) - 40) * 10
+    );
     setDeltaY(newDeltaY);
   };
 
@@ -223,8 +216,8 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
     asel && (
       <AltMenuDiv ref={ref} width={manualInput !== null ? 160 : 100} pos={pos} id="alt-menu">
         <AltMenuHeaderDiv>
-          <AltMenuHeaderCol flexGrow={1}>{entry?.callsign}</AltMenuHeaderCol>
-          <AltMenuHeaderCol width={20} onMouseDown={() => dispatch(closeMenu(EdstMenu.altitudeMenu))}>
+          <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
+          <AltMenuHeaderCol width={20} onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
             X
           </AltMenuHeaderCol>
         </AltMenuHeaderDiv>
@@ -250,8 +243,6 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
                     }
                   }
                 }}
-                onFocus={() => dispatch(setInputFocused(true))}
-                onBlur={() => dispatch(setInputFocused(false))}
               />
             </AltMenuRow>
             {showInvalid && (
@@ -264,7 +255,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
         {manualInput === null && (
           <span>
             <EdstTooltip title={Tooltips.altMenuPlanData}>
-              <AltMenuRow hover selected={selected === "trial"} onMouseDown={() => setSelected("trial")} disabled={asel.window === EdstWindow.dep}>
+              <AltMenuRow hover selected={selected === "trial"} onMouseDown={() => setSelected("trial")} disabled={asel.window === EdstWindow.DEP}>
                 TRIAL PLAN
               </AltMenuRow>
             </EdstTooltip>
@@ -273,16 +264,16 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
                 AMEND
               </AltMenuRow>
             </EdstTooltip>
-            <AltMenuRow disabled>{asel.window !== EdstWindow.dep ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
+            <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>
               {_.range(30, -40, -10).map(i => {
-                const centerAlt = Number(entry.altitude) - Math.round(deltaY / 100) * 10 + i;
+                const centerAlt = Number(formatAltitude(entry.altitude)) - Math.round(deltaY / 100) * 10 + i;
                 return (
                   <AltMenuScrollRow hover={selected === "amend" && tempAltHover === centerAlt} key={`alt-${i}`}>
-                    <AltMenuScrollCol selected={centerAlt === Number(entry.altitude)} onMouseDown={() => handleAltClick(centerAlt)}>
+                    <AltMenuScrollCol selected={centerAlt === Number(formatAltitude(entry.altitude))} onMouseDown={() => handleAltClick(centerAlt)}>
                       {String(centerAlt).padStart(3, "0")}
                     </AltMenuScrollCol>
-                    {asel.window !== EdstWindow.dep && (
+                    {asel.window !== EdstWindow.DEP && (
                       <EdstTooltip title={Tooltips.altMenuT}>
                         <AltMenuScrollTempAltCol
                           disabled={!(selected === "amend")}
