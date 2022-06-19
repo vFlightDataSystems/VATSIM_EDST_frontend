@@ -8,7 +8,7 @@ import { openMenuThunk } from "../../../redux/thunks/thunks";
 import { closeWindow, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { EdstWindow, PlanRowField } from "../../../namespaces";
-import { useHub } from "../../../hub";
+import { useHub } from "../../../hooks/hub";
 
 type PlansDisplayHeaderProps = {
   focused: boolean;

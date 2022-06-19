@@ -4,7 +4,7 @@ import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { zStackSelector, pushZStack, windowSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { useDragging, useFocused } from "../../../hooks";
+import { useDragging, useFocused } from "../../../hooks/utils";
 import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";
 import {
   OptionsBodyCol,

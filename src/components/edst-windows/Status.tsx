@@ -12,7 +12,7 @@ import {
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
-import { useDragging } from "../../hooks";
+import { useDragging } from "../../hooks/utils";
 import { EdstWindow } from "../../namespaces";
 
 const StatusDiv = styled(FloatingWindowDiv)`

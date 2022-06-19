@@ -18,15 +18,15 @@ const TimeStyle = styled.div`
 `;
 
 export function Time() {
-  const [dateState, setDateState] = useState(new Date());
+  const [date, setDate] = useState(new Date());
   useEffect(() => {
-    const interval = setInterval(() => setDateState(new Date()), 1000);
+    const interval = setInterval(() => setDate(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
   return (
     <TimeStyle>
-      {`0${dateState.getUTCHours()}`.slice(-2)}
-      {`0${dateState.getUTCMinutes()}`.slice(-2)} {`0${dateState.getUTCSeconds()}`.slice(-2)}
+      {`0${date.getUTCHours()}`.slice(-2)}
+      {`0${date.getUTCMinutes()}`.slice(-2)} {`0${date.getUTCSeconds()}`.slice(-2)}
     </TimeStyle>
   );
 }

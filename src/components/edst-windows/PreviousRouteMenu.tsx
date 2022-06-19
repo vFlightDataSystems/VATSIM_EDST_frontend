@@ -3,12 +3,12 @@ import React, { useRef } from "react";
 import { point } from "@turf/turf";
 import styled from "styled-components";
 import { EdstButton } from "../resources/EdstButton";
-import { computeFrdString, copy, getClosestReferenceFix, removeDestFromRouteString } from "../../lib";
+import { computeFrdString, getClosestReferenceFix, removeDestFromRouteString } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { AircraftTrack, LocalEdstEntry } from "../../types";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { referenceFixSelector } from "../../redux/slices/sectorSlice";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
@@ -20,8 +20,8 @@ const PrevRouteMenuDiv = styled(OptionsMenu)`
 `;
 
 export const PreviousRouteMenu: React.FC = () => {
-  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const aircraftTrack = useRootSelector(aselTrackSelector) as AircraftTrack;
+  const entry = useRootSelector(aselEntrySelector)!;
+  const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const referenceFixes = useRootSelector(referenceFixSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PREV_ROUTE_MENU));
   const zStack = useRootSelector(zStackSelector);
@@ -68,7 +68,7 @@ export const PreviousRouteMenu: React.FC = () => {
               <EdstButton
                 content="Apply Previous Route"
                 onMouseDown={() => {
-                  copy(route.replace(/\.+$/, "")).then();
+                  // TODO: implement
                   dispatch(closeWindow(EdstWindow.PREV_ROUTE_MENU));
                 }}
               />

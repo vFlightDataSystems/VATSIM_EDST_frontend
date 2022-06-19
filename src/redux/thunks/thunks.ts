@@ -1,14 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState, RootThunkAction } from "../store";
-import { computeBoundaryTime, getRemainingRouteData, getRouteDataDistance, REMOVAL_TIMEOUT } from "../../lib";
-import { addAclEntry, addDepEntry, deleteAclEntry, setEntry, updateEntry } from "../slices/entriesSlice";
-import { AircraftTrack, AirportInfo, DerivedFlightplanData, Flightplan, RouteFix, WindowPosition } from "../../types";
+import { equipmentIcaoToNas, getRemainingRouteFixes, getRouteFixesDistance, REMOVAL_TIMEOUT } from "../../lib";
+import { addAclEntry, addDepEntry, deleteAclEntry, setEntry, updateEntries, updateEntry } from "../slices/entriesSlice";
+import { AircraftTrack, AirportInfo, DerivedFlightplanData, Flightplan, LocalEdstEntry, RouteFix, WindowPosition } from "../../types";
 import { closeAircraftMenus, closeWindow, openWindow, setAsel, setWindowPosition } from "../slices/appSlice";
 import { addTrialPlan, removeTrialPlan, TrialPlan } from "../slices/planSlice";
-import { fetchAirportInfo, fetchFormatRoute, fetchRouteData } from "../../api";
+import {
+  fetchAar,
+  fetchAdar,
+  fetchAdr,
+  fetchFormatRoute,
+  fetchRouteFixes,
+  memoizedFetchAirportInfo,
+  memoizedFetchFormatRoute,
+  memoizedFetchRouteFixes
+} from "../../api/api";
 import { setAircraftTrack } from "../slices/aircraftTrackSlice";
 import { depFilter, entryFilter } from "../../filters";
-import { EDST_MENU_LIST, EdstWindow, AclRowField, DepRowField, AclAselActionTrigger, DepAselActionTrigger } from "../../namespaces";
+import { AclAselActionTrigger, AclRowField, DepAselActionTrigger, DepRowField, EDST_MENU_LIST, EdstWindow } from "../../namespaces";
 
 export const aclCleanup: RootThunkAction = (dispatch, getState) => {
   const state = getState();
@@ -22,7 +31,7 @@ export const aclCleanup: RootThunkAction = (dispatch, getState) => {
 
 function aircraftSelect(
   event: Event & any,
-  window: EdstWindow | null,
+  edstWindow: EdstWindow,
   aircraftId: string,
   field: AclRowField | DepRowField,
   aselAction: AclAselActionTrigger | DepAselActionTrigger | null = null,
@@ -34,11 +43,11 @@ function aircraftSelect(
 
     dispatch(closeAircraftMenus());
 
-    if (asel?.aircraftId === aircraftId && asel?.field === field && asel?.window === window) {
+    if (asel?.aircraftId === aircraftId && asel?.field === field && asel?.window === edstWindow) {
       dispatch(setAsel(null));
     } else {
       const entry = state.entries[aircraftId];
-      switch (window) {
+      switch (edstWindow) {
         case EdstWindow.DEP:
           if (
             !state.dep.manualPosting &&
@@ -63,7 +72,7 @@ function aircraftSelect(
           }
           dispatch(setAsel({ aircraftId, field, window: EdstWindow.GPD }));
           break;
-        default:
+        case EdstWindow.ACL:
           if (
             !state.acl.manualPosting &&
             field === AclRowField.FID &&
@@ -80,6 +89,10 @@ function aircraftSelect(
               dispatch(openWindowThunk(triggerOpenWindow as EdstWindow, event.currentTarget, EdstWindow.ACL));
             }
           }
+          break;
+        default:
+          // TODO: handle error
+          console.log("unknown window");
           break;
       }
     }
@@ -216,40 +229,41 @@ export function removeTrialPlanThunk(index: number): RootThunkAction {
   };
 }
 
-async function createEntryFromFlightplan(fp: Flightplan) {
+async function createEntryFromFlightplan(fp: Flightplan, artcc: string): Promise<LocalEdstEntry | null> {
+  if (!(fp.departure.startsWith("K") || fp.destination.startsWith("K"))) {
+    return null;
+  }
   const depInfo = fp.departure
-    ? await fetchAirportInfo(fp.departure)
-        .then(response => response.json())
-        .then(data => {
-          if (data) {
-            return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as AirportInfo;
-          }
-          return null;
-        })
+    ? await memoizedFetchAirportInfo(fp.departure).then(data => {
+        if (data) {
+          return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as AirportInfo;
+        }
+        return null;
+      })
     : null;
   const destInfo = fp.destination
-    ? await fetchAirportInfo(fp.destination)
-        .then(response => response.json())
-        .then(data => {
-          if (data) {
-            return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as AirportInfo;
-          }
-          return null;
-        })
+    ? await memoizedFetchAirportInfo(fp.destination).then(data => {
+        if (data) {
+          return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as AirportInfo;
+        }
+        return null;
+      })
     : null;
   if (!(depInfo || destInfo)) {
     return null;
   }
-  const formattedRoute: string = await fetchFormatRoute(fp.route, fp.departure, fp.destination)
-    .then(response => response.json())
-    .then(data => data ?? "");
-  const routeData = (await fetchRouteData(fp.route, fp.departure, fp.destination)
-    .then(response => response.json())
-    .then(data => data ?? [])) as RouteFix[];
-  // const icaoFields = fp.equipment.split("/").slice(1);
-  // icaoFields[0] = icaoFields[0].split("-").pop() as string;
-  // const nasSuffix = icaoFields?.length === 2 ? equipmentIcaoToNas(icaoFields[0], icaoFields[1]) : null;
-  const nasSuffix = null;
+  const formattedRoute: string = await memoizedFetchFormatRoute(fp.route, fp.departure, fp.destination).then(data => data ?? "");
+  const routeFixes = (await memoizedFetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? [])) as RouteFix[];
+  const preferentialArrivalRoutes = await fetchAar(artcc, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude);
+  const preferentialDepartureRoutes = await fetchAdr(artcc, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude);
+  const preferentialDepartureArrivalRoutes = await fetchAdar(artcc, fp.equipment.split("/")[0], fp.departure, fp.destination);
+
+  let nasSuffix = "";
+  const icaoFields = fp.equipment.split("/").slice(1);
+  if (icaoFields.length === 2) {
+    icaoFields[0] = icaoFields[0].split("-").pop() as string;
+    nasSuffix = equipmentIcaoToNas(icaoFields[0], icaoFields[1]);
+  }
   return {
     ...fp,
     aclDeleted: false,
@@ -264,9 +278,12 @@ async function createEntryFromFlightplan(fp: Flightplan) {
     formattedRoute,
     freeTextContent: "",
     holdData: null,
-    routeData,
+    routeFixes,
     currentRoute: formattedRoute,
-    currentRouteData: routeData,
+    currentRouteFixes: routeFixes,
+    preferentialDepartureRoutes,
+    preferentialDepartureArrivalRoutes,
+    preferentialArrivalRoutes,
     spa: false,
     vciStatus: -1
   };
@@ -281,38 +298,36 @@ const updateDerivedFlightplanThunk = createAsyncThunk<void, Flightplan>("entries
   if (entry) {
     const amendedData: Flightplan & Partial<DerivedFlightplanData> = { ...fp };
     if (fp.route !== entry.route) {
-      amendedData.formattedRoute = await fetchFormatRoute(fp.route, fp.departure, fp.destination)
-        .then(response => response.json())
-        .then(data => data ?? "");
-      amendedData.routeData = (await fetchRouteData(fp.route, fp.departure, fp.destination)
-        .then(response => response.json())
-        .then(data => data ?? [])) as RouteFix[];
+      amendedData.formattedRoute = await fetchFormatRoute(fp.route, fp.departure, fp.destination).then(data => data ?? "");
+      amendedData.routeFixes = (await fetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? [])) as RouteFix[];
     }
     const pos = [aircraftTrack.location.lon, aircraftTrack.location.lat];
-    const routeDataDistance = getRouteDataDistance(entry.routeData, pos);
-    const remainingRouteData = getRemainingRouteData(entry.formattedRoute, routeDataDistance, pos, entry.destination, polygons);
+    const routeFixesDistance = getRouteFixesDistance(entry.routeFixes, pos);
+    const remainingRouteFixes = getRemainingRouteFixes(entry.formattedRoute, routeFixesDistance, pos, entry.destination, polygons);
     thunkAPI.dispatch(
       updateEntry({
         aircraftId: fp.aircraftId,
-        data: { ...amendedData, ...remainingRouteData }
+        data: { ...amendedData, ...remainingRouteFixes }
       })
     );
   }
 });
 
 export const updateFlightplanThunk = createAsyncThunk<void, Flightplan>("entries/updateFlightplan", async (fp, thunkAPI) => {
-  const { entries } = thunkAPI.getState() as RootState;
-  const aircraftIds = Object.keys(entries);
-  const flightplan = {
-    ...fp,
-    equipment: fp.equipment.slice(0, 6)
-  };
-  if (aircraftIds.includes(flightplan.aircraftId)) {
-    thunkAPI.dispatch(updateDerivedFlightplanThunk(fp));
-  } else {
-    const entry = await createEntryFromFlightplan(flightplan);
-    if (entry !== null) {
-      thunkAPI.dispatch(setEntry(entry));
+  if (fp.isIfr) {
+    const { entries, sectorData } = thunkAPI.getState() as RootState;
+    const aircraftIds = Object.keys(entries);
+    const flightplan = {
+      ...fp,
+      equipment: fp.equipment.slice(0, 6)
+    };
+    if (aircraftIds.includes(flightplan.aircraftId)) {
+      thunkAPI.dispatch(updateDerivedFlightplanThunk(fp));
+    } else {
+      const entry = await createEntryFromFlightplan(flightplan, sectorData.artccId);
+      if (entry !== null) {
+        thunkAPI.dispatch(setEntry(entry));
+      }
     }
   }
 });
@@ -324,20 +339,15 @@ export function updateAircraftTrackThunk(newAircraftTrack: AircraftTrack): RootT
     const { sectors, selectedSectorIds } = sectorData;
     const polygons = selectedSectorIds ? selectedSectorIds.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
     const oldTrack = aircraftTracks[newAircraftTrack.aircraftId];
+    const updateData: Record<string, Partial<LocalEdstEntry>> = {};
     if (!oldTrack || updateTime - oldTrack.lastUpdated > 4000) {
       const entry = entries[newAircraftTrack.aircraftId];
       dispatch(setAircraftTrack({ ...newAircraftTrack, lastUpdated: updateTime }));
       if (entry) {
         const pos = [newAircraftTrack.location.lon, newAircraftTrack.location.lat];
-        const routeDataDistance = getRouteDataDistance(entry.routeData, pos);
-        const remainingRouteData = getRemainingRouteData(entry.formattedRoute, routeDataDistance, pos, entry.destination, polygons);
+        const routeFixesDistance = getRouteFixesDistance(entry.routeFixes, pos);
         // const boundaryTime = computeBoundaryTime(entry, newAircraftTrack, polygons);
-        dispatch(
-          updateEntry({
-            aircraftId: newAircraftTrack.aircraftId,
-            data: remainingRouteData
-          })
-        );
+        updateData[entry.aircraftId] = getRemainingRouteFixes(entry.formattedRoute, routeFixesDistance, pos, entry.destination);
       }
       // console.log(newAircraftTrack, entry);
       // console.log(polygons, entry);
@@ -347,5 +357,6 @@ export function updateAircraftTrackThunk(newAircraftTrack: AircraftTrack): RootT
         dispatch(addDepEntry(newAircraftTrack.aircraftId));
       }
     }
+    dispatch(updateEntries(updateData));
   };
 }

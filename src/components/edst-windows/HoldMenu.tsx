@@ -9,7 +9,7 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entriesSlice";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
 import { AircraftTrack, LocalEdstEntry, RouteFix } from "../../types";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
@@ -80,8 +80,8 @@ const EfcInputContainer = styled(InputContainer)`
 `;
 
 export const HoldMenu: React.FC = () => {
-  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const track = useRootSelector(aselTrackSelector) as AircraftTrack;
+  const entry = useRootSelector(aselEntrySelector)!;
+  const track = useRootSelector(aselTrackSelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.HOLD_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
@@ -94,7 +94,7 @@ export const HoldMenu: React.FC = () => {
   const [holdDirection, setHoldDirection] = useState<string | null>(null);
   const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utcMinutes);
-  const [routeData, setRouteData] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
+  const [routeFixes, setRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
@@ -104,7 +104,7 @@ export const HoldMenu: React.FC = () => {
     if (!entry) {
       dispatch(closeWindow(EdstWindow.HOLD_MENU));
     } else {
-      const routeData = computeCrossingTimes(entry, track);
+      const routeFixes = computeCrossingTimes(entry, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
       setHoldFix(entry.holdData?.holdFix ?? "PP");
@@ -112,7 +112,7 @@ export const HoldMenu: React.FC = () => {
       setHoldDirection(entry.holdData?.holdDirection ?? "N");
       setTurns(entry.holdData?.turns ?? "RT");
       setEfc(entry.holdData?.efc ?? utcMinutes + 30);
-      setRouteData(routeData ?? null);
+      setRouteFixes(routeFixes ?? null);
     } // eslint-disable-next-line
   }, []);
 
@@ -170,12 +170,12 @@ export const HoldMenu: React.FC = () => {
             </OptionsBodyCol>
           </OptionsBodyRow>
           <FixContainer>
-            {routeData &&
-              _.range(0, Math.min(routeData.length || 0, 10)).map(i => (
+            {routeFixes &&
+              _.range(0, Math.min(routeFixes.length || 0, 10)).map(i => (
                 <OptionsBodyRow key={`hold-menu-row-${i}`}>
-                  {_.range(0, Math.round((routeData.length || 0) / 10) + 1).map(j => {
-                    const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
-                    const minutesAtFix = routeData?.[Number(i) + Number(j) * 10]?.minutesAtFix;
+                  {_.range(0, Math.round((routeFixes.length || 0) / 10) + 1).map(j => {
+                    const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
+                    const minutesAtFix = routeFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
                     return (
                       fixName && (
                         <Col1

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { AirwayFix, Fix } from "../../types";
 
@@ -80,30 +80,30 @@ const gpdSlice = createSlice({
   name: "gpd",
   initialState,
   reducers: {
-    addGpdPlanData(state, action: { payload: Record<string, any> }) {
+    addGpdPlanData(state, action: PayloadAction<Record<string, any>>) {
       state.planData.push(action.payload);
     },
-    removeGpdPlanData(state, action: { payload: number }) {
+    removeGpdPlanData(state, action: PayloadAction<number>) {
       if (action.payload < state.planData.length - 1 && action.payload >= 0) {
         state.planData.splice(action.payload);
       }
     },
-    setMapFeatureOptions(state, action: { payload: MapFeatureOptions }) {
+    setMapFeatureOptions(state, action: PayloadAction<MapFeatureOptions>) {
       state.mapFeatureOptions = action.payload;
     },
-    setAircraftDisplayOptions(state, action: { payload: AircraftDisplayOptions }) {
+    setAircraftDisplayOptions(state, action: PayloadAction<AircraftDisplayOptions>) {
       state.aircraftDisplayOptions = action.payload;
     },
-    setSectorTypes(state, action: { payload: Record<string, SectorType> }) {
+    setSectorTypes(state, action: PayloadAction<Record<string, SectorType>>) {
       state.sectorTypes = action.payload;
     },
-    setNavaids(state, action: { payload: Fix[] }) {
+    setNavaids(state, action: PayloadAction<Fix[]>) {
       state.navaids = action.payload;
     },
-    setWaypoints(state, action: { payload: Fix[] }) {
+    setWaypoints(state, action: PayloadAction<Fix[]>) {
       state.waypoints = action.payload;
     },
-    setAirways(state, action: { payload: AirwayFix[] }) {
+    setAirways(state, action: PayloadAction<AirwayFix[]>) {
       action.payload.forEach(segment => {
         if (!state.airways[segment.airway]) {
           state.airways[segment.airway] = [];
@@ -111,7 +111,7 @@ const gpdSlice = createSlice({
         state.airways[segment.airway].push(segment);
       });
     },
-    setSuppressed(state, action: { payload: boolean }) {
+    setSuppressed(state, action: PayloadAction<boolean>) {
       state.suppressed = action.payload;
     },
     toggleSuppressed(state) {

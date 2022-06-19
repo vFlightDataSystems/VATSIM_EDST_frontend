@@ -1,10 +1,10 @@
 import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { useEventListener } from "usehooks-ts";
 import { invoke } from "@tauri-apps/api/tauri";
-import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "./redux/slices/appSlice";
-import { useRootDispatch, useRootSelector } from "./redux/hooks";
-import { WindowPosition } from "./types";
-import { EdstWindow } from "./namespaces";
+import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "../redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "../redux/hooks";
+import { WindowPosition } from "../types";
+import { EdstWindow } from "../namespaces";
 
 export const useFocused = (element: RefObject<HTMLElement>) => {
   const [focused, setFocused] = useState(false);

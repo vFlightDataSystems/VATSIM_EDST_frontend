@@ -7,7 +7,7 @@ import {
   fetchCtrFavData,
   fetchCtrProfiles,
   fetchReferenceFixes
-} from "../../api";
+} from "../../api/api";
 import { RootState } from "../store";
 import { setArtccId, setReferenceFixes, setSectorId, setSectorProfiles, setSectors } from "../slices/sectorSlice";
 import { refreshSigmets } from "./weatherThunks";
@@ -29,7 +29,7 @@ export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) =>
   let artccId: string;
   let sectorId: string;
   if (process.env.NODE_ENV === "development") {
-    artccId = process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? "zbw";
+    artccId = process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? "zma";
     // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
     sectorId = "37";
   } else {

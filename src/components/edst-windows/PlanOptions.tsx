@@ -15,7 +15,7 @@ import {
   windowPositionSelector
 } from "../../redux/slices/appSlice";
 import { deleteAclEntry, deleteDepEntry, entrySelector } from "../../redux/slices/entriesSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
@@ -29,7 +29,7 @@ const PlanOptionsBody = styled(OptionsBody)`
 
 export const PlanOptions: React.FC = () => {
   const dispatch = useRootDispatch();
-  const asel = useRootSelector(aselSelector) as Asel;
+  const asel = useRootSelector(aselSelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PLAN_OPTIONS));
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef<HTMLDivElement | null>(null);

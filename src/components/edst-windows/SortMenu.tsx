@@ -8,7 +8,7 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { setAclSort } from "../../redux/slices/aclSlice";
 import { setDepSort } from "../../redux/slices/depSlice";
 import { closeWindow, zStackSelector, pushZStack, windowSelector } from "../../redux/slices/appSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import {
   OptionsBody,
   OptionsBodyCol,

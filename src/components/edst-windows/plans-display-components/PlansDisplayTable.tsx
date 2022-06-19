@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planQueueSelector, selectedPlanIndexSelector, TrialPlan, setSelectedTrialPlanIndex } from "../../../redux/slices/planSlice";
@@ -38,15 +38,29 @@ const Col = styled.div<{ hover?: boolean; disabled?: boolean; color?: string; wi
   ${props => props.hover && { "&:hover": { border: "1px solid #F0F0F0" } }}
 `;
 const Col1 = styled(Col)`
-  width: 150px;
+  width: 200px;
   justify-content: left;
-  padding-left: 4px;
+  padding: 0 4px;
+`;
+const Col2 = styled(Col)<{ expired: boolean }>`
+  margin-left: auto;
+  margin-right: 15vw;
+  width: 40px;
+  border: 1px solid #00ad00;
+  color: #00ad00;
+  padding: 0 4px;
 `;
 
 export const PlansDisplayTable: React.FC = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
+
+  const [time, setTime] = useState(new Date().getTime() / 1000);
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date().getTime() / 1000), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleMouseDown = (event: React.MouseEvent, index: number) => {
     event.preventDefault();
@@ -62,15 +76,23 @@ export const PlansDisplayTable: React.FC = () => {
     }
   };
 
+  const formatTime = (expirationTime: number, currentTime: number) => {
+    const max = Math.max(expirationTime - currentTime, 0);
+    return `${Math.floor(max / 60).toString()}:${Math.floor(max % 60)
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
   return (
     <PlansDisplayBody>
       {planQueue?.map((p: TrialPlan, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <BodyRowDiv key={`plans-display-body-${p.aircraftId}-${i}`}>
           <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
-            {p.aircraftId} {p.callsign}
+            {p.cid} {p.aircraftId}
           </Col1>
           <Col>{p.commandString}</Col>
+          <Col2 expired={p.expirationTime - time < 0}>{formatTime(p.expirationTime, time)}</Col2>
         </BodyRowDiv>
       ))}
     </PlansDisplayBody>

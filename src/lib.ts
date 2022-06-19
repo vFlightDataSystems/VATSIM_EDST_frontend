@@ -15,11 +15,11 @@ import {
 import booleanIntersects from "@turf/boolean-intersects";
 import * as geomag from "geomag";
 import _ from "lodash";
-import { clipboard } from "@tauri-apps/api";
-import { toast } from "./components/toast/ToastManager";
 import { RouteFix, LocalEdstEntry, ReferenceFix, Fix, AircraftTrack } from "./types";
 
 export const REMOVAL_TIMEOUT = 120000;
+
+export const mod = (n: number, m: number) => ((n % m) + m) % m;
 
 function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -60,28 +60,28 @@ export function getSignedStratumDistancePointToPolygons(point: Point, polygons: 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
  * @param {string} route - truncated route string
- * @param {RouteFix[]} routeData - fixes on the route (order matters)
+ * @param {RouteFix[]} routeFixes - fixes on the route (order matters)
  * @param {Polygon[]} polygons - airspace defining boundaries
  * @param {Position} pos - lon/lat pair, current position
  * @returns {boolean}
  */
-export function routeWillEnterAirspace(route: string, routeData: RouteFix[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
-  if (routeData === null || route.length === 0) {
+export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
+  if (routeFixes === null || route.length === 0) {
     return false;
   }
   route = route.replace(/^\.*\[XXX]\.*/g, "");
   const indexToSplit = route.indexOf("[XXX]");
   const routeToProcess = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, "") : route;
-  const fixNames = routeData.map((e: { name: string }) => e.name);
+  const fixNames = routeFixes.map((e: { name: string }) => e.name);
   const lastFixIndex = fixNames.indexOf(routeToProcess.split(".").pop() as string);
-  let routeDataToProcess = routeData.slice(0, lastFixIndex);
-  routeDataToProcess.unshift({ pos, name: "ppos" });
-  if (routeDataToProcess.length > 1) {
-    const nextFix = getNextFix(route, routeDataToProcess, pos)[0] as RouteFix;
+  let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
+  routeFixesToProcess.unshift({ pos, name: "ppos" });
+  if (routeFixesToProcess.length > 1) {
+    const nextFix = getNextFix(route, routeFixesToProcess, pos)[0] as RouteFix;
     const index = fixNames.indexOf(nextFix.name);
-    routeDataToProcess = routeDataToProcess.slice(index);
-    routeDataToProcess.unshift({ name: "ppos", pos });
-    const lines = lineString(routeDataToProcess.map(e => e.pos));
+    routeFixesToProcess = routeFixesToProcess.slice(index);
+    routeFixesToProcess.unshift({ name: "ppos", pos });
+    const lines = lineString(routeFixesToProcess.map(e => e.pos));
     for (let i = 0; i < polygons.length; i++) {
       const poly = polygons[i];
       if (booleanIntersects(lines, poly)) {
@@ -94,12 +94,12 @@ export function routeWillEnterAirspace(route: string, routeData: RouteFix[] | nu
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
- * @param {RouteFix[]} routeData - fixes on the route (order matters)
+ * @param {RouteFix[]} routeFixes - fixes on the route (order matters)
  * @param {Position} pos - lon/lat pair, current position
- * @returns {RouteFix[]} - original routeData, but each item will have a `distance` attribute
+ * @returns {RouteFix[]} - original routeFixes, but each item will have a `distance` attribute
  */
-export function getRouteDataDistance(routeData: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
-  return routeData.map(fix => ({ ...fix, dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" }) })) as (RouteFix & {
+export function getRouteFixesDistance(routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
+  return routeFixes.map(fix => ({ ...fix, dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" }) })) as (RouteFix & {
     dist: number;
   })[];
 }
@@ -107,29 +107,29 @@ export function getRouteDataDistance(routeData: RouteFix[], pos: Position): (Rou
 /**
  * compute the remaining route and its route data, based on current position
  * @param {string} route - parsed route string
- * @param {RouteFix[]} routeData - fixes on the route
+ * @param {RouteFix[]} routeFixes - fixes on the route
  * @param {Position} pos - lon/lat pair, current position
  * @param {Feature<Polygon>[]} polygons - airspace defining polygons
  * @param {string} dest - ICAO string of destination airport
- * @returns {currentRoute: string, currentRouteData: RouteFix[]}
+ * @returns {currentRoute: string, currentRouteFixes: RouteFix[]}
  */
-export function getRemainingRouteData(
+export function getRemainingRouteFixes(
   route: string,
-  routeData: (RouteFix & { dist: number })[],
+  routeFixes: (RouteFix & { dist: number })[],
   pos: Position,
   dest: string,
   polygons?: Feature<Polygon>[]
-): { currentRoute: string; currentRouteData: (RouteFix & { dist: number })[] } {
+): { currentRoute: string; currentRouteFixes: (RouteFix & { dist: number })[] } {
   route = route.slice(0);
-  if (routeData.length > 1) {
-    const fixNames = routeData.map(e => e.name);
+  if (routeFixes.length > 1) {
+    const fixNames = routeFixes.map(e => e.name);
     if (fixNames.slice(-1)[0] === dest) {
       fixNames.pop();
     }
-    let firstFixToShow = routeData[0];
+    let firstFixToShow = routeFixes[0];
     if (polygons) {
-      for (let i = 0; i < routeData.length; i++) {
-        const fix = routeData[i];
+      for (let i = 0; i < routeFixes.length; i++) {
+        const fix = routeFixes[i];
         if (polygons.filter(polygon => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
           break;
         }
@@ -150,27 +150,27 @@ export function getRemainingRouteData(
         break;
       }
     }
-    routeData = routeData.slice(routeData.indexOf(firstFixToShow));
+    routeFixes = routeFixes.slice(routeFixes.indexOf(firstFixToShow));
   }
-  return { currentRoute: route, currentRouteData: routeData };
+  return { currentRoute: route, currentRouteFixes: routeFixes };
 }
 
-export function getNextFix(route: string, routeData: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
-  const routeDataWithDistance = getRouteDataDistance(_.cloneDeep(routeData), pos);
-  if (routeDataWithDistance.length > 1) {
-    const fixNames = routeData.map((e: { name: string }) => e.name);
-    const sortedRouteData = routeDataWithDistance.sort((u, v) => u.dist - v.dist);
-    const closestFix = sortedRouteData[0];
+export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
+  const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
+  if (routeFixesWithDistance.length > 1) {
+    const fixNames = routeFixes.map((e: { name: string }) => e.name);
+    const sortedRouteFixes = routeFixesWithDistance.sort((u, v) => u.dist - v.dist);
+    const closestFix = sortedRouteFixes[0];
     const index = fixNames.indexOf(closestFix.name);
-    if (index === routeDataWithDistance.length - 1) {
+    if (index === routeFixesWithDistance.length - 1) {
       return [closestFix];
     }
-    const followingFix = routeDataWithDistance[index + 1];
+    const followingFix = routeFixesWithDistance[index + 1];
     const line = lineString([closestFix.pos, followingFix.pos]);
     const lineDistance = pointToLineDistance(pos, line, { units: "nauticalmiles" });
     return lineDistance >= closestFix.dist ? [closestFix, followingFix] : [followingFix, closestFix];
   }
-  return routeDataWithDistance;
+  return routeFixesWithDistance;
 }
 
 /**
@@ -186,66 +186,8 @@ export function getClosestReferenceFix(referenceFixes: any[], posPoint: Feature<
   });
   const closestFix = fixesDistance.sort((u, v) => u.distance - v.distance)[0];
   const magneticVariation = geomag.field(closestFix.point.geometry.coordinates[1], closestFix.point.geometry.coordinates[0]).declination;
-  closestFix.bearing = (bearing(closestFix.point, posPoint) - magneticVariation + 360) % 360;
+  closestFix.bearing = mod(bearing(closestFix.point, posPoint) - magneticVariation, 360);
   return closestFix;
-}
-
-export function processAar(entry: Partial<LocalEdstEntry>, aarList: any[]) {
-  const { currentRouteData, currentRoute: route } = entry;
-  if (!currentRouteData || !route) {
-    return null;
-  }
-  let currentRoute = route.slice(0);
-  if (currentRoute.match(/^\.*[A-Z]+\d{6}/gi)) {
-    currentRoute = currentRoute.replace(/^\.*[A-Z]+\d{6}/gi, "");
-  }
-  return aarList
-    ?.map(aarData => {
-      const { route_fixes: routeFixes, amendment } = aarData;
-      const { fix: tfix, info: tfixInfo } = amendment.tfix_details;
-      const currentRouteDataFixNames = currentRouteData.map(fix => fix.name);
-      // if the current route data does not contain the tfix, this aar will not apply
-      if (!currentRouteDataFixNames.includes(tfix)) {
-        return null;
-      }
-      const aarLeadingRouteString = amendment.route;
-      let aarAmendmentRouteString = amendment.aar_amendment;
-      let amendedRouteString = aarAmendmentRouteString;
-      const currentRouteDataTfixIndex = currentRouteDataFixNames.indexOf(tfix);
-      const remainingFixNames = currentRouteDataFixNames.slice(0, currentRouteDataTfixIndex).concat(routeFixes.slice(routeFixes.indexOf(tfix)));
-      if (tfixInfo === "Prepend") {
-        aarAmendmentRouteString = tfix + aarAmendmentRouteString;
-      }
-      // if current route contains the tfix, append the aar amendment after the tfix
-      if (currentRoute.includes(tfix)) {
-        amendedRouteString = currentRoute.slice(0, currentRoute.indexOf(tfix)) + aarAmendmentRouteString;
-      } else {
-        // if current route does not contain the tfix, append the amendment after the first common segment, e.g. airway
-        const firstCommonSegment = currentRoute.split(/\.+/).filter(segment => amendedRouteString?.includes(segment))?.[0];
-        if (!firstCommonSegment) {
-          return null;
-        }
-        amendedRouteString =
-          currentRoute.slice(0, currentRoute.indexOf(firstCommonSegment) + firstCommonSegment.length) +
-          aarLeadingRouteString.slice(aarLeadingRouteString.indexOf(firstCommonSegment) + firstCommonSegment.length);
-      }
-      if (!amendedRouteString) {
-        return null;
-      }
-      return {
-        aar: true,
-        aar_amendment_route_string: aarAmendmentRouteString,
-        amended_route: amendedRouteString,
-        amended_route_fix_names: remainingFixNames,
-        destination: entry.destination,
-        tfix,
-        tfix_info: tfixInfo,
-        eligible: amendment.eligible,
-        onEligibleAar: amendment.eligible && currentRoute.includes(aarAmendmentRouteString),
-        aarData
-      };
-    })
-    .filter(aarData => aarData);
 }
 
 /**
@@ -271,22 +213,22 @@ export function computeBoundaryTime(entry: LocalEdstEntry, track: AircraftTrack,
  * @returns {RouteFix[]}
  */
 export function computeCrossingTimes(entry: LocalEdstEntry, track: AircraftTrack): (RouteFix & { minutesAtFix: number })[] {
-  const newRouteData: (RouteFix & { minutesAtFix: number })[] = [];
-  if (entry.currentRouteData) {
+  const newRouteFixes: (RouteFix & { minutesAtFix: number })[] = [];
+  if (entry.currentRouteFixes) {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    if (entry.currentRouteData.length > 0 && track.groundSpeed > 0) {
+    if (entry.currentRouteFixes.length > 0 && track.groundSpeed > 0) {
       const lineData = [[track.location.lon, track.location.lat]];
-      entry.currentRouteData.forEach(fix => {
+      entry.currentRouteFixes.forEach(fix => {
         lineData.push(fix.pos);
-        newRouteData.push({
+        newRouteFixes.push({
           ...fix,
           minutesAtFix: utcMinutes + (60 * length(lineString(lineData), { units: "nauticalmiles" })) / track.groundSpeed
         });
       });
     }
   }
-  return newRouteData;
+  return newRouteFixes;
 }
 
 /**
@@ -313,27 +255,13 @@ export function computeFrdString(referenceFix: ReferenceFix): string {
  */
 export function formatUtcMinutes(minutes: number): string {
   return (
-    (Math.round(((minutes % 1440) + 1440) / 60) % 24).toString().padStart(2, "0") +
-    Math.round((minutes + 60) % 60)
+    Math.round(mod((minutes % 1440) / 60, 24))
+      .toString()
+      .padStart(2, "0") +
+    Math.round(mod(minutes, 60))
       .toString()
       .padStart(2, "0")
   );
-}
-
-export function copy(text: string) {
-  let result;
-  // eslint-disable-next-line no-underscore-dangle
-  if (window.__TAURI__) {
-    result = clipboard.writeText(text).then(result => result);
-  } else {
-    result = navigator.clipboard.writeText(text);
-  }
-  toast.show({
-    title: "copied to clipboard",
-    content: text,
-    duration: 3000
-  });
-  return result;
 }
 
 /**
@@ -343,22 +271,29 @@ export function copy(text: string) {
  * @returns {string}
  */
 export function removeDestFromRouteString(route: string, dest: string): string {
-  if (route.slice(-dest.length) === dest) {
+  if (route.endsWith(dest)) {
     route = route.slice(0, -dest.length);
   }
   return route;
 }
 
-export function getClearedToFixRouteData(
+export function removeDepFromRouteString(route: string, dep: string): string {
+  if (route.startsWith(dep)) {
+    route = route.slice(dep.length);
+  }
+  return route;
+}
+
+export function getClearedToFixRouteFixes(
   clearedFixName: string,
   entry: LocalEdstEntry,
   location: { lat: number; lon: number },
   referenceFixes: Fix[] | null
-): { route: string; routeData: RouteFix[] } | null {
+): { route: string; routeFixes: RouteFix[] } | null {
   let newRoute = entry.currentRoute;
-  const { currentRouteData: routeData, destination } = entry;
-  if (newRoute && routeData) {
-    const fixNames = routeData.map((e: { name: string }) => e.name);
+  const { currentRouteFixes: routeFixes, destination } = entry;
+  if (newRoute && routeFixes) {
+    const fixNames = routeFixes.map((e: { name: string }) => e.name);
     const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([location.lon, location.lat])) : null;
     const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
 
@@ -370,21 +305,20 @@ export function getClearedToFixRouteData(
       if (fixIndex >= 0) {
         if (newRoute[fixIndex + name.length].match(/\d/)) {
           newRoute = newRoute.slice(fixIndex);
-          newRoute = `${frd ? `..${frd}` : ""}..${clearedFixName}.${newRoute}`;
+          newRoute = `${frd ?? ""}..${clearedFixName}.${newRoute}`;
         } else {
           newRoute = newRoute.slice(fixIndex + name.length);
-          newRoute = `${frd ? `..${frd}` : ""}..${clearedFixName}${newRoute}`;
+          newRoute = `${frd ?? ""}..${clearedFixName}${newRoute}`;
         }
         break;
       }
     }
     // new_route = `..${fix}` + new_route;
     newRoute = removeDestFromRouteString(newRoute.slice(0), destination);
-    copy(`${newRoute}`.replace(/\.+$/, "")).then();
-    // console.log(newRoute, routeData);
+    // console.log(newRoute, routeFixes);
     return {
       route: newRoute,
-      routeData: routeData.slice(index)
+      routeFixes: routeFixes.slice(index)
     };
   }
   return null;
@@ -459,5 +393,6 @@ export function convertBeaconCodeToString(code?: number | null): string {
 }
 
 export function formatAltitude(alt: string): string {
-  return String(Number(alt) / 100).padStart(3, "0");
+  const altNum = Number(alt);
+  return String(altNum >= 1000 ? altNum / 100 : altNum).padStart(3, "0");
 }

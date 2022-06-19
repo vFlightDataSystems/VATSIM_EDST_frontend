@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Plan, WindowPosition } from "../../types";
 import { RootState } from "../store";
 import { EDST_MENU_LIST, EdstWindow, AclRowField, DepRowField, PlanRowField } from "../../namespaces";
@@ -130,13 +130,13 @@ const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    toggleWindow(state, action: { payload: EdstWindow }) {
+    toggleWindow(state, action: PayloadAction<EdstWindow>) {
       state.windows[action.payload].open = !state.windows[action.payload].open;
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
     },
-    closeWindow(state, action: { payload: EdstWindow | EdstWindow[] }) {
+    closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
         action.payload.forEach(window => {
           state.windows[window].open = false;
@@ -145,7 +145,7 @@ const appSlice = createSlice({
         state.windows[action.payload].open = false;
       }
     },
-    openWindow(state, action: { payload: { window: EdstWindow; openedBy?: EdstWindow } }) {
+    openWindow(state, action: PayloadAction<{ window: EdstWindow; openedBy?: EdstWindow }>) {
       state.windows[action.payload.window].open = true;
       if (action.payload.openedBy) {
         state.windows[action.payload.window].openedBy = action.payload.openedBy;
@@ -154,20 +154,20 @@ const appSlice = createSlice({
       zStack.delete(action.payload.window);
       state.zStack = [action.payload.window, ...zStack];
     },
-    setTooltipsEnabled(state, action: { payload: boolean }) {
+    setTooltipsEnabled(state, action: PayloadAction<boolean>) {
       state.tooltipsEnabled = action.payload;
     },
-    setShowSectorSelector(state, action: { payload: boolean }) {
+    setShowSectorSelector(state, action: PayloadAction<boolean>) {
       state.showSectorSelector = action.payload;
     },
-    setWindowPosition(state, action: { payload: { window: EdstWindow; pos: { x: number; y: number; w?: number; h?: number } | null } }) {
+    setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: { x: number; y: number; w?: number; h?: number } | null }>) {
       state.windows[action.payload.window].position = action.payload.pos;
     },
-    setMraMessage(state, action: { payload: string }) {
+    setMraMessage(state, action: PayloadAction<string>) {
       state.windows[EdstWindow.MESSAGE_RESPONSE_AREA].open = true;
       state.mraMsg = action.payload;
     },
-    setMcaCommandString(state, action: { payload: string }) {
+    setMcaCommandString(state, action: PayloadAction<string>) {
       state.mcaCommandString = action.payload;
     },
     closeAllWindows(state) {
@@ -186,22 +186,22 @@ const appSlice = createSlice({
         state.windows[menu as EdstWindow].open = false;
       });
     },
-    setAsel(state, action: { payload: Asel | null }) {
+    setAsel(state, action: PayloadAction<Asel | null>) {
       state.asel = action.payload;
     },
-    setAnyDragging(state, action: { payload: boolean }) {
+    setAnyDragging(state, action: PayloadAction<boolean>) {
       state.dragging = action.payload;
     },
-    pushZStack(state, action: { payload: EdstWindow }) {
+    pushZStack(state, action: PayloadAction<EdstWindow>) {
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [action.payload, ...zStack];
     },
-    addOutageMessage(state, action: { payload: OutageEntry }) {
+    addOutageMessage(state, action: PayloadAction<OutageEntry>) {
       state.outage = [...state.outage, action.payload];
     },
     // removes outage message at index
-    removeOutageMessage(state, action: { payload: number }) {
+    removeOutageMessage(state, action: PayloadAction<number>) {
       if (action.payload > -1 && action.payload < state.outage.length) {
         state.outage.splice(action.payload, 1);
       }

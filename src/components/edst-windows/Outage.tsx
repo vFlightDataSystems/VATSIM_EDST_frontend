@@ -10,7 +10,7 @@ import {
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
-import { useDragging } from "../../hooks";
+import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
 

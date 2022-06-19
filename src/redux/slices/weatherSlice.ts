@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position } from "@turf/turf";
 import { RootState } from "../store";
 
@@ -41,19 +41,19 @@ const weatherSlice = createSlice({
   name: "weather",
   initialState,
   reducers: {
-    setAirportMetar(state, action: { payload: MetarEntry }) {
+    setAirportMetar(state, action: PayloadAction<MetarEntry>) {
       state.metarList[action.payload.airport] = action.payload;
     },
-    removeAirportMetar(state, action: { payload: string }) {
+    removeAirportMetar(state, action: PayloadAction<string>) {
       delete state.metarList[action.payload];
     },
-    setAirportAltimeter(state, action: { payload: AltimeterEntry }) {
+    setAirportAltimeter(state, action: PayloadAction<AltimeterEntry>) {
       state.altimeterList[action.payload.airport] = action.payload;
     },
-    removeAirportAltimeter(state, action: { payload: string }) {
+    removeAirportAltimeter(state, action: PayloadAction<string>) {
       delete state.altimeterList[action.payload];
     },
-    addSigmets(state, action: { payload: ApiSigmet[] }) {
+    addSigmets(state, action: PayloadAction<ApiSigmet[]>) {
       action.payload.forEach(s => {
         if (!Object.keys(state.sigmetList).includes(s.text) && /\sSIG\w?\s/.test(s.text)) {
           const polygons = lineToPolygon(lineString(s.area));
@@ -61,17 +61,17 @@ const weatherSlice = createSlice({
         }
       });
     },
-    setSigmetSuppressionState(state, action: { payload: { id: string; value: boolean } }) {
+    setSigmetSuppressionState(state, action: PayloadAction<{ id: string; value: boolean }>) {
       if (Object.keys(state.sigmetList).includes(action.payload.id)) {
         state.sigmetList[action.payload.id].suppressed = action.payload.value;
       }
     },
-    setSigmetAcknowledged(state, action: { payload: { id: string; value: boolean } }) {
+    setSigmetAcknowledged(state, action: PayloadAction<{ id: string; value: boolean }>) {
       if (Object.keys(state.sigmetList).includes(action.payload.id)) {
         state.sigmetList[action.payload.id].acknowledged = action.payload.value;
       }
     },
-    setViewSigmetSuppressed(state, action: { payload: boolean }) {
+    setViewSigmetSuppressed(state, action: PayloadAction<boolean>) {
       state.viewSigmetSuppressed = action.payload;
     }
   }

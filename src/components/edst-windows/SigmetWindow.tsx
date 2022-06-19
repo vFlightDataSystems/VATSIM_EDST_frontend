@@ -21,7 +21,7 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
-import { useDragging } from "../../hooks";
+import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
 

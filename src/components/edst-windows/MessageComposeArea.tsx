@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteData } from "../../lib";
+import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { Flightplan, LocalEdstEntry } from "../../types";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
@@ -23,10 +23,10 @@ import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { referenceFixSelector } from "../../redux/slices/sectorSlice";
-import { useDragging } from "../../hooks";
+import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aircraftTracksSelector } from "../../redux/slices/aircraftTrackSlice";
-import { useHub } from "../../hub";
+import { useHub } from "../../hooks/hub";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -158,9 +158,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const parseQU = (args: string[]) => {
     if (args.length === 2 && hubConnection) {
       const entry = getEntryByFid(args[1]);
-      if (entry && entry.aclDisplay && entry.currentRouteData?.map(fix => fix.name).includes(args[0])) {
+      if (entry && entry.aclDisplay && entry.currentRouteFixes?.map(fix => fix.name).includes(args[0])) {
         const aircraftTrack = aircraftTracks[entry.aircraftId];
-        const route = getClearedToFixRouteData(args[0], entry, aircraftTrack.location, referenceFixes)?.route;
+        const route = getClearedToFixRouteFixes(args[0], entry, aircraftTrack.location, referenceFixes)?.route;
         if (route) {
           const amendmentFlightplan: Flightplan = {
             ...entry,
@@ -181,7 +181,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
 
   const parseCommand = () => {
     // TODO: rename command variable
-    const [command, ...args] = mcaCommandString.split(/\s+/);
+    const [command, ...args] = mcaInputValue.split(/\s+/).map(s => s.toUpperCase());
     // console.log(command, args)
     if (command.match(/\/\/\w+/)) {
       toggleVci(command.slice(2));
@@ -281,7 +281,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
     }
     switch (event.key) {
       case "Enter":
-        if (mcaCommandString.length > 0) {
+        if (mcaInputValue.length > 0) {
           parseCommand();
         } else {
           setResponse("");

@@ -6,29 +6,23 @@ import { EdstButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import {
-  aselSelector,
-  Asel,
-  zStackSelector,
-  pushZStack,
-  windowPositionSelector, closeWindow
-} from "../../../redux/slices/appSlice";
+import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
-import { LocalEdstEntry } from "../../../types";
-import { useCenterCursor, useDragging, useFocused } from "../../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 import { EdstWindow } from "../../../namespaces";
+import { mod } from "../../../lib";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 190px;
 `;
 
 export const HeadingMenu: React.FC = () => {
-  const asel = useRootSelector(aselSelector) as Asel;
-  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
+  const asel = useRootSelector(aselSelector)!;
+  const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.HEADING_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
@@ -113,7 +107,7 @@ export const HeadingMenu: React.FC = () => {
           </Row2>
           <ScrollContainer onWheel={e => setDeltaY(deltaY + e.deltaY)}>
             {_.range(50, -70, -10).map(i => {
-              const centerHdg = (((heading - Math.round(deltaY / 100) * 10 + i) % 360) + 360) % 360;
+              const centerHdg = mod(heading - Math.round(deltaY / 100) * 10 + i, 360);
               const centerRelHdg = 35 + i / 2;
               return (
                 <ScrollRow key={`heading-menu-${i}`}>

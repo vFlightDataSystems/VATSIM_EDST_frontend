@@ -54,13 +54,13 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const [onAar, setOnAar] = useState(false);
 
   useEffect(() => {
-    const currentFixNames = (entry.currentRouteData ?? entry.routeData).map(fix => fix.name);
-    const aarAvail =
-      entry.aarList?.filter(aar => aar.eligible && currentFixNames.includes(aar.tfix)) && !entry.currentAarList?.filter(aar => aar.onEligibleAar);
-    const onAar = !!entry.currentAarList?.filter(aar => aar.onEligibleAar)?.length;
+    const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
+    const aarAvail = !!entry.preferentialArrivalRoutes?.filter(
+      aar => aar.eligible && currentFixNames.includes(aar.triggeredFix) && entry.formattedRoute.includes(aar.amendment)
+    );
     setAarAvail(aarAvail ?? false);
     setOnAar(onAar);
-  }, [entry.currentAarList, entry.currentRouteData, entry.aarList, entry.routeData]);
+  }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
 
   const holdData = useMemo(() => entry.holdData, [entry.holdData]);
   const route = useMemo(() => {
@@ -79,12 +79,12 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const showCoralBox = entry.nasSuffix && !entry.nasSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
 
   const checkAarReroutePending = () => {
-    const currentFixNames = (entry.currentRouteData ?? entry.routeData).map(fix => fix.name);
-    const eligibleAar = entry?.currentAarList?.filter(aar => aar.eligible);
+    const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
+    const eligibleAar = entry?.preferentialArrivalRoutes?.filter(aar => aar.eligible);
     if (eligibleAar?.length === 1) {
       const aar = eligibleAar[0];
-      if (currentFixNames.includes(aar.tfix)) {
-        return aar.aar_amendment_route_string;
+      if (currentFixNames.includes(aar.triggeredFix) && !entry.formattedRoute.includes(aar.amendment)) {
+        return aar.amendment;
       }
     }
     return null;
@@ -221,6 +221,8 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const isSelected = (aircraftId: string, field: AclRowField): boolean => {
     return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
   };
+
+  // console.log(entry.aircraftId, entry.preferentialArrivalRoutes);
 
   return (
     <BodyRowContainerDiv separator={index % 3 === 2} key={`acl-row-container-${entry.aircraftId}`} onContextMenu={event => event.preventDefault()}>
