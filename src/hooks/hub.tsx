@@ -1,14 +1,16 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { useRootDispatch } from "./redux/hooks";
-import { AircraftTrack, Flightplan } from "./types";
-import { updateAircraftTrackThunk, updateFlightplanThunk } from "./redux/thunks/thunks";
+import { useNavigate } from "react-router-dom";
+import { useRootDispatch } from "../redux/hooks";
+import { AircraftTrack, Flightplan } from "../types";
+import { updateAircraftTrackThunk, updateFlightplanThunk } from "../redux/thunks/thunks";
 
-const ATC_SERVER_URL = process.env.REACT_APP_ATC_SERVER_URL;
+const ATC_SERVER_URL = `${process.env.REACT_APP_ATC_SERVER_URL}/hubs/temp`;
 
 const useHubInit = () => {
   const dispatch = useRootDispatch();
   const [hubConnected, setHubConnected] = useState(false);
+  const navigate = useNavigate();
   // const [accessToken, setAccessToken] = useState(null);
   // const [cpdlcSessions, setCpdlcSessions] = useState<any[]>([]);
   // const [cpdlcMessages, setCpdlcMessages] = useState<any[]>([]);
@@ -30,7 +32,7 @@ const useHubInit = () => {
 
     async function start() {
       hubConnection.on("receiveFlightplan", (flightplan: Flightplan) => {
-        console.log("received flightplan:", flightplan);
+        // console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: AircraftTrack[]) => {
@@ -47,6 +49,7 @@ const useHubInit = () => {
         })
         .catch(e => {
           console.error("Error starting connection: ", e);
+          navigate("/login", { replace: true });
         });
     }
 

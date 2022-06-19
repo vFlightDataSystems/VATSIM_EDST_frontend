@@ -1,19 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
+import { useEventListener } from "usehooks-ts";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
-import { Asel, aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { Flightplan, LocalEdstEntry } from "../../types";
+import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
+import { Flightplan } from "../../types";
 import { addTrialPlanThunk } from "../../redux/thunks/thunks";
 import { NoSelectDiv } from "../../styles/styles";
-import { edstFontYellow } from "../../styles/colors";
-import { useCenterCursor } from "../../hooks";
+import { edstFontGrey, edstFontYellow } from "../../styles/colors";
+import { useCenterCursor } from "../../hooks/utils";
 import { TrialPlan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
-import { useHub } from "../../hub";
+import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: { x: number; y: number } }>`
@@ -78,6 +79,14 @@ const AltMenuRow = styled.div<{ bgBlack?: boolean; color?: string; hover?: boole
       "background-color": "#AD6C6C"
     }}
   input {
+    font-size: 16px;
+    outline: none;
+    display: flex;
+    overflow: hidden;
+    color: ${edstFontGrey};
+    resize: none;
+    text-transform: uppercase;
+    background-color: #000000;
     //height: 16px;
     width: 100%;
     border: none;
@@ -142,15 +151,10 @@ const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
   }
 `;
 
-type AltMenuProps = {
-  setAltMenuInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void;
-  showInput: boolean;
-};
-
-export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput }) => {
+export const AltMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const asel = useRootSelector(aselSelector) as Asel;
-  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
+  const asel = useRootSelector(aselSelector)!;
+  const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTITUDE_MENU));
   const dispatch = useRootDispatch();
   const [selected, setSelected] = useState(asel.window !== EdstWindow.DEP ? "trial" : "amend");
@@ -163,19 +167,6 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
 
   useCenterCursor(ref, [asel]);
 
-  useEffect(() => {
-    setAltMenuInputRef(inputRef);
-    return () => {
-      setAltMenuInputRef(null);
-    }; // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    if (manualInput === null && showInput) {
-      setManualInput("");
-    } // eslint-disable-next-line
-  }, [showInput]);
-
   const handleAltClick = (alt: string | number) => {
     const amendedFlightplan: Flightplan = { ...entry, altitude: String(Number(alt) * 100) };
     if (selected === "amend") {
@@ -184,10 +175,11 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
       }
     } else {
       const trialPlanData: TrialPlan = {
+        cid: entry.cid,
         aircraftId: entry.aircraftId,
-        callsign: entry.aircraftId,
         amendedFlightplan,
-        commandString: `QQ ${alt} ${entry.aircraftId}`
+        commandString: `AM ${entry.aircraftId} ALT ${alt}`,
+        expirationTime: new Date().getTime() / 1000 + 120
       };
       dispatch(addTrialPlanThunk(trialPlanData));
     }
@@ -195,11 +187,7 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
   };
 
   const handleTempAltClick = (alt: number) => {
-    // eslint-disable-next-line no-empty
-    if (selected === "amend") {
-    } else {
-      // dispatch(addTrialPlanThunk(trialPlanData));
-    }
+    // dispatch(addTrialPlanThunk(trialPlanData));
     dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
   };
 
@@ -210,6 +198,17 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
     );
     setDeltaY(newDeltaY);
   };
+
+  const keyDownHandler = () => {
+    if (manualInput === null) {
+      setManualInput("");
+    }
+    if (!(document.activeElement === inputRef.current) && inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  useEventListener("keydown", keyDownHandler);
 
   return (
     pos &&
@@ -223,14 +222,14 @@ export const AltMenu: React.FC<AltMenuProps> = ({ setAltMenuInputRef, showInput 
         </AltMenuHeaderDiv>
         {manualInput !== null && (
           <span>
-            <AltMenuRow>FP{entry.altitude}</AltMenuRow>
+            <AltMenuRow>FP{Number(formatAltitude(entry.altitude))}</AltMenuRow>
             <AltMenuRow bgBlack>
               <input
                 tabIndex={0}
                 ref={inputRef}
                 value={manualInput}
-                onChange={event => setManualInput(event.target.value.toUpperCase())}
-                onKeyDownCapture={event => {
+                onChange={event => setManualInput(event.target.value)}
+                onKeyDown={event => {
                   if (event.key === "Enter") {
                     // check if input is a number and length matches valid input
                     // +"string" will convert the string to a number or NaN

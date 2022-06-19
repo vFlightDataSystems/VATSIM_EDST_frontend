@@ -3,9 +3,8 @@ import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import "./index.css";
 import "./css/styles.scss";
-import { App } from "./App";
+import App from "./App";
 import store from "./redux/store";
-import { HubProvider } from "./hub";
 // import reportWebVitals from './reportWebVitals';
 
 declare global {
@@ -15,13 +14,9 @@ declare global {
 }
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <HubProvider>
-        <App />
-      </HubProvider>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById("root")
 );
 

@@ -5,7 +5,7 @@ import _ from "lodash";
 import styled from "styled-components";
 import { point } from "@turf/turf";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
-import { computeFrdString, copy, getClearedToFixRouteData, getClosestReferenceFix, removeDestFromRouteString } from "../../lib";
+import { computeFrdString, getClearedToFixRouteFixes, getClosestReferenceFix, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
 import VATSIM_LOGO from "../../resources/images/VATSIM-social_icon.svg";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
@@ -14,16 +14,16 @@ import { Tooltips } from "../../tooltips";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
-import { Asel, aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
+import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { addTrialPlanThunk, openMenuThunk } from "../../redux/thunks/thunks";
-import { AircraftTrack, Flightplan, LocalEdstEntry } from "../../types";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks";
+import { EdstPreferentialRoute, Flightplan } from "../../types";
+import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { referenceFixSelector } from "../../redux/slices/sectorSlice";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
-import { useHub } from "../../hub";
+import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
 
 const RouteMenuDiv = styled(OptionsMenu)`
@@ -78,20 +78,20 @@ const DisplayRouteDiv = styled(OptionsBodyCol)`
   margin: 2px 8px 8px 8px;
 `;
 const DctCol = styled(OptionsBodyCol)`
-  display: block;
+  display: flex;
+  justify-content: flex-start;
   height: 20px;
   padding: 0 4px;
-  flex-grow: 1;
   width: 100px;
-  margin: 0 12px;
+  margin: auto 12px;
 `;
 
 export const RouteMenu: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ROUTE_MENU));
-  const asel = useRootSelector(aselSelector) as Asel;
-  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
-  const aircraftTrack = useRootSelector(aselTrackSelector) as AircraftTrack;
+  const asel = useRootSelector(aselSelector)!;
+  const entry = useRootSelector(aselEntrySelector)!;
+  const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const referenceFixes = useRootSelector(referenceFixSelector);
   const zStack = useRootSelector(zStackSelector);
   const hubConnection = useHub();
@@ -120,18 +120,6 @@ export const RouteMenu: React.FC = () => {
   const frd = useMemo(() => (closestReferenceFix ? computeFrdString(closestReferenceFix) : "XXX000000"), [closestReferenceFix]);
 
   const { appendOplus, appendStar } = useMemo(() => append, [append]);
-  const currentRouteFixes: string[] = entry?.currentRouteData?.map(fix => fix.name) ?? [];
-  let routeData = asel.window === EdstWindow.DEP ? entry.routeData : entry.currentRouteData;
-  if (routeData?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
-    routeData = routeData?.slice(1);
-  }
-
-  let routes: any[];
-  if (asel.window === EdstWindow.DEP) {
-    routes = (entry.adar ?? []).concat(entry.adr ?? []).concat(entry.aarList ?? []);
-  } else {
-    routes = entry.currentAarList?.filter(aarData => currentRouteFixes.includes(aarData.tfix)) ?? [];
-  }
 
   useEffect(() => {
     const dep = asel.window === EdstWindow.DEP;
@@ -144,25 +132,36 @@ export const RouteMenu: React.FC = () => {
     setRouteInput(dep ? entry.departure + route + entry.destination : route + entry.destination);
   }, [asel.window, entry.currentRoute, entry.departure, entry.destination, entry.referenceFix, entry.route, referenceFixes]);
 
+  const currentRouteFixNames: string[] = entry?.routeFixes?.map(fix => fix.name) ?? [];
+  let routeFixes = asel.window === EdstWindow.DEP || !entry.currentRouteFixes ? entry.routeFixes : entry.currentRouteFixes;
+  if (routeFixes.length > 1) {
+    if (routeFixes?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
+      routeFixes = routeFixes.slice(1);
+    }
+  }
+
+  let routesAvailable = entry.preferentialArrivalRoutes.length > 0;
+  if (asel.window === EdstWindow.DEP) {
+    routesAvailable = routesAvailable || entry.preferentialDepartureRoutes.length > 0 || entry.preferentialDepartureArrivalRoutes.length > 0;
+  }
+
   // TODO: implement this
-  const clearedPrefroute = (routeString: string) => {
+  const clearedPrefroute = (prefRoute: EdstPreferentialRoute) => {
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
 
   const clearedToFix = (clearedFixName: string) => {
-    const route = getClearedToFixRouteData(clearedFixName, entry, aircraftTrack.location, referenceFixes)?.route;
+    const route = getClearedToFixRouteFixes(clearedFixName, entry, aircraftTrack.location, referenceFixes)?.route;
     if (!trialPlan) {
-      if (hubConnection) {
-        if (route) {
-          const amendedFlightplan: Flightplan = {
-            ...entry,
-            route: route
-              .split(/\.+/g)
-              .join(" ")
-              .trim()
-          };
-          hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
-        }
+      if (hubConnection && route) {
+        const amendedFlightplan: Flightplan = {
+          ...entry,
+          route: route
+            .split(/\.+/g)
+            .join(" ")
+            .trim()
+        };
+        hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
     } else if (route) {
       const amendedFlightplan: Flightplan = {
@@ -174,10 +173,11 @@ export const RouteMenu: React.FC = () => {
       };
       dispatch(
         addTrialPlanThunk({
+          cid: entry.cid,
           aircraftId: entry.aircraftId,
-          callsign: entry.aircraftId,
           amendedFlightplan,
-          commandString: `AM ${entry.aircraftId} 10 ${route}${amendedFlightplan.destination}`
+          commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+          expirationTime: new Date().getTime() / 1000 + 120
         })
       );
     }
@@ -186,19 +186,31 @@ export const RouteMenu: React.FC = () => {
 
   const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      let newRoute = removeDestFromRouteString(route.replace(/^\.+/gi, ""), entry.destination);
-      if (newRoute.match(/^[A-Z]+\d{6}/gi)) {
-        newRoute = newRoute.split(".", 1)[1].replace(/^\.+/gi, "");
+      let newRoute = removeDestFromRouteString(routeInput, entry.destination);
+      if (asel.window === EdstWindow.DEP) {
+        newRoute = removeDepFromRouteString(newRoute, entry.departure);
+      } else {
+        newRoute = `${frd}..${newRoute.replace(/^\.+/g, "")}`;
       }
-      copy(`${!(asel.window === EdstWindow.DEP) ? frd : ""}${newRoute}`.replace(/\.+$/, "")).then();
+      const amendedFlightplan: Flightplan = {
+        ...entry,
+        route: newRoute
+          .toUpperCase()
+          .replace(/^\.+/gi, "")
+          .trim()
+      };
       if (trialPlan) {
-        // dispatch(
-        //   addTrialPlanThunk({
-        //     aircraftId: entry.aircraftId,
-        //     callsign: entry.destination,
-        //
-        //   })
-        // );
+        dispatch(
+          addTrialPlanThunk({
+            cid: entry.cid,
+            aircraftId: entry.aircraftId,
+            amendedFlightplan,
+            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${newRoute}${amendedFlightplan.destination}`,
+            expirationTime: new Date().getTime() / 1000 + 120
+          })
+        );
+      } else if (hubConnection) {
+        hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
       dispatch(closeWindow(EdstWindow.ROUTE_MENU));
     }
@@ -274,7 +286,6 @@ export const RouteMenu: React.FC = () => {
                     title={Tooltips.routeMenuFrd}
                     onContextMenu={event => {
                       event.preventDefault();
-                      copy(frd).then();
                     }}
                   >
                     <PposDiv>{frd}..</PposDiv>
@@ -320,10 +331,10 @@ export const RouteMenu: React.FC = () => {
               {asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
             </DisplayRouteDiv>
           </OptionsBodyRow>
-          {_.range(0, Math.min(routeData?.length ?? 0, 10)).map(i => (
+          {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map(i => (
             <OptionsBodyRow key={`route-menu-row-${i}`}>
-              {_.range(0, Math.round((routeData?.length ?? 0) / 10) + 1).map(j => {
-                const fixName = routeData?.[Number(i) + Number(j) * 10]?.name;
+              {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map(j => {
+                const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
                 return (
                   fixName && (
                     <EdstTooltip key={`route-menu-col-${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
@@ -334,13 +345,11 @@ export const RouteMenu: React.FC = () => {
               })}
             </OptionsBodyRow>
           ))}
-          {routes?.length > 0 && (
+          {routesAvailable && (
             <PreferredRouteDisplay
-              aar={entry.currentAarList?.filter(aarData => currentRouteFixes.includes(aarData.tfix)) ?? []}
-              adr={asel.window === EdstWindow.DEP && entry.adr ? entry.adr : []}
-              adar={asel.window === EdstWindow.DEP && entry.adar ? entry.adar : []}
-              dep={entry.departure}
-              dest={entry.destination}
+              aar={entry.preferentialArrivalRoutes.filter(aarData => currentRouteFixNames.includes(aarData.triggeredFix)) ?? []}
+              adr={asel.window === EdstWindow.DEP ? entry.preferentialDepartureRoutes : []}
+              adar={asel.window === EdstWindow.DEP ? entry.preferentialDepartureArrivalRoutes : []}
               clearedPrefroute={clearedPrefroute}
             />
           )}

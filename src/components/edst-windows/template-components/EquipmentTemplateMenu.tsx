@@ -10,7 +10,7 @@ import { EquipmentCommTemplate } from "./EquipmentCommTemplate";
 import { EquipmentAppServTemplate } from "./EquipmentAppServTemplate";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
-import { useCenterCursor, useDragging, useFocused } from "../../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import {
   OptionsBodyCol,
   OptionsBody,

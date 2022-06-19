@@ -6,7 +6,7 @@ import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { closeWindow, pushZStack, windowSelector, zStackSelector } from "../../../redux/slices/appSlice";
 import { ToolsOptionsMenu } from "./ToolsOptionsMenu";
-import { useDragging, useFocused } from "../../../hooks";
+import { useDragging, useFocused } from "../../../hooks/utils";
 import {
   OptionsBody,
   OptionsBodyCol,

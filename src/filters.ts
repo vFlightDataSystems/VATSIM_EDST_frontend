@@ -18,6 +18,8 @@ export const depFilter = (entry: LocalEdstEntry, track: AircraftTrack, artccId: 
 export const entryFilter = (entry: LocalEdstEntry, track: AircraftTrack, polygons: Feature<Polygon>[]) => {
   const pos: Position = [track.location.lon, track.location.lat];
   const willEnterAirspace =
-    entry.currentRouteData && entry.currentRoute ? routeWillEnterAirspace(entry.currentRoute, entry.currentRouteData.slice(0), polygons, pos) : false;
-  return entry.boundaryTime < BOUNDARY_TIME_FILTER && willEnterAirspace; // && Number(track.groundSpeed) > AIRBORNE_GROUNDSPEED_FILTER;
+    entry.currentRouteFixes && entry.currentRoute
+      ? routeWillEnterAirspace(entry.currentRoute, entry.currentRouteFixes.slice(0), polygons, pos)
+      : false;
+  return track.altitudeTrue > 500 && entry.boundaryTime < BOUNDARY_TIME_FILTER && willEnterAirspace; // && Number(track.groundSpeed) > AIRBORNE_GROUNDSPEED_FILTER;
 };

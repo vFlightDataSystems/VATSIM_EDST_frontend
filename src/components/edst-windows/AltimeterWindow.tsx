@@ -14,8 +14,9 @@ import {
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
-import { useDragging } from "../../hooks";
+import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import {mod} from '../../lib';
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   width: 180px;
@@ -84,8 +85,8 @@ export const AltimeterWindow: React.FC = () => {
                     key={`altimeter-list-key-${airport}`}
                   >
                     <AltimCol reportingStation>{airportAltimeterEntry.airport}</AltimCol>
-                    <AltimCol underline={(Number(utcMinutesNow) - observationTime + 1440) % 1440 > 60}>{airportAltimeterEntry.time}</AltimCol>
-                    {(Number(utcMinutesNow) - observationTime + 1440) % 1440 > 120 ? (
+                    <AltimCol underline={mod(Number(utcMinutesNow) - observationTime, 1440) > 60}>{airportAltimeterEntry.time}</AltimCol>
+                    {mod(Number(utcMinutesNow) - observationTime, 1440) > 120 ? (
                       "-M-"
                     ) : (
                       <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>{airportAltimeterEntry.altimeter.slice(1)}</AltimCol>

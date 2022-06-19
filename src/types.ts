@@ -26,9 +26,9 @@ export type Flightplan = {
 
 export type DerivedFlightplanData = {
   formattedRoute: string; // formatted route string
-  routeData: RouteFix[];
+  routeFixes: RouteFix[];
   currentRoute: string; // shortened route string, starting at the next inbound fix
-  currentRouteData?: RouteFix[];
+  currentRouteFixes?: RouteFix[];
 };
 
 export type AircraftTrack = {
@@ -53,17 +53,48 @@ export type AirportInfo = {
   lon: number;
 };
 
+export type PreferentialArrivalRoute = {
+  destination: string;
+  amendment: string;
+  triggeredFix: string;
+  eligible: boolean;
+  rnavRequired: boolean;
+  truncatedRoute: string;
+  order: number;
+  routeGroups: string[];
+};
+
+export type PreferentialDepartureRoute = {
+  departure: string;
+  amendment: string;
+  triggeredFix: string;
+  eligible: boolean;
+  rnavRequired: boolean;
+  truncatedRoute: string;
+  order: number;
+  routeGroups: string[];
+};
+
+export type PreferentialDepartureArrivalRoute = {
+  route: string;
+  departure: string;
+  destination: string;
+  eligible: boolean;
+  rnavRequired: boolean;
+  order: number;
+  routeGroups: string[];
+};
+
 // TODO: type all `any` types
 // local data for a single EDST entry
 export type LocalVEdstEntry = {
   depInfo: AirportInfo | null;
   destInfo: AirportInfo | null;
   nasSuffix: string | null;
-  adr?: any[];
-  adar?: any[];
+  preferentialDepartureRoutes: PreferentialDepartureRoute[];
+  preferentialDepartureArrivalRoutes: PreferentialDepartureArrivalRoute[];
+  preferentialArrivalRoutes: PreferentialArrivalRoute[];
   freeTextContent: string;
-  aarList?: any[]; // preferred arrival routes
-  currentAarList?: any[] | null; // preferred arrival routes processed by the frontend
   vciStatus: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
   depStatus: number; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
   aclHighlighted?: boolean;
@@ -136,14 +167,13 @@ export type Navaid = {
   artcc_high: string;
 };
 
-export type EdstPreferredRoute = {
-  eligible?: boolean;
-  routeType?: string;
+export type EdstPreferentialRoute = {
+  eligible: boolean;
+  routeType: string;
   route?: string;
-  route_data?: RouteFix[];
   amendment?: string;
-  departure?: string;
-  destination?: string;
+  departure: string;
+  destination: string;
 };
 
 export type WindowPosition = {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { computeFrdString, convertBeaconCodeToString, getDepString, getDestString } from "../../lib";
 import { EdstButton } from "../resources/EdstButton";
@@ -8,7 +8,7 @@ import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSe
 import { openMenuThunk } from "../../redux/thunks/thunks";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";

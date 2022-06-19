@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AircraftTrack } from "../../types";
 import { RootState } from "../store";
 
@@ -10,7 +10,7 @@ const aircraftTrackSlice = createSlice({
   name: "aircraftTracks",
   initialState,
   reducers: {
-    setAircraftTrack(state, action: { payload: AircraftTrack & { lastUpdated: number } }) {
+    setAircraftTrack(state, action: PayloadAction<AircraftTrack & { lastUpdated: number }>) {
       state[action.payload.aircraftId] = action.payload;
     }
   }

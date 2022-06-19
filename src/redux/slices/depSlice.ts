@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { SortOptions } from "../../namespaces";
 
@@ -16,10 +16,10 @@ const depSlice = createSlice({
   name: "dep",
   initialState,
   reducers: {
-    setDepSort(state: DepState, action: { payload: SortOptions }) {
+    setDepSort(state: DepState, action: PayloadAction<SortOptions>) {
       state.sortData.selectedOption = action.payload;
     },
-    setDepManualPosting(state: DepState, action) {
+    setDepManualPosting(state: DepState, action: PayloadAction<boolean>) {
       state.manualPosting = action.payload;
     }
   }

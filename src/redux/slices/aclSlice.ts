@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { SortOptions } from "../../namespaces";
 
@@ -20,13 +20,13 @@ const aclSlice = createSlice({
   name: "acl",
   initialState,
   reducers: {
-    setAclSort(state, action: { payload: { selectedOption: SortOptions; sector: boolean } }) {
+    setAclSort(state, action: PayloadAction<{ selectedOption: SortOptions; sector: boolean }>) {
       state.sortData = action.payload;
     },
-    setAclManualPosting(state, action: { payload: boolean }) {
+    setAclManualPosting(state, action: PayloadAction<boolean>) {
       state.manualPosting = action.payload;
     },
-    updateToolsOptions(state, action: { payload: ToolsOptions }) {
+    updateToolsOptions(state, action: PayloadAction<ToolsOptions>) {
       state.toolsOptions = action.payload;
     }
   }

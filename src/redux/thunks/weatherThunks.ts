@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState, RootThunkAction } from "../store";
 import { addSigmets, ApiSigmet, removeAirportAltimeter, removeAirportMetar, setAirportAltimeter, setAirportMetar } from "../slices/weatherSlice";
-import { fetchAirportMetar, fetchSigmets } from "../../api";
+import { fetchAirportMetar, fetchSigmets } from "../../api/api";
 
 const setMetarThunk = createAsyncThunk("weather/setMetar", async (airports: string | string[], thunkAPI) => {
   async function dispatchFetch(airport: string) {

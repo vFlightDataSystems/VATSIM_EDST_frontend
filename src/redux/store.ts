@@ -8,6 +8,7 @@ import planReducer from "./slices/planSlice";
 import appReducer from "./slices/appSlice";
 import aircraftTrackReducer from "./slices/aircraftTrackSlice";
 import weatherReducer from "./slices/weatherSlice";
+import authReducer from "./slices/authSlice";
 
 const store = configureStore({
   reducer: {
@@ -19,7 +20,8 @@ const store = configureStore({
     sectorData: sectorReducer,
     entries: entriesReducer,
     aircraftTracks: aircraftTrackReducer,
-    weather: weatherReducer
+    weather: weatherReducer,
+    auth: authReducer
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false })
 });

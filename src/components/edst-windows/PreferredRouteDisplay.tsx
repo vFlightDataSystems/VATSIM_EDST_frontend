@@ -3,7 +3,7 @@ import _ from "lodash";
 import styled from "styled-components";
 import { EdstButton } from "../resources/EdstButton";
 import { Tooltips } from "../../tooltips";
-import { EdstPreferredRoute } from "../../types";
+import { EdstPreferentialRoute, PreferentialArrivalRoute, PreferentialDepartureArrivalRoute, PreferentialDepartureRoute } from "../../types";
 import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "../../styles/optionMenuStyles";
 
 const PrefrouteContainer = styled(ScrollContainer)`
@@ -30,41 +30,34 @@ const Col = styled(OptionsBodyCol)`
 `;
 
 type PreferredRouteDisplayProps = {
-  aar: any[];
-  adr: any[];
-  adar: any[];
-  dep: string;
-  dest: string;
-  clearedPrefroute: (routeString: string) => void;
+  aar: PreferentialArrivalRoute[];
+  adr: PreferentialDepartureRoute[];
+  adar: PreferentialDepartureArrivalRoute[];
+  clearedPrefroute: (prefRoute: EdstPreferentialRoute) => void;
 };
 
-function computeRouteList(aar: any[], adr: any[], adar: any[], dep: string, dest: string): EdstPreferredRoute[] {
-  let routes: EdstPreferredRoute[] = adar.map(r => {
-    return _.assign({}, r, { dep, dest, routeType: "adar" });
+function computeRouteList(aar: any[], adr: any[], adar: any[]): EdstPreferentialRoute[] {
+  let routes: EdstPreferentialRoute[] = adar.map(r => {
+    return _.assign({}, r, { routeType: "adar" });
   });
   routes = routes
     .concat(
       adr.map(r => {
-        const ret = _.assign({}, r.amendment, { dep, routeType: "adr" });
-        ret.amendment = r.amendment.adr_amendment;
         // delete ret.route;
-        return ret;
+        return _.assign({}, r.amendment, { routeType: "adr" });
       })
     )
     .concat(
       aar.map(r => {
-        const ret = _.assign({}, r, { dest, amendment: r.aar_amendment_route_string, routeType: "aar" });
-        delete ret.route;
-        return ret;
+        return _.assign({}, r, { routeType: "aar" });
       })
     );
   return routes;
 }
 
-export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps> = ({ aar, adr, adar, dep, dest, clearedPrefroute }) => {
+export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps> = ({ aar, adr, adar, clearedPrefroute }) => {
   const [eligibleOnly, setEligibleOnly] = useState(false);
-
-  const routes = computeRouteList(aar.slice(0), adr.slice(0), adar.slice(0), dep, dest);
+  const routes = computeRouteList(aar.slice(0), adr.slice(0), adar.slice(0));
   const eligibleRoutes = routes.filter(r => r.eligible);
 
   return (
@@ -94,15 +87,14 @@ export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps> = ({ aa
         {eligibleOnly && eligibleRoutes.length === 0 && (
           <PrefrouteRow key="route-menu-prefroute-row-no-eligible-avail">No Eligible APRs: Select ALL to display Ineligible APRs</PrefrouteRow>
         )}
-        {Object.entries(routes).map(([i, r]: [string, EdstPreferredRoute]) => {
+        {Object.entries(routes).map(([i, r]: [string, EdstPreferentialRoute]) => {
           return (
             r &&
-            (!eligibleOnly || r.eligible) &&
-            (r.amendment?.length ?? 0) > 0 && (
+            (!eligibleOnly || r.eligible) && (
               <PrefrouteRow key={`route-menu-prefroute-row-${i}`}>
-                <Col hover onMouseDown={() => r.amendment && clearedPrefroute(r.amendment)}>
+                <Col hover onMouseDown={() => clearedPrefroute(r)}>
                   {r.departure ?? ""}
-                  {r.amendment}
+                  {r.amendment ?? r.route}
                   {r.destination ?? ""}
                 </Col>
               </PrefrouteRow>

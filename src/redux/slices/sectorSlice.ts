@@ -1,5 +1,5 @@
 import { Feature, polygon, Polygon } from "@turf/turf";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Fix, SectorData } from "../../types";
 import { RootState } from "../store";
 
@@ -27,15 +27,15 @@ const sectorSlice = createSlice({
   name: "sectorData",
   initialState,
   reducers: {
-    setSectors(state: SectorDataState, action) {
+    setSectors(state: SectorDataState, action: PayloadAction<SectorData[]>) {
       state.sectors = Object.fromEntries(
-        action.payload.map((sector: SectorData) => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)])
+        action.payload.map(sector => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)])
       );
     },
-    setSelectedSectors(state: SectorDataState, action) {
+    setSelectedSectors(state: SectorDataState, action: PayloadAction<string[]>) {
       state.selectedSectorIds = action.payload;
     },
-    toggleSector(state: SectorDataState, action) {
+    toggleSector(state: SectorDataState, action: PayloadAction<string>) {
       if (state.selectedSectorIds.includes(action.payload)) {
         const selectedSectorsSet = new Set(state.selectedSectorIds);
         selectedSectorsSet.delete(action.payload);
@@ -44,16 +44,16 @@ const sectorSlice = createSlice({
         state.selectedSectorIds = [...state.selectedSectorIds, action.payload];
       }
     },
-    setArtccId(state: SectorDataState, action) {
+    setArtccId(state: SectorDataState, action: PayloadAction<string>) {
       state.artccId = action.payload;
     },
-    setSectorId(state: SectorDataState, action) {
+    setSectorId(state: SectorDataState, action: PayloadAction<string>) {
       state.sectorId = action.payload;
     },
-    setSectorProfiles(state, action: { payload: SectorProfile[] }) {
+    setSectorProfiles(state, action: PayloadAction<SectorProfile[]>) {
       state.profiles = action.payload;
     },
-    setReferenceFixes(state: SectorDataState, action) {
+    setReferenceFixes(state: SectorDataState, action: PayloadAction<Fix[]>) {
       state.referenceFixes = action.payload;
     }
   }

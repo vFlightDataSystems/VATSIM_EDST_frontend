@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatAltitude, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { LocalEdstEntry } from "../../../types";
+import { LocalEdstEntry, PreferentialDepartureArrivalRoute, PreferentialDepartureRoute } from "../../../types";
 import { deleteDepEntry, toggleSpa, updateEntry } from "../../../redux/slices/entriesSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
@@ -40,6 +40,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
   const [onAar, setOnAar] = useState(false);
   const [adrAvail, setAdrAvail] = useState(false);
   const [onAdr, setOnAdr] = useState(false);
+  const [onAdar, setOnAdar] = useState(false);
 
   const now = new Date().getTime();
   const route = removeDestFromRouteString(entry.formattedRoute.slice(0), entry.destination);
@@ -48,47 +49,63 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const currentFixNames = entry.routeData.map(fix => fix.name);
-    const aarAvail = !!entry.aarList?.filter(aar => aar.eligible && currentFixNames.includes(aar.tfix)).length;
-    const onAar = !!entry.aarList?.filter(aar => aar.onEligibleAar)?.length;
+    const currentFixNames = entry.routeFixes.map(fix => fix.name);
+    const aarAvail = !!entry.preferentialArrivalRoutes?.filter(aar => aar.eligible && currentFixNames.includes(aar.triggeredFix)).length;
+    const onAar = !!entry.preferentialArrivalRoutes?.filter(aar => aar.eligible && entry.formattedRoute.includes(aar.amendment))?.length;
+    const onAdar = !!entry.preferentialDepartureArrivalRoutes.filter(adar => adar.eligible && entry.formattedRoute === adar.route).length;
     setAarAvail(aarAvail);
     setOnAar(onAar);
+    setOnAdar(onAdar);
 
-    const adrAvail = !!entry.adr?.filter(adr => adr.eligible).length;
-    const onAdr = (entry.adr?.filter(adr => route.startsWith(adr.amendment.adr_amendment))?.length ?? 0) > 0;
+    const adrAvail = !!entry.preferentialDepartureRoutes?.filter(adr => adr.eligible).length;
+    const onAdr = (entry.preferentialDepartureRoutes?.filter(adr => route.startsWith(adr.amendment))?.length ?? 0) > 0;
     setAdrAvail(adrAvail);
     setOnAdr(onAdr);
-  }, [entry.aarList, entry.adr, entry.routeData, route]);
+  }, [entry.preferentialArrivalRoutes, entry.preferentialDepartureRoutes, entry.routeFixes, route]);
 
   const checkAarReroutePending = () => {
-    const currentFixNames = (entry.currentRouteData ?? entry.routeData).map(fix => fix.name);
-    const eligibleAar = entry.currentAarList?.filter(aar => aar.eligible);
-    if (eligibleAar?.length === 1) {
+    const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
+    const eligibleAar = entry.preferentialArrivalRoutes.filter(aar => aar.eligible);
+    if (eligibleAar.length === 1) {
       const aar = eligibleAar[0];
-      if (currentFixNames.includes(aar.tfix)) {
-        return aar.aar_amendment_route_string;
+      if (currentFixNames.includes(aar.triggeredFix)) {
+        return aar.amendment;
       }
     }
     return null;
   };
 
-  const checkAdrReroutePending = (routes?: ({ eligible: boolean; order: string; ierr: any[] } & any)[]) => {
-    if (!routes) {
+  const checkAdrReroutePending = (routes: PreferentialDepartureRoute[]) => {
+    if (routes.length === 0) {
       return null;
     }
     const eligibleRoutes = routes.filter(adr => adr.eligible);
-    if (eligibleRoutes?.length > 0) {
-      const eligibleRnavRoutes = eligibleRoutes.filter(adr => adr.ierr.length > 0);
+    if (eligibleRoutes.length > 0) {
+      const eligibleRnavRoutes = eligibleRoutes.filter(adr => adr.rnavRequired);
       if (eligibleRnavRoutes.length > 0) {
-        return eligibleRnavRoutes.sort((u: { order: string }, v: { order: string }) => Number(u.order) - Number(v.order))[0].amendment.adr_amendment;
+        return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
       }
-      return eligibleRoutes.sort((u: { order: string }, v: { order: string }) => Number(u.order) - Number(v.order))[0].amendment.adr_amendment;
+      return eligibleRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
+    }
+    return null;
+  };
+  const checkAdarReroutePending = (routes: PreferentialDepartureArrivalRoute[]) => {
+    if (routes.length === 0) {
+      return null;
+    }
+    const eligibleRoutes = routes.filter(adr => adr.eligible);
+    if (eligibleRoutes.length > 0) {
+      const eligibleRnavRoutes = eligibleRoutes.filter(adr => adr.rnavRequired);
+      if (eligibleRnavRoutes.length > 0) {
+        return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
+      }
+      return eligibleRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
     }
     return null;
   };
 
-  const pendingAdr = checkAdrReroutePending(entry.adr);
-  // const pendingAdar = checkAdrReroutePending(entry.adar);
+  const pendingAdr = checkAdrReroutePending(entry.preferentialDepartureRoutes);
+  const pendingAdar = checkAdarReroutePending(entry.preferentialDepartureArrivalRoutes);
   const pendingAar = checkAarReroutePending();
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
@@ -200,11 +217,14 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
                   {/* className={`${((aarAvail && !onAar) || (adrAvail && !onAdr)) ? 'amendment-1' : ''} ${isSelected(entry.aircraftId, depRowFieldEnum.route) ? 'selected' : ''}`}> */}
                   {entry.departure}
                 </RouteSpan>
-                {pendingAdr && !onAdr && (
+                {pendingAdar && !onAdar && (
+                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingAdar}]`}</RouteAmendmentSpan>
+                )}
+                {!pendingAdar && pendingAdr && !onAdr && (
                   <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingAdr}]`}</RouteAmendmentSpan>
                 )}
                 {route}
-                {pendingAar && !onAar && (
+                {!pendingAdar && pendingAar && !onAar && (
                   <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
                 )}
                 {route?.slice(-1) !== "." && ".."}
@@ -220,12 +240,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           <DepCol2 />
           <InnerRow2 highlight={entry.depHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={202}>
-              <input
-                
-                
-                value={freeTextContent}
-                onChange={event => setFreeTextContent(event.target.value.toUpperCase())}
-              />
+              <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value.toUpperCase())} />
             </FreeTextRow>
           </InnerRow2>
         </BodyRowDiv>

@@ -8,7 +8,7 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, Asel, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
 import { LocalEdstEntry } from "../../../types";
-import { useCenterCursor, useDragging, useFocused } from "../../../hooks";
+import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
 import { InputContainer } from "../../InputComponents";
@@ -26,8 +26,8 @@ const SpeedDiv = styled(OptionsMenu)`
 `;
 
 export const SpeedMenu: React.FC = () => {
-  const asel = useRootSelector(aselSelector) as Asel;
-  const entry = useRootSelector(aselEntrySelector) as LocalEdstEntry;
+  const asel = useRootSelector(aselSelector)!;
+  const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.SPEED_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
