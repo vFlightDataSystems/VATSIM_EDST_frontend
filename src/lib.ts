@@ -1,5 +1,4 @@
 import {
-  bearing,
   booleanPointInPolygon,
   distance,
   Feature,
@@ -13,9 +12,9 @@ import {
   Position
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import * as geomag from "geomag";
 import _ from "lodash";
-import { RouteFix, LocalEdstEntry, ReferenceFix, Fix, AircraftTrack } from "./types";
+import { HubConnection } from "@microsoft/signalr";
+import { RouteFix, LocalEdstEntry, AircraftTrack } from "./types";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -174,23 +173,6 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
 }
 
 /**
- * compute frd to the closest reference fix
- * @param {any[]} referenceFixes - list of reference fixes
- * @param {Feature<Point>} posPoint - present position
- * @returns {ReferenceFix} - closest reference fix
- */
-export function getClosestReferenceFix(referenceFixes: any[], posPoint: Feature<Point>): ReferenceFix {
-  const fixesDistance = referenceFixes.map(fix => {
-    const fixPoint = point([fix.lon, fix.lat]);
-    return { point: fixPoint, distance: distance(fixPoint, posPoint, { units: "nauticalmiles" }), ...fix };
-  });
-  const closestFix = fixesDistance.sort((u, v) => u.distance - v.distance)[0];
-  const magneticVariation = geomag.field(closestFix.point.geometry.coordinates[1], closestFix.point.geometry.coordinates[0]).declination;
-  closestFix.bearing = mod(bearing(closestFix.point, posPoint) - magneticVariation, 360);
-  return closestFix;
-}
-
-/**
  * computes how long it will take until an aircraft will enter a controller's airspace
  * @param {LocalEdstEntry} entry - an EDST entry
  * @param track
@@ -229,23 +211,6 @@ export function computeCrossingTimes(entry: LocalEdstEntry, track: AircraftTrack
     }
   }
   return newRouteFixes;
-}
-
-/**
- * compute the FRD string from reference fix data
- * @param {{waypoint_id: string, bearing: number, distance: number}} referenceFix
- * @returns {string} - fix/radial/distance in standard format: ABC123456
- */
-export function computeFrdString(referenceFix: ReferenceFix): string {
-  return (
-    referenceFix.waypoint_id +
-    Math.round(referenceFix.bearing)
-      .toString()
-      .padStart(3, "0") +
-    Math.round(referenceFix.distance)
-      .toString()
-      .padStart(3, "0")
-  );
 }
 
 /**
@@ -288,14 +253,12 @@ export function getClearedToFixRouteFixes(
   clearedFixName: string,
   entry: LocalEdstEntry,
   location: { lat: number; lon: number },
-  referenceFixes: Fix[] | null
+  frd: string | null
 ): { route: string; routeFixes: RouteFix[] } | null {
   let newRoute = entry.currentRoute;
   const { currentRouteFixes: routeFixes, destination } = entry;
   if (newRoute && routeFixes) {
     const fixNames = routeFixes.map((e: { name: string }) => e.name);
-    const closestReferenceFix = referenceFixes ? getClosestReferenceFix(referenceFixes, point([location.lon, location.lat])) : null;
-    const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
 
     const index = fixNames.indexOf(clearedFixName);
     const relevantFixNames = fixNames.slice(0, index + 1).reverse();
@@ -313,9 +276,7 @@ export function getClearedToFixRouteFixes(
         break;
       }
     }
-    // new_route = `..${fix}` + new_route;
     newRoute = removeDestFromRouteString(newRoute.slice(0), destination);
-    // console.log(newRoute, routeFixes);
     return {
       route: newRoute,
       routeFixes: routeFixes.slice(index)
@@ -395,4 +356,18 @@ export function convertBeaconCodeToString(code?: number | null): string {
 export function formatAltitude(alt: string): string {
   const altNum = Number(alt);
   return String(altNum >= 1000 ? altNum / 100 : altNum).padStart(3, "0");
+}
+
+export async function getFrd(artccId: string, location: { lat: number; lon: number }, hubConnection: HubConnection | null) {
+  let frd = null;
+  if (hubConnection) {
+    frd = await hubConnection.invoke("GenerateFrd", { artccId, location }).then(response => {
+      if (response.isSuccess) {
+        return response.frd;
+      }
+      console.log(response.error);
+      return null;
+    });
+  }
+  return frd;
 }

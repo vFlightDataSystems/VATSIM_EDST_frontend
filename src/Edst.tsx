@@ -123,7 +123,9 @@ const Edst: React.FC = () => {
 
 const EdstProvider: React.FC = () => (
   <HubProvider>
-    <Edst />
+    <React.StrictMode>
+      <Edst />
+    </React.StrictMode>
   </HubProvider>
 );
 

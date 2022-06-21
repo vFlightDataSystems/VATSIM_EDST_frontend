@@ -5,7 +5,7 @@ import { useRootDispatch } from "../redux/hooks";
 import { AircraftTrack, Flightplan } from "../types";
 import { updateAircraftTrackThunk, updateFlightplanThunk } from "../redux/thunks/thunks";
 
-const ATC_SERVER_URL = `${process.env.REACT_APP_ATC_SERVER_URL}/hubs/temp`;
+const ATC_SERVER_URL = process.env.REACT_APP_ATC_SERVER_URL;
 
 const useHubInit = () => {
   const dispatch = useRootDispatch();

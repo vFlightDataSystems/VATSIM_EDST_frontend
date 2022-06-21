@@ -1,15 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  fetchArtccAirways,
-  fetchArtccNavaids,
-  fetchArtccSectorTypes,
-  fetchArtccWaypoints,
-  fetchCtrFavData,
-  fetchCtrProfiles,
-  fetchReferenceFixes
-} from "../../api/api";
+import { fetchArtccAirways, fetchArtccNavaids, fetchArtccSectorTypes, fetchArtccWaypoints, fetchCtrFavData, fetchCtrProfiles } from "../../api/api";
 import { RootState } from "../store";
-import { setArtccId, setReferenceFixes, setSectorId, setSectorProfiles, setSectors } from "../slices/sectorSlice";
+import { setArtccId, setSectorId, setSectorProfiles, setSectors } from "../slices/sectorSlice";
 import { refreshSigmets } from "./weatherThunks";
 import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
 import { Fix } from "../../types";
@@ -52,16 +44,6 @@ export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) =>
       });
   }
   sectorData = (thunkAPI.getState() as RootState).sectorData;
-  // if we have no reference fixes for computing FRD, get some
-  if (!(sectorData.referenceFixes.length > 0)) {
-    await fetchReferenceFixes(artccId)
-      .then(response => response.json())
-      .then(referenceFixes => {
-        if (referenceFixes) {
-          thunkAPI.dispatch(setReferenceFixes(referenceFixes));
-        }
-      });
-  }
   if (!(Object.keys(gpdData.sectorTypes).length > 0)) {
     await fetchArtccSectorTypes(artccId)
       .then(response => response.json())

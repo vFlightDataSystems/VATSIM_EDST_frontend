@@ -1,40 +1,43 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { point } from "@turf/turf";
 import styled from "styled-components";
 import { EdstButton } from "../resources/EdstButton";
-import { computeFrdString, getClosestReferenceFix, removeDestFromRouteString } from "../../lib";
+import { getFrd, removeDestFromRouteString } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { AircraftTrack, LocalEdstEntry } from "../../types";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { referenceFixSelector } from "../../redux/slices/sectorSlice";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
 import { EdstWindow } from "../../namespaces";
+import { useHub } from "../../hooks/hub";
+import { artccIdSelector } from "../../redux/slices/sectorSlice";
 
 const PrevRouteMenuDiv = styled(OptionsMenu)`
   width: 380px;
 `;
 
 export const PreviousRouteMenu: React.FC = () => {
+  const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
-  const referenceFixes = useRootSelector(referenceFixSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PREV_ROUTE_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
+  const [frd, setFrd] = useState(null);
+  const hubConnection = useHub();
   useCenterCursor(ref);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.EQUIPMENT_TEMPLATE_MENU);
 
-  const closestReferenceFix = entry.aclDisplay
-    ? getClosestReferenceFix(referenceFixes, point([aircraftTrack.location.lon, aircraftTrack.location.lat]))
-    : null;
-  const frd = closestReferenceFix ? computeFrdString(closestReferenceFix) : null;
+  useEffect(() => {
+    async function updateFrd() {
+      setFrd(await getFrd(artccId, aircraftTrack.location, hubConnection));
+    }
+    updateFrd().then();
+  }, []);
 
   const route = removeDestFromRouteString(entry.route.slice(0), entry.destination);
 

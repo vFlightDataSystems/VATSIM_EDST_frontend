@@ -8,7 +8,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entriesSlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { RouteFix, LocalEdstEntry, AirwayFix, AircraftTrack } from "../../../types";
+import { LocalEdstEntry, AirwayFix, AircraftTrack } from "../../../types";
 import { getNextFix } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { aircraftTrackSelector } from "../../../redux/slices/aircraftTrackSlice";
@@ -56,23 +56,10 @@ function getRouteLine(entry: LocalEdstEntry, track: AircraftTrack) {
   if (fixNames.length === 0) {
     return null;
   }
-  if (entry.destInfo) {
-    fixNames = fixNames.slice(0, lastFixIndex);
-    let routeFixesToDisplay = routeFixes.slice(0, lastFixIndex);
-    routeFixesToDisplay.push({
-      name: entry.destInfo.icao,
-      pos: [Number(entry.destInfo.lon), Number(entry.destInfo.lat)]
-    });
-    const [nextFix] = getNextFix(route, routeFixesToDisplay, pos) as RouteFix[];
-    const index = fixNames.indexOf(nextFix.name);
-    routeFixesToDisplay = routeFixesToDisplay.slice(index);
-    routeFixesToDisplay.unshift({ name: "ppos", pos });
-    return routeFixesToDisplay;
-  }
   fixNames = fixNames.slice(0, lastFixIndex + 1);
   let routeFixesToDisplay = routeFixes.slice(0, lastFixIndex + 1);
-  const [nextFix] = getNextFix(route, routeFixesToDisplay, pos) as RouteFix[];
-  const index = fixNames.indexOf(nextFix?.name);
+  const [nextFix] = getNextFix(route, routeFixesToDisplay, pos);
+  const index = fixNames.indexOf(nextFix.name);
   routeFixesToDisplay = routeFixesToDisplay.slice(index);
   routeFixesToDisplay.unshift({ name: "ppos", pos });
   return routeFixesToDisplay;
