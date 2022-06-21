@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { computeFrdString, convertBeaconCodeToString, getDepString, getDestString } from "../../lib";
+import { convertBeaconCodeToString, getDepString, getDestString, getFrd } from "../../lib";
 import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
@@ -12,6 +12,9 @@ import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
+import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
+import { useHub } from "../../hooks/hub";
+import { artccIdSelector } from "../../redux/slices/sectorSlice";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;
@@ -91,16 +94,18 @@ const TemplateTextArea: React.FC<TemplateInputProps> = ({ title, ...props }) => 
 export const TemplateMenu: React.FC = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
+  const aircraftTrack = useRootSelector(aselTrackSelector);
   const entry = useRootSelector(aselEntrySelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.TEMPLATE_MENU));
   const zStack = useRootSelector(zStackSelector);
+  const artccId = useRootSelector(artccIdSelector);
+  const hubConnection = useHub();
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
   const route =
     (asel?.window === EdstWindow.DEP
       ? entry?.route?.concat(getDestString(entry?.destination) ?? "")
       : entry?.currentRoute?.replace(/^\.*/, "")?.concat(getDestString(entry?.destination) ?? "")) ?? "";
-  const frd = entry?.referenceFix ? computeFrdString(entry.referenceFix) : "";
 
   const [aidInput, setAidInput] = useState(entry?.aircraftId ?? "");
   const [numInput, setNumInput] = useState(entry ? 1 : "");
@@ -109,7 +114,7 @@ export const TemplateMenu: React.FC = () => {
   const [equipInput, setEquipInput] = useState(entry?.equipment ?? "");
   const [beaconInput, setBeaconInput] = useState(convertBeaconCodeToString(entry?.assignedBeaconCode));
   const [speedInput, setSpeedInput] = useState(entry?.speed ?? "");
-  const [frdInput, setFrdInput] = useState(frd);
+  const [frdInput, setFrdInput] = useState("");
   const [timeInput, setTimeInput] = useState("EXX00");
   const [altInput, setAltInput] = useState(entry?.altitude ?? "");
   const [routeInput, setRouteInput] = useState((asel?.window === EdstWindow.DEP ? (getDepString(entry?.departure) ?? "") + route : route) ?? "");
@@ -120,6 +125,15 @@ export const TemplateMenu: React.FC = () => {
   useCenterCursor(ref, [asel]);
 
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TEMPLATE_MENU);
+
+  useEffect(() => {
+    async function updateFrd() {
+      if (aircraftTrack) {
+        setFrdInput(await getFrd(artccId, aircraftTrack.location, hubConnection));
+      }
+    }
+    updateFrd().then();
+  }, [entry?.aircraftId]);
 
   return (
     pos && (

@@ -103,7 +103,6 @@ export type LocalVEdstEntry = {
   remarksChecked?: boolean; // whether remarks have been checked or not
   spa: boolean; // SPA indicator
   boundaryTime: number; // minutes until entering the sector's airspace (will be negative if already inside)
-  referenceFix?: ReferenceFix | null; // current FRD
   pendingRemoval?: number | null; // if not null, number represents timestamp when pendingRemoval status was activated
   scratchHdg?: string; // speed assigned in the scratchpad
   scratchSpd?: string; // heading assigned in the scratchpad
@@ -141,13 +140,6 @@ export type AirwayFix = {
   sequence: string;
   lat: string | number;
   lon: string | number;
-};
-
-export type ReferenceFix = {
-  waypoint_id: string;
-  point: Feature<Point>;
-  distance: number;
-  bearing: number;
 };
 
 export type RouteFix = {

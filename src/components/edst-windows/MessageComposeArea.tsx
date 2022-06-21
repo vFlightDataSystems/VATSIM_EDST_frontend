@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
+import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes, getFrd } from "../../lib";
 import { Flightplan, LocalEdstEntry } from "../../types";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
@@ -22,7 +22,7 @@ import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { referenceFixSelector } from "../../redux/slices/sectorSlice";
+import { artccIdSelector } from "../../redux/slices/sectorSlice";
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aircraftTracksSelector } from "../../redux/slices/aircraftTrackSlice";
@@ -88,9 +88,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
   const manualPosting = useRootSelector(aclManualPostingSelector);
-  const referenceFixes = useRootSelector(referenceFixSelector);
   const entries = useRootSelector(entriesSelector);
   const aircraftTracks = useRootSelector(aircraftTracksSelector);
+  const artccId = useRootSelector(artccIdSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -155,12 +155,13 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
     }
   };
 
-  const parseQU = (args: string[]) => {
+  const parseQU = async (args: string[]) => {
     if (args.length === 2 && hubConnection) {
       const entry = getEntryByFid(args[1]);
       if (entry && entry.aclDisplay && entry.currentRouteFixes?.map(fix => fix.name).includes(args[0])) {
         const aircraftTrack = aircraftTracks[entry.aircraftId];
-        const route = getClearedToFixRouteFixes(args[0], entry, aircraftTrack.location, referenceFixes)?.route;
+        const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
+        const route = getClearedToFixRouteFixes(args[0], entry, aircraftTrack.location, frd)?.route;
         if (route) {
           const amendmentFlightplan: Flightplan = {
             ...entry,
@@ -234,7 +235,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
           }
           break; // end case UU
         case "QU": // cleared direct to fix: QU <fix> <fid>
-          parseQU(args);
+          parseQU(args).then();
           break; // end case QU
         case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));

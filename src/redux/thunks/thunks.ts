@@ -1,8 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import _ from "lodash";
 import { RootState, RootThunkAction } from "../store";
 import { equipmentIcaoToNas, getRemainingRouteFixes, getRouteFixesDistance, REMOVAL_TIMEOUT } from "../../lib";
 import { addAclEntry, addDepEntry, deleteAclEntry, setEntry, updateEntries, updateEntry } from "../slices/entriesSlice";
-import { AircraftTrack, AirportInfo, DerivedFlightplanData, Flightplan, LocalEdstEntry, RouteFix, WindowPosition } from "../../types";
+import { AircraftTrack, AirportInfo, DerivedFlightplanData, Flightplan, LocalEdstEntry, LocalVEdstEntry, WindowPosition } from "../../types";
 import { closeAircraftMenus, closeWindow, openWindow, setAsel, setWindowPosition } from "../slices/appSlice";
 import { addTrialPlan, removeTrialPlan, TrialPlan } from "../slices/planSlice";
 import {
@@ -252,11 +253,13 @@ async function createEntryFromFlightplan(fp: Flightplan, artcc: string): Promise
   if (!(depInfo || destInfo)) {
     return null;
   }
-  const formattedRoute: string = await memoizedFetchFormatRoute(fp.route, fp.departure, fp.destination).then(data => data ?? "");
-  const routeFixes = (await memoizedFetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? [])) as RouteFix[];
-  const preferentialArrivalRoutes = await fetchAar(artcc, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude);
-  const preferentialDepartureRoutes = await fetchAdr(artcc, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude);
-  const preferentialDepartureArrivalRoutes = await fetchAdar(artcc, fp.equipment.split("/")[0], fp.departure, fp.destination);
+  const [formattedRoute, routeFixes, preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes] = await Promise.all([
+    memoizedFetchFormatRoute(fp.route, fp.departure, fp.destination),
+    memoizedFetchRouteFixes(fp.route, fp.departure, fp.destination),
+    fetchAar(artcc, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude),
+    fetchAdr(artcc, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
+    fetchAdar(artcc, fp.equipment.split("/")[0], fp.departure, fp.destination)
+  ]);
 
   let nasSuffix = "";
   const icaoFields = fp.equipment.split("/").slice(1);
@@ -296,10 +299,18 @@ const updateDerivedFlightplanThunk = createAsyncThunk<void, Flightplan>("entries
   const entry = { ...entries[fp.aircraftId] };
   const aircraftTrack = aircraftTracks[fp.aircraftId];
   if (entry) {
-    const amendedData: Flightplan & Partial<DerivedFlightplanData> = { ...fp };
+    const amendedData: Flightplan & Partial<DerivedFlightplanData & LocalVEdstEntry> = { ...fp };
     if (fp.route !== entry.route) {
       amendedData.formattedRoute = await fetchFormatRoute(fp.route, fp.departure, fp.destination).then(data => data ?? "");
-      amendedData.routeFixes = (await fetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? [])) as RouteFix[];
+      amendedData.routeFixes = await fetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? []);
+    }
+    if (fp.equipment !== entry.equipment) {
+      const [preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes] = await Promise.all([
+        fetchAar(sectorData.artccId, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude),
+        fetchAdr(sectorData.artccId, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
+        fetchAdar(sectorData.artccId, fp.equipment.split("/")[0], fp.departure, fp.destination)
+      ]);
+      _.assign(amendedData, { preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes });
     }
     const pos = [aircraftTrack.location.lon, aircraftTrack.location.lat];
     const routeFixesDistance = getRouteFixesDistance(entry.routeFixes, pos);

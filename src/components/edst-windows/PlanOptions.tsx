@@ -5,15 +5,7 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { openMenuThunk } from "../../redux/thunks/thunks";
-import {
-  aselSelector,
-  Asel,
-  closeWindow,
-  setAsel,
-  zStackSelector,
-  pushZStack,
-  windowPositionSelector
-} from "../../redux/slices/appSlice";
+import { aselSelector, closeWindow, setAsel, zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
 import { deleteAclEntry, deleteDepEntry, entrySelector } from "../../redux/slices/entriesSlice";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";

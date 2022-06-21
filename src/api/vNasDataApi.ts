@@ -1,6 +1,6 @@
 export const login = async (code: string, redirectUrl: string) => {
   return fetch(
-    `${process.env.REACT_APP_ATC_SERVER_URL}/api/auth/code-exchange?code=${code}&redirectUrl=${redirectUrl}&clientId=${process.env.REACT_APP_VATSIM_CLIENT_ID}`,
+    `${process.env.REACT_APP_NAS_SERVER_URL}/api/auth/code-exchange?code=${code}&redirectUrl=${redirectUrl}&clientId=${process.env.REACT_APP_VATSIM_CLIENT_ID}`,
     {
       credentials: "include"
     }
@@ -10,5 +10,5 @@ export const login = async (code: string, redirectUrl: string) => {
 };
 
 export const logout = async () => {
-  return fetch(`${process.env.REACT_APP_ATC_SERVER_URL}/api/auth/logout`, { credentials: "include" });
+  return fetch(`${process.env.REACT_APP_NAS_SERVER_URL}/api/auth/logout`, { credentials: "include" });
 };

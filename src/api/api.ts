@@ -49,10 +49,6 @@ export async function fetchCtrProfiles(artcc: string): Promise<Response> {
   return fetch(`${baseurl}/edst/ctr_profiles/${artcc}`);
 }
 
-export async function fetchReferenceFixes(artcc: string): Promise<Response> {
-  return fetch(`${baseurl}/edst/reference_fixes/${artcc}`);
-}
-
 export async function fetchArtccNavaids(artcc: string): Promise<Response> {
   return fetch(`${baseurl}/edst/gpd/${artcc}/navaids`);
 }

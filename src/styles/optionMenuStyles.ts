@@ -141,10 +141,12 @@ export const OptionsBodyCol = styled.div<{
   hover?: boolean;
   justifyContent?: string;
 }>`
+  display: block;
   flex-grow: 1;
   flex-flow: row;
   font-size: 16px;
-  justify-content: ${props => props.justifyContent ?? "center"};
+  min-height: 20px;
+  justify-content: ${props => props.justifyContent ?? "flex-start"};
   align-items: center;
   vertical-align: center;
   border: 1px solid transparent;

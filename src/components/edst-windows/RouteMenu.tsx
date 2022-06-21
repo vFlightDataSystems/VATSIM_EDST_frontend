@@ -3,9 +3,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../css/styles.scss";
 import _ from "lodash";
 import styled from "styled-components";
-import { point } from "@turf/turf";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
-import { computeFrdString, getClearedToFixRouteFixes, getClosestReferenceFix, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
+import { getClearedToFixRouteFixes, getFrd, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
 import VATSIM_LOGO from "../../resources/images/VATSIM-social_icon.svg";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
@@ -20,7 +19,7 @@ import { EdstPreferentialRoute, Flightplan } from "../../types";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { referenceFixSelector } from "../../redux/slices/sectorSlice";
+import { artccIdSelector } from "../../redux/slices/sectorSlice";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
 import { useHub } from "../../hooks/hub";
@@ -90,11 +89,12 @@ export const RouteMenu: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ROUTE_MENU));
   const asel = useRootSelector(aselSelector)!;
+  const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
-  const referenceFixes = useRootSelector(referenceFixSelector);
   const zStack = useRootSelector(zStackSelector);
   const hubConnection = useHub();
+  const [frd, setFrd] = useState(null);
 
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(
@@ -113,11 +113,12 @@ export const RouteMenu: React.FC = () => {
   useCenterCursor(ref, [asel]);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU);
 
-  const closestReferenceFix = useMemo(() => getClosestReferenceFix(referenceFixes, point([aircraftTrack.location.lon, aircraftTrack.location.lat])), [
-    aircraftTrack.location,
-    referenceFixes
-  ]);
-  const frd = useMemo(() => (closestReferenceFix ? computeFrdString(closestReferenceFix) : "XXX000000"), [closestReferenceFix]);
+  useEffect(() => {
+    async function updateFrd() {
+      setFrd(await getFrd(artccId, aircraftTrack.location, hubConnection));
+    }
+    updateFrd().then();
+  }, [entry.aircraftId]);
 
   const { appendOplus, appendStar } = useMemo(() => append, [append]);
 
@@ -130,7 +131,7 @@ export const RouteMenu: React.FC = () => {
     }
     setRoute(route);
     setRouteInput(dep ? entry.departure + route + entry.destination : route + entry.destination);
-  }, [asel.window, entry.currentRoute, entry.departure, entry.destination, entry.referenceFix, entry.route, referenceFixes]);
+  }, [asel.window, entry.currentRoute, entry.departure, entry.destination, entry.route]);
 
   const currentRouteFixNames: string[] = entry?.routeFixes?.map(fix => fix.name) ?? [];
   let routeFixes = asel.window === EdstWindow.DEP || !entry.currentRouteFixes ? entry.routeFixes : entry.currentRouteFixes;
@@ -150,8 +151,9 @@ export const RouteMenu: React.FC = () => {
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
 
-  const clearedToFix = (clearedFixName: string) => {
-    const route = getClearedToFixRouteFixes(clearedFixName, entry, aircraftTrack.location, referenceFixes)?.route;
+  const clearedToFix = async (clearedFixName: string) => {
+    const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
+    const route = getClearedToFixRouteFixes(clearedFixName, entry, aircraftTrack.location, frd)?.route;
     if (!trialPlan) {
       if (hubConnection && route) {
         const amendedFlightplan: Flightplan = {
@@ -184,8 +186,9 @@ export const RouteMenu: React.FC = () => {
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
 
-  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
+      const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
       let newRoute = removeDestFromRouteString(routeInput, entry.destination);
       if (asel.window === EdstWindow.DEP) {
         newRoute = removeDepFromRouteString(newRoute, entry.departure);

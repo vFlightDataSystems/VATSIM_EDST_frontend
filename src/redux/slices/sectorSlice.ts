@@ -1,6 +1,6 @@
 import { Feature, polygon, Polygon } from "@turf/turf";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Fix, SectorData } from "../../types";
+import { SectorData } from "../../types";
 import { RootState } from "../store";
 
 type SectorProfile = { id: string; name: string; sectors: string[] };
@@ -9,7 +9,6 @@ export type SectorDataState = {
   sectors: Record<string, Feature<Polygon>>;
   profiles: SectorProfile[];
   selectedSectorIds: string[];
-  referenceFixes: Fix[];
   sectorId: string;
   artccId: string;
 };
@@ -18,7 +17,6 @@ const initialState: SectorDataState = {
   sectors: {},
   profiles: [],
   selectedSectorIds: [],
-  referenceFixes: [],
   sectorId: "",
   artccId: process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? ""
 };
@@ -45,23 +43,20 @@ const sectorSlice = createSlice({
       }
     },
     setArtccId(state: SectorDataState, action: PayloadAction<string>) {
-      state.artccId = action.payload;
+      state.artccId = action.payload.toUpperCase();
     },
     setSectorId(state: SectorDataState, action: PayloadAction<string>) {
       state.sectorId = action.payload;
     },
     setSectorProfiles(state, action: PayloadAction<SectorProfile[]>) {
       state.profiles = action.payload;
-    },
-    setReferenceFixes(state: SectorDataState, action: PayloadAction<Fix[]>) {
-      state.referenceFixes = action.payload;
     }
   }
 });
 
-export const { setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setReferenceFixes, setSectorProfiles } = sectorSlice.actions;
+export const { setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setSectorProfiles } = sectorSlice.actions;
 export default sectorSlice.reducer;
-export const referenceFixSelector = (state: RootState) => state.sectorData.referenceFixes;
+export const artccIdSelector = (state: RootState) => state.sectorData.artccId;
 export const sectorPolygonSelector = (state: RootState) => state.sectorData.sectors;
 export const sectorIdSelector = (state: RootState) => state.sectorData.sectorId;
 export const sectorProfilesSelector = (state: RootState) => state.sectorData.profiles;
