@@ -45,24 +45,20 @@ function posToLatLng(pos: Position | { lat: number | string; lon: number | strin
 }
 
 function getRouteLine(entry: LocalEdstEntry, track: AircraftTrack) {
-  let { route } = entry;
-  const { routeFixes } = entry;
-  route = route.replace(/^\.*\[XXX]\.*/g, "");
-  const indexToSplit = route.indexOf("[XXX]");
-  const routeToDisplay = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/\.+$/g, "") : route.replace(/\.+$/g, "");
-  let fixNames = routeFixes.map(e => e.name);
-  const lastFixIndex = fixNames.indexOf(routeToDisplay.split(/\.+/g).pop() as string);
-  const pos = [Number(track.location.lon), Number(track.location.lat)];
+  const { formattedRoute, routeFixes } = entry;
+  const fixNames = routeFixes.map(e => e.name);
   if (fixNames.length === 0) {
     return null;
   }
-  fixNames = fixNames.slice(0, lastFixIndex + 1);
-  let routeFixesToDisplay = routeFixes.slice(0, lastFixIndex + 1);
-  const [nextFix] = getNextFix(route, routeFixesToDisplay, pos);
-  const index = fixNames.indexOf(nextFix.name);
-  routeFixesToDisplay = routeFixesToDisplay.slice(index);
-  routeFixesToDisplay.unshift({ name: "ppos", pos });
-  return routeFixesToDisplay;
+  const pos = [Number(track.location.lon), Number(track.location.lat)];
+  const nextFix = getNextFix(formattedRoute, routeFixes, pos);
+  if (nextFix) {
+    const index = fixNames.indexOf(nextFix.name);
+    const routeFixesToDisplay = routeFixes.slice(index);
+    routeFixesToDisplay.unshift({ name: "ppos", pos });
+    return routeFixesToDisplay;
+  }
+  return null;
 }
 
 export const GpdNavaid: React.FC<GpdFixProps> = ({ lat, lon }) => {

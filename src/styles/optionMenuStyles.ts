@@ -107,7 +107,7 @@ export const OptionsBottomRow = styled(OptionsBodyRow)`
   text-overflow: unset;
   white-space: unset;
   margin-top: 10px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   flex-grow: 1;
 `;
 export const UnderlineRow = styled(OptionsBodyRow)`
@@ -141,7 +141,7 @@ export const OptionsBodyCol = styled.div<{
   hover?: boolean;
   justifyContent?: string;
 }>`
-  display: block;
+  display: flex;
   flex-grow: 1;
   flex-flow: row;
   font-size: 16px;
@@ -169,6 +169,7 @@ export const OptionsBodyCol = styled.div<{
   ${props =>
     props.alignRight && {
       "justify-content": "right",
+      margin: "0 2px 0 0",
       display: "flex",
       "margin-left": "auto"
     }}

@@ -50,16 +50,16 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
-  const [aarAvail, setAarAvail] = useState(false);
-  const [onAar, setOnAar] = useState(false);
+  const [parAvail, setParAvail] = useState(false);
+  const [onPar, setOnPar] = useState(false);
 
   useEffect(() => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-    const aarAvail = !!entry.preferentialArrivalRoutes?.filter(
-      aar => aar.eligible && currentFixNames.includes(aar.triggeredFix) && entry.formattedRoute.includes(aar.amendment)
+    const parAvail = !!entry.preferentialArrivalRoutes?.filter(
+      par => par.eligible && currentFixNames.includes(par.triggeredFix) && entry.formattedRoute.includes(par.amendment)
     );
-    setAarAvail(aarAvail ?? false);
-    setOnAar(onAar);
+    setParAvail(parAvail ?? false);
+    setOnPar(onPar);
   }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
 
   const holdData = useMemo(() => entry.holdData, [entry.holdData]);
@@ -78,18 +78,18 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
   const showCoralBox = entry.nasSuffix && !entry.nasSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
 
-  const checkAarReroutePending = () => {
+  const checkParReroutePending = () => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-    const eligibleAar = entry?.preferentialArrivalRoutes?.filter(aar => aar.eligible);
-    if (eligibleAar?.length === 1) {
-      const aar = eligibleAar[0];
-      if (currentFixNames.includes(aar.triggeredFix) && !entry.formattedRoute.includes(aar.amendment)) {
-        return aar.amendment;
+    const eligiblePar = entry?.preferentialArrivalRoutes?.filter(par => par.eligible);
+    if (eligiblePar?.length === 1) {
+      const par = eligiblePar[0];
+      if (currentFixNames.includes(par.triggeredFix) && !entry.formattedRoute.includes(par.amendment)) {
+        return par.amendment;
       }
     }
     return null;
   };
-  const pendingAar = checkAarReroutePending();
+  const pendingPar = checkParReroutePending();
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -350,15 +350,15 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
               {entry.aclRouteDisplay === "raw_route" && <span>{entry.route}</span>}
               {!entry.aclRouteDisplay && (
                 <RouteSpan padding="0 2px">
-                  <RouteDepSpan amendmentPending={aarAvail && !onAar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
+                  <RouteDepSpan amendmentPending={parAvail && !onPar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
                     {entry.departure}
                   </RouteDepSpan>
                   ./.
                   {/* {entry.reference_fix ? computeFrd(entry.reference_fix) + '.' : ''} */}
                   {route}
                   {!route.endsWith(".") && route.length > 0 && `.`}
-                  {pendingAar && !onAar && (
-                    <RouteAmendmentSpan selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
+                  {pendingPar && !onPar && (
+                    <RouteAmendmentSpan selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>{`[${pendingPar}]`}</RouteAmendmentSpan>
                   )}
                   {entry.destination}
                 </RouteSpan>

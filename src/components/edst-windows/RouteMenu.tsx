@@ -37,6 +37,7 @@ const InputContainer = styled.div`
   align-items: center;
   vertical-align: center;
   display: flex;
+  flex-grow: 1;
   padding: 0;
   overflow: hidden;
   border-top: 2px solid #575757;
@@ -49,6 +50,7 @@ const Input = styled.input`
   font-size: 16px;
   outline: none;
   flex: 1;
+  width: 100%;
   color: ${edstFontGrey};
   background-color: #000000;
   border: 1px solid transparent;
@@ -350,9 +352,9 @@ export const RouteMenu: React.FC = () => {
           ))}
           {routesAvailable && (
             <PreferredRouteDisplay
-              aar={entry.preferentialArrivalRoutes.filter(aarData => currentRouteFixNames.includes(aarData.triggeredFix)) ?? []}
-              adr={asel.window === EdstWindow.DEP ? entry.preferentialDepartureRoutes : []}
-              adar={asel.window === EdstWindow.DEP ? entry.preferentialDepartureArrivalRoutes : []}
+              par={entry.preferentialArrivalRoutes.filter(parData => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+              pdr={asel.window === EdstWindow.DEP ? entry.preferentialDepartureRoutes : []}
+              pdar={asel.window === EdstWindow.DEP ? entry.preferentialDepartureArrivalRoutes : []}
               clearedPrefroute={clearedPrefroute}
             />
           )}

@@ -1,4 +1,4 @@
-import { Feature, Point, Position } from "@turf/turf";
+import { Position } from "@turf/turf";
 
 // flightplan data
 export type Flightplan = {
@@ -159,14 +159,10 @@ export type Navaid = {
   artcc_high: string;
 };
 
-export type EdstPreferentialRoute = {
-  eligible: boolean;
-  routeType: string;
-  route?: string;
-  amendment?: string;
-  departure: string;
-  destination: string;
-};
+export type EdstPreferentialRoute =
+  | (PreferentialDepartureRoute & { routeType: "pdr" })
+  | (PreferentialArrivalRoute & { routeType: "par" })
+  | (PreferentialDepartureArrivalRoute & { routeType: "pdar" });
 
 export type WindowPosition = {
   x: number;

@@ -34,8 +34,6 @@ const SectorRow = styled(OptionsBodyRow)`
 `;
 
 const SortCol = styled(OptionsBodyCol)`
-  justify-content: left;
-  align-content: center;
   //height: 20px;
   padding: 0 6px;
 

@@ -36,11 +36,9 @@ type DepRowProps = {
 export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
-  const [aarAvail, setAarAvail] = useState(false);
-  const [onAar, setOnAar] = useState(false);
-  const [adrAvail, setAdrAvail] = useState(false);
-  const [onAdr, setOnAdr] = useState(false);
-  const [onAdar, setOnAdar] = useState(false);
+  const [onPar, setOnPar] = useState(false);
+  const [onPdr, setOnPdr] = useState(false);
+  const [onPdar, setOnPdar] = useState(false);
 
   const now = new Date().getTime();
   const route = removeDestFromRouteString(entry.formattedRoute.slice(0), entry.destination);
@@ -49,39 +47,34 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const currentFixNames = entry.routeFixes.map(fix => fix.name);
-    const aarAvail = !!entry.preferentialArrivalRoutes?.filter(aar => aar.eligible && currentFixNames.includes(aar.triggeredFix)).length;
-    const onAar = !!entry.preferentialArrivalRoutes?.filter(aar => aar.eligible && entry.formattedRoute.includes(aar.amendment))?.length;
-    const onAdar = !!entry.preferentialDepartureArrivalRoutes.filter(adar => adar.eligible && entry.formattedRoute === adar.route).length;
-    setAarAvail(aarAvail);
-    setOnAar(onAar);
-    setOnAdar(onAdar);
+    const onPar = !!entry.preferentialArrivalRoutes?.filter(par => par.eligible && entry.formattedRoute.includes(par.amendment))?.length;
+    const onPdar = !!entry.preferentialDepartureArrivalRoutes.filter(pdar => pdar.eligible && entry.formattedRoute === pdar.route).length;
+    setOnPar(onPar);
+    setOnPdar(onPdar);
 
-    const adrAvail = !!entry.preferentialDepartureRoutes?.filter(adr => adr.eligible).length;
-    const onAdr = (entry.preferentialDepartureRoutes?.filter(adr => route.startsWith(adr.amendment))?.length ?? 0) > 0;
-    setAdrAvail(adrAvail);
-    setOnAdr(onAdr);
+    const onPdr = (entry.preferentialDepartureRoutes?.filter(pdr => route.startsWith(pdr.amendment))?.length ?? 0) > 0;
+    setOnPdr(onPdr);
   }, [entry.preferentialArrivalRoutes, entry.preferentialDepartureRoutes, entry.routeFixes, route]);
 
-  const checkAarReroutePending = () => {
+  const checkParReroutePending = () => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-    const eligibleAar = entry.preferentialArrivalRoutes.filter(aar => aar.eligible);
-    if (eligibleAar.length === 1) {
-      const aar = eligibleAar[0];
-      if (currentFixNames.includes(aar.triggeredFix)) {
-        return aar.amendment;
+    const eligiblePar = entry.preferentialArrivalRoutes.filter(par => par.eligible);
+    if (eligiblePar.length === 1) {
+      const par = eligiblePar[0];
+      if (currentFixNames.includes(par.triggeredFix)) {
+        return par.amendment;
       }
     }
     return null;
   };
 
-  const checkAdrReroutePending = (routes: PreferentialDepartureRoute[]) => {
+  const checkPdrReroutePending = (routes: PreferentialDepartureRoute[]) => {
     if (routes.length === 0) {
       return null;
     }
-    const eligibleRoutes = routes.filter(adr => adr.eligible);
+    const eligibleRoutes = routes.filter(pdr => pdr.eligible);
     if (eligibleRoutes.length > 0) {
-      const eligibleRnavRoutes = eligibleRoutes.filter(adr => adr.rnavRequired);
+      const eligibleRnavRoutes = eligibleRoutes.filter(pdr => pdr.rnavRequired);
       if (eligibleRnavRoutes.length > 0) {
         return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
       }
@@ -89,13 +82,13 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
     }
     return null;
   };
-  const checkAdarReroutePending = (routes: PreferentialDepartureArrivalRoute[]) => {
+  const checkPdarReroutePending = (routes: PreferentialDepartureArrivalRoute[]) => {
     if (routes.length === 0) {
       return null;
     }
-    const eligibleRoutes = routes.filter(adr => adr.eligible);
+    const eligibleRoutes = routes.filter(pdr => pdr.eligible);
     if (eligibleRoutes.length > 0) {
-      const eligibleRnavRoutes = eligibleRoutes.filter(adr => adr.rnavRequired);
+      const eligibleRnavRoutes = eligibleRoutes.filter(pdr => pdr.rnavRequired);
       if (eligibleRnavRoutes.length > 0) {
         return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
       }
@@ -104,9 +97,9 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
     return null;
   };
 
-  const pendingAdr = checkAdrReroutePending(entry.preferentialDepartureRoutes);
-  const pendingAdar = checkAdarReroutePending(entry.preferentialDepartureArrivalRoutes);
-  const pendingAar = checkAarReroutePending();
+  const pendingPdr = checkPdrReroutePending(entry.preferentialDepartureRoutes);
+  const pendingPdar = checkPdarReroutePending(entry.preferentialDepartureArrivalRoutes);
+  const pendingPar = checkParReroutePending();
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -214,18 +207,18 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
             >
               <RouteSpan padding="0 2px">
                 <RouteSpan>
-                  {/* className={`${((aarAvail && !onAar) || (adrAvail && !onAdr)) ? 'amendment-1' : ''} ${isSelected(entry.aircraftId, depRowFieldEnum.route) ? 'selected' : ''}`}> */}
+                  {/* className={`${((parAvail && !onPar) || (pdrAvail && !onPdr)) ? 'amendment-1' : ''} ${isSelected(entry.aircraftId, depRowFieldEnum.route) ? 'selected' : ''}`}> */}
                   {entry.departure}
                 </RouteSpan>
-                {pendingAdar && !onAdar && (
-                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingAdar}]`}</RouteAmendmentSpan>
+                {pendingPdar && !onPdar && (
+                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingPdar}]`}</RouteAmendmentSpan>
                 )}
-                {!pendingAdar && pendingAdr && !onAdr && (
-                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingAdr}]`}</RouteAmendmentSpan>
+                {!pendingPdar && pendingPdr && !onPdr && (
+                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingPdr}]`}</RouteAmendmentSpan>
                 )}
                 {route}
-                {!pendingAdar && pendingAar && !onAar && (
-                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingAar}]`}</RouteAmendmentSpan>
+                {!pendingPdar && pendingPar && !onPar && (
+                  <RouteAmendmentSpan selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}>{`[${pendingPar}]`}</RouteAmendmentSpan>
                 )}
                 {route?.slice(-1) !== "." && ".."}
                 {entry.destination}
