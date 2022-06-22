@@ -6,14 +6,6 @@ import { refreshSigmets } from "./weatherThunks";
 import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
 import { Fix } from "../../types";
 
-const DISCLAIMER_MESSAGE = `
-!!! WARNING !!!\n
-This vEDST project is not considered “usable” by the developers at this time.\n
-Features may not always work as intended and at times will stop working completely.\n
-If you wish to contribute to this project, please checkout the GitHub Repository 
-https://github.com/vFlightDataSystems/VATSIM_EDST_frontend.\n
-`;
-
 export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) => {
   const state = thunkAPI.getState() as RootState;
   let { sectorData } = state;
@@ -25,8 +17,6 @@ export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) =>
     // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
     sectorId = "37";
   } else {
-    // eslint-disable-next-line no-alert
-    await alert(DISCLAIMER_MESSAGE);
     artccId =
       // eslint-disable-next-line no-alert
       (await prompt("Choose an ARTCC")

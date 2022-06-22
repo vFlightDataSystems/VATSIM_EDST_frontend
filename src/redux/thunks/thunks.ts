@@ -7,9 +7,9 @@ import { AircraftTrack, AirportInfo, DerivedFlightplanData, Flightplan, LocalEds
 import { closeAircraftMenus, closeWindow, openWindow, setAsel, setWindowPosition } from "../slices/appSlice";
 import { addTrialPlan, removeTrialPlan, TrialPlan } from "../slices/planSlice";
 import {
-  fetchAar,
-  fetchAdar,
-  fetchAdr,
+  fetchPar,
+  fetchPdar,
+  fetchPdr,
   fetchFormatRoute,
   fetchRouteFixes,
   memoizedFetchAirportInfo,
@@ -93,6 +93,7 @@ function aircraftSelect(
           break;
         default:
           // TODO: handle error
+          // eslint-disable-next-line no-console
           console.log("unknown window");
           break;
       }
@@ -256,9 +257,9 @@ async function createEntryFromFlightplan(fp: Flightplan, artcc: string): Promise
   const [formattedRoute, routeFixes, preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes] = await Promise.all([
     memoizedFetchFormatRoute(fp.route, fp.departure, fp.destination),
     memoizedFetchRouteFixes(fp.route, fp.departure, fp.destination),
-    fetchAar(artcc, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude),
-    fetchAdr(artcc, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
-    fetchAdar(artcc, fp.equipment.split("/")[0], fp.departure, fp.destination)
+    fetchPar(artcc, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude),
+    fetchPdr(artcc, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
+    fetchPdar(artcc, fp.equipment.split("/")[0], fp.departure, fp.destination)
   ]);
 
   let nasSuffix = "";
@@ -306,9 +307,9 @@ const updateDerivedFlightplanThunk = createAsyncThunk<void, Flightplan>("entries
     }
     if (fp.equipment !== entry.equipment) {
       const [preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes] = await Promise.all([
-        fetchAar(sectorData.artccId, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude),
-        fetchAdr(sectorData.artccId, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
-        fetchAdar(sectorData.artccId, fp.equipment.split("/")[0], fp.departure, fp.destination)
+        fetchPar(sectorData.artccId, fp.route, fp.equipment.split("/")[0], fp.destination, fp.altitude),
+        fetchPdr(sectorData.artccId, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
+        fetchPdar(sectorData.artccId, fp.equipment.split("/")[0], fp.departure, fp.destination)
       ]);
       _.assign(amendedData, { preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes });
     }

@@ -67,7 +67,11 @@ const Edst: React.FC = () => {
   const handleKeyDown = (event: KeyboardEvent) => {
     // console.log(document.activeElement?.localName);
     // event.preventDefault();
-    if (document.activeElement?.localName !== "input" && !windows[EdstWindow.ALTITUDE_MENU].open) {
+    if (
+      document.activeElement?.localName !== "input" &&
+      document.activeElement?.localName !== "textarea" &&
+      !windows[EdstWindow.ALTITUDE_MENU].open
+    ) {
       if (!mcaInputRef?.current) {
         dispatch(openWindow({ window: EdstWindow.MESSAGE_COMPOSE_AREA }));
         if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
@@ -86,7 +90,7 @@ const Edst: React.FC = () => {
     <EdstDiv
       ref={bodyRef}
       onContextMenu={event => process.env.NODE_ENV !== "development" && event.preventDefault()}
-      tabIndex={document.activeElement?.localName !== "input" ? -1 : 0}
+      tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
     >
       <EdstHeader />
       <div id="toPrint" />

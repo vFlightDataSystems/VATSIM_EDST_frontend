@@ -12,7 +12,7 @@ export const depFilter = (entry: LocalEdstEntry, track: AircraftTrack, artccId: 
     const depPos = [entry.depInfo.lon, entry.depInfo.lat];
     depAirportDistance = distance(point(depPos), point(pos), { units: "nauticalmiles" });
   }
-  return Number(track.groundSpeed) < AIRBORNE_GROUNDSPEED_FILTER && entry.depInfo?.artcc?.toLowerCase() === artccId && depAirportDistance < 20;
+  return Number(track.groundSpeed) < AIRBORNE_GROUNDSPEED_FILTER && entry.depInfo?.artcc?.toUpperCase() === artccId && depAirportDistance < 20;
 };
 
 export const entryFilter = (entry: LocalEdstEntry, track: AircraftTrack, polygons: Feature<Polygon>[]) => {

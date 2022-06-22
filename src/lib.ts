@@ -76,7 +76,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | n
   let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
   routeFixesToProcess.unshift({ pos, name: "ppos" });
   if (routeFixesToProcess.length > 1) {
-    const nextFix = getNextFix(route, routeFixesToProcess, pos)[0] as RouteFix;
+    const nextFix = getNextFix(route, routeFixesToProcess, pos) as RouteFix;
     const index = fixNames.indexOf(nextFix.name);
     routeFixesToProcess = routeFixesToProcess.slice(index);
     routeFixesToProcess.unshift({ name: "ppos", pos });
@@ -154,7 +154,7 @@ export function getRemainingRouteFixes(
   return { currentRoute: route, currentRouteFixes: routeFixes };
 }
 
-export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
+export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number }) | null {
   const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
   if (routeFixesWithDistance.length > 1) {
     const fixNames = routeFixes.map((e: { name: string }) => e.name);
@@ -162,14 +162,14 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
     const closestFix = sortedRouteFixes[0];
     const index = fixNames.indexOf(closestFix.name);
     if (index === routeFixesWithDistance.length - 1) {
-      return [closestFix];
+      return closestFix;
     }
     const followingFix = routeFixesWithDistance[index + 1];
     const line = lineString([closestFix.pos, followingFix.pos]);
     const lineDistance = pointToLineDistance(pos, line, { units: "nauticalmiles" });
-    return lineDistance >= closestFix.dist ? [closestFix, followingFix] : [followingFix, closestFix];
+    return lineDistance >= closestFix.dist ? closestFix : followingFix;
   }
-  return routeFixesWithDistance;
+  return routeFixesWithDistance[0];
 }
 
 /**
@@ -361,11 +361,8 @@ export function formatAltitude(alt: string): string {
 export async function getFrd(artccId: string, location: { lat: number; lon: number }, hubConnection: HubConnection | null) {
   let frd = null;
   if (hubConnection) {
-    frd = await hubConnection.invoke("GenerateFrd", { artccId, location }).then(response => {
-      if (response.isSuccess) {
-        return response.frd;
-      }
-      console.log(response.error);
+    frd = await hubConnection.invoke("GenerateFrd", { artccId, location }).catch(error => {
+      console.log(error);
       return null;
     });
   }

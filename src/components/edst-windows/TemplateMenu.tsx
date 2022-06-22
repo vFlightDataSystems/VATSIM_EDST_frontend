@@ -190,52 +190,52 @@ export const TemplateMenu: React.FC = () => {
           <TemplateRowDiv>
             <TemplateCol width={90}>
               <EdstTooltip title={Tooltips.templateMenuAid}>
-                <TemplateInput value={aidInput} onChange={event => setAidInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={aidInput} onChange={event => setAidInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={50}>
               <EdstTooltip title={Tooltips.templateMenuNum}>
-                <TemplateInput value={numInput} onChange={event => setNumInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={numInput} onChange={event => setNumInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={50}>
               <EdstTooltip title={Tooltips.templateMenuSai}>
-                <TemplateInput value={saiInput} onChange={event => setSaiInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={saiInput} onChange={event => setSaiInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={60}>
               <EdstTooltip title={Tooltips.templateMenuTyp}>
-                <TemplateInput value={typeInput} onChange={event => setTypeInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={typeInput} onChange={event => setTypeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={69}>
               <EdstTooltip title={Tooltips.templateMenuEqpBox}>
-                <TemplateInput value={equipInput} onChange={event => setEquipInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={equipInput} onChange={event => setEquipInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={60}>
               <EdstTooltip title={Tooltips.templateMenuBcn}>
-                <TemplateInput value={beaconInput} onChange={event => setBeaconInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={beaconInput} onChange={event => setBeaconInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={70}>
               <EdstTooltip title={Tooltips.templateMenuSpd}>
-                <TemplateInput value={speedInput} onChange={event => setSpeedInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={speedInput} onChange={event => setSpeedInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={120}>
               <EdstTooltip title={Tooltips.templateMenuFix}>
-                <TemplateInput value={frdInput} onChange={event => setFrdInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={frdInput} onChange={event => setFrdInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width={70}>
               <EdstTooltip title={Tooltips.templateMenuTim}>
-                <TemplateInput value={timeInput} onChange={event => setTimeInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={timeInput} onChange={event => setTimeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <FlexCol>
               <EdstTooltip title={Tooltips.templateMenuAlt}>
-                <TemplateInput value={altInput} onChange={event => setAltInput(event.target.value.toUpperCase())} />
+                <TemplateInput value={altInput} onChange={event => setAltInput(event.target.value)} />
               </EdstTooltip>
             </FlexCol>
           </TemplateRowDiv>
@@ -245,12 +245,7 @@ export const TemplateMenu: React.FC = () => {
             </TemplateCol>
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateTextArea
-              title={Tooltips.templateMenuRte}
-              value={routeInput}
-              onChange={event => setRouteInput(event.target.value.toUpperCase())}
-              rows={3}
-            />
+            <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={event => setRouteInput(event.target.value)} rows={3} />
           </TemplateRowDiv>
           <TemplateRowDiv>
             <TemplateCol width={50} textIndent>
@@ -262,12 +257,7 @@ export const TemplateMenu: React.FC = () => {
             </TemplateCol>
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateTextArea
-              title={Tooltips.templateMenuRmk}
-              value={rmkInput}
-              onChange={event => setRmkInput(event.target.value.toUpperCase())}
-              rows={3}
-            />
+            <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={event => setRmkInput(event.target.value)} rows={3} />
           </TemplateRowDiv>
           <TemplateRowDiv>
             <TemplateCol bottomRow>
