@@ -1,10 +1,11 @@
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { isLoggedInSelector, login } from "../redux/slices/authSlice";
+import { isExchangingCodeSelector, exchangeCode, sessionSelector} from "../redux/slices/authSlice";
+import { useRootSelector } from "../redux/hooks";
 
 const LoginPanel = styled.div`
   height: 100vh;
@@ -49,16 +50,24 @@ const Button = styled.button`
   padding: 0.25em 1em;
   border: 2px solid #1dbe77;
   border-radius: 3px;
+  width: 150px;
 `;
 
-const Login = () => {
+const Login: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const isLoggingIn = useSelector(isLoggedInSelector);
   const code = searchParams.get("code");
 
-  if (code && !isLoggingIn) {
-    dispatch(login({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
+  const isExchanging = useRootSelector(isExchangingCodeSelector);
+  const session = useRootSelector(sessionSelector);
+
+  if (code && !session && !isExchanging) {
+    dispatch(exchangeCode({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
+  }
+
+  if (!isExchanging && session) {
+    navigate("/", { replace: true });
   }
 
   return (
@@ -75,7 +84,6 @@ const Login = () => {
                 process.env.REACT_APP_VATSIM_CLIENT_ID
               }&redirect_uri=${encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`)}&response_type=code&scope=vatsim_details`;
             }}
-            style={{ width: "150px" }}
           >
             {code ? (
               /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
