@@ -71,7 +71,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | n
   route = route.replace(/^\.*\[XXX]\.*/g, "");
   const indexToSplit = route.indexOf("[XXX]");
   const routeToProcess = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, "") : route;
-  const fixNames = routeFixes.map((e: { name: string }) => e.name);
+  const fixNames = routeFixes.map(e => e.name);
   const lastFixIndex = fixNames.indexOf(routeToProcess.split(".").pop() as string);
   let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
   routeFixesToProcess.unshift({ pos, name: "ppos" });
@@ -157,7 +157,7 @@ export function getRemainingRouteFixes(
 export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number }) | null {
   const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
   if (routeFixesWithDistance.length > 1) {
-    const fixNames = routeFixes.map((e: { name: string }) => e.name);
+    const fixNames = routeFixes.map(e => e.name);
     const sortedRouteFixes = routeFixesWithDistance.sort((u, v) => u.dist - v.dist);
     const closestFix = sortedRouteFixes[0];
     const index = fixNames.indexOf(closestFix.name);
@@ -252,13 +252,12 @@ export function removeDepFromRouteString(route: string, dep: string): string {
 export function getClearedToFixRouteFixes(
   clearedFixName: string,
   entry: LocalEdstEntry,
-  location: { lat: number; lon: number },
   frd: string | null
 ): { route: string; routeFixes: RouteFix[] } | null {
   let newRoute = entry.currentRoute;
   const { currentRouteFixes: routeFixes, destination } = entry;
   if (newRoute && routeFixes) {
-    const fixNames = routeFixes.map((e: { name: string }) => e.name);
+    const fixNames = routeFixes.map(e => e.name);
 
     const index = fixNames.indexOf(clearedFixName);
     const relevantFixNames = fixNames.slice(0, index + 1).reverse();

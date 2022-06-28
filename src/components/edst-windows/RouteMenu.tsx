@@ -155,7 +155,7 @@ export const RouteMenu: React.FC = () => {
 
   const clearedToFix = async (clearedFixName: string) => {
     const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
-    const route = getClearedToFixRouteFixes(clearedFixName, entry, aircraftTrack.location, frd)?.route;
+    const route = getClearedToFixRouteFixes(clearedFixName, entry, frd)?.route;
     if (!trialPlan) {
       if (hubConnection && route) {
         const amendedFlightplan: Flightplan = {
