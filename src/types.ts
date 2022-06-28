@@ -186,3 +186,10 @@ export type Plan = {
   planData: Record<string, any>;
   msg: string;
 };
+
+export type SessionInfo = {
+  id: string;
+  artccId: string;
+  facilityId: string;
+  positionId: string;
+};
