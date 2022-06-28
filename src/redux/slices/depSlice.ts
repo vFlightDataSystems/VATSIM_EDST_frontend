@@ -16,10 +16,10 @@ const depSlice = createSlice({
   name: "dep",
   initialState,
   reducers: {
-    setDepSort(state: DepState, action: PayloadAction<SortOptions>) {
+    setDepSort(state, action: PayloadAction<SortOptions>) {
       state.sortData.selectedOption = action.payload;
     },
-    setDepManualPosting(state: DepState, action: PayloadAction<boolean>) {
+    setDepManualPosting(state, action: PayloadAction<boolean>) {
       state.manualPosting = action.payload;
     }
   }

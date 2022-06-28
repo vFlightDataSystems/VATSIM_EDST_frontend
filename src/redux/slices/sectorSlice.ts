@@ -18,7 +18,7 @@ const initialState: SectorDataState = {
   profiles: [],
   selectedSectorIds: [],
   sectorId: "",
-  artccId: process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? ""
+  artccId: ""
 };
 
 const sectorSlice = createSlice({
@@ -30,10 +30,10 @@ const sectorSlice = createSlice({
         action.payload.map(sector => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)])
       );
     },
-    setSelectedSectors(state: SectorDataState, action: PayloadAction<string[]>) {
+    setSelectedSectors(state, action: PayloadAction<string[]>) {
       state.selectedSectorIds = action.payload;
     },
-    toggleSector(state: SectorDataState, action: PayloadAction<string>) {
+    toggleSector(state, action: PayloadAction<string>) {
       if (state.selectedSectorIds.includes(action.payload)) {
         const selectedSectorsSet = new Set(state.selectedSectorIds);
         selectedSectorsSet.delete(action.payload);
@@ -42,7 +42,7 @@ const sectorSlice = createSlice({
         state.selectedSectorIds = [...state.selectedSectorIds, action.payload];
       }
     },
-    setArtccId(state: SectorDataState, action: PayloadAction<string>) {
+    setArtccId(state, action: PayloadAction<string>) {
       state.artccId = action.payload.toUpperCase();
     },
     setSectorId(state: SectorDataState, action: PayloadAction<string>) {
