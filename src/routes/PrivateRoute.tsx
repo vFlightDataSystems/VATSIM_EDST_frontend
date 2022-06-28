@@ -1,13 +1,13 @@
 import React from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { isLoggedInSelector } from "../redux/slices/authSlice";
+import { Navigate, Outlet } from "react-router-dom";
+import { sessionSelector } from "../redux/slices/authSlice";
 import { useRootSelector } from "../redux/hooks";
 
 const PrivateRoute = () => {
-  const location = useLocation();
-  const isLoggedIn = useRootSelector(isLoggedInSelector);
+  const session = useRootSelector(sessionSelector);
 
-  return isLoggedIn ? <Outlet /> : <Navigate to={`/login?next=${location.pathname}`} replace />;
+  // User needs a valid session and an ARTCC id before viewing EDST
+  return session ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

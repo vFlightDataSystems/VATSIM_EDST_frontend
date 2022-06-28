@@ -161,7 +161,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
       if (entry && entry.aclDisplay && entry.currentRouteFixes?.map(fix => fix.name).includes(args[0])) {
         const aircraftTrack = aircraftTracks[entry.aircraftId];
         const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
-        const route = getClearedToFixRouteFixes(args[0], entry, aircraftTrack.location, frd)?.route;
+        const route = getClearedToFixRouteFixes(args[0], entry, frd)?.route;
         if (route) {
           const amendmentFlightplan: Flightplan = {
             ...entry,
