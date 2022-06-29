@@ -62,7 +62,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
     setOnPar(onPar);
   }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
 
-  const holdData = useMemo(() => entry.holdData, [entry.holdData]);
+  const { holdData } = entry;
   const route = useMemo(() => {
     const route = entry.currentRoute?.replace(/^\.+/, "") ?? entry.formattedRoute;
     return removeDestFromRouteString(route.slice(0), entry.destination);

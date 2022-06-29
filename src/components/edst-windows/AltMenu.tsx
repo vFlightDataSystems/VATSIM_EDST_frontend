@@ -61,23 +61,23 @@ const AltMenuRow = styled.div<{ bgBlack?: boolean; color?: string; hover?: boole
   border: 1px solid #adadad;
   ${props => props.bgBlack && { "background-color": "#000000" }};
 
-  ${props => props.color && { color: props.color }},
+  ${props => props.color && { color: props.color }};
   &[disabled] {
     pointer-events: none;
     color: #adadad;
   }
 
   ${props =>
-          props.hover && {
-            "&:hover": {
-              border: "1px solid #F0F0F0"
-            }
-          }},
+    props.hover && {
+      "&:hover": {
+        border: "1px solid #F0F0F0"
+      }
+    }};
   ${props =>
-          props.selected && {
-            border: "1px solid #FFFFFF",
-            "background-color": "#AD6C6C"
-          }},
+    props.selected && {
+      border: "1px solid #FFFFFF",
+      "background-color": "#AD6C6C"
+    }};
   input {
     font-size: 16px;
     outline: none;
@@ -107,7 +107,7 @@ const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
       "&:hover": {
         border: "1px solid #F0F0F0"
       }
-    }}
+    }};
 `;
 
 const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; selected?: boolean }>`
@@ -127,12 +127,12 @@ const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; 
       "&:hover": {
         border: "1px solid #F0F0F0"
       }
-    }}
+    }};
   ${props =>
     props.selected && {
       "background-color": "#AD6C6C",
       color: "#D6D6D6"
-    }}
+    }};
 `;
 
 const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
