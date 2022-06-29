@@ -264,7 +264,6 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           <EdstTooltip title={Tooltips.aclAlt}>
             <AltCol>
               <AltColDiv
-                interimAltitude={!!entry.interimAltitude}
                 headerMouseDown={altMouseDown}
                 selected={isSelected(entry.aircraftId, AclRowField.ALT)}
                 onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}

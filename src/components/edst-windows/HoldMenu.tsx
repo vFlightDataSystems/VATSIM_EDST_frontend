@@ -8,7 +8,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entriesSlice";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
-import { AircraftTrack, LocalEdstEntry, RouteFix } from "../../types";
+import { RouteFix } from "../../types";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
