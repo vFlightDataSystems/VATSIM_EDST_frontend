@@ -16,7 +16,7 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
-import {mod} from '../../lib';
+import { mod } from "../../lib";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   width: 180px;
