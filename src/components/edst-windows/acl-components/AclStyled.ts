@@ -142,7 +142,7 @@ export const AltCol = styled(Col)<{ headerCol?: boolean }>`
 export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
   border: 1px solid transparent;
 
-  ${props => props.headerMouseDown && { border: "1px solid #AD3636" }},
+  ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
   &:hover {
     border: 1px solid #f0f0f0;
   }
