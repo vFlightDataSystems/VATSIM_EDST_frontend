@@ -6,24 +6,15 @@ import { refreshSigmets } from "./weatherThunks";
 import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
 import { Fix } from "../../types";
 
-export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) => {
+type InitArgs = {
+  artccId: string;
+  sectorId: string;
+};
+
+export const initThunk = createAsyncThunk<void, InitArgs>("app/init", async ({ artccId, sectorId }, thunkAPI) => {
   const state = thunkAPI.getState() as RootState;
   let { sectorData } = state;
   const gpdData = state.gpd;
-  let artccId: string;
-  let sectorId: string;
-  if (process.env.NODE_ENV === "development") {
-    artccId = process.env.REACT_APP_DEV_DEFAULT_ARTCC ?? "zma";
-    // artccId = await prompt('Choose an ARTCC')?.trim().toLowerCase() ?? '';
-    sectorId = "37";
-  } else {
-    artccId =
-      // eslint-disable-next-line no-alert
-      (await prompt("Choose an ARTCC")
-        ?.trim()
-        .toLowerCase()) ?? "";
-    sectorId = "37";
-  }
   thunkAPI.dispatch(setArtccId(artccId));
   thunkAPI.dispatch(setSectorId(sectorId));
   if (Object.keys(sectorData.sectors).length === 0) {

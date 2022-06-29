@@ -20,7 +20,6 @@ import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea
 import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
-import { initThunk } from "./redux/thunks/initThunk";
 import { EdstWindow } from "./namespaces";
 import {
   mcaCommandStringSelector,
@@ -55,7 +54,6 @@ const Edst: React.FC = () => {
   const bodyRef = React.useRef<HTMLDivElement & any>(null);
 
   useEffect(() => {
-    dispatch(initThunk());
     const weatherUpdateIntervalId = setInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
     return () => {
       if (weatherUpdateIntervalId) {

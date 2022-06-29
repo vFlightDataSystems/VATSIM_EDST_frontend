@@ -4,7 +4,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { isExchangingCodeSelector, exchangeCode, sessionSelector} from "../redux/slices/authSlice";
+import { isExchangingCodeSelector, exchangeCode, sessionSelector, isExchangedSelector } from "../redux/slices/authSlice";
 import { useRootSelector } from "../redux/hooks";
 
 const LoginPanel = styled.div`
@@ -60,13 +60,14 @@ const Login: React.FC = () => {
   const code = searchParams.get("code");
 
   const isExchanging = useRootSelector(isExchangingCodeSelector);
+  const isExchanged = useRootSelector(isExchangedSelector);
   const session = useRootSelector(sessionSelector);
 
-  if (code && !session && !isExchanging) {
+  if (code && !session && !isExchanging && !isExchanged) {
     dispatch(exchangeCode({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
   }
 
-  if (!isExchanging && session) {
+  if (isExchanged && session) {
     navigate("/", { replace: true });
   }
 
