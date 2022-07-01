@@ -187,9 +187,24 @@ export type Plan = {
   msg: string;
 };
 
+export type EramConfiguration = {
+  sectorId: string;
+};
+
+export type ControllerPosition = {
+  callsign: string;
+  eramConfiguration: EramConfiguration | null;
+  frequency: number;
+  id: string;
+  name: string;
+  radioName: string;
+};
+
 export type SessionInfo = {
   id: string;
   artccId: string;
   facilityId: string;
   positionId: string;
+  isActive: boolean;
+  position: ControllerPosition;
 };
