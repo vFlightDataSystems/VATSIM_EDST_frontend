@@ -1,11 +1,14 @@
+// noinspection CssUnknownTarget
+
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { isExchangingCodeSelector, exchangeCode, sessionSelector, isExchangedSelector } from "../redux/slices/authSlice";
-import { useRootSelector } from "../redux/hooks";
+import {login, vatsimTokenSelector} from "../redux/slices/authSlice";
+import {useHub} from '../hooks/hub';
+import {useRootSelector} from '../redux/hooks';
 
 const LoginPanel = styled.div`
   height: 100vh;
@@ -58,18 +61,19 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
+  const vatsimToken = useRootSelector(vatsimTokenSelector);
 
-  const isExchanging = useRootSelector(isExchangingCodeSelector);
-  const isExchanged = useRootSelector(isExchangedSelector);
-  const session = useRootSelector(sessionSelector);
+  useEffect(() => {
+    if (code) {
+      dispatch(login({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
+    }
+  }, [code]);
 
-  if (code && !session && !isExchanging && !isExchanged) {
-    dispatch(exchangeCode({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
-  }
-
-  if (isExchanged && session) {
-    navigate("/", { replace: true });
-  }
+  useEffect(() => {
+    if (vatsimToken) {
+      navigate("/", { replace: true });
+    }
+  }, [vatsimToken]);
 
   return (
     <>

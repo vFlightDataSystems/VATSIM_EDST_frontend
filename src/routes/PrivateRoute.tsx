@@ -1,13 +1,13 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { sessionSelector } from "../redux/slices/authSlice";
+import { vatsimTokenSelector } from "../redux/slices/authSlice";
 import { useRootSelector } from "../redux/hooks";
 
 const PrivateRoute = () => {
-  const session = useRootSelector(sessionSelector);
+  const token = useRootSelector(vatsimTokenSelector);
 
   // User needs a valid session and an ARTCC id before viewing EDST
-  return session ? <Outlet /> : <Navigate to="/login" replace />;
+  return token ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;
