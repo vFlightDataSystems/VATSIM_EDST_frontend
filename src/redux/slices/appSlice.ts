@@ -92,7 +92,7 @@ export const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.cpdlcMsgOut
 ];
 
-const defaultWindowPositions: Partial<Record<EdstWindow, { x: number; y: number } | null>> = {
+const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition | null>> = {
   [EdstWindow.STATUS]: { x: 400, y: 100 },
   [EdstWindow.OUTAGE]: { x: 400, y: 100 },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 600 },
@@ -160,7 +160,7 @@ const appSlice = createSlice({
     setShowSectorSelector(state, action: PayloadAction<boolean>) {
       state.showSectorSelector = action.payload;
     },
-    setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: { x: number; y: number; w?: number; h?: number } | null }>) {
+    setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: WindowPosition | null }>) {
       state.windows[action.payload.window].position = action.payload.pos;
     },
     setMraMessage(state, action: PayloadAction<string>) {

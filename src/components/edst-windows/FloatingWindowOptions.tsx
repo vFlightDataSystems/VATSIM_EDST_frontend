@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { FloatingWindowHeaderColDiv14, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
 import { NoSelectDiv } from "../../styles/styles";
+import { WindowPosition } from "../../types";
 
-const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv)<{ pos: { x: number; y: number } }>`
+const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv)<{ pos: WindowPosition }>`
   position: absolute;
   display: flex;
   flex-flow: column;
@@ -26,7 +27,7 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<{ unselected?: b
 `;
 
 type FloatingWindowOptionsProps = {
-  pos: { x: number; y: number };
+  pos: WindowPosition;
   closeOptions?: () => void;
   header?: string;
   options?: string[];

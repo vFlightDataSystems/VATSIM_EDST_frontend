@@ -7,7 +7,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { Flightplan } from "../../types";
+import {Flightplan, WindowPosition} from "../../types";
 import { addTrialPlanThunk } from "../../redux/thunks/thunks";
 import { NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
@@ -17,7 +17,7 @@ import { formatAltitude } from "../../lib";
 import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
 
-const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: { x: number; y: number } }>`
+const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: WindowPosition }>`
   z-index: 11000;
   background-color: #888888;
   position: fixed;

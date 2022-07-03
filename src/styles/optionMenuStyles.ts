@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { DraggableDiv } from "./styles";
 import { edstFontGrey } from "./colors";
+import {WindowPosition} from '../types';
 
 export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?: boolean; diamond?: boolean }>`
   display: inline-flex;
@@ -34,7 +35,7 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?:
       transform: "rotate(45deg)"
     }}
 `;
-export const OptionsMenu = styled(DraggableDiv)<{ pos?: { x: number; y: number }; zIndex: number }>`
+export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
   z-index: ${props => 10000 - props.zIndex};
   overflow: hidden;
   position: fixed;
