@@ -16,6 +16,7 @@ import {
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
+import { WindowPosition } from "../../types";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
@@ -25,7 +26,7 @@ export const MetarWindow: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.METAR));
   const [selected, setSelected] = useState<string | null>(null);
-  const [selectedPos, setSelectedPos] = useState<{ x: number; y: number; w: number } | null>(null);
+  const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const metarList = useRootSelector(metarSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
@@ -73,7 +74,7 @@ export const MetarWindow: React.FC = () => {
                 {selected === airport && selectedPos && (
                   <FloatingWindowOptions
                     pos={{
-                      x: selectedPos.x + selectedPos.w,
+                      x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
                     }}
                     options={[`DELETE ${airport}`]}

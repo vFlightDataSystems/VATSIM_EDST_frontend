@@ -8,7 +8,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entriesSlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { LocalEdstEntry, AirwayFix, AircraftTrack } from "../../../types";
+import { LocalEdstEntry, AirwayFix, AircraftTrack, WindowPosition } from "../../../types";
 import { getNextFix } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { aircraftTrackSelector } from "../../../redux/slices/aircraftTrackSlice";
@@ -18,7 +18,7 @@ type GpdFixProps = {
   lon: number | string;
 };
 
-const TrackLineDiv = styled.div<{ pos: { x: number; y: number } }>`
+const TrackLineDiv = styled.div<{ pos: WindowPosition }>`
   transform-origin: top left;
   transform: rotate(-45deg);
   position: absolute;
@@ -88,7 +88,7 @@ export const GpdAircraftTrack: React.FC<{ aircraftId: string }> = ({ aircraftId 
   const entry = useRootSelector(entrySelector(aircraftId));
   const track = useRootSelector(aircraftTrackSelector(aircraftId));
   const posLatLng = useMemo(() => posToLatLng({ ...track.location }), [track.location]);
-  const [trackPos, setTrackPos] = useState<{ x: number; y: number } | null>(null);
+  const [trackPos, setTrackPos] = useState<WindowPosition | null>(null);
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);

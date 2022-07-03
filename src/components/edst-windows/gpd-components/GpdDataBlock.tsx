@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { LocalEdstEntry } from "../../../types";
+import { LocalEdstEntry, WindowPosition } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdAircraftSelect } from "../../../redux/thunks/thunks";
 import { aselSelector } from "../../../redux/slices/appSlice";
@@ -14,7 +14,7 @@ type GpdDataBlockProps = {
   toggleShowRoute(): void;
 };
 
-const DataBlockDiv = styled.div<{ pos: { x: number; y: number }; offset: { x: number; y: number } }>`
+const DataBlockDiv = styled.div<{ pos: WindowPosition; offset: { x: number; y: number } }>`
   z-index: 999;
   ${props => ({
     left: props.pos.x + props.offset.x + 24,

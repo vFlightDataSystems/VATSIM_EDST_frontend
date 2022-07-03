@@ -17,6 +17,7 @@ import {
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { mod } from "../../lib";
+import { WindowPosition } from "../../types";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   width: 180px;
@@ -32,7 +33,7 @@ export const AltimeterWindow: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTIMETER));
   const [selected, setSelected] = useState<string | null>(null);
-  const [selectedPos, setSelectedPos] = useState<{ x: number; y: number; w: number } | null>(null);
+  const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const altimeterList = useRootSelector(altimeterSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
@@ -95,7 +96,7 @@ export const AltimeterWindow: React.FC = () => {
                   {selected === airport && selectedPos && (
                     <FloatingWindowOptions
                       pos={{
-                        x: selectedPos.x + selectedPos.w,
+                        x: selectedPos.x + selectedPos.w!,
                         y: selectedPos.y
                       }}
                       options={[`DELETE ${airport}`]}

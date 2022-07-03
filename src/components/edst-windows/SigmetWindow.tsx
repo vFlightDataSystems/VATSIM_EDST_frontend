@@ -24,6 +24,7 @@ import { sectorIdSelector } from "../../redux/slices/sectorSlice";
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
+import { WindowPosition } from "../../types";
 
 enum sigmetOption {
   viewSuppressed = "VIEW SUPPRESS",
@@ -44,7 +45,7 @@ export const SigmetWindow: React.FC = () => {
   const zStack = useRootSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedPos, setSelectedPos] = useState<{ x: number; y: number; w: number } | null>(null);
+  const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS);
 
