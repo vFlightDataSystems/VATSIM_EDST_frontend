@@ -120,7 +120,7 @@ const initialState: AppState = {
   mraMsg: "",
   mcaCommandString: "",
   tooltipsEnabled: true,
-  showSectorSelector: true,
+  showSectorSelector: false,
   asel: null,
   zStack: [],
   outage: []
