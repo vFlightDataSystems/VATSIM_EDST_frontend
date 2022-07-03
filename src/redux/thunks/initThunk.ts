@@ -1,22 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchArtccAirways, fetchArtccNavaids, fetchArtccSectorTypes, fetchArtccWaypoints, fetchCtrFavData, fetchCtrProfiles } from "../../api/api";
 import { RootState } from "../store";
-import { setArtccId, setSectorId, setSectorProfiles, setSectors } from "../slices/sectorSlice";
+import { setSectorProfiles, setSectors } from "../slices/sectorSlice";
 import { refreshSigmets } from "./weatherThunks";
 import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
 import { Fix } from "../../types";
 
-type InitArgs = {
-  artccId: string;
-  sectorId: string;
-};
-
-export const initThunk = createAsyncThunk<void, InitArgs>("app/init", async ({ artccId, sectorId }, thunkAPI) => {
+export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) => {
   const state = thunkAPI.getState() as RootState;
   let { sectorData } = state;
+  const { artccId } = sectorData;
   const gpdData = state.gpd;
-  thunkAPI.dispatch(setArtccId(artccId));
-  thunkAPI.dispatch(setSectorId(sectorId));
   if (Object.keys(sectorData.sectors).length === 0) {
     await fetchCtrFavData(artccId)
       .then(response => response.json())

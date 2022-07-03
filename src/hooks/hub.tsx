@@ -8,6 +8,7 @@ import { updateAircraftTrackThunk, updateFlightplanThunk } from "../redux/thunks
 import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
 import { refreshToken } from "../api/vNasDataApi";
 import { initThunk } from "../redux/thunks/initThunk";
+import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_SERVER_URL;
 
@@ -60,7 +61,7 @@ const useHubInit = () => {
       hubConnection.on("receiveAircraft", (aircraft: AircraftTrack[]) => {
         // console.log("received aircraft:", aircraft);
         aircraft.forEach(t => {
-          dispatch(updateAircraftTrackThunk({ ...t }));
+          dispatch(updateAircraftTrackThunk(t));
         });
       });
 
@@ -70,16 +71,42 @@ const useHubInit = () => {
           hubConnection
             .invoke("getSessionInfo")
             .then((sessionInfo: SessionInfo) => {
+              console.log(sessionInfo);
               if (sessionInfo.position.eramConfiguration) {
                 const { artccId } = sessionInfo;
                 const { sectorId } = sessionInfo.position.eramConfiguration;
+                dispatch(setArtccId(artccId));
+                dispatch(setSectorId(sectorId));
                 dispatch(setSession(sessionInfo));
-                dispatch(initThunk({ artccId, sectorId }));
+                dispatch(initThunk());
               } else {
                 console.log("not signed in to a Center position");
               }
             })
             .catch(() => {
+              const sessionInfo = {
+                artccId: "ZBW",
+                facilityId: "ZBW",
+                id: "01G3CZTG1TFZZ4EB2PJ5P4MJ2X",
+                isActive: true,
+                position: {
+                  callsign: "BOS_37_CTR",
+                  eramConfiguration: {
+                    sectorId: "37"
+                  },
+                  frequency: 134700000,
+                  id: "",
+                  name: "Concord 37",
+                  radioName: "Boston Center"
+                },
+                positionId: "01G3CZTG1TFZZ4EB2PJ5P4MJ2X"
+              };
+              const { artccId } = sessionInfo;
+              const { sectorId } = sessionInfo.position.eramConfiguration;
+              dispatch(setArtccId(artccId));
+              dispatch(setSectorId(sectorId));
+              dispatch(setSession(sessionInfo));
+              dispatch(initThunk());
               console.log("No session found");
             });
           console.log("Connected to ATC hub");
