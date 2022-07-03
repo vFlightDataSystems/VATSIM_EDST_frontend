@@ -18,7 +18,7 @@ const initialState: SectorDataState = {
   profiles: [],
   selectedSectorIds: [],
   sectorId: "",
-  artccId: ""
+  artccId: "ZBW"
 };
 
 const sectorSlice = createSlice({
@@ -29,6 +29,7 @@ const sectorSlice = createSlice({
       state.sectors = Object.fromEntries(
         action.payload.map(sector => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)])
       );
+      state.selectedSectorIds = [Object.keys(state.sectors)[0]];
     },
     setSelectedSectors(state, action: PayloadAction<string[]>) {
       state.selectedSectorIds = action.payload;
