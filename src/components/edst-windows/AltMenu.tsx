@@ -7,7 +7,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entriesSlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import {Flightplan, WindowPosition} from "../../types";
+import { Flightplan, WindowPosition } from "../../types";
 import { addTrialPlanThunk } from "../../redux/thunks/thunks";
 import { NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
