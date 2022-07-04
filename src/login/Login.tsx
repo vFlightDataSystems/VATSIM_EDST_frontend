@@ -6,9 +6,8 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import {login, vatsimTokenSelector} from "../redux/slices/authSlice";
-import {useHub} from '../hooks/hub';
-import {useRootSelector} from '../redux/hooks';
+import { login, vatsimTokenSelector } from "../redux/slices/authSlice";
+import { useRootSelector } from "../redux/hooks";
 
 const LoginPanel = styled.div`
   height: 100vh;
