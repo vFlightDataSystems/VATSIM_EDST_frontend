@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EdstButton, EdstTemplateButton85 } from "../../resources/EdstButton";
 import { EquipmentNavTemplate } from "./EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "./EquipmentSurvTemplate";

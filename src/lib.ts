@@ -14,7 +14,9 @@ import {
 import booleanIntersects from "@turf/boolean-intersects";
 import _ from "lodash";
 import { HubConnection } from "@microsoft/signalr";
-import { RouteFix, LocalEdstEntry, AircraftTrack } from "./types";
+import { ApiAircraftTrack } from "./types/apiAircraftTrack";
+import { RouteFix } from "./types/routeFix";
+import { EdstEntry } from "./types/edstEntry";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -174,12 +176,12 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
- * @param {LocalEdstEntry} entry - an EDST entry
+ * @param {EdstEntry} entry - an EDST entry
  * @param track
  * @param {Feature<Polygon>[]} polygons - airspace boundaries
  * @returns {number} - minutes until the aircraft enters the airspace
  */
-export function computeBoundaryTime(entry: LocalEdstEntry, track: AircraftTrack, polygons: Feature<Polygon>[]): number {
+export function computeBoundaryTime(entry: EdstEntry, track: ApiAircraftTrack, polygons: Feature<Polygon>[]): number {
   const pos = [track.location.lon, track.location.lat];
   const posPoint = point(pos);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -190,11 +192,11 @@ export function computeBoundaryTime(entry: LocalEdstEntry, track: AircraftTrack,
 
 /**
  *
- * @param {LocalEdstEntry} entry
+ * @param {EdstEntry} entry
  * @param track
  * @returns {RouteFix[]}
  */
-export function computeCrossingTimes(entry: LocalEdstEntry, track: AircraftTrack): (RouteFix & { minutesAtFix: number })[] {
+export function computeCrossingTimes(entry: EdstEntry, track: ApiAircraftTrack): (RouteFix & { minutesAtFix: number })[] {
   const newRouteFixes: (RouteFix & { minutesAtFix: number })[] = [];
   if (entry.currentRouteFixes) {
     const now = new Date();
@@ -251,7 +253,7 @@ export function removeDepFromRouteString(route: string, dep: string): string {
 
 export function getClearedToFixRouteFixes(
   clearedFixName: string,
-  entry: LocalEdstEntry,
+  entry: EdstEntry,
   frd: string | null
 ): { route: string; routeFixes: RouteFix[] } | null {
   let newRoute = entry.currentRoute;

@@ -6,15 +6,15 @@ import { EdstButton, HoldDirButton16, HoldDirButton20, HoldDirButton50 } from ".
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entriesSlice";
+import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entrySlice";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
-import { RouteFix } from "../../types";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
-import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
+import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { EdstWindow } from "../../namespaces";
+import { RouteFix } from "../../types/routeFix";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;
@@ -113,7 +113,7 @@ export const HoldMenu: React.FC = () => {
       setTurns(entry.holdData?.turns ?? "RT");
       setEfc(entry.holdData?.efc ?? utcMinutes + 30);
       setRouteFixes(routeFixes ?? null);
-    } // eslint-disable-next-line
+    }
   }, []);
 
   const clearedHold = () => {

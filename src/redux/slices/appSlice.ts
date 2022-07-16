@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Plan, WindowPosition } from "../../types";
 import { RootState } from "../store";
 import { EDST_MENU_LIST, EdstWindow, AclRowField, DepRowField, PlanRowField } from "../../namespaces";
+import { Plan } from "../../types/plan";
+import { WindowPosition } from "../../types/windowPosition";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,

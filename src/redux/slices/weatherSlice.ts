@@ -2,20 +2,22 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position } from "@turf/turf";
 import { RootState } from "../store";
 
-export type WeatherState = {
-  altimeterList: Record<string, AltimeterEntry>;
-  metarList: Record<string, MetarEntry>;
-  sigmetList: Record<string, SigmetEntry>;
+type AirportCode = string;
+
+type WeatherState = {
+  altimeterList: Record<AirportCode, AltimeterEntry>;
+  metarList: Record<AirportCode, MetarEntry>;
+  sigmetList: Record<AirportCode, SigmetEntry>;
   viewSigmetSuppressed: boolean;
 };
 
 export type MetarEntry = {
-  airport: string;
+  airport: AirportCode;
   metar: string;
 };
 
 export type AltimeterEntry = {
-  airport: string;
+  airport: AirportCode;
   time: string;
   altimeter: string;
 };
@@ -44,13 +46,13 @@ const weatherSlice = createSlice({
     setAirportMetar(state, action: PayloadAction<MetarEntry>) {
       state.metarList[action.payload.airport] = action.payload;
     },
-    removeAirportMetar(state, action: PayloadAction<string>) {
+    removeAirportMetar(state, action: PayloadAction<AirportCode>) {
       delete state.metarList[action.payload];
     },
     setAirportAltimeter(state, action: PayloadAction<AltimeterEntry>) {
       state.altimeterList[action.payload.airport] = action.payload;
     },
-    removeAirportAltimeter(state, action: PayloadAction<string>) {
+    removeAirportAltimeter(state, action: PayloadAction<AirportCode>) {
       delete state.altimeterList[action.payload];
     },
     addSigmets(state, action: PayloadAction<ApiSigmet[]>) {

@@ -24,7 +24,7 @@ import { sectorIdSelector } from "../../redux/slices/sectorSlice";
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
-import { WindowPosition } from "../../types";
+import { WindowPosition } from "../../types/windowPosition";
 
 enum sigmetOption {
   viewSuppressed = "VIEW SUPPRESS",

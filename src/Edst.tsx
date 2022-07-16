@@ -59,7 +59,7 @@ const Edst: React.FC = () => {
       if (weatherUpdateIntervalId) {
         clearInterval(weatherUpdateIntervalId);
       }
-    }; // eslint-disable-next-line
+    };
   }, []);
 
   const handleKeyDown = (event: KeyboardEvent) => {

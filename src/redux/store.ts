@@ -3,10 +3,10 @@ import aclReducer from "./slices/aclSlice";
 import depReducer from "./slices/depSlice";
 import gpdReducer from "./slices/gpdSlice";
 import sectorReducer from "./slices/sectorSlice";
-import entriesReducer from "./slices/entriesSlice";
+import entryReducer from "./slices/entrySlice";
 import planReducer from "./slices/planSlice";
 import appReducer from "./slices/appSlice";
-import aircraftTrackReducer from "./slices/aircraftTrackSlice";
+import aircraftTrackReducer from "./slices/trackSlice";
 import weatherReducer from "./slices/weatherSlice";
 import authReducer from "./slices/authSlice";
 
@@ -18,7 +18,7 @@ const store = configureStore({
     gpd: gpdReducer,
     plan: planReducer,
     sectorData: sectorReducer,
-    entries: entriesReducer,
+    entries: entryReducer,
     aircraftTracks: aircraftTrackReducer,
     weather: weatherReducer,
     auth: authReducer

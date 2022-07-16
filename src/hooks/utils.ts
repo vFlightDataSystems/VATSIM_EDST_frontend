@@ -3,8 +3,17 @@ import { useEventListener } from "usehooks-ts";
 import { invoke } from "@tauri-apps/api/tauri";
 import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { WindowPosition } from "../types";
 import { EdstWindow } from "../namespaces";
+import { WindowPosition } from "../types/windowPosition";
+
+type DragPreviewStyle = {
+  left: number;
+  top: number;
+  relX: number;
+  relY: number;
+  height: number;
+  width: number;
+};
 
 export const useFocused = (element: RefObject<HTMLElement>) => {
   const [focused, setFocused] = useState(false);
@@ -20,7 +29,7 @@ export const useCenterCursor = (element: RefObject<HTMLElement>, deps: any[] = [
       const rect = element.current.getBoundingClientRect();
       const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
       invoke("set_cursor_position", newCursorPos).then();
-    } // eslint-disable-next-line
+    }
   }, deps);
 };
 
@@ -40,14 +49,14 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
   const [dragging, setDragging] = useState(false);
   const windows = useRootSelector(windowsSelector);
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
-  const [dragPreviewStyle, setDragPreviewStyle] = useState<any | null>(null);
+  const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
   let ppos: WindowPosition | null = null;
   ppos = windows[edstWindow as EdstWindow].position;
 
   useEffect(() => {
     return () => {
       dispatch(setAnyDragging(false));
-    }; // eslint-disable-next-line
+    };
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -62,16 +71,16 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
     (event: MouseEvent) => {
       if (event && element.current) {
         if (repositionCursor) {
-          setDragPreviewStyle((prevStyle: any) => ({
-            ...prevStyle,
+          setDragPreviewStyle(prevStyle => ({
+            ...prevStyle!,
             left: event.clientX,
             top: event.clientY
           }));
         } else {
           const { clientWidth: width, clientHeight: height } = element.current;
-          setDragPreviewStyle((prevStyle: any) => ({
-            ...prevStyle,
-            ...computePreviewPos(event.pageX + prevStyle.relX, event.pageY + prevStyle.relY, width, height)
+          setDragPreviewStyle(prevStyle => ({
+            ...prevStyle!,
+            ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height)
           }));
         }
       }
@@ -120,7 +129,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
   );
 
   const stopDrag = useCallback(() => {
-    if (dragging && element?.current) {
+    if (dragging && element?.current && dragPreviewStyle) {
       const { left: x, top: y } = dragPreviewStyle;
       const newPos = { x: x + 1, y };
       // eslint-disable-next-line no-underscore-dangle

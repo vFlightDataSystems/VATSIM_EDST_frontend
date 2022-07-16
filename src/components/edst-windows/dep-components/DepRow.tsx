@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatAltitude, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { LocalEdstEntry, PreferentialDepartureArrivalRoute, PreferentialDepartureRoute } from "../../../types";
-import { deleteDepEntry, toggleSpa, updateEntry } from "../../../redux/slices/entriesSlice";
+import { deleteDepEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { depAircraftSelect } from "../../../redux/thunks/thunks";
@@ -23,12 +22,15 @@ import {
 } from "./DepStyled";
 import { CodeCol } from "../acl-components/AclStyled";
 import { EdstWindow, DepRowField } from "../../../namespaces";
+import { ApiPreferentialDepartureRoute } from "../../../types/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiPreferentialDepartureArrivalRoute";
+import { EdstEntry } from "../../../types/edstEntry";
 
 const SPA_INDICATOR = "\u2303";
 const COMPLETED_SYMBOL = "✓";
 
 type DepRowProps = {
-  entry: LocalEdstEntry;
+  entry: EdstEntry;
   hidden: DepRowField[];
   index: number;
 };
@@ -68,7 +70,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
     return null;
   };
 
-  const checkPdrReroutePending = (routes: PreferentialDepartureRoute[]) => {
+  const checkPdrReroutePending = (routes: ApiPreferentialDepartureRoute[]) => {
     if (routes.length === 0) {
       return null;
     }
@@ -82,7 +84,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
     }
     return null;
   };
-  const checkPdarReroutePending = (routes: PreferentialDepartureArrivalRoute[]) => {
+  const checkPdarReroutePending = (routes: ApiPreferentialDepartureArrivalRoute[]) => {
     if (routes.length === 0) {
       return null;
     }

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { SortOptions } from "../../namespaces";
 
-export type DepState = {
+type DepState = {
   sortData: { selectedOption: SortOptions; sector: boolean };
   manualPosting: boolean;
 };

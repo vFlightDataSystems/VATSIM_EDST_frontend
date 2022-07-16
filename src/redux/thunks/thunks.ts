@@ -2,8 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState, RootThunkAction } from "../store";
 import { equipmentIcaoToNas, getRemainingRouteFixes, getRouteFixesDistance, REMOVAL_TIMEOUT } from "../../lib";
-import { addAclEntry, addDepEntry, deleteAclEntry, setEntry, updateEntries, updateEntry } from "../slices/entriesSlice";
-import { AircraftTrack, AirportInfo, DerivedFlightplanData, Flightplan, LocalEdstEntry, LocalVEdstEntry, WindowPosition } from "../../types";
+import { addAclEntry, addDepEntry, deleteAclEntry, setEntry, updateEntries, updateEntry } from "../slices/entrySlice";
 import { closeAircraftMenus, closeWindow, openWindow, setAsel, setWindowPosition } from "../slices/appSlice";
 import { addTrialPlan, removeTrialPlan, TrialPlan } from "../slices/planSlice";
 import {
@@ -16,9 +15,16 @@ import {
   memoizedFetchFormatRoute,
   memoizedFetchRouteFixes
 } from "../../api/api";
-import { setAircraftTrack } from "../slices/aircraftTrackSlice";
+import { setTrack } from "../slices/trackSlice";
 import { depFilter, entryFilter } from "../../filters";
 import { AclAselActionTrigger, AclRowField, DepAselActionTrigger, DepRowField, EDST_MENU_LIST, EdstWindow } from "../../namespaces";
+import { ApiFlightplan } from "../../types/apiFlightplan";
+import { ApiAircraftTrack } from "../../types/apiAircraftTrack";
+import { ApiAirportInfo } from "../../types/apiAirportInfo";
+import { LocalVEdstEntry } from "../../types/localVEdstEntry";
+import { WindowPosition } from "../../types/windowPosition";
+import { EdstEntry } from "../../types/edstEntry";
+import { DerivedFlightplanData } from "../../types/derivedFlightplanData";
 
 export const aclCleanup: RootThunkAction = (dispatch, getState) => {
   const state = getState();
@@ -231,14 +237,14 @@ export function removeTrialPlanThunk(index: number): RootThunkAction {
   };
 }
 
-async function createEntryFromFlightplan(fp: Flightplan, artcc: string): Promise<LocalEdstEntry | null> {
+async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Promise<EdstEntry | null> {
   if (!(fp.departure.startsWith("K") || fp.destination.startsWith("K"))) {
     return null;
   }
   const depInfo = fp.departure
     ? await memoizedFetchAirportInfo(fp.departure).then(data => {
         if (data) {
-          return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as AirportInfo;
+          return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as ApiAirportInfo;
         }
         return null;
       })
@@ -246,7 +252,7 @@ async function createEntryFromFlightplan(fp: Flightplan, artcc: string): Promise
   const destInfo = fp.destination
     ? await memoizedFetchAirportInfo(fp.destination).then(data => {
         if (data) {
-          return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as AirportInfo;
+          return { ...data, lat: Number(data.lat), lon: Number(data.lon) } as ApiAirportInfo;
         }
         return null;
       })
@@ -289,18 +295,22 @@ async function createEntryFromFlightplan(fp: Flightplan, artcc: string): Promise
     preferentialDepartureArrivalRoutes,
     preferentialArrivalRoutes,
     spa: false,
-    vciStatus: -1
+    vciStatus: -1,
+    aclRouteDisplay: null,
+    assignedHeading: null,
+    assignedSpeed: null,
+    interimAltitude: null
   };
 }
 
-const updateDerivedFlightplanThunk = createAsyncThunk<void, Flightplan>("entries/updateDerivedFlightplan", async (fp, thunkAPI) => {
+const updateDerivedFlightplanThunk = createAsyncThunk<void, ApiFlightplan>("entries/updateDerivedFlightplan", async (fp, thunkAPI) => {
   const { aircraftTracks, entries, sectorData } = thunkAPI.getState() as RootState;
   const { sectors, selectedSectorIds } = sectorData;
   const polygons = selectedSectorIds ? selectedSectorIds.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
   const entry = { ...entries[fp.aircraftId] };
   const aircraftTrack = aircraftTracks[fp.aircraftId];
   if (entry) {
-    const amendedData: Flightplan & Partial<DerivedFlightplanData & LocalVEdstEntry> = { ...fp };
+    const amendedData: ApiFlightplan & Partial<DerivedFlightplanData & LocalVEdstEntry> = { ...fp };
     if (fp.route !== entry.route) {
       amendedData.formattedRoute = await fetchFormatRoute(fp.route, fp.departure, fp.destination).then(data => data ?? "");
       amendedData.routeFixes = await fetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? []);
@@ -325,7 +335,7 @@ const updateDerivedFlightplanThunk = createAsyncThunk<void, Flightplan>("entries
   }
 });
 
-export const updateFlightplanThunk = createAsyncThunk<void, Flightplan>("entries/updateFlightplan", async (fp, thunkAPI) => {
+export const updateFlightplanThunk = createAsyncThunk<void, ApiFlightplan>("entries/updateFlightplan", async (fp, thunkAPI) => {
   if (fp.isIfr) {
     const { entries, sectorData } = thunkAPI.getState() as RootState;
     const aircraftIds = Object.keys(entries);
@@ -344,17 +354,17 @@ export const updateFlightplanThunk = createAsyncThunk<void, Flightplan>("entries
   }
 });
 
-export function updateAircraftTrackThunk(newAircraftTrack: AircraftTrack): RootThunkAction {
+export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): RootThunkAction {
   return (dispatch, getState) => {
     const updateTime = new Date().getTime();
     const { aircraftTracks, entries, sectorData } = getState();
     const { sectors, selectedSectorIds } = sectorData;
     const polygons = selectedSectorIds ? selectedSectorIds.map(id => sectors[id]) : Object.values(sectors).slice(0, 1);
     const oldTrack = aircraftTracks[newAircraftTrack.aircraftId];
-    const updateData: Record<string, Partial<LocalEdstEntry>> = {};
+    const updateData: Record<string, Partial<EdstEntry>> = {};
     if (!oldTrack || updateTime - oldTrack.lastUpdated > 4000) {
       const entry = entries[newAircraftTrack.aircraftId];
-      dispatch(setAircraftTrack({ ...newAircraftTrack, lastUpdated: updateTime }));
+      dispatch(setTrack({ ...newAircraftTrack, lastUpdated: updateTime }));
       if (entry) {
         const pos = [newAircraftTrack.location.lon, newAircraftTrack.location.lat];
         const routeFixesDistance = getRouteFixesDistance(entry.routeFixes, pos);

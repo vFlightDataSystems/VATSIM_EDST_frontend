@@ -12,18 +12,19 @@ import { EdstButton, EdstRouteButton12x12 } from "../resources/EdstButton";
 import { Tooltips } from "../../tooltips";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { addTrialPlanThunk, openMenuThunk } from "../../redux/thunks/thunks";
-import { EdstPreferentialRoute, Flightplan } from "../../types";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { artccIdSelector } from "../../redux/slices/sectorSlice";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
-import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
+import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
+import { ApiFlightplan } from "../../types/apiFlightplan";
+import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -158,7 +159,7 @@ export const RouteMenu: React.FC = () => {
     const route = getClearedToFixRouteFixes(clearedFixName, entry, frd)?.route;
     if (!trialPlan) {
       if (hubConnection && route) {
-        const amendedFlightplan: Flightplan = {
+        const amendedFlightplan: ApiFlightplan = {
           ...entry,
           route: route
             .split(/\.+/g)
@@ -168,7 +169,7 @@ export const RouteMenu: React.FC = () => {
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
     } else if (route) {
-      const amendedFlightplan: Flightplan = {
+      const amendedFlightplan: ApiFlightplan = {
         ...entry,
         route: route
           .split(/\.+/g)
@@ -197,7 +198,7 @@ export const RouteMenu: React.FC = () => {
       } else {
         newRoute = `${frd}..${newRoute.replace(/^\.+/g, "")}`;
       }
-      const amendedFlightplan: Flightplan = {
+      const amendedFlightplan: ApiFlightplan = {
         ...entry,
         route: newRoute
           .toUpperCase()

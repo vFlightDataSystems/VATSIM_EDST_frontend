@@ -6,7 +6,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { openMenuThunk } from "../../redux/thunks/thunks";
 import { aselSelector, closeWindow, setAsel, zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
-import { deleteAclEntry, deleteDepEntry, entrySelector } from "../../redux/slices/entriesSlice";
+import { deleteAclEntry, deleteDepEntry, entrySelector } from "../../redux/slices/entrySlice";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";

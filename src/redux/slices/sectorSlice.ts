@@ -1,7 +1,7 @@
 import { Feature, polygon, Polygon } from "@turf/turf";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SectorData } from "../../types";
 import { RootState } from "../store";
+import { SectorData } from "../../types/sectorData";
 
 type SectorProfile = { id: string; name: string; sectors: string[] };
 

@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes, getFrd } from "../../lib";
-import { Flightplan, LocalEdstEntry } from "../../types";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
-import { entriesSelector, updateEntry } from "../../redux/slices/entriesSlice";
+import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
 import { aclCleanup, openWindowThunk } from "../../redux/thunks/thunks";
 import { EdstWindow } from "../../namespaces";
 import {
@@ -25,8 +24,10 @@ import { edstFontGrey } from "../../styles/colors";
 import { artccIdSelector } from "../../redux/slices/sectorSlice";
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
-import { aircraftTracksSelector } from "../../redux/slices/aircraftTrackSlice";
+import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
+import { ApiFlightplan } from "../../types/apiFlightplan";
+import { EdstEntry } from "../../types/edstEntry";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -102,11 +103,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   useEffect(() => {
     setMcaInputRef(inputRef);
     return () => setMcaInputRef(null);
-    // eslint-disable-next-line
   }, []);
 
   const toggleVci = (fid: string) => {
-    const entry: LocalEdstEntry | any = Object.values(entries)?.find(
+    const entry: EdstEntry | any = Object.values(entries)?.find(
       e => String(e.cid) === fid || String(e.aircraftId) === fid || String(e.assignedBeaconCode ?? 0).padStart(4, "0") === fid
     );
     if (entry) {
@@ -119,7 +119,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: LocalEdstEntry | any = Object.values(entries)?.find(
+    const entry: EdstEntry | any = Object.values(entries)?.find(
       entry => String(entry?.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
     if (entry) {
@@ -132,9 +132,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
     }
   };
 
-  const getEntryByFid = (fid: string): LocalEdstEntry | undefined => {
+  const getEntryByFid = (fid: string): EdstEntry | undefined => {
     return Object.values(entries ?? {})?.find(
-      (entry: LocalEdstEntry) =>
+      (entry: EdstEntry) =>
         String(entry.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
   };
@@ -142,7 +142,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const flightplanReadout = (fid: string) => {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry: LocalEdstEntry | undefined = getEntryByFid(fid);
+    const entry: EdstEntry | undefined = getEntryByFid(fid);
     if (entry) {
       // TODO: put speed instead of groundspeed
       const msg =
@@ -163,7 +163,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
         const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
         const route = getClearedToFixRouteFixes(args[0], entry, frd)?.route;
         if (route) {
-          const amendmentFlightplan: Flightplan = {
+          const amendmentFlightplan: ApiFlightplan = {
             ...entry,
             route: route
               .split(/\.+/g)
