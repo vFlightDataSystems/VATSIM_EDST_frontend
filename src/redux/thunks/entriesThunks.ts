@@ -1,5 +1,5 @@
 import { RootThunkAction } from "../store";
-import { addAclEntry, addDepEntry } from "../slices/entriesSlice";
+import { addAclEntry, addDepEntry } from "../slices/entrySlice";
 import { setAsel } from "../slices/appSlice";
 import { convertBeaconCodeToString } from "../../lib";
 import { EdstWindow, AclRowField, DepRowField } from "../../namespaces";

@@ -1,17 +1,20 @@
 import _ from "lodash";
+import { ApiPreferentialArrivalRoute } from "../types/apiPreferentialArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../types/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../types/apiPreferentialDepartureArrivalRoute";
 
 // const baseurl = "http://localhost:5000/api";
 const baseurl = "https://tdls.oakartcc.org/api";
 
-export async function fetchPar(artcc: string, route: string, aircraft: string, dest: string, alt: string): Promise<any[]> {
+export async function fetchPar(artcc: string, route: string, aircraft: string, dest: string, alt: string): Promise<ApiPreferentialArrivalRoute[]> {
   return fetch(`${baseurl}/route/aar/${artcc}?${new URLSearchParams({ route, aircraft, dest, alt })}`).then(response => response.json());
 }
 
-export async function fetchPdr(artcc: string, route: string, aircraft: string, dep: string, alt: string): Promise<any[]> {
+export async function fetchPdr(artcc: string, route: string, aircraft: string, dep: string, alt: string): Promise<ApiPreferentialDepartureRoute[]> {
   return fetch(`${baseurl}/route/adr/${artcc}?${new URLSearchParams({ route, aircraft, dep, alt })}`).then(response => response.json());
 }
 
-export async function fetchPdar(artcc: string, aircraft: string, dep: string, dest: string): Promise<any[]> {
+export async function fetchPdar(artcc: string, aircraft: string, dep: string, dest: string): Promise<ApiPreferentialDepartureArrivalRoute[]> {
   return fetch(`${baseurl}/route/adar/${artcc}?${new URLSearchParams({ aircraft, dep, dest })}`).then(response => response.json());
 }
 

@@ -1,42 +1,43 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { LocalEdstEntry } from "../../types";
 import { RootState } from "../store";
+import { EdstEntry } from "../../types/edstEntry";
+import { AircraftId } from "../../types/aircraftId";
 
-export type EntriesState = Record<string, LocalEdstEntry>;
+type EntryState = Record<AircraftId, EdstEntry>;
 
-const initialState: EntriesState = {};
+const initialState: EntryState = {};
 
-const entriesSlice = createSlice({
-  name: "entries",
+const entrySlice = createSlice({
+  name: "entry",
   initialState,
   reducers: {
-    updateEntry(state, action: PayloadAction<{ aircraftId: string; data: Partial<LocalEdstEntry> }>) {
+    updateEntry(state, action: PayloadAction<{ aircraftId: AircraftId; data: Partial<EdstEntry> }>) {
       _.assign(state[action.payload.aircraftId], action.payload.data);
     },
-    setEntry(state, action: PayloadAction<LocalEdstEntry>) {
+    setEntry(state, action: PayloadAction<EdstEntry>) {
       state[action.payload.aircraftId] = action.payload;
     },
-    toggleSpa(state, action: PayloadAction<string>) {
+    toggleSpa(state, action: PayloadAction<AircraftId>) {
       state[action.payload].spa = !state[action.payload].spa;
     },
-    deleteAclEntry(state, action: PayloadAction<string>) {
+    deleteAclEntry(state, action: PayloadAction<AircraftId>) {
       state[action.payload].aclDisplay = false;
       state[action.payload].aclDeleted = true;
     },
-    addAclEntry(state, action: PayloadAction<string>) {
+    addAclEntry(state, action: PayloadAction<AircraftId>) {
       state[action.payload].aclDisplay = true;
       state[action.payload].aclDeleted = false;
     },
-    deleteDepEntry(state, action: PayloadAction<string>) {
+    deleteDepEntry(state, action: PayloadAction<AircraftId>) {
       state[action.payload].depDisplay = false;
       state[action.payload].depDeleted = true;
     },
-    addDepEntry(state, action: PayloadAction<string>) {
+    addDepEntry(state, action: PayloadAction<AircraftId>) {
       state[action.payload].depDisplay = true;
       state[action.payload].depDeleted = false;
     },
-    updateEntries(state, action: PayloadAction<Record<string, Partial<LocalEdstEntry>>>) {
+    updateEntries(state, action: PayloadAction<Record<AircraftId, Partial<EdstEntry>>>) {
       const aircraftIdList = Object.keys(state);
       // eslint-disable-next-line no-restricted-syntax
       for (const [aircraftId, data] of Object.keys(action.payload)) {
@@ -48,8 +49,8 @@ const entriesSlice = createSlice({
   }
 });
 
-export const { setEntry, updateEntry, toggleSpa, deleteAclEntry, deleteDepEntry, addAclEntry, addDepEntry, updateEntries } = entriesSlice.actions;
-export default entriesSlice.reducer;
+export const { setEntry, updateEntry, toggleSpa, deleteAclEntry, deleteDepEntry, addAclEntry, addDepEntry, updateEntries } = entrySlice.actions;
+export default entrySlice.reducer;
 
 export const entriesSelector = (state: RootState) => state.entries;
 export const entrySelector = (aircraftId: string) => (state: RootState) => state.entries[aircraftId];

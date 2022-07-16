@@ -5,8 +5,7 @@ import styled from "styled-components";
 import { useRootSelector } from "../../../redux/hooks";
 import { sectorPolygonSelector } from "../../../redux/slices/sectorSlice";
 import { GpdAircraftTrack, GpdNavaid, GpdMapSectorPolygon, GpdFix, GpdAirwayPolyline, GpdPlanDisplay } from "./GpdMapElements";
-import { LocalEdstEntry } from "../../../types";
-import { entriesSelector } from "../../../redux/slices/entriesSlice";
+import { entriesSelector } from "../../../redux/slices/entrySlice";
 import {
   gpdAircraftDisplayOptionsSelector,
   gpdAirwaySelector,
@@ -19,6 +18,7 @@ import {
   mapFeatureOption,
   SectorType
 } from "../../../redux/slices/gpdSlice";
+import { EdstEntry } from "../../../types/edstEntry";
 
 const center = { lat: 42.362944444444445, lng: -71.00638888888889 };
 
@@ -58,7 +58,7 @@ export const GpdBody: React.FC<{ zoomLevel: number }> = ({ zoomLevel }) => {
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
 
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.aclDisplay), [entries]);
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: EdstEntry) => entry.aclDisplay), [entries]);
 
   return (
     <GpdBodyDiv>

@@ -5,9 +5,8 @@ import { useEventListener } from "usehooks-ts";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { Flightplan, WindowPosition } from "../../types";
 import { addTrialPlanThunk } from "../../redux/thunks/thunks";
 import { NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
@@ -16,6 +15,8 @@ import { TrialPlan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
 import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
+import { ApiFlightplan } from "../../types/apiFlightplan";
+import { WindowPosition } from "../../types/windowPosition";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: WindowPosition }>`
   z-index: 11000;
@@ -168,7 +169,7 @@ export const AltMenu: React.FC = () => {
   useCenterCursor(ref, [asel]);
 
   const handleAltClick = (alt: string | number) => {
-    const amendedFlightplan: Flightplan = { ...entry, altitude: String(Number(alt) * 100) };
+    const amendedFlightplan: ApiFlightplan = { ...entry, altitude: String(Number(alt) * 100) };
     if (selected === "amend") {
       if (hubConnection) {
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));

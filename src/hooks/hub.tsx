@@ -3,12 +3,14 @@ import React, { createContext, useContext, useEffect, useRef } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { AircraftTrack, Flightplan, SessionInfo } from "../types";
 import { updateAircraftTrackThunk, updateFlightplanThunk } from "../redux/thunks/thunks";
 import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
 import { refreshToken } from "../api/vNasDataApi";
 import { initThunk } from "../redux/thunks/initThunk";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
+import { ApiFlightplan } from "../types/apiFlightplan";
+import { ApiAircraftTrack } from "../types/apiAircraftTrack";
+import { ApiSessionInfo } from "../types/apiSessionInfo";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_SERVER_URL;
 
@@ -47,18 +49,18 @@ const useHubInit = () => {
         console.log("ATC hub disconnected");
       });
 
-      hubConnection.on("HandleSessionStarted", (sessionInfo: SessionInfo) => {
+      hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfo) => {
         dispatch(setSession(sessionInfo));
       });
 
       hubConnection.on("HandleSessionEnded", () => {
         dispatch(clearSession());
       });
-      hubConnection.on("receiveFlightplan", (flightplan: Flightplan) => {
+      hubConnection.on("receiveFlightplan", (flightplan: ApiFlightplan) => {
         // console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
-      hubConnection.on("receiveAircraft", (aircraft: AircraftTrack[]) => {
+      hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
         // console.log("received aircraft:", aircraft);
         aircraft.forEach(t => {
           dispatch(updateAircraftTrackThunk(t));
@@ -70,7 +72,7 @@ const useHubInit = () => {
         .then(() => {
           hubConnection
             .invoke("getSessionInfo")
-            .then((sessionInfo: SessionInfo) => {
+            .then((sessionInfo: ApiSessionInfo) => {
               console.log(sessionInfo);
               if (sessionInfo.position.eramConfiguration) {
                 const { artccId } = sessionInfo;

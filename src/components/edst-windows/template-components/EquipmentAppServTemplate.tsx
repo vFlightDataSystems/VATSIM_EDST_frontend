@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
-import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 import { EqpCol } from "./styled";

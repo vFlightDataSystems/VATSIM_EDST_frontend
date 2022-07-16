@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { entriesSelector } from "./slices/entriesSlice";
+import { entriesSelector } from "./slices/entrySlice";
 
 export const anyHoldingSelector = createSelector([entriesSelector], entries => {
   // eslint-disable-next-line no-restricted-syntax

@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { Flightplan } from "../../types";
+import { ApiFlightplan } from "../../types/apiFlightplan";
 
 export type TrialPlan = {
   cid: string;
   aircraftId: string;
-  amendedFlightplan: Flightplan;
+  amendedFlightplan: ApiFlightplan;
   commandString: string;
   expirationTime: number; // unix time in seconds (return value from new Date().getTime()
 };

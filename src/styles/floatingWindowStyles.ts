@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { DraggableDiv, NoSelectDiv } from "./styles";
-import {WindowPosition} from '../types';
+import { WindowPosition } from "../types/windowPosition";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 

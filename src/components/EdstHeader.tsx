@@ -9,7 +9,7 @@ import { planQueueSelector } from "../redux/slices/planSlice";
 import { sigmetSelector } from "../redux/slices/weatherSlice";
 import { edstFontGrey } from "../styles/colors";
 import { sectorIdSelector } from "../redux/slices/sectorSlice";
-import { entriesSelector } from "../redux/slices/entriesSlice";
+import { entriesSelector } from "../redux/slices/entrySlice";
 import { EdstWindow } from "../namespaces";
 
 const YELLOW = "#A3A300";

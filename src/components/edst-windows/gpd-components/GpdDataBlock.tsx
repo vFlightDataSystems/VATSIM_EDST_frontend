@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { LocalEdstEntry, WindowPosition } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdAircraftSelect } from "../../../redux/thunks/thunks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { defaultFontFamily } from "../../../styles/styles";
 import { formatAltitude } from "../../../lib";
 import { EdstWindow, AclRowField } from "../../../namespaces";
+import { WindowPosition } from "../../../types/windowPosition";
+import { EdstEntry } from "../../../types/edstEntry";
 
 type GpdDataBlockProps = {
-  entry: LocalEdstEntry;
+  entry: EdstEntry;
   pos: { x: number; y: number } | null;
   toggleShowRoute(): void;
 };

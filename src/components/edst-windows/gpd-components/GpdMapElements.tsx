@@ -5,13 +5,16 @@ import L, { LatLngExpression } from "leaflet";
 import { useBoolean } from "usehooks-ts";
 import styled from "styled-components";
 import { useRootSelector } from "../../../redux/hooks";
-import { entrySelector } from "../../../redux/slices/entriesSlice";
+import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { LocalEdstEntry, AirwayFix, AircraftTrack, WindowPosition } from "../../../types";
 import { getNextFix } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
-import { aircraftTrackSelector } from "../../../redux/slices/aircraftTrackSlice";
+import { aircraftTrackSelector } from "../../../redux/slices/trackSlice";
+import { ApiAircraftTrack } from "../../../types/apiAircraftTrack";
+import { AirwayFix } from "../../../types/airwayFix";
+import { WindowPosition } from "../../../types/windowPosition";
+import { EdstEntry } from "../../../types/edstEntry";
 
 type GpdFixProps = {
   lat: number | string;
@@ -44,7 +47,7 @@ function posToLatLng(pos: Position | { lat: number | string; lon: number | strin
   return { lat: Number(pos.lat), lng: Number(pos.lon) };
 }
 
-function getRouteLine(entry: LocalEdstEntry, track: AircraftTrack) {
+function getRouteLine(entry: EdstEntry, track: ApiAircraftTrack) {
   const { formattedRoute, routeFixes } = entry;
   const fixNames = routeFixes.map(e => e.name);
   if (fixNames.length === 0) {

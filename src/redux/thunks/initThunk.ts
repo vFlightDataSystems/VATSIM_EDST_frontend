@@ -4,7 +4,7 @@ import { RootState } from "../store";
 import { setSectorProfiles, setSectors } from "../slices/sectorSlice";
 import { refreshSigmets } from "./weatherThunks";
 import { SectorType, setAirways, setNavaids, setSectorTypes, setWaypoints } from "../slices/gpdSlice";
-import { Fix } from "../../types";
+import { Fix } from "../../types/fix";
 
 export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) => {
   const state = thunkAPI.getState() as RootState;

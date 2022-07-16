@@ -1,11 +1,12 @@
 import { distance, Feature, point, Polygon, Position } from "@turf/turf";
-import { AircraftTrack, LocalEdstEntry } from "./types";
 import { routeWillEnterAirspace } from "./lib";
+import { ApiAircraftTrack } from "./types/apiAircraftTrack";
+import { EdstEntry } from "./types/edstEntry";
 
 const BOUNDARY_TIME_FILTER = 30; // minutes
 const AIRBORNE_GROUNDSPEED_FILTER = 30; // knots
 
-export const depFilter = (entry: LocalEdstEntry, track: AircraftTrack, artccId: string) => {
+export const depFilter = (entry: EdstEntry, track: ApiAircraftTrack, artccId: string) => {
   let depAirportDistance = 0;
   if (entry.depInfo) {
     const pos = [track.location.lon, track.location.lat];
@@ -15,7 +16,7 @@ export const depFilter = (entry: LocalEdstEntry, track: AircraftTrack, artccId: 
   return Number(track.groundSpeed) < AIRBORNE_GROUNDSPEED_FILTER && entry.depInfo?.artcc?.toUpperCase() === artccId && depAirportDistance < 20;
 };
 
-export const entryFilter = (entry: LocalEdstEntry, track: AircraftTrack, polygons: Feature<Polygon>[]) => {
+export const entryFilter = (entry: EdstEntry, track: ApiAircraftTrack, polygons: Feature<Polygon>[]) => {
   const pos: Position = [track.location.lon, track.location.lat];
   const willEnterAirspace =
     entry.currentRouteFixes && entry.currentRoute

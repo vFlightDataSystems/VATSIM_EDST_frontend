@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { EdstButton } from "../resources/EdstButton";
 import { Tooltips } from "../../tooltips";
-import { EdstPreferentialRoute, PreferentialArrivalRoute, PreferentialDepartureArrivalRoute, PreferentialDepartureRoute } from "../../types";
 import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "../../styles/optionMenuStyles";
+import { ApiPreferentialArrivalRoute } from "../../types/apiPreferentialArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../../types/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../../types/apiPreferentialDepartureArrivalRoute";
+import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
 
 const PrefrouteContainer = styled(ScrollContainer)`
   border: 2px solid #414141;
@@ -30,16 +33,16 @@ const Col = styled(OptionsBodyCol)`
 `;
 
 type PreferredRouteDisplayProps = {
-  par: PreferentialArrivalRoute[];
-  pdr: PreferentialDepartureRoute[];
-  pdar: PreferentialDepartureArrivalRoute[];
+  par: ApiPreferentialArrivalRoute[];
+  pdr: ApiPreferentialDepartureRoute[];
+  pdar: ApiPreferentialDepartureArrivalRoute[];
   clearedPrefroute: (prefRoute: EdstPreferentialRoute) => void;
 };
 
 function computeRouteList(
-  par: PreferentialArrivalRoute[],
-  pdr: PreferentialDepartureRoute[],
-  pdar: PreferentialDepartureArrivalRoute[]
+  par: ApiPreferentialArrivalRoute[],
+  pdr: ApiPreferentialDepartureRoute[],
+  pdar: ApiPreferentialDepartureArrivalRoute[]
 ): EdstPreferentialRoute[] {
   return pdar
     .map(r => {

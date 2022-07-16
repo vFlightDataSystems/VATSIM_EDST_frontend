@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
-import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./styled";

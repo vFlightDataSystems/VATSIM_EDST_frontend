@@ -1,16 +1,16 @@
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { DepRow } from "./DepRow";
-import { LocalEdstEntry } from "../../../types";
 import { useRootSelector } from "../../../redux/hooks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
 import { AircraftTypeCol, AltCol, DepCol2, FidCol, RadioCol, SpecialBox, CodeCol, RouteCol } from "./DepStyled";
-import { entriesSelector } from "../../../redux/slices/entriesSlice";
+import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
 import { DepRowField, SortOptions } from "../../../namespaces";
+import { EdstEntry } from "../../../types/edstEntry";
 
 const COMPLETED_SYMBOL = "✓";
 
@@ -39,7 +39,7 @@ export function DepTable() {
     setHiddenList(hiddenCopy);
   };
 
-  const sortFunc = (u: LocalEdstEntry, v: LocalEdstEntry) => {
+  const sortFunc = (u: EdstEntry, v: EdstEntry) => {
     switch (sortData.selectedOption) {
       case SortOptions.ACID:
         return u.aircraftId.localeCompare(v.aircraftId);
@@ -52,8 +52,8 @@ export function DepTable() {
     }
   };
 
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.depDisplay), [entries]);
-  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntry) => entry.spa)), [entryList]);
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: EdstEntry) => entry.depDisplay), [entries]);
+  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: EdstEntry) => entry.spa)), [entryList]);
 
   return (
     <DepBodyStyleDiv>
@@ -73,20 +73,18 @@ export function DepTable() {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList?.map(([i, entry]: [string, LocalEdstEntry]) => (
+        {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
           <DepRow key={`dep-row-spa-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {Object.entries(entryList?.filter((entry: LocalEdstEntry) => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
-          ([i, entry]: [string, LocalEdstEntry]) => (
+        {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
+          ([i, entry]: [string, EdstEntry]) => (
             <DepRow key={`dep-row-ack-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
           )
         )}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
-          Object.entries(
-            entryList?.filter((entry: LocalEdstEntry) => !entry.spa && entry.depStatus === -1)
-          )?.map(([i, entry]: [string, LocalEdstEntry]) => (
+          Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.depStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
             <DepRow key={`dep-row-no-ack-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
           ))}
       </ScrollContainer>

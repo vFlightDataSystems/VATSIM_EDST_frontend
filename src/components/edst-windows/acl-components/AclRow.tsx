@@ -3,9 +3,8 @@ import { convertBeaconCodeToString, formatAltitude, formatUtcMinutes, REMOVAL_TI
 import VCI from "../../../resources/images/VCI_v4.png";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { LocalEdstEntry } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { deleteAclEntry, toggleSpa, updateEntry } from "../../../redux/slices/entriesSlice";
+import { deleteAclEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclAircraftSelect } from "../../../redux/thunks/thunks";
 import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
@@ -34,11 +33,12 @@ import {
 } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
 import { EdstWindow, AclRowField, AclAselActionTrigger } from "../../../namespaces";
+import { EdstEntry } from "../../../types/edstEntry";
 
 const SPA_INDICATOR = "\u2303";
 
 type AclRowProps = {
-  entry: LocalEdstEntry;
+  entry: EdstEntry;
   index: number;
   anyHolding: boolean;
   hidden: AclRowField[];

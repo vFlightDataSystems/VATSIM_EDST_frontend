@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { AirwayFix, Fix } from "../../types";
+import { AirwayFix } from "../../types/airwayFix";
+import { Fix } from "../../types/fix";
 
 export enum SectorType {
   ultraLow = "UL",

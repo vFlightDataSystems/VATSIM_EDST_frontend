@@ -4,7 +4,7 @@ import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { useRootSelector } from "../../../redux/hooks";
-import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "./styled";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 

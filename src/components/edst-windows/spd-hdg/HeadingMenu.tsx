@@ -7,7 +7,7 @@ import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { aselEntrySelector } from "../../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";

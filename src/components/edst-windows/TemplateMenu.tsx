@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { convertBeaconCodeToString, getDepString, getDestString, getFrd } from "../../lib";
 import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entriesSlice";
+import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { openMenuThunk } from "../../redux/thunks/thunks";
 import { EdstTooltip } from "../resources/EdstTooltip";
@@ -12,7 +12,7 @@ import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
-import { aselTrackSelector } from "../../redux/slices/aircraftTrackSlice";
+import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { artccIdSelector } from "../../redux/slices/sectorSlice";
 

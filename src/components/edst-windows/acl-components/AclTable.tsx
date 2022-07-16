@@ -4,7 +4,6 @@ import { AclRow } from "./AclRow";
 import VCI from "../../../resources/images/VCI_v4.png";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { LocalEdstEntry } from "../../../types";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "../../../redux/selectors";
 import { aselSelector, closeWindow, setAsel } from "../../../redux/slices/appSlice";
@@ -27,8 +26,9 @@ import {
   SpecialBox
 } from "./AclStyled";
 import { aclManualPostingSelector, aclSortDataSelector } from "../../../redux/slices/aclSlice";
-import { entriesSelector } from "../../../redux/slices/entriesSlice";
+import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { EdstWindow, AclRowField, SortOptions } from "../../../namespaces";
+import { EdstEntry } from "../../../types/edstEntry";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -106,7 +106,7 @@ export function AclTable() {
     setHiddenList(hiddenCopy);
   };
 
-  const sortFunc = (u: LocalEdstEntry, v: LocalEdstEntry) => {
+  const sortFunc = (u: EdstEntry, v: EdstEntry) => {
     switch (sortData.selectedOption) {
       case SortOptions.ACID:
         return u.aircraftId.localeCompare(v.aircraftId);
@@ -120,8 +120,8 @@ export function AclTable() {
         return u.aircraftId.localeCompare(v.aircraftId);
     }
   };
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: LocalEdstEntry) => entry.aclDisplay), [entries]);
-  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: LocalEdstEntry) => entry.spa)), [entryList]);
+  const entryList = useMemo(() => Object.values(entries)?.filter((entry: EdstEntry) => entry.aclDisplay), [entries]);
+  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: EdstEntry) => entry.spa)), [entryList]);
 
   return (
     <AclBodyStyleDiv>
@@ -178,7 +178,7 @@ export function AclTable() {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList?.map(([i, entry]: [string, LocalEdstEntry]) => (
+        {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
           <AclRow
             key={`acl-table-row-spa-${entry.aircraftId}-${i}`}
             index={Number(i)}
@@ -189,8 +189,8 @@ export function AclTable() {
           />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {Object.entries(entryList?.filter((entry: LocalEdstEntry) => !entry.spa && (entry.vciStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
-          ([i, entry]: [string, LocalEdstEntry]) => (
+        {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.vciStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
+          ([i, entry]: [string, EdstEntry]) => (
             <AclRow
               key={`acl-table-row-ack-${entry.aircraftId}-${i}`}
               index={Number(i)}
@@ -203,9 +203,7 @@ export function AclTable() {
         )}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
-          Object.entries(
-            entryList?.filter((entry: LocalEdstEntry) => !entry.spa && entry.vciStatus === -1)
-          )?.map(([i, entry]: [string, LocalEdstEntry]) => (
+          Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.vciStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
             <AclRow
               key={`acl-table-row-no-ack-${entry.aircraftId}-${i}`}
               index={Number(i)}

@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { LocalEdstEntry } from "../types";
 import { convertBeaconCodeToString, formatUtcMinutes } from "../lib";
+import { EdstEntry } from "../types/edstEntry";
 
-function getRouteString(entry: LocalEdstEntry) {
+function getRouteString(entry: EdstEntry) {
   return (
     (entry.currentRoute?.length
       ? entry?.route?.concat(entry?.destination ?? "")
@@ -11,7 +11,7 @@ function getRouteString(entry: LocalEdstEntry) {
   );
 }
 
-export function printFlightStrip(entry?: LocalEdstEntry) {
+export function printFlightStrip(entry?: EdstEntry) {
   if (entry) {
     const printDoc = document.getElementById("toPrint");
     if (printDoc) {
