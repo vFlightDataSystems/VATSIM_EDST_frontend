@@ -62,7 +62,7 @@ export const HeadingMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.HEADING_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.HEADING_MENU) > 0 && dispatch(pushZStack(EdstWindow.HEADING_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.HEADING_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HEADING_MENU))}
         anyDragging={anyDragging}
         id="heading-menu"
       >

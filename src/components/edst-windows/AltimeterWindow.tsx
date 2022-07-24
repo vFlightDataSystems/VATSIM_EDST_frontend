@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { EdstWindow } from "../../namespaces";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { altimeterSelector, removeAirportAltimeter } from "../../redux/slices/weatherSlice";
+import { altimeterSelector, delAltimeter } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,
@@ -34,7 +34,7 @@ export const AltimeterWindow: React.FC = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTIMETER));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
-  const altimeterList = useRootSelector(altimeterSelector);
+  const altimeterMap = useRootSelector(altimeterSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER);
@@ -61,7 +61,7 @@ export const AltimeterWindow: React.FC = () => {
       <AltimeterDiv
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.ALTIMETER)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.ALTIMETER) > 0 && dispatch(pushZStack(EdstWindow.ALTIMETER))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.ALTIMETER) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ALTIMETER))}
         ref={ref}
         anyDragging={anyDragging}
         id="edst-altimeter"
@@ -74,9 +74,9 @@ export const AltimeterWindow: React.FC = () => {
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>
-        {Object.values(altimeterList).length > 0 && (
+        {Object.values(altimeterMap).length > 0 && (
           <FloatingWindowBodyDiv>
-            {Object.entries(altimeterList).map(([airport, airportAltimeterEntry]) => {
+            {Object.entries(altimeterMap).map(([airport, airportAltimeterEntry]) => {
               const observationTime = Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2));
               return (
                 <div key={`altimeter-list-key-${airport}`}>
@@ -101,7 +101,7 @@ export const AltimeterWindow: React.FC = () => {
                       }}
                       options={[`DELETE ${airport}`]}
                       handleOptionClick={() => {
-                        dispatch(removeAirportAltimeter(airport));
+                        dispatch(delAltimeter(airport));
                         setSelected(null);
                         setSelectedPos(null);
                       }}

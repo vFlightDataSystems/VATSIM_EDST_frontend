@@ -21,7 +21,7 @@ const DepDiv = styled(DraggableDiv)<{ zIndex: number }>`
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
-  z-index: ${props => 10000 - props.zIndex};
+  z-index: ${props => 10000 + props.zIndex};
 `;
 
 export const Dep: React.FC = () => {
@@ -37,7 +37,7 @@ export const Dep: React.FC = () => {
       anyDragging={anyDragging}
       ref={ref}
       zIndex={zStack.indexOf(EdstWindow.DEP)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.DEP) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.DEP))}
+      onMouseDown={() => zStack.indexOf(EdstWindow.DEP) < zStack.length - 1 && !fullscreen && dispatch(pushZStack(EdstWindow.DEP))}
     >
       <DepHeader focused={focused} />
       <DepTable />

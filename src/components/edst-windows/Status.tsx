@@ -37,7 +37,7 @@ export const Status: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.STATUS)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.STATUS) > 0 && dispatch(pushZStack(EdstWindow.STATUS))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.STATUS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.STATUS))}
         anyDragging={anyDragging}
         id="edst-status"
       >

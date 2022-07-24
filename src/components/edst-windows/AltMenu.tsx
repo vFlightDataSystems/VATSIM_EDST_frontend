@@ -7,11 +7,11 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { addTrialPlanThunk } from "../../redux/thunks/thunks";
+import { addPlanThunk } from "../../redux/thunks/thunks";
 import { NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
 import { useCenterCursor } from "../../hooks/utils";
-import { TrialPlan } from "../../redux/slices/planSlice";
+import { Plan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
 import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
@@ -175,14 +175,14 @@ export const AltMenu: React.FC = () => {
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
     } else {
-      const trialPlanData: TrialPlan = {
+      const trialPlanData: Plan = {
         cid: entry.cid,
         aircraftId: entry.aircraftId,
         amendedFlightplan,
         commandString: `AM ${entry.aircraftId} ALT ${alt}`,
         expirationTime: new Date().getTime() / 1000 + 120
       };
-      dispatch(addTrialPlanThunk(trialPlanData));
+      dispatch(addPlanThunk(trialPlanData));
     }
     dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
   };

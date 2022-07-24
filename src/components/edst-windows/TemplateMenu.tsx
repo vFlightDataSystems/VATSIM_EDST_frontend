@@ -141,7 +141,7 @@ export const TemplateMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.TEMPLATE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.TEMPLATE_MENU) > 0 && dispatch(pushZStack(EdstWindow.TEMPLATE_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TEMPLATE_MENU))}
         anyDragging={anyDragging}
         id="template-menu"
       >

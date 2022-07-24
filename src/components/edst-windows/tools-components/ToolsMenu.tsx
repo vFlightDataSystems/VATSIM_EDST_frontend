@@ -38,7 +38,7 @@ export const ToolsMenu: React.FC = () => {
         ref={ref}
         pos={windowProps.position}
         zIndex={zStack.indexOf(EdstWindow.TOOLS_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.TOOLS_MENU) > 0 && dispatch(pushZStack(EdstWindow.TOOLS_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.TOOLS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TOOLS_MENU))}
         anyDragging={anyDragging}
         id="tools-menu"
       >

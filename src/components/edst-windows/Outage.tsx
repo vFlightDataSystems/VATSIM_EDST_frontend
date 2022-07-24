@@ -31,7 +31,7 @@ export const Outage: React.FC = () => {
         pos={pos}
         ref={ref}
         zIndex={zStack.indexOf(EdstWindow.OUTAGE)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.OUTAGE) > 0 && dispatch(pushZStack(EdstWindow.OUTAGE))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.OUTAGE) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.OUTAGE))}
         anyDragging={anyDragging}
         id="edst-outage"
       >

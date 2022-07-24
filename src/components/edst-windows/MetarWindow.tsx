@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { metarSelector, removeAirportMetar } from "../../redux/slices/weatherSlice";
+import { metarSelector, delMetar } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,
@@ -27,7 +27,7 @@ export const MetarWindow: React.FC = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.METAR));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
-  const metarList = useRootSelector(metarSelector);
+  const metarMap = useRootSelector(metarSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR);
@@ -51,7 +51,7 @@ export const MetarWindow: React.FC = () => {
       <MetarDiv
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.METAR)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.METAR) > 0 && dispatch(pushZStack(EdstWindow.METAR))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.METAR) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.METAR))}
         ref={ref}
         anyDragging={anyDragging}
         id="edst-status"
@@ -64,9 +64,9 @@ export const MetarWindow: React.FC = () => {
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>
-        {Object.values(metarList).length > 0 && (
+        {Object.values(metarMap).length > 0 && (
           <FloatingWindowBodyDiv>
-            {Object.entries(metarList).map(([airport, airportMetarEntry]) => (
+            {Object.entries(metarMap).map(([airport, airportMetarEntry]) => (
               <span style={{ margin: "6px 0" }} key={`metar-list-key-${airport}`}>
                 <FloatingWindowRow selected={selected === airport} onMouseDown={event => handleMouseDown(event, airport)}>
                   {airportMetarEntry.metar}
@@ -79,7 +79,7 @@ export const MetarWindow: React.FC = () => {
                     }}
                     options={[`DELETE ${airport}`]}
                     handleOptionClick={() => {
-                      dispatch(removeAirportMetar(airport));
+                      dispatch(delMetar(airport));
                       setSelected(null);
                       setSelectedPos(null);
                     }}

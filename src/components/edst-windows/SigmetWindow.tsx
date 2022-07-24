@@ -4,10 +4,10 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import {
   setSigmetAcknowledged,
-  setSigmetSuppressionState,
-  setViewSigmetSuppressed,
+  setSigmetSuppressed,
+  setViewSuppressedSigmet,
   sigmetSelector,
-  viewSigmetSuppressedSelector
+  viewSuppressedSigmetSelector
 } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
 import {
@@ -40,7 +40,7 @@ export const SigmetWindow: React.FC = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.SIGMETS));
   const sectorId = useRootSelector(sectorIdSelector);
-  const viewSuppressed = useRootSelector(viewSigmetSuppressedSelector);
+  const viewSuppressed = useRootSelector(viewSuppressedSigmetSelector);
   const sigmetList = useRootSelector(sigmetSelector);
   const zStack = useRootSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
@@ -79,7 +79,7 @@ export const SigmetWindow: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.SIGMETS)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.SIGMETS) > 0 && dispatch(pushZStack(EdstWindow.SIGMETS))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.SIGMETS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SIGMETS))}
         anyDragging={anyDragging}
         id="edst-status"
       >
@@ -113,7 +113,7 @@ export const SigmetWindow: React.FC = () => {
                           }}
                           options={[!sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE"]}
                           handleOptionClick={() => {
-                            dispatch(setSigmetSuppressionState({ id: sigmetId, value: !sigmetEntry.suppressed }));
+                            dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
                             setSelectedOption(null);
                             setSelectedPos(null);
                           }}
@@ -138,10 +138,10 @@ export const SigmetWindow: React.FC = () => {
             handleOptionClick={option => {
               switch (option as sigmetOption) {
                 case sigmetOption.viewSuppressed:
-                  dispatch(setViewSigmetSuppressed(true));
+                  dispatch(setViewSuppressedSigmet(true));
                   break;
                 case sigmetOption.hideSuppressed:
-                  dispatch(setViewSigmetSuppressed(false));
+                  dispatch(setViewSuppressedSigmet(false));
                   break;
                 default:
                   break;

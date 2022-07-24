@@ -136,7 +136,7 @@ export const HoldMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.HOLD_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) > 0 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
         anyDragging={anyDragging}
         id="hold-menu"
       >

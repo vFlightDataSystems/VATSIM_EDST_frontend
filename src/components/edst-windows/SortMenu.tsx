@@ -63,7 +63,7 @@ export const SortMenu: React.FC = () => {
         width={window === EdstWindow.ACL ? 220 : 190}
         pos={windowProps.position}
         zIndex={zStack.indexOf(EdstWindow.SORT_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.SORT_MENU) > 0 && dispatch(pushZStack(EdstWindow.SORT_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.SORT_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SORT_MENU))}
         anyDragging={anyDragging}
         id="sort-menu"
       >
@@ -230,14 +230,7 @@ export const SortMenu: React.FC = () => {
               <EdstButton
                 content="OK"
                 onMouseDown={() => {
-                  dispatch(
-                    EdstWindow.ACL
-                      ? setAclSort({
-                          selectedOption: sortState.selectedOption,
-                          sector: sortState.sector
-                        })
-                      : setDepSort(sortState.selectedOption)
-                  );
+                  dispatch(EdstWindow.ACL ? setAclSort(sortState) : setDepSort(sortState));
                   dispatch(closeWindow(EdstWindow.SORT_MENU));
                 }}
               />

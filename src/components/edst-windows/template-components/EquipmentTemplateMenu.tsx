@@ -99,7 +99,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU) > 0 && dispatch(pushZStack(EdstWindow.EQUIPMENT_TEMPLATE_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.EQUIPMENT_TEMPLATE_MENU))}
         anyDragging={anyDragging}
         id="equipment-template-menu"
       >
