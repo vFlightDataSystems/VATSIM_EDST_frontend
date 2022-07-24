@@ -1,5 +1,5 @@
 import { RootThunkAction } from "../store";
-import { addAclEntry, addDepEntry } from "../slices/entrySlice";
+import { addEntryToAcl, addEntryToDep } from "../slices/entrySlice";
 import { setAsel } from "../slices/appSlice";
 import { convertBeaconCodeToString } from "../../lib";
 import { EdstWindow, AclRowField, DepRowField } from "../../namespaces";
@@ -13,11 +13,11 @@ function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
     if (aircraftId) {
       switch (window) {
         case EdstWindow.ACL:
-          dispatch(addAclEntry(aircraftId));
+          dispatch(addEntryToAcl(aircraftId));
           dispatch(setAsel({ aircraftId, field: AclRowField.FID, window: EdstWindow.ACL }));
           break;
         case EdstWindow.DEP:
-          dispatch(addDepEntry(aircraftId));
+          dispatch(addEntryToDep(aircraftId));
           dispatch(setAsel({ aircraftId, field: DepRowField.FID, window: EdstWindow.DEP }));
           break;
         default:
