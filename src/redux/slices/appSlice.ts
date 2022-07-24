@@ -196,7 +196,7 @@ const appSlice = createSlice({
     pushZStack(state, action: PayloadAction<EdstWindow>) {
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
-      state.zStack = [action.payload, ...zStack];
+      state.zStack = [...zStack, action.payload];
     },
     addOutageMessage(state, action: PayloadAction<OutageEntry>) {
       state.outage = [...state.outage, action.payload];
