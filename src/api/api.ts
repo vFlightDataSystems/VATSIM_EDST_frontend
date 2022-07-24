@@ -2,6 +2,8 @@ import _ from "lodash";
 import { ApiPreferentialArrivalRoute } from "../types/apiPreferentialArrivalRoute";
 import { ApiPreferentialDepartureRoute } from "../types/apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "../types/apiPreferentialDepartureArrivalRoute";
+import { RouteFix } from "../types/routeFix";
+import { ApiAirSigmet } from "../redux/slices/weatherSlice";
 
 // const baseurl = "http://localhost:5000/api";
 const baseurl = "https://tdls.oakartcc.org/api";
@@ -18,26 +20,16 @@ export async function fetchPdar(artcc: string, aircraft: string, dep: string, de
   return fetch(`${baseurl}/route/adar/${artcc}?${new URLSearchParams({ aircraft, dep, dest })}`).then(response => response.json());
 }
 
-export async function fetchRouteFixes(route: string, dep: string, dest: string): Promise<any[]> {
+export async function fetchRouteFixes(route: string, dep: string, dest: string): Promise<RouteFix[]> {
   return fetch(`${baseurl}/route/get_route_data?${new URLSearchParams({ route, dep, dest })}`).then(response => response.json());
 }
 
-export async function fetchFormatRoute(route: string, dep: string, dest: string): Promise<any> {
+export async function fetchFormatRoute(route: string, dep: string, dest: string): Promise<string> {
   return fetch(`${baseurl}/route/format_route?${new URLSearchParams({ route, dep, dest })}`).then(response => response.json());
 }
 
 export async function fetchAirportInfo(apt: string): Promise<any> {
   return fetch(`${baseurl}/navdata/airport/${apt}`).then(response => response.json());
-}
-
-export async function trialRoute(callsign: string, planData: Record<string, any>): Promise<any> {
-  return fetch(`${baseurl}/edst/trial/route`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ callsign, ...planData })
-  });
 }
 
 export async function fetchCtrFavData(artcc: string): Promise<Response> {
@@ -72,8 +64,8 @@ export async function fetchAirportMetar(airport: string): Promise<Response> {
   return fetch(`${baseurl}/weather/metar/airport/${airport}`);
 }
 
-export async function fetchSigmets(): Promise<Response> {
-  return fetch(`${baseurl}/weather/sigmets`);
+export async function fetchSigmets(): Promise<ApiAirSigmet[]> {
+  return fetch(`${baseurl}/weather/sigmets`).then(response => response.json());
 }
 
 export const memoizedFetchAirportInfo = _.memoize(fetchAirportInfo);
