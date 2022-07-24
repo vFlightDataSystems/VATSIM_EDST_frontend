@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { RootState, RootThunkAction } from "../store";
 import { EDST_MENU_LIST, EdstWindow, AclRowField, DepRowField, PlanRowField } from "../../namespaces";
 import { Plan } from "../../types/plan";
 import { WindowPosition } from "../../types/windowPosition";
@@ -24,7 +24,7 @@ type AppWindow = {
   openedBy?: EdstWindow;
 };
 
-enum outageTypeEnum {
+enum OutageType {
   facilityDown,
   facilityUp,
   serviceDown,
@@ -33,7 +33,7 @@ enum outageTypeEnum {
 
 type OutageEntry = {
   message: string;
-  outageType: outageTypeEnum;
+  outageType: OutageType;
   canDelete: boolean;
   acknowledged: boolean;
 };
@@ -44,14 +44,14 @@ export type AppState = {
   disabledHeaderButtons: edstHeaderButton[];
   planQueue: Plan[];
   windows: Record<EdstWindow, AppWindow>;
-  dragging: boolean;
+  anyDragging: boolean;
   mraMsg: string;
   mcaCommandString: string;
   tooltipsEnabled: boolean;
   showSectorSelector: boolean;
   asel: Asel | null;
   zStack: EdstWindow[];
-  outage: OutageEntry[];
+  outages: OutageEntry[];
 };
 
 export enum edstHeaderButton {
@@ -117,14 +117,14 @@ const initialState: AppState = {
   disabledHeaderButtons: DISABLED_HEADER_BUTTONS,
   planQueue: [],
   windows: initialWindowState,
-  dragging: false,
+  anyDragging: false,
   mraMsg: "",
   mcaCommandString: "",
   tooltipsEnabled: true,
   showSectorSelector: false,
   asel: null,
   zStack: [],
-  outage: []
+  outages: []
 };
 
 const appSlice = createSlice({
@@ -191,7 +191,7 @@ const appSlice = createSlice({
       state.asel = action.payload;
     },
     setAnyDragging(state, action: PayloadAction<boolean>) {
-      state.dragging = action.payload;
+      state.anyDragging = action.payload;
     },
     pushZStack(state, action: PayloadAction<EdstWindow>) {
       const zStack = new Set([...state.zStack]);
@@ -199,16 +199,24 @@ const appSlice = createSlice({
       state.zStack = [...zStack, action.payload];
     },
     addOutageMessage(state, action: PayloadAction<OutageEntry>) {
-      state.outage = [...state.outage, action.payload];
+      state.outages = [...state.outages, action.payload];
     },
     // removes outage message at index
     removeOutageMessage(state, action: PayloadAction<number>) {
-      if (action.payload > -1 && action.payload < state.outage.length) {
-        state.outage.splice(action.payload, 1);
+      if (action.payload > -1 && action.payload < state.outages.length) {
+        state.outages.splice(action.payload, 1);
       }
     }
   }
 });
+
+export function setAsel(asel: Asel | null): RootThunkAction {
+  return (dispatch, getState) => {
+    if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
+      dispatch(appSlice.actions.setAsel(asel));
+    }
+  };
+}
 
 export const {
   setTooltipsEnabled,
@@ -222,7 +230,6 @@ export const {
   closeAllWindows,
   closeAllMenus,
   closeAircraftMenus,
-  setAsel,
   setAnyDragging,
   pushZStack,
   addOutageMessage,
@@ -238,9 +245,9 @@ export const aselSelector = (state: RootState) => state.app.asel;
 export const aclAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.ACL ? state.app.asel : null);
 export const depAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.DEP ? state.app.asel : null);
 export const gpdAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.GPD ? state.app.asel : null);
-export const anyDraggingSelector = (state: RootState) => state.app.dragging;
+export const anyDraggingSelector = (state: RootState) => state.app.anyDragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;
-export const outageSelector = (state: RootState) => state.app.outage;
+export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
 export const tooltipsEnabledSelector = (state: RootState) => state.app.tooltipsEnabled;
 export const showSectorSelectorSelector = (state: RootState) => state.app.showSectorSelector;
