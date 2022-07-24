@@ -5,7 +5,7 @@ import { WindowPosition } from "../types/windowPosition";
 const floatingWindowTitleBackgroundColor = "#575757";
 
 export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
-  z-index: ${props => 10000 - props.zIndex};
+  z-index: ${props => 10000 + props.zIndex};
   position: fixed;
   color: #adadad;
 

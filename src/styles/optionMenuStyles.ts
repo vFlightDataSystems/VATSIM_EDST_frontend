@@ -36,7 +36,7 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?:
     }}
 `;
 export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
-  z-index: ${props => 10000 - props.zIndex};
+  z-index: ${props => 10000 + props.zIndex};
   overflow: hidden;
   position: fixed;
   color: #adadad;
