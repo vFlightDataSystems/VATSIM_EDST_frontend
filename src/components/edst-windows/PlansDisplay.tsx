@@ -21,7 +21,7 @@ const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
-  z-index: ${props => 10000 - props.zIndex};
+  z-index: ${props => 10000 + props.zIndex};
 `;
 
 export const PlansDisplay: React.FC = () => {
@@ -37,7 +37,7 @@ export const PlansDisplay: React.FC = () => {
       anyDragging={anyDragging}
       ref={ref}
       zIndex={zStack.indexOf(EdstWindow.PLANS_DISPLAY)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.PLANS_DISPLAY) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.PLANS_DISPLAY))}
+      onMouseDown={() => zStack.indexOf(EdstWindow.PLANS_DISPLAY) < zStack.length - 1 && !fullscreen && dispatch(pushZStack(EdstWindow.PLANS_DISPLAY))}
     >
       <PlansDisplayHeader focused={focused} />
       <PlansDisplayTable />

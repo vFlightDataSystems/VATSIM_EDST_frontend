@@ -6,7 +6,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { openMenuThunk } from "../../redux/thunks/thunks";
 import { aselSelector, closeWindow, setAsel, zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
-import { deleteAclEntry, deleteDepEntry, entrySelector } from "../../redux/slices/entrySlice";
+import { rmvEntryFromAcl, rmvEntryFromDep, entrySelector } from "../../redux/slices/entrySlice";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
@@ -42,7 +42,7 @@ export const PlanOptions: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.PLAN_OPTIONS)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.PLAN_OPTIONS) > 0 && dispatch(pushZStack(EdstWindow.PLAN_OPTIONS))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.PLAN_OPTIONS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.PLAN_OPTIONS))}
         anyDragging={anyDragging}
         id="plan-menu"
       >
@@ -110,7 +110,7 @@ export const PlanOptions: React.FC = () => {
               style={{ flexGrow: 1 }}
               title={Tooltips.planOptionsDelete}
               onMouseDown={() => {
-                dispatch(asel.window === EdstWindow.ACL ? deleteAclEntry(asel.aircraftId) : deleteDepEntry(asel.aircraftId));
+                dispatch(asel.window === EdstWindow.ACL ? rmvEntryFromAcl(asel.aircraftId) : rmvEntryFromDep(asel.aircraftId));
                 dispatch(setAsel(null));
                 dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
               }}

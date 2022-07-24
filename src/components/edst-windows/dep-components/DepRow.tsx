@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatAltitude, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { deleteDepEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
+import { rmvEntryFromDep, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { depAircraftSelect } from "../../../redux/thunks/thunks";
@@ -131,7 +131,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(deleteDepEntry(entry.aircraftId));
+          dispatch(rmvEntryFromDep(entry.aircraftId));
         }
         break;
       default:

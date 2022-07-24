@@ -30,7 +30,7 @@ export const CancelHoldMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.CANCEL_HOLD_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.CANCEL_HOLD_MENU) > 0 && dispatch(pushZStack(EdstWindow.CANCEL_HOLD_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.CANCEL_HOLD_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.CANCEL_HOLD_MENU))}
         anyDragging={anyDragging}
         id="cancel-hold-menu"
       >

@@ -20,7 +20,7 @@ const AclDiv = styled(DraggableDiv)<{ zIndex: number }>`
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
-  z-index: ${props => 10000 - props.zIndex};
+  z-index: ${props => 10000 + props.zIndex};
 `;
 
 export const Acl: React.FC = () => {

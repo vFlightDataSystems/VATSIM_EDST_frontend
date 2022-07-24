@@ -21,7 +21,7 @@ const GpdDiv = styled(DraggableDiv)<{ zIndex: number }>`
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
-  z-index: ${props => 10000 - props.zIndex};
+  z-index: ${props => 10000 + props.zIndex};
 `;
 
 export const Gpd: React.FC = () => {
@@ -33,7 +33,7 @@ export const Gpd: React.FC = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
-  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.GPD) > 0 && !fullscreen && dispatch(pushZStack(EdstWindow.GPD));
+  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.GPD) < zStack.length - 1 && !fullscreen && dispatch(pushZStack(EdstWindow.GPD));
 
   return (
     <GpdDiv ref={ref} anyDragging={anyDragging} zIndex={zStack.indexOf(EdstWindow.GPD)} onMouseDown={onMouseDownHandler}>

@@ -48,7 +48,7 @@ export const PreviousRouteMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.PREV_ROUTE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.PREV_ROUTE_MENU) > 0 && dispatch(pushZStack(EdstWindow.PREV_ROUTE_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.PREV_ROUTE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.PREV_ROUTE_MENU))}
         anyDragging={anyDragging}
         id="prev-route-menu"
       >

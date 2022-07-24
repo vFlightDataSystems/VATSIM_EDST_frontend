@@ -311,7 +311,6 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
             dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
           }
         }}
-        // onMouseEnter={() => setInputFocus()}
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
         <MessageComposeInputAreaDiv>

@@ -34,7 +34,7 @@ export const GpdMapOptions: React.FC = () => {
         ref={ref}
         pos={windowProps.position}
         zIndex={zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU) > 0 && dispatch(pushZStack(EdstWindow.GPD_MAP_OPTIONS_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.GPD_MAP_OPTIONS_MENU))}
         anyDragging={anyDragging}
         id="gpd-map-options-menu"
       >

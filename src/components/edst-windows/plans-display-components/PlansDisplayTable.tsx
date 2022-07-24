@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { planQueueSelector, selectedPlanIndexSelector, TrialPlan, setSelectedTrialPlanIndex } from "../../../redux/slices/planSlice";
-import { removeTrialPlanThunk } from "../../../redux/thunks/thunks";
+import { planQueueSelector, selectedPlanIndexSelector, Plan, setSelectedPlanIndex } from "../../../redux/slices/planSlice";
+import { removePlanThunk } from "../../../redux/thunks/thunks";
 import { BodyRowDiv } from "../../../styles/bodyStyles";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
@@ -66,10 +66,10 @@ export const PlansDisplayTable: React.FC = () => {
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(setSelectedTrialPlanIndex(selectedPlanIndex === index ? null : index));
+        dispatch(setSelectedPlanIndex(selectedPlanIndex === index ? null : index));
         break;
       case 2:
-        dispatch(removeTrialPlanThunk(index));
+        dispatch(removePlanThunk(index));
         break;
       default:
         break;
@@ -85,7 +85,7 @@ export const PlansDisplayTable: React.FC = () => {
 
   return (
     <PlansDisplayBody>
-      {planQueue?.map((p: TrialPlan, i) => (
+      {planQueue?.map((p: Plan, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <BodyRowDiv key={`plans-display-body-${p.aircraftId}-${i}`}>
           <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>

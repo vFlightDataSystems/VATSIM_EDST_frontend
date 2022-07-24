@@ -14,7 +14,7 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
-import { addTrialPlanThunk, openMenuThunk } from "../../redux/thunks/thunks";
+import { addPlanThunk, openMenuThunk } from "../../redux/thunks/thunks";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
@@ -177,7 +177,7 @@ export const RouteMenu: React.FC = () => {
           .trim()
       };
       dispatch(
-        addTrialPlanThunk({
+        addPlanThunk({
           cid: entry.cid,
           aircraftId: entry.aircraftId,
           amendedFlightplan,
@@ -207,7 +207,7 @@ export const RouteMenu: React.FC = () => {
       };
       if (trialPlan) {
         dispatch(
-          addTrialPlanThunk({
+          addPlanThunk({
             cid: entry.cid,
             aircraftId: entry.aircraftId,
             amendedFlightplan,
@@ -228,7 +228,7 @@ export const RouteMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.ROUTE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.ROUTE_MENU) > 0 && dispatch(pushZStack(EdstWindow.ROUTE_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.ROUTE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ROUTE_MENU))}
         anyDragging={anyDragging}
         id="route-menu"
       >

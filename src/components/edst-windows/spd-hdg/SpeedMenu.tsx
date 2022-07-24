@@ -72,7 +72,7 @@ export const SpeedMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.SPEED_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.SPEED_MENU) > 0 && dispatch(pushZStack(EdstWindow.SPEED_MENU))}
+        onMouseDown={() => zStack.indexOf(EdstWindow.SPEED_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SPEED_MENU))}
         anyDragging={anyDragging}
         id="speed-menu"
       >

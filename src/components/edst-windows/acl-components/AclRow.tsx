@@ -4,7 +4,7 @@ import VCI from "../../../resources/images/VCI_v4.png";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { deleteAclEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
+import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclAircraftSelect } from "../../../redux/thunks/thunks";
 import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
@@ -170,7 +170,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(deleteAclEntry(entry.aircraftId));
+          dispatch(rmvEntryFromAcl(entry.aircraftId));
         }
         break;
       default:
