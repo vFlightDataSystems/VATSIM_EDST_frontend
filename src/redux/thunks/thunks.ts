@@ -2,9 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState, RootThunkAction } from "../store";
 import { equipmentIcaoToNas, getRemainingRouteFixes, getRouteFixesDistance, REMOVAL_TIMEOUT } from "../../lib";
-import { addAclEntry, addDepEntry, deleteAclEntry, setEntry, updateEntries, updateEntry } from "../slices/entrySlice";
+import { addEntryToAcl, addEntryToDep, rmvEntryFromAcl, setEntry, updateEntries, updateEntry } from "../slices/entrySlice";
 import { closeAircraftMenus, closeWindow, openWindow, setAsel, setWindowPosition } from "../slices/appSlice";
-import { addTrialPlan, removeTrialPlan, TrialPlan } from "../slices/planSlice";
+import { addPlan, removePlan, Plan } from "../slices/planSlice";
 import {
   fetchPar,
   fetchPdar,
@@ -32,7 +32,7 @@ export const aclCleanup: RootThunkAction = (dispatch, getState) => {
   const now = new Date().getTime();
   const pendingRemovalEntryList = Object.values(entries).filter(entry => entry.aclDisplay && now - (entry?.pendingRemoval ?? now) > REMOVAL_TIMEOUT);
   pendingRemovalEntryList.forEach(entry => {
-    dispatch(deleteAclEntry(entry.aircraftId));
+    dispatch(rmvEntryFromAcl(entry.aircraftId));
   });
 };
 
@@ -223,14 +223,14 @@ export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, trigg
   };
 }
 
-export const addTrialPlanThunk = createAsyncThunk<void, TrialPlan>("plan/trial/route", async (plan, thunkAPI) => {
-  thunkAPI.dispatch(addTrialPlan(plan));
+export const addPlanThunk = createAsyncThunk<void, Plan>("plan/trial/route", async (plan, thunkAPI) => {
+  thunkAPI.dispatch(addPlan(plan));
   thunkAPI.dispatch(openWindow({ window: EdstWindow.PLANS_DISPLAY }));
 });
 
-export function removeTrialPlanThunk(index: number): RootThunkAction {
+export function removePlanThunk(index: number): RootThunkAction {
   return (dispatch, getState) => {
-    dispatch(removeTrialPlan(index));
+    dispatch(removePlan(index));
     if (getState().plan.planQueue.length === 0) {
       dispatch(closeWindow(EdstWindow.PLANS_DISPLAY));
     }
@@ -374,9 +374,9 @@ export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): Ro
       // console.log(newAircraftTrack, entry);
       // console.log(polygons, entry);
       if (polygons && entry && !entry.aclDisplay && entryFilter(entry, newAircraftTrack, polygons)) {
-        dispatch(addAclEntry(newAircraftTrack.aircraftId));
+        dispatch(addEntryToAcl(newAircraftTrack.aircraftId));
       } else if (entry && !entry.depDisplay && depFilter(entry, newAircraftTrack, sectorData.artccId)) {
-        dispatch(addDepEntry(newAircraftTrack.aircraftId));
+        dispatch(addEntryToDep(newAircraftTrack.aircraftId));
       }
     }
     dispatch(updateEntries(updateData));
