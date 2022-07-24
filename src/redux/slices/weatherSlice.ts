@@ -5,24 +5,24 @@ import { RootState } from "../store";
 type AirportCode = string;
 
 type WeatherState = {
-  altimeterList: Record<AirportCode, AltimeterEntry>;
-  metarList: Record<AirportCode, MetarEntry>;
-  sigmetList: Record<AirportCode, SigmetEntry>;
-  viewSigmetSuppressed: boolean;
+  altimeterMap: Record<AirportCode, AltimeterEntry>;
+  metarMap: Record<AirportCode, MetarEntry>;
+  sigmetMap: Record<string, SigmetEntry>;
+  viewSuppressedSigmet: boolean;
 };
 
-export type MetarEntry = {
+type MetarEntry = {
   airport: AirportCode;
   metar: string;
 };
 
-export type AltimeterEntry = {
+type AltimeterEntry = {
   airport: AirportCode;
   time: string;
   altimeter: string;
 };
 
-export type ApiSigmet = {
+export type ApiAirSigmet = {
   airsigmet_type: string;
   text: string;
   area: Position[];
@@ -31,67 +31,67 @@ export type ApiSigmet = {
   sectorIntersects?: Record<string, boolean>;
 };
 
-export type SigmetEntry = ApiSigmet & {
+type SigmetEntry = ApiAirSigmet & {
   suppressed: boolean;
   acknowledged: boolean;
   polygons: Feature<Polygon | MultiPolygon>;
 };
 
-const initialState: WeatherState = { altimeterList: {}, metarList: {}, sigmetList: {}, viewSigmetSuppressed: true };
+const initialState: WeatherState = { altimeterMap: {}, metarMap: {}, sigmetMap: {}, viewSuppressedSigmet: true };
 
 const weatherSlice = createSlice({
   name: "weather",
   initialState,
   reducers: {
-    setAirportMetar(state, action: PayloadAction<MetarEntry>) {
-      state.metarList[action.payload.airport] = action.payload;
+    setMetar(state, action: PayloadAction<MetarEntry>) {
+      state.metarMap[action.payload.airport] = action.payload;
     },
-    removeAirportMetar(state, action: PayloadAction<AirportCode>) {
-      delete state.metarList[action.payload];
+    delMetar(state, action: PayloadAction<AirportCode>) {
+      delete state.metarMap[action.payload];
     },
-    setAirportAltimeter(state, action: PayloadAction<AltimeterEntry>) {
-      state.altimeterList[action.payload.airport] = action.payload;
+    setAltimeter(state, action: PayloadAction<AltimeterEntry>) {
+      state.altimeterMap[action.payload.airport] = action.payload;
     },
-    removeAirportAltimeter(state, action: PayloadAction<AirportCode>) {
-      delete state.altimeterList[action.payload];
+    delAltimeter(state, action: PayloadAction<AirportCode>) {
+      delete state.altimeterMap[action.payload];
     },
-    addSigmets(state, action: PayloadAction<ApiSigmet[]>) {
+    addSigmets(state, action: PayloadAction<ApiAirSigmet[]>) {
       action.payload.forEach(s => {
-        if (!Object.keys(state.sigmetList).includes(s.text) && /\sSIG\w?\s/.test(s.text)) {
+        if (!Object.keys(state.sigmetMap).includes(s.text) && /\sSIG\w?\s/.test(s.text)) {
           const polygons = lineToPolygon(lineString(s.area));
-          state.sigmetList[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
+          state.sigmetMap[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
         }
       });
     },
-    setSigmetSuppressionState(state, action: PayloadAction<{ id: string; value: boolean }>) {
-      if (Object.keys(state.sigmetList).includes(action.payload.id)) {
-        state.sigmetList[action.payload.id].suppressed = action.payload.value;
+    setSigmetSuppressed(state, action: PayloadAction<{ id: string; value: boolean }>) {
+      if (Object.keys(state.sigmetMap).includes(action.payload.id)) {
+        state.sigmetMap[action.payload.id].suppressed = action.payload.value;
       }
     },
     setSigmetAcknowledged(state, action: PayloadAction<{ id: string; value: boolean }>) {
-      if (Object.keys(state.sigmetList).includes(action.payload.id)) {
-        state.sigmetList[action.payload.id].acknowledged = action.payload.value;
+      if (Object.keys(state.sigmetMap).includes(action.payload.id)) {
+        state.sigmetMap[action.payload.id].acknowledged = action.payload.value;
       }
     },
-    setViewSigmetSuppressed(state, action: PayloadAction<boolean>) {
-      state.viewSigmetSuppressed = action.payload;
+    setViewSuppressedSigmet(state, action: PayloadAction<boolean>) {
+      state.viewSuppressedSigmet = action.payload;
     }
   }
 });
 
 export const {
-  setAirportMetar,
-  removeAirportMetar,
-  setAirportAltimeter,
-  removeAirportAltimeter,
+  setMetar,
+  delMetar,
+  setAltimeter,
+  delAltimeter,
   addSigmets,
-  setSigmetSuppressionState,
+  setSigmetSuppressed,
   setSigmetAcknowledged,
-  setViewSigmetSuppressed
+  setViewSuppressedSigmet
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 
-export const altimeterSelector = (state: RootState) => state.weather.altimeterList;
-export const metarSelector = (state: RootState) => state.weather.metarList;
-export const sigmetSelector = (state: RootState) => state.weather.sigmetList;
-export const viewSigmetSuppressedSelector = (state: RootState) => state.weather.viewSigmetSuppressed;
+export const altimeterSelector = (state: RootState) => state.weather.altimeterMap;
+export const metarSelector = (state: RootState) => state.weather.metarMap;
+export const sigmetSelector = (state: RootState) => state.weather.sigmetMap;
+export const viewSuppressedSigmetSelector = (state: RootState) => state.weather.viewSuppressedSigmet;
