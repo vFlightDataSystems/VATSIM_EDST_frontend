@@ -41,8 +41,6 @@ import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
 import { HubProvider } from "./hooks/hub";
 
-// const CACHE_TIMEOUT = 300000; // ms
-
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
 const Edst: React.FC = () => {
