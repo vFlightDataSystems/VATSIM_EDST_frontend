@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
@@ -16,6 +16,7 @@ import { Topic } from "../types/topic";
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
 const useHubInit = () => {
+  const [, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const nasToken = useRootSelector(nasTokenSelector)!;
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
