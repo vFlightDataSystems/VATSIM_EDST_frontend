@@ -3,7 +3,7 @@ import { AircraftId } from "./aircraftId";
 export type ApiFlightplan = {
   aircraftId: AircraftId;
   cid: string;
-  status: "Proposed" | "Tentative" | "Active";
+  status: any;
   assignedBeaconCode: number | null;
   equipment: string;
   aircraftType: string;
@@ -23,5 +23,5 @@ export type ApiFlightplan = {
   minutesEnroute: number;
   pilotCid: string;
   remarks: string;
-  revision: string;
+  tdlsDumped: boolean;
 };
