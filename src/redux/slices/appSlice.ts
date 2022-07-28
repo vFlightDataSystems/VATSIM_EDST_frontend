@@ -136,7 +136,7 @@ const appSlice = createSlice({
       state.windows[action.payload].open = !state.windows[action.payload].open;
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
-      state.zStack = [action.payload, ...zStack];
+      state.zStack = [...zStack, action.payload];
     },
     closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
