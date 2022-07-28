@@ -58,7 +58,7 @@ export const PreviousRouteMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <OptionsBodyRow padding="0 8px">
             <OptionsBodyCol>

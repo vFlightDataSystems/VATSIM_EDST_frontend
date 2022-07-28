@@ -17,6 +17,7 @@ import { HubConnection } from "@microsoft/signalr";
 import { ApiAircraftTrack } from "./types/apiAircraftTrack";
 import { RouteFix } from "./types/routeFix";
 import { EdstEntry } from "./types/edstEntry";
+import { AircraftTrack } from "./types/aircraftTrack";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -286,62 +287,6 @@ export function getClearedToFixRouteFixes(
   return null;
 }
 
-export function equipmentIcaoToNas(field10a: string, field10b: string): string {
-  let nasSuffix = "";
-  if (field10a.includes("W")) {
-    if (field10b.match(/[CPSEHL]/g)?.length) {
-      if (field10a.includes("G")) {
-        nasSuffix = "L";
-      } else if (field10b.match(/[RCIX]/g)?.length) {
-        nasSuffix = "Z";
-      } else {
-        nasSuffix = "W";
-      }
-    } else if (field10b.match(/[AXIN]/g)?.length) {
-      nasSuffix = "H";
-    }
-  } else if (field10a.includes("G")) {
-    if (field10b.match(/[CPSEHL]/g)?.length) {
-      nasSuffix = "G";
-    } else if (field10b.match(/[AXIN]/g)?.length) {
-      nasSuffix = "S";
-    } else {
-      nasSuffix = "V";
-    }
-  } else if (field10a.match(/[RCIX]/g)?.length) {
-    if (field10b.match(/[CPSEHL]/g)?.length) {
-      nasSuffix = "I";
-    } else if (field10b.match(/[AXIN]/g)?.length) {
-      nasSuffix = "C";
-    } else {
-      nasSuffix = "Y";
-    }
-  } else if (field10a.includes("D")) {
-    if (field10b.match(/[CPSEHL]/g)?.length) {
-      nasSuffix = "A";
-    } else if (field10b.match(/[AXIN]/g)?.length) {
-      nasSuffix = "B";
-    } else {
-      nasSuffix = "D";
-    }
-  } else if (field10a.includes("T")) {
-    if (field10b.match(/[CPSEHL]/g)?.length) {
-      nasSuffix = "P";
-    } else if (field10b.match(/[AXIN]/g)?.length) {
-      nasSuffix = "N";
-    } else {
-      nasSuffix = "M";
-    }
-  } else if (field10b.match(/[CPSEHL]/g)?.length) {
-    nasSuffix = "U";
-  } else if (field10b.match(/[AXIN]/g)?.length) {
-    nasSuffix = "T";
-  } else {
-    nasSuffix = "X";
-  }
-  return nasSuffix;
-}
-
 export function getDepString(dep?: string): string | null {
   return dep ? `${dep}\u{2191}` : null;
 }
@@ -368,4 +313,8 @@ export async function getFrd(artccId: string, location: { lat: number; lon: numb
     });
   }
   return frd;
+}
+
+export function probeConflicts(tracks: AircraftTrack[]): unknown {
+  return null;
 }

@@ -178,7 +178,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
               selected={isSelected(entry.aircraftId, DepRowField.TYPE)}
               onMouseDown={event => dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.TYPE))}
             >
-              {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+              {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depAlt}>

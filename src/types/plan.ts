@@ -1,6 +1,6 @@
 export type Plan = {
   aircraftId: string;
   callsign: string;
-  planData: Record<string, any>;
+  planData: Record<string, unknown>;
   msg: string;
 };

@@ -99,7 +99,9 @@ export const EquipmentTemplateMenu: React.FC = () => {
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.EQUIPMENT_TEMPLATE_MENU))}
+        onMouseDown={() =>
+          zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.EQUIPMENT_TEMPLATE_MENU))
+        }
         anyDragging={anyDragging}
         id="equipment-template-menu"
       >
@@ -108,7 +110,7 @@ export const EquipmentTemplateMenu: React.FC = () => {
           Equipment Template
         </OptionsMenuHeader>
         <EqpTemplateBody>
-          <FidRow>{entry && `${entry.aircraftId} ${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}</FidRow>
+          <FidRow>{entry && `${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix}`}</FidRow>
           <EqpTemplateRow>
             <EdstTemplateButton85
               selected={selectedMenu === menuOptions.surv}

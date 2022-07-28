@@ -52,7 +52,7 @@ export const PlanOptions: React.FC = () => {
         </OptionsMenuHeader>
         <PlanOptionsBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <OptionsBodyRow>
             <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsAlt} onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)}>

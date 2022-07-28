@@ -6,7 +6,6 @@ import { ApiPreferentialArrivalRoute } from "./apiPreferentialArrivalRoute";
 export type LocalVEdstEntry = {
   depInfo: ApiAirportInfo | null;
   destInfo: ApiAirportInfo | null;
-  nasSuffix: string | null;
   preferentialDepartureRoutes: ApiPreferentialDepartureRoute[];
   preferentialDepartureArrivalRoutes: ApiPreferentialDepartureArrivalRoute[];
   preferentialArrivalRoutes: ApiPreferentialArrivalRoute[];

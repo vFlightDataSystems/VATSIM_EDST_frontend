@@ -82,7 +82,7 @@ export const SpeedMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <Row>
             <OptionsBodyCol>

@@ -40,7 +40,7 @@ export const CancelHoldMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <OptionsBodyRow>
             <OptionsBodyCol>

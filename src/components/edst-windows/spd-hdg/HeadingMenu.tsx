@@ -72,7 +72,7 @@ export const HeadingMenu: React.FC = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <Row
           // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}

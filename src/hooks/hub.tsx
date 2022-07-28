@@ -11,8 +11,9 @@ import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { ApiFlightplan } from "../types/apiFlightplan";
 import { ApiAircraftTrack } from "../types/apiAircraftTrack";
 import { ApiSessionInfo } from "../types/apiSessionInfo";
+import { Topic } from "../types/topic";
 
-const ATC_SERVER_URL = process.env.REACT_APP_ATC_SERVER_URL;
+const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
 const useHubInit = () => {
   const dispatch = useRootDispatch();
@@ -50,14 +51,16 @@ const useHubInit = () => {
       });
 
       hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfo) => {
+        console.log(sessionInfo);
         dispatch(setSession(sessionInfo));
       });
 
       hubConnection.on("HandleSessionEnded", () => {
+        console.log("clearing session");
         dispatch(clearSession());
       });
-      hubConnection.on("receiveFlightplan", (flightplan: ApiFlightplan) => {
-        // console.log("received flightplan:", flightplan);
+      hubConnection.on("receiveFlightplan", (topic: Topic, flightplan: ApiFlightplan) => {
+        console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
@@ -67,7 +70,7 @@ const useHubInit = () => {
         });
       });
 
-      await hubConnection
+      hubConnection
         .start()
         .then(() => {
           hubConnection
@@ -81,34 +84,21 @@ const useHubInit = () => {
                 dispatch(setSectorId(sectorId));
                 dispatch(setSession(sessionInfo));
                 dispatch(initThunk());
+                hubConnection
+                  .invoke("joinSession", { sessionId: sessionInfo.id })
+                  .then(() => {
+                    console.log(`joined session ${sessionInfo.id}`);
+                    hubConnection
+                      .invoke("subscribe", { facilityId: sessionInfo.facilityId, category: "Eram", subCategory: "FlightPlans" })
+                      .then(() => console.log("subscribe succeeded."))
+                      .catch(console.log);
+                  })
+                  .catch(console.log);
               } else {
                 console.log("not signed in to a Center position");
               }
             })
             .catch(() => {
-              const sessionInfo = {
-                artccId: "ZBW",
-                facilityId: "ZBW",
-                id: "01G3CZTG1TFZZ4EB2PJ5P4MJ2X",
-                isActive: true,
-                position: {
-                  callsign: "BOS_37_CTR",
-                  eramConfiguration: {
-                    sectorId: "37"
-                  },
-                  frequency: 134700000,
-                  id: "",
-                  name: "Concord 37",
-                  radioName: "Boston Center"
-                },
-                positionId: "01G3CZTG1TFZZ4EB2PJ5P4MJ2X"
-              };
-              const { artccId } = sessionInfo;
-              const { sectorId } = sessionInfo.position.eramConfiguration;
-              dispatch(setArtccId(artccId));
-              dispatch(setSectorId(sectorId));
-              dispatch(setSession(sessionInfo));
-              dispatch(initThunk());
               console.log("No session found");
             });
           console.log("Connected to ATC hub");

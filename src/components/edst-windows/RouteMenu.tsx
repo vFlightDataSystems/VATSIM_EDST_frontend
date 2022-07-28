@@ -238,7 +238,7 @@ export const RouteMenu: React.FC = () => {
         </RouteMenuHeader>
         <RouteMenuBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <RouteMenuRow>
             <OptionsBodyCol>

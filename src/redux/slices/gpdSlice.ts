@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { AirwayFix } from "../../types/airwayFix";
-import { Fix } from "../../types/fix";
 
 export enum SectorType {
   ultraLow = "UL",
@@ -42,15 +40,14 @@ export type AircraftDisplayOptions = {
   routePreviewMinutes: ["Route Preview (minutes)", number];
 };
 
+type GpdConfiguration = Record<string, unknown> | null;
+
 export type GpdState = {
+  gpdConfiguration: GpdConfiguration;
   mapFeatureOptions: MapFeatureOptions;
   aircraftDisplayOptions: AircraftDisplayOptions;
-  sectorTypes: Record<string, SectorType>;
-  navaids: Fix[];
-  waypoints: Fix[];
-  airways: Record<string, AirwayFix[]>;
   suppressed: boolean;
-  planData: Record<string, any>[];
+  planData: Record<string, unknown>[];
 };
 
 const initialMapFeatureOptionsState = {
@@ -60,10 +57,7 @@ const initialMapFeatureOptionsState = {
 
 const initialState: GpdState = {
   mapFeatureOptions: initialMapFeatureOptionsState,
-  sectorTypes: {},
-  navaids: [],
-  waypoints: [],
-  airways: {},
+  gpdConfiguration: null,
   aircraftDisplayOptions: {
     aircraftListFilter: ["Aircraft List Filter", false],
     altitudeFilterLimits: ["Altitude Filter Limits", false],
@@ -81,7 +75,7 @@ const gpdSlice = createSlice({
   name: "gpd",
   initialState,
   reducers: {
-    addGpdPlanData(state, action: PayloadAction<Record<string, any>>) {
+    addGpdPlanData(state, action: PayloadAction<Record<string, unknown>>) {
       state.planData.push(action.payload);
     },
     removeGpdPlanData(state, action: PayloadAction<number>) {
@@ -94,23 +88,6 @@ const gpdSlice = createSlice({
     },
     setAircraftDisplayOptions(state, action: PayloadAction<AircraftDisplayOptions>) {
       state.aircraftDisplayOptions = action.payload;
-    },
-    setSectorTypes(state, action: PayloadAction<Record<string, SectorType>>) {
-      state.sectorTypes = action.payload;
-    },
-    setNavaids(state, action: PayloadAction<Fix[]>) {
-      state.navaids = action.payload;
-    },
-    setWaypoints(state, action: PayloadAction<Fix[]>) {
-      state.waypoints = action.payload;
-    },
-    setAirways(state, action: PayloadAction<AirwayFix[]>) {
-      action.payload.forEach(segment => {
-        if (!state.airways[segment.airway]) {
-          state.airways[segment.airway] = [];
-        }
-        state.airways[segment.airway].push(segment);
-      });
     },
     setSuppressed(state, action: PayloadAction<boolean>) {
       state.suppressed = action.payload;
@@ -126,10 +103,6 @@ export const {
   removeGpdPlanData,
   setMapFeatureOptions,
   setAircraftDisplayOptions,
-  setSectorTypes,
-  setNavaids,
-  setWaypoints,
-  setAirways,
   setSuppressed,
   toggleSuppressed
 } = gpdSlice.actions;
@@ -138,8 +111,4 @@ export default gpdSlice.reducer;
 export const gpdMapFeatureOptionsSelector = (state: RootState) => state.gpd.mapFeatureOptions;
 export const gpdSuppressedSelector = (state: RootState) => state.gpd.suppressed;
 export const gpdAircraftDisplayOptionsSelector = (state: RootState) => state.gpd.aircraftDisplayOptions;
-export const gpdSectorTypesSelector = (state: RootState) => state.gpd.sectorTypes;
-export const gpdNavaidSelector = (state: RootState) => state.gpd.navaids;
-export const gpdWaypointSelector = (state: RootState) => state.gpd.waypoints;
-export const gpdAirwaySelector = (state: RootState) => state.gpd.airways;
 export const gpdPlanDataSelector = (state: RootState) => state.gpd.planData;

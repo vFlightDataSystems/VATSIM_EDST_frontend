@@ -76,7 +76,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
   const ref = useRef<HTMLDivElement | null>(null);
 
   // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
-  const showCoralBox = entry.nasSuffix && !entry.nasSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
+  const showCoralBox = !entry.faaEquipmentSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
 
   const checkParReroutePending = () => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
@@ -258,7 +258,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
               selected={isSelected(entry.aircraftId, AclRowField.TYPE)}
               onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
             >
-              {`${entry.equipment.split("/")[0]}/${entry.nasSuffix}`}
+              {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclAlt}>

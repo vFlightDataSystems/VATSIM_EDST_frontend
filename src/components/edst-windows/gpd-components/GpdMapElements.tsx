@@ -143,7 +143,7 @@ export const GpdAircraftTrack: React.FC<{ aircraftId: string }> = ({ aircraftId 
 };
 
 // TODO: give this component a better name...
-export const GpdPlanDisplay: React.FC<{ displayData: Record<string, any>[] }> = ({ displayData }) => {
+export const GpdPlanDisplay: React.FC<{ displayData: Record<string, unknown>[] }> = ({ displayData }) => {
   // TODO: implement component
 
   return <>{displayData.map(() => null)}</>;

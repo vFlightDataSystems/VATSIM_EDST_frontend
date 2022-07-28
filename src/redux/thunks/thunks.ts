@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState, RootThunkAction } from "../store";
-import { equipmentIcaoToNas, getRemainingRouteFixes, getRouteFixesDistance, REMOVAL_TIMEOUT } from "../../lib";
+import { getRemainingRouteFixes, getRouteFixesDistance, REMOVAL_TIMEOUT } from "../../lib";
 import { addEntryToAcl, addEntryToDep, rmvEntryFromAcl, setEntry, updateEntries, updateEntry } from "../slices/entrySlice";
 import { closeAircraftMenus, closeWindow, openWindow, setAsel, setWindowPosition } from "../slices/appSlice";
 import { addPlan, removePlan, Plan } from "../slices/planSlice";
@@ -267,13 +267,6 @@ async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Prom
     fetchPdr(artcc, fp.route, fp.equipment.split("/")[0], fp.departure, fp.altitude),
     fetchPdar(artcc, fp.equipment.split("/")[0], fp.departure, fp.destination)
   ]);
-
-  let nasSuffix = "";
-  const icaoFields = fp.equipment.split("/").slice(1);
-  if (icaoFields.length === 2) {
-    icaoFields[0] = icaoFields[0].split("-").pop() as string;
-    nasSuffix = equipmentIcaoToNas(icaoFields[0], icaoFields[1]);
-  }
   return {
     ...fp,
     aclDeleted: false,
@@ -281,7 +274,6 @@ async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Prom
     boundaryTime: 0,
     depDeleted: false,
     depDisplay: false,
-    nasSuffix,
     depInfo,
     destInfo,
     depStatus: -1,
