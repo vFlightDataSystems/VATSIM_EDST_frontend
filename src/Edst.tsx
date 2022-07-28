@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useEventListener } from "usehooks-ts";
+import { useEventListener, useInterval } from "usehooks-ts";
 import { EdstHeader } from "./components/EdstHeader";
 import { Acl } from "./components/edst-windows/Acl";
 import { Dep } from "./components/edst-windows/Dep";
@@ -40,6 +40,8 @@ import { Gpd } from "./components/edst-windows/Gpd";
 import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
 import { HubProvider } from "./hooks/hub";
+import { fetchAllAircraft } from "./api/api";
+import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
 
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
@@ -50,6 +52,12 @@ const Edst: React.FC = () => {
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
   const bodyRef = React.useRef<HTMLDivElement & any>(null);
+
+  useInterval(() => {
+    fetchAllAircraft().then(aircraftList => {
+      dispatch(updateSweatboxAircraftThunk(aircraftList));
+    });
+  }, 5000);
 
   useEffect(() => {
     const weatherUpdateIntervalId = setInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);

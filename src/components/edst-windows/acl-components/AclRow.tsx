@@ -6,7 +6,6 @@ import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aselSelector } from "../../../redux/slices/appSlice";
-import { aclAircraftSelect } from "../../../redux/thunks/thunks";
 import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import {
@@ -34,6 +33,7 @@ import {
 import { edstFontBrown } from "../../../styles/colors";
 import { EdstWindow, AclRowField, AclAselActionTrigger } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
+import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 
 const SPA_INDICATOR = "\u2303";
 

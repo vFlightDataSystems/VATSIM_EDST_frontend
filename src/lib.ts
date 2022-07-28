@@ -304,14 +304,15 @@ export function formatAltitude(alt: string): string {
   return String(altNum >= 1000 ? altNum / 100 : altNum).padStart(3, "0");
 }
 
-export async function getFrd(artccId: string, location: { lat: number; lon: number }, hubConnection: HubConnection | null) {
+export async function getFrd(location: { lat: number; lon: number }, hubConnection: HubConnection | null) {
   let frd = null;
   if (hubConnection) {
-    frd = await hubConnection.invoke("GenerateFrd", { artccId, location }).catch(error => {
+    frd = await hubConnection.invoke("generateFrd", location).catch(error => {
       console.log(error);
       return null;
     });
   }
+  console.log(frd);
   return frd;
 }
 

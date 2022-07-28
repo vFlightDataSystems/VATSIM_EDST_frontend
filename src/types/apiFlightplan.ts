@@ -21,7 +21,6 @@ export type ApiFlightplan = {
   fuelMinutes: number;
   hoursEnroute: number;
   minutesEnroute: number;
-  isIfr: boolean;
   pilotCid: string;
   remarks: string;
   revision: string;

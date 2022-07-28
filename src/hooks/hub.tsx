@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { updateAircraftTrackThunk, updateFlightplanThunk } from "../redux/thunks/thunks";
 import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
 import { refreshToken } from "../api/vNasDataApi";
 import { initThunk } from "../redux/thunks/initThunk";
@@ -12,6 +11,8 @@ import { ApiFlightplan } from "../types/apiFlightplan";
 import { ApiAircraftTrack } from "../types/apiAircraftTrack";
 import { ApiSessionInfo } from "../types/apiSessionInfo";
 import { Topic } from "../types/topic";
+import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThunk";
+import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
@@ -61,7 +62,7 @@ const useHubInit = () => {
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", (topic: Topic, flightplan: ApiFlightplan) => {
-        console.log("received flightplan:", flightplan);
+        // console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
@@ -102,6 +103,7 @@ const useHubInit = () => {
             .catch(() => {
               console.log("No session found");
             });
+          setHubConnected(true);
           console.log("Connected to ATC hub");
         })
         .catch(e => {
@@ -124,6 +126,7 @@ const HubContext = createContext<HubContextValue>(null);
 
 export const HubProvider: React.FC = ({ children }) => {
   const hubConnection = useHubInit();
+  console.log(hubConnection);
 
   return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
 };

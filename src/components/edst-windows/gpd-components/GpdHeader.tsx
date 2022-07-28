@@ -4,12 +4,12 @@ import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { openMenuThunk } from "../../../redux/thunks/thunks";
 import { closeAllMenus, closeWindow, gpdAselSelector } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { gpdSuppressedSelector, toggleSuppressed } from "../../../redux/slices/gpdSlice";
 import { EdstWindow } from "../../../namespaces";
+import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
 type GpdHeaderProps = {
   focused: boolean;

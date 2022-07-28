@@ -5,7 +5,6 @@ import { Tooltips } from "../../../tooltips";
 import { rmvEntryFromDep, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
-import { depAircraftSelect } from "../../../redux/thunks/thunks";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import {
   AircraftTypeCol,
@@ -25,6 +24,7 @@ import { EdstWindow, DepRowField } from "../../../namespaces";
 import { ApiPreferentialDepartureRoute } from "../../../types/apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiPreferentialDepartureArrivalRoute";
 import { EdstEntry } from "../../../types/edstEntry";
+import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 
 const SPA_INDICATOR = "\u2303";
 const COMPLETED_SYMBOL = "✓";

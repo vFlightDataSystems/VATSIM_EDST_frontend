@@ -12,14 +12,12 @@ import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { EdstWindow } from "../../namespaces";
 import { useHub } from "../../hooks/hub";
-import { artccIdSelector } from "../../redux/slices/sectorSlice";
 
 const PrevRouteMenuDiv = styled(OptionsMenu)`
   width: 380px;
 `;
 
 export const PreviousRouteMenu: React.FC = () => {
-  const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PREV_ROUTE_MENU));
@@ -34,7 +32,7 @@ export const PreviousRouteMenu: React.FC = () => {
 
   useEffect(() => {
     async function updateFrd() {
-      setFrd(await getFrd(artccId, aircraftTrack.location, hubConnection));
+      setFrd(await getFrd(aircraftTrack.location, hubConnection));
     }
     updateFrd().then();
   }, []);

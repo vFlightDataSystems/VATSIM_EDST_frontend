@@ -3,6 +3,7 @@ import { RootState, RootThunkAction } from "../store";
 import { EDST_MENU_LIST, EdstWindow, AclRowField, DepRowField, PlanRowField } from "../../namespaces";
 import { Plan } from "../../types/plan";
 import { WindowPosition } from "../../types/windowPosition";
+import { AircraftId } from "../../types/aircraftId";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -38,7 +39,7 @@ type OutageEntry = {
   acknowledged: boolean;
 };
 
-export type Asel = { aircraftId: string; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
+export type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
 
 export type AppState = {
   disabledHeaderButtons: edstHeaderButton[];
@@ -153,7 +154,7 @@ const appSlice = createSlice({
       }
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload.window);
-      state.zStack = [action.payload.window, ...zStack];
+      state.zStack = [...zStack, action.payload.window];
     },
     setTooltipsEnabled(state, action: PayloadAction<boolean>) {
       state.tooltipsEnabled = action.payload;

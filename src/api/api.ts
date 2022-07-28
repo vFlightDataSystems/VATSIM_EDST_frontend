@@ -4,6 +4,7 @@ import { ApiPreferentialDepartureRoute } from "../types/apiPreferentialDeparture
 import { ApiPreferentialDepartureArrivalRoute } from "../types/apiPreferentialDepartureArrivalRoute";
 import { RouteFix } from "../types/routeFix";
 import { ApiAirSigmet } from "../redux/slices/weatherSlice";
+import { ApiAircraft } from "../types/apiAircraft";
 
 // const baseurl = "http://localhost:5000/api";
 const baseurl = "https://tdls.oakartcc.org/api";
@@ -38,6 +39,16 @@ export async function fetchAirportMetar(airport: string): Promise<Response> {
 
 export async function fetchSigmets(): Promise<ApiAirSigmet[]> {
   return fetch(`${baseurl}/weather/sigmets`).then(response => response.json());
+}
+
+const AIRCRAFT_URL = process.env.REACT_APP_NAS_AIRCRAFT_URL ?? "";
+
+export async function fetchAllAircraft(): Promise<ApiAircraft[]> {
+  return fetch(AIRCRAFT_URL).then(response => response.json());
+}
+
+export async function fetchAircraft(callsign: string): Promise<ApiAircraft> {
+  return fetch(`${AIRCRAFT_URL}/${callsign}`).then(response => response.json());
 }
 
 export const memoizedFetchAirportInfo = _.memoize(fetchAirportInfo);

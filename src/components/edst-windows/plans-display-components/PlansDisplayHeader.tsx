@@ -4,11 +4,11 @@ import { EdstWindowHeaderButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "../../../redux/slices/planSlice";
-import { openMenuThunk } from "../../../redux/thunks/thunks";
 import { closeWindow, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { EdstWindow, PlanRowField } from "../../../namespaces";
 import { useHub } from "../../../hooks/hub";
+import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
 type PlansDisplayHeaderProps = {
   focused: boolean;

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planQueueSelector, selectedPlanIndexSelector, Plan, setSelectedPlanIndex } from "../../../redux/slices/planSlice";
-import { removePlanThunk } from "../../../redux/thunks/thunks";
 import { BodyRowDiv } from "../../../styles/bodyStyles";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
+import { removePlanThunk } from "../../../redux/thunks/removePlanThunk";
 
 const PlansDisplayBody = styled(NoSelectDiv)`
   overflow: hidden;

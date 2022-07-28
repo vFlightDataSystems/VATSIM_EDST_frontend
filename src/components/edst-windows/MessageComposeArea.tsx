@@ -4,7 +4,6 @@ import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes,
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
-import { aclCleanup, openWindowThunk } from "../../redux/thunks/thunks";
 import { EdstWindow } from "../../namespaces";
 import {
   closeAllWindows,
@@ -21,13 +20,14 @@ import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { artccIdSelector } from "../../redux/slices/sectorSlice";
 import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { ApiFlightplan } from "../../types/apiFlightplan";
 import { EdstEntry } from "../../types/edstEntry";
+import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
+import { aclCleanup } from "../../redux/thunks/aclCleanup";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -91,7 +91,6 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
   const aircraftTracks = useRootSelector(aircraftTracksSelector);
-  const artccId = useRootSelector(artccIdSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -160,7 +159,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
       const entry = getEntryByFid(args[1]);
       if (entry && entry.aclDisplay && entry.currentRouteFixes?.map(fix => fix.name).includes(args[0])) {
         const aircraftTrack = aircraftTracks[entry.aircraftId];
-        const frd = await getFrd(artccId, aircraftTrack.location, hubConnection);
+        const frd = await getFrd(aircraftTrack.location, hubConnection);
         const route = getClearedToFixRouteFixes(args[0], entry, frd)?.route;
         if (route) {
           const amendmentFlightplan: ApiFlightplan = {

@@ -5,12 +5,12 @@ import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { depManualPostingSelector, depSortDataSelector, setDepManualPosting } from "../../../redux/slices/depSlice";
 import { closeAllMenus, closeWindow, depAselSelector } from "../../../redux/slices/appSlice";
-import { openMenuThunk } from "../../../redux/thunks/thunks";
 import { addDepEntryByFid } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { AddFindInput } from "../../InputComponents";
 import { EdstWindow, SortOptionValues } from "../../../namespaces";
+import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
 type DepHeaderProps = {
   focused: boolean;

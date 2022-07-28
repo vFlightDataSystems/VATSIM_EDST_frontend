@@ -5,7 +5,6 @@ import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
-import { openMenuThunk } from "../../redux/thunks/thunks";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
@@ -14,7 +13,7 @@ import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
-import { artccIdSelector } from "../../redux/slices/sectorSlice";
+import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;
@@ -98,7 +97,6 @@ export const TemplateMenu: React.FC = () => {
   const entry = useRootSelector(aselEntrySelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.TEMPLATE_MENU));
   const zStack = useRootSelector(zStackSelector);
-  const artccId = useRootSelector(artccIdSelector);
   const hubConnection = useHub();
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
@@ -129,7 +127,7 @@ export const TemplateMenu: React.FC = () => {
   useEffect(() => {
     async function updateFrd() {
       if (aircraftTrack) {
-        setFrdInput(await getFrd(artccId, aircraftTrack.location, hubConnection));
+        setFrdInput(await getFrd(aircraftTrack.location, hubConnection));
       }
     }
     updateFrd().then();
