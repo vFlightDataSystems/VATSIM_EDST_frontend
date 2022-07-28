@@ -188,6 +188,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
                 onMouseDown={event => dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
               >
                 {formatAltitude(entry.altitude)}
+                {entry.interimAltitude && `T${entry.interimAltitude}`}
               </AltColDiv>
             </AltCol>
           </EdstTooltip>
