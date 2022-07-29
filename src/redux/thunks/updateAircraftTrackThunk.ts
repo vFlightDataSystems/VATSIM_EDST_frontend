@@ -3,7 +3,7 @@ import { RootThunkAction } from "../store";
 import { EdstEntry } from "../../types/edstEntry";
 import { setTrack } from "../slices/trackSlice";
 import { getRemainingRouteFixes, getRouteFixesDistance } from "../../lib";
-import { depFilter, entryFilter } from "../../filters";
+import { depFilter, aclFilter } from "../../filters";
 import { addEntryToAcl, addEntryToDep, updateEntries } from "../slices/entrySlice";
 
 export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): RootThunkAction {
@@ -25,7 +25,7 @@ export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): Ro
       }
       // console.log(newAircraftTrack, entry);
       // console.log(polygons, entry);
-      if (polygons && entry && !entry.aclDisplay && entryFilter(entry, newAircraftTrack, polygons)) {
+      if (polygons && entry && !entry.aclDisplay && aclFilter(entry, newAircraftTrack, polygons)) {
         dispatch(addEntryToAcl(newAircraftTrack.aircraftId));
       } else if (entry && !entry.depDisplay && depFilter(entry, newAircraftTrack, sectorData.artccId)) {
         dispatch(addEntryToDep(newAircraftTrack.aircraftId));

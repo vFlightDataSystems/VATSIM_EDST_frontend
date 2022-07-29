@@ -7,13 +7,15 @@ import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
+import { useDragging } from "../../hooks/useDragging";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { useFocused } from "../../hooks/useFocused";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;

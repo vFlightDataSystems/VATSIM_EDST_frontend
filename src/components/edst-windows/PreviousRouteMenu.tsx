@@ -6,12 +6,14 @@ import { getFrd, removeDestFromRouteString } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { EdstWindow } from "../../namespaces";
 import { useHub } from "../../hooks/hub";
+import { useDragging } from "../../hooks/useDragging";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { useFocused } from "../../hooks/useFocused";
 
 const PrevRouteMenuDiv = styled(OptionsMenu)`
   width: 380px;

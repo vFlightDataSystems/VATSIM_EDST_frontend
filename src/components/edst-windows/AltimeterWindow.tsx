@@ -14,10 +14,10 @@ import {
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
-import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { mod } from "../../lib";
 import { WindowPosition } from "../../types/windowPosition";
+import { useDragging } from "../../hooks/useDragging";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   width: 180px;

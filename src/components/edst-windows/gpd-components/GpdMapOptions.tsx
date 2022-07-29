@@ -4,7 +4,6 @@ import { EdstButton } from "../../resources/EdstButton";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { zStackSelector, pushZStack, windowSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { useDragging, useFocused } from "../../../hooks/utils";
 import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";
 import {
   OptionsBodyCol,
@@ -17,6 +16,8 @@ import {
 } from "../../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 import { EdstWindow } from "../../../namespaces";
+import { useDragging } from "../../../hooks/useDragging";
+import { useFocused } from "../../../hooks/useFocused";
 
 export const GpdMapOptions: React.FC = () => {
   const dispatch = useRootDispatch();

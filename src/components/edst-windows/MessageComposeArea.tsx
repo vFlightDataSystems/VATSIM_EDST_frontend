@@ -20,7 +20,6 @@ import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
@@ -28,6 +27,7 @@ import { ApiFlightplan } from "../../types/apiFlightplan";
 import { EdstEntry } from "../../types/edstEntry";
 import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 import { aclCleanup } from "../../redux/thunks/aclCleanup";
+import { useDragging } from "../../hooks/useDragging";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;

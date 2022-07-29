@@ -14,7 +14,6 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
@@ -25,6 +24,9 @@ import { ApiFlightplan } from "../../types/apiFlightplan";
 import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
+import { useDragging } from "../../hooks/useDragging";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { useFocused } from "../../hooks/useFocused";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;

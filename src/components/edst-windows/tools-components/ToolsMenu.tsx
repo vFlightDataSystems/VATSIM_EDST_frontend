@@ -6,7 +6,6 @@ import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { closeWindow, pushZStack, windowSelector, zStackSelector } from "../../../redux/slices/appSlice";
 import { ToolsOptionsMenu } from "./ToolsOptionsMenu";
-import { useDragging, useFocused } from "../../../hooks/utils";
 import {
   OptionsBody,
   OptionsBodyCol,
@@ -18,6 +17,8 @@ import {
 } from "../../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 import { EdstWindow } from "../../../namespaces";
+import { useDragging } from "../../../hooks/useDragging";
+import { useFocused } from "../../../hooks/useFocused";
 
 export const ToolsBody = styled(OptionsBody)`
   padding: 20px 0 4px 0;

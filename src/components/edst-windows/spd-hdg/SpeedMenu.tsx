@@ -7,12 +7,14 @@ import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 import { EdstWindow } from "../../../namespaces";
+import { useDragging } from "../../../hooks/useDragging";
+import { useCenterCursor } from "../../../hooks/useCenterCursor";
+import { useFocused } from "../../../hooks/useFocused";
 
 enum Sign {
   more = "+",

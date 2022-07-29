@@ -8,13 +8,15 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entrySlice";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { EdstWindow } from "../../namespaces";
 import { RouteFix } from "../../types/routeFix";
+import { useDragging } from "../../hooks/useDragging";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { useFocused } from "../../hooks/useFocused";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;

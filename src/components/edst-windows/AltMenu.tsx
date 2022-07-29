@@ -9,7 +9,6 @@ import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
-import { useCenterCursor } from "../../hooks/utils";
 import { Plan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
 import { useHub } from "../../hooks/hub";
@@ -17,6 +16,7 @@ import { EdstWindow } from "../../namespaces";
 import { ApiFlightplan } from "../../types/apiFlightplan";
 import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
 
 const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: WindowPosition }>`
   z-index: 11000;

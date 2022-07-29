@@ -4,10 +4,10 @@ import { AclHeader } from "./acl-components/AclHeader";
 import { AclTable } from "./acl-components/AclTable";
 import { useRootSelector, useRootDispatch } from "../../redux/hooks";
 import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { useFocused } from "../../hooks/utils";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { DraggableDiv } from "../../styles/styles";
 import { EdstWindow } from "../../namespaces";
+import { useFocused } from "../../hooks/useFocused";
 
 const AclDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;

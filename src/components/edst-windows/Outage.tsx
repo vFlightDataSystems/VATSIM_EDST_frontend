@@ -10,9 +10,9 @@ import {
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
-import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
+import { useDragging } from "../../hooks/useDragging";
 
 const OutageDiv = styled(FloatingWindowDiv)`
   width: 340px;

@@ -3,12 +3,12 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { useFocused } from "../../hooks/utils";
 import { GpdHeader } from "./gpd-components/GpdHeader";
 import { GpdBody } from "./gpd-components/GpdBody";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { DraggableDiv } from "../../styles/styles";
 import { EdstWindow } from "../../namespaces";
+import { useFocused } from "../../hooks/useFocused";
 
 const GpdDiv = styled(DraggableDiv)<{ zIndex: number }>`
   white-space: nowrap;

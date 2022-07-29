@@ -13,10 +13,10 @@ import {
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
-import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
 import { WindowPosition } from "../../types/windowPosition";
+import { useDragging } from "../../hooks/useDragging";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;

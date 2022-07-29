@@ -10,7 +10,6 @@ import { EquipmentCommTemplate } from "./EquipmentCommTemplate";
 import { EquipmentAppServTemplate } from "./EquipmentAppServTemplate";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
-import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import {
   OptionsBodyCol,
   OptionsBody,
@@ -23,6 +22,9 @@ import {
 import { EqpContentCol, EqpRow } from "./styled";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 import { EdstWindow } from "../../../namespaces";
+import { useDragging } from "../../../hooks/useDragging";
+import { useCenterCursor } from "../../../hooks/useCenterCursor";
+import { useFocused } from "../../../hooks/useFocused";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
   width: 900px;

@@ -4,10 +4,12 @@ import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, updateEntry } from "../../redux/slices/entrySlice";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import { FidRow, OptionsBodyCol, OptionsBody, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
+import { useDragging } from "../../hooks/useDragging";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { useFocused } from "../../hooks/useFocused";
 
 const CancelHoldDiv = styled(OptionsMenu)`
   width: 250px;

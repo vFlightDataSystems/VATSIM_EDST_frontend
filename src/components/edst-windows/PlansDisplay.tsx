@@ -5,10 +5,10 @@ import { PlansDisplayHeader } from "./plans-display-components/PlansDisplayHeade
 import { PlansDisplayTable } from "./plans-display-components/PlansDisplayTable";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { anyDraggingSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { useFocused } from "../../hooks/utils";
 import { DraggableDiv } from "../../styles/styles";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { EdstWindow } from "../../namespaces";
+import { useFocused } from "../../hooks/useFocused";
 
 const PlansDisplayDiv = styled(DraggableDiv)<{ zIndex: number }>`
   display: block;

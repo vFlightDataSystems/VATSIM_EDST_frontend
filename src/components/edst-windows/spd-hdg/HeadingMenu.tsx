@@ -8,13 +8,15 @@ import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { useCenterCursor, useDragging, useFocused } from "../../../hooks/utils";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../../styles/draggingStyles";
 import { EdstWindow } from "../../../namespaces";
 import { mod } from "../../../lib";
+import { useDragging } from "../../../hooks/useDragging";
+import { useCenterCursor } from "../../../hooks/useCenterCursor";
+import { useFocused } from "../../../hooks/useFocused";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 190px;

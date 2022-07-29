@@ -8,7 +8,6 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { setAclSort } from "../../redux/slices/aclSlice";
 import { setDepSort } from "../../redux/slices/depSlice";
 import { closeWindow, zStackSelector, pushZStack, windowSelector } from "../../redux/slices/appSlice";
-import { useCenterCursor, useDragging, useFocused } from "../../hooks/utils";
 import {
   OptionsBody,
   OptionsBodyCol,
@@ -20,6 +19,9 @@ import {
 } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow, SortOptions } from "../../namespaces";
+import { useDragging } from "../../hooks/useDragging";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { useFocused } from "../../hooks/useFocused";
 
 const SortDiv = styled(OptionsMenu)<{ width: number }>(props => ({ width: `${props.width}px` }));
 const SortHeader = styled(OptionsMenuHeader)``;

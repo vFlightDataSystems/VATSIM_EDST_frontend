@@ -21,10 +21,10 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
-import { useDragging } from "../../hooks/utils";
 import { EdstDraggingOutline } from "../../styles/draggingStyles";
 import { EdstWindow } from "../../namespaces";
 import { WindowPosition } from "../../types/windowPosition";
+import { useDragging } from "../../hooks/useDragging";
 
 enum sigmetOption {
   viewSuppressed = "VIEW SUPPRESS",
