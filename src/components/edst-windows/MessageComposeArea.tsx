@@ -149,7 +149,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
       // TODO: put speed instead of groundspeed
       const msg =
         `${formatUtcMinutes(utcMinutes)}\n` +
-        `${entry.aircraftId} ${entry.aircraftId} ${entry.equipment} ${convertBeaconCodeToString(entry.assignedBeaconCode)} ${entry.speed} EXX00` +
+        `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
+          entry.assignedBeaconCode
+        )} ${entry.speed} EXX00` +
         ` ${entry.altitude} ${entry.departure}./.` +
         `${entry.currentRoute?.replace(/^\.+/, "")}` +
         `${entry.destination ?? ""}`;
