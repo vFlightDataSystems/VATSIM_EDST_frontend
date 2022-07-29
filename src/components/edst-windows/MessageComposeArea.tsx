@@ -101,7 +101,10 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
 
   useEffect(() => {
     setMcaInputRef(inputRef);
-    return () => setMcaInputRef(null);
+    return () => {
+      dispatch(setMcaCommandString(mcaInputValue));
+      setMcaInputRef(null);
+    };
   }, []);
 
   const toggleVci = (fid: string) => {
@@ -172,6 +175,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
           hubConnection
             .invoke("AmendFlightPlan", amendmentFlightplan)
             .then(() => setResponse(`ACCEPT\nCLEARED DIRECT`))
+            // eslint-disable-next-line no-console
             .catch((error: any) => console.log("error amending flightplan:", error));
         }
       }
@@ -266,13 +270,11 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
       }
     }
     setMcaInputValue("");
-    dispatch(setMcaCommandString(""));
   };
 
   const handleInputChange = (event: React.ChangeEvent<any>) => {
     event.preventDefault();
     setMcaInputValue(event.target.value);
-    dispatch(setMcaCommandString(event.target.value));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
