@@ -14,9 +14,15 @@ import { EdstWindow, SortOptionValues } from "../../../namespaces";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
 
+type AclHeaderProps = {
+  focused: boolean;
+  toggleFullscreen: () => void;
+  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
+};
+
 const AclHeaderDiv = styled(NoSelectDiv)``;
 
-export const AclHeader: React.FC<{ focused: boolean }> = ({ focused }) => {
+export const AclHeader: React.FC<AclHeaderProps> = ({ focused, toggleFullscreen, startDrag }) => {
   const asel = useRootSelector(aclAselSelector);
   const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);
@@ -34,6 +40,8 @@ export const AclHeader: React.FC<{ focused: boolean }> = ({ focused }) => {
     <AclHeaderDiv>
       <WindowTitleBar
         focused={focused}
+        toggleFullscreen={toggleFullscreen}
+        startDrag={startDrag}
         closeWindow={() => {
           if (asel?.window === EdstWindow.ACL) {
             dispatch(closeAllMenus());

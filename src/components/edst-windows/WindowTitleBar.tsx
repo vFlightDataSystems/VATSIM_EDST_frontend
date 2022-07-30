@@ -80,7 +80,15 @@ const InvertedBlock8x8 = styled(InvertedBlock)`
   height: 8px;
 `;
 
-export const WindowTitleBar: React.FC<{ focused: boolean; closeWindow: () => void; text: string[] }> = ({ focused, text, closeWindow }) => {
+type WindowTitleBarProps = {
+  focused: boolean;
+  closeWindow: () => void;
+  toggleFullscreen: () => void;
+  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
+  text: string[];
+};
+
+export const WindowTitleBar: React.FC<WindowTitleBarProps> = ({ focused, text, closeWindow, toggleFullscreen, startDrag }) => {
   return (
     <WindowTitleBarDiv>
       <WindowTitleBarCol focused={focused}>
@@ -88,7 +96,7 @@ export const WindowTitleBar: React.FC<{ focused: boolean; closeWindow: () => voi
           <Block8x3 focused={focused} />
         </Block>
       </WindowTitleBarCol>
-      <WindowTitleBarCol middle focused={focused}>
+      <WindowTitleBarCol middle focused={focused} onMouseDown={startDrag}>
         <Block flexGrow={1}>
           {text.map(s => (
             <TitleBarText key={s}>{s}</TitleBarText>
@@ -99,7 +107,7 @@ export const WindowTitleBar: React.FC<{ focused: boolean; closeWindow: () => voi
         <Block as="button" onClick={closeWindow}>
           <Block3x3 focused={focused} />
         </Block>
-        <Block as="button" focused={focused}>
+        <Block as="button" focused={focused} onClick={toggleFullscreen}>
           <InvertedBlock8x8 focused={focused} />
         </Block>
       </WindowTitleBarCol>

@@ -109,7 +109,7 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
     value as EdstWindow,
     {
       open: false,
-      position: defaultWindowPositions[value as EdstWindow] ?? null
+      position: defaultWindowPositions[value as EdstWindow] ?? { x: 100, y: 100 }
     } as AppWindow
   ])
 ) as Record<EdstWindow, AppWindow>;

@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../resources/EdstButton";
 import { Tooltips } from "../../../tooltips";
@@ -10,11 +11,15 @@ import { EdstWindow, PlanRowField } from "../../../namespaces";
 import { useHub } from "../../../hooks/hub";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
+const PlansDisplayHeaderDiv = styled(NoSelectDiv)``;
+
 type PlansDisplayHeaderProps = {
   focused: boolean;
+  toggleFullscreen: () => void;
+  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused }) => {
+export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused, toggleFullscreen, startDrag }) => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
@@ -25,14 +30,21 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused 
     if (selectedPlanIndex !== null && hubConnection) {
       const amendedFlightplan = planQueue[selectedPlanIndex]?.amendedFlightplan;
       if (amendedFlightplan) {
+        // eslint-disable-next-line no-console
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
     }
   };
 
   return (
-    <div>
-      <WindowTitleBar focused={focused} closeWindow={() => dispatch(closeWindow(EdstWindow.PLANS_DISPLAY))} text={["Plans Display"]} />
+    <PlansDisplayHeaderDiv>
+      <WindowTitleBar
+        focused={focused}
+        toggleFullscreen={toggleFullscreen}
+        startDrag={startDrag}
+        closeWindow={() => dispatch(closeWindow(EdstWindow.PLANS_DISPLAY))}
+        text={["Plans Display"]}
+      />
       <NoSelectDiv>
         <EdstWindowHeaderButton
           disabled={selectedPlanIndex === null}
@@ -80,6 +92,6 @@ export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused 
           title={Tooltips.plansCleanUp}
         />
       </NoSelectDiv>
-    </div>
+    </PlansDisplayHeaderDiv>
   );
 };

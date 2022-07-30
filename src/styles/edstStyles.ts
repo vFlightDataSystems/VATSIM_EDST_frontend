@@ -28,7 +28,7 @@ export const EdstDiv = styled(NoSelectDiv)`
 
 export const EdstBodyDiv = styled.div`
   overflow: hidden;
-  flex-flow: column;
+  //flex-flow: ;
   position: absolute;
   top: 36px;
   left: 0;

@@ -4,16 +4,23 @@ import { WindowPosition } from "../types/windowPosition";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
-export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
+export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | null; zIndex: number; fullscreen?: boolean }>`
   z-index: ${props => 10000 + props.zIndex};
-  position: fixed;
+  position: ${props => (!props.fullscreen ? "fixed" : "relative")};
   color: #adadad;
 
   ${props =>
+    !props.fullscreen &&
     props.pos && {
       left: `${props.pos.x}px`,
       top: `${props.pos.y}px`
     }}
+
+  ${props => props.fullscreen && { width: "auto", height: "auto" }};
+`;
+
+export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)`
+  resize: ${props => (!props.fullscreen ? "both" : "none")};
 `;
 
 export const FloatingWindowBodyDiv = styled.div`

@@ -13,13 +13,15 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
 type GpdHeaderProps = {
   focused: boolean;
+  toggleFullscreen: () => void;
+  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
   zoomLevel: number;
   setZoomLevel: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const GpdDiv = styled(NoSelectDiv)``;
 
-export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, zoomLevel, setZoomLevel }) => {
+export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, toggleFullscreen, startDrag, zoomLevel, setZoomLevel }) => {
   const asel = useRootSelector(gpdAselSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const dispatch = useRootDispatch();
@@ -45,6 +47,8 @@ export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, zoomLevel, setZoo
     <GpdDiv>
       <WindowTitleBar
         focused={focused}
+        toggleFullscreen={toggleFullscreen}
+        startDrag={startDrag}
         closeWindow={() => {
           if (asel?.window === EdstWindow.GPD) {
             dispatch(closeAllMenus());

@@ -68,7 +68,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
   );
 
   const startDrag = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<HTMLElement>) => {
       if (element.current && ppos && !anyDragging) {
         let previewPos;
         let relX = 0;

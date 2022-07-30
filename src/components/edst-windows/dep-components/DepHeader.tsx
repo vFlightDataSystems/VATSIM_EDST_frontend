@@ -14,9 +14,11 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
 type DepHeaderProps = {
   focused: boolean;
+  toggleFullscreen: () => void;
+  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export const DepHeader: React.FC<DepHeaderProps> = ({ focused }) => {
+export const DepHeader: React.FC<DepHeaderProps> = ({ focused, toggleFullscreen, startDrag }) => {
   const asel = useRootSelector(depAselSelector);
   const sortData = useRootSelector(depSortDataSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
@@ -34,6 +36,8 @@ export const DepHeader: React.FC<DepHeaderProps> = ({ focused }) => {
     <NoSelectDiv>
       <WindowTitleBar
         focused={focused}
+        toggleFullscreen={toggleFullscreen}
+        startDrag={startDrag}
         closeWindow={() => {
           if (asel?.window === EdstWindow.DEP) {
             dispatch(closeAllMenus());
