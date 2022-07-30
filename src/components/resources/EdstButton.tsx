@@ -33,9 +33,16 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
   margin-bottom: 1px;
 `;
 
-const EdstInnerButton = styled.div<{ selected?: boolean; flexGrow?: number; width?: number; height?: number; padding?: string; disabled?: boolean }>`
+type EdstInnerButtonProps = { selected?: boolean; flexGrow?: number; width?: number; height?: number; padding?: string; disabled?: boolean };
+
+const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
+  width: props.width ? `${props.width}px` : "auto",
+  height: props.height ? `${props.height}px` : "auto",
+  padding: props.padding ?? "0 4px",
+  flexGrow: props.flexGrow ?? 1
+}))<EdstInnerButtonProps>`
   display: flex;
-  flex-grow: ${props => props.flexGrow ?? 1};
+  flex-grow: ${props => props.flexGrow};
   justify-content: center;
   align-items: center;
   color: ${props => (props.selected ? "#000000" : edstFontGrey)};
@@ -44,10 +51,10 @@ const EdstInnerButton = styled.div<{ selected?: boolean; flexGrow?: number; widt
   border-right: 2px solid ${props => (props.selected ? "#888888" : "#575757")};
   border-top: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
   border-left: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
-  padding: ${props => props.padding ?? "0 4px"};
+  padding: ${props => props.padding};
 
-  width: ${props => (props.width ? `${props.width}px` : "auto")};
-  height: ${props => (props.height ? `${props.height}px` : "auto")};
+  width: ${props => props.width};
+  height: ${props => props.height};
 
   &[disabled] {
     pointer-events: none;

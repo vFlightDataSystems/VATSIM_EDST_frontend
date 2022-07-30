@@ -38,14 +38,21 @@ const TemplateRowDiv = styled.div<{ alignRight?: boolean }>`
   }
 `;
 
-const TemplateCol = styled.div<{ bottomRow?: boolean; alignRight?: boolean; width?: number; textIndent?: boolean }>`
+type TemplateColProps = {
+  bottomRow?: boolean;
+  alignRight?: boolean;
+  width?: number;
+  textIndent?: boolean;
+};
+
+const TemplateCol = styled.div.attrs((props: TemplateColProps) => ({ width: props.width ? `${props.width}px` : "auto" }))<TemplateColProps>`
   align-items: center;
   vertical-align: center;
   padding: 0 2px;
   justify-content: left;
   display: flex;
   flex-shrink: 0;
-  width: ${props => (props.width ? `${props.width}px` : "auto")};
+  width: ${props => props.width};
   ${props => props.textIndent && { "text-indent": "6px" }}
 
   ${props =>

@@ -10,7 +10,7 @@ import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { ApiFlightplan } from "../types/apiFlightplan";
 import { ApiAircraftTrack } from "../types/apiAircraftTrack";
 import { ApiSessionInfo } from "../types/apiSessionInfo";
-import { Topic } from "../types/topic";
+import { ApiTopic } from "../types/apiTopic";
 import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThunk";
 import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
 import { log } from "../console";
@@ -27,7 +27,6 @@ const useHubInit = () => {
   const getValidNasToken = () => {
     const decodedToken = decodeJwt(nasToken);
     if (decodedToken.exp! - Math.trunc(Date.now() / 1000) < 0) {
-      if (process.env.NODE_ENV)
       console.log("Refreshed NAS token");
       return refreshToken(vatsimToken).then(r => {
         return r.data;
@@ -63,7 +62,7 @@ const useHubInit = () => {
         log("clearing session");
         dispatch(clearSession());
       });
-      hubConnection.on("receiveFlightplan", (topic: Topic, flightplan: ApiFlightplan) => {
+      hubConnection.on("receiveFlightplan", (topic: ApiTopic, flightplan: ApiFlightplan) => {
         // log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });

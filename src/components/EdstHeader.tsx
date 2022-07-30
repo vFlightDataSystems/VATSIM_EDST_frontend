@@ -39,25 +39,35 @@ const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   }
 `;
 
-const ColButton = styled.button<{
+type ColButtonProps = {
   width?: number;
   height?: number;
+  color?: string;
   open?: boolean;
   fontWeight?: string;
   backgroundColor?: string;
   borderColor?: string;
-}>`
+};
+
+const ColButton = styled.button.attrs((props: ColButtonProps) => ({
+  width: `${props.width ?? 70}px`,
+  height: `${props.height ?? 30}px`,
+  backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
+  color: props.color ?? edstFontGrey,
+  fontWeight: props.fontWeight ?? "bolder",
+  border: `1px solid ${props.borderColor ?? "#adadad"}`
+}))<ColButtonProps>`
   display: flex;
   justify-content: center;
   line-height: 13px;
   font-size: 13px;
-  width: ${props => (props.width ? `${props.width}px` : "70px")};
-  height: ${props => (props.height ? `${props.height}px` : "30px")};
+  width: ${props => props.width};
+  height: ${props => props.height};
   margin: 0 1px;
-  border: 1px solid #adadad;
-  background-color: ${props => props.backgroundColor ?? "#000000"};
-  color: ${props => props.color ?? edstFontGrey};
-  font-weight: ${props => props.fontWeight ?? "bolder"};
+  border: ${props => props.border};
+  background-color: ${props => props.backgroundColor};
+  color: ${props => props.color};
+  font-weight: ${props => props.fontWeight};
 
   &:hover {
     border: 1px solid #ffffff;
@@ -67,15 +77,6 @@ const ColButton = styled.button<{
     border: 1px solid #707070;
     color: #707070;
   }
-
-  ${props =>
-    props.borderColor && {
-      border: `1px solid ${props.borderColor}`
-    }}
-  ${props =>
-    props.open && {
-      "background-color": "#595959"
-    }}
 `;
 
 type EdstHeaderButtonProps = {

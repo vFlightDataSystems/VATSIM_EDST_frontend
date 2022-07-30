@@ -18,11 +18,12 @@ import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 
-const AltMenuDiv = styled(NoSelectDiv)<{ width?: number; pos: WindowPosition }>`
+type AltMenuDivProps = { width?: number; pos: WindowPosition };
+const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({ width: `${props.width ?? 100}px` }))<AltMenuDivProps>`
   z-index: 11000;
   background-color: #888888;
   position: fixed;
-  width: ${props => (props.width ? `${props.width}px` : "100px")};
+  width: ${props => props.width};
   color: #d6d6d6;
 
   ${props => ({ left: `${props.pos.x}px`, top: `${props.pos.y}px` })}
@@ -172,6 +173,7 @@ export const AltMenu: React.FC = () => {
     const amendedFlightplan: ApiFlightplan = { ...entry, altitude: String(Number(alt) * 100) };
     if (selected === "amend") {
       if (hubConnection) {
+        // eslint-disable-next-line no-console
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
     } else {

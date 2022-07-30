@@ -6,11 +6,12 @@ import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
-import { AircraftTypeCol, AltCol, DepCol2, FidCol, RadioCol, SpecialBox, CodeCol, RouteCol } from "./DepStyled";
+import { AltCol, DepCol2, DepFidCol, RadioCol, SpecialBox } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
 import { DepRowField, SortOptions } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
+import { AircraftTypeCol, CodeCol, RouteCol } from "../../../styles/sharedColumns";
 
 const COMPLETED_SYMBOL = "✓";
 
@@ -60,7 +61,7 @@ export function DepTable() {
       <BodyRowHeaderDiv key="dep-table-header">
         <RadioCol header>{COMPLETED_SYMBOL}</RadioCol>
         <DepCol2>P Time</DepCol2>
-        <FidCol>Flight ID</FidCol>
+        <DepFidCol>Flight ID</DepFidCol>
         <SpecialBox />
         <SpecialBox />
         <AircraftTypeCol hidden={hiddenList.includes(DepRowField.TYPE)}>

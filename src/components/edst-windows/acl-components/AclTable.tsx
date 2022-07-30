@@ -11,24 +11,12 @@ import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/bodyStyles";
-import {
-  AclCol1,
-  AircraftTypeCol,
-  AltCol,
-  CodeCol,
-  FidCol,
-  HdgCol,
-  HdgSpdSlashCol,
-  PointOutCol,
-  RadioCol,
-  RouteCol,
-  SpdCol,
-  SpecialBox
-} from "./AclStyled";
+import { AclCol1, AltCol, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol, SpecialBox } from "./AclStyled";
 import { aclManualPostingSelector, aclSortDataSelector } from "../../../redux/slices/aclSlice";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { EdstWindow, AclRowField, SortOptions } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
+import { AircraftTypeCol, CodeCol, FidCol, RouteCol } from "../../../styles/sharedColumns";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;

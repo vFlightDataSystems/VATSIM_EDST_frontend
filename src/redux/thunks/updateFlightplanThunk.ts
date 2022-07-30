@@ -69,7 +69,17 @@ async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Prom
     aclRouteDisplay: null,
     assignedHeading: null,
     assignedSpeed: null,
-    interimAltitude: null
+    interimAltitude: null,
+    aclHighlighted: false,
+    depHighlighted: false,
+    pendingRemoval: null,
+    previousRoute: null,
+    remarksChecked: false,
+    scratchHdg: null,
+    scratchSpd: null,
+    showFreeText: false,
+    uplinkEligible: false,
+    voiceType: ""
   };
 }
 

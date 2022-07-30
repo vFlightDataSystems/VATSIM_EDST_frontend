@@ -10,21 +10,14 @@ import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/s
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import {
   AclCol1,
-  AircraftTypeCol,
   AltCol,
   AltColDiv,
-  CodeCol,
   CoralBox,
-  FidCol,
   HdgCol,
   HdgSpdSlashCol,
-  HotBox,
   PointOutCol,
   RadioCol,
   RemarksBox,
-  RouteCol,
-  RouteDepAirportSpan,
-  RouteSpan,
   SpdCol,
   SpecialBox,
   VoiceTypeSpan
@@ -34,6 +27,7 @@ import { AclAselActionTrigger, AclRowField, EdstWindow } from "../../../namespac
 import { EdstEntry } from "../../../types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { AclRouteDisplayOption } from "../../../types/localVEdstEntry";
+import { AircraftTypeCol, CodeCol, FidCol, HotBox, RouteCol, RouteDepAirportSpan, RouteSpan } from "../../../styles/sharedColumns";
 
 const SPA_INDICATOR = "\u2303";
 
@@ -257,7 +251,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
               contentHidden={hidden.includes(AclRowField.TYPE)}
               hover
               selected={isSelected(entry.aircraftId, AclRowField.TYPE)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
+              onMouseDown={(event: React.MouseEvent) => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
             >
               {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
@@ -267,7 +261,9 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
               <AltColDiv
                 headerMouseDown={altMouseDown}
                 selected={isSelected(entry.aircraftId, AclRowField.ALT)}
-                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
+                onMouseDown={(event: React.MouseEvent) =>
+                  dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))
+                }
               >
                 {formatAltitude(entry.altitude)}
                 {entry.interimAltitude && `T${entry.interimAltitude}`}
@@ -280,7 +276,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
               contentHidden={hidden.includes(AclRowField.CODE)}
               hover
               selected={isSelected(entry.aircraftId, AclRowField.CODE)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
+              onMouseDown={(event: React.MouseEvent) => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
             >
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
@@ -319,7 +315,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
             color={edstFontBrown}
             selected={isSelected(entry.aircraftId, AclRowField.HOLD)}
             onMouseDown={handleHoldClick}
-            onContextMenu={event => {
+            onContextMenu={(event: React.MouseEvent) => {
               event.preventDefault();
               if (entry?.holdData) {
                 dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
@@ -341,7 +337,9 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
             <RouteCol
               hover
               selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
+              onMouseDown={(event: React.MouseEvent) =>
+                dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))
+              }
             >
               {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute &&
                 holdData &&
