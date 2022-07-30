@@ -174,7 +174,7 @@ export const RouteSpan = styled(RouteCol)<{ padding?: string }>`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-export const RouteAmendmentSpan = styled(RouteSpan)`
+export const EmbeddedRouteTextSpan = styled(RouteSpan)`
   color: ${edstFontBlue};
   ${props =>
     props.selected && {
@@ -182,8 +182,13 @@ export const RouteAmendmentSpan = styled(RouteSpan)`
       color: "#000000"
     }}
 `;
-export const RouteDepSpan = styled(RouteSpan)<{ amendmentPending?: boolean }>`
-  ${props => props.amendmentPending && RouteAmendmentSpan}
+export const RouteDepAirportSpan = styled(RouteSpan)<{ amendmentPending?: boolean }>`
+  ${props =>
+    props.amendmentPending && {
+      color: props.selected ? "#000000" : edstFontBlue,
+      "background-color": props.selected ? edstFontBlue : "#000000"
+    }}
+  }
 `;
 export const HdgCol = styled(Col)<{ scratchpad?: boolean }>`
   width: 38px;
