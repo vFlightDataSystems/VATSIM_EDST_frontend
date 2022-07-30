@@ -46,10 +46,7 @@ export function printFlightStrip(entry?: EdstEntry) {
           nextTime: nextFix ? formatUtcMinutes(nextFix.minutesAtFix) : "", // next fix timestamp
           dofArrow: "", // direction of flight arrow
           reqAlt: "", // requested altitude
-          route: getRouteString(entry)
-            .split(".")
-            .filter(x => x !== "")
-            .join(" "), // route
+          route: getRouteString(entry).replace(/\.+/g, " "), // route
           remarks: filterRemarks(entry.remarks), // remarks
           squawk: convertBeaconCodeToString(entry.assignedBeaconCode), // squawk code
           misc: "", // miscellaneous info
