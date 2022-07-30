@@ -1,6 +1,5 @@
-export type Topic = {
+export type ApiTopic = {
   category: string;
-  subCategory: string;
   facilityId: string;
   sectorId?: string;
 };
