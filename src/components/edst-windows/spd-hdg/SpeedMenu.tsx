@@ -10,7 +10,7 @@ import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
 import { InputContainer } from "../../InputComponents";
-import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";

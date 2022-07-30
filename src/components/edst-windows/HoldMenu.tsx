@@ -10,7 +10,7 @@ import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/en
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { EdstWindow } from "../../namespaces";
 import { RouteFix } from "../../types/routeFix";

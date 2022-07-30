@@ -20,7 +20,7 @@ import {
   FidRow
 } from "../../../styles/optionMenuStyles";
 import { EqpContentCol, EqpRow } from "./styled";
-import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";

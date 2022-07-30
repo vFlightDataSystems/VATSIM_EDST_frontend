@@ -94,7 +94,16 @@ export const EdstTemplateButton85: React.FC<EdstButtonProps> = props => <EdstBut
 export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({ onMouseDown, id, ...props }) => {
   return (
     <EdstTooltip title={props.title}>
-      <EdstOuterHeaderButton disabled={props.disabled} id={id} onMouseDownCapture={onMouseDown}>
+      <EdstOuterHeaderButton
+        disabled={props.disabled}
+        id={id}
+        onMouseDownCapture={event => {
+          if (onMouseDown) {
+            onMouseDown(event);
+            event.stopPropagation();
+          }
+        }}
+      >
         <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width}>
           {props.content ?? props.children}
         </EdstInnerButton>

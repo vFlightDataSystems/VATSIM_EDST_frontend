@@ -9,7 +9,7 @@ import { EdstWindow } from "../../namespaces";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
 
 const AclDiv = styled(ResizableFloatingWindowDiv)`
@@ -23,6 +23,8 @@ const AclDiv = styled(ResizableFloatingWindowDiv)`
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
+  min-width: 600px;
+  min-height: 200px;
 `;
 
 export const Acl: React.FC = () => {
@@ -35,7 +37,7 @@ export const Acl: React.FC = () => {
   const { fullscreen, toggleFullscreen } = useFullscreen(ref);
 
   const onMouseDownHandler = () => {
-    if (zStack.indexOf(EdstWindow.ACL) > 0 && !fullscreen) {
+    if (zStack.indexOf(EdstWindow.ACL) < zStack.length - 1 && !fullscreen) {
       dispatch(pushZStack(EdstWindow.ACL));
     }
   };

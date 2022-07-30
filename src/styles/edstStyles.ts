@@ -28,12 +28,11 @@ export const EdstDiv = styled(NoSelectDiv)`
 
 export const EdstBodyDiv = styled.div`
   overflow: hidden;
-  //flex-flow: ;
   position: absolute;
+  display: flex;
   top: 36px;
   left: 0;
   height: calc(100% - 36px);
   width: 100%;
   flex-grow: 1;
-  display: flex;
 `;

@@ -13,7 +13,7 @@ import {
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstWindow } from "../../namespaces";
 import { WindowPosition } from "../../types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";

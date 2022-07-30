@@ -8,7 +8,7 @@ import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSe
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstWindow } from "../../namespaces";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";

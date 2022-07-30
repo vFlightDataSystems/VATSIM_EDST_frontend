@@ -20,7 +20,7 @@ import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { ApiFlightplan } from "../../types/apiFlightplan";
@@ -178,7 +178,7 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
             .invoke("AmendFlightPlan", amendmentFlightplan)
             .then(() => setResponse(`ACCEPT\nCLEARED DIRECT`))
             // eslint-disable-next-line no-console
-            .catch((error: any) => console.log("error amending flightplan:", error));
+            .catch(e => console.log("error amending flightplan:", e));
         }
       }
     }

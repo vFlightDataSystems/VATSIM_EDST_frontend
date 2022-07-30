@@ -13,6 +13,7 @@ import { ApiSessionInfo } from "../types/apiSessionInfo";
 import { Topic } from "../types/topic";
 import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThunk";
 import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
+import { log } from "../console";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
@@ -26,6 +27,7 @@ const useHubInit = () => {
   const getValidNasToken = () => {
     const decodedToken = decodeJwt(nasToken);
     if (decodedToken.exp! - Math.trunc(Date.now() / 1000) < 0) {
+      if (process.env.NODE_ENV)
       console.log("Refreshed NAS token");
       return refreshToken(vatsimToken).then(r => {
         return r.data;
@@ -49,24 +51,24 @@ const useHubInit = () => {
 
     async function start() {
       hubConnection.onclose(() => {
-        console.log("ATC hub disconnected");
+        log("ATC hub disconnected");
       });
 
       hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfo) => {
-        console.log(sessionInfo);
+        log(sessionInfo);
         dispatch(setSession(sessionInfo));
       });
 
       hubConnection.on("HandleSessionEnded", () => {
-        console.log("clearing session");
+        log("clearing session");
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", (topic: Topic, flightplan: ApiFlightplan) => {
-        // console.log("received flightplan:", flightplan);
+        // log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
-        // console.log("received aircraft:", aircraft);
+        // log("received aircraft:", aircraft);
         aircraft.forEach(t => {
           dispatch(updateAircraftTrackThunk(t));
         });
@@ -78,7 +80,7 @@ const useHubInit = () => {
           hubConnection
             .invoke("getSessionInfo")
             .then((sessionInfo: ApiSessionInfo) => {
-              console.log(sessionInfo);
+              log(sessionInfo);
               if (sessionInfo.position.eramConfiguration) {
                 const { artccId } = sessionInfo;
                 const { sectorId } = sessionInfo.position.eramConfiguration;
@@ -89,10 +91,10 @@ const useHubInit = () => {
                 hubConnection
                   .invoke("joinSession", { sessionId: sessionInfo.id })
                   .then(() => {
-                    console.log(`joined session ${sessionInfo.id}`);
+                    log(`joined session ${sessionInfo.id}`);
                     hubConnection
                       .invoke("subscribe", { facilityId: sessionInfo.facilityId, category: "Eram", subCategory: "FlightPlans" })
-                      .then(() => console.log("subscribe succeeded."))
+                      .then(() => log("subscribe succeeded."))
                       .catch(console.log);
                   })
                   .catch(console.log);

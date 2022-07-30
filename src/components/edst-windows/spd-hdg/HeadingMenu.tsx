@@ -11,7 +11,7 @@ import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
 import { InputContainer } from "../../InputComponents";
-import { EdstDraggingOutline } from "../../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { EdstWindow } from "../../../namespaces";
 import { mod } from "../../../lib";
 import { useDragging } from "../../../hooks/useDragging";

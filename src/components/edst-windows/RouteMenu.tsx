@@ -16,7 +16,7 @@ import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { EdstWindow } from "../../namespaces";
@@ -167,6 +167,7 @@ export const RouteMenu: React.FC = () => {
             .join(" ")
             .trim()
         };
+        // eslint-disable-next-line no-console
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
     } else if (route) {
@@ -217,6 +218,7 @@ export const RouteMenu: React.FC = () => {
           })
         );
       } else if (hubConnection) {
+        // eslint-disable-next-line no-console
         hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
       }
       dispatch(closeWindow(EdstWindow.ROUTE_MENU));

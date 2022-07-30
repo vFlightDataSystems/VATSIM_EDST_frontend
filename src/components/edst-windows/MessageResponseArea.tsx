@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { mraMsgSelector, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstWindow } from "../../namespaces";
 import { useDragging } from "../../hooks/useDragging";
 

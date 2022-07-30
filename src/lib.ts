@@ -308,11 +308,11 @@ export async function getFrd(location: { lat: number; lon: number }, hubConnecti
   let frd = null;
   if (hubConnection) {
     frd = await hubConnection.invoke("generateFrd", location).catch(error => {
+      // eslint-disable-next-line no-console
       console.log(error);
       return null;
     });
   }
-  console.log(frd);
   return frd;
 }
 

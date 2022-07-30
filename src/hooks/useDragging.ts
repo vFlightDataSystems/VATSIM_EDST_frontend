@@ -4,15 +4,8 @@ import { EdstWindow } from "../namespaces";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "../redux/slices/appSlice";
 import { WindowPosition } from "../types/windowPosition";
+import { DragPreviewStyle } from "../types/dragPreviewStyle";
 
-type DragPreviewStyle = {
-  left: number;
-  top: number;
-  relX: number;
-  relY: number;
-  height: number;
-  width: number;
-};
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.STATUS,
   EdstWindow.OUTAGE,
@@ -68,7 +61,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
   );
 
   const startDrag = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
+    (event: React.MouseEvent<HTMLDivElement>) => {
       if (element.current && ppos && !anyDragging) {
         let previewPos;
         let relX = 0;
@@ -95,8 +88,14 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
           top: previewPos.y + relY,
           relX,
           relY,
-          height: element.current.clientHeight,
-          width: element.current.clientWidth
+          height:
+            element.current.clientHeight +
+            parseFloat(getComputedStyle(element.current).getPropertyValue("border")) +
+            parseFloat(getComputedStyle(element.current).getPropertyValue("margin")) * 2,
+          width:
+            element.current.clientWidth +
+            parseFloat(getComputedStyle(element.current).getPropertyValue("border")) +
+            parseFloat(getComputedStyle(element.current).getPropertyValue("margin")) * 2
         };
         setDragPreviewStyle(style);
         setDragging(true);

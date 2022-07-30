@@ -31,7 +31,6 @@ export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[]): RootTh
         }
       }
     });
-    console.log(newTracks);
     dispatch(setTracks(newTracks));
   };
 }

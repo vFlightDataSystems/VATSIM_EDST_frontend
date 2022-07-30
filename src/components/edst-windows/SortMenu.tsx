@@ -17,7 +17,7 @@ import {
   OptionsMenu,
   OptionsMenuHeader
 } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstWindow, SortOptions } from "../../namespaces";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";

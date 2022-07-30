@@ -10,7 +10,7 @@ import { EdstWindow } from "../../namespaces";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
 
 const GpdDiv = styled(ResizableFloatingWindowDiv)`
@@ -24,6 +24,8 @@ const GpdDiv = styled(ResizableFloatingWindowDiv)`
   outline: 1px solid ${edstWindowOutlineColor};
   color: ${edstFontGrey};
   background-color: #000000;
+  min-width: 600px;
+  min-height: 200px;
 `;
 
 export const Gpd: React.FC = () => {
@@ -48,7 +50,13 @@ export const Gpd: React.FC = () => {
       onMouseDown={onMouseDownHandler}
     >
       {!fullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-      <GpdHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={startDrag} zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
+      <GpdHeader
+        focused={focused}
+        toggleFullscreen={toggleFullscreen}
+        startDrag={e => !fullscreen && startDrag(e)}
+        zoomLevel={zoomLevel}
+        setZoomLevel={setZoomLevel}
+      />
       <GpdBody zoomLevel={zoomLevel} />
     </GpdDiv>
   );

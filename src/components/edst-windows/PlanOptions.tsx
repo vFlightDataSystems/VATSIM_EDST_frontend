@@ -7,7 +7,7 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselSelector, closeWindow, setAsel, zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
 import { rmvEntryFromAcl, rmvEntryFromDep, entrySelector } from "../../redux/slices/entrySlice";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../../styles/draggingStyles";
+import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstWindow } from "../../namespaces";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
 import { useDragging } from "../../hooks/useDragging";

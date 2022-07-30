@@ -6,7 +6,7 @@ const floatingWindowTitleBackgroundColor = "#575757";
 
 export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | null; zIndex: number; fullscreen?: boolean }>`
   z-index: ${props => 10000 + props.zIndex};
-  position: ${props => (!props.fullscreen ? "fixed" : "relative")};
+  position: ${props => (!props.fullscreen ? "fixed" : "absolute")};
   color: #adadad;
 
   ${props =>
@@ -15,12 +15,12 @@ export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | n
       left: `${props.pos.x}px`,
       top: `${props.pos.y}px`
     }}
-
-  ${props => props.fullscreen && { width: "auto", height: "auto" }};
 `;
 
-export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)`
+export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<{ width?: number; height?: number }>`
   resize: ${props => (!props.fullscreen ? "both" : "none")};
+  width: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
+  height: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
 `;
 
 export const FloatingWindowBodyDiv = styled.div`

@@ -36,6 +36,7 @@ export const authSlice = createSlice({
         state.nasToken = action.payload.nasToken;
       } else {
         // TODO: inform user that login failed
+        // eslint-disable-next-line no-console
         console.log(`Failed to log in: ${action.payload.statusText}`);
       }
     });
@@ -53,7 +54,5 @@ export const authSlice = createSlice({
 export const { setSession, clearSession } = authSlice.actions;
 export default authSlice.reducer;
 
-export const sessionSelector = (state: RootState) => state.auth.session;
-export const isRefreshingSessionSelector = (state: RootState) => state.auth.isRefreshingSession;
 export const vatsimTokenSelector = (state: RootState) => state.auth.vatsimToken;
 export const nasTokenSelector = (state: RootState) => state.auth.nasToken;
