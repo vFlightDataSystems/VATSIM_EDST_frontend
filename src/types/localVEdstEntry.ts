@@ -3,6 +3,12 @@ import { ApiPreferentialDepartureRoute } from "./apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "./apiPreferentialDepartureArrivalRoute";
 import { ApiPreferentialArrivalRoute } from "./apiPreferentialArrivalRoute";
 
+export enum AclRouteDisplayOption {
+  holdData = "HOLD_DATA",
+  remarks = "REMARKS",
+  rawRoute = "RAW_ROUTE"
+}
+
 export type LocalVEdstEntry = {
   depInfo: ApiAirportInfo | null;
   destInfo: ApiAirportInfo | null;
@@ -14,14 +20,14 @@ export type LocalVEdstEntry = {
   depStatus: number; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
   aclHighlighted?: boolean;
   depHighlighted?: boolean;
-  aclRouteDisplay?: string | null; // for toggling remarks
-  remarksChecked?: boolean; // whether remarks have been checked or not
+  aclRouteDisplay: AclRouteDisplayOption | null; // for toggling remarks
+  remarksChecked: boolean; // whether remarks have been checked or not
   spa: boolean; // SPA indicator
   boundaryTime: number; // minutes until entering the sector's airspace (will be negative if already inside)
-  pendingRemoval?: number | null; // if not null, number represents timestamp when pendingRemoval status was activated
-  scratchHdg?: string; // speed assigned in the scratchpad
-  scratchSpd?: string; // heading assigned in the scratchpad
-  showFreeText?: boolean; // boolean whether to display the free text row or not
+  pendingRemoval: number | null; // if not null, number represents timestamp when pendingRemoval status was activated
+  scratchHdg: string | null; // speed assigned in the scratchpad
+  scratchSpd: string | null; // heading assigned in the scratchpad
+  showFreeText: boolean; // boolean whether to display the free text row or not
   voiceType?: string; // voice type in VATSIM flightplan, /v/ by default
   aclDisplay: boolean;
   aclDeleted: boolean;
@@ -32,5 +38,5 @@ export type LocalVEdstEntry = {
   assignedSpeed: string | null;
   assignedHeading: string | null;
   interimAltitude: number | null;
-  previousRoute?: string;
+  previousRoute: string | null;
 };

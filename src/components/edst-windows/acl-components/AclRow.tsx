@@ -31,9 +31,10 @@ import {
   VoiceTypeSpan
 } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
-import { EdstWindow, AclRowField, AclAselActionTrigger } from "../../../namespaces";
+import { AclAselActionTrigger, AclRowField, EdstWindow } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
+import { AclRouteDisplayOption } from "../../../types/localVEdstEntry";
 
 const SPA_INDICATOR = "\u2303";
 
@@ -123,7 +124,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           dispatch(
             updateEntry({
               aircraftId: entry.aircraftId,
-              data: { aclRouteDisplay: !entry.aclRouteDisplay ? "hold_data" : null }
+              data: { aclRouteDisplay: !entry.aclRouteDisplay ? AclRouteDisplayOption.holdData : null }
             })
           );
         }
@@ -146,7 +147,8 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           updateEntry({
             aircraftId: entry.aircraftId,
             data: {
-              aclRouteDisplay: !(entry.aclRouteDisplay === "remarks") && entry.remarks.length > 0 ? "remarks" : null,
+              aclRouteDisplay:
+                !(entry.aclRouteDisplay === AclRouteDisplayOption.remarks) && entry.remarks.length > 0 ? AclRouteDisplayOption.remarks : null,
               remarksChecked: true
             }
           })
@@ -156,7 +158,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
         dispatch(
           updateEntry({
             aircraftId: entry.aircraftId,
-            data: { aclRouteDisplay: !(entry.aclRouteDisplay === "raw_route") ? "raw_route" : null }
+            data: { aclRouteDisplay: !(entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute) ? AclRouteDisplayOption.rawRoute : null }
           })
         );
         break;
@@ -342,11 +344,11 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
               selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}
               onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
             >
-              {entry.aclRouteDisplay === "hold_data" &&
+              {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute &&
                 holdData &&
                 `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}
-              {entry.aclRouteDisplay === "remarks" && <span>{entry.remarks}</span>}
-              {entry.aclRouteDisplay === "raw_route" && <span>{entry.route}</span>}
+              {entry.aclRouteDisplay === AclRouteDisplayOption.remarks && <span>{entry.remarks}</span>}
+              {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
               {!entry.aclRouteDisplay && (
                 <RouteSpan padding="0 2px">
                   <RouteDepSpan amendmentPending={parAvail && !onPar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
