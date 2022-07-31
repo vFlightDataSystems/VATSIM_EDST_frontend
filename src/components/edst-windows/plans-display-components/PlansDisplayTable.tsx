@@ -27,7 +27,6 @@ const Col = styled.div<{ hover?: boolean; disabled?: boolean; color?: string; wi
     pointer-events: none;
     color: #000000;
   }
-
   width: ${props => (props.width ? `${props.width}px` : "auto")};
   ${props => props.color && { color: props.color }};
   ${props =>

@@ -5,7 +5,7 @@ import { Tooltips } from "../../../tooltips";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "./styled";
+import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "./eqpStyled";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 
 const EqpCol2 = styled(EqpCol)`

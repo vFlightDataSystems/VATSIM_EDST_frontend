@@ -1,19 +1,20 @@
 import styled from "styled-components";
 import { edstFontBlue } from "./colors";
 
-type ColProps = {
+export type ColProps = {
   hover?: boolean;
   disabled?: boolean;
   color?: string;
   width?: number;
   selected?: boolean;
   hidden?: boolean;
-  contentHidden?: boolean;
+  visibilityHidden?: boolean;
 };
 
 export const Col = styled.div.attrs((props: ColProps) => ({
   // eslint-disable-next-line no-nested-ternary
-  width: props.contentHidden || props.hidden ? "30px" : props.width ? `${props.width}px` : "auto"
+  width: props.visibilityHidden || props.hidden ? "30px" : props.width ? `${props.width}px` : "auto",
+  visibility: props.visibilityHidden ? "hidden" : "initial"
 }))<ColProps>`
   display: flex;
   flex-shrink: 0;
@@ -28,6 +29,7 @@ export const Col = styled.div.attrs((props: ColProps) => ({
   }
 
   width: ${props => props.width};
+  visibility: ${props => props.visibility};
   ${props => props.color && { color: props.color }};
   ${props =>
     props.selected && {
@@ -35,7 +37,6 @@ export const Col = styled.div.attrs((props: ColProps) => ({
       color: "#000000"
     }};
   ${props => props.hover && { "&:hover": { border: "1px solid #F0F0F0" } }};
-  ${props => props.contentHidden && { visibility: "hidden" }};
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
@@ -55,10 +56,12 @@ export const HotBox = styled(SpecialBox)`
   border-bottom: 1px solid #414141;
   border-right: 1px solid #414141;
 `;
-export const AircraftTypeCol = styled(Col)`
+export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
+  width: props.visibilityHidden || props.hidden ? "30px" : "100px"
+}))`
   min-width: 30px;
   justify-content: left;
-  width: 100px;
+  width: ${props => props.width};
   margin-right: 0;
   margin-left: 10px;
   padding-left: 4px;
@@ -73,8 +76,6 @@ export const AircraftTypeCol = styled(Col)`
       border: 1px solid #f0f0f0;
     }
   }
-  ${props => props.contentHidden && { visibility: "hidden" }};
-  ${props => (props.contentHidden || props.hidden) && { width: "30px" }};
 `;
 export const CodeCol = styled(Col)`
   padding: 0 2px;
@@ -82,8 +83,7 @@ export const CodeCol = styled(Col)`
   width: 40px;
   margin-left: 0;
   margin-right: 10px;
-  ${props => props.contentHidden && { visibility: "hidden" }};
-  ${props => (props.contentHidden || props.hidden) && { width: "20px" }};
+  ${props => (props.visibilityHidden || props.hidden) && { width: "20px" }};
 `;
 export const AltCol = styled(Col)<{ headerCol?: boolean }>`
   display: flex;
@@ -113,13 +113,16 @@ export const RouteCol = styled(Col)`
   margin-left: 4px;
   padding-right: 2px;
 `;
-export const RouteSpan = styled(RouteCol)<{ padding?: string }>`
+type RouteSpanProps = { padding?: string };
+export const RouteSpan = styled(RouteCol).attrs((props: RouteSpanProps) => ({
+  padding: props.padding ?? "0"
+}))<RouteSpanProps>`
   max-width: 50vw;
   pointer-events: none;
   border: none;
   margin: 0;
   border: transparent;
-  padding: ${props => props.padding ?? "0"};
+  padding: ${props => props.padding};
   overflow: hidden;
   text-overflow: ellipsis;
 `;

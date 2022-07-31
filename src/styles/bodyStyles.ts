@@ -2,22 +2,21 @@ import styled from "styled-components";
 import { edstFontGrey, stripHighlightColor, stripPendingRemovalColor } from "./colors";
 import { defaultFontSize } from "./styles";
 
-export const BodyRowContainerDiv = styled.div<{ separator?: boolean }>`
+type BodyRowContainerProps = { separator?: boolean };
+export const BodyRowContainerDiv = styled.div<BodyRowContainerProps>`
   margin: 3px 0;
   flex-flow: wrap;
-
+  border: none;
   ${props =>
     props.separator && {
-      border: "none",
       "border-bottom": "1px solid #252525"
-    }}
+    }};
 `;
 
 export const BodyRowDiv = styled.div<{ pendingRemoval?: boolean; separator?: boolean }>`
   display: flex;
   align-items: center;
   min-height: 2px;
-  //flex-grow: 2;
   padding: 0 10px;
   ${props => props.pendingRemoval && { color: stripPendingRemovalColor }};
   ${props =>

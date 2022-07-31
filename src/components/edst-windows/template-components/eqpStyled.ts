@@ -10,18 +10,16 @@ export const EqpInputRow = styled(EqpRow)`
   margin: 6px 20px;
 `;
 export const EqpContentRow = styled(EqpRow)`
-  align-items: center;
   float: left;
   display: inline-flex;
   text-indent: 6px;
 `;
 
-export const EqpInputContainer = styled.div<{ width?: string }>`
+export const EqpInputContainer = styled.div`
   display: flex;
   flex-grow: 1;
-  //max-width: 57%;
   border: 1px solid transparent;
-  max-width: ${props => props.width ?? "50px"};
+  max-width: 50px;
 `;
 export const EqpInputContainer60 = styled(EqpInputContainer)`
   max-width: 60%;

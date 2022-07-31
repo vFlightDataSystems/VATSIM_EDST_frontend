@@ -3,24 +3,26 @@ import styled from "styled-components";
 import { EdstTooltip } from "./EdstTooltip";
 import { edstFontGrey } from "../../styles/colors";
 
-const EdstOuterButton = styled.div<{ width?: number; height?: number; margin?: string; disabled?: boolean }>`
+type EdstOuterButtonProps = { width?: number; height?: number; margin?: string; disabled?: boolean };
+const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
+  width: props.width ? `${props.width}px` : "auto",
+  height: props.height ? `${props.height}px` : "auto",
+  margin: props.margin ?? "initial"
+}))<EdstOuterButtonProps>`
   display: inline-flex;
   //height: 20px;
   border: 1px solid #000000;
   font-size: 16px;
 
-  width: ${props => (props.width ? `${props.width}px` : "auto")};
-  height: ${props => (props.height ? `${props.height}px` : "auto")};
-
+  width: ${props => props.width};
+  height: ${props => props.height};
   ${props =>
     props.margin && {
       margin: props.margin
     }};
-
   &:hover {
     border: 1px solid #ffffff;
   }
-
   &[disabled] {
     pointer-events: none;
   }
@@ -34,7 +36,6 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
 `;
 
 type EdstInnerButtonProps = { selected?: boolean; flexGrow?: number; width?: number; height?: number; padding?: string; disabled?: boolean };
-
 const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
   width: props.width ? `${props.width}px` : "auto",
   height: props.height ? `${props.height}px` : "auto",
@@ -52,10 +53,8 @@ const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
   border-top: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
   border-left: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
   padding: ${props => props.padding};
-
   width: ${props => props.width};
   height: ${props => props.height};
-
   &[disabled] {
     pointer-events: none;
     color: #707070;
@@ -104,7 +103,7 @@ export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({ onMouseDown,
       <EdstOuterHeaderButton
         disabled={props.disabled}
         id={id}
-        onMouseDownCapture={event => {
+        onMouseDownCapture={(event: React.MouseEvent) => {
           if (onMouseDown) {
             onMouseDown(event);
             event.stopPropagation();

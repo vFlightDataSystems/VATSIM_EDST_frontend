@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { edstFontGreen, edstFontYellow } from "../../../styles/colors";
-import { Col, SpecialBox } from "../../../styles/sharedColumns";
+import { Col, ColProps, SpecialBox } from "../../../styles/sharedColumns";
 
 export const AclCol1 = styled(Col)<{ border?: boolean }>`
   margin: 0 2px;
@@ -12,11 +12,9 @@ export const AclCol1 = styled(Col)<{ border?: boolean }>`
 `;
 export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean }>`
   width: 10px;
-
   &:hover {
     border: 1px solid ${props => (props.hoverGreen ? edstFontGreen : "#F0F0F0")};
   }
-
   ${props =>
     props.header && {
       "font-size": "14px",
@@ -47,8 +45,10 @@ export const PointOutCol = styled(Col)`
   width: 30px;
   justify-content: left;
 `;
-export const HdgCol = styled(Col)<{ scratchpad?: boolean }>`
-  width: 38px;
+export const HdgCol = styled(Col).attrs((props: ColProps) => ({
+  width: props.visibilityHidden || props.hidden ? "20px" : "38px"
+}))<{ scratchpad?: boolean }>`
+  width: ${props => props.width};
   margin: 0;
   justify-content: right;
   padding-right: 1px;
@@ -58,15 +58,15 @@ export const HdgCol = styled(Col)<{ scratchpad?: boolean }>`
       color: "#000000",
       "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
     }};
-  ${props => props.contentHidden && { visibility: "hidden" }};
-  ${props => (props.contentHidden || props.hidden) && { width: "20px" }};
 `;
 export const HdgSpdSlashCol = styled(Col)`
   width: 10px;
   margin: 0;
 `;
-export const SpdCol = styled(Col)<{ scratchpad?: boolean }>`
-  width: 38px;
+export const SpdCol = styled(Col).attrs((props: ColProps) => ({
+  width: props.visibilityHidden || props.hidden ? "20px" : "38px"
+}))<{ scratchpad?: boolean }>`
+  width: ${props => props.width};
   margin: 0;
   justify-content: left;
   padding-left: 1px;
@@ -76,6 +76,4 @@ export const SpdCol = styled(Col)<{ scratchpad?: boolean }>`
       color: "#000000",
       "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
     }};
-  ${props => props.contentHidden && { visibility: "hidden" }};
-  ${props => (props.contentHidden || props.hidden) && { width: "20px" }};
 `;

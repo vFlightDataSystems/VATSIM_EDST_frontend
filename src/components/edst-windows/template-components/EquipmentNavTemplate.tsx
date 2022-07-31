@@ -5,7 +5,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EdstInput, OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
-import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./styled";
+import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./eqpStyled";
 
 enum NavCat {
   F = "F",
@@ -183,7 +183,7 @@ export const EquipmentNavTemplate: React.FC = () => {
       <EqpInputRow>
         NAV/
         <EdstTooltip style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
-          <EqpInputContainer60 width="60%">
+          <EqpInputContainer60>
             <EqpInput
               value={
                 [...(navCategories as string[])]

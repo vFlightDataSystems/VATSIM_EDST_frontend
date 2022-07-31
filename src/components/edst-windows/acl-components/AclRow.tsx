@@ -246,7 +246,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclType}>
             <AircraftTypeCol
-              contentHidden={hidden.includes(AclRowField.TYPE)}
+              visibilityHidden={hidden.includes(AclRowField.TYPE)}
               hover
               selected={isSelected(entry.aircraftId, AclRowField.TYPE)}
               onMouseDown={(event: React.MouseEvent) => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
@@ -271,7 +271,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclCode}>
             <CodeCol
-              contentHidden={hidden.includes(AclRowField.CODE)}
+              visibilityHidden={hidden.includes(AclRowField.CODE)}
               hover
               selected={isSelected(entry.aircraftId, AclRowField.CODE)}
               onMouseDown={(event: React.MouseEvent) => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
@@ -285,7 +285,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           <EdstTooltip title={Tooltips.aclHdg}>
             <HdgCol
               hover
-              contentHidden={hidden.includes(AclRowField.HDG)}
+              visibilityHidden={hidden.includes(AclRowField.HDG)}
               selected={isSelected(entry.aircraftId, AclRowField.HDG)}
               onMouseDown={handleHeadingClick}
               scratchpad={!!entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null)}
@@ -297,7 +297,7 @@ export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, ind
           <EdstTooltip title={Tooltips.aclSpd}>
             <SpdCol
               hover
-              contentHidden={hidden.includes(AclRowField.SPD)}
+              visibilityHidden={hidden.includes(AclRowField.SPD)}
               selected={isSelected(entry.aircraftId, AclRowField.SPD)}
               onMouseDown={handleSpeedClick}
               scratchpad={!!entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null)}

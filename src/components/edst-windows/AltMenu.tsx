@@ -48,7 +48,6 @@ const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
   border: 1px solid #adadad;
   width: ${props => props.width};
   flex-grow: ${props => props.flexGrow};
-
   &:hover {
     border: 1px solid #f0f0f0;
   }
@@ -69,13 +68,11 @@ const AltMenuRow = styled.div<{ bgBlack?: boolean; color?: string; hover?: boole
   align-items: center;
   border: 1px solid #adadad;
   ${props => props.bgBlack && { "background-color": "#000000" }};
-
   ${props => props.color && { color: props.color }};
   &[disabled] {
     pointer-events: none;
     color: #adadad;
   }
-
   ${props =>
     props.hover && {
       "&:hover": {
@@ -130,7 +127,6 @@ const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; 
   &:hover {
     outline: 1px solid #f0f0f0;
   }
-
   ${props =>
     props.borderHover && {
       "&:hover": {
@@ -143,7 +139,6 @@ const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; 
       color: "#D6D6D6"
     }};
 `;
-
 const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
   display: flex;
   /*margin-left: 6px;*/
@@ -159,7 +154,6 @@ const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
     color: #575757;
   }
 `;
-
 export const AltMenu: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const asel = useRootSelector(aselSelector)!;

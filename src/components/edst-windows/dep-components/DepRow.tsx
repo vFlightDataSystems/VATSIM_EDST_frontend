@@ -171,7 +171,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depType}>
             <AircraftTypeCol
-              contentHidden={hidden.includes(DepRowField.TYPE)}
+              visibilityHidden={hidden.includes(DepRowField.TYPE)}
               hover
               selected={isSelected(entry.aircraftId, DepRowField.TYPE)}
               onMouseDown={(event: React.MouseEvent) => dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.TYPE))}
@@ -194,7 +194,7 @@ export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depCode}>
             <CodeCol
-              contentHidden={hidden.includes(DepRowField.CODE)}
+              visibilityHidden={hidden.includes(DepRowField.CODE)}
               hover
               selected={isSelected(entry.aircraftId, DepRowField.CODE)}
               onMouseDown={(event: React.MouseEvent) => dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.CODE))}

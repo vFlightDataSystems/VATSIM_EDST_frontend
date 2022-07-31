@@ -6,7 +6,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
-import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./styled";
+import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./eqpStyled";
 
 const ContentCol = styled.div`
   justify-content: left;

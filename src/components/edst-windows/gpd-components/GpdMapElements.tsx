@@ -26,8 +26,8 @@ const TrackLineDiv = styled.div<{ pos: WindowPosition }>`
   transform: rotate(-45deg);
   position: absolute;
   ${props => ({
-    left: props.pos.x,
-    top: props.pos.y
+    left: `${props.pos.x}px`,
+    top: `${props.pos.y}px`
   })}
   height: 1px;
   width: 30px;

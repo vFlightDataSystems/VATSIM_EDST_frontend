@@ -5,7 +5,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
-import { EqpCol } from "./styled";
+import { EqpCol } from "./eqpStyled";
 
 export const EqpCol2 = styled(EqpCol)`
   margin: 0 20px;
