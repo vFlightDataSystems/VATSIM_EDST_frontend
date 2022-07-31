@@ -283,6 +283,9 @@ export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaIn
     if (event.shiftKey && inputRef.current) {
       inputRef.current.blur();
     }
+    if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
+      dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+    }
     switch (event.key) {
       case "Enter":
         if (mcaInputValue.length > 0) {
