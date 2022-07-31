@@ -5,13 +5,18 @@ import { FloatingWindowHeaderColDiv14, FloatingWindowHeaderColDivFlex, FloatingW
 import { NoSelectDiv } from "../../styles/styles";
 import { WindowPosition } from "../../types/windowPosition";
 
-const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv)<{ pos: WindowPosition }>`
+type FloatingWindowOptionsBodyProps = { pos: WindowPosition };
+const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv).attrs((props: FloatingWindowOptionsBodyProps) => ({
+  left: `${props.pos.x}px`,
+  top: `${props.pos.y}px`
+}))<FloatingWindowOptionsBodyProps>`
   position: absolute;
   display: flex;
   flex-flow: column;
   height: auto;
   width: 140px;
-  ${props => ({ left: `${props.pos.x}px`, top: `${props.pos.y}px` })}
+  left: ${props => props.left};
+  top: ${props => props.top};
 `;
 
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<{ unselected?: boolean }>`

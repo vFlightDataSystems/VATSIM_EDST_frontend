@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { SpecialBox } from "../components/edst-windows/acl-components/AclStyled";
 import { edstFontBlue } from "./colors";
 
 type ColProps = {
@@ -43,6 +42,13 @@ export const FidCol = styled(Col)`
   width: 130px;
   padding: 0 2px;
 `;
+export const SpecialBox = styled(Col)`
+  margin: 0 2px;
+  width: 8px;
+  &:hover {
+    border: 1px solid #f0f0f0;
+  }
+`;
 export const HotBox = styled(SpecialBox)`
   border-top: 1px solid #575757;
   border-left: 1px solid #575757;
@@ -78,6 +84,26 @@ export const CodeCol = styled(Col)`
   margin-right: 10px;
   ${props => props.contentHidden && { visibility: "hidden" }};
   ${props => (props.contentHidden || props.hidden) && { width: "20px" }};
+`;
+export const AltCol = styled(Col)<{ headerCol?: boolean }>`
+  display: flex;
+  justify-content: left;
+  width: 70px;
+  margin-right: 8px;
+
+  ${props =>
+    props.headerCol && {
+      width: "55px",
+      "margin-right": "19px",
+      "padding-left": "4px"
+    }}
+`;
+export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
+  border: 1px solid transparent;
+  ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
+  &:hover {
+    border: 1px solid #f0f0f0;
+  }
 `;
 export const RouteCol = styled(Col)`
   height: calc(100% - 4px);

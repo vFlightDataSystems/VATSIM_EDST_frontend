@@ -6,12 +6,12 @@ import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
-import { AltCol, DepCol2, DepFidCol, RadioCol, SpecialBox } from "./DepStyled";
+import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
 import { DepRowField, SortOptions } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
-import { AircraftTypeCol, CodeCol, RouteCol } from "../../../styles/sharedColumns";
+import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 
 const COMPLETED_SYMBOL = "✓";
 

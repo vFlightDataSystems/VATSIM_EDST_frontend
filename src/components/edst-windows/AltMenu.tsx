@@ -19,28 +19,35 @@ import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 
 type AltMenuDivProps = { width?: number; pos: WindowPosition };
-const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({ width: `${props.width ?? 100}px` }))<AltMenuDivProps>`
+const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
+  width: `${props.width ?? 100}px`,
+  left: `${props.pos.x}px`,
+  top: `${props.pos.y}px`
+}))<AltMenuDivProps>`
   z-index: 11000;
   background-color: #888888;
   position: fixed;
   width: ${props => props.width};
   color: #d6d6d6;
-
-  ${props => ({ left: `${props.pos.x}px`, top: `${props.pos.y}px` })}
+  left: ${props => props.left};
+  top: ${props => props.top};
 `;
 
 const AltMenuHeaderDiv = styled.div`
   display: flex;
   height: 20px;
 `;
-
-const AltMenuHeaderCol = styled.div<{ flexGrow?: number; width?: number }>`
+type AltMenuHeaderColProps = { flexGrow?: number; width?: number };
+const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
+  width: props.width ? `${props.width}px` : "auto",
+  flexGrow: props.flexGrow ?? 0
+}))<AltMenuHeaderColProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   border: 1px solid #adadad;
-  width: ${props => (props.width ? `${props.width}px` : "auto")};
-  flex-grow: ${props => props.flexGrow ?? 0};
+  width: ${props => props.width};
+  flex-grow: ${props => props.flexGrow};
 
   &:hover {
     border: 1px solid #f0f0f0;

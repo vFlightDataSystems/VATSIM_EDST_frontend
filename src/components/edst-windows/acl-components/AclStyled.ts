@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { edstFontGreen, edstFontYellow } from "../../../styles/colors";
-import { Col } from "../../../styles/sharedColumns";
+import { Col, SpecialBox } from "../../../styles/sharedColumns";
 
 export const AclCol1 = styled(Col)<{ border?: boolean }>`
   margin: 0 2px;
@@ -25,20 +25,6 @@ export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean
       "pointer-events": "none"
     }};
 `;
-export const SpecialBox = styled(Col)`
-  margin: 0 2px;
-  width: 8px;
-
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
-
-  ${props =>
-    props.selected && {
-      "background-color": "#ADADAD",
-      color: "#000000"
-    }};
-`;
 export const CoralBox = styled(SpecialBox)`
   margin: 0 2px;
   width: 8px;
@@ -60,27 +46,6 @@ export const VoiceTypeSpan = styled.span`
 export const PointOutCol = styled(Col)`
   width: 30px;
   justify-content: left;
-`;
-export const AltCol = styled(Col)<{ headerCol?: boolean }>`
-  display: flex;
-  justify-content: left;
-  width: 70px;
-  margin-right: 8px;
-
-  ${props =>
-    props.headerCol && {
-      width: "55px",
-      "margin-right": "19px",
-      "padding-left": "4px"
-    }}
-`;
-export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
-  border: 1px solid transparent;
-
-  ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
 `;
 export const HdgCol = styled(Col)<{ scratchpad?: boolean }>`
   width: 38px;

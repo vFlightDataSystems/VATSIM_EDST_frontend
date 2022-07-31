@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { edstFontBlue } from "../../../styles/colors";
 import { Col, FidCol } from "../../../styles/sharedColumns";
 
 export const DepFidCol = styled(FidCol)`
@@ -44,31 +43,4 @@ export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean }>
       color: "#FFFFFF",
       "font-size": "10px"
     }};
-`;
-export const SpecialBox = styled(Col)`
-  margin: 0 2px;
-  width: 8px;
-
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
-`;
-export const AltCol = styled(Col)<{ headerCol?: boolean }>`
-  display: flex;
-  justify-content: left;
-  width: 70px;
-  margin-right: 8px;
-
-  ${props =>
-    props.headerCol && {
-      width: "55px",
-      "margin-right": "19px",
-      "padding-left": "4px"
-    }}
-`;
-export const AltColDiv = styled(Col)`
-  border: 1px solid transparent;
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
 `;

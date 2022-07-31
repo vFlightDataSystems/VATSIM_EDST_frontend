@@ -6,13 +6,23 @@ import { rmvEntryFromDep, toggleSpa, updateEntry } from "../../../redux/slices/e
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
-import { AltCol, AltColDiv, DepCol2, DepFidCol, RadioCol, SpecialBox } from "./DepStyled";
+import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { EdstWindow, DepRowField } from "../../../namespaces";
 import { ApiPreferentialDepartureRoute } from "../../../types/apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiPreferentialDepartureArrivalRoute";
 import { EdstEntry } from "../../../types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
-import { AircraftTypeCol, CodeCol, EmbeddedRouteTextSpan, HotBox, RouteCol, RouteSpan } from "../../../styles/sharedColumns";
+import {
+  AircraftTypeCol,
+  AltCol,
+  AltColDiv,
+  CodeCol,
+  EmbeddedRouteTextSpan,
+  HotBox,
+  RouteCol,
+  RouteSpan,
+  SpecialBox
+} from "../../../styles/sharedColumns";
 
 const SPA_INDICATOR = "\u2303";
 const COMPLETED_SYMBOL = "✓";
