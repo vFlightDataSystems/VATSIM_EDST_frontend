@@ -33,6 +33,7 @@ export type LocalVEdstEntry = {
   aclDeleted: boolean;
   depDisplay: boolean;
   depDeleted: boolean;
+  keep: boolean;
   uplinkEligible?: boolean;
   holdData: Record<string, any> | null;
   assignedSpeed: string | null;

@@ -10,7 +10,7 @@ export const AclCol1 = styled(Col)<{ border?: boolean }>`
       outline: "1px solid #ADADAD"
     }};
 `;
-export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean }>`
+export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean; keep?: boolean }>`
   width: 10px;
   &:hover {
     border: 1px solid ${props => (props.hoverGreen ? edstFontGreen : "#F0F0F0")};
@@ -22,6 +22,7 @@ export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean
       width: "10px",
       "pointer-events": "none"
     }};
+  ${props => props.keep && { "background-color": "#adadad", color: "#adadad" }};
 `;
 export const CoralBox = styled(SpecialBox)`
   margin: 0 2px;

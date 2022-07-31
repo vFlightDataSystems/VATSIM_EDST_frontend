@@ -18,7 +18,7 @@ export const DepCol1 = styled(Col)<{ border?: boolean }>`
 export const DepCol2 = styled(Col)`
   width: 55px;
 `;
-export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean }>`
+export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean; keep?: boolean }>`
   width: 10px;
   border-top: 1px solid #575757;
   border-left: 1px solid #575757;
@@ -43,4 +43,5 @@ export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean }>
       color: "#FFFFFF",
       "font-size": "10px"
     }};
+  ${props => props.keep && { "background-color": "#adadad", color: "#adadad" }};
 `;
