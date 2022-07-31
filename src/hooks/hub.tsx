@@ -63,7 +63,7 @@ const useHubInit = () => {
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", (topic: ApiTopic, flightplan: ApiFlightplan) => {
-        // log("received flightplan:", flightplan);
+        log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
@@ -92,7 +92,7 @@ const useHubInit = () => {
                   .then(() => {
                     log(`joined session ${sessionInfo.id}`);
                     hubConnection
-                      .invoke("subscribe", { facilityId: sessionInfo.facilityId, category: "Eram", subCategory: "FlightPlans" })
+                      .invoke("subscribe", new ApiTopic("FlightPlans", sessionInfo.facilityId))
                       .then(() => log("subscribe succeeded."))
                       .catch(console.log);
                   })
