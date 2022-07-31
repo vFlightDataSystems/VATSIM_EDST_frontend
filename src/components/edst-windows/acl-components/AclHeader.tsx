@@ -99,6 +99,7 @@ export const AclHeader: React.FC<AclHeaderProps> = ({ focused, toggleFullscreen,
       <WindowHeaderRowDiv bottomRow>
         Add/Find
         <AddFindInput value={searchStr} onChange={e => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
+        Facilities:
       </WindowHeaderRowDiv>
     </AclHeaderDiv>
   );

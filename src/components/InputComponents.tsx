@@ -20,7 +20,7 @@ const AddFindContainer = styled.div`
 
 export const AddFindInput: React.FC<InputProps> = ({ title, ...props }) => {
   return (
-    <EdstTooltip title={title} style={{ flexGrow: 1, width: "auto" }}>
+    <EdstTooltip title={title} style={{ width: "auto" }}>
       <AddFindContainer>
         <EdstInput {...props} />
       </AddFindContainer>

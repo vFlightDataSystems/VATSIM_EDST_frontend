@@ -6,6 +6,7 @@ export const WindowHeaderRowDiv = styled.div<{ bottomRow?: boolean }>`
   ${props =>
     props.bottomRow && {
       "align-items": "center",
+      "justify-content": "start",
       display: "flex",
       padding: "0 10px"
     }}
