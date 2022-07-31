@@ -5,7 +5,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EdstInput, OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
-import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./eqpStyled";
+import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
 
 enum NavCat {
   F = "F",

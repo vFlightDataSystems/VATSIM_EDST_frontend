@@ -19,7 +19,7 @@ import {
   OptionsMenuHeader,
   FidRow
 } from "../../../styles/optionMenuStyles";
-import { EqpContentCol, EqpRow } from "./eqpStyled";
+import { EqpContentCol, EqpRow } from "./EqpStyled";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
