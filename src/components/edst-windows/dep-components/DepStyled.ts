@@ -43,5 +43,5 @@ export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean; k
       color: "#FFFFFF",
       "font-size": "10px"
     }};
-  ${props => props.keep && { "background-color": "#adadad", color: "#adadad" }};
+  ${props => props.keep && { "background-color": "#adadad" }};
 `;
