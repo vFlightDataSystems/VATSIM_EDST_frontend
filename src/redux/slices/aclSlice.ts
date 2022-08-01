@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { SortOptions } from "../../namespaces";
 import { SortData } from "../../types/sortData";
+import { SortOptions } from "../../enums/sortOptions";
 
 type ToolsOptions = { displayCoordinationColumn: boolean; dropTrackDelete: boolean; iafDofManual: boolean; nonRvsmIndicator: boolean };
 

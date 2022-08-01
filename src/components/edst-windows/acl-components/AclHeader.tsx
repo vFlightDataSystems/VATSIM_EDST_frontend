@@ -10,9 +10,10 @@ import { addAclEntryByFid } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { AddFindInput } from "../../InputComponents";
-import { EdstWindow, SortOptionValues } from "../../../namespaces";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
+import { EdstWindow } from "../../../enums/edstWindow";
+import { SortOptionValues } from "../../../enums/sortOptions";
 
 type AclHeaderProps = {
   focused: boolean;

@@ -18,10 +18,11 @@ import {
   OptionsMenuHeader
 } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
-import { EdstWindow, SortOptions } from "../../namespaces";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
+import { EdstWindow } from "../../enums/edstWindow";
+import { SortOptions } from "../../enums/sortOptions";
 
 const SortDiv = styled(OptionsMenu)<{ width: number }>(props => ({ width: `${props.width}px` }));
 const SortHeader = styled(OptionsMenuHeader)``;

@@ -12,11 +12,11 @@ import { edstFontGrey, edstFontYellow } from "../../styles/colors";
 import { Plan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
 import { useHub } from "../../hooks/hub";
-import { EdstWindow } from "../../namespaces";
 import { ApiFlightplan } from "../../types/apiFlightplan";
 import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { EdstWindow } from "../../enums/edstWindow";
 
 type AltMenuDivProps = { width?: number; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({

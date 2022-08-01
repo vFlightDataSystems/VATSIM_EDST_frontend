@@ -4,10 +4,11 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { defaultFontFamily } from "../../../styles/styles";
 import { formatAltitude } from "../../../lib";
-import { EdstWindow, AclRowField } from "../../../namespaces";
 import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
+import { EdstWindow } from "../../../enums/edstWindow";
+import { AclRowField } from "../../../enums/aclRowField";
 
 type GpdDataBlockProps = {
   entry: EdstEntry;

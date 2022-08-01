@@ -1,9 +1,13 @@
-import { AclAselActionTrigger, AclRowField, DepAselActionTrigger, DepRowField, EDST_MENU_LIST, EdstWindow } from "../../namespaces";
 import { RootThunkAction } from "../store";
 import { closeAircraftMenus, setAsel } from "../slices/appSlice";
 import { updateEntry } from "../slices/entrySlice";
 import { openMenuThunk } from "./openMenuThunk";
 import { openWindowThunk } from "./openWindowThunk";
+import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
+import { AclRowField } from "../../enums/aclRowField";
+import { DepRowField } from "../../enums/depRowField";
+import { AclAselActionTrigger } from "../../enums/aclAselActionTrigger";
+import { DepAselActionTrigger } from "../../enums/depAselActionTrigger";
 
 function aircraftSelect(
   event: Event & any,

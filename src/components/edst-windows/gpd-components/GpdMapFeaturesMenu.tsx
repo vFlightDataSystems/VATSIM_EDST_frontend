@@ -6,7 +6,7 @@ import { EdstButton } from "../../resources/EdstButton";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdMapFeatureOptionsSelector, mapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";
-import { EdstWindow } from "../../../namespaces";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 export const GpdMapFeaturesMenu = () => {
   const dispatch = useRootDispatch();

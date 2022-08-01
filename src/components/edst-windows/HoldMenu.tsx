@@ -12,11 +12,11 @@ import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, Options
 import { InputContainer } from "../InputComponents";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { EdstWindow } from "../../namespaces";
 import { RouteFix } from "../../types/routeFix";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;

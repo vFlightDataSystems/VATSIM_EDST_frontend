@@ -4,7 +4,6 @@ import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes,
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
-import { EdstWindow } from "../../namespaces";
 import {
   closeAllWindows,
   mcaCommandStringSelector,
@@ -28,6 +27,7 @@ import { EdstEntry } from "../../types/edstEntry";
 import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 import { aclCleanup } from "../../redux/thunks/aclCleanup";
 import { useDragging } from "../../hooks/useDragging";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;

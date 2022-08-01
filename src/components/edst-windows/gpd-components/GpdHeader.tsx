@@ -8,8 +8,8 @@ import { closeAllMenus, closeWindow, gpdAselSelector } from "../../../redux/slic
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { gpdSuppressedSelector, toggleSuppressed } from "../../../redux/slices/gpdSlice";
-import { EdstWindow } from "../../../namespaces";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 type GpdHeaderProps = {
   focused: boolean;

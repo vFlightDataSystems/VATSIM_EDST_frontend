@@ -15,9 +15,9 @@ import {
   OptionsMenuHeader
 } from "../../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
-import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useFocused } from "../../../hooks/useFocused";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 export const GpdMapOptions = () => {
   const dispatch = useRootDispatch();

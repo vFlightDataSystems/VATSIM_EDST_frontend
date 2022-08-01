@@ -11,10 +11,10 @@ import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, Options
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
-import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 enum Sign {
   more = "+",

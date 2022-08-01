@@ -10,7 +10,7 @@ import { sigmetSelector } from "../redux/slices/weatherSlice";
 import { edstFontGrey } from "../styles/colors";
 import { sectorIdSelector } from "../redux/slices/sectorSlice";
 import { entriesSelector } from "../redux/slices/entrySlice";
-import { EdstWindow } from "../namespaces";
+import { EdstWindow } from "../enums/edstWindow";
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";

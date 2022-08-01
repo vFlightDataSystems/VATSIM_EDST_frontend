@@ -1,7 +1,7 @@
-import { EdstWindow } from "../../namespaces";
 import { RootThunkAction } from "../store";
 import { WindowPosition } from "../../types/windowPosition";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
+import { EdstWindow } from "../../enums/edstWindow";
 
 export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, triggeredFromWindow?: EdstWindow, plan = false): RootThunkAction {
   return dispatch => {

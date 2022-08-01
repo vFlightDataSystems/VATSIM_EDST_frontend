@@ -6,12 +6,12 @@ import { PlansDisplayTable } from "./plans-display-components/PlansDisplayTable"
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
-import { EdstWindow } from "../../namespaces";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const PlansDisplayDiv = styled(ResizableFloatingWindowDiv)`
   display: block;

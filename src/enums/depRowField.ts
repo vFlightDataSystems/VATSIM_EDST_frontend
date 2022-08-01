@@ -1,0 +1,8 @@
+export enum DepRowField {
+  FID = "FID_DEP_ROW_FIELD",
+  P_TIME = "P_TIME _DEP_ROW_FIELD",
+  TYPE = "TYPE _DEP_ROW_FIELD",
+  ALT = "ALT_DEP_ROW_FIELD",
+  CODE = "CODE _DEP_ROW_FIELD",
+  ROUTE = "ROUTE_DEP_ROW_FIELD"
+}

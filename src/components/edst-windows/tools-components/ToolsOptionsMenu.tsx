@@ -6,7 +6,7 @@ import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/aclSlice";
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
-import { EdstWindow } from "../../../namespaces";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 export const ToolsOptionsMenu = () => {
   const dispatch = useRootDispatch();

@@ -21,10 +21,10 @@ import {
 } from "../../../styles/optionMenuStyles";
 import { EqpContentCol, EqpRow } from "./EqpStyled";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
-import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
   width: 900px;

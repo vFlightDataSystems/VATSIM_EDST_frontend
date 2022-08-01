@@ -14,9 +14,11 @@ import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/bodyStyl
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
 import { aclManualPostingSelector, aclSortDataSelector } from "../../../redux/slices/aclSlice";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { EdstWindow, AclRowField, SortOptions } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
+import { EdstWindow } from "../../../enums/edstWindow";
+import { AclRowField } from "../../../enums/aclRowField";
+import { SortOptions } from "../../../enums/sortOptions";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;

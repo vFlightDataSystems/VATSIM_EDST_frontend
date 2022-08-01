@@ -16,9 +16,9 @@ import {
   OptionsMenuHeader
 } from "../../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
-import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useFocused } from "../../../hooks/useFocused";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 export const ToolsBody = styled(OptionsBody)`
   padding: 20px 0 4px 0;

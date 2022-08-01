@@ -12,11 +12,11 @@ import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, Options
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
 import { InputContainer } from "../../InputComponents";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
-import { EdstWindow } from "../../../namespaces";
 import { mod } from "../../../lib";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
+import { EdstWindow } from "../../../enums/edstWindow";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 190px;

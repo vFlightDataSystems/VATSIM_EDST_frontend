@@ -6,12 +6,12 @@ import { zStackSelector, pushZStack, windowPositionSelector } from "../../redux/
 import { GpdHeader } from "./gpd-components/GpdHeader";
 import { GpdBody } from "./gpd-components/GpdBody";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
-import { EdstWindow } from "../../namespaces";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const GpdDiv = styled(ResizableFloatingWindowDiv)`
   white-space: nowrap;

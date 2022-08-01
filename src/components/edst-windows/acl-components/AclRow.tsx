@@ -10,7 +10,6 @@ import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/s
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
-import { AclAselActionTrigger, AclRowField, EdstWindow } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { AclRouteDisplayOption } from "../../../types/localVEdstEntry";
@@ -26,6 +25,9 @@ import {
   RouteSpan,
   SpecialBox
 } from "../../../styles/sharedColumns";
+import { EdstWindow } from "../../../enums/edstWindow";
+import { AclRowField } from "../../../enums/aclRowField";
+import { AclAselActionTrigger } from "../../../enums/aclAselActionTrigger";
 
 const SPA_INDICATOR = "\u2303";
 

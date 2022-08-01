@@ -9,9 +9,10 @@ import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
-import { DepRowField, SortOptions } from "../../../namespaces";
 import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
+import { DepRowField } from "../../../enums/depRowField";
+import { SortOptions } from "../../../enums/sortOptions";
 
 const COMPLETED_SYMBOL = "✓";
 

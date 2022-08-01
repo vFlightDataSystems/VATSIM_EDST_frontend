@@ -4,17 +4,13 @@ import { useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { EdstWindow } from "../../namespaces";
 import { useHub } from "../../hooks/hub";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstPrompt } from "./EdstPrompt";
+import { PromptProps } from "./promptProps";
+import { EdstWindow } from "../../enums/edstWindow";
 
-type PreviousRouteMenuProps = {
-  onSubmit: () => void;
-  onCancel: () => void;
-};
-
-export const PreviousRouteMenu = ({ onSubmit, onCancel }: PreviousRouteMenuProps) => {
+export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const ref = useRef<HTMLDivElement | null>(null);

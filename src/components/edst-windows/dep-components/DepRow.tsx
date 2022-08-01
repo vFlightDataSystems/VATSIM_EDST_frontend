@@ -7,7 +7,6 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
-import { EdstWindow, DepRowField } from "../../../namespaces";
 import { ApiPreferentialDepartureRoute } from "../../../types/apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiPreferentialDepartureArrivalRoute";
 import { EdstEntry } from "../../../types/edstEntry";
@@ -23,6 +22,8 @@ import {
   RouteSpan,
   SpecialBox
 } from "../../../styles/sharedColumns";
+import { EdstWindow } from "../../../enums/edstWindow";
+import { DepRowField } from "../../../enums/depRowField";
 
 const SPA_INDICATOR = "\u2303";
 const COMPLETED_SYMBOL = "✓";

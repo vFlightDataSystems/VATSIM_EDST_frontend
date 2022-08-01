@@ -2,7 +2,9 @@ import { RootThunkAction } from "../store";
 import { addEntryToAcl, addEntryToDep } from "../slices/entrySlice";
 import { setAsel } from "../slices/appSlice";
 import { convertBeaconCodeToString } from "../../lib";
-import { EdstWindow, AclRowField, DepRowField } from "../../namespaces";
+import { EdstWindow } from "../../enums/edstWindow";
+import { AclRowField } from "../../enums/aclRowField";
+import { DepRowField } from "../../enums/depRowField";
 
 function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
   return (dispatch, getState) => {

@@ -4,11 +4,11 @@ import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHe
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstButton } from "../resources/EdstButton";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { EdstWindow } from "../../namespaces";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
+import { EdstWindow } from "../../enums/edstWindow";
 
 type PromptDivProps = {
   width?: number;

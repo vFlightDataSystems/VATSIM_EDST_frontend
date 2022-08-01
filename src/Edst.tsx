@@ -18,7 +18,6 @@ import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea
 import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
-import { EdstWindow } from "./namespaces";
 import {
   mcaCommandStringSelector,
   openWindow,
@@ -40,6 +39,7 @@ import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOp
 import { HubProvider } from "./hooks/hub";
 import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
+import { EdstWindow } from "./enums/edstWindow";
 
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 

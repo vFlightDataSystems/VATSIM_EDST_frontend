@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, RootThunkAction } from "../store";
-import { EDST_MENU_LIST, EdstWindow, AclRowField, DepRowField, PlanRowField } from "../../namespaces";
 import { Plan } from "../../types/plan";
 import { WindowPosition } from "../../types/windowPosition";
 import { AircraftId } from "../../types/aircraftId";
+import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
+import { AclRowField } from "../../enums/aclRowField";
+import { DepRowField } from "../../enums/depRowField";
+import { PlanRowField } from "../../enums/planRowField";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,

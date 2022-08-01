@@ -19,7 +19,6 @@ import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
-import { EdstWindow } from "../../namespaces";
 import { ApiFlightplan } from "../../types/apiFlightplan";
 import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
@@ -27,6 +26,7 @@ import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;

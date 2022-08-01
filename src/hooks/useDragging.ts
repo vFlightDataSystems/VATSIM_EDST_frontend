@@ -1,10 +1,10 @@
 import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { EdstWindow } from "../namespaces";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "../redux/slices/appSlice";
 import { WindowPosition } from "../types/windowPosition";
 import { DragPreviewStyle } from "../types/dragPreviewStyle";
+import { EdstWindow } from "../enums/edstWindow";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.STATUS,

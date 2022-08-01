@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { EdstWindow } from "../../namespaces";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { altimeterSelector, delAltimeter } from "../../redux/slices/weatherSlice";
@@ -18,6 +17,7 @@ import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { mod } from "../../lib";
 import { WindowPosition } from "../../types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   width: 180px;

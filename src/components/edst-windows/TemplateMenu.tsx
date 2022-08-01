@@ -9,13 +9,13 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
-import { EdstWindow } from "../../namespaces";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useHub } from "../../hooks/hub";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
+import { EdstWindow } from "../../enums/edstWindow";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;

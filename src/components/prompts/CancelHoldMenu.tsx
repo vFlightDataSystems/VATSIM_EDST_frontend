@@ -1,16 +1,12 @@
 import React from "react";
 import { useRootSelector } from "../../redux/hooks";
-import { EdstWindow } from "../../namespaces";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { EdstPrompt } from "./EdstPrompt";
 import { FidRow } from "../../styles/optionMenuStyles";
+import { PromptProps } from "./promptProps";
+import { EdstWindow } from "../../enums/edstWindow";
 
-type CancelHoldMenuProps = {
-  onSubmit: () => void;
-  onCancel: () => void;
-};
-
-export const CancelHoldMenu = ({ onSubmit, onCancel }: CancelHoldMenuProps) => {
+export const CancelHoldMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
 
   return (

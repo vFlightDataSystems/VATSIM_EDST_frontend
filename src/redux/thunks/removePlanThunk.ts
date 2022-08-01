@@ -1,7 +1,7 @@
 import { RootThunkAction } from "../store";
 import { removePlan } from "../slices/planSlice";
 import { closeWindow } from "../slices/appSlice";
-import { EdstWindow } from "../../namespaces";
+import { EdstWindow } from "../../enums/edstWindow";
 
 export function removePlanThunk(index: number): RootThunkAction {
   return (dispatch, getState) => {
