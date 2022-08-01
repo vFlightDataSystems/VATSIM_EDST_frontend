@@ -14,7 +14,7 @@ type InputProps = {
 const AddFindContainer = styled.div`
   border: 1px solid #000000;
   display: inline-flex;
-  margin: 1px 8px;
+  margin: 1px 20px 1px 14px;
   width: 68px;
 `;
 
