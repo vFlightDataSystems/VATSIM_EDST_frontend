@@ -13,9 +13,7 @@ import { SortMenu } from "./components/edst-windows/SortMenu";
 import { PlansDisplay } from "./components/edst-windows/PlansDisplay";
 import { SpeedMenu } from "./components/edst-windows/spd-hdg/SpeedMenu";
 import { HeadingMenu } from "./components/edst-windows/spd-hdg/HeadingMenu";
-import { PreviousRouteMenu } from "./components/edst-windows/PreviousRouteMenu";
 import { HoldMenu } from "./components/edst-windows/HoldMenu";
-import { CancelHoldMenu } from "./components/edst-windows/CancelHoldMenu";
 import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea";
 import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
@@ -112,8 +110,6 @@ const Edst = () => {
         {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
         {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
         {windows[EdstWindow.HOLD_MENU].open && <HoldMenu />}
-        {windows[EdstWindow.CANCEL_HOLD_MENU].open && <CancelHoldMenu />}
-        {windows[EdstWindow.PREV_ROUTE_MENU].open && <PreviousRouteMenu />}
         {windows[EdstWindow.SPEED_MENU].open && <SpeedMenu />}
         {windows[EdstWindow.HEADING_MENU].open && <HeadingMenu />}
         {windows[EdstWindow.ALTITUDE_MENU].open && <AltMenu />}

@@ -1,7 +1,6 @@
 import React, { PropsWithChildren, useRef } from "react";
 import styled from "styled-components";
 import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { AircraftId } from "../../types/aircraftId";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { EdstButton } from "../resources/EdstButton";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -9,7 +8,7 @@ import { EdstWindow } from "../../namespaces";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
-import { entrySelector } from "../../redux/slices/entrySlice";
+import { useCenterCursor } from "../../hooks/useCenterCursor";
 
 type PromptDivProps = {
   width?: number;
@@ -24,7 +23,6 @@ type EdstPromptProps = PropsWithChildren<{
   title: string;
   width?: number;
   windowId: EdstWindow;
-  aircraftId: AircraftId;
   submitText: string;
   onSubmit: () => void;
   cancelText: string;
@@ -36,14 +34,13 @@ export const EdstPrompt = ({ ...props }: EdstPromptProps) => {
   const pos = useRootSelector(windowPositionSelector(props.windowId));
   const ref = useRef<HTMLDivElement | null>(null);
   const zStack = useRootSelector(zStackSelector);
-  const entry = useRootSelector(entrySelector(props.aircraftId));
   const focused = useFocused(ref);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, props.windowId);
   const dispatch = useRootDispatch();
+  useCenterCursor(ref);
 
   return (
-    pos &&
-    entry && (
+    pos && (
       <PromptDiv
         ref={ref}
         width={props.width}

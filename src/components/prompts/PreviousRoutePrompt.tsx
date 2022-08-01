@@ -1,20 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-
-import { getFrd, removeDestFromRouteString } from "../../lib";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
+import { getFrd } from "../../lib";
+import { useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { closeWindow } from "../../redux/slices/appSlice";
 import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { EdstWindow } from "../../namespaces";
 import { useHub } from "../../hooks/hub";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { EdstPrompt } from "../prompts/EdstPrompt";
+import { EdstPrompt } from "./EdstPrompt";
 
-export const PreviousRouteMenu = () => {
+type PreviousRouteMenuProps = {
+  onSubmit: () => void;
+  onCancel: () => void;
+};
+
+export const PreviousRouteMenu = ({ onSubmit, onCancel }: PreviousRouteMenuProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
-  const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
   const [frd, setFrd] = useState(null);
   const hubConnection = useHub();
@@ -28,22 +30,15 @@ export const PreviousRouteMenu = () => {
     updateFrd().then();
   }, []);
 
-  const route = removeDestFromRouteString(entry.route.slice(0), entry.destination);
-
-  const onSubmit = () => {
-    // TODO: implement
-    dispatch(closeWindow(EdstWindow.PREV_ROUTE_MENU));
-  };
-
   return (
     <EdstPrompt
       title="Previous Route Menu"
       windowId={EdstWindow.PREV_ROUTE_MENU}
       width={380}
-      aircraftId={entry.aircraftId}
       submitText="Apply Previous Route"
       onSubmit={onSubmit}
       cancelText="Exit"
+      onCancel={onCancel}
       id="previous-route-menu"
     >
       <FidRow>
