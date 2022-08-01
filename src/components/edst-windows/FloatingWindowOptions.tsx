@@ -19,13 +19,15 @@ const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv).attrs((props: FloatingW
   top: ${props => props.top};
 `;
 
-const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<{ unselected?: boolean }>`
+type FloatingWindowOptionDivProps = { unselected?: boolean };
+const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: FloatingWindowOptionDivProps) => ({
+  backgroundColor: props.unselected ? "#000000" : "#575757"
+}))<FloatingWindowOptionDivProps>`
   height: 18px;
-  background-color: #575757;
+  background-color: ${props => props.backgroundColor};
   border: 1px solid #adadad;
   text-indent: 4px;
-  ${props => props.unselected && { "background-color": "#000000" }};
-
+  align-items: center;
   &:hover {
     border: 1px solid #ffffff;
   }
