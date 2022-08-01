@@ -12,7 +12,6 @@ import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, Remar
 import { edstFontBrown } from "../../../styles/colors";
 import { EdstEntry } from "../../../types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
-import { AclRouteDisplayOption } from "../../../types/localVEdstEntry";
 import {
   AircraftTypeCol,
   AltCol,
@@ -26,8 +25,11 @@ import {
   SpecialBox
 } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
-import { AclRowField } from "../../../enums/aclRowField";
-import { AclAselActionTrigger } from "../../../enums/aclAselActionTrigger";
+import { AclRowField } from "../../../enums/acl/aclRowField";
+import { AclAselActionTrigger } from "../../../enums/acl/aclAselActionTrigger";
+import { AclRouteDisplayOption } from "../../../types/aclRouteDisplayOption";
+import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
+import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
 
 const SPA_INDICATOR = "\u2303";
 
@@ -60,7 +62,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     setOnPar(onPar);
   }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
 
-  const { holdData } = entry;
+  const { holdAnnotations } = entry;
   const route = useMemo(() => {
     const route = entry.currentRoute?.replace(/^\.+/, "") ?? entry.formattedRoute;
     return removeDestFromRouteString(route.slice(0), entry.destination);
@@ -111,13 +113,13 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   const handleHoldClick = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
-        if (!entry.holdData) {
+        if (!entry.holdAnnotations) {
           dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.HOLD_MENU));
         } else {
           dispatch(
             updateEntry({
               aircraftId: entry.aircraftId,
-              data: { aclRouteDisplay: !entry.aclRouteDisplay ? AclRouteDisplayOption.holdData : null }
+              data: { aclRouteDisplay: !entry.aclRouteDisplay ? AclRouteDisplayOption.holdAnnotations : null }
             })
           );
         }
@@ -317,13 +319,13 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             onMouseDown={handleHoldClick}
             onContextMenu={(event: React.MouseEvent) => {
               event.preventDefault();
-              if (entry?.holdData) {
+              if (entry?.holdAnnotations) {
                 dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
               }
             }}
             disabled={!anyHolding}
           >
-            {entry.holdData ? "H" : ""}
+            {entry.holdAnnotations ? "H" : ""}
           </SpecialBox>
           <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclRemarksBtn}>
@@ -341,9 +343,12 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
                 dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))
               }
             >
-              {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute &&
-                holdData &&
-                `${holdData.hold_fix} ${holdData.hold_direction} ${holdData.turns} ${holdData.leg_length} EFC ${formatUtcMinutes(holdData.efc)}`}
+              {entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations &&
+                holdAnnotations &&
+                `${holdAnnotations.isPresentPosition ? "PP" : holdAnnotations.fix} ${HoldDirectionValues[holdAnnotations.direction]} ` +
+                  `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
+                  `${holdAnnotations.legLength}` +
+                  `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efcTime)}`}
               {entry.aclRouteDisplay === AclRouteDisplayOption.remarks && <span>{entry.remarks}</span>}
               {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
               {!entry.aclRouteDisplay && (

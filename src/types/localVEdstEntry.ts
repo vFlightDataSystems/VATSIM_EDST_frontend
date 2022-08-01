@@ -2,12 +2,7 @@ import { ApiAirportInfo } from "./apiAirportInfo";
 import { ApiPreferentialDepartureRoute } from "./apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "./apiPreferentialDepartureArrivalRoute";
 import { ApiPreferentialArrivalRoute } from "./apiPreferentialArrivalRoute";
-
-export enum AclRouteDisplayOption {
-  holdData = "HOLD_DATA",
-  remarks = "REMARKS",
-  rawRoute = "RAW_ROUTE"
-}
+import { AclRouteDisplayOption } from "./aclRouteDisplayOption";
 
 export type LocalVEdstEntry = {
   depInfo: ApiAirportInfo | null;
@@ -16,10 +11,10 @@ export type LocalVEdstEntry = {
   preferentialDepartureArrivalRoutes: ApiPreferentialDepartureArrivalRoute[];
   preferentialArrivalRoutes: ApiPreferentialArrivalRoute[];
   freeTextContent: string;
-  vciStatus: number; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
-  depStatus: number; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
-  aclHighlighted?: boolean;
-  depHighlighted?: boolean;
+  vciStatus: -1 | 0 | 1; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
+  depStatus: -1 | 0 | 1; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
+  aclHighlighted: boolean;
+  depHighlighted: boolean;
   aclRouteDisplay: AclRouteDisplayOption | null; // for toggling remarks
   remarksChecked: boolean; // whether remarks have been checked or not
   spa: boolean; // SPA indicator
@@ -34,8 +29,7 @@ export type LocalVEdstEntry = {
   depDisplay: boolean;
   depDeleted: boolean;
   keep: boolean;
-  uplinkEligible?: boolean;
-  holdData: Record<string, any> | null;
+  uplinkEligible: boolean;
   assignedSpeed: string | null;
   assignedHeading: string | null;
   interimAltitude: number | null;

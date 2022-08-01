@@ -1,4 +1,5 @@
 import { AircraftId } from "./aircraftId";
+import { HoldAnnotations } from "../enums/hold/holdAnnotations";
 
 export type ApiFlightplan = {
   aircraftId: AircraftId;
@@ -23,5 +24,6 @@ export type ApiFlightplan = {
   minutesEnroute: number;
   pilotCid: string;
   remarks: string;
+  holdAnnotations: HoldAnnotations | null;
   tdlsDumped: boolean;
 };

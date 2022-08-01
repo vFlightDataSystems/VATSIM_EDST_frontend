@@ -57,7 +57,7 @@ async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Prom
     depStatus: -1,
     formattedRoute,
     freeTextContent: "",
-    holdData: null,
+    holdAnnotations: null,
     routeFixes,
     currentRoute: formattedRoute,
     currentRouteFixes: routeFixes,

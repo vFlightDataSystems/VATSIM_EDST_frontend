@@ -17,6 +17,8 @@ import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
+import { CompassDirection } from "../../enums/hold/compassDirection";
+import { TurnDirection } from "../../enums/hold/turnDirection";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;
@@ -92,7 +94,7 @@ export const HoldMenu = () => {
   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
 
   const [holdFix, setHoldFix] = useState<string | null>(null);
-  const [legLength, setLegLength] = useState<string | number | null>(null);
+  const [legLength, setLegLength] = useState<number | null>(null);
   const [holdDirection, setHoldDirection] = useState<string | null>(null);
   const [turns, setTurns] = useState<string | null>(null);
   const [efc, setEfc] = useState(utcMinutes);
@@ -109,18 +111,18 @@ export const HoldMenu = () => {
       const routeFixes = computeCrossingTimes(entry, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      setHoldFix(entry.holdData?.holdFix ?? "PP");
-      setLegLength(entry.holdData?.legLength ?? "STD");
-      setHoldDirection(entry.holdData?.holdDirection ?? "N");
-      setTurns(entry.holdData?.turns ?? "RT");
-      setEfc(entry.holdData?.efc ?? utcMinutes + 30);
+      setHoldFix(entry.holdAnnotations?.fix ?? null);
+      setLegLength(entry.holdAnnotations?.legLength ?? null);
+      setHoldDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
+      setTurns(entry.holdAnnotations?.turns ?? TurnDirection.RIGHT);
+      setEfc(entry.holdAnnotations?.efcTime ?? utcMinutes + 30);
       setRouteFixes(routeFixes ?? null);
     }
   }, []);
 
   const clearedHold = () => {
     if (entry) {
-      const holdData = {
+      const holdAnnotations = {
         holdFix,
         legLength,
         holdDirection,
@@ -213,24 +215,44 @@ export const HoldMenu = () => {
           </Row1>
           <Row1>
             <Col3>
-              <HoldDirButton16 content="NW" selected={holdDirection === "NW"} onMouseDown={() => setHoldDirection("NW")} />
-              <HoldDirButton16 content="N" selected={holdDirection === "N"} onMouseDown={() => setHoldDirection("N")} />
-              <HoldDirButton16 content="NE" selected={holdDirection === "NE"} onMouseDown={() => setHoldDirection("NE")} />
+              <HoldDirButton16
+                content="NW"
+                selected={holdDirection === CompassDirection.NORTH_WEST}
+                onMouseDown={() => setHoldDirection(CompassDirection.NORTH_WEST)}
+              />
+              <HoldDirButton16
+                content="N"
+                selected={holdDirection === CompassDirection.NORTH}
+                onMouseDown={() => setHoldDirection(CompassDirection.NORTH)}
+              />
+              <HoldDirButton16
+                content="NE"
+                selected={holdDirection === CompassDirection.NORTH_EAST}
+                onMouseDown={() => setHoldDirection(CompassDirection.NORTH_EAST)}
+              />
             </Col3>
             <Col3>
-              <HoldDirButton20 content="LT" selected={turns === "LT"} onMouseDown={() => setTurns("LT")} />
-              <HoldDirButton20 content="RT" selected={turns === "RT"} onMouseDown={() => setTurns("RT")} />
+              <HoldDirButton20 content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
+              <HoldDirButton20 content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
             </Col3>
             <Col3>
-              <HoldDirButton50 content="STD" selected={!legLength || legLength === "STD"} onMouseDown={() => setLegLength("STD")} />
+              <HoldDirButton50 content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
               <HoldDirButton50 content="15 NM" selected={!legLength || legLength === 15} onMouseDown={() => setLegLength(15)} />
             </Col3>
           </Row1>
           <Row1>
             <Col3>
-              <HoldDirButton16 content="W" selected={holdDirection === "W"} onMouseDown={() => setHoldDirection("W")} />
+              <HoldDirButton16
+                content="W"
+                selected={holdDirection === CompassDirection.WEST}
+                onMouseDown={() => setHoldDirection(CompassDirection.WEST)}
+              />
               <HoldDirButton16 disabled />
-              <HoldDirButton16 content="E" selected={holdDirection === "E"} onMouseDown={() => setHoldDirection("E")} />
+              <HoldDirButton16
+                content="E"
+                selected={holdDirection === CompassDirection.EAST}
+                onMouseDown={() => setHoldDirection(CompassDirection.EAST)}
+              />
             </Col3>
             <Col3>
               <HoldDirButton20 disabled />
@@ -243,9 +265,21 @@ export const HoldMenu = () => {
           </Row1>
           <Row1>
             <Col3>
-              <HoldDirButton16 content="SW" selected={holdDirection === "SW"} onMouseDown={() => setHoldDirection("SW")} />
-              <HoldDirButton16 content="S" selected={holdDirection === "S"} onMouseDown={() => setHoldDirection("S")} />
-              <HoldDirButton16 content="SE" selected={holdDirection === "SE"} onMouseDown={() => setHoldDirection("SE")} />
+              <HoldDirButton16
+                content="SW"
+                selected={holdDirection === CompassDirection.SOUTH_WEST}
+                onMouseDown={() => setHoldDirection(CompassDirection.SOUTH_WEST)}
+              />
+              <HoldDirButton16
+                content="S"
+                selected={holdDirection === CompassDirection.SOUTH}
+                onMouseDown={() => setHoldDirection(CompassDirection.SOUTH)}
+              />
+              <HoldDirButton16
+                content="SE"
+                selected={holdDirection === CompassDirection.SOUTH_EAST}
+                onMouseDown={() => setHoldDirection(CompassDirection.SOUTH_EAST)}
+              />
             </Col3>
             <Col3>
               <HoldDirButton20 disabled />
@@ -298,7 +332,7 @@ export const HoldMenu = () => {
                 content="Hold/SPA"
                 margin="0 6px 0 0"
                 padding="0 6px"
-                disabled={!!entry?.holdData}
+                disabled={!!entry?.holdAnnotations}
                 onMouseDown={() => {
                   if (!entry.spa) {
                     dispatch(toggleSpa(entry.aircraftId));
@@ -307,10 +341,16 @@ export const HoldMenu = () => {
                 }}
                 title={Tooltips.holdHoldSpaBtn}
               />
-              <EdstButton content="Hold" margin="0 6px 0 0" onMouseDown={clearedHold} disabled={!!entry?.holdData} title={Tooltips.holdHoldBtn} />
+              <EdstButton
+                content="Hold"
+                margin="0 6px 0 0"
+                onMouseDown={clearedHold}
+                disabled={!!entry?.holdAnnotations}
+                title={Tooltips.holdHoldBtn}
+              />
               <EdstButton
                 content="Cancel Hold"
-                disabled={!entry?.holdData}
+                disabled={!entry?.holdAnnotations}
                 onMouseDown={() => {
                   dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclRouteDisplay: null } }));
                   dispatch(closeWindow(EdstWindow.HOLD_MENU));
