@@ -17,7 +17,7 @@ import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
-import { AclRowField } from "../../../enums/aclRowField";
+import { AclRowField } from "../../../enums/acl/aclRowField";
 import { SortOptions } from "../../../enums/sortOptions";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`

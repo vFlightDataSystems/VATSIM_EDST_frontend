@@ -23,7 +23,7 @@ import {
   SpecialBox
 } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
-import { DepRowField } from "../../../enums/depRowField";
+import { DepRowField } from "../../../enums/dep/depRowField";
 
 const SPA_INDICATOR = "\u2303";
 const COMPLETED_SYMBOL = "✓";

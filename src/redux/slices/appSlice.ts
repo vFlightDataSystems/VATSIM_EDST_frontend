@@ -4,8 +4,8 @@ import { Plan } from "../../types/plan";
 import { WindowPosition } from "../../types/windowPosition";
 import { AircraftId } from "../../types/aircraftId";
 import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
-import { AclRowField } from "../../enums/aclRowField";
-import { DepRowField } from "../../enums/depRowField";
+import { AclRowField } from "../../enums/acl/aclRowField";
+import { DepRowField } from "../../enums/dep/depRowField";
 import { PlanRowField } from "../../enums/planRowField";
 
 export const AIRCRAFT_MENUS = [

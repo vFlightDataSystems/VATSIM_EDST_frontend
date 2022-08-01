@@ -8,7 +8,7 @@ import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { EdstWindow } from "../../../enums/edstWindow";
-import { AclRowField } from "../../../enums/aclRowField";
+import { AclRowField } from "../../../enums/acl/aclRowField";
 
 type GpdDataBlockProps = {
   entry: EdstEntry;

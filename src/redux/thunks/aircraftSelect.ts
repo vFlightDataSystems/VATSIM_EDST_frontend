@@ -4,10 +4,10 @@ import { updateEntry } from "../slices/entrySlice";
 import { openMenuThunk } from "./openMenuThunk";
 import { openWindowThunk } from "./openWindowThunk";
 import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
-import { AclRowField } from "../../enums/aclRowField";
-import { DepRowField } from "../../enums/depRowField";
-import { AclAselActionTrigger } from "../../enums/aclAselActionTrigger";
-import { DepAselActionTrigger } from "../../enums/depAselActionTrigger";
+import { AclRowField } from "../../enums/acl/aclRowField";
+import { DepRowField } from "../../enums/dep/depRowField";
+import { AclAselActionTrigger } from "../../enums/acl/aclAselActionTrigger";
+import { DepAselActionTrigger } from "../../enums/dep/depAselActionTrigger";
 
 function aircraftSelect(
   event: Event & any,

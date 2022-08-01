@@ -11,7 +11,7 @@ import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
 import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
-import { DepRowField } from "../../../enums/depRowField";
+import { DepRowField } from "../../../enums/dep/depRowField";
 import { SortOptions } from "../../../enums/sortOptions";
 
 const COMPLETED_SYMBOL = "✓";
