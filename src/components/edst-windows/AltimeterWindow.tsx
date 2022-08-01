@@ -29,7 +29,7 @@ const AltimCol = styled.span<{ underline?: boolean; reportingStation?: boolean }
   ${props => props.underline && { "text-decoration": "underline" }};
 `;
 
-export const AltimeterWindow: React.FC = () => {
+export const AltimeterWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTIMETER));
   const [selected, setSelected] = useState<string | null>(null);

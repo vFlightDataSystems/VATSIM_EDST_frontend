@@ -19,7 +19,7 @@ enum AppCategory {
   S = "S"
 }
 
-export const EquipmentAppServTemplate: React.FC = () => {
+export const EquipmentAppServTemplate = () => {
   const entry = useRootSelector(aselEntrySelector);
   const field10a = entry?.equipment
     ?.split("/")

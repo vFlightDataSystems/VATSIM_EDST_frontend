@@ -55,7 +55,7 @@ const Button = styled.button`
   width: 150px;
 `;
 
-const Login: React.FC = () => {
+const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

@@ -50,7 +50,7 @@ const Col2 = styled(Col)<{ expired: boolean }>`
   padding: 0 4px;
 `;
 
-export const PlansDisplayTable: React.FC = () => {
+export const PlansDisplayTable = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);

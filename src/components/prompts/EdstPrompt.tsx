@@ -32,7 +32,7 @@ type EdstPromptProps = PropsWithChildren<{
   id: string;
 }>;
 
-export const EdstPrompt: React.FC<EdstPromptProps> = ({ ...props }) => {
+export const EdstPrompt = ({ ...props }: EdstPromptProps) => {
   const pos = useRootSelector(windowPositionSelector(props.windowId));
   const ref = useRef<HTMLDivElement | null>(null);
   const zStack = useRootSelector(zStackSelector);

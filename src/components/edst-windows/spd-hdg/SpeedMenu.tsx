@@ -26,7 +26,7 @@ const SpeedDiv = styled(OptionsMenu)`
   width: 190px;
 `;
 
-export const SpeedMenu: React.FC = () => {
+export const SpeedMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.SPEED_MENU));

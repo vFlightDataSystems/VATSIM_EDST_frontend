@@ -61,7 +61,7 @@ enum AdsbV {
   V2 = "V2"
 }
 
-export const EquipmentSurvTemplate: React.FC = () => {
+export const EquipmentSurvTemplate = () => {
   const entry = useRootSelector(aselEntrySelector);
   const field10b = entry?.equipment
     ?.split("/")

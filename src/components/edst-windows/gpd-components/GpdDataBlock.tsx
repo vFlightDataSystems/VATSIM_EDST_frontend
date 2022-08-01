@@ -43,7 +43,7 @@ const DataBlockElement = styled.span<{ selected?: boolean }>`
   }
 `;
 
-export const GpdDataBlock: React.FC<GpdDataBlockProps> = ({ entry, pos, toggleShowRoute }) => {
+export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
   // datablock offset after it has been dragged by the user

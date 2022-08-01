@@ -8,7 +8,7 @@ import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
 import { EdstWindow } from "../../../namespaces";
 
-export const ToolsOptionsMenu: React.FC = () => {
+export const ToolsOptionsMenu = () => {
   const dispatch = useRootDispatch();
   const toolsOptions = useRootSelector(toolsOptionsSelector);
   const [displayCoordinationColumn, setDisplayCoordinationColumn] = useState(toolsOptions.displayCoordinationColumn);

@@ -22,7 +22,7 @@ const HeadingDiv = styled(OptionsMenu)`
   width: 190px;
 `;
 
-export const HeadingMenu: React.FC = () => {
+export const HeadingMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.HEADING_MENU));

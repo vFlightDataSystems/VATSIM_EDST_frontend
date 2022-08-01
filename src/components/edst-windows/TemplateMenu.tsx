@@ -80,7 +80,7 @@ type TemplateInputProps = {
   rows?: number;
 };
 
-const TemplateInput: React.FC<TemplateInputProps> = ({ title, ...props }) => {
+const TemplateInput = ({ title, ...props }: TemplateInputProps) => {
   return (
     <EdstTooltip title={title} style={{ flexGrow: 1, width: "auto" }}>
       <TemplateCol style={{ flexGrow: 1, width: "auto", border: "1px solid transparent" }}>
@@ -89,7 +89,7 @@ const TemplateInput: React.FC<TemplateInputProps> = ({ title, ...props }) => {
     </EdstTooltip>
   );
 };
-const TemplateTextArea: React.FC<TemplateInputProps> = ({ title, ...props }) => {
+const TemplateTextArea = ({ title, ...props }: TemplateInputProps) => {
   return (
     <EdstTooltip title={title} style={{ flexGrow: 1, width: "auto" }}>
       <TemplateCol style={{ flexGrow: 1, width: "auto", border: "1px solid transparent" }}>
@@ -99,7 +99,7 @@ const TemplateTextArea: React.FC<TemplateInputProps> = ({ title, ...props }) => 
   );
 };
 
-export const TemplateMenu: React.FC = () => {
+export const TemplateMenu = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
   const aircraftTrack = useRootSelector(aselTrackSelector);

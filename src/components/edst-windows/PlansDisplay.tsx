@@ -27,7 +27,7 @@ const PlansDisplayDiv = styled(ResizableFloatingWindowDiv)`
   min-height: 200px;
 `;
 
-export const PlansDisplay: React.FC = () => {
+export const PlansDisplay = () => {
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);

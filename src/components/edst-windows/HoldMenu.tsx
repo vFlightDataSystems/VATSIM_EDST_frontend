@@ -81,7 +81,7 @@ const EfcInputContainer = styled(InputContainer)`
   width: 55px;
 `;
 
-export const HoldMenu: React.FC = () => {
+export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const track = useRootSelector(aselTrackSelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.HOLD_MENU));

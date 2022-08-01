@@ -14,7 +14,7 @@ type MapConfiguratorProps = {
   zoomLevel: number;
 };
 
-const MapConfigurator: React.FC<MapConfiguratorProps> = ({ zoomLevel }) => {
+const MapConfigurator = ({ zoomLevel }: MapConfiguratorProps) => {
   const map = useMap();
   useEffect(() => {
     map.setZoom(zoomLevel); // eslint-disable-next-line
@@ -34,7 +34,7 @@ const GpdBodyDiv = styled.div`
   }
 `;
 
-export const GpdBody: React.FC<{ zoomLevel: number }> = ({ zoomLevel }) => {
+export const GpdBody = ({ zoomLevel }: { zoomLevel: number }) => {
   const entries = useRootSelector(entriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);

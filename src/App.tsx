@@ -4,7 +4,7 @@ import EdstProvider from "./Edst";
 import Login from "./login/Login";
 import PrivateRoute from "./routes/PrivateRoute";
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <BrowserRouter>
       <Routes>

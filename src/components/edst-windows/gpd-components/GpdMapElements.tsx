@@ -36,7 +36,7 @@ const TrackLineDiv = styled.div<{ pos: WindowPosition }>`
 
 type TrackLineProps = { start: { x: number; y: number } | null; end?: { x: number; y: number } | null; toggleShowRoute(): void };
 
-const TrackLine: React.FC<TrackLineProps> = ({ start, end, toggleShowRoute }) => {
+const TrackLine = ({ start, end, toggleShowRoute }: TrackLineProps) => {
   return start && <TrackLineDiv pos={start} onMouseDown={event => event.button === 1 && toggleShowRoute()} />;
 };
 
@@ -64,17 +64,17 @@ function getRouteLine(entry: EdstEntry, track: ApiAircraftTrack) {
   return null;
 }
 
-export const GpdNavaid: React.FC<GpdFixProps> = ({ lat, lon }) => {
+export const GpdNavaid = ({ lat, lon }: GpdFixProps) => {
   const posLatLng = posToLatLng([Number(lon), Number(lat)]);
   return <Marker position={posLatLng} icon={vorIcon} />;
 };
 
-export const GpdFix: React.FC<GpdFixProps> = ({ lat, lon }) => {
+export const GpdFix = ({ lat, lon }: GpdFixProps) => {
   const posLatLng = posToLatLng([Number(lon), Number(lat)]);
   return <Marker position={posLatLng} icon={fixIcon} />;
 };
 
-export const GpdAirwayPolyline: React.FC<{ segments: AirwayFix[] }> = ({ segments }) => {
+export const GpdAirwayPolyline = ({ segments }: { segments: AirwayFix[] }) => {
   return (
     <Polyline
       positions={segments.sort((u, v) => Number(u.sequence) - Number(v.sequence)).map(segment => posToLatLng({ lat: segment.lat, lon: segment.lon }))}
@@ -83,11 +83,11 @@ export const GpdAirwayPolyline: React.FC<{ segments: AirwayFix[] }> = ({ segment
   );
 };
 
-export const GpdMapSectorPolygon: React.FC<{ sector: Feature<Polygon> }> = ({ sector }) => {
+export const GpdMapSectorPolygon = ({ sector }: { sector: Feature<Polygon> }) => {
   return <GeoJSON data={sector} pathOptions={{ color: "#ADADAD", weight: 1, opacity: 0.3, fill: false }} />;
 };
 
-export const GpdAircraftTrack: React.FC<{ aircraftId: string }> = ({ aircraftId }) => {
+export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   const entry = useRootSelector(entrySelector(aircraftId));
   const track = useRootSelector(aircraftTrackSelector(aircraftId));
   const posLatLng = useMemo(() => posToLatLng({ ...track.location }), [track.location]);
@@ -143,7 +143,7 @@ export const GpdAircraftTrack: React.FC<{ aircraftId: string }> = ({ aircraftId 
 };
 
 // TODO: give this component a better name...
-export const GpdPlanDisplay: React.FC<{ displayData: Record<string, unknown>[] }> = ({ displayData }) => {
+export const GpdPlanDisplay = ({ displayData }: { displayData: Record<string, unknown>[] }) => {
   // TODO: implement component
 
   return <>{displayData.map(() => null)}</>;

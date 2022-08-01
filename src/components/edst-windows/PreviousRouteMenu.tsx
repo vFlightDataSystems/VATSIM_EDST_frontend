@@ -11,7 +11,7 @@ import { useHub } from "../../hooks/hub";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstPrompt } from "../prompts/EdstPrompt";
 
-export const PreviousRouteMenu: React.FC = () => {
+export const PreviousRouteMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const dispatch = useRootDispatch();

@@ -91,16 +91,16 @@ type EdstHeaderButtonProps = {
   onMouseDown?: () => void;
 };
 
-const EdstHeaderButton: React.FC<EdstHeaderButtonProps> = ({ title, content, ...props }) => (
+const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) => (
   <EdstTooltip title={title}>
     <ColButton {...props} open={props.open} width={props.width} disabled={props.disabled} onMouseDown={props.onMouseDown}>
       {content}
     </ColButton>
   </EdstTooltip>
 );
-const EdstHeaderButton50: React.FC<EdstHeaderButtonProps> = props => <EdstHeaderButton width={50} {...props} />;
+const EdstHeaderButton50 = (props: EdstHeaderButtonProps) => <EdstHeaderButton width={50} {...props} />;
 
-export const EdstHeader: React.FC = () => {
+export const EdstHeader = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const windows = useRootSelector(windowsSelector);

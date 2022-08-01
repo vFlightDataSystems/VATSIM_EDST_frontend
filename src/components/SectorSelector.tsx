@@ -112,7 +112,7 @@ const SectorSelectorDropdown = styled.select`
   color: #ffffff;
 `;
 
-export const SectorSelector: React.FC = () => {
+export const SectorSelector = () => {
   const dispatch = useRootDispatch();
   const sectors = useRootSelector(sectorPolygonSelector);
   const profiles = useRootSelector(sectorProfilesSelector);

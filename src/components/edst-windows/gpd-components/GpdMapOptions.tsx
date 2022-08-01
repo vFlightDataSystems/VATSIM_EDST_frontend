@@ -19,7 +19,7 @@ import { EdstWindow } from "../../../namespaces";
 import { useDragging } from "../../../hooks/useDragging";
 import { useFocused } from "../../../hooks/useFocused";
 
-export const GpdMapOptions: React.FC = () => {
+export const GpdMapOptions = () => {
   const dispatch = useRootDispatch();
   const windowProps = useRootSelector(windowSelector(EdstWindow.GPD_MAP_OPTIONS_MENU));
   const zStack = useRootSelector(zStackSelector);
@@ -35,7 +35,9 @@ export const GpdMapOptions: React.FC = () => {
         ref={ref}
         pos={windowProps.position}
         zIndex={zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.GPD_MAP_OPTIONS_MENU))}
+        onMouseDown={() =>
+          zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.GPD_MAP_OPTIONS_MENU))
+        }
         anyDragging={anyDragging}
         id="gpd-map-options-menu"
       >

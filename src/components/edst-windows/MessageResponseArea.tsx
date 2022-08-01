@@ -19,7 +19,7 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
   font-family: EDST, serif;
 `;
 
-export const MessageResponseArea: React.FC = () => {
+export const MessageResponseArea = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_RESPONSE_AREA));
   const msg = useRootSelector(mraMsgSelector);
   const zStack = useRootSelector(zStackSelector);

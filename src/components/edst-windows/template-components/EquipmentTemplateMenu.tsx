@@ -61,16 +61,7 @@ export type EquipmentTemplateRowProps = {
   toggleSelect(): void;
 };
 
-export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = ({
-  margin,
-  tooltip,
-  toggleSelect,
-  selected,
-  circle,
-  diamond,
-  buttonText,
-  text
-}) => {
+export const EquipmentTemplateRow = ({ margin, tooltip, toggleSelect, selected, circle, diamond, buttonText, text }: EquipmentTemplateRowProps) => {
   return (
     <EqpRow margin={margin}>
       <EdstTooltip title={tooltip} onMouseDown={toggleSelect}>
@@ -84,7 +75,7 @@ export const EquipmentTemplateRow: React.FC<EquipmentTemplateRowProps> = ({
   );
 };
 
-export const EquipmentTemplateMenu: React.FC = () => {
+export const EquipmentTemplateMenu = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.EQUIPMENT_TEMPLATE_MENU));
   const entry = useRootSelector(aselEntrySelector);

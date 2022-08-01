@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { useRootSelector } from "../../redux/hooks";
 import { tooltipsEnabledSelector } from "../../redux/slices/appSlice";
@@ -15,7 +15,7 @@ const TooltipDiv = styled.div`
   white-space: pre-line;
 `;
 
-const TooltipContent: React.FC<{ content: any }> = ({ content }) => {
+const TooltipContent = ({ content }: { content: string }) => {
   // eslint-disable-next-line jsx-a11y/tabindex-no-positive
   return <TooltipDiv tabIndex={2000}>{content}</TooltipDiv>;
 };
@@ -33,7 +33,7 @@ type EdstTooltipProps = {
   style?: Record<string, string | number>;
 };
 
-export const EdstTooltip: React.FC<EdstTooltipProps> = ({ title, content, style, ...props }) => {
+export const EdstTooltip = ({ title, content, style, ...props }: PropsWithChildren<EdstTooltipProps>) => {
   const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 

@@ -18,7 +18,7 @@ type DepHeaderProps = {
   startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export const DepHeader: React.FC<DepHeaderProps> = ({ focused, toggleFullscreen, startDrag }) => {
+export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderProps) => {
   const asel = useRootSelector(depAselSelector);
   const sortData = useRootSelector(depSortDataSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);

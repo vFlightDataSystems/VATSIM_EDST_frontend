@@ -60,7 +60,7 @@ function computeRouteList(
     );
 }
 
-export const PreferredRouteDisplay: React.FC<PreferredRouteDisplayProps> = ({ par, pdr, pdar, clearedPrefroute }) => {
+export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: PreferredRouteDisplayProps) => {
   const [eligibleOnly, setEligibleOnly] = useState(false);
   const routes = computeRouteList(par, pdr, pdar);
   const eligibleRoutes = routes.filter(r => r.eligible);

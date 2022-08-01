@@ -27,7 +27,7 @@ const DepDiv = styled(ResizableFloatingWindowDiv)`
   min-height: 200px;
 `;
 
-export const Dep: React.FC = () => {
+export const Dep = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);

@@ -70,7 +70,7 @@ const satCatText = {
   M3: "(IRIDIUM)"
 };
 
-export const EquipmentCommTemplate: React.FC = () => {
+export const EquipmentCommTemplate = () => {
   const entry = useRootSelector(aselEntrySelector);
   const field10a = entry?.equipment
     ?.split("/")

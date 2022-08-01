@@ -16,6 +16,6 @@ type EdstDraggingOutlineProps = {
   onMouseDown?: () => void;
 };
 
-export const EdstDraggingOutline: React.FC<EdstDraggingOutlineProps> = ({ style, onMouseDown, onMouseUp }) => {
+export const EdstDraggingOutline = ({ style, onMouseDown, onMouseUp }: EdstDraggingOutlineProps) => {
   return <EdstDraggingOutlineDiv style={style} onMouseUp={onMouseUp} onMouseDown={onMouseDown} />;
 };

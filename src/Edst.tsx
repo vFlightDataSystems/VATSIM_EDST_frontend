@@ -45,7 +45,7 @@ import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircra
 
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
-const Edst: React.FC = () => {
+const Edst = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
@@ -129,7 +129,7 @@ const Edst: React.FC = () => {
   );
 };
 
-const EdstProvider: React.FC = () => (
+const EdstProvider = () => (
   <HubProvider>
     <React.StrictMode>
       <Edst />

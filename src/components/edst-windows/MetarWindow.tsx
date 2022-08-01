@@ -22,7 +22,7 @@ const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
 `;
 
-export const MetarWindow: React.FC = () => {
+export const MetarWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.METAR));
   const [selected, setSelected] = useState<string | null>(null);

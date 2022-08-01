@@ -18,7 +18,7 @@ const OutageDiv = styled(FloatingWindowDiv)`
   width: 340px;
 `;
 
-export const Outage: React.FC = () => {
+export const Outage = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.OUTAGE));
   const ref = useRef(null);

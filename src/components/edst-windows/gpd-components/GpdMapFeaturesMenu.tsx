@@ -8,7 +8,7 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdMapFeatureOptionsSelector, mapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";
 import { EdstWindow } from "../../../namespaces";
 
-export const GpdMapFeaturesMenu: React.FC = () => {
+export const GpdMapFeaturesMenu = () => {
   const dispatch = useRootDispatch();
   const mapFeatureOptions = useRootSelector(gpdMapFeatureOptionsSelector);
   const [currentOptions, setCurrentOptions] = useState(_.cloneDeep(mapFeatureOptions));

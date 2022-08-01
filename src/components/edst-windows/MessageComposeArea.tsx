@@ -84,7 +84,7 @@ const RejectCrossSpan = styled.span`
   }
 `;
 
-export const MessageComposeArea: React.FC<MessageComposeAreaProps> = ({ setMcaInputRef }) => {
+export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) => {
   const [response, setResponse] = useState<string | null>(null);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));

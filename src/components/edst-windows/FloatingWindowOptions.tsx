@@ -40,7 +40,7 @@ type FloatingWindowOptionsProps = {
   handleOptionClick?: (option?: string) => void;
 };
 
-export const FloatingWindowOptions: React.FC<FloatingWindowOptionsProps> = ({ pos, ...props }) => {
+export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const xRef = useRef<HTMLDivElement | null>(null);

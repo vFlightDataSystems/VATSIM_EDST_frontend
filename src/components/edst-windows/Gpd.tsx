@@ -28,7 +28,7 @@ const GpdDiv = styled(ResizableFloatingWindowDiv)`
   min-height: 200px;
 `;
 
-export const Gpd: React.FC = () => {
+export const Gpd = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const [zoomLevel, setZoomLevel] = useState(6);

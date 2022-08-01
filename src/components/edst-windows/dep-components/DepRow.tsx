@@ -33,7 +33,7 @@ type DepRowProps = {
   index: number;
 };
 
-export const DepRow: React.FC<DepRowProps> = ({ entry, hidden, index }) => {
+export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
   const [onPar, setOnPar] = useState(false);

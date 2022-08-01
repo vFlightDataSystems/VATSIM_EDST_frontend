@@ -36,7 +36,7 @@ const SigmetDiv = styled(FloatingWindowDiv)`
   width: 1100px;
 `;
 
-export const SigmetWindow: React.FC = () => {
+export const SigmetWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.SIGMETS));
   const sectorId = useRootSelector(sectorIdSelector);

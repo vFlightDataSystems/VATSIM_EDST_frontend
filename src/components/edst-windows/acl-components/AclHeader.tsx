@@ -22,7 +22,7 @@ type AclHeaderProps = {
 
 const AclHeaderDiv = styled(NoSelectDiv)``;
 
-export const AclHeader: React.FC<AclHeaderProps> = ({ focused, toggleFullscreen, startDrag }) => {
+export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderProps) => {
   const asel = useRootSelector(aclAselSelector);
   const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);

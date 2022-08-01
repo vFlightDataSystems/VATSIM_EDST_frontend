@@ -21,7 +21,7 @@ type GpdHeaderProps = {
 
 const GpdDiv = styled(NoSelectDiv)``;
 
-export const GpdHeader: React.FC<GpdHeaderProps> = ({ focused, toggleFullscreen, startDrag, zoomLevel, setZoomLevel }) => {
+export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, setZoomLevel }: GpdHeaderProps) => {
   const asel = useRootSelector(gpdAselSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const dispatch = useRootDispatch();

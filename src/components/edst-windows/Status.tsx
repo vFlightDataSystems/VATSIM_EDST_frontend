@@ -24,7 +24,7 @@ const StatusBodyDiv = styled(FloatingWindowBodyDiv)`
   padding-left: 20px;
 `;
 
-export const Status: React.FC = () => {
+export const Status = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.STATUS));
   const ref = useRef(null);

@@ -15,7 +15,7 @@ const CancelHoldDiv = styled(OptionsMenu)`
   width: 250px;
 `;
 
-export const CancelHoldMenu: React.FC = () => {
+export const CancelHoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.CANCEL_HOLD_MENU));
   const zStack = useRootSelector(zStackSelector);

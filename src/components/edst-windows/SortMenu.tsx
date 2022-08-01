@@ -44,7 +44,7 @@ const SortCol = styled(OptionsBodyCol)`
   }
 `;
 
-export const SortMenu: React.FC = () => {
+export const SortMenu = () => {
   const dispatch = useRootDispatch();
   const windowProps = useRootSelector(windowSelector(EdstWindow.SORT_MENU));
   const window = windowProps.openedBy;

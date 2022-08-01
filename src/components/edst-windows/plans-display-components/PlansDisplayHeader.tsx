@@ -19,7 +19,7 @@ type PlansDisplayHeaderProps = {
   startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export const PlansDisplayHeader: React.FC<PlansDisplayHeaderProps> = ({ focused, toggleFullscreen, startDrag }) => {
+export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: PlansDisplayHeaderProps) => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);

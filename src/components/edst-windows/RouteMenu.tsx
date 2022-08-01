@@ -90,7 +90,7 @@ const DctCol = styled(OptionsBodyCol)`
   margin: auto 12px;
 `;
 
-export const RouteMenu: React.FC = () => {
+export const RouteMenu = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ROUTE_MENU));
   const asel = useRootSelector(aselSelector)!;

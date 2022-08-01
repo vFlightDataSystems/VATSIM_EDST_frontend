@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
@@ -125,7 +125,7 @@ type HubContextValue = ReturnType<typeof useHubInit>;
 
 const HubContext = createContext<HubContextValue>(null);
 
-export const HubProvider: React.FC = ({ children }) => {
+export const HubProvider = ({ children }: { children: ReactNode }) => {
   const hubConnection = useHubInit();
   console.log(hubConnection);
 

@@ -88,7 +88,7 @@ type WindowTitleBarProps = {
   text: string[];
 };
 
-export const WindowTitleBar: React.FC<WindowTitleBarProps> = ({ focused, text, closeWindow, toggleFullscreen, startDrag }) => {
+export const WindowTitleBar = ({ focused, text, closeWindow, toggleFullscreen, startDrag }: WindowTitleBarProps) => {
   return (
     <WindowTitleBarDiv>
       <WindowTitleBarCol focused={focused}>

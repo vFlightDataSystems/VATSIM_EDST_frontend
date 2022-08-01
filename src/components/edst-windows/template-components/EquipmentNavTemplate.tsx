@@ -37,7 +37,7 @@ const rnavCatText = {
   X: "(MNPS APPROVED)"
 };
 
-export const EquipmentNavTemplate: React.FC = () => {
+export const EquipmentNavTemplate = () => {
   const entry = useRootSelector(aselEntrySelector);
   const field10a = entry?.equipment
     ?.split("/")

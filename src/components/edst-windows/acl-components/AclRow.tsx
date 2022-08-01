@@ -37,7 +37,7 @@ type AclRowProps = {
   altMouseDown: boolean;
 };
 
-export const AclRow: React.FC<AclRowProps> = ({ entry, hidden, altMouseDown, index, anyHolding }) => {
+export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRowProps) => {
   const asel = useRootSelector(aselSelector);
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);

@@ -24,7 +24,7 @@ export const ToolsBody = styled(OptionsBody)`
   padding: 20px 0 4px 0;
 `;
 
-export const ToolsMenu: React.FC = () => {
+export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
   const windowProps = useRootSelector(windowSelector(EdstWindow.TOOLS_MENU));
   const zStack = useRootSelector(zStackSelector);

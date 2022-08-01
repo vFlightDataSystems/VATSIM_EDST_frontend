@@ -27,7 +27,7 @@ const AclDiv = styled(ResizableFloatingWindowDiv)`
   min-height: 200px;
 `;
 
-export const Acl: React.FC = () => {
+export const Acl = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);

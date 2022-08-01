@@ -21,7 +21,7 @@ const PlanOptionsBody = styled(OptionsBody)`
   text-indent: 4px;
 `;
 
-export const PlanOptions: React.FC = () => {
+export const PlanOptions = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PLAN_OPTIONS));

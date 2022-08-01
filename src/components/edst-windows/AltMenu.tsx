@@ -154,7 +154,7 @@ const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
     color: #575757;
   }
 `;
-export const AltMenu: React.FC = () => {
+export const AltMenu = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;

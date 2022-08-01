@@ -18,7 +18,7 @@ const AddFindContainer = styled.div`
   width: 68px;
 `;
 
-export const AddFindInput: React.FC<InputProps> = ({ title, ...props }) => {
+export const AddFindInput = ({ title, ...props }: InputProps) => {
   return (
     <EdstTooltip title={title} style={{ width: "auto" }}>
       <AddFindContainer>

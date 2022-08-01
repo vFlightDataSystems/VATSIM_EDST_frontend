@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { EdstTooltip } from "./EdstTooltip";
 import { edstFontGrey } from "../../styles/colors";
@@ -74,7 +74,7 @@ type EdstButtonProps = {
   onMouseDown?: (event: React.MouseEvent) => void;
 };
 
-export const EdstButton: React.FC<EdstButtonProps> = ({ onMouseDown, id, ...props }) => {
+export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
   return (
     <EdstTooltip title={props.title}>
       <EdstOuterButton
@@ -92,12 +92,12 @@ export const EdstButton: React.FC<EdstButtonProps> = ({ onMouseDown, id, ...prop
     </EdstTooltip>
   );
 };
-export const EdstButton12x12: React.FC<EdstButtonProps> = props => <EdstButton width={12} height={12} {...props} />;
-export const EdstButton20x20: React.FC<EdstButtonProps> = props => <EdstButton width={20} height={20} {...props} />;
-export const EdstRouteButton12x12: React.FC<EdstButtonProps> = props => <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props} />;
-export const EdstTemplateButton85: React.FC<EdstButtonProps> = props => <EdstButton width={85} margin="0 4px" {...props} />;
+export const EdstButton12x12 = (props: EdstButtonProps) => <EdstButton width={12} height={12} {...props} />;
+export const EdstButton20x20 = (props: EdstButtonProps) => <EdstButton width={20} height={20} {...props} />;
+export const EdstRouteButton12x12 = (props: EdstButtonProps) => <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props} />;
+export const EdstTemplateButton85 = (props: EdstButtonProps) => <EdstButton width={85} margin="0 4px" {...props} />;
 
-export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({ onMouseDown, id, ...props }) => {
+export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
   return (
     <EdstTooltip title={props.title}>
       <EdstOuterHeaderButton
@@ -118,7 +118,7 @@ export const EdstWindowHeaderButton: React.FC<EdstButtonProps> = ({ onMouseDown,
   );
 };
 
-const HoldDirButton: React.FC<EdstButtonProps> = ({ onMouseDown, id, ...props }) => (
+const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => (
   <EdstTooltip title={props.title}>
     <EdstOuterButton disabled={props.disabled} margin="0 2px" id={id} onMouseDownCapture={onMouseDown}>
       <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} flexGrow={0}>
@@ -127,6 +127,6 @@ const HoldDirButton: React.FC<EdstButtonProps> = ({ onMouseDown, id, ...props })
     </EdstOuterButton>
   </EdstTooltip>
 );
-export const HoldDirButton16: React.FC<EdstButtonProps> = props => <HoldDirButton width={16} {...props} />;
-export const HoldDirButton20: React.FC<EdstButtonProps> = props => <HoldDirButton width={20} {...props} />;
-export const HoldDirButton50: React.FC<EdstButtonProps> = props => <HoldDirButton width={50} {...props} />;
+export const HoldDirButton16 = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width={16} {...props} />;
+export const HoldDirButton20 = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width={20} {...props} />;
+export const HoldDirButton50 = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width={50} {...props} />;
