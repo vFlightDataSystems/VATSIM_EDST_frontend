@@ -30,7 +30,7 @@ type EdstTooltipProps = {
   onMouseDown?: React.EventHandler<React.MouseEvent>;
   onContextMenu?: React.EventHandler<React.MouseEvent>;
   disabled?: boolean;
-  style?: Record<string, string | number>;
+  style?: React.CSSProperties;
 };
 
 export const EdstTooltip = ({ title, content, style, ...props }: PropsWithChildren<EdstTooltipProps>) => {

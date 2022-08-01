@@ -49,21 +49,15 @@ export const GpdMapOptions = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           {mapFeaturesMenuOpen && <GpdMapFeaturesMenu />}
-          {!mapFeaturesMenuOpen && (
+          {!(mapFeaturesMenuOpen || aircraftDisplayMenuIsOpen) && (
             <span>
               <OptionsBodyRow>
-                <EdstTooltip
-                  style={{ flexGrow: 1 }}
-                  // onMouseDown={() => {}}
-                >
+                <EdstTooltip style={{ flexGrow: 1 }}>
                   <OptionsFlexCol onMouseDown={() => setMapFeaturesMenuOpen(true)}>Map Features...</OptionsFlexCol>
                 </EdstTooltip>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <EdstTooltip
-                  style={{ flexGrow: 1 }}
-                  // onMouseDown={() => {}}
-                >
+                <EdstTooltip style={{ flexGrow: 1 }}>
                   <OptionsFlexCol>AC Display Menu...</OptionsFlexCol>
                 </EdstTooltip>
               </OptionsBodyRow>
