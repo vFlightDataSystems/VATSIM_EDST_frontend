@@ -13,7 +13,6 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import _ from "lodash";
-import { HubConnection } from "@microsoft/signalr";
 import { ApiAircraftTrack } from "./types/apiAircraftTrack";
 import { RouteFix } from "./types/routeFix";
 import { EdstEntry } from "./types/edstEntry";
@@ -302,18 +301,6 @@ export function convertBeaconCodeToString(code?: number | null): string {
 export function formatAltitude(alt: string): string {
   const altNum = Number(alt);
   return String(altNum >= 1000 ? altNum / 100 : altNum).padStart(3, "0");
-}
-
-export async function getFrd(location: { lat: number; lon: number }, hubConnection: HubConnection | null) {
-  let frd = null;
-  if (hubConnection) {
-    frd = await hubConnection.invoke("generateFrd", location).catch(error => {
-      // eslint-disable-next-line no-console
-      console.log(error);
-      return null;
-    });
-  }
-  return frd;
 }
 
 export function probeConflicts(tracks: AircraftTrack[]): unknown {

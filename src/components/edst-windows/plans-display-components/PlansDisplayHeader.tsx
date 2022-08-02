@@ -7,10 +7,10 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "../../../redux/slices/planSlice";
 import { closeWindow, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
-import { useHub } from "../../../hooks/hub";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { PlanRowField } from "../../../enums/planRowField";
+import { useHubActions } from "../../../hooks/useHubActions";
 
 const PlansDisplayHeaderDiv = styled(NoSelectDiv)``;
 
@@ -25,14 +25,13 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
   const interimDisabled = true;
-  const hubConnection = useHub();
+  const { amendFlightplan } = useHubActions();
 
   const handleAmendClick = () => {
-    if (selectedPlanIndex !== null && hubConnection) {
+    if (selectedPlanIndex !== null) {
       const amendedFlightplan = planQueue[selectedPlanIndex]?.amendedFlightplan;
       if (amendedFlightplan) {
-        // eslint-disable-next-line no-console
-        hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
+        amendFlightplan(amendedFlightplan).then();
       }
     }
   };

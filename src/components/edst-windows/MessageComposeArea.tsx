@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes, getFrd } from "../../lib";
+import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
@@ -21,13 +21,13 @@ import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
-import { useHub } from "../../hooks/hub";
 import { ApiFlightplan } from "../../types/apiFlightplan";
 import { EdstEntry } from "../../types/edstEntry";
 import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 import { aclCleanup } from "../../redux/thunks/aclCleanup";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../enums/edstWindow";
+import { useHubActions } from "../../hooks/useHubActions";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   height: 84px;
@@ -96,8 +96,8 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const inputRef = useRef<HTMLInputElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const [mcaInputValue, setMcaInputValue] = useState(mcaCommandString);
-  const hubConnection = useHub();
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA);
+  const hubActions = useHubActions();
 
   useEffect(() => {
     setMcaInputRef(inputRef);
@@ -160,25 +160,21 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   };
 
   const parseQU = async (args: string[]) => {
-    if (args.length === 2 && hubConnection) {
+    if (args.length === 2) {
       const entry = getEntryByFid(args[1]);
       if (entry && entry.aclDisplay && entry.currentRouteFixes?.map(fix => fix.name).includes(args[0])) {
         const aircraftTrack = aircraftTracks[entry.aircraftId];
-        const frd = await getFrd(aircraftTrack.location, hubConnection);
+        const frd = await hubActions.generateFrd(aircraftTrack.location);
         const route = getClearedToFixRouteFixes(args[0], entry, frd)?.route;
         if (route) {
-          const amendmentFlightplan: ApiFlightplan = {
+          const amendedFlightplan: ApiFlightplan = {
             ...entry,
             route: route
               .split(/\.+/g)
               .join(" ")
               .trim()
           };
-          hubConnection
-            .invoke("AmendFlightPlan", amendmentFlightplan)
-            .then(() => setResponse(`ACCEPT\nCLEARED DIRECT`))
-            // eslint-disable-next-line no-console
-            .catch(e => console.log("error amending flightplan:", e));
+          hubActions.amendFlightplan(amendedFlightplan).then(() => setResponse(`ACCEPT\nCLEARED DIRECT`));
         }
       }
     }

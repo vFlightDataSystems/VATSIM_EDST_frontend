@@ -36,10 +36,11 @@ import { SigmetWindow } from "./components/edst-windows/SigmetWindow";
 import { Gpd } from "./components/edst-windows/Gpd";
 import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
-import { HubProvider } from "./hooks/hub";
+import { HubProvider } from "./hooks/useHub";
 import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
 import { EdstWindow } from "./enums/edstWindow";
+import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
 
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
@@ -110,6 +111,7 @@ const Edst = () => {
         {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
         {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
         {windows[EdstWindow.HOLD_MENU].open && <HoldMenu />}
+        {windows[EdstWindow.CANCEL_HOLD_MENU] && <CancelHoldMenu />}
         {windows[EdstWindow.SPEED_MENU].open && <SpeedMenu />}
         {windows[EdstWindow.HEADING_MENU].open && <HeadingMenu />}
         {windows[EdstWindow.ALTITUDE_MENU].open && <AltMenu />}

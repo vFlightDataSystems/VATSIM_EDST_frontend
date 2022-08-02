@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { convertBeaconCodeToString, getDepString, getDestString, getFrd } from "../../lib";
+import { convertBeaconCodeToString, getDepString, getDestString } from "../../lib";
 import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
@@ -10,12 +10,12 @@ import { Tooltips } from "../../tooltips";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { useHub } from "../../hooks/hub";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
+import { useHubActions } from "../../hooks/useHubActions";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;
@@ -106,7 +106,6 @@ export const TemplateMenu = () => {
   const entry = useRootSelector(aselEntrySelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.TEMPLATE_MENU));
   const zStack = useRootSelector(zStackSelector);
-  const hubConnection = useHub();
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
 
   const route =
@@ -126,6 +125,7 @@ export const TemplateMenu = () => {
   const [altInput, setAltInput] = useState(entry?.altitude ?? "");
   const [routeInput, setRouteInput] = useState((asel?.window === EdstWindow.DEP ? (getDepString(entry?.departure) ?? "") + route : route) ?? "");
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? "");
+  const { generateFrd } = useHubActions();
 
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
@@ -136,7 +136,7 @@ export const TemplateMenu = () => {
   useEffect(() => {
     async function updateFrd() {
       if (aircraftTrack) {
-        setFrdInput(await getFrd(aircraftTrack.location, hubConnection));
+        setFrdInput((await generateFrd(aircraftTrack.location)) ?? "");
       }
     }
     updateFrd().then();

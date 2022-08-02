@@ -108,8 +108,8 @@ export const SigmetWindow = () => {
                       {selectedOption === sigmetId && selectedPos && (
                         <FloatingWindowOptions
                           pos={{
-                            x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-                            y: (ref.current as HTMLDivElement).clientTop
+                            x: ref.current!.clientLeft + ref.current!.clientWidth,
+                            y: ref.current!.clientTop
                           }}
                           options={[!sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE"]}
                           handleOptionClick={() => {
@@ -128,15 +128,15 @@ export const SigmetWindow = () => {
         {showOptions && (
           <FloatingWindowOptions
             pos={{
-              x: (ref.current as HTMLDivElement).clientLeft + (ref.current as HTMLDivElement).clientWidth,
-              y: (ref.current as HTMLDivElement).clientTop
+              x: ref.current!.clientLeft + ref.current!.clientWidth,
+              y: ref.current!.clientTop
             }}
             header="SIGMETS"
             closeOptions={() => setShowOptions(false)}
             options={Object.values(sigmetOption)}
             selectedOptions={[viewSuppressed ? sigmetOption.viewSuppressed : sigmetOption.hideSuppressed]}
             handleOptionClick={option => {
-              switch (option as sigmetOption) {
+              switch (option!) {
                 case sigmetOption.viewSuppressed:
                   dispatch(setViewSuppressedSigmet(true));
                   break;

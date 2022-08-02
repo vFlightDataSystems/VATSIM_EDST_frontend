@@ -66,7 +66,7 @@ function aircraftSelect(
             if (triggerOpenWindow in EDST_MENU_LIST) {
               dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, EdstWindow.ACL, false));
             } else {
-              dispatch(openWindowThunk(triggerOpenWindow as EdstWindow, event.currentTarget, EdstWindow.ACL));
+              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, EdstWindow.ACL));
             }
           }
           break;

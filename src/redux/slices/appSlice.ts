@@ -109,10 +109,10 @@ const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition | null>>
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
   Object.values(EdstWindow).map(value => [
-    value as EdstWindow,
+    value,
     {
       open: false,
-      position: defaultWindowPositions[value as EdstWindow] ?? { x: 100, y: 100 }
+      position: defaultWindowPositions[value] ?? { x: 100, y: 100 }
     } as AppWindow
   ])
 ) as Record<EdstWindow, AppWindow>;
@@ -177,18 +177,18 @@ const appSlice = createSlice({
     },
     closeAllWindows(state) {
       Object.values(EdstWindow).forEach(window => {
-        state.windows[window as EdstWindow].open = false;
+        state.windows[window].open = false;
       });
     },
     closeAllMenus(state) {
       EDST_MENU_LIST.forEach(menu => {
-        state.windows[menu as EdstWindow].open = false;
+        state.windows[menu].open = false;
       });
       state.asel = null;
     },
     closeAircraftMenus(state) {
       AIRCRAFT_MENUS.forEach(menu => {
-        state.windows[menu as EdstWindow].open = false;
+        state.windows[menu].open = false;
       });
     },
     setAsel(state, action: PayloadAction<Asel | null>) {

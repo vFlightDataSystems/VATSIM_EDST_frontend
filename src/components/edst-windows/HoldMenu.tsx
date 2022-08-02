@@ -7,7 +7,7 @@ import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entrySlice";
-import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../redux/slices/appSlice";
+import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { InputContainer } from "../InputComponents";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
@@ -19,6 +19,9 @@ import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
 import { CompassDirection } from "../../enums/hold/compassDirection";
 import { TurnDirection } from "../../enums/hold/turnDirection";
+import { HoldAnnotations } from "../../enums/hold/holdAnnotations";
+import { useHubActions } from "../../hooks/useHubActions";
+import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;
@@ -27,7 +30,6 @@ const FixContainer = styled.div`
   padding: 4px 0;
   border-bottom: 1px solid #adadad;
 `;
-
 const Row1 = styled(OptionsBodyRow)`
   justify-content: space-between;
 `;
@@ -93,16 +95,17 @@ export const HoldMenu = () => {
   const now = new Date();
   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
 
-  const [holdFix, setHoldFix] = useState<string | null>(null);
+  const [fix, setFix] = useState<string | null>(null);
   const [legLength, setLegLength] = useState<number | null>(null);
-  const [holdDirection, setHoldDirection] = useState<string | null>(null);
-  const [turns, setTurns] = useState<string | null>(null);
-  const [efc, setEfc] = useState(utcMinutes);
+  const [direction, setDirection] = useState<CompassDirection>(CompassDirection.NORTH);
+  const [turns, setTurns] = useState<TurnDirection>(TurnDirection.RIGHT);
+  const [efcTime, setEfcTime] = useState(utcMinutes);
   const [routeFixes, setRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU);
+  const hubActions = useHubActions();
 
   useEffect(() => {
     if (!entry) {
@@ -111,24 +114,26 @@ export const HoldMenu = () => {
       const routeFixes = computeCrossingTimes(entry, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-      setHoldFix(entry.holdAnnotations?.fix ?? null);
+      setFix(entry.holdAnnotations?.fix ?? null);
       setLegLength(entry.holdAnnotations?.legLength ?? null);
-      setHoldDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
+      setDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
       setTurns(entry.holdAnnotations?.turns ?? TurnDirection.RIGHT);
-      setEfc(entry.holdAnnotations?.efcTime ?? utcMinutes + 30);
+      setEfcTime(entry.holdAnnotations?.efcTime ?? utcMinutes + 30);
       setRouteFixes(routeFixes ?? null);
     }
   }, []);
 
   const clearedHold = () => {
     if (entry) {
-      const holdAnnotations = {
-        holdFix,
+      const holdAnnotations: HoldAnnotations = {
+        fix,
         legLength,
-        holdDirection,
+        legLengthInNm: true,
+        direction,
         turns,
-        efc
+        efcTime
       };
+      hubActions.setHoldAnnotations(entry.aircraftId, holdAnnotations).then();
     }
     dispatch(closeWindow(EdstWindow.HOLD_MENU));
   };
@@ -161,12 +166,12 @@ export const HoldMenu = () => {
             <OptionsBodyCol>
               <EdstButton
                 content="Present Position"
-                selected={!holdFix || holdFix === "PP"}
+                selected={fix === null}
                 onMouseDown={() => {
                   const now = new Date();
                   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-                  setHoldFix("PP");
-                  setEfc(utcMinutes + 30);
+                  setFix(null);
+                  setEfcTime(utcMinutes + 30);
                 }}
               >
                 Present Position
@@ -184,11 +189,11 @@ export const HoldMenu = () => {
                       fixName && (
                         <Col1
                           hover
-                          selected={holdFix === fixName}
+                          selected={fix === fixName}
                           key={`hold-menu-col-${i}-${j}`}
                           onMouseDown={() => {
-                            setHoldFix(fixName);
-                            setEfc(minutesAtFix + 30);
+                            setFix(fixName);
+                            setEfcTime(minutesAtFix + 30);
                           }}
                         >
                           {fixName}
@@ -217,18 +222,14 @@ export const HoldMenu = () => {
             <Col3>
               <HoldDirButton16
                 content="NW"
-                selected={holdDirection === CompassDirection.NORTH_WEST}
-                onMouseDown={() => setHoldDirection(CompassDirection.NORTH_WEST)}
+                selected={direction === CompassDirection.NORTH_WEST}
+                onMouseDown={() => setDirection(CompassDirection.NORTH_WEST)}
               />
-              <HoldDirButton16
-                content="N"
-                selected={holdDirection === CompassDirection.NORTH}
-                onMouseDown={() => setHoldDirection(CompassDirection.NORTH)}
-              />
+              <HoldDirButton16 content="N" selected={direction === CompassDirection.NORTH} onMouseDown={() => setDirection(CompassDirection.NORTH)} />
               <HoldDirButton16
                 content="NE"
-                selected={holdDirection === CompassDirection.NORTH_EAST}
-                onMouseDown={() => setHoldDirection(CompassDirection.NORTH_EAST)}
+                selected={direction === CompassDirection.NORTH_EAST}
+                onMouseDown={() => setDirection(CompassDirection.NORTH_EAST)}
               />
             </Col3>
             <Col3>
@@ -242,17 +243,9 @@ export const HoldMenu = () => {
           </Row1>
           <Row1>
             <Col3>
-              <HoldDirButton16
-                content="W"
-                selected={holdDirection === CompassDirection.WEST}
-                onMouseDown={() => setHoldDirection(CompassDirection.WEST)}
-              />
+              <HoldDirButton16 content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
               <HoldDirButton16 disabled />
-              <HoldDirButton16
-                content="E"
-                selected={holdDirection === CompassDirection.EAST}
-                onMouseDown={() => setHoldDirection(CompassDirection.EAST)}
-              />
+              <HoldDirButton16 content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
             </Col3>
             <Col3>
               <HoldDirButton20 disabled />
@@ -267,18 +260,14 @@ export const HoldMenu = () => {
             <Col3>
               <HoldDirButton16
                 content="SW"
-                selected={holdDirection === CompassDirection.SOUTH_WEST}
-                onMouseDown={() => setHoldDirection(CompassDirection.SOUTH_WEST)}
+                selected={direction === CompassDirection.SOUTH_WEST}
+                onMouseDown={() => setDirection(CompassDirection.SOUTH_WEST)}
               />
-              <HoldDirButton16
-                content="S"
-                selected={holdDirection === CompassDirection.SOUTH}
-                onMouseDown={() => setHoldDirection(CompassDirection.SOUTH)}
-              />
+              <HoldDirButton16 content="S" selected={direction === CompassDirection.SOUTH} onMouseDown={() => setDirection(CompassDirection.SOUTH)} />
               <HoldDirButton16
                 content="SE"
-                selected={holdDirection === CompassDirection.SOUTH_EAST}
-                onMouseDown={() => setHoldDirection(CompassDirection.SOUTH_EAST)}
+                selected={direction === CompassDirection.SOUTH_EAST}
+                onMouseDown={() => setDirection(CompassDirection.SOUTH_EAST)}
               />
             </Col3>
             <Col3>
@@ -312,18 +301,18 @@ export const HoldMenu = () => {
             <Col7>
               <EfcInputContainer>
                 <EdstInput
-                  value={formatUtcMinutes(efc)}
+                  value={formatUtcMinutes(efcTime)}
                   readOnly
                   // onChange={(e) => setEfc(e.target.value)}
                 />
               </EfcInputContainer>
-              <EdstButton content="-" margin="0 0 0 10px" width={24} onMouseDown={() => setEfc(efc - 1)} />
-              <EdstButton content="+" margin="0 0 0 4px" width={24} onMouseDown={() => setEfc(efc + 1)} />
+              <EdstButton content="-" margin="0 0 0 10px" width={24} onMouseDown={() => setEfcTime(efcTime - 1)} />
+              <EdstButton content="+" margin="0 0 0 4px" width={24} onMouseDown={() => setEfcTime(efcTime + 1)} />
             </Col7>
           </OptionsBodyRow>
           <Row2 bottomBorder>
             <Col5>
-              <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
+              <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfcTime(0)} title={Tooltips.holdDelEfc} />
             </Col5>
           </Row2>
           <OptionsBodyRow margin="6px 0 0 0">
@@ -353,6 +342,7 @@ export const HoldMenu = () => {
                 disabled={!entry?.holdAnnotations}
                 onMouseDown={() => {
                   dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclRouteDisplay: null } }));
+                  dispatch(openWindowThunk(EdstWindow.CANCEL_HOLD_MENU));
                   dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}
               />

@@ -1,13 +1,24 @@
 import React from "react";
-import { useRootSelector } from "../../redux/hooks";
+import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { EdstPrompt } from "./EdstPrompt";
 import { FidRow } from "../../styles/optionMenuStyles";
-import { PromptProps } from "./promptProps";
 import { EdstWindow } from "../../enums/edstWindow";
+import { useHubActions } from "../../hooks/useHubActions";
+import { closeWindow } from "../../redux/slices/appSlice";
 
-export const CancelHoldMenu = ({ onSubmit, onCancel }: PromptProps) => {
+export const CancelHoldMenu = () => {
+  const dispatch = useRootDispatch();
   const entry = useRootSelector(aselEntrySelector)!;
+  const hubActions = useHubActions();
+
+  const onSubmit = () => {
+    hubActions.cancelHold(entry.aircraftId).then();
+  };
+
+  const onCancel = () => {
+    dispatch(closeWindow(EdstWindow.CANCEL_HOLD_MENU));
+  };
 
   return (
     <EdstPrompt

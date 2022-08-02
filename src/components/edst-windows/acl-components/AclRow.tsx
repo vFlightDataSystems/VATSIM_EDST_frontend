@@ -104,7 +104,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     if (entry.vciStatus === -1 && manualPosting) {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     } else if (entry.vciStatus < 1) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: entry.vciStatus + 1 } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"] } }));
     } else {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     }
@@ -345,7 +345,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             >
               {entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations &&
                 holdAnnotations &&
-                `${holdAnnotations.isPresentPosition ? "PP" : holdAnnotations.fix} ${HoldDirectionValues[holdAnnotations.direction]} ` +
+                `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
                   `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
                   `${holdAnnotations.legLength}` +
                   `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efcTime)}`}

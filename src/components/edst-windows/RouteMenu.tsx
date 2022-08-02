@@ -4,7 +4,7 @@ import "../../css/styles.scss";
 import _ from "lodash";
 import styled from "styled-components";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
-import { getClearedToFixRouteFixes, getFrd, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
+import { getClearedToFixRouteFixes, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
 import VATSIM_LOGO from "../../resources/images/VATSIM-social_icon.svg";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
@@ -18,7 +18,6 @@ import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, Optio
 import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { useHub } from "../../hooks/hub";
 import { ApiFlightplan } from "../../types/apiFlightplan";
 import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
@@ -27,6 +26,7 @@ import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
+import { useHubActions } from "../../hooks/useHubActions";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -97,8 +97,8 @@ export const RouteMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const zStack = useRootSelector(zStackSelector);
-  const hubConnection = useHub();
-  const [frd, setFrd] = useState(null);
+  const [frd, setFrd] = useState<string | null>(null);
+  const hubActions = useHubActions();
 
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(
@@ -119,7 +119,7 @@ export const RouteMenu = () => {
 
   useEffect(() => {
     async function updateFrd() {
-      setFrd(await getFrd(aircraftTrack.location, hubConnection));
+      setFrd(await hubActions.generateFrd(aircraftTrack.location));
     }
     updateFrd().then();
   }, [entry.aircraftId]);
@@ -156,10 +156,10 @@ export const RouteMenu = () => {
   };
 
   const clearedToFix = async (clearedFixName: string) => {
-    const frd = await getFrd(aircraftTrack.location, hubConnection);
+    const frd = await hubActions.generateFrd(aircraftTrack.location);
     const route = getClearedToFixRouteFixes(clearedFixName, entry, frd)?.route;
     if (!trialPlan) {
-      if (hubConnection && route) {
+      if (route) {
         const amendedFlightplan: ApiFlightplan = {
           ...entry,
           route: route
@@ -167,8 +167,7 @@ export const RouteMenu = () => {
             .join(" ")
             .trim()
         };
-        // eslint-disable-next-line no-console
-        hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
+        await hubActions.amendFlightplan(amendedFlightplan);
       }
     } else if (route) {
       const amendedFlightplan: ApiFlightplan = {
@@ -193,7 +192,7 @@ export const RouteMenu = () => {
 
   const handleInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      const frd = await getFrd(aircraftTrack.location, hubConnection);
+      const frd = await hubActions.generateFrd(aircraftTrack.location);
       let newRoute = removeDestFromRouteString(routeInput, entry.destination);
       if (asel.window === EdstWindow.DEP) {
         newRoute = removeDepFromRouteString(newRoute, entry.departure);
@@ -217,9 +216,8 @@ export const RouteMenu = () => {
             expirationTime: new Date().getTime() / 1000 + 120
           })
         );
-      } else if (hubConnection) {
-        // eslint-disable-next-line no-console
-        hubConnection.invoke("AmendFlightPlan", amendedFlightplan).catch(e => console.log("error amending flightplan:", e));
+      } else {
+        await hubActions.amendFlightplan(amendedFlightplan);
       }
       dispatch(closeWindow(EdstWindow.ROUTE_MENU));
     }

@@ -227,7 +227,7 @@ export const EdstHeader = () => {
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.ADSB))}
           />
           <EdstHeaderButton50
-            open={windows[EdstWindow.SAT as EdstWindow].open}
+            open={windows[EdstWindow.SAT].open}
             content="SAT COMM"
             disabled={disabledHeaderButtons.includes(edstHeaderButton.sat)}
             // title={Tooltips.sat}

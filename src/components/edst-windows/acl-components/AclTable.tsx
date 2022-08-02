@@ -69,24 +69,24 @@ export function AclTable() {
     if (hiddenCopy.includes(AclRowField.SPD) && hiddenCopy.includes(AclRowField.HDG)) {
       hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.SPD), 1);
       hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.HDG), 1);
-      if ((asel?.field as AclRowField) === AclRowField.SPD) {
+      if (asel?.field === AclRowField.SPD) {
         dispatch(closeWindow(EdstWindow.SORT_MENU));
         dispatch(setAsel(null));
       }
-      if ((asel?.field as AclRowField) === AclRowField.HDG) {
+      if (asel?.field === AclRowField.HDG) {
         dispatch(closeWindow(EdstWindow.HEADING_MENU));
         dispatch(setAsel(null));
       }
     } else {
       if (!hiddenCopy.includes(AclRowField.HDG)) {
         hiddenCopy.push(AclRowField.HDG);
-        if ((asel?.field as AclRowField) === AclRowField.HDG) {
+        if (asel?.field === AclRowField.HDG) {
           dispatch(closeWindow(EdstWindow.HEADING_MENU));
           dispatch(setAsel(null));
         }
       }
       if (!hiddenCopy.includes(AclRowField.SPD)) {
-        if ((asel?.field as AclRowField) === AclRowField.SPD) {
+        if (asel?.field === AclRowField.SPD) {
           dispatch(closeWindow(EdstWindow.SPEED_MENU));
           dispatch(setAsel(null));
         }
