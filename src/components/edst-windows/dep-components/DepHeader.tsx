@@ -19,6 +19,12 @@ type DepHeaderProps = {
   startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
+/**
+ * DEP title bar and header row with add/find input field
+ * @param focused focused state of DEP window
+ * @param toggleFullscreen eventHandler to toggle maximized mode of DEP window
+ * @param startDrag startDrag event handler
+ */
 export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderProps) => {
   const asel = useRootSelector(depAselSelector);
   const sortData = useRootSelector(depSortDataSelector);

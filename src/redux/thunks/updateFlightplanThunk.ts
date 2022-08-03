@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { ApiFlightplan } from "../../types/apiFlightplan";
+import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { RootState } from "../store";
 import { DerivedFlightplanData } from "../../types/derivedFlightplanData";
 import { LocalVEdstEntry } from "../../types/localVEdstEntry";
@@ -16,7 +16,7 @@ import {
 } from "../../api/api";
 import { setEntry, updateEntry } from "../slices/entrySlice";
 import { EdstEntry } from "../../types/edstEntry";
-import { ApiAirportInfo } from "../../types/apiAirportInfo";
+import { ApiAirportInfo } from "../../types/apiTypes/apiAirportInfo";
 
 async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Promise<EdstEntry | null> {
   const depInfo = fp.departure

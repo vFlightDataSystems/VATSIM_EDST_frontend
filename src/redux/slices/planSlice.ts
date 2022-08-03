@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { ApiFlightplan } from "../../types/apiFlightplan";
+import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { UnixTime } from "../../types/unixTime";
 
 export type Plan = {

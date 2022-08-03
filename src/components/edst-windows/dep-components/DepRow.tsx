@@ -7,8 +7,8 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
-import { ApiPreferentialDepartureRoute } from "../../../types/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiPreferentialDepartureArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../../../types/apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiTypes/apiPreferentialDepartureArrivalRoute";
 import { EdstEntry } from "../../../types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
@@ -34,6 +34,12 @@ type DepRowProps = {
   index: number;
 };
 
+/**
+ * Single ACL row
+ * @param entry
+ * @param hidden array of DEP fields hidden by the user
+ * @param index row index
+ */
 export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);

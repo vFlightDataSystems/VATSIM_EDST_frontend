@@ -1,8 +1,8 @@
-import { ApiAirportInfo } from "./apiAirportInfo";
-import { ApiPreferentialDepartureRoute } from "./apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "./apiPreferentialDepartureArrivalRoute";
-import { ApiPreferentialArrivalRoute } from "./apiPreferentialArrivalRoute";
-import { AclRouteDisplayOption } from "./aclRouteDisplayOption";
+import { ApiAirportInfo } from "./apiTypes/apiAirportInfo";
+import { ApiPreferentialDepartureRoute } from "./apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "./apiTypes/apiPreferentialDepartureArrivalRoute";
+import { ApiPreferentialArrivalRoute } from "./apiTypes/apiPreferentialArrivalRoute";
+import { AclRouteDisplayOption } from "../enums/aclRouteDisplayOption";
 
 export type LocalVEdstEntry = {
   depInfo: ApiAirportInfo | null;
@@ -11,19 +11,26 @@ export type LocalVEdstEntry = {
   preferentialDepartureArrivalRoutes: ApiPreferentialDepartureArrivalRoute[];
   preferentialArrivalRoutes: ApiPreferentialArrivalRoute[];
   freeTextContent: string;
-  vciStatus: -1 | 0 | 1; // vci status (-1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency)
-  depStatus: -1 | 0 | 1; // departure flightplan status (-1: not acknowledged, 0: acknowledged but not checked, 1: verified)
+  // -1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency
+  vciStatus: -1 | 0 | 1;
+  // -1: not acknowledged, 0: acknowledged but not checked, 1: verified
+  depStatus: -1 | 0 | 1;
   aclHighlighted: boolean;
   depHighlighted: boolean;
-  aclRouteDisplay: AclRouteDisplayOption | null; // for toggling remarks
-  remarksChecked: boolean; // whether remarks have been checked or not
-  spa: boolean; // SPA indicator
-  boundaryTime: number; // minutes until entering the sector's airspace (will be negative if already inside)
-  pendingRemoval: number | null; // if not null, number represents timestamp when pendingRemoval status was activated
-  scratchHdg: string | null; // speed assigned in the scratchpad
-  scratchSpd: string | null; // heading assigned in the scratchpad
-  showFreeText: boolean; // boolean whether to display the free text row or not
-  voiceType?: string; // voice type in VATSIM flightplan, /v/ by default
+  // what data to display in ACL route column
+  aclRouteDisplay: AclRouteDisplayOption | null;
+  remarksChecked: boolean;
+  spa: boolean;
+  // minutes until entering the sector's airspace (will be negative if already inside)
+  boundaryTime: number;
+  // if not null, number represents timestamp when pendingRemoval status was activated
+  pendingRemoval: number | null;
+  // speed assigned in the scratchpad
+  scratchHdg: string | null;
+  // heading assigned in the scratchpad
+  scratchSpd: string | null;
+  showFreeText: boolean;
+  voiceType?: string;
   aclDisplay: boolean;
   aclDeleted: boolean;
   depDisplay: boolean;

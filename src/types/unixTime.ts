@@ -1,1 +1,2 @@
-export type UnixTime = number; // unix time in seconds (return value from new Date().getTime())
+// unix time in seconds (return value from new Date().getTime())
+export type UnixTime = number;

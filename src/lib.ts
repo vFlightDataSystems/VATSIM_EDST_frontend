@@ -13,13 +13,19 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import _ from "lodash";
-import { ApiAircraftTrack } from "./types/apiAircraftTrack";
+import { ApiAircraftTrack } from "./types/apiTypes/apiAircraftTrack";
 import { RouteFix } from "./types/routeFix";
 import { EdstEntry } from "./types/edstEntry";
 import { AircraftTrack } from "./types/aircraftTrack";
+import { RouteFixWithDistance } from "./types/routeFixWithDistance";
 
 export const REMOVAL_TIMEOUT = 120000;
 
+/**
+ * returns the positive modulus n mod m
+ * @param n
+ * @param m
+ */
 export const mod = (n: number, m: number) => ((n % m) + m) % m;
 
 function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
@@ -35,11 +41,10 @@ function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
 /**
  * Computes the signed distance from a given point to the union of all polygons (in nm).
  * The returned value is negative if the point is inside of one of the polygons.
- * @param {Point} point - current position
+ * @param point - current position
  * @param altitude - filed/assigned altitude
  * @param interim - assigned temp altitude
- * @param {Feature<Polygon>[]} polygons - airspace defining boundaries
- * @returns {number}
+ * @param polygons - airspace defining boundaries
  */
 export function getSignedStratumDistancePointToPolygons(point: Point, polygons: Feature<Polygon>[], altitude: number, interim?: number): number {
   let minDistance = Infinity;
@@ -60,11 +65,10 @@ export function getSignedStratumDistancePointToPolygons(point: Point, polygons: 
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
- * @param {string} route - truncated route string
- * @param {RouteFix[]} routeFixes - fixes on the route (order matters)
- * @param {Polygon[]} polygons - airspace defining boundaries
- * @param {Position} pos - lon/lat pair, current position
- * @returns {boolean}
+ * @param route - truncated route string
+ * @param routeFixes - fixes on the route (order matters)
+ * @param polygons - airspace defining boundaries
+ * @param pos - lon/lat pair, current position
  */
 export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
   if (routeFixes === null || route.length === 0) {
@@ -95,32 +99,30 @@ export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | n
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
- * @param {RouteFix[]} routeFixes - fixes on the route (order matters)
- * @param {Position} pos - lon/lat pair, current position
- * @returns {RouteFix[]} - original routeFixes, but each item will have a `distance` attribute
+ * @param routeFixes - fixes on the route (order matters)
+ * @param pos - lon/lat pair, current aircraft position
+ * @returns original routeFixes, but each item will have a `distance` attribute
  */
-export function getRouteFixesDistance(routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number })[] {
-  return routeFixes.map(fix => ({ ...fix, dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" }) })) as (RouteFix & {
-    dist: number;
-  })[];
+export function getRouteFixesDistance(routeFixes: RouteFix[], pos: Position): RouteFixWithDistance[] {
+  return routeFixes.map(fix => ({ ...fix, dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" }) })) as RouteFixWithDistance[];
 }
 
 /**
  * compute the remaining route and its route data, based on current position
  * @param {string} route - parsed route string
- * @param {RouteFix[]} routeFixes - fixes on the route
- * @param {Position} pos - lon/lat pair, current position
- * @param {Feature<Polygon>[]} polygons - airspace defining polygons
- * @param {string} dest - ICAO string of destination airport
+ * @param routeFixes - fixes on the route
+ * @param pos - lon/lat pair, current position
+ * @param polygons - airspace defining polygons
+ * @param dest - ICAO string of destination airport
  * @returns {currentRoute: string, currentRouteFixes: RouteFix[]}
  */
 export function getRemainingRouteFixes(
   route: string,
-  routeFixes: (RouteFix & { dist: number })[],
+  routeFixes: RouteFixWithDistance[],
   pos: Position,
   dest: string,
   polygons?: Feature<Polygon>[]
-): { currentRoute: string; currentRouteFixes: (RouteFix & { dist: number })[] } {
+): { currentRoute: string; currentRouteFixes: RouteFixWithDistance[] } {
   route = route.slice(0);
   if (routeFixes.length > 1) {
     const fixNames = routeFixes.map(e => e.name);
@@ -156,7 +158,13 @@ export function getRemainingRouteFixes(
   return { currentRoute: route, currentRouteFixes: routeFixes };
 }
 
-export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): (RouteFix & { dist: number }) | null {
+/**
+ * returns the next fix on the route from present position
+ * @param route
+ * @param routeFixes
+ * @param pos
+ */
+export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): RouteFixWithDistance | null {
   const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
   if (routeFixesWithDistance.length > 1) {
     const fixNames = routeFixes.map(e => e.name);
@@ -176,9 +184,9 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace
- * @param {EdstEntry} entry - an EDST entry
+ * @param entry
  * @param track
- * @param {Feature<Polygon>[]} polygons - airspace boundaries
+ * @param polygons - airspace boundaries
  * @returns {number} - minutes until the aircraft enters the airspace
  */
 export function computeBoundaryTime(entry: EdstEntry, track: ApiAircraftTrack, polygons: Feature<Polygon>[]): number {
@@ -192,7 +200,7 @@ export function computeBoundaryTime(entry: EdstEntry, track: ApiAircraftTrack, p
 
 /**
  *
- * @param {EdstEntry} entry
+ * @param entry
  * @param track
  * @returns {RouteFix[]}
  */
@@ -217,7 +225,7 @@ export function computeCrossingTimes(entry: EdstEntry, track: ApiAircraftTrack):
 
 /**
  * given a number, representing minutes elapsed after midnight, give the corresponding UTC string HHMM format
- * @param {number} minutes - minutes after midnight
+ * @param minutes - minutes after midnight
  * @returns {string} - UTC time string in HHMM format
  */
 export function formatUtcMinutes(minutes: number): string {
@@ -233,9 +241,9 @@ export function formatUtcMinutes(minutes: number): string {
 
 /**
  *
- * @param {string} route
- * @param {string} dest
- * @returns {string}
+ * @param route
+ * @param dest - destination airport
+ * @returns {string} route string with destination removed from end of route
  */
 export function removeDestFromRouteString(route: string, dest: string): string {
   if (route.endsWith(dest)) {
@@ -251,6 +259,13 @@ export function removeDepFromRouteString(route: string, dep: string): string {
   return route;
 }
 
+/**
+ *
+ * @param clearedFixName - fix cleared direct to
+ * @param entry - EDST entry
+ * @param frd - FixRadialDistance
+ * @returns all fixes on the remaining route starting from clearedFixName
+ */
 export function getClearedToFixRouteFixes(
   clearedFixName: string,
   entry: EdstEntry,
@@ -302,10 +317,18 @@ export function appendDownArrowToString(s: string): string {
   return `${s}\u{2193}`;
 }
 
+/**
+ * format beacon code into 4 digit octal string
+ * @param code
+ */
 export function convertBeaconCodeToString(code?: number | null): string {
   return String(code ?? 0).padStart(4, "0");
 }
 
+/**
+ * format altitude string to be displayed in ACL/DEP rows
+ * @param alt
+ */
 export function formatAltitude(alt: string): string {
   const altNum = Number(alt);
   return String(altNum >= 1000 ? altNum / 100 : altNum).padStart(3, "0");

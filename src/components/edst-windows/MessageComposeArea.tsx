@@ -21,7 +21,7 @@ import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
-import { ApiFlightplan } from "../../types/apiFlightplan";
+import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { EdstEntry } from "../../types/edstEntry";
 import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 import { aclCleanup } from "../../redux/thunks/aclCleanup";
@@ -108,7 +108,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   }, []);
 
   const toggleVci = (fid: string) => {
-    const entry: EdstEntry | any = Object.values(entries)?.find(
+    const entry: EdstEntry | undefined = Object.values(entries)?.find(
       e => String(e.cid) === fid || String(e.aircraftId) === fid || String(e.assignedBeaconCode ?? 0).padStart(4, "0") === fid
     );
     if (entry) {
@@ -121,7 +121,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   };
 
   const toggleHighlightEntry = (fid: string) => {
-    const entry: EdstEntry | any = Object.values(entries)?.find(
+    const entry: EdstEntry | undefined = Object.values(entries)?.find(
       entry => String(entry?.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
     if (entry) {

@@ -1,4 +1,4 @@
-import { ApiFlightplan } from "./apiFlightplan";
+import { ApiFlightplan } from "./apiTypes/apiFlightplan";
 import { LocalVEdstEntry } from "./localVEdstEntry";
 import { DerivedFlightplanData } from "./derivedFlightplanData";
 

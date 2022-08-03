@@ -15,6 +15,13 @@ const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.METAR,
   EdstWindow.SIGMETS
 ];
+
+/**
+ * hook to provide startDrag/endDrag functions with a previewStyle to render the previewWindow
+ * @param element ref to a DOM element
+ * @param edstWindow window for which to trigger dragging events
+ * @returns
+ */
 export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
   const anyDragging = useRootSelector(anyDraggingSelector);

@@ -1,4 +1,4 @@
-import { ApiAircraft } from "../../types/apiAircraft";
+import { ApiAircraft } from "../../types/apiTypes/apiAircraft";
 import { RootThunkAction } from "../store";
 import { AircraftId } from "../../types/aircraftId";
 import { AircraftTrack } from "../../types/aircraftTrack";

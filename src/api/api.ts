@@ -1,10 +1,10 @@
 import _ from "lodash";
-import { ApiPreferentialArrivalRoute } from "../types/apiPreferentialArrivalRoute";
-import { ApiPreferentialDepartureRoute } from "../types/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../types/apiPreferentialDepartureArrivalRoute";
+import { ApiPreferentialArrivalRoute } from "../types/apiTypes/apiPreferentialArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../types/apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../types/apiTypes/apiPreferentialDepartureArrivalRoute";
 import { RouteFix } from "../types/routeFix";
 import { ApiAirSigmet } from "../redux/slices/weatherSlice";
-import { ApiAircraft } from "../types/apiAircraft";
+import { ApiAircraft } from "../types/apiTypes/apiAircraft";
 
 // const baseurl = "http://localhost:5000/api";
 const baseurl = "https://tdls.oakartcc.org/api";

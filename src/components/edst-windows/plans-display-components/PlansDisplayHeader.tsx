@@ -20,6 +20,12 @@ type PlansDisplayHeaderProps = {
   startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
+/**
+ * Plans Display title bar and header row with add/find input field
+ * @param focused focused state of Plans Display window
+ * @param toggleFullscreen eventHandler to toggle maximized mode of Plans Display window
+ * @param startDrag startDrag event handler
+ */
 export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: PlansDisplayHeaderProps) => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);

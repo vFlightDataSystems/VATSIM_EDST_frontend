@@ -1,4 +1,4 @@
-import { AircraftId } from "./aircraftId";
+import { AircraftId } from "../aircraftId";
 import { ApiLocation } from "./apiLocation";
 
 export type ApiAircraft = {

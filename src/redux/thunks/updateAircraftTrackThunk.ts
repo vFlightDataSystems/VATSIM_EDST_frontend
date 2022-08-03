@@ -1,4 +1,4 @@
-import { ApiAircraftTrack } from "../../types/apiAircraftTrack";
+import { ApiAircraftTrack } from "../../types/apiTypes/apiAircraftTrack";
 import { RootThunkAction } from "../store";
 import { EdstEntry } from "../../types/edstEntry";
 import { setTrack } from "../slices/trackSlice";

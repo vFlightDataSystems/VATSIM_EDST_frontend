@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { useHub } from "./useHub";
-import { ApiLocation } from "../types/apiLocation";
-import { ApiFlightplan } from "../types/apiFlightplan";
+import { ApiLocation } from "../types/apiTypes/apiLocation";
+import { ApiFlightplan } from "../types/apiTypes/apiFlightplan";
 import { HoldAnnotations } from "../enums/hold/holdAnnotations";
 
 export const useHubActions = () => {
@@ -20,9 +20,11 @@ export const useHubActions = () => {
   };
 
   const setHoldAnnotations = async (aircraftId: string, holdAnnotations: HoldAnnotations) =>
-    hubConnection?.invoke("setHoldAnnotations", { aircraftId, holdAnnotations }).catch(error => {
-      console.log(error);
-    });
+    hubConnection
+      ?.invoke<void>("setHoldAnnotations", { aircraftId, holdAnnotations })
+      .catch(error => {
+        console.log(error);
+      });
 
   const cancelHold = async (aircraftId: string) =>
     hubConnection

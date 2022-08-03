@@ -1,8 +1,10 @@
 import { RouteFix } from "./routeFix";
 
 export type DerivedFlightplanData = {
-  formattedRoute: string; // formatted route string
+  formattedRoute: string;
   routeFixes: RouteFix[];
-  currentRoute: string; // shortened route string, starting at the next inbound fix
+  // shortened route string, starting at the next inbound fix
+  currentRoute: string;
+  // route fixes for currentRoute
   currentRouteFixes?: RouteFix[];
 };

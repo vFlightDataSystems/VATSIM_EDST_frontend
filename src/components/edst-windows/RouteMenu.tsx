@@ -18,7 +18,7 @@ import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, Optio
 import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { ApiFlightplan } from "../../types/apiFlightplan";
+import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";

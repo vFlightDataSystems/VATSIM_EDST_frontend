@@ -1,6 +1,6 @@
 import { distance, Feature, point, Polygon, Position } from "@turf/turf";
 import { routeWillEnterAirspace } from "./lib";
-import { ApiAircraftTrack } from "./types/apiAircraftTrack";
+import { ApiAircraftTrack } from "./types/apiTypes/apiAircraftTrack";
 import { EdstEntry } from "./types/edstEntry";
 
 const BOUNDARY_TIME_FILTER = 30; // minutes

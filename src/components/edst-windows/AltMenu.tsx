@@ -11,7 +11,7 @@ import { NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
 import { Plan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
-import { ApiFlightplan } from "../../types/apiFlightplan";
+import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";

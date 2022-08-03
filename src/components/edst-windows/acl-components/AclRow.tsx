@@ -27,7 +27,7 @@ import {
 import { EdstWindow } from "../../../enums/edstWindow";
 import { AclRowField } from "../../../enums/acl/aclRowField";
 import { AclAselActionTrigger } from "../../../enums/acl/aclAselActionTrigger";
-import { AclRouteDisplayOption } from "../../../types/aclRouteDisplayOption";
+import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
 
@@ -41,6 +41,14 @@ type AclRowProps = {
   altMouseDown: boolean;
 };
 
+/**
+ * Single ACL row
+ * @param entry
+ * @param hidden array of ACL fields hidden by the user
+ * @param altMouseDown boolean indicating where mouse is pressed on the ACL header Alt column
+ * @param index row index
+ * @param anyHolding boolean whether any aircraft is currently in a hold, an extra column will be displayed if true
+ */
 export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRowProps) => {
   const asel = useRootSelector(aselSelector);
   const dispatch = useRootDispatch();

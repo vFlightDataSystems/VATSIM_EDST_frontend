@@ -7,10 +7,10 @@ import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from 
 import { refreshToken } from "../api/vNasDataApi";
 import { initThunk } from "../redux/thunks/initThunk";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
-import { ApiFlightplan } from "../types/apiFlightplan";
-import { ApiAircraftTrack } from "../types/apiAircraftTrack";
-import { ApiSessionInfo } from "../types/apiSessionInfo";
-import { ApiTopic } from "../types/apiTopic";
+import { ApiFlightplan } from "../types/apiTypes/apiFlightplan";
+import { ApiAircraftTrack } from "../types/apiTypes/apiAircraftTrack";
+import { ApiSessionInfo } from "../types/apiTypes/apiSessionInfo";
+import { ApiTopic } from "../types/apiTypes/apiTopic";
 import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThunk";
 import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
 import { log } from "../console";
@@ -127,7 +127,7 @@ const HubContext = createContext<HubContextValue>(null);
 
 export const HubProvider = ({ children }: { children: ReactNode }) => {
   const hubConnection = useHubInit();
-  console.log(hubConnection);
+  log(hubConnection);
 
   return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
 };
