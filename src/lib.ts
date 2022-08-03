@@ -286,12 +286,20 @@ export function getClearedToFixRouteFixes(
   return null;
 }
 
-export function getDepString(dep?: string): string | null {
-  return dep ? `${dep}\u{2191}` : null;
+/**
+ * appends upward arrow to string, used for indicating a departure airport in a route
+ * @param s
+ */
+export function appendUpArrowToString(s: string): string {
+  return `${s}\u{2191}`;
 }
 
-export function getDestString(dest?: string): string | null {
-  return dest ? `${dest}\u{2193}` : null;
+/**
+ * appends downward arrow to string, used for indicating a destination airport in a route
+ * @param s
+ */
+export function appendDownArrowToString(s: string): string {
+  return `${s}\u{2193}`;
 }
 
 export function convertBeaconCodeToString(code?: number | null): string {

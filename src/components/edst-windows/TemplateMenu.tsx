@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { convertBeaconCodeToString, getDepString, getDestString } from "../../lib";
+import { convertBeaconCodeToString, appendUpArrowToString, appendDownArrowToString } from "../../lib";
 import { EdstButton } from "../resources/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
@@ -110,8 +110,8 @@ export const TemplateMenu = () => {
 
   const route =
     (asel?.window === EdstWindow.DEP
-      ? entry?.route?.concat(getDestString(entry?.destination) ?? "")
-      : entry?.currentRoute?.replace(/^\.*/, "")?.concat(getDestString(entry?.destination) ?? "")) ?? "";
+      ? entry?.route?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")
+      : entry?.currentRoute?.replace(/^\.*/, "")?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")) ?? "";
 
   const [aidInput, setAidInput] = useState(entry?.aircraftId ?? "");
   const [numInput, setNumInput] = useState(entry ? 1 : "");
@@ -123,7 +123,9 @@ export const TemplateMenu = () => {
   const [frdInput, setFrdInput] = useState("");
   const [timeInput, setTimeInput] = useState("EXX00");
   const [altInput, setAltInput] = useState(entry?.altitude ?? "");
-  const [routeInput, setRouteInput] = useState((asel?.window === EdstWindow.DEP ? (getDepString(entry?.departure) ?? "") + route : route) ?? "");
+  const [routeInput, setRouteInput] = useState(
+    (asel?.window === EdstWindow.DEP ? (entry?.departure ? appendUpArrowToString(entry?.departure) : "") + route : route) ?? ""
+  );
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? "");
   const { generateFrd } = useHubActions();
 
