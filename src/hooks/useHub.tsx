@@ -77,8 +77,8 @@ const useHubInit = () => {
         .start()
         .then(() => {
           hubConnection
-            .invoke("getSessionInfo")
-            .then((sessionInfo: ApiSessionInfo) => {
+            .invoke<ApiSessionInfo>("getSessionInfo")
+            .then(sessionInfo => {
               log(sessionInfo);
               if (sessionInfo.position.eramConfiguration) {
                 const { artccId } = sessionInfo;
@@ -88,11 +88,11 @@ const useHubInit = () => {
                 dispatch(setSession(sessionInfo));
                 dispatch(initThunk());
                 hubConnection
-                  .invoke("joinSession", { sessionId: sessionInfo.id })
+                  .invoke<void>("joinSession", { sessionId: sessionInfo.id })
                   .then(() => {
                     log(`joined session ${sessionInfo.id}`);
                     hubConnection
-                      .invoke("subscribe", new ApiTopic("FlightPlans", sessionInfo.facilityId))
+                      .invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.facilityId))
                       .then(() => log("subscribe succeeded."))
                       .catch(console.log);
                   })
