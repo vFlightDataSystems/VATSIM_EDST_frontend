@@ -4,6 +4,8 @@ import { useRootSelector } from "../../redux/hooks";
 import { tooltipsEnabledSelector } from "../../redux/slices/appSlice";
 
 const TooltipDiv = styled.div`
+  width: auto;
+  height: auto;
   position: absolute;
   color: #ffffff;
   background-color: #000000;
@@ -17,7 +19,7 @@ const TooltipDiv = styled.div`
 
 const TooltipContent = ({ content }: { content: string }) => {
   // eslint-disable-next-line jsx-a11y/tabindex-no-positive
-  return <TooltipDiv tabIndex={2000}>{content}</TooltipDiv>;
+  return <TooltipDiv tabIndex={30000}>{content}</TooltipDiv>;
 };
 
 const TooltipBody = styled.div`
