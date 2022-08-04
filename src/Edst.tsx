@@ -111,7 +111,7 @@ const Edst = () => {
         {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
         {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
         {windows[EdstWindow.HOLD_MENU].open && <HoldMenu />}
-        {windows[EdstWindow.CANCEL_HOLD_MENU] && <CancelHoldMenu />}
+        {windows[EdstWindow.CANCEL_HOLD_MENU].open && <CancelHoldMenu />}
         {windows[EdstWindow.SPEED_MENU].open && <SpeedMenu />}
         {windows[EdstWindow.HEADING_MENU].open && <HeadingMenu />}
         {windows[EdstWindow.ALTITUDE_MENU].open && <AltMenu />}

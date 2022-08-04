@@ -3,7 +3,7 @@ import { PromptProps } from "./promptProps";
 import { useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { EdstPrompt } from "./EdstPrompt";
-import { FidRow } from "../../styles/optionMenuStyles";
+import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
 import { EdstWindow } from "../../enums/edstWindow";
 
 export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
@@ -11,18 +11,21 @@ export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
 
   return (
     <EdstPrompt
-      title="Cancel Hold Confirmation"
+      title="AM Change Destination Menu"
       windowId={EdstWindow.CHANGE_DEST_MENU}
       width={250}
-      submitText="Cancel Hold"
+      submitText="YES"
       onSubmit={onSubmit}
-      cancelText="Exit"
+      cancelText="NO"
       onCancel={onCancel}
-      id="cancel-hold-menu"
+      id="change-destination-menu"
     >
       <FidRow>
-        {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+        {entry.cid} {entry.aircraftId}
       </FidRow>
+      <OptionsBodyRow padding="0 8px">
+        <OptionsBodyCol>Are you sure you want to change the destination?</OptionsBodyCol>
+      </OptionsBodyRow>
     </EdstPrompt>
   );
 };
