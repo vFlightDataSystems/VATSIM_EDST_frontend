@@ -13,6 +13,8 @@ const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
   //height: 20px;
   border: 1px solid #000000;
   font-size: 16px;
+  justify-content: center;
+  align-items: center;
 
   width: ${props => props.width};
   height: ${props => props.height};
