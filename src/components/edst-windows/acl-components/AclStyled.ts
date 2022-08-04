@@ -47,7 +47,7 @@ export const PointOutCol = styled(Col)`
   justify-content: left;
 `;
 export const HdgCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "20px" : "38px"
+  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
 }))<{ scratchpad?: boolean }>`
   width: ${props => props.width};
   margin: 0;
@@ -61,11 +61,11 @@ export const HdgCol = styled(Col).attrs((props: ColProps) => ({
     }};
 `;
 export const HdgSpdSlashCol = styled(Col)`
-  width: 10px;
+  width: 1ch;
   margin: 0;
 `;
 export const SpdCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "20px" : "38px"
+  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
 }))<{ scratchpad?: boolean }>`
   width: ${props => props.width};
   margin: 0;
@@ -77,4 +77,7 @@ export const SpdCol = styled(Col).attrs((props: ColProps) => ({
       color: "#000000",
       "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
     }};
+`;
+export const HdgSpdStarCol = styled(SpecialBox)`
+  margin: 0;
 `;

@@ -44,8 +44,8 @@ export const FidCol = styled(Col)`
   padding: 0 2px;
 `;
 export const SpecialBox = styled(Col)`
-  margin: 0 2px;
-  width: 8px;
+  margin: 0 1px;
+  width: 1ch;
   &:hover {
     border: 1px solid #f0f0f0;
   }
@@ -57,7 +57,7 @@ export const HotBox = styled(SpecialBox)`
   border-right: 1px solid #414141;
 `;
 export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "30px" : "100px"
+  width: props.visibilityHidden || props.hidden ? "3ch" : "100px"
 }))`
   min-width: 30px;
   justify-content: left;
@@ -77,18 +77,19 @@ export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
     }
   }
 `;
-export const CodeCol = styled(Col)`
+export const CodeCol = styled(Col).attrs((props: ColProps) => ({
+  width: props.visibilityHidden || props.hidden ? "2ch" : "6ch"
+}))`
   padding: 0 2px;
   justify-content: left;
-  width: 40px;
+  width: ${props => props.width};
   margin-left: 0;
   margin-right: 10px;
-  ${props => (props.visibilityHidden || props.hidden) && { width: "20px" }};
 `;
 export const AltCol = styled(Col)<{ headerCol?: boolean }>`
   display: flex;
   justify-content: left;
-  width: 70px;
+  width: 9ch;
   margin-right: 8px;
 
   ${props =>

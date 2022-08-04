@@ -12,7 +12,7 @@ import { edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow } from "../..
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/bodyStyles";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
-import { aclManualPostingSelector, aclSortDataSelector } from "../../../redux/slices/aclSlice";
+import { aclManualPostingSelector, aclSortDataSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
@@ -40,6 +40,7 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
 export function AclTable() {
   const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);
+  const toolOptions = useRootSelector(toolsOptionsSelector);
   const dispatch = useRootDispatch();
 
   const asel = useRootSelector(aselSelector);
@@ -124,12 +125,14 @@ export function AclTable() {
         <AclCol1 color={edstFontOrange}>A</AclCol1>
         <InnerRow>
           <SpecialBox disabled />
-          <SpecialBox disabled />
           <FidCol>Flight ID</FidCol>
           <EdstTooltip title={Tooltips.aclHeaderPa}>
             <PointOutCol>PA</PointOutCol>
           </EdstTooltip>
+          {toolOptions.displayCoordinationColumn && <SpecialBox disabled />}
+          {/* spa indicator column */}
           <SpecialBox disabled />
+          {/* hotbox column */}
           <SpecialBox disabled />
           <AircraftTypeCol hidden={hiddenList.includes(AclRowField.TYPE)}>
             <div onMouseDown={() => toggleHideColumn(AclRowField.TYPE)}>T{!hiddenList.includes(AclRowField.TYPE) && "ype"}</div>
@@ -159,10 +162,8 @@ export function AclTable() {
           </EdstTooltip>
           <SpecialBox disabled />
           <SpecialBox disabled />
-          <SpecialBox disabled={!anyHolding}>H</SpecialBox>
-          <SpecialBox disabled />
-          <SpecialBox disabled />
-          <SpecialBox disabled />
+          {anyHolding && <SpecialBox>H</SpecialBox>}
+          {/* toggle remarks column */}
           <SpecialBox disabled />
           <RouteCol>Route</RouteCol>
         </InnerRow>

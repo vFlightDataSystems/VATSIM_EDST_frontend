@@ -61,7 +61,7 @@ export function DepTable() {
     <DepBodyStyleDiv>
       <BodyRowHeaderDiv key="dep-table-header">
         <RadioCol header>{COMPLETED_SYMBOL}</RadioCol>
-        <DepCol2>P Time</DepCol2>
+        <DepCol2>P-Time</DepCol2>
         <DepFidCol>Flight ID</DepFidCol>
         <SpecialBox />
         <SpecialBox />

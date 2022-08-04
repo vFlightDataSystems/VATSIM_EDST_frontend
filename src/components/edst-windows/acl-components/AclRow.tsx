@@ -8,7 +8,7 @@ import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/e
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
-import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
+import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, HdgSpdStarCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
 import { EdstEntry } from "../../../types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
@@ -252,6 +252,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             </FidCol>
           </EdstTooltip>
           <PointOutCol />
+          {toolOptions.displayCoordinationColumn && <SpecialBox disabled />}
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
           <EdstTooltip title={Tooltips.aclHotbox}>
             <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
@@ -291,9 +292,9 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
           </EdstTooltip>
-          <SpecialBox onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchHdg)}>
+          <HdgSpdStarCol onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchHdg)}>
             {entry.assignedHeading && entry.scratchHdg && "*"}
-          </SpecialBox>
+          </HdgSpdStarCol>
           <EdstTooltip title={Tooltips.aclHdg}>
             <HdgCol
               hover
@@ -317,31 +318,30 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               {entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchSpd : entry.assignedSpeed}
             </SpdCol>
           </EdstTooltip>
-          <SpecialBox onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchSpd)}>
+          <HdgSpdStarCol onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchSpd)}>
             {entry.assignedSpeed && entry.scratchSpd && "*"}
-          </SpecialBox>
+          </HdgSpdStarCol>
           <SpecialBox disabled />
-          <SpecialBox
-            color={edstFontBrown}
-            selected={isSelected(entry.aircraftId, AclRowField.HOLD)}
-            onMouseDown={handleHoldClick}
-            onContextMenu={(event: React.MouseEvent) => {
-              event.preventDefault();
-              if (entry?.holdAnnotations) {
-                dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
-              }
-            }}
-            disabled={!anyHolding}
-          >
-            {entry.holdAnnotations ? "H" : ""}
-          </SpecialBox>
-          <SpecialBox disabled />
+          {anyHolding && (
+            <SpecialBox
+              color={edstFontBrown}
+              selected={isSelected(entry.aircraftId, AclRowField.HOLD)}
+              onMouseDown={handleHoldClick}
+              onContextMenu={(event: React.MouseEvent) => {
+                event.preventDefault();
+                if (entry?.holdAnnotations) {
+                  dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
+                }
+              }}
+            >
+              {entry.holdAnnotations ? "H" : ""}
+            </SpecialBox>
+          )}
           <EdstTooltip title={Tooltips.aclRemarksBtn}>
             <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
               {entry.remarks.length > 0 && "*"}
             </RemarksBox>
           </EdstTooltip>
-          <SpecialBox disabled />
           <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclRoute}>
             <RouteCol
@@ -380,7 +380,6 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           <AclCol1 />
           <AclCol1 />
           <AclCol1 />
-          <SpecialBox disabled />
           <SpecialBox disabled />
           <InnerRow2 highlight={entry.aclHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={214}>
