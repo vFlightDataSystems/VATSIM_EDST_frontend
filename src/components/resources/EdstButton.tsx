@@ -10,7 +10,6 @@ const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
   margin: props.margin ?? "initial"
 }))<EdstOuterButtonProps>`
   display: inline-flex;
-  //height: 20px;
   border: 1px solid #000000;
   font-size: 16px;
 
