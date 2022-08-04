@@ -8,5 +8,5 @@ export type HoldAnnotations = {
   // null for STD
   legLength: number | null;
   legLengthInNm: boolean;
-  efcTime: number;
+  efc: number;
 };

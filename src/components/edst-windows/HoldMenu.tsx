@@ -99,7 +99,7 @@ export const HoldMenu = () => {
   const [legLength, setLegLength] = useState<number | null>(null);
   const [direction, setDirection] = useState<CompassDirection>(CompassDirection.NORTH);
   const [turns, setTurns] = useState<TurnDirection>(TurnDirection.RIGHT);
-  const [efcTime, setEfcTime] = useState(utcMinutes);
+  const [efc, setEfc] = useState(utcMinutes);
   const [routeFixes, setRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
@@ -118,7 +118,7 @@ export const HoldMenu = () => {
       setLegLength(entry.holdAnnotations?.legLength ?? null);
       setDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
       setTurns(entry.holdAnnotations?.turns ?? TurnDirection.RIGHT);
-      setEfcTime(entry.holdAnnotations?.efcTime ?? utcMinutes + 30);
+      setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
       setRouteFixes(routeFixes ?? null);
     }
   }, []);
@@ -131,7 +131,7 @@ export const HoldMenu = () => {
         legLengthInNm: true,
         direction,
         turns,
-        efcTime
+        efc
       };
       hubActions.setHoldAnnotations(entry.aircraftId, holdAnnotations).then();
     }
@@ -171,7 +171,7 @@ export const HoldMenu = () => {
                   const now = new Date();
                   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
                   setFix(null);
-                  setEfcTime(utcMinutes + 30);
+                  setEfc(utcMinutes + 30);
                 }}
               >
                 Present Position
@@ -193,7 +193,7 @@ export const HoldMenu = () => {
                           key={`hold-menu-col-${i}-${j}`}
                           onMouseDown={() => {
                             setFix(fixName);
-                            setEfcTime(minutesAtFix + 30);
+                            setEfc(minutesAtFix + 30);
                           }}
                         >
                           {fixName}
@@ -301,18 +301,18 @@ export const HoldMenu = () => {
             <Col7>
               <EfcInputContainer>
                 <EdstInput
-                  value={formatUtcMinutes(efcTime)}
+                  value={formatUtcMinutes(efc)}
                   readOnly
                   // onChange={(e) => setEfc(e.target.value)}
                 />
               </EfcInputContainer>
-              <EdstButton content="-" margin="0 0 0 10px" width={24} onMouseDown={() => setEfcTime(efcTime - 1)} />
-              <EdstButton content="+" margin="0 0 0 4px" width={24} onMouseDown={() => setEfcTime(efcTime + 1)} />
+              <EdstButton content="-" margin="0 0 0 10px" width={24} onMouseDown={() => setEfc(efc - 1)} />
+              <EdstButton content="+" margin="0 0 0 4px" width={24} onMouseDown={() => setEfc(efc + 1)} />
             </Col7>
           </OptionsBodyRow>
           <Row2 bottomBorder>
             <Col5>
-              <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfcTime(0)} title={Tooltips.holdDelEfc} />
+              <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
             </Col5>
           </Row2>
           <OptionsBodyRow margin="6px 0 0 0">

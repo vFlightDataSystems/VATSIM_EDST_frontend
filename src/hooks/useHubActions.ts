@@ -19,19 +19,15 @@ export const useHubActions = () => {
     });
   };
 
-  const setHoldAnnotations = async (aircraftId: string, holdAnnotations: HoldAnnotations) =>
-    hubConnection
-      ?.invoke<void>("setHoldAnnotations", { aircraftId, holdAnnotations })
-      .catch(error => {
-        console.log(error);
-      });
+  const setHoldAnnotations = async (aircraftId: string, annotations: HoldAnnotations) =>
+    hubConnection?.invoke<void>("setHoldAnnotations", aircraftId, annotations).catch(error => {
+      console.log(error);
+    });
 
   const cancelHold = async (aircraftId: string) =>
-    hubConnection
-      ?.invoke<void>("deleteHoldAnnotations", { aircraftId })
-      .catch(error => {
-        console.log(error);
-      });
+    hubConnection?.invoke<void>("deleteHoldAnnotations", aircraftId).catch(error => {
+      console.log(error);
+    });
 
   return {
     generateFrd,
