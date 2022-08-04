@@ -91,13 +91,6 @@ export const AltCol = styled(Col)<{ headerCol?: boolean }>`
   justify-content: left;
   width: 9ch;
   margin-right: 8px;
-
-  ${props =>
-    props.headerCol && {
-      width: "55px",
-      "margin-right": "19px",
-      "padding-left": "4px"
-    }}
 `;
 export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
   border: 1px solid transparent;

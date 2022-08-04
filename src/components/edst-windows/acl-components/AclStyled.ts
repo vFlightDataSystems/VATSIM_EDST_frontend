@@ -47,9 +47,8 @@ export const PointOutCol = styled(Col)`
   justify-content: left;
 `;
 export const HdgCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
+  width: props.visibilityHidden || props.hidden ? "1ch" : "3ch"
 }))<{ scratchpad?: boolean }>`
-  width: ${props => props.width};
   margin: 0;
   justify-content: right;
   padding-right: 1px;
@@ -60,14 +59,16 @@ export const HdgCol = styled(Col).attrs((props: ColProps) => ({
       "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
     }};
 `;
+export const HdgHeaderCol = styled(HdgCol).attrs((props: ColProps) => ({
+  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
+}))``;
 export const HdgSpdSlashCol = styled(Col)`
   width: 1ch;
   margin: 0;
 `;
 export const SpdCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
+  width: props.visibilityHidden || props.hidden ? "1ch" : "3ch"
 }))<{ scratchpad?: boolean }>`
-  width: ${props => props.width};
   margin: 0;
   justify-content: left;
   padding-left: 1px;
@@ -78,6 +79,9 @@ export const SpdCol = styled(Col).attrs((props: ColProps) => ({
       "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
     }};
 `;
+export const SpdHeaderCol = styled(SpdCol).attrs((props: ColProps) => ({
+  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
+}))``;
 export const HdgSpdStarCol = styled(SpecialBox)`
   margin: 0;
 `;

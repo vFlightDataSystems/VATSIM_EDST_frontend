@@ -63,10 +63,11 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
 
   useEffect(() => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-    const parAvail = !!entry.preferentialArrivalRoutes?.filter(
-      par => par.eligible && currentFixNames.includes(par.triggeredFix) && entry.formattedRoute.includes(par.amendment)
-    );
-    setParAvail(parAvail ?? false);
+    const parAvail =
+      entry.preferentialArrivalRoutes.filter(
+        par => par.eligible && currentFixNames.includes(par.triggeredFix) && entry.formattedRoute.includes(par.amendment)
+      ).length > 0;
+    setParAvail(parAvail);
     setOnPar(onPar);
   }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
 
@@ -242,7 +243,6 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         <AclCol1 border />
         <AclCol1 border />
         <SpecialBox disabled />
-        <SpecialBox disabled />
         <InnerRow highlight={entry.aclHighlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.aclFlightId} onMouseDown={handleFidClick}>
             <FidCol hover selected={isSelected(entry.aircraftId, AclRowField.FID)}>
@@ -342,7 +342,6 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               {entry.remarks.length > 0 && "*"}
             </RemarksBox>
           </EdstTooltip>
-          <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclRoute}>
             <RouteCol
               hover
@@ -356,7 +355,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
                 `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
                   `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
                   `${holdAnnotations.legLength}` +
-                  `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efcTime)}`}
+                  `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efc)}`}
               {entry.aclRouteDisplay === AclRouteDisplayOption.remarks && <span>{entry.remarks}</span>}
               {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
               {!entry.aclRouteDisplay && (
