@@ -15,12 +15,12 @@ const AddFindContainer = styled.div`
   border: 1px solid #000000;
   display: inline-flex;
   margin: 1px 20px 1px 14px;
-  width: 68px;
+  width: 100px;
 `;
 
 export const AddFindInput = ({ title, ...props }: InputProps) => {
   return (
-    <EdstTooltip title={title} style={{ width: "auto" }}>
+    <EdstTooltip title={title}>
       <AddFindContainer>
         <EdstInput {...props} />
       </AddFindContainer>
