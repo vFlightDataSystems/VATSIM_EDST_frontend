@@ -13,15 +13,10 @@ const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
   //height: 20px;
   border: 1px solid #000000;
   font-size: 16px;
-  justify-content: center;
-  align-items: center;
 
   width: ${props => props.width};
   height: ${props => props.height};
-  ${props =>
-    props.margin && {
-      margin: props.margin
-    }};
+  margin: ${props => props.margin};
   &:hover {
     border: 1px solid #ffffff;
   }
@@ -112,7 +107,7 @@ export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithC
           }
         }}
       >
-        <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width}>
+        <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} height={props.height}>
           {props.content ?? props.children}
         </EdstInnerButton>
       </EdstOuterHeaderButton>

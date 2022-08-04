@@ -238,7 +238,7 @@ export const HoldMenu = () => {
             </Col3>
             <Col3>
               <HoldDirButton50 content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
-              <HoldDirButton50 content="15 NM" selected={!legLength || legLength === 15} onMouseDown={() => setLegLength(15)} />
+              <HoldDirButton50 content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
             </Col3>
           </Row1>
           <Row1>
@@ -252,8 +252,8 @@ export const HoldMenu = () => {
               <HoldDirButton20 disabled />
             </Col3>
             <Col3>
-              <HoldDirButton50 content="5 NM" selected={!legLength || legLength === 5} onMouseDown={() => setLegLength(5)} />
-              <HoldDirButton50 content="20 NM" selected={!legLength || legLength === 20} onMouseDown={() => setLegLength(20)} />
+              <HoldDirButton50 content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
+              <HoldDirButton50 content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
             </Col3>
           </Row1>
           <Row1>
@@ -275,8 +275,8 @@ export const HoldMenu = () => {
               <HoldDirButton20 disabled />
             </Col3>
             <Col3>
-              <HoldDirButton50 content="10 NM" selected={!legLength || legLength === 10} onMouseDown={() => setLegLength(10)} />
-              <HoldDirButton50 content="25 NM" selected={!legLength || legLength === 25} onMouseDown={() => setLegLength(25)} />
+              <HoldDirButton50 content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
+              <HoldDirButton50 content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
             </Col3>
           </Row1>
           <Row2 bottomBorder>
