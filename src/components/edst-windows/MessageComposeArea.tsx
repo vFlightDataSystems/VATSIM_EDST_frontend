@@ -7,8 +7,10 @@ import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
 import {
   closeAllWindows,
   mcaCommandStringSelector,
+  mcaResponseStringSelector,
   pushZStack,
   setMcaCommandString,
+  setMcaResponseString,
   setMraMessage,
   windowPositionSelector,
   zStackSelector
@@ -85,7 +87,7 @@ const RejectCrossSpan = styled.span`
 `;
 
 export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) => {
-  const [response, setResponse] = useState<string | null>(null);
+  const mcaResponseString = useRootSelector(mcaResponseStringSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
   const manualPosting = useRootSelector(aclManualPostingSelector);
@@ -174,11 +176,15 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
               .join(" ")
               .trim()
           };
-          hubActions.amendFlightplan(amendedFlightplan).then(() => setResponse(`ACCEPT\nCLEARED DIRECT`));
+          hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaResponseString(`ACCEPT\nCLEARED DIRECT`)));
         }
       }
     }
-    setResponse(`REJECT\nFORMAT`);
+    dispatch(setMcaResponseString(`REJECT\nFORMAT`));
+  };
+
+  const acceptDposKeyBD = () => {
+    dispatch(setMcaResponseString(`ACCEPT\nD POS KEYBD`));
   };
 
   const parseCommand = () => {
@@ -187,19 +193,19 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
     // console.log(command, args)
     if (command.match(/\/\/\w+/)) {
       toggleVci(command.slice(2));
-      setResponse(`ACCEPT\nD POS KEYBD`);
+      acceptDposKeyBD();
     } else {
       // TODO: break down switch cases into functions (parseUU, parseFR, ...)
       switch (command) {
         case "//": // should turn vci on/off for a CID
           toggleVci(args[0]);
-          setResponse(`ACCEPT\nD POS KEYBD`);
+          acceptDposKeyBD();
           break; // end case //
         case "UU":
           switch (args.length) {
             case 0:
               dispatch(openWindowThunk(EdstWindow.ACL));
-              setResponse(`ACCEPT\nD POS KEYBD`);
+              acceptDposKeyBD();
               break;
             case 1:
               switch (args[0]) {
@@ -220,19 +226,19 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
                   dispatch(addAclEntryByFid(args[0]));
                   break;
               }
-              setResponse(`ACCEPT\nD POS KEYBD`);
+              acceptDposKeyBD();
               break;
             case 2:
               if (args[0] === "H") {
                 toggleHighlightEntry(args[1]);
-                setResponse(`ACCEPT\nD POS KEYBD`);
+                acceptDposKeyBD();
               } else {
-                setResponse(`REJECT\n${mcaCommandString}`);
+                dispatch(setMcaResponseString(`REJECT\n${mcaCommandString}`));
               }
               break;
             default:
               // TODO: give error msg
-              setResponse(`REJECT\n${mcaCommandString}`);
+              dispatch(setMcaResponseString(`REJECT\n${mcaCommandString}`));
           }
           break; // end case UU
         case "QU": // cleared direct to fix: QU <fix> <fid>
@@ -241,30 +247,30 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));
           dispatch(openWindowThunk(EdstWindow.ALTIMETER));
-          setResponse(`ACCEPT\nALTIMETER REQ`);
+          dispatch(setMcaResponseString(`ACCEPT\nALTIMETER REQ`));
           break; // end case QD
         case "WR": // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
           dispatch(openWindowThunk(EdstWindow.METAR));
-          setResponse(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`);
+          dispatch(setMcaResponseString(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`));
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
           if (args.length === 1) {
             flightplanReadout(args[0]);
-            setResponse(`ACCEPT\nREADOUT\n${mcaCommandString}`);
+            dispatch(setMcaResponseString(`ACCEPT\nREADOUT\n${mcaCommandString}`));
           } else {
-            setResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
+            dispatch(setMcaResponseString(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`));
           }
           break; // end case FR
         case "SR":
           if (args.length === 1) {
             printFlightStrip(getEntryByFid(args[0]));
-            setResponse(`ACCEPT\nD POS KEYBD`);
+            acceptDposKeyBD();
           }
           break;
         default:
           // TODO: give better error msg
-          setResponse(`REJECT\n\n${mcaCommandString}`);
+          dispatch(setMcaResponseString(`REJECT\n\n${mcaCommandString}`));
       }
     }
     setMcaInputValue("");
@@ -287,7 +293,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         if (mcaInputValue.length > 0) {
           parseCommand();
         } else {
-          setResponse("");
+          dispatch(setMcaResponseString(""));
         }
         break;
       case "Escape":
@@ -325,9 +331,9 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           />
         </MessageComposeInputAreaDiv>
         <MessageComposeResponseAreaDiv>
-          {response?.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
-          {response?.startsWith("REJECT") && <RejectCrossSpan />}
-          {response?.toUpperCase()}
+          {mcaResponseString?.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
+          {mcaResponseString?.startsWith("REJECT") && <RejectCrossSpan />}
+          {mcaResponseString?.toUpperCase()}
         </MessageComposeResponseAreaDiv>
       </MessageComposeAreaDiv>
     )

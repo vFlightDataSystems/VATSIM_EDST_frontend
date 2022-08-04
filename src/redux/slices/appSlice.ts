@@ -51,6 +51,7 @@ export type AppState = {
   anyDragging: boolean;
   mraMsg: string;
   mcaCommandString: string;
+  mcaResponseString: string;
   tooltipsEnabled: boolean;
   showSectorSelector: boolean;
   asel: Asel | null;
@@ -124,6 +125,7 @@ const initialState: AppState = {
   anyDragging: false,
   mraMsg: "",
   mcaCommandString: "",
+  mcaResponseString: "",
   tooltipsEnabled: true,
   showSectorSelector: false,
   asel: null,
@@ -169,11 +171,13 @@ const appSlice = createSlice({
       state.windows[action.payload.window].position = action.payload.pos;
     },
     setMraMessage(state, action: PayloadAction<string>) {
-      state.windows[EdstWindow.MESSAGE_RESPONSE_AREA].open = true;
       state.mraMsg = action.payload;
     },
     setMcaCommandString(state, action: PayloadAction<string>) {
       state.mcaCommandString = action.payload;
+    },
+    setMcaResponseString(state, action: PayloadAction<string>) {
+      state.mcaResponseString = action.payload;
     },
     closeAllWindows(state) {
       Object.values(EdstWindow).forEach(window => {
@@ -222,11 +226,24 @@ export function setAsel(asel: Asel | null): RootThunkAction {
   };
 }
 
+export const setMcaResponseString = (message: string): RootThunkAction => {
+  return dispatch => {
+    dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+    dispatch(appSlice.actions.setMcaResponseString(message));
+  };
+};
+
+export const setMraMessage = (message: string): RootThunkAction => {
+  return dispatch => {
+    dispatch(pushZStack(EdstWindow.MESSAGE_RESPONSE_AREA));
+    dispatch(appSlice.actions.setMraMessage(message));
+  };
+};
+
 export const {
   setTooltipsEnabled,
   setShowSectorSelector,
   setWindowPosition,
-  setMraMessage,
   setMcaCommandString,
   openWindow,
   closeWindow,
@@ -242,6 +259,7 @@ export const {
 export default appSlice.reducer;
 
 export const mcaCommandStringSelector = (state: RootState) => state.app.mcaCommandString;
+export const mcaResponseStringSelector = (state: RootState) => state.app.mcaResponseString;
 export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
 export const windowSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window];
 export const windowPositionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].position;
