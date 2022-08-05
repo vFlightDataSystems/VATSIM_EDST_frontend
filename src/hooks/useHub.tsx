@@ -14,7 +14,7 @@ import { ApiTopic } from "../types/apiTypes/apiTopic";
 import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThunk";
 import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
 import { log } from "../console";
-import { setMcaResponseString } from "../redux/slices/appSlice";
+import { setMcaRejectMessage } from "../redux/slices/appSlice";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
@@ -75,7 +75,7 @@ const useHubInit = () => {
       });
 
       hubConnection.on("receiveError", (message: string) => {
-        dispatch(setMcaResponseString(message));
+        dispatch(setMcaRejectMessage(message));
       });
 
       hubConnection

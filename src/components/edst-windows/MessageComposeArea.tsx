@@ -9,8 +9,10 @@ import {
   mcaCommandStringSelector,
   mcaResponseStringSelector,
   pushZStack,
+  setMcaAcceptMessage,
   setMcaCommandString,
-  setMcaResponseString,
+  setMcaRejectMessage,
+  setMcaResponse,
   setMraMessage,
   windowPositionSelector,
   zStackSelector
@@ -101,6 +103,18 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA);
   const hubActions = useHubActions();
 
+  const accept = (message: string) => {
+    dispatch(setMcaAcceptMessage(message));
+  };
+
+  const acceptDposKeyBD = () => {
+    accept("D POS KEYBD");
+  };
+
+  const reject = (message: string) => {
+    dispatch(setMcaRejectMessage(message));
+  };
+
   useEffect(() => {
     setMcaInputRef(inputRef);
     return () => {
@@ -176,15 +190,11 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
               .join(" ")
               .trim()
           };
-          hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaResponseString(`ACCEPT\nCLEARED DIRECT`)));
+          hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
         }
       }
     }
-    dispatch(setMcaResponseString(`REJECT\nFORMAT`));
-  };
-
-  const acceptDposKeyBD = () => {
-    dispatch(setMcaResponseString(`ACCEPT\nD POS KEYBD`));
+    reject("FORMAT");
   };
 
   const parseCommand = () => {
@@ -233,12 +243,12 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
                 toggleHighlightEntry(args[1]);
                 acceptDposKeyBD();
               } else {
-                dispatch(setMcaResponseString(`REJECT\n${mcaCommandString}`));
+                dispatch(setMcaRejectMessage(`REJECT\n${mcaCommandString}`));
               }
               break;
             default:
               // TODO: give error msg
-              dispatch(setMcaResponseString(`REJECT\n${mcaCommandString}`));
+              dispatch(setMcaRejectMessage(`REJECT\n${mcaCommandString}`));
           }
           break; // end case UU
         case "QU": // cleared direct to fix: QU <fix> <fid>
@@ -247,19 +257,19 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeterThunk(args));
           dispatch(openWindowThunk(EdstWindow.ALTIMETER));
-          dispatch(setMcaResponseString(`ACCEPT\nALTIMETER REQ`));
+          accept("ALTIMETER REQ");
           break; // end case QD
         case "WR": // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
           dispatch(openWindowThunk(EdstWindow.METAR));
-          dispatch(setMcaResponseString(`ACCEPT\nWEATHER STAT REQ\n${mcaCommandString}`));
+          accept(`WEATHER STAT REQ\n${mcaCommandString}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
           if (args.length === 1) {
             flightplanReadout(args[0]);
-            dispatch(setMcaResponseString(`ACCEPT\nREADOUT\n${mcaCommandString}`));
+            accept(`READOUT\n${mcaCommandString}`);
           } else {
-            dispatch(setMcaResponseString(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`));
+            setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
           }
           break; // end case FR
         case "SR":
@@ -270,7 +280,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           break;
         default:
           // TODO: give better error msg
-          dispatch(setMcaResponseString(`REJECT\n\n${mcaCommandString}`));
+          reject(mcaCommandString);
       }
     }
     setMcaInputValue("");
@@ -293,7 +303,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         if (mcaInputValue.length > 0) {
           parseCommand();
         } else {
-          dispatch(setMcaResponseString(""));
+          dispatch(setMcaRejectMessage(""));
         }
         break;
       case "Escape":

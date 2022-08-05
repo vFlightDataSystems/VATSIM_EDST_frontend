@@ -226,12 +226,16 @@ export function setAsel(asel: Asel | null): RootThunkAction {
   };
 }
 
-export const setMcaResponseString = (message: string): RootThunkAction => {
+export const setMcaResponse = (message: string): RootThunkAction => {
   return dispatch => {
     dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-    dispatch(appSlice.actions.setMcaResponseString(message));
+    dispatch(appSlice.actions.setMcaResponseString(`ACCEPT\n${message}`));
   };
 };
+
+export const setMcaAcceptMessage = (message: string) => setMcaResponse(`ACCEPT\n${message}`);
+
+export const setMcaRejectMessage = (message: string) => setMcaResponse(`REJECT\n${message}`);
 
 export const setMraMessage = (message: string): RootThunkAction => {
   return dispatch => {
