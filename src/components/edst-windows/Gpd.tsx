@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
+import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { GpdHeader } from "./gpd-components/GpdHeader";
 import { GpdBody } from "./gpd-components/GpdBody";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
@@ -36,24 +36,24 @@ export const Gpd = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.GPD));
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD);
-  const { fullscreen, toggleFullscreen } = useFullscreen(ref);
+  const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.GPD);
 
-  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.GPD) < zStack.length - 1 && !fullscreen && dispatch(pushZStack(EdstWindow.GPD));
+  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.GPD) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(EdstWindow.GPD));
 
   return (
     <GpdDiv
       ref={ref}
       pos={pos}
       anyDragging={anyDragging}
-      fullscreen={fullscreen}
+      fullscreen={isFullscreen}
       zIndex={zStack.indexOf(EdstWindow.GPD)}
       onMouseDown={onMouseDownHandler}
     >
-      {!fullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
       <GpdHeader
         focused={focused}
         toggleFullscreen={toggleFullscreen}
-        startDrag={e => !fullscreen && startDrag(e)}
+        startDrag={e => !isFullscreen && startDrag(e)}
         zoomLevel={zoomLevel}
         setZoomLevel={setZoomLevel}
       />

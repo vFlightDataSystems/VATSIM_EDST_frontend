@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { DepHeader } from "./dep-components/DepHeader";
 import { DepTable } from "./dep-components/DepTable";
-import { useRootSelector, useRootDispatch } from "../../redux/hooks";
-import { zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "../../redux/hooks";
+import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
@@ -34,21 +34,21 @@ export const Dep = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.DEP));
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.DEP);
-  const { fullscreen, toggleFullscreen } = useFullscreen(ref);
+  const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.DEP);
 
-  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.DEP) < zStack.length - 1 && !fullscreen && dispatch(pushZStack(EdstWindow.DEP));
+  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.DEP) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(EdstWindow.DEP));
 
   return (
     <DepDiv
       anyDragging={anyDragging}
       ref={ref}
       pos={pos}
-      fullscreen={fullscreen}
+      fullscreen={isFullscreen}
       zIndex={zStack.indexOf(EdstWindow.DEP)}
       onMouseDown={onMouseDownHandler}
     >
-      {!fullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-      <DepHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !fullscreen && startDrag(e)} />
+      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+      <DepHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !isFullscreen && startDrag(e)} />
       <DepTable />
     </DepDiv>
   );

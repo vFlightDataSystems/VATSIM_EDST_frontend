@@ -21,10 +21,13 @@ export const AIRCRAFT_MENUS = [
   EdstWindow.EQUIPMENT_TEMPLATE_MENU
 ];
 
+const FULLSCREEN_WINDOWS = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
+
 type AppWindow = {
   open: boolean;
   window: EdstWindow;
   position: WindowPosition | null;
+  isFullscreen: boolean;
   openedBy?: EdstWindow;
 };
 
@@ -113,6 +116,7 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
     value,
     {
       open: false,
+      isFullscreen: FULLSCREEN_WINDOWS.includes(value),
       position: defaultWindowPositions[value] ?? { x: 100, y: 100 }
     } as AppWindow
   ])
@@ -160,6 +164,9 @@ const appSlice = createSlice({
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload.window);
       state.zStack = [...zStack, action.payload.window];
+    },
+    setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
+      state.windows[action.payload.window].isFullscreen = action.payload.value;
     },
     setTooltipsEnabled(state, action: PayloadAction<boolean>) {
       state.tooltipsEnabled = action.payload;
@@ -245,6 +252,7 @@ export const setMraMessage = (message: string): RootThunkAction => {
 };
 
 export const {
+  setIsFullscreen,
   setTooltipsEnabled,
   setShowSectorSelector,
   setWindowPosition,
@@ -267,6 +275,7 @@ export const mcaResponseStringSelector = (state: RootState) => state.app.mcaResp
 export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
 export const windowSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window];
 export const windowPositionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].position;
+export const windowIsFullscreenSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].isFullscreen;
 export const aselSelector = (state: RootState) => state.app.asel;
 export const aclAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.ACL ? state.app.asel : null);
 export const depAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.DEP ? state.app.asel : null);

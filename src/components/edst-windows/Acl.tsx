@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { AclHeader } from "./acl-components/AclHeader";
 import { AclTable } from "./acl-components/AclTable";
-import { useRootSelector, useRootDispatch } from "../../redux/hooks";
-import { zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "../../redux/hooks";
+import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
@@ -34,10 +34,10 @@ export const Acl = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ACL));
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ACL);
-  const { fullscreen, toggleFullscreen } = useFullscreen(ref);
+  const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.ACL);
 
   const onMouseDownHandler = () => {
-    if (zStack.indexOf(EdstWindow.ACL) < zStack.length - 1 && !fullscreen) {
+    if (zStack.indexOf(EdstWindow.ACL) < zStack.length - 1 && !isFullscreen) {
       dispatch(pushZStack(EdstWindow.ACL));
     }
   };
@@ -47,12 +47,12 @@ export const Acl = () => {
       ref={ref}
       pos={pos}
       anyDragging={anyDragging}
-      fullscreen={fullscreen}
+      fullscreen={isFullscreen}
       zIndex={zStack.indexOf(EdstWindow.ACL)}
       onMouseDown={onMouseDownHandler}
     >
-      {!fullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-      <AclHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !fullscreen && startDrag(e)} />
+      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+      <AclHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !isFullscreen && startDrag(e)} />
       <AclTable />
     </AclDiv>
   );

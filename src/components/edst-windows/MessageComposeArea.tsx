@@ -229,6 +229,9 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
                   dispatch(openWindowThunk(EdstWindow.ACL));
                   dispatch(setAclManualPosting(!manualPosting));
                   break;
+                case "G":
+                  dispatch(openWindowThunk(EdstWindow.GPD));
+                  break;
                 case "X":
                   dispatch(closeAllWindows());
                   break;

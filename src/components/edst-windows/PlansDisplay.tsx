@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { PlansDisplayHeader } from "./plans-display-components/PlansDisplayHeader";
 import { PlansDisplayTable } from "./plans-display-components/PlansDisplayTable";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
+import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
@@ -34,15 +34,15 @@ export const PlansDisplay = () => {
   const zStack = useRootSelector(zStackSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PLANS_DISPLAY));
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLANS_DISPLAY);
-  const { fullscreen, toggleFullscreen } = useFullscreen(ref);
+  const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.PLANS_DISPLAY);
 
   const onMouseDownHandler = () =>
-    zStack.indexOf(EdstWindow.PLANS_DISPLAY) < zStack.length - 1 && !fullscreen && dispatch(pushZStack(EdstWindow.PLANS_DISPLAY));
+    zStack.indexOf(EdstWindow.PLANS_DISPLAY) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(EdstWindow.PLANS_DISPLAY));
 
   return (
     <PlansDisplayDiv ref={ref} pos={pos} anyDragging={anyDragging} zIndex={zStack.indexOf(EdstWindow.PLANS_DISPLAY)} onMouseDown={onMouseDownHandler}>
-      {!fullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-      <PlansDisplayHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !fullscreen && startDrag(e)} />
+      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+      <PlansDisplayHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !isFullscreen && startDrag(e)} />
       <PlansDisplayTable />
     </PlansDisplayDiv>
   );

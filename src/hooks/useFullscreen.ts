@@ -1,12 +1,15 @@
-import { RefObject, useState } from "react";
+import { RefObject } from "react";
+import { EdstWindow } from "../enums/edstWindow";
+import { useRootDispatch, useRootSelector } from "../redux/hooks";
+import { setIsFullscreen, windowIsFullscreenSelector } from "../redux/slices/appSlice";
 
-export const useFullscreen = (element: RefObject<HTMLElement>) => {
-  const [fullscreen, setFullscreen] = useState(true);
+export const useFullscreen = (element: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
+  const dispatch = useRootDispatch();
+  const isFullscreen = useRootSelector(windowIsFullscreenSelector(edstWindow));
 
   const toggleFullscreen = () => {
-    setFullscreen(!fullscreen);
     if (element.current) {
-      if (!fullscreen) {
+      if (!isFullscreen) {
         element.current.style.width = `calc(100% - 10px)`;
         element.current.style.height = `calc(100% - 10px)`;
       } else {
@@ -14,7 +17,8 @@ export const useFullscreen = (element: RefObject<HTMLElement>) => {
         element.current.style.height = "auto";
       }
     }
+    dispatch(setIsFullscreen({ window: edstWindow, value: !isFullscreen }));
   };
 
-  return { fullscreen, toggleFullscreen };
+  return { isFullscreen, toggleFullscreen };
 };
