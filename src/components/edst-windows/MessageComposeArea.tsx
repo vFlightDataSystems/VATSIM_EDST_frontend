@@ -6,14 +6,18 @@ import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slice
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
 import {
   closeAllWindows,
+  defaultWindowPositions,
+  FULLSCREEN_WINDOWS,
   mcaCommandStringSelector,
   mcaResponseStringSelector,
   pushZStack,
+  setIsFullscreen,
   setMcaAcceptMessage,
   setMcaCommandString,
   setMcaRejectMessage,
   setMcaResponse,
   setMraMessage,
+  setWindowPosition,
   windowPositionSelector,
   zStackSelector
 } from "../../redux/slices/appSlice";
@@ -162,7 +166,6 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry: EdstEntry | undefined = getEntryByFid(fid);
     if (entry) {
-      // TODO: put speed instead of groundspeed
       const msg =
         `${formatUtcMinutes(utcMinutes)}\n` +
         `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
@@ -231,6 +234,13 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
                   break;
                 case "G":
                   dispatch(openWindowThunk(EdstWindow.GPD));
+                  break;
+
+                case "R":
+                  FULLSCREEN_WINDOWS.forEach(window => dispatch(setIsFullscreen({ window, value: true })));
+                  dispatch(
+                    setWindowPosition({ window: EdstWindow.MESSAGE_COMPOSE_AREA, pos: defaultWindowPositions[EdstWindow.MESSAGE_COMPOSE_AREA]! })
+                  );
                   break;
                 case "X":
                   dispatch(closeAllWindows());
@@ -344,9 +354,9 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           />
         </MessageComposeInputAreaDiv>
         <MessageComposeResponseAreaDiv>
-          {mcaResponseString?.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
-          {mcaResponseString?.startsWith("REJECT") && <RejectCrossSpan />}
-          {mcaResponseString?.toUpperCase()}
+          {mcaResponseString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
+          {mcaResponseString.startsWith("REJECT") && <RejectCrossSpan />}
+          {mcaResponseString.toUpperCase()}
         </MessageComposeResponseAreaDiv>
       </MessageComposeAreaDiv>
     )

@@ -21,7 +21,7 @@ export const AIRCRAFT_MENUS = [
   EdstWindow.EQUIPMENT_TEMPLATE_MENU
 ];
 
-const FULLSCREEN_WINDOWS = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
+export const FULLSCREEN_WINDOWS = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
 
 type AppWindow = {
   open: boolean;
@@ -101,14 +101,10 @@ export const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.cpdlcMsgOut
 ];
 
-const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition | null>> = {
+export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
   [EdstWindow.STATUS]: { x: 400, y: 100 },
   [EdstWindow.OUTAGE]: { x: 400, y: 100 },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 600 },
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: { x: 100, y: 100 },
-  [EdstWindow.ALTIMETER]: { x: 100, y: 100 },
-  [EdstWindow.METAR]: { x: 100, y: 100 },
-  [EdstWindow.SIGMETS]: { x: 100, y: 100 }
+  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 600 }
 };
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
