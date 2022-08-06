@@ -3,8 +3,11 @@ import { useHub } from "./useHub";
 import { ApiLocation } from "../types/apiTypes/apiLocation";
 import { ApiFlightplan } from "../types/apiTypes/apiFlightplan";
 import { HoldAnnotations } from "../enums/hold/holdAnnotations";
+import { useRootDispatch } from "../redux/hooks";
+import { setMcaAcceptMessage } from "../redux/slices/appSlice";
 
 export const useHubActions = () => {
+  const dispatch = useRootDispatch();
   const hubConnection = useHub();
 
   const generateFrd = (location: ApiLocation) =>
@@ -21,9 +24,12 @@ export const useHubActions = () => {
 
   const setHoldAnnotations = async (aircraftId: string, annotations: HoldAnnotations) => {
     hubConnection?.invoke("activateFlightplan", aircraftId).then(console.log);
-    return hubConnection?.invoke<void>("setHoldAnnotations", aircraftId, annotations).catch(error => {
-      console.log(error);
-    });
+    return hubConnection
+      ?.invoke<void>("setHoldAnnotations", aircraftId, annotations)
+      .then(() => dispatch(setMcaAcceptMessage(`HOLD\n${aircraftId}`)))
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   const cancelHold = async (aircraftId: string) =>
