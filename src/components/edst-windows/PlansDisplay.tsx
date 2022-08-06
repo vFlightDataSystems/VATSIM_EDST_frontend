@@ -40,7 +40,14 @@ export const PlansDisplay = () => {
     zStack.indexOf(EdstWindow.PLANS_DISPLAY) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(EdstWindow.PLANS_DISPLAY));
 
   return (
-    <PlansDisplayDiv ref={ref} pos={pos} anyDragging={anyDragging} zIndex={zStack.indexOf(EdstWindow.PLANS_DISPLAY)} onMouseDown={onMouseDownHandler}>
+    <PlansDisplayDiv
+      ref={ref}
+      pos={pos}
+      anyDragging={anyDragging}
+      fullscreen={isFullscreen}
+      zIndex={zStack.indexOf(EdstWindow.PLANS_DISPLAY)}
+      onMouseDown={onMouseDownHandler}
+    >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
       <PlansDisplayHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !isFullscreen && startDrag(e)} />
       <PlansDisplayTable />
