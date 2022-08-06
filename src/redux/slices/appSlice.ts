@@ -7,6 +7,7 @@ import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
 import { AclRowField } from "../../enums/acl/aclRowField";
 import { DepRowField } from "../../enums/dep/depRowField";
 import { PlanRowField } from "../../enums/planRowField";
+import { openWindowThunk } from "../thunks/openWindowThunk";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -231,8 +232,8 @@ export function setAsel(asel: Asel | null): RootThunkAction {
 
 export const setMcaResponse = (message: string): RootThunkAction => {
   return dispatch => {
-    dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-    dispatch(appSlice.actions.setMcaResponseString(`ACCEPT\n${message}`));
+    dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
+    dispatch(appSlice.actions.setMcaResponseString(message));
   };
 };
 

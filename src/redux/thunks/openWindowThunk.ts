@@ -1,5 +1,5 @@
 import { RootThunkAction } from "../store";
-import { openWindow, setWindowPosition } from "../slices/appSlice";
+import { openWindow, pushZStack, setWindowPosition } from "../slices/appSlice";
 import { EdstWindow } from "../../enums/edstWindow";
 
 export function openWindowThunk(window: EdstWindow, ref?: EventTarget & any, triggeredFromWindow?: EdstWindow): RootThunkAction {
@@ -12,6 +12,7 @@ export function openWindowThunk(window: EdstWindow, ref?: EventTarget & any, tri
       };
       dispatch(setWindowPosition({ window, pos: windowPos }));
     }
+    dispatch(pushZStack(window));
     dispatch(openWindow({ window, openedBy: triggeredFromWindow }));
   };
 }
