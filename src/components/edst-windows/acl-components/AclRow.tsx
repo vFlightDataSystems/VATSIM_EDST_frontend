@@ -113,7 +113,12 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     if (entry.vciStatus === -1 && manualPosting) {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     } else if (entry.vciStatus < 1) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"] } }));
+      dispatch(
+        updateEntry({
+          aircraftId: entry.aircraftId,
+          data: { vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"] }
+        })
+      );
     } else {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     }
@@ -350,25 +355,27 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
                 dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))
               }
             >
-              {entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations &&
-                holdAnnotations &&
-                `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
-                  `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
-                  `${holdAnnotations.legLength}` +
-                  `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efc)}`}
-              {entry.aclRouteDisplay === AclRouteDisplayOption.remarks && <span>{entry.remarks}</span>}
-              {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
-              {!entry.aclRouteDisplay && (
-                <RouteSpan padding="0 2px">
-                  <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
-                    {entry.departure}
-                  </RouteDepAirportSpan>
-                  ./.
-                  {route}
-                  {!route.endsWith(".") && route.length > 0 && `.`}
-                  {entry.destination}
-                </RouteSpan>
-              )}
+              <RouteSpan padding="0 2px">
+                {entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations &&
+                  holdAnnotations &&
+                  `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
+                    `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
+                    `${holdAnnotations.legLength}` +
+                    `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efc)}`}
+                {entry.aclRouteDisplay === AclRouteDisplayOption.remarks && <span>{entry.remarks}</span>}
+                {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
+                {!entry.aclRouteDisplay && (
+                  <>
+                    <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
+                      {entry.departure}
+                    </RouteDepAirportSpan>
+                    ./.
+                    {route}
+                    {!route.endsWith(".") && route.length > 0 && `.`}
+                    {entry.destination}
+                  </>
+                )}
+              </RouteSpan>
             </RouteCol>
           </EdstTooltip>
         </InnerRow>

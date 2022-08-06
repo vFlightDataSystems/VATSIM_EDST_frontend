@@ -160,11 +160,10 @@ export function AclTable() {
             </SpdHeaderCol>
           </EdstTooltip>
           <SpecialBox disabled />
-          <SpecialBox disabled />
           {anyHolding && <SpecialBox>H</SpecialBox>}
           {/* toggle remarks column */}
           <SpecialBox disabled />
-          <RouteCol>Route</RouteCol>
+          <RouteCol padding="0 4px">Route</RouteCol>
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>

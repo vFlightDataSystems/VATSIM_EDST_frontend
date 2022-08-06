@@ -99,13 +99,16 @@ export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
     border: 1px solid #f0f0f0;
   }
 `;
-export const RouteCol = styled(Col)`
+type RouteColProps = { padding?: string };
+export const RouteCol = styled(Col).attrs((props: RouteColProps) => ({
+  padding: props.padding ?? "0 2px 0 0"
+}))<RouteColProps>`
   height: calc(100% - 4px);
   white-space: nowrap;
   justify-content: left;
   border: 1px solid transparent;
   margin-left: 4px;
-  padding-right: 2px;
+  padding: ${props => props.padding};
 `;
 type RouteSpanProps = { padding?: string };
 export const RouteSpan = styled(RouteCol).attrs((props: RouteSpanProps) => ({
