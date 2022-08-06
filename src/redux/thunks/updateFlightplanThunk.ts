@@ -95,6 +95,9 @@ const updateDerivedFlightplanThunk = createAsyncThunk<void, ApiFlightplan>("entr
     if (fp.route !== entry.route) {
       amendedData.formattedRoute = await fetchFormatRoute(fp.route, fp.departure, fp.destination).then(data => data ?? "");
       amendedData.routeFixes = await fetchRouteFixes(fp.route, fp.departure, fp.destination).then(data => data ?? []);
+    } else {
+      amendedData.formattedRoute = entry.formattedRoute;
+      amendedData.routeFixes = entry.routeFixes;
     }
     if (fp.equipment !== entry.equipment) {
       const [preferentialArrivalRoutes, preferentialDepartureRoutes, preferentialDepartureArrivalRoutes] = await Promise.all([
