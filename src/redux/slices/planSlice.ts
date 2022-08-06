@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import _ from "lodash";
 import { RootState } from "../store";
 import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { UnixTime } from "../../types/unixTime";
@@ -36,8 +37,7 @@ const planSlice = createSlice({
       }
     },
     planCleanup(state) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      state = initialState;
+      _.assign(state, initialState);
     },
     setSelectedPlanIndex(state, action: PayloadAction<number | null>) {
       if (action.payload === null || (action.payload >= 0 && action.payload < state.planQueue.length)) {
