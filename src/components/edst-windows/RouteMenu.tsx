@@ -102,10 +102,7 @@ export const RouteMenu = () => {
 
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(
-    removeDestFromRouteString(
-      asel.window === EdstWindow.DEP ? entry.formattedRoute : entry.currentRoute?.replace(/^\.*/, "") ?? "",
-      entry.destination
-    )
+    removeDestFromRouteString(asel.window === EdstWindow.DEP ? entry.formattedRoute : entry.currentRoute.replace(/^\.*/, "") ?? "", entry.destination)
   );
   const [routeInput, setRouteInput] = useState<string>(
     asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : route + entry.destination
@@ -128,7 +125,7 @@ export const RouteMenu = () => {
 
   useEffect(() => {
     const dep = asel.window === EdstWindow.DEP;
-    let route = dep ? entry.formattedRoute : entry.currentRoute?.replace(/^\.*/, "") ?? "";
+    let route = dep ? entry.formattedRoute : entry.currentRoute.replace(/^\.*/, "") ?? "";
     route = removeDestFromRouteString(route ?? "", entry.destination);
     if (dep) {
       setTrialPlan(false);

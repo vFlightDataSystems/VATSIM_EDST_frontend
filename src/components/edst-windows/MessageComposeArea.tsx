@@ -172,7 +172,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           entry.assignedBeaconCode
         )} ${entry.speed} EXX00` +
         ` ${entry.altitude} ${entry.departure}./.` +
-        `${entry.currentRoute?.replace(/^\.+/, "")}` +
+        `${entry.currentRoute.replace(/^\.+/, "")}` +
         `${entry.destination ?? ""}`;
       dispatch(setMraMessage(msg));
     }

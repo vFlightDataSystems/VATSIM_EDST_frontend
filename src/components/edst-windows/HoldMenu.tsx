@@ -198,7 +198,7 @@ export const HoldMenu = () => {
                         >
                           {fixName}
                           <OptionsBodyCol alignRight margin="0">
-                            {`0${Math.round(minutesAtFix / 60) % 24}`.slice(-2) + `0${Math.round(minutesAtFix % 60)}`.slice(-2)}
+                            {`0${Math.floor(minutesAtFix / 60) % 24}`.slice(-2) + `0${Math.floor(minutesAtFix % 60)}`.slice(-2)}
                           </OptionsBodyCol>
                         </Col1>
                       )

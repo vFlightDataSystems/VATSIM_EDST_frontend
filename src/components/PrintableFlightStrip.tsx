@@ -5,9 +5,9 @@ import { EdstEntry } from "../types/edstEntry";
 
 function getRouteString(entry: EdstEntry) {
   return (
-    (entry.currentRoute?.length
+    (entry.currentRoute.length
       ? entry?.route?.concat(entry?.destination ?? "")
-      : entry?.currentRoute?.replace(/^\.*/, "")?.concat(entry?.destination ?? "")) ?? ""
+      : entry?.currentRoute.replace(/^\.*/, "")?.concat(entry?.destination ?? "")) ?? ""
   );
 }
 
