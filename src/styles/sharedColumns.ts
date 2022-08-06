@@ -25,7 +25,6 @@ export const Col = styled.div.attrs((props: ColProps) => ({
 
   &[disabled] {
     pointer-events: none;
-    color: #000000;
   }
 
   width: ${props => props.width};
