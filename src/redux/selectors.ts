@@ -17,7 +17,7 @@ export const anyHoldingSelector = createSelector([entriesSelector], entries => {
 export const anyAssignedHdgSelector = createSelector([entriesSelector], entries => {
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of Object.values(entries)) {
-    if ((entry.assignedHeading || entry.scratchHdg) && entry.aclDisplay) {
+    if ((entry.assignedHeading || entry.scratchpadHeading) && entry.aclDisplay) {
       return true;
     }
   }
@@ -27,7 +27,7 @@ export const anyAssignedHdgSelector = createSelector([entriesSelector], entries 
 export const anyAssignedSpdSelector = createSelector([entriesSelector], entries => {
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of Object.values(entries)) {
-    if ((entry.assignedSpeed || entry.scratchSpd) && entry.aclDisplay) {
+    if ((entry.assignedSpeed || entry.scratchpadSpeed) && entry.aclDisplay) {
       return true;
     }
   }

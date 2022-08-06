@@ -200,8 +200,8 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HDG, null, EdstWindow.HEADING_MENU));
         break;
       case 1:
-        if (entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null)) {
-          const promotedHdg = "LRH".includes(entry.scratchHdg.slice(-1)) ? entry.scratchHdg : `H${entry.scratchHdg}`;
+        if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
+          const promotedHdg = "LRH".includes(entry.scratchpadHeading.slice(-1)) ? entry.scratchpadHeading : `H${entry.scratchpadHeading}`;
         }
         break;
       case 2:
@@ -218,8 +218,8 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.SPD, null, EdstWindow.SPEED_MENU));
         break;
       case 1:
-        if (entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null)) {
-          const promotedSpd = entry.scratchSpd.slice(0, 1) === "M" ? entry.scratchSpd : `S${entry.scratchSpd}`;
+        if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
+          const promotedSpd = entry.scratchpadSpeed.slice(0, 1) === "M" ? entry.scratchpadSpeed : `S${entry.scratchpadSpeed}`;
         }
         break;
       case 2:
@@ -297,8 +297,8 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
           </EdstTooltip>
-          <HdgSpdStarCol onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchHdg)}>
-            {entry.assignedHeading && entry.scratchHdg && "*"}
+          <HdgSpdStarCol onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchpadHeading)}>
+            {entry.assignedHeading && entry.scratchpadHeading && "*"}
           </HdgSpdStarCol>
           <EdstTooltip title={Tooltips.aclHdg}>
             <HdgCol
@@ -306,9 +306,9 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               visibilityHidden={hidden.includes(AclRowField.HDG)}
               selected={isSelected(entry.aircraftId, AclRowField.HDG)}
               onMouseDown={handleHeadingClick}
-              scratchpad={!!entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null)}
+              scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
             >
-              {entry.scratchHdg && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchHdg : entry.assignedHeading}
+              {entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchpadHeading : entry.assignedHeading}
             </HdgCol>
           </EdstTooltip>
           <HdgSpdSlashCol>/</HdgSpdSlashCol>
@@ -318,13 +318,13 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               visibilityHidden={hidden.includes(AclRowField.SPD)}
               selected={isSelected(entry.aircraftId, AclRowField.SPD)}
               onMouseDown={handleSpeedClick}
-              scratchpad={!!entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null)}
+              scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}
             >
-              {entry.scratchSpd && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchSpd : entry.assignedSpeed}
+              {entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchpadSpeed : entry.assignedSpeed}
             </SpdCol>
           </EdstTooltip>
-          <HdgSpdStarCol onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchSpd)}>
-            {entry.assignedSpeed && entry.scratchSpd && "*"}
+          <HdgSpdStarCol onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchpadSpeed)}>
+            {entry.assignedSpeed && entry.scratchpadSpeed && "*"}
           </HdgSpdStarCol>
           <SpecialBox disabled />
           {anyHolding && (

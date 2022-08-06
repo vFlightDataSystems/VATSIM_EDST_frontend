@@ -7,7 +7,7 @@ import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { aselEntrySelector } from "../../../redux/slices/entrySlice";
+import { aselEntrySelector, updateEntry } from "../../../redux/slices/entrySlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
 import { InputContainer } from "../../InputComponents";
@@ -48,8 +48,20 @@ export const HeadingMenu = () => {
 
     switch (event.button) {
       case 0:
+        if (amend) {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: null } }));
+          // set assigned heading
+        } else {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: valueStr } }));
+          // delete assigned heading
+        }
         break;
       case 1:
+        if (amend) {
+          // set assigned heading
+        } else {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: valueStr } }));
+        }
         break;
       default:
         break;

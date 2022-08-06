@@ -6,7 +6,7 @@ import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
-import { aselEntrySelector } from "../../../redux/slices/entrySlice";
+import { aselEntrySelector, updateEntry } from "../../../redux/slices/entrySlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
 import { InputContainer } from "../../InputComponents";
@@ -58,8 +58,20 @@ export const SpeedMenu = () => {
     const valueStr = !mach ? `${amend && sign === Sign.none ? "S" : ""}${value}${sign}` : `M${Math.round(value * 100)}${sign}`;
     switch (event.button) {
       case 0:
+        if (amend) {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: null } }));
+          // set assigned speed
+        } else {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: valueStr } }));
+          // delete assigned speed
+        }
         break;
       case 1:
+        if (amend) {
+          // set assigned speed
+        } else {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: valueStr } }));
+        }
         break;
       default:
         break;

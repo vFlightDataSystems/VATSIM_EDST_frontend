@@ -26,9 +26,9 @@ export type LocalVEdstEntry = {
   // if not null, number represents timestamp when pendingRemoval status was activated
   pendingRemoval: number | null;
   // speed assigned in the scratchpad
-  scratchHdg: string | null;
+  scratchpadHeading: string | null;
   // heading assigned in the scratchpad
-  scratchSpd: string | null;
+  scratchpadSpeed: string | null;
   showFreeText: boolean;
   voiceType?: string;
   aclDisplay: boolean;

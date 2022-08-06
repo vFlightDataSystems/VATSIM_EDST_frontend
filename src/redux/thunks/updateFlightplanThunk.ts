@@ -76,8 +76,8 @@ async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Prom
     pendingRemoval: null,
     previousRoute: null,
     remarksChecked: false,
-    scratchHdg: null,
-    scratchSpd: null,
+    scratchpadHeading: null,
+    scratchpadSpeed: null,
     showFreeText: false,
     uplinkEligible: false,
     voiceType: ""
