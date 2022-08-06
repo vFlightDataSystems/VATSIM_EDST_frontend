@@ -11,7 +11,7 @@ import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/bodyStyles";
-import { AclCol1, HdgHeaderCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdHeaderCol } from "./AclStyled";
+import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
 import { aclManualPostingSelector, aclSortDataSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { EdstEntry } from "../../../types/edstEntry";
@@ -143,10 +143,11 @@ export function AclTable() {
           <CodeCol hover hidden={hiddenList.includes(AclRowField.CODE)} onMouseDown={() => toggleHideColumn(AclRowField.CODE)}>
             C{!hiddenList.includes(AclRowField.CODE) && "ode"}
           </CodeCol>
+          <SpecialBox disabled />
           <EdstTooltip title={Tooltips.aclHeaderHdg}>
-            <HdgHeaderCol hover hidden={hiddenList.includes(AclRowField.HDG)} onMouseDown={() => toggleHideColumn(AclRowField.HDG)}>
+            <HdgCol hover hidden={hiddenList.includes(AclRowField.HDG)} onMouseDown={() => toggleHideColumn(AclRowField.HDG)}>
               {hiddenList.includes(AclRowField.HDG) && anyAssignedHeading && "*"}H{!hiddenList.includes(AclRowField.HDG) && "dg"}
-            </HdgHeaderCol>
+            </HdgCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclHeaderSlash}>
             <HdgSpdSlashCol hover onMouseDown={handleClickSlash}>
@@ -154,13 +155,14 @@ export function AclTable() {
             </HdgSpdSlashCol>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclHeaderSpd}>
-            <SpdHeaderCol hover hidden={hiddenList.includes(AclRowField.SPD)} onMouseDown={() => toggleHideColumn(AclRowField.SPD)}>
+            <SpdCol hover hidden={hiddenList.includes(AclRowField.SPD)} onMouseDown={() => toggleHideColumn(AclRowField.SPD)}>
               S{!hiddenList.includes(AclRowField.SPD) && "pd"}
               {hiddenList.includes(AclRowField.SPD) && anyAssignedSpeed && "*"}
-            </SpdHeaderCol>
+            </SpdCol>
           </EdstTooltip>
           <SpecialBox disabled />
-          {anyHolding && <SpecialBox>H</SpecialBox>}
+          <SpecialBox disabled />
+          {anyHolding && <SpecialBox disabled>H</SpecialBox>}
           {/* toggle remarks column */}
           <SpecialBox disabled />
           <RouteCol padding="0 4px">Route</RouteCol>

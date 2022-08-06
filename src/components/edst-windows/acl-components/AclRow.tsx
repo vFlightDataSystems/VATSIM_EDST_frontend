@@ -8,7 +8,7 @@ import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/e
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
-import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, HdgSpdStarCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
+import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
 import { EdstEntry } from "../../../types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
@@ -26,7 +26,6 @@ import {
 } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { AclRowField } from "../../../enums/acl/aclRowField";
-import { AclAselActionTrigger } from "../../../enums/acl/aclAselActionTrigger";
 import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
@@ -73,7 +72,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
 
   const { holdAnnotations } = entry;
   const route = useMemo(() => {
-    const route = entry.currentRoute?.replace(/^\.+/, "") ?? entry.formattedRoute;
+    const route = entry.currentRoute.replace(/^\.+/, "") ?? entry.formattedRoute;
     return removeDestFromRouteString(route.slice(0), entry.destination);
   }, [entry]);
 
@@ -125,6 +124,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   };
 
   const handleHoldClick = (event: React.MouseEvent) => {
+    event.preventDefault();
     switch (event.button) {
       case 0:
         if (!entry.holdAnnotations) {
@@ -139,7 +139,12 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         }
         break;
       case 1:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, AclAselActionTrigger.TOGGLE_HOLD_INFO));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.HOLD_MENU));
+        break;
+      case 2:
+        if (entry?.holdAnnotations) {
+          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
+        }
         break;
       default:
         break;
@@ -229,6 +234,14 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
+  const handleRouteClicked = (event: React.MouseEvent) => {
+    if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
+      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.HOLD_MENU));
+    } else {
+      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU));
+    }
+  };
+
   const isSelected = (aircraftId: string, field: AclRowField): boolean => {
     return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
   };
@@ -297,9 +310,9 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
           </EdstTooltip>
-          <HdgSpdStarCol onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchpadHeading)}>
+          <SpecialBox onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchpadHeading)}>
             {entry.assignedHeading && entry.scratchpadHeading && "*"}
-          </HdgSpdStarCol>
+          </SpecialBox>
           <EdstTooltip title={Tooltips.aclHdg}>
             <HdgCol
               hover
@@ -323,22 +336,12 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               {entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchpadSpeed : entry.assignedSpeed}
             </SpdCol>
           </EdstTooltip>
-          <HdgSpdStarCol onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchpadSpeed)}>
+          <SpecialBox onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchpadSpeed)}>
             {entry.assignedSpeed && entry.scratchpadSpeed && "*"}
-          </HdgSpdStarCol>
+          </SpecialBox>
           <SpecialBox disabled />
           {anyHolding && (
-            <SpecialBox
-              color={edstFontBrown}
-              selected={isSelected(entry.aircraftId, AclRowField.HOLD)}
-              onMouseDown={handleHoldClick}
-              onContextMenu={(event: React.MouseEvent) => {
-                event.preventDefault();
-                if (entry?.holdAnnotations) {
-                  dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
-                }
-              }}
-            >
+            <SpecialBox color={edstFontBrown} selected={isSelected(entry.aircraftId, AclRowField.HOLD)} onMouseDown={handleHoldClick}>
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}
@@ -348,20 +351,17 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             </RemarksBox>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclRoute}>
-            <RouteCol
-              hover
-              selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}
-              onMouseDown={(event: React.MouseEvent) =>
-                dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))
-              }
-            >
+            <RouteCol hover selected={isSelected(entry.aircraftId, AclRowField.ROUTE)} onMouseDown={handleRouteClicked}>
               <RouteSpan padding="0 2px">
                 {entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations &&
                   holdAnnotations &&
                   `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
                     `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
-                    `${holdAnnotations.legLength}` +
-                    `${holdAnnotations.legLengthInNm ? "NM" : "Minutes"} EFC ${formatUtcMinutes(holdAnnotations.efc)}`}
+                    `${holdAnnotations.legLength ?? "STD"}` +
+                    // eslint-disable-next-line no-nested-ternary
+                    `${holdAnnotations.legLength ? (holdAnnotations.legLengthInNm ? "NM" : "Minutes") : ""} EFC ${formatUtcMinutes(
+                      holdAnnotations.efc
+                    )}`}
                 {entry.aclRouteDisplay === AclRouteDisplayOption.remarks && <span>{entry.remarks}</span>}
                 {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
                 {!entry.aclRouteDisplay && (
