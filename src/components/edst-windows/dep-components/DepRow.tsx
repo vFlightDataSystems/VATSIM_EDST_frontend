@@ -64,7 +64,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   }, [entry.preferentialArrivalRoutes, entry.preferentialDepartureRoutes, entry.routeFixes, route]);
 
   const checkParReroutePending = () => {
-    const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
+    const currentFixNames = entry.routeFixes.map(fix => fix.name);
     const eligiblePar = entry.preferentialArrivalRoutes.filter(par => par.eligible);
     if (eligiblePar.length === 1) {
       const par = eligiblePar[0];
