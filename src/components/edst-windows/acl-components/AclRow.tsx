@@ -388,7 +388,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           <AclCol1 />
           <SpecialBox disabled />
           <InnerRow2 highlight={entry.aclHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
-            <FreeTextRow marginLeft={214}>
+            <FreeTextRow marginLeft={202}>
               <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value)} />
             </FreeTextRow>
           </InnerRow2>

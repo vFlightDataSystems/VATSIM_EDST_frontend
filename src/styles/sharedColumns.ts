@@ -88,7 +88,7 @@ export const CodeCol = styled(Col).attrs((props: ColProps) => ({
 export const AltCol = styled(Col)<{ headerCol?: boolean }>`
   display: flex;
   justify-content: left;
-  width: 9ch;
+  width: 7ch;
   margin-right: 8px;
 `;
 export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`

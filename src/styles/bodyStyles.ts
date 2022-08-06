@@ -43,6 +43,7 @@ export const InnerRow2 = styled(InnerRow)<{ minWidth: number }>`
 `;
 export const FreeTextRow = styled(BodyRowDiv)<{ marginLeft: number }>`
   margin-left: ${props => props.marginLeft}px;
+  padding: 0;
   width: 100%;
   display: flex;
   align-items: center;
@@ -50,7 +51,6 @@ export const FreeTextRow = styled(BodyRowDiv)<{ marginLeft: number }>`
   border: 1px solid transparent;
 
   input {
-    margin-left: 2px;
     width: 100%;
     background-color: transparent;
     font-size: ${defaultFontSize};
