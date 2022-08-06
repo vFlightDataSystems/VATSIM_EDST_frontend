@@ -14,6 +14,7 @@ export const CancelHoldMenu = () => {
 
   const onSubmit = () => {
     hubActions.cancelHold(entry.aircraftId).then();
+    dispatch(closeWindow(EdstWindow.CANCEL_HOLD_MENU));
   };
 
   const onCancel = () => {
