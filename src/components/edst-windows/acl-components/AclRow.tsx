@@ -252,7 +252,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     <BodyRowContainerDiv separator={index % 3 === 2} key={`acl-row-container-${entry.aircraftId}`} onContextMenu={event => event.preventDefault()}>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.aclNAndVciBtn}>
-          <RadioCol hoverGreen={entry.vciStatus === 1} onMouseDown={updateVci}>
+          <RadioCol hoverGreen={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
             {entry.vciStatus === -1 && "N"}
             {entry.vciStatus === 1 && <img src={VCI} alt="wifi-symbol" />}
           </RadioCol>

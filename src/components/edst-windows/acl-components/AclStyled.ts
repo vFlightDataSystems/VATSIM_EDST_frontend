@@ -22,7 +22,7 @@ export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean
       width: "10px",
       "pointer-events": "none"
     }};
-  ${props => props.keep && { "background-color": "#adadad" }};
+  ${props => props.keep && { "background-color": "#414141" }};
 `;
 export const CoralBox = styled(SpecialBox)`
   margin: 0 2px;

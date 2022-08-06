@@ -153,7 +153,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
     <BodyRowContainerDiv separator={index % 3 === 2} key={`dep-row-container-${entry.aircraftId}`} onContextMenu={event => event.preventDefault()}>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
-          <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus}>
+          <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
             {entry.depStatus === -1 && "N"}
             {entry.depStatus === 1 && COMPLETED_SYMBOL}
           </RadioCol>
