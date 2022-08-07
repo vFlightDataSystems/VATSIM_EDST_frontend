@@ -50,10 +50,11 @@ export const FloatingWindowHeaderDiv = styled.div`
   background-color: ${floatingWindowTitleBackgroundColor};
   justify-content: space-between;
   display: flex;
-  height: 20px;
+  height: auto;
 `;
 
 const FloatingWindowHeaderColDiv = styled.div`
+  height: 1.2em;
   display: inline-flex;
   justify-content: center;
   align-items: center;

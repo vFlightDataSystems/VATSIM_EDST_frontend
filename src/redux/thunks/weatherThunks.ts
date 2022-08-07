@@ -92,7 +92,8 @@ export const refreshSigmets = createAsyncThunk("weather/refreshSigmets", async (
     sigmetEntries.forEach(sigmetEntry => {
       const observationTime = sigmetEntry.text.match(/\d{6}/)?.[0];
       if (observationTime) {
-        sigmetEntry.text = sigmetEntry.text.slice(sigmetEntry.text.lastIndexOf(observationTime) + 2);
+        // eslint-disable-next-line prefer-destructuring
+        sigmetEntry.text = sigmetEntry.text.slice(sigmetEntry.text.lastIndexOf(observationTime) + 2).split(/\n\s*\n/)[0];
       }
     });
     thunkAPI.dispatch(addSigmets(sigmetEntries.reverse()));
