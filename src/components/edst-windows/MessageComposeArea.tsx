@@ -67,7 +67,7 @@ const MessageComposeInputAreaDiv = styled.div`
 `;
 
 const MessageComposeResponseAreaDiv = styled.div`
-  height: 4em;
+  height: 3em;
   line-height: 1;
   padding: 2px;
   display: flex;
