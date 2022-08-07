@@ -19,7 +19,7 @@ import { WindowPosition } from "../../types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../enums/edstWindow";
 
-enum giOptions {
+enum giOption {
   printAll = "PRINT ALL"
 }
 
@@ -100,8 +100,9 @@ export const GIWindow = () => {
               y: ref.current!.clientTop
             }}
             header="GI"
+            selectedOptions={[]}
             closeOptions={() => setShowOptions(false)}
-            options={Object.values(giOptions)}
+            options={Object.values(giOption)}
           />
         )}
       </GIDiv>
