@@ -49,7 +49,7 @@ const Edst = () => {
   const windows = useRootSelector(windowsSelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
-  const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLInputElement> | null>(null);
+  const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLTextAreaElement> | null>(null);
   const bodyRef = React.useRef<HTMLDivElement & any>(null);
 
   useInterval(() => {

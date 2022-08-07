@@ -38,8 +38,6 @@ import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
-  height: 84px;
-  width: 400px;
   background-color: #000000;
   border: 1px solid #adadad;
   font-family: ${defaultFontFamily};
@@ -48,11 +46,15 @@ const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
 const MessageComposeInputAreaDiv = styled.div`
   line-height: 1;
   width: 100%;
-  height: 40%;
+  height: auto;
   border-bottom: 1px solid #adadad;
 
-  input {
-    width: 98%;
+  textarea {
+    height: 2.2em;
+    resize: none;
+    white-space: initial;
+    overflow: hidden;
+    width: 45ch;
     font-family: ${defaultFontFamily};
     font-size: ${defaultFontSize};
     color: ${edstFontGrey};
@@ -65,7 +67,8 @@ const MessageComposeInputAreaDiv = styled.div`
 `;
 
 const MessageComposeResponseAreaDiv = styled.div`
-  line-height: 0.95;
+  height: 4em;
+  line-height: 1;
   padding: 2px;
   display: flex;
   flex-grow: 1;
@@ -73,7 +76,7 @@ const MessageComposeResponseAreaDiv = styled.div`
 `;
 
 type MessageComposeAreaProps = {
-  setMcaInputRef: (ref: React.RefObject<HTMLInputElement> | null) => void;
+  setMcaInputRef: (ref: React.RefObject<HTMLTextAreaElement> | null) => void;
 };
 
 const AcceptCheckmarkSpan = styled.span`
@@ -101,7 +104,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const aircraftTracks = useRootSelector(aircraftTracksSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const [mcaInputValue, setMcaInputValue] = useState(mcaCommandString);
   const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA);
@@ -202,7 +205,10 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
 
   const parseCommand = () => {
     // TODO: rename command variable
-    const [command, ...args] = mcaInputValue.split(/\s+/).map(s => s.toUpperCase());
+    const [command, ...args] = mcaInputValue
+      .trim()
+      .split(/\s+/)
+      .map(s => s.toUpperCase());
     // console.log(command, args)
     if (command.match(/\/\/\w+/)) {
       toggleVci(command.slice(2));
@@ -293,7 +299,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           break;
         default:
           // TODO: give better error msg
-          reject(mcaCommandString);
+          reject(mcaInputValue);
       }
     }
     setMcaInputValue("");
@@ -301,7 +307,11 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
 
   const handleInputChange = (event: React.ChangeEvent<any>) => {
     event.preventDefault();
-    setMcaInputValue(event.target.value);
+    if (event.target.value.match(/\n$/)) {
+      setMcaInputValue(event.target.value.trim());
+    } else {
+      setMcaInputValue(event.target.value);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
@@ -321,7 +331,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         break;
       case "Escape":
         setMcaInputValue("");
-        setMcaCommandString("");
+        dispatch(setMcaResponse(""));
         break;
       default:
         break;
@@ -345,7 +355,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
         <MessageComposeInputAreaDiv>
-          <input
+          <textarea
             ref={inputRef}
             tabIndex={document.activeElement === inputRef.current ? -1 : undefined}
             value={mcaInputValue}
