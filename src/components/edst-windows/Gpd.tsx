@@ -5,7 +5,6 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { GpdHeader } from "./gpd-components/GpdHeader";
 import { GpdBody } from "./gpd-components/GpdBody";
-import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "../../styles/colors";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -13,20 +12,7 @@ import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
 import { EdstWindow } from "../../enums/edstWindow";
 
-const GpdDiv = styled(ResizableFloatingWindowDiv)`
-  white-space: nowrap;
-  display: flex;
-  flex-flow: column;
-  overflow: hidden;
-  margin: 2px;
-  flex-grow: 1;
-  border: 3px solid ${edstWindowBorderColor};
-  outline: 1px solid ${edstWindowOutlineColor};
-  color: ${edstFontGrey};
-  background-color: #000000;
-  min-width: 600px;
-  min-height: 200px;
-`;
+const GpdDiv = styled(ResizableFloatingWindowDiv)``;
 
 export const Gpd = () => {
   const ref = useRef<HTMLDivElement>(null);

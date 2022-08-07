@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { DraggableDiv, NoSelectDiv } from "./styles";
 import { WindowPosition } from "../types/windowPosition";
+import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
@@ -18,6 +19,18 @@ export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | n
 `;
 
 export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<{ width?: number; height?: number }>`
+  display: flex;
+  white-space: nowrap;
+  flex-flow: column;
+  overflow: hidden;
+  margin: 2px;
+  flex-grow: 1;
+  border: 3px solid ${edstWindowBorderColor};
+  outline: 1px solid ${edstWindowOutlineColor};
+  color: ${edstFontGrey};
+  background-color: #000000;
+  min-width: 600px;
+  min-height: 200px;
   resize: ${props => (!props.fullscreen ? "both" : "none")};
   width: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
   height: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
