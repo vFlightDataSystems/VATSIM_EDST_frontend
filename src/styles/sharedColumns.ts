@@ -134,7 +134,7 @@ export const RouteDepAirportSpan = styled(RouteSpan)<{ amendmentPending?: boolea
   ${props =>
     props.amendmentPending && {
       color: props.selected ? "#000000" : edstFontBlue,
-      "background-color": props.selected ? edstFontBlue : "#000000"
+      "background-color": props.selected ? edstFontBlue : "#transparent"
     }}
   }
 `;
