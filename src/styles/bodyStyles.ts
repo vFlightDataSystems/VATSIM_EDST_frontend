@@ -28,7 +28,7 @@ export const BodyRowDiv = styled.div<{ pendingRemoval?: boolean; separator?: boo
 export const InnerRow = styled.div<{ highlight?: boolean }>`
   display: flex;
   align-items: center;
-  min-height: 20px;
+  min-height: 1em;
   border-bottom: 1px solid transparent;
   ${props =>
     props.highlight && {

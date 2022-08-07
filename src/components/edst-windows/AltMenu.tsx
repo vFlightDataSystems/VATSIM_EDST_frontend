@@ -7,7 +7,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../styles/styles";
+import { defaultInputFontSize, NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
 import { Plan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
@@ -18,9 +18,9 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 
-type AltMenuDivProps = { width?: number; pos: WindowPosition };
+type AltMenuDivProps = { width?: string; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
-  width: `${props.width ?? 100}px`,
+  width: props.width ?? "100px",
   left: `${props.pos.x}px`,
   top: `${props.pos.y}px`
 }))<AltMenuDivProps>`
@@ -37,9 +37,9 @@ const AltMenuHeaderDiv = styled.div`
   display: flex;
   height: 20px;
 `;
-type AltMenuHeaderColProps = { flexGrow?: number; width?: number };
+type AltMenuHeaderColProps = { flexGrow?: number; width?: string };
 const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
-  width: props.width ? `${props.width}px` : "auto",
+  width: props.width ?? "auto",
   flexGrow: props.flexGrow ?? 0
 }))<AltMenuHeaderColProps>`
   display: flex;
@@ -62,6 +62,7 @@ const AltMenuSelectContainer = styled.div`
 `;
 
 const AltMenuRow = styled.div<{ bgBlack?: boolean; color?: string; hover?: boolean; selected?: boolean; disabled?: boolean }>`
+  min-height: 1.1em;
   display: flex;
   flex-grow: 1;
   justify-content: center;
@@ -85,7 +86,7 @@ const AltMenuRow = styled.div<{ bgBlack?: boolean; color?: string; hover?: boole
       "background-color": "#AD6C6C"
     }};
   input {
-    font-size: 16px;
+    font-size: ${defaultInputFontSize};
     outline: none;
     display: flex;
     overflow: hidden;
@@ -214,10 +215,10 @@ export const AltMenu = () => {
   return (
     pos &&
     asel && (
-      <AltMenuDiv ref={ref} width={manualInput !== null ? 160 : 100} pos={pos} id="alt-menu">
+      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "100px"} pos={pos} id="alt-menu">
         <AltMenuHeaderDiv>
           <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
-          <AltMenuHeaderCol width={20} onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
+          <AltMenuHeaderCol width="1.4ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
             X
           </AltMenuHeaderCol>
         </AltMenuHeaderDiv>

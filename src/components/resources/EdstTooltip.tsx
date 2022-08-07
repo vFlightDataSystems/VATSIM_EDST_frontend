@@ -24,6 +24,7 @@ const TooltipContent = ({ content }: { content: string }) => {
 
 const TooltipBody = styled.div`
   all: unset;
+  font-size: inherit;
 `;
 
 type EdstTooltipProps = {

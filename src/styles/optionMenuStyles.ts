@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { DraggableDiv } from "./styles";
+import { defaultInputFontSize, DraggableDiv } from "./styles";
 import { edstFontGrey } from "./colors";
 import { WindowPosition } from "../types/windowPosition";
 
@@ -145,8 +145,8 @@ export const OptionsBodyCol = styled.div<{
   display: flex;
   flex-grow: 1;
   flex-flow: row;
-  font-size: 16px;
-  min-height: 20px;
+  font-size: inherit;
+  min-height: 1.2em;
   justify-content: ${props => props.justifyContent ?? "flex-start"};
   align-items: center;
   vertical-align: center;
@@ -188,7 +188,7 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
 `;
 export const EdstInput = styled.input<{ width?: number }>`
   width: ${props => (props.width ? `${props.width}px` : "calc(100% - 7px)")};
-  font-size: 16px;
+  font-size: ${defaultInputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
@@ -207,7 +207,7 @@ export const EdstInput = styled.input<{ width?: number }>`
 `;
 export const EdstTextArea = styled.textarea`
   width: calc(100% - 7px);
-  font-size: 16px;
+  font-size: ${defaultInputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;

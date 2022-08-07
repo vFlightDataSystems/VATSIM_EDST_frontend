@@ -41,7 +41,6 @@ const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
 
 type ColButtonProps = {
   width?: number;
-  height?: number;
   color?: string;
   open?: boolean;
   fontWeight?: string;
@@ -51,7 +50,6 @@ type ColButtonProps = {
 
 const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   width: `${props.width ?? 70}px`,
-  height: `${props.height ?? 30}px`,
   backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
   color: props.color ?? edstFontGrey,
   fontWeight: props.fontWeight ?? "bolder",
@@ -62,7 +60,7 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   line-height: 13px;
   font-size: 13px;
   width: ${props => props.width};
-  height: ${props => props.height};
+  height: 2.3em;
   margin: 0 1px;
   border: ${props => props.border};
   background-color: ${props => props.backgroundColor};

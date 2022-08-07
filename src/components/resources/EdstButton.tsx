@@ -3,15 +3,14 @@ import styled from "styled-components";
 import { EdstTooltip } from "./EdstTooltip";
 import { edstFontGrey } from "../../styles/colors";
 
-type EdstOuterButtonProps = { width?: number; height?: number; margin?: string; disabled?: boolean };
+type EdstOuterButtonProps = { width?: string; height?: string; margin?: string; disabled?: boolean };
 const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
-  width: props.width ? `${props.width}px` : "auto",
-  height: props.height ? `${props.height}px` : "auto",
+  width: props.width ?? "auto",
+  height: props.height ?? "auto",
   margin: props.margin ?? "initial"
 }))<EdstOuterButtonProps>`
   display: inline-flex;
   border: 1px solid #000000;
-  font-size: 16px;
 
   width: ${props => props.width};
   height: ${props => props.height};
@@ -25,19 +24,21 @@ const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
 `;
 
 const EdstOuterHeaderButton = styled(EdstOuterButton)`
-  font-size: 17px;
+  font-size: inherit;
   margin-left: 6px;
   margin-right: 6px;
   margin-bottom: 1px;
 `;
 
-type EdstInnerButtonProps = { selected?: boolean; flexGrow?: number; width?: number; height?: number; padding?: string; disabled?: boolean };
+type EdstInnerButtonProps = { selected?: boolean; flexGrow?: number; width?: string; height?: string; padding?: string; disabled?: boolean };
 const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
-  width: props.width ? `${props.width}px` : "auto",
-  height: props.height ? `${props.height}px` : "auto",
+  width: props.width ?? "auto",
+  height: props.height ?? "auto",
   padding: props.padding ?? "0 4px",
   flexGrow: props.flexGrow ?? 1
 }))<EdstInnerButtonProps>`
+  min-height: 1.2em;
+  font-size: inherit;
   display: flex;
   flex-grow: ${props => props.flexGrow};
   justify-content: center;
@@ -60,8 +61,8 @@ const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
 type EdstButtonProps = {
   disabled?: boolean;
   selected?: boolean;
-  width?: number;
-  height?: number;
+  width?: string;
+  height?: string;
   margin?: string;
   padding?: string;
   content?: string;
@@ -88,10 +89,10 @@ export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<Edst
     </EdstTooltip>
   );
 };
-export const EdstButton12x12 = (props: EdstButtonProps) => <EdstButton width={12} height={12} {...props} />;
-export const EdstButton20x20 = (props: EdstButtonProps) => <EdstButton width={20} height={20} {...props} />;
+export const EdstButton12x12 = (props: EdstButtonProps) => <EdstButton width="12px" height="12px" {...props} />;
+export const EdstButton20x20 = (props: EdstButtonProps) => <EdstButton width="20px" height="20px" {...props} />;
 export const EdstRouteButton12x12 = (props: EdstButtonProps) => <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props} />;
-export const EdstTemplateButton85 = (props: EdstButtonProps) => <EdstButton width={85} margin="0 4px" {...props} />;
+export const EdstTemplateButton85 = (props: EdstButtonProps) => <EdstButton width="85px" margin="0 4px" {...props} />;
 
 export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
   return (
@@ -123,6 +124,6 @@ const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButt
     </EdstOuterButton>
   </EdstTooltip>
 );
-export const HoldDirButton16 = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width={16} {...props} />;
-export const HoldDirButton20 = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width={20} {...props} />;
-export const HoldDirButton50 = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width={50} {...props} />;
+export const HoldDirButton2ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="2ch" {...props} />;
+export const HoldDirButton22ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="2.2ch" {...props} />;
+export const HoldDirButton6ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="6ch" {...props} />;

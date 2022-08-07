@@ -87,7 +87,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
         <EdstWindowHeaderButton disabled onMouseDown={handleRangeClick} content="Range" />
-        <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width={84} />
+        <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
         <EdstWindowHeaderButton
           onMouseDown={(e: React.MouseEvent) => {
             dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU));

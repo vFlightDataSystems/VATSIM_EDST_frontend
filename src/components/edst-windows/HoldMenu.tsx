@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 import { computeCrossingTimes, formatUtcMinutes } from "../../lib";
-import { EdstButton, HoldDirButton16, HoldDirButton20, HoldDirButton50 } from "../resources/EdstButton";
+import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch } from "../resources/EdstButton";
 import { EdstTooltip } from "../resources/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
@@ -220,63 +220,71 @@ export const HoldMenu = () => {
           </Row1>
           <Row1>
             <Col3>
-              <HoldDirButton16
+              <HoldDirButton2ch
                 content="NW"
                 selected={direction === CompassDirection.NORTH_WEST}
                 onMouseDown={() => setDirection(CompassDirection.NORTH_WEST)}
               />
-              <HoldDirButton16 content="N" selected={direction === CompassDirection.NORTH} onMouseDown={() => setDirection(CompassDirection.NORTH)} />
-              <HoldDirButton16
+              <HoldDirButton2ch
+                content="N"
+                selected={direction === CompassDirection.NORTH}
+                onMouseDown={() => setDirection(CompassDirection.NORTH)}
+              />
+              <HoldDirButton2ch
                 content="NE"
                 selected={direction === CompassDirection.NORTH_EAST}
                 onMouseDown={() => setDirection(CompassDirection.NORTH_EAST)}
               />
             </Col3>
             <Col3>
-              <HoldDirButton20 content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
-              <HoldDirButton20 content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
+              <HoldDirButton22ch content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
+              <HoldDirButton22ch content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
             </Col3>
             <Col3>
-              <HoldDirButton50 content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
-              <HoldDirButton50 content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
-            </Col3>
-          </Row1>
-          <Row1>
-            <Col3>
-              <HoldDirButton16 content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
-              <HoldDirButton16 disabled />
-              <HoldDirButton16 content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
-            </Col3>
-            <Col3>
-              <HoldDirButton20 disabled />
-              <HoldDirButton20 disabled />
-            </Col3>
-            <Col3>
-              <HoldDirButton50 content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
-              <HoldDirButton50 content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
+              <HoldDirButton6ch content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
+              <HoldDirButton6ch content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
             </Col3>
           </Row1>
           <Row1>
             <Col3>
-              <HoldDirButton16
+              <HoldDirButton2ch content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
+              <HoldDirButton2ch disabled />
+              <HoldDirButton2ch content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
+            </Col3>
+            <Col3>
+              <HoldDirButton22ch disabled />
+              <HoldDirButton22ch disabled />
+            </Col3>
+            <Col3>
+              <HoldDirButton6ch content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
+              <HoldDirButton6ch content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
+            </Col3>
+          </Row1>
+          <Row1>
+            <Col3>
+              <HoldDirButton2ch
                 content="SW"
                 selected={direction === CompassDirection.SOUTH_WEST}
                 onMouseDown={() => setDirection(CompassDirection.SOUTH_WEST)}
               />
-              <HoldDirButton16 content="S" selected={direction === CompassDirection.SOUTH} onMouseDown={() => setDirection(CompassDirection.SOUTH)} />
-              <HoldDirButton16
+              <HoldDirButton2ch
+                content="S"
+                selected={direction === CompassDirection.SOUTH}
+                onMouseDown={() => setDirection(CompassDirection.SOUTH)}
+              />
+              <HoldDirButton2ch
                 content="SE"
                 selected={direction === CompassDirection.SOUTH_EAST}
                 onMouseDown={() => setDirection(CompassDirection.SOUTH_EAST)}
               />
             </Col3>
             <Col3>
-              <HoldDirButton20 disabled />
-              <HoldDirButton20 disabled />
+              <HoldDirButton22ch disabled />
+              <HoldDirButton22ch disabled />
             </Col3>
             <Col3>
-              <HoldDirButton50 content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
-              <HoldDirButton50 content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
+              <HoldDirButton6ch content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
+              <HoldDirButton6ch content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
             </Col3>
           </Row1>
           <Row2 bottomBorder>
@@ -306,8 +314,8 @@ export const HoldMenu = () => {
                   // onChange={(e) => setEfc(e.target.value)}
                 />
               </EfcInputContainer>
-              <EdstButton content="-" margin="0 0 0 10px" width={24} onMouseDown={() => setEfc(efc - 1)} />
-              <EdstButton content="+" margin="0 0 0 4px" width={24} onMouseDown={() => setEfc(efc + 1)} />
+              <EdstButton content="-" margin="0 0 0 10px" width="24px" onMouseDown={() => setEfc(efc - 1)} />
+              <EdstButton content="+" margin="0 0 0 4px" width="24px" onMouseDown={() => setEfc(efc + 1)} />
             </Col7>
           </OptionsBodyRow>
           <Row2 bottomBorder>

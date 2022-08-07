@@ -75,14 +75,14 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
             content="ELIGIBLE"
             selected={eligibleOnly}
             margin="0 6px"
-            width={85}
+            width="85px"
             onMouseDown={() => setEligibleOnly(true)}
             title={Tooltips.routeMenuPreferredEligible}
           />
           <EdstButton
             content="ALL"
             selected={!eligibleOnly}
-            width={75}
+            width="75px"
             onMouseDown={() => setEligibleOnly(false)}
             title={Tooltips.routeMenuPreferredAll}
           />

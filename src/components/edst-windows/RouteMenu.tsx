@@ -27,6 +27,7 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
+import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -50,7 +51,7 @@ const InputContainer = styled.div`
 `;
 const Input = styled.input`
   //cursor: default;
-  font-size: 16px;
+  font-size: ${defaultInputFontSize};
   outline: none;
   flex: 1;
   width: 100%;
@@ -67,7 +68,7 @@ const PposDiv = styled.div`
   border-right: none;
   padding: 0 2px;
   width: 120px;
-  font-size: 16px;
+  font-size: ${defaultFontSize};
   color: #575757;
 `;
 const ButtonCol = styled(OptionsBodyCol)`
