@@ -37,7 +37,6 @@ const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
   padding: props.padding ?? "0 4px",
   flexGrow: props.flexGrow ?? 1
 }))<EdstInnerButtonProps>`
-  min-height: 1.2em;
   font-size: inherit;
   display: flex;
   flex-grow: ${props => props.flexGrow};
