@@ -89,13 +89,6 @@ export const toggleAltimeterThunk = createAsyncThunk("weather/toggleAltimeter", 
 export const refreshSigmets = createAsyncThunk("weather/refreshSigmets", async (_args, thunkAPI) => {
   // const sectors = (thunkAPI.getState() as RootState).sectorData.sectors;
   await fetchSigmets().then(sigmetEntries => {
-    sigmetEntries.forEach(sigmetEntry => {
-      const observationTime = sigmetEntry.text.match(/\d{6}/)?.[0];
-      if (observationTime) {
-        // eslint-disable-next-line prefer-destructuring
-        sigmetEntry.text = sigmetEntry.text.slice(sigmetEntry.text.lastIndexOf(observationTime) + 2).split(/\n\s*\n/)[0];
-      }
-    });
     thunkAPI.dispatch(addSigmets(sigmetEntries.reverse()));
   });
 });

@@ -41,6 +41,7 @@ import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
 import { EdstWindow } from "./enums/edstWindow";
 import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
+import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
 
 const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 
@@ -120,6 +121,7 @@ const Edst = () => {
         {windows[EdstWindow.ALTIMETER].open && <AltimeterWindow />}
         {windows[EdstWindow.METAR].open && <MetarWindow />}
         {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
+        {windows[EdstWindow.GI].open && <GIWindow />}
         {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea setMcaInputRef={setMcaInputRef} />}
         {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
       </EdstBodyDiv>

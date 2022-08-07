@@ -90,7 +90,6 @@ export enum edstHeaderButton {
 
 export const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.not,
-  edstHeaderButton.gi,
   edstHeaderButton.ua,
   edstHeaderButton.keep,
   edstHeaderButton.adsb,

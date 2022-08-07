@@ -8,6 +8,7 @@ type WeatherState = {
   altimeterMap: Record<AirportCode, AltimeterEntry>;
   metarMap: Record<AirportCode, MetarEntry>;
   sigmetMap: Record<string, SigmetEntry>;
+  airmetMap: Record<string, AirmetEntry>;
   viewSuppressedSigmet: boolean;
 };
 
@@ -37,7 +38,9 @@ type SigmetEntry = ApiAirSigmet & {
   polygons: Feature<Polygon | MultiPolygon>;
 };
 
-const initialState: WeatherState = { altimeterMap: {}, metarMap: {}, sigmetMap: {}, viewSuppressedSigmet: true };
+type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Polygon | MultiPolygon> };
+
+const initialState: WeatherState = { altimeterMap: {}, metarMap: {}, sigmetMap: {}, airmetMap: {}, viewSuppressedSigmet: true };
 
 const weatherSlice = createSlice({
   name: "weather",
@@ -57,9 +60,20 @@ const weatherSlice = createSlice({
     },
     addSigmets(state, action: PayloadAction<ApiAirSigmet[]>) {
       action.payload.forEach(s => {
-        if (!Object.keys(state.sigmetMap).includes(s.text) && /\sSIG\w?\s/.test(s.text)) {
-          const polygons = lineToPolygon(lineString(s.area));
-          state.sigmetMap[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
+        const polygons = lineToPolygon(lineString(s.area));
+        const observationTime = s.text.match(/\d{6}/)?.[0];
+        if (observationTime) {
+          // eslint-disable-next-line prefer-destructuring
+          s.text = s.text.slice(s.text.lastIndexOf(observationTime) + 2).split(/\n\s*\n/)[0];
+          if (/\sSIG\w?\s/.test(s.text)) {
+            state.sigmetMap[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
+          } else {
+            s.text = `${s.text
+              .split("\n")
+              .slice(0, 2)
+              .join("")} AVAIL FLIGHT SERVICE FREQS`;
+            state.airmetMap[s.text] = { acknowledged: false, polygons, ...s };
+          }
         }
       });
     },
@@ -94,4 +108,5 @@ export default weatherSlice.reducer;
 export const altimeterSelector = (state: RootState) => state.weather.altimeterMap;
 export const metarSelector = (state: RootState) => state.weather.metarMap;
 export const sigmetSelector = (state: RootState) => state.weather.sigmetMap;
+export const airmetSelector = (state: RootState) => state.weather.airmetMap;
 export const viewSuppressedSigmetSelector = (state: RootState) => state.weather.viewSuppressedSigmet;
