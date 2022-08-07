@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { edstFontGreen, edstFontYellow } from "../../../styles/colors";
+import { edstFontGreen, edstFontGrey, edstFontYellow } from "../../../styles/colors";
 import { Col, ColProps, SpecialBox } from "../../../styles/sharedColumns";
 
 export const AclCol1 = styled(Col)<{ border?: boolean }>`
@@ -7,13 +7,18 @@ export const AclCol1 = styled(Col)<{ border?: boolean }>`
   width: 14px;
   ${props =>
     props.border && {
-      outline: "1px solid #ADADAD"
+      border: "1px solid #ADADAD"
     }};
 `;
-export const RadioCol = styled(AclCol1)<{ hoverGreen?: boolean; header?: boolean; keep?: boolean }>`
+type RadioColProps = { green?: boolean; header?: boolean; keep?: boolean };
+export const RadioCol = styled(AclCol1).attrs((props: RadioColProps) => ({
+  color: props.green ? edstFontGreen : edstFontGrey,
+  hoverBorderColor: props.green ? edstFontGreen : "#F0F0F0"
+}))<RadioColProps>`
+  color: ${props => props.color};
   width: 10px;
   &:hover {
-    border: 1px solid ${props => (props.hoverGreen ? edstFontGreen : "#F0F0F0")};
+    border: 1px solid ${props => props.hoverBorderColor};
   }
   ${props =>
     props.header && {
