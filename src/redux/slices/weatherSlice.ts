@@ -68,11 +68,13 @@ const weatherSlice = createSlice({
           if (/\sSIG\w?\s/.test(s.text)) {
             state.sigmetMap[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
           } else {
-            s.text = `${s.text
-              .split("\n")
-              .slice(0, 2)
-              .join("")} AVAIL FLIGHT SERVICE FREQS`;
-            state.airmetMap[s.text] = { acknowledged: false, polygons, ...s };
+            const splitText = s.text.split("\n");
+            const regions = splitText[2].split("...")[1];
+            const validUntil = splitText[1].match(/VALID UNTIL \d+/)?.[0];
+            if (validUntil) {
+              s.text = `GI ${splitText[0]} ${splitText[1].replace(validUntil, "").trim()} WITHIN ${regions} ${validUntil}`;
+              state.airmetMap[s.text] = { acknowledged: false, polygons, ...s };
+            }
           }
         }
       });
