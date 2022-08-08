@@ -110,7 +110,7 @@ export const TemplateMenu = () => {
 
   const route =
     (asel?.window === EdstWindow.DEP
-      ? entry?.route?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")
+      ? entry?.formattedRoute?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")
       : entry?.currentRoute.replace(/^\.*/, "")?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")) ?? "";
 
   const [aidInput, setAidInput] = useState(entry?.aircraftId ?? "");
