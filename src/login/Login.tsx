@@ -1,13 +1,11 @@
 // noinspection CssUnknownTarget
-
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { login, vatsimTokenSelector } from "../redux/slices/authSlice";
-import { useRootSelector } from "../redux/hooks";
+import { useRootDispatch, useRootSelector } from "../redux/hooks";
 
 const LoginPanel = styled.div`
   height: 100vh;
@@ -56,7 +54,7 @@ const Button = styled.button`
 `;
 
 const Login = () => {
-  const dispatch = useDispatch();
+  const dispatch = useRootDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
