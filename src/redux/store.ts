@@ -1,4 +1,4 @@
-import { configureStore, ThunkAction } from "@reduxjs/toolkit";
+import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import aclReducer from "./slices/aclSlice";
 import depReducer from "./slices/depSlice";
 import gpdReducer from "./slices/gpdSlice";
@@ -30,4 +30,4 @@ export default store;
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 export type RootDispatch = typeof store.dispatch;
-export type RootThunkAction = ThunkAction<void, RootState, any, any>;
+export type RootThunkAction<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
