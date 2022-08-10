@@ -30,7 +30,7 @@ import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
 
-const SPA_INDICATOR = "\u02c6";
+const SPA_INDICATOR = "^";
 
 type AclRowProps = {
   entry: EdstEntry;

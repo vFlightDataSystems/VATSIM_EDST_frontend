@@ -25,7 +25,7 @@ import {
 import { EdstWindow } from "../../../enums/edstWindow";
 import { DepRowField } from "../../../enums/dep/depRowField";
 
-const SPA_INDICATOR = "\u2303";
+const SPA_INDICATOR = "^";
 const COMPLETED_SYMBOL = "✓";
 
 type DepRowProps = {
