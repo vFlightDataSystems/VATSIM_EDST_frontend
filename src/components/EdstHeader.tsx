@@ -52,7 +52,7 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   width: `${props.width ?? 70}px`,
   backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
   color: props.color ?? edstFontGrey,
-  fontWeight: props.fontWeight ?? "bolder",
+  fontWeight: props.fontWeight ?? "normal",
   border: `1px solid ${props.borderColor ?? "#adadad"}`
 }))<ColButtonProps>`
   display: flex;
