@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import { useHub } from "./useHub";
 import { ApiLocation } from "../types/apiTypes/apiLocation";
-import { ApiFlightplan } from "../types/apiTypes/apiFlightplan";
 import { HoldAnnotations } from "../enums/hold/holdAnnotations";
 import { useRootDispatch } from "../redux/hooks";
 import { setMcaAcceptMessage } from "../redux/slices/appSlice";
+import { CreateOrAmendFlightplanDto } from "../types/apiTypes/CreateOrAmendFlightplanDto";
 
 export const useHubActions = () => {
   const dispatch = useRootDispatch();
@@ -16,7 +16,7 @@ export const useHubActions = () => {
       return null;
     }) ?? null;
 
-  const amendFlightplan = async (fp: ApiFlightplan) => {
+  const amendFlightplan = async (fp: CreateOrAmendFlightplanDto) => {
     hubConnection?.invoke<void>("amendFlightPlan", fp).catch(e => {
       console.log("error amending flightplan:", e);
     });

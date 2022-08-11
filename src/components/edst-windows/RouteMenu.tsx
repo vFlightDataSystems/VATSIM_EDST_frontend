@@ -197,7 +197,7 @@ export const RouteMenu = () => {
       } else {
         newRoute = `${frd}..${newRoute.replace(/^\.+/g, "")}`;
       }
-      const amendedFlightplan: ApiFlightplan = {
+      const amendedFlightplan = {
         ...entry,
         route: newRoute
           .toUpperCase()

@@ -11,7 +11,6 @@ import { defaultInputFontSize, NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
 import { Plan } from "../../redux/slices/planSlice";
 import { formatAltitude } from "../../lib";
-import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
 import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
@@ -172,7 +171,7 @@ export const AltMenu = () => {
   useCenterCursor(ref, [asel]);
 
   const handleAltClick = (alt: string | number) => {
-    const amendedFlightplan: ApiFlightplan = { ...entry, altitude: String(Number(alt) * 100) };
+    const amendedFlightplan = { ...entry, altitude: String(Number(alt) * 100) };
     if (selected === "amend") {
       amendFlightplan(amendedFlightplan).then();
     } else {

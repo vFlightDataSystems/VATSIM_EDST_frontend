@@ -241,7 +241,6 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
                 case "G":
                   dispatch(openWindowThunk(EdstWindow.GPD));
                   break;
-
                 case "R":
                   FULLSCREEN_WINDOWS.forEach(window => dispatch(setIsFullscreen({ window, value: true })));
                   dispatch(

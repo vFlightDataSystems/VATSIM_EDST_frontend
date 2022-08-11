@@ -49,7 +49,7 @@ type ColButtonProps = {
 };
 
 const ColButton = styled.button.attrs((props: ColButtonProps) => ({
-  width: `${props.width ?? 70}px`,
+  width: `${props.width ?? 66}px`,
   backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
   color: props.color ?? edstFontGrey,
   fontWeight: props.fontWeight ?? "normal",
