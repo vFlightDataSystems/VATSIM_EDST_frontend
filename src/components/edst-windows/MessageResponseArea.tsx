@@ -6,6 +6,7 @@ import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../enums/edstWindow";
+import { eramFontFamily } from "../../styles/styles";
 
 const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
   line-height: 1;
@@ -16,7 +17,7 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)`
   border: 1px solid #adadad;
   overflow-wrap: anywhere;
   white-space: pre-line;
-  font-family: EDST, serif;
+  font-family: ${eramFontFamily};
 `;
 
 export const MessageResponseArea = () => {

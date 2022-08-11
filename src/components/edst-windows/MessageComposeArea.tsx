@@ -24,7 +24,7 @@ import {
 import { toggleAltimeterThunk, toggleMetarThunk } from "../../redux/thunks/weatherThunks";
 import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
-import { defaultFontFamily, defaultFontSize } from "../../styles/styles";
+import { defaultFontSize, eramFontFamily } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
@@ -40,7 +40,7 @@ import { useHubActions } from "../../hooks/useHubActions";
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
   border: 1px solid #adadad;
-  font-family: ${defaultFontFamily};
+  font-family: ${eramFontFamily};
 `;
 
 const MessageComposeInputAreaDiv = styled.div`
@@ -55,7 +55,7 @@ const MessageComposeInputAreaDiv = styled.div`
     white-space: initial;
     overflow: hidden;
     width: 45ch;
-    font-family: ${defaultFontFamily};
+    font-family: ${eramFontFamily};
     font-size: ${defaultFontSize};
     color: ${edstFontGrey};
     outline: none;
@@ -261,12 +261,12 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
                 toggleHighlightEntry(args[1]);
                 acceptDposKeyBD();
               } else {
-                dispatch(setMcaRejectMessage(`REJECT\n${mcaCommandString}`));
+                dispatch(setMcaRejectMessage(`REJECT\n${mcaInputValue}`));
               }
               break;
             default:
               // TODO: give error msg
-              dispatch(setMcaRejectMessage(`REJECT\n${mcaCommandString}`));
+              dispatch(setMcaRejectMessage(`REJECT\n${mcaInputValue}`));
           }
           break; // end case UU
         case "QU": // cleared direct to fix: QU <fix> <fid>
@@ -280,14 +280,14 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         case "WR": // weather request: WR <station>
           dispatch(toggleMetarThunk(args));
           dispatch(openWindowThunk(EdstWindow.METAR));
-          accept(`WEATHER STAT REQ\n${mcaCommandString}`);
+          accept(`WEATHER STAT REQ\n${mcaInputValue}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
           if (args.length === 1) {
             flightplanReadout(args[0]);
-            accept(`READOUT\n${mcaCommandString}`);
+            accept(`READOUT\n${mcaInputValue}`);
           } else {
-            setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaCommandString}`);
+            setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaInputValue}`);
           }
           break; // end case FR
         case "SR":

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { edstFontGrey } from "../styles/colors";
+import { eramFontFamily } from "../styles/styles";
 
 const TimeStyle = styled.div`
+  font-family: ${eramFontFamily};
   display: inline-flex;
   justify-content: center;
   height: 30px;

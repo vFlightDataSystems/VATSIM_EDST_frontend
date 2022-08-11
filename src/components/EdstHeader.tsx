@@ -11,11 +11,13 @@ import { edstFontGrey } from "../styles/colors";
 import { sectorIdSelector } from "../redux/slices/sectorSlice";
 import { entriesSelector } from "../redux/slices/entrySlice";
 import { EdstWindow } from "../enums/edstWindow";
+import { eramFontFamily } from "../styles/styles";
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";
 
 const EdstHeaderDiv = styled.div`
+  font-family: ${eramFontFamily};
   width: 100vw;
   position: absolute;
 `;
