@@ -59,14 +59,7 @@ const Edst = () => {
     });
   }, 5000);
 
-  useEffect(() => {
-    const weatherUpdateIntervalId = setInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
-    return () => {
-      if (weatherUpdateIntervalId) {
-        clearInterval(weatherUpdateIntervalId);
-      }
-    };
-  }, []);
+  useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
 
   const handleKeyDown = (event: KeyboardEvent) => {
     // console.log(document.activeElement?.localName);
