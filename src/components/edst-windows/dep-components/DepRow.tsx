@@ -24,9 +24,7 @@ import {
 } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { DepRowField } from "../../../enums/dep/depRowField";
-
-const SPA_INDICATOR = "^";
-const COMPLETED_SYMBOL = "✓";
+import { COMPLETED_SYMBOL, SPA_INDICATOR } from "../../../constants";
 
 type DepRowProps = {
   entry: EdstEntry;

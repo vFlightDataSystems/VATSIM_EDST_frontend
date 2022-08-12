@@ -32,7 +32,7 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
     object-fit: contain;
   }
 
-  .wifi-symbol {
+  .vci-symbol {
     background-image: url(${VCI});
   }
 `;
@@ -118,7 +118,7 @@ export function AclTable() {
     <AclBodyStyleDiv>
       <BodyRowHeaderDiv key="acl-table-header">
         <RadioCol header>
-          <img src={VCI} alt="wifi-symbol" />
+          <img src={VCI} alt="vci-symbol" />
         </RadioCol>
         <AclCol1 color={edstFontRed}>R</AclCol1>
         <AclCol1 color={edstFontYellow}>Y</AclCol1>

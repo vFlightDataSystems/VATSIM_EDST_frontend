@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useEventListener, useInterval } from "usehooks-ts";
 import { EdstHeader } from "./components/EdstHeader";
@@ -42,8 +42,7 @@ import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircra
 import { EdstWindow } from "./enums/edstWindow";
 import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
 import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
-
-const WEATHER_REFRESH_RATE = 120000; // 2 minutes
+import { WEATHER_REFRESH_RATE } from "./constants";
 
 const Edst = () => {
   const dispatch = useRootDispatch();

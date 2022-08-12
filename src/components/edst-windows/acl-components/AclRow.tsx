@@ -29,8 +29,7 @@ import { AclRowField } from "../../../enums/acl/aclRowField";
 import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
-
-const SPA_INDICATOR = "^";
+import { SPA_INDICATOR } from "../../../constants";
 
 type AclRowProps = {
   entry: EdstEntry;
@@ -254,7 +253,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         <EdstTooltip title={Tooltips.aclNAndVciBtn}>
           <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
             {entry.vciStatus === -1 && "N"}
-            {entry.vciStatus === 1 && <img src={VCI} alt="wifi-symbol" />}
+            {entry.vciStatus === 1 && <img src={VCI} alt="vci-symbol" />}
           </RadioCol>
         </EdstTooltip>
         <AclCol1 border />
