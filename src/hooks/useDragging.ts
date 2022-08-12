@@ -13,7 +13,9 @@ const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.MESSAGE_RESPONSE_AREA,
   EdstWindow.ALTIMETER,
   EdstWindow.METAR,
-  EdstWindow.SIGMETS
+  EdstWindow.SIGMETS,
+  EdstWindow.NOTAMS,
+  EdstWindow.GI
 ];
 
 /**
