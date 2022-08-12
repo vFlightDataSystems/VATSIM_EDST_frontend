@@ -91,7 +91,7 @@ const RejectCrossSpan = styled.span`
   color: #ad0000;
 
   ::before {
-    content: "X"; // apparently this is literally just the character X (xray)
+    content: "\u{2715}"; // apparently this is literally just the character X (xray)
   }
 `;
 
