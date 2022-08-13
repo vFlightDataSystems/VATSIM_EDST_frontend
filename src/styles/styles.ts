@@ -3,8 +3,8 @@ import styled from "styled-components";
 // export const edstFontFamily = "Consolas, MyConsolas";
 export const edstFontFamily = "EDST, Consolas, MyConsolas";
 export const eramFontFamily = "ERAM";
-export const defaultFontSize = "16px";
-export const defaultInputFontSize = "16px";
+export const defaultFontSize = "17px";
+export const defaultInputFontSize = "17px";
 
 export const NoSelectDiv = styled.div`
   -webkit-touch-callout: none;
