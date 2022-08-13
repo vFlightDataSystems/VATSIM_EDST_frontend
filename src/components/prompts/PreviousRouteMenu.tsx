@@ -28,7 +28,7 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
     <EdstPrompt
       title="Previous Route Menu"
       windowId={EdstWindow.PREV_ROUTE_MENU}
-      width={380}
+      width="380px"
       submitText="Apply Previous Route"
       onSubmit={onSubmit}
       cancelText="Exit"

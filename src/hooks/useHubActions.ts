@@ -5,6 +5,7 @@ import { HoldAnnotations } from "../enums/hold/holdAnnotations";
 import { useRootDispatch } from "../redux/hooks";
 import { setMcaAcceptMessage } from "../redux/slices/appSlice";
 import { CreateOrAmendFlightplanDto } from "../types/apiTypes/CreateOrAmendFlightplanDto";
+import { AircraftId } from "../types/aircraftId";
 
 export const useHubActions = () => {
   const dispatch = useRootDispatch();
@@ -22,7 +23,7 @@ export const useHubActions = () => {
     });
   };
 
-  const setHoldAnnotations = async (aircraftId: string, annotations: HoldAnnotations) => {
+  const setHoldAnnotations = async (aircraftId: AircraftId, annotations: HoldAnnotations) => {
     hubConnection?.invoke("activateFlightplan", aircraftId).then(console.log);
     return hubConnection
       ?.invoke<void>("setHoldAnnotations", aircraftId, annotations)
@@ -37,11 +38,17 @@ export const useHubActions = () => {
       console.log(error);
     });
 
+  const sendUplinkMessage = async (aircraftId: AircraftId, message: string) =>
+    hubConnection?.invoke<void>("sendPrivateMessage", aircraftId, message).catch(error => {
+      console.log(error);
+    });
+
   return {
     generateFrd,
     amendFlightplan,
     setHoldAnnotations,
-    cancelHold
+    cancelHold,
+    sendUplinkMessage
   };
 };
 /* eslint-enable no-console */

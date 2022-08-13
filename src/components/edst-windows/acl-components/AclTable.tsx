@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { AclRow } from "./AclRow";
-import VCI from "../../../resources/images/VCI_v4.png";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -19,6 +18,7 @@ import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "
 import { EdstWindow } from "../../../enums/edstWindow";
 import { AclRowField } from "../../../enums/acl/aclRowField";
 import { SortOptions } from "../../../enums/sortOptions";
+import { VCI_SYMBOL } from "../../../constants";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -26,15 +26,6 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
   flex-flow: column;
   display: flex;
   color: ${edstFontGrey};
-
-  img {
-    width: 8px;
-    object-fit: contain;
-  }
-
-  .vci-symbol {
-    background-image: url(${VCI});
-  }
 `;
 
 export function AclTable() {
@@ -117,8 +108,8 @@ export function AclTable() {
   return (
     <AclBodyStyleDiv>
       <BodyRowHeaderDiv key="acl-table-header">
-        <RadioCol header>
-          <img src={VCI} alt="vci-symbol" />
+        <RadioCol header green>
+          {VCI_SYMBOL}
         </RadioCol>
         <AclCol1 color={edstFontRed}>R</AclCol1>
         <AclCol1 color={edstFontYellow}>Y</AclCol1>

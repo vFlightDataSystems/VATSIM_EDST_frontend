@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { defaultFontFamily, defaultFontSize, NoSelectDiv } from "./styles";
+import { edstFontFamily, defaultFontSize, NoSelectDiv, eramFontFamily } from "./styles";
 
 export const EdstDiv = styled(NoSelectDiv)`
   display: flex;
@@ -8,7 +8,7 @@ export const EdstDiv = styled(NoSelectDiv)`
   padding: 0;
   margin: 0;
   background-color: #000000;
-  font-family: ${defaultFontFamily};
+  font-family: ${eramFontFamily};
   font-size: ${defaultFontSize};
   //caret-color: transparent;
   //scroll-behavior: auto;
@@ -17,7 +17,7 @@ export const EdstDiv = styled(NoSelectDiv)`
   button,
   input,
   textarea {
-    font-family: ${defaultFontFamily};
+    font-family: ${edstFontFamily};
     text-transform: uppercase;
     //font-weight: bold;
     cursor: default;

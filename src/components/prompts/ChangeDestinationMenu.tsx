@@ -13,7 +13,7 @@ export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
     <EdstPrompt
       title="AM Change Destination Menu"
       windowId={EdstWindow.CHANGE_DEST_MENU}
-      width={250}
+      width="250px"
       submitText="YES"
       onSubmit={onSubmit}
       cancelText="NO"

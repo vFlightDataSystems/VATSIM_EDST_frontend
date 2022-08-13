@@ -88,6 +88,7 @@ export const CodeCol = styled(Col).attrs((props: ColProps) => ({
 export const AltCol = styled(Col)<{ headerCol?: boolean }>`
   display: flex;
   justify-content: left;
+  padding: 0 2px;
   width: 7ch;
   margin-right: 8px;
 `;

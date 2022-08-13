@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { edstFontGrey } from "../styles/colors";
-import { eramFontFamily } from "../styles/styles";
+import { eramFontFamily, NoSelectDiv } from "../styles/styles";
 
-const TimeStyle = styled.div`
+const TimeStyle = styled(NoSelectDiv)`
   font-family: ${eramFontFamily};
   display: inline-flex;
   justify-content: center;
   height: 30px;
   line-height: 28px;
-  width: 100px;
+  width: 90px;
   margin: 0 1px;
   color: ${edstFontGrey};
   font-size: 20px;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 `;
 
 export function Time() {

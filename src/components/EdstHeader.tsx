@@ -60,9 +60,9 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   display: flex;
   justify-content: center;
   line-height: 13px;
-  font-size: 13px;
+  font-size: 14px;
   width: ${props => props.width};
-  height: 2.3em;
+  height: 2.2em;
   margin: 0 1px;
   border: ${props => props.border};
   background-color: ${props => props.backgroundColor};

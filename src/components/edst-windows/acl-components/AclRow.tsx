@@ -1,6 +1,5 @@
 import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatAltitude, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
-import VCI from "../../../resources/images/VCI_v4.png";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -29,7 +28,7 @@ import { AclRowField } from "../../../enums/acl/aclRowField";
 import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
-import { SPA_INDICATOR } from "../../../constants";
+import { SPA_INDICATOR, VCI_SYMBOL } from "../../../constants";
 
 type AclRowProps = {
   entry: EdstEntry;
@@ -253,7 +252,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         <EdstTooltip title={Tooltips.aclNAndVciBtn}>
           <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
             {entry.vciStatus === -1 && "N"}
-            {entry.vciStatus === 1 && <img src={VCI} alt="vci-symbol" />}
+            {entry.vciStatus === 1 && VCI_SYMBOL}
           </RadioCol>
         </EdstTooltip>
         <AclCol1 border />

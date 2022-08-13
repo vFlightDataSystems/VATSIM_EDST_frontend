@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { defaultInputFontSize, DraggableDiv } from "./styles";
+import { defaultInputFontSize, DraggableDiv, edstFontFamily } from "./styles";
 import { edstFontGrey } from "./colors";
 import { WindowPosition } from "../types/windowPosition";
 
@@ -36,6 +36,7 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?:
     }}
 `;
 export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
+  font-family: ${edstFontFamily};
   z-index: ${props => 10000 + props.zIndex};
   overflow: hidden;
   position: fixed;

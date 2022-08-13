@@ -28,6 +28,8 @@ import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
+import { OPLUS_SYMBOL } from "../../constants";
+import { UplinkSymbol } from "../resources/UplinkSymbol";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -279,7 +281,7 @@ export const RouteMenu = () => {
               </EdstTooltip>
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              {entry.uplinkEligible && <EdstButton margin="2px 0 0 0" disabled content={`\u{1D925}`} />}
+              {entry.uplinkEligible && <UplinkSymbol />}
               <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)} title={Tooltips.routeMenuAmend} />
             </OptionsBodyCol>
           </RouteMenuRow>
@@ -324,7 +326,7 @@ export const RouteMenu = () => {
             <EdstTooltip title={Tooltips.routeMenuAppendOplus} onMouseDown={() => setAppend({ appendOplus: !appendOplus, appendStar: false })}>
               <ButtonCol hover>
                 <EdstRouteButton12x12 disabled selected={appendOplus} />
-                Append<span>&nbsp;{`\u2295`}</span>
+                Append<span>&nbsp;{OPLUS_SYMBOL}</span>
               </ButtonCol>
             </EdstTooltip>
           </RouteMenuRow>

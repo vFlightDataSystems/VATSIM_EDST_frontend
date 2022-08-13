@@ -60,7 +60,15 @@ const AltMenuSelectContainer = styled.div`
   border: 1px solid #adadad;
 `;
 
-const AltMenuRow = styled.div<{ bgBlack?: boolean; color?: string; hover?: boolean; selected?: boolean; disabled?: boolean }>`
+type AltMenuRowProps = {
+  bgBlack?: boolean;
+  color?: string;
+  hover?: boolean;
+  selected?: boolean;
+  disabled?: boolean;
+};
+
+const AltMenuRow = styled.div<AltMenuRowProps>`
   min-height: 1.1em;
   display: flex;
   flex-grow: 1;
@@ -117,9 +125,8 @@ const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
 `;
 
 const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; selected?: boolean }>`
+  padding: 0 2px;
   display: flex;
-  padding-left: 4px;
-  padding-right: 4px;
   justify-content: left;
   align-items: center;
   color: #adadad;
@@ -214,10 +221,10 @@ export const AltMenu = () => {
   return (
     pos &&
     asel && (
-      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "100px"} pos={pos} id="alt-menu">
+      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "110px"} pos={pos} id="alt-menu">
         <AltMenuHeaderDiv>
           <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
-          <AltMenuHeaderCol width="1.4ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
+          <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
             X
           </AltMenuHeaderCol>
         </AltMenuHeaderDiv>

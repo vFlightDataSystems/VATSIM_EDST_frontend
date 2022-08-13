@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { DraggableDiv, NoSelectDiv } from "./styles";
+import { DraggableDiv, edstFontFamily, eramFontFamily, NoSelectDiv } from "./styles";
 import { WindowPosition } from "../types/windowPosition";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
 export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | null; zIndex: number; fullscreen?: boolean }>`
+  font-family: ${eramFontFamily};
   z-index: ${props => 10000 + props.zIndex};
   position: ${props => (!props.fullscreen ? "fixed" : "absolute")};
   color: #adadad;
@@ -19,6 +20,7 @@ export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | n
 `;
 
 export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<{ width?: number; height?: number }>`
+  font-family: ${edstFontFamily};
   display: flex;
   white-space: nowrap;
   flex-flow: column;
@@ -65,8 +67,8 @@ const FloatingWindowHeaderColDiv = styled.div`
     border: 1px solid #ffffff;
   }
 `;
-export const FloatingWindowHeaderColDiv14 = styled(FloatingWindowHeaderColDiv)`
-  width: 14px;
+export const FloatingWindowHeaderColDiv16ch = styled(FloatingWindowHeaderColDiv)`
+  width: 1.6ch;
 `;
 export const FloatingWindowHeaderColDiv20 = styled(FloatingWindowHeaderColDiv)`
   width: 20px;

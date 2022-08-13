@@ -79,7 +79,7 @@ async function createEntryFromFlightplan(fp: ApiFlightplan, artcc: string): Prom
     scratchpadHeading: null,
     scratchpadSpeed: null,
     showFreeText: false,
-    uplinkEligible: false,
+    uplinkEligible: true,
     voiceType: ""
   };
 }

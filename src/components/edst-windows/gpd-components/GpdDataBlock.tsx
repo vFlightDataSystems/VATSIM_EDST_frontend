@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
-import { defaultFontFamily } from "../../../styles/styles";
+import { edstFontFamily } from "../../../styles/styles";
 import { formatAltitude } from "../../../lib";
 import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
@@ -24,7 +24,7 @@ const DataBlockDiv = styled.div<{ pos: WindowPosition; offset: { x: number; y: n
   })}
   width: auto;
   position: absolute;
-  font-family: ${defaultFontFamily};
+  font-family: ${edstFontFamily};
   font-size: 16px;
   line-height: 16px;
   color: #adadad;

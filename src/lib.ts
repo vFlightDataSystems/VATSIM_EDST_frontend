@@ -215,7 +215,7 @@ export function computeCrossingTimes(entry: EdstEntry, track: ApiAircraftTrack):
         lineData.push(fix.pos);
         newRouteFixes.push({
           ...fix,
-          minutesAtFix: utcMinutes + (60 * length(lineString(lineData), { units: "nauticalmiles" })) / track.groundSpeed
+          minutesAtFix: Math.floor(utcMinutes + (60 * length(lineString(lineData), { units: "nauticalmiles" })) / track.groundSpeed)
         });
       });
     }
@@ -306,7 +306,7 @@ export function getClearedToFixRouteFixes(
  * @param s
  */
 export function appendUpArrowToString(s: string): string {
-  return `${s}\u{2191}`;
+  return `${s}@`; // @ is uparrow in the font
 }
 
 /**
@@ -314,7 +314,7 @@ export function appendUpArrowToString(s: string): string {
  * @param s
  */
 export function appendDownArrowToString(s: string): string {
-  return `${s}\u{2193}`;
+  return `${s}#`; // # is downarrow in the font
 }
 
 /**

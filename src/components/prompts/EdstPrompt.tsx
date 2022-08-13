@@ -11,7 +11,7 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../enums/edstWindow";
 
 type PromptDivProps = {
-  width?: number;
+  width?: string;
 };
 const PromptDiv = styled(OptionsMenu).attrs((props: PromptDivProps) => ({
   width: props.width ?? "auto"
@@ -21,7 +21,7 @@ const PromptDiv = styled(OptionsMenu).attrs((props: PromptDivProps) => ({
 
 type EdstPromptProps = PropsWithChildren<{
   title: string;
-  width?: number;
+  width?: string;
   windowId: EdstWindow;
   submitText: string;
   onSubmit: () => void;

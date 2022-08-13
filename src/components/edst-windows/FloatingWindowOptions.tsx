@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
-import { FloatingWindowHeaderColDiv14, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
+import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
 import { NoSelectDiv } from "../../styles/styles";
 import { WindowPosition } from "../../types/windowPosition";
 
@@ -69,9 +69,9 @@ export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsPr
       {props.header && (
         <FloatingWindowHeaderDiv ref={headerRef}>
           <FloatingWindowHeaderColDivFlex>{props.header}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv14 onMouseDown={props.closeOptions} ref={xRef}>
+          <FloatingWindowHeaderColDiv16ch onMouseDown={props.closeOptions} ref={xRef}>
             X
-          </FloatingWindowHeaderColDiv14>
+          </FloatingWindowHeaderColDiv16ch>
         </FloatingWindowHeaderDiv>
       )}
       {props.options?.map(option => (

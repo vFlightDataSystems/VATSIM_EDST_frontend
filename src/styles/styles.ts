@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-// export const defaultFontFamily = "Consolas, MyConsolas";
-export const defaultFontFamily = "EDST, Consolas, MyConsolas";
+// export const edstFontFamily = "Consolas, MyConsolas";
+export const edstFontFamily = "EDST, Consolas, MyConsolas";
 export const eramFontFamily = "ERAM";
 export const defaultFontSize = "16px";
 export const defaultInputFontSize = "16px";
