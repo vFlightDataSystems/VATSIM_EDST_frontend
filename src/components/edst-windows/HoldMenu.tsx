@@ -155,7 +155,7 @@ export const HoldMenu = () => {
         </OptionsMenuHeader>
         <OptionsBody>
           <FidRow>
-            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+            {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <OptionsBodyRow>
             <EdstTooltip title={Tooltips.holdDirection}>
