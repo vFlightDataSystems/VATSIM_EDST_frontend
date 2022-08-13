@@ -25,5 +25,4 @@ export type ApiFlightplan = {
   pilotCid: string;
   remarks: string;
   holdAnnotations: HoldAnnotations | null;
-  tdlsDumped: boolean;
 };
