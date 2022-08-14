@@ -14,7 +14,7 @@ const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv).attrs((props: FloatingW
   display: flex;
   flex-flow: column;
   height: auto;
-  width: 140px;
+  width: 150px;
   left: ${props => props.left};
   top: ${props => props.top};
 `;
