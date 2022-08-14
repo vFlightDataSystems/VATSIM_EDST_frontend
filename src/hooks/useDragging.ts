@@ -125,7 +125,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
       }
       dispatch(
         setWindowPosition({
-          window: edstWindow as EdstWindow,
+          window: edstWindow,
           pos: newPos
         })
       );
