@@ -15,6 +15,7 @@ import { ApiAircraftTrack } from "../../../types/apiTypes/apiAircraftTrack";
 import { AirwayFix } from "../../../types/airwayFix";
 import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
+import { RouteFix } from "../../../types/routeFix";
 
 type GpdFixProps = {
   lat: number | string;
@@ -90,14 +91,13 @@ export const GpdMapSectorPolygon = ({ sector }: { sector: Feature<Polygon> }) =>
 export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   const entry = useRootSelector(entrySelector(aircraftId));
   const track = useRootSelector(aircraftTrackSelector(aircraftId));
+  const [routeLine, setRouteLine] = useState<RouteFix[] | null>(null);
   const posLatLng = useMemo(() => (track?.location ? posToLatLng({ ...track.location }) : null), [track?.location]);
   const [trackPos, setTrackPos] = useState<WindowPosition | null>(null);
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
   const map = useMap();
-
-  const routeLine = track ? getRouteLine(entry, track) : null;
 
   const updateHandler = useCallback(() => {
     const element: HTMLElement & any = ref.current?.getElement();
@@ -106,6 +106,13 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
       setTrackPos(element._leaflet_pos);
     }
   }, []);
+
+  // updates route line
+  useEffect(() => {
+    if (showRoute) {
+      setRouteLine(track ? getRouteLine(entry, track) : null);
+    }
+  }, [posLatLng, showRoute]);
 
   useEffect(() => {
     updateHandler();
