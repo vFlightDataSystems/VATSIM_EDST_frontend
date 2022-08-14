@@ -13,8 +13,7 @@ import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { DepRowField } from "../../../enums/dep/depRowField";
 import { SortOptions } from "../../../enums/sortOptions";
-
-const COMPLETED_SYMBOL = "✓";
+import { COMPLETED_CHECKMARK_SYMBOL } from "../../../constants";
 
 const DepBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -60,7 +59,7 @@ export function DepTable() {
   return (
     <DepBodyStyleDiv>
       <BodyRowHeaderDiv key="dep-table-header">
-        <RadioCol header>{COMPLETED_SYMBOL}</RadioCol>
+        <RadioCol header>{COMPLETED_CHECKMARK_SYMBOL}</RadioCol>
         <DepCol2>P-Time</DepCol2>
         <DepFidCol>Flight ID</DepFidCol>
         <SpecialBox />

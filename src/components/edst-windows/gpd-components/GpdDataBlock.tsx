@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { edstFontFamily } from "../../../styles/styles";
-import { formatAltitude } from "../../../lib";
 import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
@@ -77,7 +76,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           selected={selectedField === AclRowField.ALT}
           onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
         >
-          {entry.interimAltitude ? `${entry.interimAltitude}T${formatAltitude(entry.altitude)}` : `${formatAltitude(entry.altitude)}C`}
+          {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}C`}
         </DataBlockElement>
         <br />
         <DataBlockElement

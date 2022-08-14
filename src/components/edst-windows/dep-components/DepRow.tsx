@@ -24,7 +24,7 @@ import {
 } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { DepRowField } from "../../../enums/dep/depRowField";
-import { COMPLETED_SYMBOL, SPA_INDICATOR } from "../../../constants";
+import { COMPLETED_CHECKMARK_SYMBOL, SPA_INDICATOR } from "../../../constants";
 
 type DepRowProps = {
   entry: EdstEntry;
@@ -153,7 +153,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
         <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
           <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
             {entry.depStatus === -1 && "N"}
-            {entry.depStatus === 1 && COMPLETED_SYMBOL}
+            {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
           </RadioCol>
         </EdstTooltip>
         <DepCol2>0000</DepCol2>
