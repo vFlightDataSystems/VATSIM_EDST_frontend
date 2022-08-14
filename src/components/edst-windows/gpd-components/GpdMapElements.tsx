@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Feature, Polygon, Position } from "@turf/turf";
 import L, { LatLngExpression } from "leaflet";
 import { useBoolean } from "usehooks-ts";
-import styled from "styled-components";
 import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
@@ -20,25 +19,6 @@ import { RouteFix } from "../../../types/routeFix";
 type GpdFixProps = {
   lat: number | string;
   lon: number | string;
-};
-
-const TrackLineDiv = styled.div<{ pos: WindowPosition }>`
-  transform-origin: top left;
-  transform: rotate(-45deg);
-  position: absolute;
-  ${props => ({
-    left: `${props.pos.x}px`,
-    top: `${props.pos.y}px`
-  })}
-  height: 1px;
-  width: 30px;
-  background-color: #adadad;
-`;
-
-type TrackLineProps = { start: { x: number; y: number } | null; end?: { x: number; y: number } | null; toggleShowRoute(): void };
-
-const TrackLine = ({ start, end, toggleShowRoute }: TrackLineProps) => {
-  return start && <TrackLineDiv pos={start} onMouseDown={event => event.button === 1 && toggleShowRoute()} />;
 };
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): LatLngExpression {
@@ -136,12 +116,7 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
           mousedown: event => event.originalEvent.button === 1 && toggleShowRoute()
         }}
       />
-      {showDataBlock && (
-        <>
-          <TrackLine start={trackPos} toggleShowRoute={toggleShowRoute} />
-          <GpdDataBlock entry={entry} pos={trackPos} toggleShowRoute={toggleShowRoute} />
-        </>
-      )}
+      {showDataBlock && <GpdDataBlock entry={entry} pos={trackPos} toggleShowRoute={toggleShowRoute} />}
       {showRoute && routeLine && (
         <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))} pathOptions={{ color: edstFontGreen, weight: 1.1 }} />
       )}
