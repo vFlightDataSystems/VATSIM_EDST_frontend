@@ -18,6 +18,14 @@ const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.GI
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number; top: number } => {
+  return {
+    left: x - 1,
+    top: y
+  };
+};
+
 /**
  * hook to provide startDrag/endDrag functions with a previewStyle to render the previewWindow
  * @param element ref to a DOM element
@@ -39,14 +47,6 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
       dispatch(setAnyDragging(false));
     };
   }, []);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number; top: number } => {
-    return {
-      left: x - 1,
-      top: y
-    };
-  };
 
   const draggingHandler = useCallback(
     (event: MouseEvent) => {
