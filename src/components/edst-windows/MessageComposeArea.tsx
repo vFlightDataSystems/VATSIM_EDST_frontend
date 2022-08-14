@@ -9,7 +9,7 @@ import {
   defaultWindowPositions,
   FULLSCREEN_WINDOWS,
   mcaCommandStringSelector,
-  mcaResponseStringSelector,
+  mcaFeedbackSelector,
   pushZStack,
   setIsFullscreen,
   setMcaAcceptMessage,
@@ -66,7 +66,7 @@ const MessageComposeInputAreaDiv = styled.div`
   }
 `;
 
-const MessageComposeResponseAreaDiv = styled.div`
+const ResponseFeedbackAreaDiv = styled.div`
   height: 3em;
   line-height: 1;
   padding: 2px;
@@ -83,7 +83,7 @@ const AcceptCheckmarkSpan = styled.span`
   color: #00ad00;
 
   ::before {
-    content: "✓";
+    content: "\u2713";
   }
 `;
 
@@ -91,12 +91,12 @@ const RejectCrossSpan = styled.span`
   color: #ad0000;
 
   ::before {
-    content: "\u{2715}"; // apparently this is literally just the character X (xray)
+    content: "\u2715"; // apparently this is literally just the character X (xray)
   }
 `;
 
 export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) => {
-  const mcaResponseString = useRootSelector(mcaResponseStringSelector);
+  const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
   const manualPosting = useRootSelector(aclManualPostingSelector);
@@ -362,11 +362,11 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
             onKeyDownCapture={handleKeyDown}
           />
         </MessageComposeInputAreaDiv>
-        <MessageComposeResponseAreaDiv>
-          {mcaResponseString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
-          {mcaResponseString.startsWith("REJECT") && <RejectCrossSpan />}
-          {mcaResponseString.toUpperCase()}
-        </MessageComposeResponseAreaDiv>
+        <ResponseFeedbackAreaDiv>
+          {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
+          {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
+          {mcaFeedbackString.toUpperCase()}
+        </ResponseFeedbackAreaDiv>
       </MessageComposeAreaDiv>
     )
   );

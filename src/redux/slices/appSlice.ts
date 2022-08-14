@@ -55,7 +55,7 @@ export type AppState = {
   anyDragging: boolean;
   mraMsg: string;
   mcaCommandString: string;
-  mcaResponseString: string;
+  mcaFeedbackString: string;
   tooltipsEnabled: boolean;
   showSectorSelector: boolean;
   asel: Asel | null;
@@ -125,7 +125,7 @@ const initialState: AppState = {
   anyDragging: false,
   mraMsg: "",
   mcaCommandString: "",
-  mcaResponseString: "",
+  mcaFeedbackString: "",
   tooltipsEnabled: true,
   showSectorSelector: false,
   asel: null,
@@ -179,8 +179,8 @@ const appSlice = createSlice({
     setMcaCommandString(state, action: PayloadAction<string>) {
       state.mcaCommandString = action.payload;
     },
-    setMcaResponseString(state, action: PayloadAction<string>) {
-      state.mcaResponseString = action.payload;
+    setmcaFeedbackString(state, action: PayloadAction<string>) {
+      state.mcaFeedbackString = action.payload;
     },
     closeAllWindows(state) {
       Object.values(EdstWindow).forEach(window => {
@@ -232,7 +232,7 @@ export function setAsel(asel: Asel | null): RootThunkAction {
 export const setMcaResponse = (message: string): RootThunkAction => {
   return dispatch => {
     dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
-    dispatch(appSlice.actions.setMcaResponseString(message));
+    dispatch(appSlice.actions.setmcaFeedbackString(message));
   };
 };
 
@@ -267,7 +267,7 @@ export const {
 export default appSlice.reducer;
 
 export const mcaCommandStringSelector = (state: RootState) => state.app.mcaCommandString;
-export const mcaResponseStringSelector = (state: RootState) => state.app.mcaResponseString;
+export const mcaFeedbackSelector = (state: RootState) => state.app.mcaFeedbackString;
 export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
 export const windowSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window];
 export const windowPositionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].position;
