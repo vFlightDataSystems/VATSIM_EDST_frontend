@@ -90,14 +90,14 @@ export const GpdMapSectorPolygon = ({ sector }: { sector: Feature<Polygon> }) =>
 export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   const entry = useRootSelector(entrySelector(aircraftId));
   const track = useRootSelector(aircraftTrackSelector(aircraftId));
-  const posLatLng = useMemo(() => posToLatLng({ ...track.location }), [track.location]);
+  const posLatLng = useMemo(() => (track?.location ? posToLatLng({ ...track.location }) : null), [track?.location]);
   const [trackPos, setTrackPos] = useState<WindowPosition | null>(null);
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
   const map = useMap();
 
-  const routeLine = getRouteLine(entry, track);
+  const routeLine = track ? getRouteLine(entry, track) : null;
 
   const updateHandler = useCallback(() => {
     const element: HTMLElement & any = ref.current?.getElement();
@@ -116,7 +116,7 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
     updateHandler();
   }, [posLatLng, updateHandler]);
 
-  return (
+  return track && posLatLng ? (
     <>
       <Marker
         position={posLatLng}
@@ -139,7 +139,7 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
         <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))} pathOptions={{ color: edstFontGreen, weight: 1.1 }} />
       )}
     </>
-  );
+  ) : null;
 };
 
 // TODO: give this component a better name...
