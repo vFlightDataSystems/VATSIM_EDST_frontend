@@ -30,6 +30,8 @@ import { useHubActions } from "../../hooks/useHubActions";
 import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
 import { OPLUS_SYMBOL } from "../../constants";
 import { UplinkSymbol } from "../resources/UplinkSymbol";
+import { CreateOrAmendFlightplanDto } from "../../types/apiTypes/CreateOrAmendFlightplanDto";
+import { fetchFormatRoute } from "../../api/api";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -151,25 +153,65 @@ export const RouteMenu = () => {
   }
 
   // TODO: implement this
-  const clearedPrefroute = (prefRoute: EdstPreferentialRoute) => {
+  const clearedPrefroute = async (prefRoute: EdstPreferentialRoute) => {
+    let amendedFlightplan: CreateOrAmendFlightplanDto;
+    let route: string;
+    if (prefRoute.routeType === "pdar") {
+      amendedFlightplan = { ...entry, route: prefRoute.route };
+      if (!trialPlan) {
+        await hubActions.amendFlightplan(amendedFlightplan);
+      } else {
+        route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+        dispatch(
+          addPlanThunk({
+            cid: entry.cid,
+            aircraftId: entry.aircraftId,
+            amendedFlightplan,
+            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+            expirationTime: new Date().getTime() / 1000 + 120
+          })
+        );
+      }
+    } else if (prefRoute.routeType === "pdr") {
+      amendedFlightplan = { ...entry, route: prefRoute.amendment.split(".").join(" ") + prefRoute.truncatedRoute };
+      if (!trialPlan) {
+        await hubActions.amendFlightplan(amendedFlightplan);
+      } else {
+        route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+        dispatch(
+          addPlanThunk({
+            cid: entry.cid,
+            aircraftId: entry.aircraftId,
+            amendedFlightplan,
+            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+            expirationTime: new Date().getTime() / 1000 + 120
+          })
+        );
+      }
+    } else if (prefRoute.routeType === "par") {
+      amendedFlightplan = { ...entry, route: prefRoute.truncatedRoute + prefRoute.amendment.split(".").join(" ") };
+      if (!trialPlan) {
+        await hubActions.amendFlightplan(amendedFlightplan);
+      } else {
+        route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+        dispatch(
+          addPlanThunk({
+            cid: entry.cid,
+            aircraftId: entry.aircraftId,
+            amendedFlightplan,
+            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+            expirationTime: new Date().getTime() / 1000 + 120
+          })
+        );
+      }
+    }
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
 
   const clearedToFix = async (clearedFixName: string) => {
     const frd = await hubActions.generateFrd(aircraftTrack.location);
     const route = getClearedToFixRouteFixes(clearedFixName, entry, frd)?.route;
-    if (!trialPlan) {
-      if (route) {
-        const amendedFlightplan: ApiFlightplan = {
-          ...entry,
-          route: route
-            .split(/\.+/g)
-            .join(" ")
-            .trim()
-        };
-        await hubActions.amendFlightplan(amendedFlightplan);
-      }
-    } else if (route) {
+    if (route) {
       const amendedFlightplan: ApiFlightplan = {
         ...entry,
         route: route
@@ -177,15 +219,19 @@ export const RouteMenu = () => {
           .join(" ")
           .trim()
       };
-      dispatch(
-        addPlanThunk({
-          cid: entry.cid,
-          aircraftId: entry.aircraftId,
-          amendedFlightplan,
-          commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-          expirationTime: new Date().getTime() / 1000 + 120
-        })
-      );
+      if (!trialPlan) {
+        await hubActions.amendFlightplan(amendedFlightplan);
+      } else {
+        dispatch(
+          addPlanThunk({
+            cid: entry.cid,
+            aircraftId: entry.aircraftId,
+            amendedFlightplan,
+            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+            expirationTime: new Date().getTime() / 1000 + 120
+          })
+        );
+      }
     }
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
