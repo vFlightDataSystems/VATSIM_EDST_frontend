@@ -10,12 +10,13 @@ import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/s
 import { defaultInputFontSize, NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
 import { Plan } from "../../redux/slices/planSlice";
-import { formatAltitude } from "../../lib";
 import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
+import { formatAltitude } from "../../lib";
+import { UPLINK_SYMBOL } from "../../constants";
 
 type AltMenuDivProps = { width?: string; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
@@ -47,6 +48,7 @@ const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
   border: 1px solid #adadad;
   width: ${props => props.width};
   flex-grow: ${props => props.flexGrow};
+
   &:hover {
     border: 1px solid #f0f0f0;
   }
@@ -106,6 +108,16 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
     border: none;
   }
 `;
+type AltMenuRowColProps = {
+  width?: string;
+  disabled?: boolean;
+};
+const AltMenuRowCol = styled(AltMenuRow).attrs((props: AltMenuRowColProps) => ({
+  width: props.width ?? "auto"
+}))<AltMenuRowColProps>`
+  padding: 0;
+  width: ${props => props.width};
+`;
 
 const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
   width: 56px;
@@ -134,6 +146,7 @@ const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; 
   &:hover {
     outline: 1px solid #f0f0f0;
   }
+
   ${props =>
     props.borderHover && {
       "&:hover": {
@@ -271,6 +284,13 @@ export const AltMenu = () => {
                 AMEND
               </AltMenuRow>
             </EdstTooltip>
+            <AltMenuRow>FP{Number(formatAltitude(entry.altitude))}</AltMenuRow>
+            <AltMenuRow disabled>UPLINK</AltMenuRow>
+            <AltMenuRow disabled>
+              <AltMenuRowCol>PD</AltMenuRowCol>
+              <AltMenuRowCol>TFC</AltMenuRowCol>
+              <AltMenuRowCol width="0.4ch">{UPLINK_SYMBOL}</AltMenuRowCol>
+            </AltMenuRow>
             <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>
               {_.range(30, -40, -10).map(i => {
