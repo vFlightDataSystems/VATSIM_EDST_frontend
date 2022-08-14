@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { convertBeaconCodeToString, formatAltitude, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
+import { convertBeaconCodeToString, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { rmvEntryFromDep, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
@@ -192,8 +192,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
                   dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.ALT, null, EdstWindow.ALTITUDE_MENU))
                 }
               >
-                {formatAltitude(entry.altitude)}
-                {entry.interimAltitude && `T${entry.interimAltitude}`}
+                {entry.altitude}
               </AltColDiv>
             </AltCol>
           </EdstTooltip>

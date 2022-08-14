@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
-import { convertBeaconCodeToString, formatAltitude, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
+import { convertBeaconCodeToString, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../resources/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -292,7 +292,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
                   dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))
                 }
               >
-                {formatAltitude(entry.altitude)}
+                {entry.altitude}
                 {entry.interimAltitude && `T${entry.interimAltitude}`}
               </AltColDiv>
               {showCoralBox && <CoralBox />}
