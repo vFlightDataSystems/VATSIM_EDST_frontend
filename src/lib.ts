@@ -168,7 +168,7 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
   const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
   if (routeFixesWithDistance.length > 1) {
     const fixNames = routeFixes.map(e => e.name);
-    const sortedRouteFixes = routeFixesWithDistance.sort((u, v) => u.dist - v.dist);
+    const sortedRouteFixes = _.cloneDeep(routeFixesWithDistance).sort((u, v) => u.dist - v.dist);
     const closestFix = sortedRouteFixes[0];
     const index = fixNames.indexOf(closestFix.name);
     if (index === routeFixesWithDistance.length - 1) {
