@@ -37,7 +37,7 @@ export const AltimeterWindow = () => {
   const altimeterMap = useRootSelector(altimeterSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER, "mousedown");
 
   const now = new Date();
   const utcMinutesNow = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -66,7 +66,7 @@ export const AltimeterWindow = () => {
         anyDragging={anyDragging}
         id="edst-altimeter"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>ALTIM SET</FloatingWindowHeaderColDivFlex>

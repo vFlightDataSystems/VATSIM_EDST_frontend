@@ -133,7 +133,7 @@ export const TemplateMenu = () => {
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
 
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TEMPLATE_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TEMPLATE_MENU, "mouseup");
 
   useEffect(() => {
     async function updateFrd() {
@@ -154,7 +154,7 @@ export const TemplateMenu = () => {
         anyDragging={anyDragging}
         id="template-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} onMouseUp={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           {asel ? "Amendment" : "Flight Plan"} Menu
         </OptionsMenuHeader>

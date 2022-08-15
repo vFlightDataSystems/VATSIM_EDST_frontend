@@ -39,7 +39,7 @@ export const SpeedMenu = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SPEED_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SPEED_MENU, "mouseup");
 
   useEffect(() => {
     setSpeed(280);
@@ -90,7 +90,7 @@ export const SpeedMenu = () => {
         anyDragging={anyDragging}
         id="speed-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           Speed Information
         </OptionsMenuHeader>

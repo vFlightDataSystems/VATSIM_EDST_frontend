@@ -117,7 +117,7 @@ export const RouteMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU, "mouseup");
 
   useEffect(() => {
     async function updateFrd() {
@@ -279,8 +279,8 @@ export const RouteMenu = () => {
         anyDragging={anyDragging}
         id="route-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <RouteMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <RouteMenuHeader focused={focused} onMouseDown={startDrag}>
           Route Menu
         </RouteMenuHeader>
         <RouteMenuBody>

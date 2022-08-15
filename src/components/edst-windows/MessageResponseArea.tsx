@@ -26,7 +26,7 @@ export const MessageResponseArea = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_RESPONSE_AREA);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_RESPONSE_AREA, "mousedown");
 
   return (
     pos && (
@@ -38,12 +38,12 @@ export const MessageResponseArea = () => {
         id="edst-mra"
         onMouseDown={event => {
           startDrag(event);
-          if (zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA) > 0) {
+          if (zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA) < zStack.length - 1) {
             dispatch(pushZStack(EdstWindow.MESSAGE_RESPONSE_AREA));
           }
         }}
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         {msg}
       </MessageResponseAreaDiv>
     )

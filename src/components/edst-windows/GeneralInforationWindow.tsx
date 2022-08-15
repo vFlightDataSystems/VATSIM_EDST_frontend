@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
+import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { airmetSelector, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
@@ -36,7 +37,7 @@ export const GIWindow = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI, "mousedown");
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, airmetId: string) => {
     setShowOptions(false);
@@ -72,7 +73,7 @@ export const GIWindow = () => {
         anyDragging={anyDragging}
         id="edst-status"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>General Information</FloatingWindowHeaderColDivFlex>

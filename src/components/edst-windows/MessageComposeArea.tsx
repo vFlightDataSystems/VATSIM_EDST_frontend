@@ -107,7 +107,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const [mcaInputValue, setMcaInputValue] = useState(mcaCommandString);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA, "mousedown");
   const hubActions = useHubActions();
 
   const accept = (message: string) => {
@@ -352,7 +352,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           }
         }}
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <MessageComposeInputAreaDiv>
           <textarea
             ref={inputRef}

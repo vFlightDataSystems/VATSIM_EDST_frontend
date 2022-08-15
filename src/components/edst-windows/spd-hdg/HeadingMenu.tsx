@@ -35,7 +35,7 @@ export const HeadingMenu = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HEADING_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HEADING_MENU, "mouseup");
 
   useEffect(() => {
     setHeading(280);
@@ -80,8 +80,8 @@ export const HeadingMenu = () => {
         anyDragging={anyDragging}
         id="heading-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           Heading Information
         </OptionsMenuHeader>
         <OptionsBody>

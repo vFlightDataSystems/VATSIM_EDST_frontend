@@ -27,7 +27,7 @@ export const GpdMapOptions = () => {
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD_MAP_OPTIONS_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD_MAP_OPTIONS_MENU, "mouseup");
 
   return (
     windowProps?.position && (
@@ -41,8 +41,8 @@ export const GpdMapOptions = () => {
         anyDragging={anyDragging}
         id="gpd-map-options-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           {aircraftDisplayMenuIsOpen && "Aircraft Display"}
           {mapFeaturesMenuOpen && "Map Features"}
           {!(aircraftDisplayMenuIsOpen || mapFeaturesMenuOpen) && "Map Options"} Menu

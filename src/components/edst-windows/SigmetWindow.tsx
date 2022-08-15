@@ -47,7 +47,7 @@ export const SigmetWindow = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS, "mousedown");
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
@@ -83,7 +83,7 @@ export const SigmetWindow = () => {
         anyDragging={anyDragging}
         id="edst-status"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>SIGMETS SECTOR {sectorId}</FloatingWindowHeaderColDivFlex>

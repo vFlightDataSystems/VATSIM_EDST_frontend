@@ -55,7 +55,7 @@ export const SortMenu = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SORT_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SORT_MENU, "mouseup");
 
   const sortStateCopy = { ...sortState };
 
@@ -70,8 +70,8 @@ export const SortMenu = () => {
         anyDragging={anyDragging}
         id="sort-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <SortHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <SortHeader focused={focused} onMouseDown={startDrag}>
           Sort Menu
         </SortHeader>
         <SortBody>

@@ -21,7 +21,7 @@ export const Gpd = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.GPD));
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD, "mouseup");
   const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.GPD);
 
   const onMouseDownHandler = () => zStack.indexOf(EdstWindow.GPD) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(EdstWindow.GPD));
@@ -35,7 +35,7 @@ export const Gpd = () => {
       zIndex={zStack.indexOf(EdstWindow.GPD)}
       onMouseDown={onMouseDownHandler}
     >
-      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <GpdHeader
         focused={focused}
         toggleFullscreen={toggleFullscreen}

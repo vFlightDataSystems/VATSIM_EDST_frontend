@@ -31,7 +31,7 @@ export const ToolsMenu = () => {
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TOOLS_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TOOLS_MENU, "mouseup");
 
   return (
     windowProps?.position && (
@@ -43,8 +43,8 @@ export const ToolsMenu = () => {
         anyDragging={anyDragging}
         id="tools-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           {optionsMenuOpen ? "Options" : "Tools"} Menu
         </OptionsMenuHeader>
         <ToolsBody>

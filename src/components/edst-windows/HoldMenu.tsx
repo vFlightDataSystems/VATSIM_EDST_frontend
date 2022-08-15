@@ -104,7 +104,7 @@ export const HoldMenu = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU, "mouseup");
   const hubActions = useHubActions();
 
   useEffect(() => {
@@ -149,8 +149,8 @@ export const HoldMenu = () => {
         anyDragging={anyDragging}
         id="hold-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           Hold Data Menu
         </OptionsMenuHeader>
         <OptionsBody>

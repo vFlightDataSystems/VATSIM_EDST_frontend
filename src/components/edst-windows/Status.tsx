@@ -28,7 +28,7 @@ export const Status = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.STATUS));
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.STATUS);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.STATUS, "mousedown");
   const zStack = useRootSelector(zStackSelector);
 
   return (
@@ -41,7 +41,7 @@ export const Status = () => {
         anyDragging={anyDragging}
         id="edst-status"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>STATUS</FloatingWindowHeaderColDivFlex>

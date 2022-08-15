@@ -31,7 +31,7 @@ export const PlanOptions = () => {
   const entry = useRootSelector(entrySelector(asel.aircraftId));
   const dep = asel.window === EdstWindow.DEP;
   useCenterCursor(ref, [asel]);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
 
   const openMenu = (menu: EdstWindow) => {
     dispatch(openMenuThunk(menu, ref.current, EdstWindow.PLAN_OPTIONS, true));
@@ -52,8 +52,8 @@ export const PlanOptions = () => {
         anyDragging={anyDragging}
         id="plan-menu"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           Plan Options Menu
         </OptionsMenuHeader>
         <PlanOptionsBody>

@@ -30,7 +30,7 @@ export const MetarWindow = () => {
   const metarMap = useRootSelector(metarSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selected !== airport) {
@@ -56,7 +56,7 @@ export const MetarWindow = () => {
         anyDragging={anyDragging}
         id="edst-status"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>WX</FloatingWindowHeaderColDivFlex>

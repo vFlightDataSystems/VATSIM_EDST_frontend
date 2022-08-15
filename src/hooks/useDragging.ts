@@ -1,7 +1,8 @@
 import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { anyDraggingSelector, setAnyDragging, setWindowPosition, windowsSelector } from "../redux/slices/appSlice";
+import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "../redux/slices/appSlice";
 import { WindowPosition } from "../types/windowPosition";
 import { DragPreviewStyle } from "../types/dragPreviewStyle";
 import { EdstWindow } from "../enums/edstWindow";
@@ -26,14 +27,18 @@ const computePreviewPos = (x: number, y: number, _width: number, _height: number
   };
 };
 
+type StopDragOn = "mousedown" | "mouseup";
+
 /**
  * hook to provide startDrag/endDrag functions with a previewStyle to render the previewWindow
  * @param element ref to a DOM element
  * @param edstWindow window for which to trigger dragging events
+ * @param stopDragOn whether to listen for stopDrag onMouseDown or onMouseUp
  * @returns
  */
-export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
+export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
   const dispatch = useRootDispatch();
+  const zStack = useRootSelector(zStackSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
   const [dragging, setDragging] = useState(false);
   const windows = useRootSelector(windowsSelector);
@@ -72,6 +77,10 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
   const startDrag = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (element.current && ppos && !anyDragging) {
+        event.stopPropagation();
+        if (zStack.indexOf(edstWindow) < zStack.length - 1) {
+          dispatch(pushZStack(edstWindow));
+        }
         let previewPos;
         let relX = 0;
         let relY = 0;
@@ -136,5 +145,11 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
     }
   }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, element]);
 
-  return { startDrag, stopDrag, dragPreviewStyle, anyDragging };
+  useEventListener(stopDragOn, () => {
+    if (dragPreviewStyle) {
+      stopDrag();
+    }
+  });
+
+  return { startDrag, dragPreviewStyle, anyDragging };
 };

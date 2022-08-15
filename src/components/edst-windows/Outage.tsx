@@ -22,7 +22,7 @@ export const Outage = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.OUTAGE));
   const ref = useRef(null);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.OUTAGE);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.OUTAGE, "mousedown");
   const zStack = useRootSelector(zStackSelector);
 
   return (
@@ -35,7 +35,7 @@ export const Outage = () => {
         anyDragging={anyDragging}
         id="edst-outage"
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseDown={stopDrag} />}
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
           <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>OUTAGE</FloatingWindowHeaderColDivFlex>

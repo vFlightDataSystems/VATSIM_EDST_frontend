@@ -28,14 +28,15 @@ type EdstPromptProps = PropsWithChildren<{
   cancelText: string;
   onCancel?: () => void;
   id: string;
+  stopDragOn?: "mousedown" | "mouseup";
 }>;
 
-export const EdstPrompt = ({ ...props }: EdstPromptProps) => {
+export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps) => {
   const pos = useRootSelector(windowPositionSelector(props.windowId));
   const ref = useRef<HTMLDivElement | null>(null);
   const zStack = useRootSelector(zStackSelector);
   const focused = useFocused(ref);
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, props.windowId);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, props.windowId, stopDragOn);
   const dispatch = useRootDispatch();
   useCenterCursor(ref);
 
@@ -50,8 +51,8 @@ export const EdstPrompt = ({ ...props }: EdstPromptProps) => {
         onMouseDown={() => zStack.indexOf(props.windowId) < zStack.length - 1 && dispatch(pushZStack(props.windowId))}
         id={props.id}
       >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag} onMouseUp={stopDrag}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
           {props.title}
         </OptionsMenuHeader>
         <OptionsBody>

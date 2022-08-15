@@ -26,7 +26,7 @@ export const FullscreenWindow = ({ edstWindow, HeaderComponent, BodyComponent, .
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);
   const pos = useRootSelector(windowPositionSelector(edstWindow));
-  const { startDrag, stopDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mouseup");
   const { isFullscreen, toggleFullscreen } = useFullscreen(ref, edstWindow);
 
   const onMouseDownHandler = () => zStack.indexOf(edstWindow) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(edstWindow));
@@ -40,7 +40,7 @@ export const FullscreenWindow = ({ edstWindow, HeaderComponent, BodyComponent, .
       zIndex={zStack.indexOf(edstWindow)}
       onMouseDown={onMouseDownHandler}
     >
-      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} onMouseUp={stopDrag} />}
+      {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <HeaderComponent
         focused={focused}
         toggleFullscreen={toggleFullscreen}
