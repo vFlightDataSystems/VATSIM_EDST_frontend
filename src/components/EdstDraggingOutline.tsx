@@ -2,20 +2,21 @@ import styled from "styled-components";
 import React from "react";
 import { DragPreviewStyle } from "../types/dragPreviewStyle";
 
-const EdstDraggingOutlineDiv = styled.div`
+const EdstDraggingOutlineDiv = styled.div<{ absolute?: boolean }>`
+  position: ${props => (props.absolute ? "absolute" : "fixed")};
   pointer-events: all;
-  position: fixed;
   z-index: 30000;
   background-color: transparent;
   border: 1px solid #ffffff;
 `;
 
 type EdstDraggingOutlineProps = {
+  absolute?: boolean;
   style: DragPreviewStyle;
   onMouseUp?: () => void;
   onMouseDown?: () => void;
 };
 
-export const EdstDraggingOutline = ({ style, onMouseDown, onMouseUp }: EdstDraggingOutlineProps) => {
-  return <EdstDraggingOutlineDiv style={style} onMouseUp={onMouseUp} onMouseDown={onMouseDown} />;
+export const EdstDraggingOutline = (props: EdstDraggingOutlineProps) => {
+  return <EdstDraggingOutlineDiv {...props} />;
 };
