@@ -53,8 +53,6 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
   const asel = useRootSelector(aselSelector);
   const ref = useRef<HTMLDivElement | null>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
-  // datablock offset after it has been dragged by the user
-  // to be implemented
   const [offset, setOffset] = useState({ x: 24, y: -30 });
 
   const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? (asel.field as AclRowField) : null;
