@@ -107,7 +107,7 @@ export function AclTable() {
 
   return (
     <AclBodyStyleDiv>
-      <BodyRowHeaderDiv key="acl-table-header">
+      <BodyRowHeaderDiv>
         <RadioCol header green>
           {VCI_SYMBOL}
         </RadioCol>
@@ -161,39 +161,18 @@ export function AclTable() {
       </BodyRowHeaderDiv>
       <ScrollContainer>
         {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
-          <AclRow
-            key={`acl-table-row-spa-${entry.aircraftId}-${i}`}
-            index={Number(i)}
-            entry={entry}
-            anyHolding={anyHolding}
-            hidden={hiddenList}
-            altMouseDown={altMouseDown}
-          />
+          <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} hidden={hiddenList} altMouseDown={altMouseDown} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
         {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.vciStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
           ([i, entry]: [string, EdstEntry]) => (
-            <AclRow
-              key={`acl-table-row-ack-${entry.aircraftId}-${i}`}
-              index={Number(i)}
-              entry={entry}
-              anyHolding={anyHolding}
-              hidden={hiddenList}
-              altMouseDown={altMouseDown}
-            />
+            <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} hidden={hiddenList} altMouseDown={altMouseDown} />
           )
         )}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
           Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.vciStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
-            <AclRow
-              key={`acl-table-row-no-ack-${entry.aircraftId}-${i}`}
-              index={Number(i)}
-              entry={entry}
-              anyHolding={anyHolding}
-              hidden={hiddenList}
-              altMouseDown={altMouseDown}
-            />
+            <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} hidden={hiddenList} altMouseDown={altMouseDown} />
           ))}
       </ScrollContainer>
     </AclBodyStyleDiv>

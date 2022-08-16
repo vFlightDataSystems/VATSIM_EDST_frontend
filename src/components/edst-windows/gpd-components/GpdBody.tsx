@@ -55,7 +55,7 @@ export const GpdBody = ({ zoomLevel }: { zoomLevel: number }) => {
         minZoom={5}
       >
         <MapConfigurator zoomLevel={zoomLevel} />
-        {!suppressed && entryList.map(entry => <GpdAircraftTrack key={`gpd-track-${entry.aircraftId}`} aircraftId={entry.aircraftId} />)}
+        {!suppressed && entryList.map(entry => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
         {displayData && <GpdPlanDisplay displayData={displayData} />}
       </MapContainer>
     </GpdBodyDiv>

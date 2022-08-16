@@ -67,7 +67,7 @@ export const MetarWindow = () => {
         {Object.values(metarMap).length > 0 && (
           <FloatingWindowBodyDiv>
             {Object.entries(metarMap).map(([airport, airportMetarEntry]) => (
-              <span style={{ margin: "6px 0" }} key={`metar-list-key-${airport}`}>
+              <span style={{ margin: "6px 0" }} key={airport}>
                 <FloatingWindowRow selected={selected === airport} onMouseDown={event => handleMouseDown(event, airport)}>
                   {airportMetarEntry.metar}
                 </FloatingWindowRow>

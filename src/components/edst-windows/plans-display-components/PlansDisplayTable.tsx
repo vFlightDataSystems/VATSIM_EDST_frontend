@@ -86,7 +86,7 @@ export const PlansDisplayTable = () => {
     <PlansDisplayBody>
       {planQueue?.map((p: Plan, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <BodyRowDiv key={`plans-display-body-${p.aircraftId}-${i}`}>
+        <BodyRowDiv key={p.aircraftId}>
           <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
             {p.cid} {p.aircraftId}
           </Col1>

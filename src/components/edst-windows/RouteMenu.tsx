@@ -385,12 +385,12 @@ export const RouteMenu = () => {
             </DisplayRouteDiv>
           </OptionsBodyRow>
           {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map(i => (
-            <OptionsBodyRow key={`route-menu-row-${i}`}>
+            <OptionsBodyRow key={i}>
               {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map(j => {
                 const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
                 return (
                   fixName && (
-                    <EdstTooltip key={`route-menu-col-${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
+                    <EdstTooltip key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
                       <DctCol hover>{fixName}</DctCol>
                     </EdstTooltip>
                   )

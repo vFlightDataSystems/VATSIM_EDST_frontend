@@ -97,7 +97,7 @@ export const SigmetWindow = () => {
               {Object.entries(sigmetList).map(
                 ([sigmetId, sigmetEntry]) =>
                   (!sigmetEntry.suppressed || viewSuppressed) && (
-                    <span style={{ margin: "6px 0" }} key={`sigmet-list-key-${sigmetId}`}>
+                    <span style={{ margin: "6px 0" }} key={sigmetId}>
                       <FloatingWindowRow
                         selected={selectedOption === sigmetId}
                         suppressed={sigmetEntry.suppressed}

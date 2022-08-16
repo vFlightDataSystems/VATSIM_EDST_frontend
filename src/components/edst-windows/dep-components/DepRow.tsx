@@ -148,7 +148,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   };
 
   return (
-    <BodyRowContainerDiv separator={index % 3 === 2} key={`dep-row-container-${entry.aircraftId}`} onContextMenu={event => event.preventDefault()}>
+    <BodyRowContainerDiv separator={index % 3 === 2} onContextMenu={event => event.preventDefault()}>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
           <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>

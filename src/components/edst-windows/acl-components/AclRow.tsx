@@ -247,7 +247,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   // console.log(entry.aircraftId, entry.preferentialArrivalRoutes);
 
   return (
-    <BodyRowContainerDiv separator={index % 3 === 2} key={`acl-row-container-${entry.aircraftId}`} onContextMenu={event => event.preventDefault()}>
+    <BodyRowContainerDiv separator={index % 3 === 2} onContextMenu={event => event.preventDefault()}>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.aclNAndVciBtn}>
           <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>

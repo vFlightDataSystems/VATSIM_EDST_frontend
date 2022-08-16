@@ -58,7 +58,7 @@ export function DepTable() {
 
   return (
     <DepBodyStyleDiv>
-      <BodyRowHeaderDiv key="dep-table-header">
+      <BodyRowHeaderDiv>
         <RadioCol header>{COMPLETED_CHECKMARK_SYMBOL}</RadioCol>
         <DepCol2>P-Time</DepCol2>
         <DepFidCol>Flight ID</DepFidCol>
@@ -75,18 +75,18 @@ export function DepTable() {
       </BodyRowHeaderDiv>
       <ScrollContainer>
         {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
-          <DepRow key={`dep-row-spa-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
+          <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} hidden={hiddenList} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
         {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
           ([i, entry]: [string, EdstEntry]) => (
-            <DepRow key={`dep-row-ack-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
+            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} hidden={hiddenList} />
           )
         )}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
           Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.depStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
-            <DepRow key={`dep-row-no-ack-${entry.aircraftId}-${i}`} index={Number(i)} entry={entry} hidden={hiddenList} />
+            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} hidden={hiddenList} />
           ))}
       </ScrollContainer>
     </DepBodyStyleDiv>

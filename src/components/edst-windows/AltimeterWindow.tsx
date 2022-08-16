@@ -79,12 +79,8 @@ export const AltimeterWindow = () => {
             {Object.entries(altimeterMap).map(([airport, airportAltimeterEntry]) => {
               const observationTime = Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2));
               return (
-                <div key={`altimeter-list-key-${airport}`}>
-                  <FloatingWindowRow
-                    selected={selected === airport}
-                    onMouseDown={event => handleMouseDown(event, airport)}
-                    key={`altimeter-list-key-${airport}`}
-                  >
+                <div key={airport}>
+                  <FloatingWindowRow selected={selected === airport} onMouseDown={event => handleMouseDown(event, airport)}>
                     <AltimCol reportingStation>{airportAltimeterEntry.airport}</AltimCol>
                     <AltimCol underline={mod(Number(utcMinutesNow) - observationTime, 1440) > 60}>{airportAltimeterEntry.time}</AltimCol>
                     {mod(Number(utcMinutesNow) - observationTime, 1440) > 120 ? (

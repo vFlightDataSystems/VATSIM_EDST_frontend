@@ -124,7 +124,7 @@ export const HeadingMenu = () => {
               const centerHdg = mod(heading - Math.round(deltaY / 100) * 10 + i, 360);
               const centerRelHdg = 35 + i / 2;
               return (
-                <ScrollRow key={`heading-menu-${i}`}>
+                <ScrollRow key={i}>
                   <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg)}>{String(centerHdg).padStart(3, "0")}</ScrollCol>
                   <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg + 5)}>{String(centerHdg + 5).padStart(3, "0")}</ScrollCol>
                   <ScrollCol2 onMouseDown={e => handleMouseDown(e, centerRelHdg, "L")}>{centerRelHdg}</ScrollCol2>

@@ -89,14 +89,12 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
         </Col>
       </Row>
       <PrefrouteContainer maxHeight={100}>
-        {eligibleOnly && eligibleRoutes.length === 0 && (
-          <PrefrouteRow key="route-menu-prefroute-row-no-eligible-avail">No Eligible APRs: Select ALL to display Ineligible APRs</PrefrouteRow>
-        )}
+        {eligibleOnly && eligibleRoutes.length === 0 && <PrefrouteRow>No Eligible APRs: Select ALL to display Ineligible APRs</PrefrouteRow>}
         {Object.entries(routes).map(([i, r]: [string, EdstPreferentialRoute]) => {
           return (
             r &&
             (!eligibleOnly || r.eligible) && (
-              <PrefrouteRow key={`route-menu-prefroute-row-${i}`}>
+              <PrefrouteRow key={i}>
                 <Col hover onMouseDown={() => clearedPrefroute(r)}>
                   {r.routeType === "pdr" || r.routeType === "pdar" ? r.departure : ""}
                   {r.routeType === "pdar" ? r.route : r.amendment}

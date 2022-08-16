@@ -17,7 +17,7 @@ export const GpdMapFeaturesMenu = () => {
     <>
       {Object.values(mapFeatureOption).map(option => {
         return (
-          <OptionsBodyRow key={`map-feature-option-${option}`}>
+          <OptionsBodyRow key={option}>
             <EdstTooltip
               style={{ flexGrow: 1 }}
               onMouseDown={() => setCurrentOptions(prev => ({ ...prev, [option as mapFeatureOption]: !currentOptions[option as mapFeatureOption] }))}

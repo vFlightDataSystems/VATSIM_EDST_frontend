@@ -181,7 +181,7 @@ export const HoldMenu = () => {
           <FixContainer>
             {routeFixes &&
               _.range(0, Math.min(routeFixes.length || 0, 10)).map(i => (
-                <OptionsBodyRow key={`hold-menu-row-${i}`}>
+                <OptionsBodyRow key={i}>
                   {_.range(0, Math.round((routeFixes.length || 0) / 10) + 1).map(j => {
                     const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
                     const minutesAtFix = routeFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
@@ -190,7 +190,7 @@ export const HoldMenu = () => {
                         <Col1
                           hover
                           selected={fix === fixName}
-                          key={`hold-menu-col-${i}-${j}`}
+                          key={`${i}-${j}`}
                           onMouseDown={() => {
                             setFix(fixName);
                             setEfc(minutesAtFix + 30);

@@ -296,7 +296,7 @@ export const AltMenu = () => {
               {_.range(30, -40, -10).map(i => {
                 const centerAlt = Number(formatAltitude(entry.altitude)) - Math.round(deltaY / 100) * 10 + i;
                 return (
-                  <AltMenuScrollRow hover={selected === "amend" && tempAltHover === centerAlt} key={`alt-${i}`}>
+                  <AltMenuScrollRow hover={selected === "amend" && tempAltHover === centerAlt} key={i}>
                     <AltMenuScrollCol selected={centerAlt === Number(formatAltitude(entry.altitude))} onMouseDown={() => handleAltClick(centerAlt)}>
                       {String(centerAlt).padStart(3, "0")}
                     </AltMenuScrollCol>

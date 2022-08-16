@@ -144,17 +144,17 @@ export const SectorSelector = () => {
             </option>
             <option value="All">All</option>
             {profiles.map(profile => (
-              <option key={`sector-profiles-${profile.id}`} value={profile.id}>
+              <option key={profile.id} value={profile.id}>
                 {profile.id}
               </option>
             ))}
           </SectorSelectorDropdown>
           <CheckBoxBlock>
             {Object.entries(sectors).map(([id, sector]) => (
-              <EdstTooltip title={sector?.properties?.name} key={`sector-selector-${id}-container`}>
+              <EdstTooltip title={sector?.properties?.name} key={id}>
                 {[
                   <SectorSelectorInput
-                    key={`sector-selector-${id}-input`}
+                    key={`${id}-input`}
                     type="checkbox"
                     onChange={() => dispatch(toggleSector(id))}
                     id={id}
@@ -162,7 +162,7 @@ export const SectorSelector = () => {
                     name={id}
                     checked={selectedSectors.includes(id)}
                   />,
-                  <SectorSelectorLabel key={`sector-selector-${id}-label`} htmlFor={id}>
+                  <SectorSelectorLabel key={`${id}-label`} htmlFor={id}>
                     {id}
                   </SectorSelectorLabel>
                 ]}

@@ -77,7 +77,7 @@ export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsPr
       {props.options?.map(option => (
         <FloatingWindowOptionDiv
           unselected={!(props.selectedOptions?.includes(option) ?? true)}
-          key={`sigmet-option-${option}`}
+          key={option}
           onMouseDown={() => props.handleOptionClick?.(option)}
         >
           {option}

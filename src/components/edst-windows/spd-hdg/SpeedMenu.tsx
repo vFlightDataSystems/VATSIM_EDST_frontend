@@ -136,7 +136,7 @@ export const SpeedMenu = () => {
               const centerSpd = speed - Math.round(deltaY / 100) * 10 + i * 10;
               const centerMach = 0.79 - Math.round(deltaY / 100) / 100 + i / 100;
               return (
-                <ScrollRow key={`speed-menu-${i}`}>
+                <ScrollRow key={i}>
                   <ScrollCol onMouseDown={e => handleMouseDown(e, centerSpd)}>
                     {String(centerSpd).padStart(3, "0")}
                     {sign}
