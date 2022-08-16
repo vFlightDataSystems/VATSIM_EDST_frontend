@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
+import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
 import { edstFontFamily } from "../../../styles/styles";
 import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
@@ -57,6 +57,7 @@ const DataBlockElement = styled.span<{ selected?: boolean }>`
 export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
+  const anyDragging = useRootSelector(anyDraggingSelector);
   const ref = useRef<HTMLDivElement | null>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
   const [offset, setOffset] = useState({ x: 24, y: -30 });
@@ -65,15 +66,17 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
   const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? (asel.field as AclRowField) : null;
 
   const onCallsignMouseDown = (event: React.MouseEvent) => {
-    switch (event.button) {
-      case 0:
-        dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.FID));
-        break;
-      case 1:
-        toggleShowRoute();
-        break;
-      default:
-        break;
+    if (!anyDragging) {
+      switch (event.button) {
+        case 0:
+          dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.FID));
+          break;
+        case 1:
+          toggleShowRoute();
+          break;
+        default:
+          break;
+      }
     }
   };
 
@@ -140,14 +143,14 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} absolute />}
         <DataBlockDiv ref={ref} pos={pos} offset={offset} onMouseMove={event => !dragPreviewStyle && startDrag(event)}>
           <DataBlockRow>
-            <DataBlockElement selected={selectedField === AclRowField.FID} onMouseDown={onCallsignMouseDown}>
+            <DataBlockElement selected={selectedField === AclRowField.FID} onMouseUp={onCallsignMouseDown}>
               {entry.aircraftId}
             </DataBlockElement>
           </DataBlockRow>
           <DataBlockRow>
             <DataBlockElement
               selected={selectedField === AclRowField.ALT}
-              onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
+              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
             >
               {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}C`}
             </DataBlockElement>
@@ -155,13 +158,13 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           <DataBlockRow>
             <DataBlockElement
               selected={selectedField === AclRowField.ROUTE}
-              onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
+              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
             >
               {entry.destination}
             </DataBlockElement>
             <DataBlockElement
               selected={selectedField === AclRowField.SPD}
-              onMouseDown={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.SPD))}
+              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.SPD))}
             >
               {entry.speed}
             </DataBlockElement>
