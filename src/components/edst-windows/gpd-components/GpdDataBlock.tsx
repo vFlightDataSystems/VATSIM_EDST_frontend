@@ -42,7 +42,7 @@ const DataBlockRow = styled.div`
 const DataBlockElement = styled.span<{ selected?: boolean }>`
   height: 1em;
   color: ${props => (props.selected ? "#000000" : "#ADADAD")};
-  background-color: ${props => (props.selected ? "#ADADAD" : "#000000")};
+  background-color: ${props => (props.selected ? "#ADADAD" : "transparent")};
   border: 1px solid transparent;
   margin: 0 1px;
   padding: 0 1px;
