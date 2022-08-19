@@ -29,7 +29,7 @@ import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
 import { OPLUS_SYMBOL } from "../../constants";
-import { UplinkSymbol } from "../resources/UplinkSymbol";
+import { DownlinkSymbol } from "../resources/DownlinkSymbol";
 import { CreateOrAmendFlightplanDto } from "../../types/apiTypes/CreateOrAmendFlightplanDto";
 import { fetchFormatRoute } from "../../api/api";
 
@@ -305,17 +305,6 @@ export const RouteMenu = () => {
               </EdstTooltip>
             </OptionsBodyCol>
             <OptionsBodyCol maxWidth={24} maxHeight={24}>
-              <EdstTooltip title={Tooltips.routeMenuVatsimLogo}>
-                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-                <img
-                  src={VATSIM_LOGO}
-                  alt="vatsim-logo"
-                  onMouseDown={() => setDisplayRawRoute(!displayRawRoute)}
-                  onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
-                />
-              </EdstTooltip>
-            </OptionsBodyCol>
-            <OptionsBodyCol maxWidth={24} maxHeight={24}>
               <EdstTooltip>
                 <a
                   href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
@@ -327,7 +316,7 @@ export const RouteMenu = () => {
               </EdstTooltip>
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              {entry.uplinkEligible && <UplinkSymbol />}
+              <DownlinkSymbol disabled={!entry.cpdlcCapable} />
               <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)} title={Tooltips.routeMenuAmend} />
             </OptionsBodyCol>
           </RouteMenuRow>
