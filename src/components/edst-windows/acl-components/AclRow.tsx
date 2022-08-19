@@ -60,11 +60,9 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
 
   useEffect(() => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-    const parAvail =
-      entry.preferentialArrivalRoutes.filter(
-        par => par.eligible && currentFixNames.includes(par.triggeredFix) && entry.formattedRoute.includes(par.amendment)
-      ).length > 0;
-    setParAvail(parAvail);
+    const availPar = entry.preferentialArrivalRoutes.filter(par => par.eligible && currentFixNames.includes(par.triggeredFix));
+    const onPar = availPar.some(par => entry.formattedRoute.includes(par.amendment));
+    setParAvail(availPar.length > 0);
     setOnPar(onPar);
   }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
 

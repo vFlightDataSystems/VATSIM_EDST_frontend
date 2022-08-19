@@ -36,7 +36,7 @@ export type LocalVEdstEntry = {
   depDisplay: boolean;
   depDeleted: boolean;
   keep: boolean;
-  uplinkEligible: boolean;
+  cpdlcCapable: boolean;
   assignedSpeed: string | null;
   assignedHeading: string | null;
   interimAltitude: number | null;

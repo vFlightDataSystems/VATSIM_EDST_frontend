@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import styled from "styled-components";
@@ -39,7 +39,7 @@ export const GpdBody = ({ zoomLevel }: { zoomLevel: number }) => {
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
 
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: EdstEntry) => entry.aclDisplay), [entries]);
+  const entryList = Object.values(entries)?.filter((entry: EdstEntry) => entry.aclDisplay);
 
   return (
     <GpdBodyDiv>
