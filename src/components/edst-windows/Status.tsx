@@ -1,8 +1,7 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { closeWindow, setShowSectorSelector, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import { EdstButton } from "../resources/EdstButton";
+import { closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
 import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
@@ -50,7 +49,7 @@ export const Status = () => {
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>
         <StatusBodyDiv>
-          <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>Change Sectors</EdstButton>
+          {/* <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>Change Sectors</EdstButton> */}
           <div>
             Submit Feedback{" "}
             <a href="https://forms.gle/LpzgyNMNMwa8CY8e8" target="_blank" rel="noreferrer">
