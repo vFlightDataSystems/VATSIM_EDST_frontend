@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import _ from "lodash";
 import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
@@ -67,13 +68,12 @@ const MessageComposeInputAreaDiv = styled.div`
   }
 `;
 
-const ResponseFeedbackAreaDiv = styled.div`
-  height: 3em;
+const ResponseFeedbackRowDiv = styled.div`
+  height: 1em;
   line-height: 1;
   padding: 2px;
   display: flex;
   flex-grow: 1;
-  white-space: pre-line;
 `;
 
 type MessageComposeAreaProps = {
@@ -82,6 +82,7 @@ type MessageComposeAreaProps = {
 
 const AcceptCheckmarkSpan = styled.span`
   color: #00ad00;
+  height: 1em;
 
   ::before {
     content: "\u2713";
@@ -90,6 +91,7 @@ const AcceptCheckmarkSpan = styled.span`
 
 const RejectCrossSpan = styled.span`
   color: #ad0000;
+  height: 1em;
 
   ::before {
     content: "\u2715"; // apparently this is literally just the character X (xray)
@@ -111,6 +113,8 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA, "mousedown");
   const hubActions = useHubActions();
   const { connectHub, disconnectHub } = useHubConnector();
+
+  const rows = 3;
 
   const accept = (message: string) => {
     dispatch(setMcaAcceptMessage(message));
@@ -349,6 +353,8 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
     }
   };
 
+  const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
+
   return (
     pos && (
       <MessageComposeAreaDiv
@@ -374,11 +380,14 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
             onKeyDownCapture={handleKeyDown}
           />
         </MessageComposeInputAreaDiv>
-        <ResponseFeedbackAreaDiv>
+        <ResponseFeedbackRowDiv>
           {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
           {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
-          {mcaFeedbackString.toUpperCase()}
-        </ResponseFeedbackAreaDiv>
+          {feedbackRows[0]}
+        </ResponseFeedbackRowDiv>
+        {_.range(1, rows).map(i => (
+          <ResponseFeedbackRowDiv key={i}>{feedbackRows[i]}</ResponseFeedbackRowDiv>
+        ))}
       </MessageComposeAreaDiv>
     )
   );
