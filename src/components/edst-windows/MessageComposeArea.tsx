@@ -224,13 +224,13 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           break; // end case //
         case "SI":
           connectHub()
-            .then(() => accept("SI"))
-            .catch(() => reject("SI"));
+            .then(() => accept("SIGN IN"))
+            .catch(() => reject("SIGN IN"));
           break;
         case "SO":
           disconnectHub()
-            .then(() => accept("SO"))
-            .catch(() => reject("SO"));
+            .then(() => accept("SIGN OUT"))
+            .catch(() => reject("SIGN OUT"));
           break;
         case "UU":
           switch (args.length) {
