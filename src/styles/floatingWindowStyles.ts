@@ -19,7 +19,7 @@ export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | n
     }}
 `;
 
-export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<{ width?: number; height?: number }>`
+export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)`
   font-family: ${edstFontFamily};
   display: flex;
   white-space: nowrap;
