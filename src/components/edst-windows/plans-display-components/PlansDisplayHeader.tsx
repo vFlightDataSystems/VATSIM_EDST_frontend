@@ -11,6 +11,7 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { PlanRowField } from "../../../enums/planRowField";
 import { useHubActions } from "../../../hooks/useHubActions";
+import { DownlinkSymbol } from "../../resources/DownlinkSymbol";
 
 const PlansDisplayHeaderDiv = styled(NoSelectDiv)``;
 
@@ -71,6 +72,8 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
         />
         <EdstWindowHeaderButton disabled content="Show" />
         <EdstWindowHeaderButton disabled content="Show ALL" />
+        <DownlinkSymbol disabled />
+        <EdstWindowHeaderButton disabled content="AM+Uplink" />
         <EdstWindowHeaderButton disabled={selectedPlanIndex === null} content="Amend" onMouseDown={handleAmendClick} title={Tooltips.plansAmend} />
         <EdstWindowHeaderButton
           disabled={interimDisabled}
