@@ -284,8 +284,6 @@ export const EdstHeader = () => {
             />
             <EdstHeaderButton
               open={windows[EdstWindow.CPDLC_HIST].open}
-              backgroundColor={YELLOW}
-              borderColor={YELLOW}
               content="CPDLC HIST"
               disabled={disabledHeaderButtons.includes(edstHeaderButton.cpdlcHist)}
               // title={Tooltips.cpdlc_hist}
@@ -293,8 +291,6 @@ export const EdstHeader = () => {
             />
             <EdstHeaderButton
               open={windows[EdstWindow.CPDLC_MSG].open}
-              backgroundColor={YELLOW}
-              borderColor={YELLOW}
               content="CPDLC MSGOUT"
               disabled={disabledHeaderButtons.includes(edstHeaderButton.cpdlcMsgOut)}
               // title={Tooltips.cpdlc_msg_out}
