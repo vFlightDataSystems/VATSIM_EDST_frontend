@@ -5,3 +5,10 @@ export const UPLINK_SYMBOL = "\u00BB";
 export const OPLUS_SYMBOL = "\u2295";
 export const VCI_SYMBOL = "\u2719";
 export const CPDLC_VCI = "\u2720";
+
+const ALT_EXPR = /[0-5]?[1-9][05]/;
+export const ALTITUDE_VALIDATION_EXPRESSIONS = {
+  hardAlt: ALT_EXPR,
+  tempAlt: new RegExp(`T${ALT_EXPR.source}`),
+  blockAlt: new RegExp(`${ALT_EXPR.source}B${ALT_EXPR.source}`)
+}

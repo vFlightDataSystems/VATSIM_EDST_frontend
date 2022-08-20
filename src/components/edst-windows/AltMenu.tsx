@@ -15,8 +15,7 @@ import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
-import { formatAltitude } from "../../lib";
-import { UPLINK_SYMBOL } from "../../constants";
+import { ALTITUDE_VALIDATION_EXPRESSIONS, UPLINK_SYMBOL } from "../../constants";
 
 type AltMenuDivProps = { width?: string; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
@@ -174,6 +173,14 @@ const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
     color: #575757;
   }
 `;
+
+function validateAltitudeInput(input: string) {
+  // check if input is a number and length matches valid input
+  // +"string" will convert the string to a number or NaN
+  // it is called the unary plus operator
+  return Object.values(ALTITUDE_VALIDATION_EXPRESSIONS).some(regex => regex.test(input));
+}
+
 export const AltMenu = () => {
   const ref = useRef<HTMLDivElement | null>(null);
   const asel = useRootSelector(aselSelector)!;
@@ -188,10 +195,12 @@ export const AltMenu = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { amendFlightplan } = useHubActions();
 
+  const assignedAltitude = Number.isFinite(+entry.altitude) ? +entry.altitude : 200;
+
   useCenterCursor(ref, [asel]);
 
   const handleAltClick = (alt: string | number) => {
-    const amendedFlightplan = { ...entry, altitude: String(Number(alt) * 100) };
+    const amendedFlightplan = { ...entry, altitude: alt.toString().toUpperCase() };
     if (selected === "amend") {
       amendFlightplan(amendedFlightplan).then();
     } else {
@@ -213,10 +222,7 @@ export const AltMenu = () => {
   };
 
   const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-    const newDeltaY = Math.min(
-      Math.max((Number(formatAltitude(entry.altitude)) - 560) * 10, deltaY + e.deltaY),
-      (Number(formatAltitude(entry.altitude)) - 40) * 10
-    );
+    const newDeltaY = Math.min(Math.max((assignedAltitude - 560) * 10, deltaY + e.deltaY), (assignedAltitude - 40) * 10);
     setDeltaY(newDeltaY);
   };
 
@@ -243,7 +249,7 @@ export const AltMenu = () => {
         </AltMenuHeaderDiv>
         {manualInput !== null && (
           <span>
-            <AltMenuRow>FP{Number(formatAltitude(entry.altitude))}</AltMenuRow>
+            <AltMenuRow>FP{entry.altitude}</AltMenuRow>
             <AltMenuRow bgBlack>
               <input
                 tabIndex={0}
@@ -252,11 +258,7 @@ export const AltMenu = () => {
                 onChange={event => setManualInput(event.target.value)}
                 onKeyDown={event => {
                   if (event.key === "Enter") {
-                    // check if input is a number and length matches valid input
-                    // +"string" will convert the string to a number or NaN
-                    // it is called the unary plus operator
-                    const numberInput = +manualInput;
-                    if (_.isFinite(numberInput) && numberInput > 10 && numberInput < 590 && manualInput.length === 3) {
+                    if (validateAltitudeInput(manualInput)) {
                       handleAltClick(manualInput);
                     } else {
                       setShowInvalid(true);
@@ -284,7 +286,7 @@ export const AltMenu = () => {
                 AMEND
               </AltMenuRow>
             </EdstTooltip>
-            <AltMenuRow>FP{Number(formatAltitude(entry.altitude))}</AltMenuRow>
+            <AltMenuRow>FP{entry.altitude}</AltMenuRow>
             <AltMenuRow disabled>UPLINK</AltMenuRow>
             <AltMenuRow disabled>
               <AltMenuRowCol>PD</AltMenuRowCol>
@@ -294,10 +296,10 @@ export const AltMenu = () => {
             <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>
               {_.range(30, -40, -10).map(i => {
-                const centerAlt = Number(formatAltitude(entry.altitude)) - Math.round(deltaY / 100) * 10 + i;
+                const centerAlt = (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10 + i;
                 return (
                   <AltMenuScrollRow hover={selected === "amend" && tempAltHover === centerAlt} key={i}>
-                    <AltMenuScrollCol selected={centerAlt === Number(formatAltitude(entry.altitude))} onMouseDown={() => handleAltClick(centerAlt)}>
+                    <AltMenuScrollCol selected={centerAlt === +entry.altitude} onMouseDown={() => handleAltClick(centerAlt)}>
                       {String(centerAlt).padStart(3, "0")}
                     </AltMenuScrollCol>
                     {asel.window !== EdstWindow.DEP && (
