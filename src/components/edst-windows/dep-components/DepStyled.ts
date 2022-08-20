@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Col, FidCol } from "../../../styles/sharedColumns";
 
 export const DepFidCol = styled(FidCol)`
@@ -31,17 +31,19 @@ export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean; k
 
   ${props => props.disabled && { "border-color": "transparent" }};
   ${props =>
-    props.header && {
-      "font-size": "10px",
-      margin: "0 2px",
-      width: "10px",
-      "pointer-events": "none"
-    }};
+    props.header &&
+    css`
+      font-size: 10px;
+      margin: 0 2px;
+      width: 10px;
+      pointer-events: none;
+    `};
 
   ${props =>
-    props.checked && {
-      color: "#FFFFFF",
-      "font-size": "10px"
-    }};
+    props.checked &&
+    css`
+      color: #ffffff;
+      font-size: 10px;
+    `};
   ${props => props.keep && { "background-color": "#414141" }};
 `;

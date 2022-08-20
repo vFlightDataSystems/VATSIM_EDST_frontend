@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { edstFontGreen, edstFontGrey, edstFontYellow } from "../../../styles/colors";
 import { Col, ColProps, SpecialBox } from "../../../styles/sharedColumns";
 
@@ -21,12 +21,13 @@ export const RadioCol = styled(AclCol1).attrs((props: RadioColProps) => ({
     border: 1px solid ${props => props.hoverBorderColor};
   }
   ${props =>
-    props.header && {
-      "font-size": "14px",
-      margin: "0 2px",
-      width: "10px",
-      "pointer-events": "none"
-    }};
+    props.header &&
+    css`
+      font-size: 14px;
+      margin: 0 2px;
+      width: 10px;
+      pointer-events: none;
+    `};
   ${props => props.keep && { "background-color": "#414141" }};
 `;
 export const CoralBox = styled(SpecialBox)`
@@ -51,33 +52,26 @@ export const PointOutCol = styled(Col)`
   width: 30px;
   justify-content: left;
 `;
-export const HdgCol = styled(Col).attrs((props: ColProps) => ({
+const HdgSpdCol = styled(Col).attrs((props: ColProps) => ({
   width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
 }))<{ scratchpad?: boolean }>`
-  margin: 0;
-  justify-content: right;
-  padding-right: 1px;
   ${props => props.scratchpad && { color: edstFontYellow }}
   ${props =>
-    props.selected && {
-      color: "#000000",
-      "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
-    }};
+    props.selected &&
+    css`
+      color: #000000;
+      background-color: ${props.scratchpad ? edstFontYellow : "#ADADAD"};
+    `}};
+`;
+export const HdgCol = styled(HdgSpdCol)`
+  justify-content: right;
+  padding-right: 1px;
 `;
 export const HdgSpdSlashCol = styled(Col)`
   width: 1ch;
   margin: 0;
 `;
-export const SpdCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
-}))<{ scratchpad?: boolean }>`
-  margin: 0;
+export const SpdCol = styled(HdgSpdCol)`
   justify-content: left;
   padding-left: 1px;
-  ${props => props.scratchpad && { color: edstFontYellow }}
-  ${props =>
-    props.selected && {
-      color: "#000000",
-      "background-color": props.scratchpad ? edstFontYellow : "#ADADAD"
-    }};
 `;
