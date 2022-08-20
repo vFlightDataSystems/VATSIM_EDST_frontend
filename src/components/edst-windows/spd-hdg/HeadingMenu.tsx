@@ -32,7 +32,7 @@ export const HeadingMenu = () => {
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [amend, setAmend] = useState(true);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HEADING_MENU, "mouseup");

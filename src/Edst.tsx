@@ -50,7 +50,7 @@ const Edst = () => {
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLTextAreaElement> | null>(null);
-  const bodyRef = React.useRef<HTMLDivElement & any>(null);
+  const bodyRef = React.useRef<HTMLDivElement>(null);
 
   useInterval(() => {
     fetchAllAircraft().then(aircraftList => {

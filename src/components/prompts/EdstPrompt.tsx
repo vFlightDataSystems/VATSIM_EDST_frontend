@@ -33,7 +33,7 @@ type EdstPromptProps = PropsWithChildren<{
 
 export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps) => {
   const pos = useRootSelector(windowPositionSelector(props.windowId));
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const focused = useFocused(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, props.windowId, stopDragOn);

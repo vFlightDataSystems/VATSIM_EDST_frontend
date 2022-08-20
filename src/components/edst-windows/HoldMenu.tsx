@@ -101,7 +101,7 @@ export const HoldMenu = () => {
   const [turns, setTurns] = useState<TurnDirection>(TurnDirection.RIGHT);
   const [efc, setEfc] = useState(utcMinutes);
   const [routeFixes, setRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU, "mouseup");

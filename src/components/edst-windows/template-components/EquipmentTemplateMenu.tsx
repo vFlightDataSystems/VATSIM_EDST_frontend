@@ -81,7 +81,7 @@ export const EquipmentTemplateMenu = () => {
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.EQUIPMENT_TEMPLATE_MENU, "mouseup");

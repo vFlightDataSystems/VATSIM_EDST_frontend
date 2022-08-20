@@ -52,7 +52,7 @@ export const SortMenu = () => {
   const sortData = useRootSelector(state => state[window === EdstWindow.ACL ? "acl" : "dep"].sortData);
   const zStack = useRootSelector(zStackSelector);
   const [sortState, setSortState] = useState({ ...sortData });
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SORT_MENU, "mouseup");

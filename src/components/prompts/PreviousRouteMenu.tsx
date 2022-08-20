@@ -12,7 +12,7 @@ import { useHubActions } from "../../hooks/useHubActions";
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [frd, setFrd] = useState<string | null>(null);
   useCenterCursor(ref);
   const { generateFrd } = useHubActions();

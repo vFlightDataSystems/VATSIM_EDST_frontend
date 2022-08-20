@@ -56,7 +56,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);

@@ -129,7 +129,7 @@ export const TemplateMenu = () => {
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? "");
   const { generateFrd } = useHubActions();
 
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
 

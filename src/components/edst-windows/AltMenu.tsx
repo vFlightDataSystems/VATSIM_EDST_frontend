@@ -182,7 +182,7 @@ function validateAltitudeInput(input: string) {
 }
 
 export const AltMenu = () => {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTITUDE_MENU));

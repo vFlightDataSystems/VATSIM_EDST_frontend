@@ -43,9 +43,9 @@ type FloatingWindowOptionsProps = {
 };
 
 export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsProps) => {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const headerRef = useRef<HTMLDivElement | null>(null);
-  const xRef = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const xRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__) {

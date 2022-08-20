@@ -26,7 +26,7 @@ export const PlanOptions = () => {
   const asel = useRootSelector(aselSelector)!;
   const pos = useRootSelector(windowPositionSelector(EdstWindow.PLAN_OPTIONS));
   const zStack = useRootSelector(zStackSelector);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const entry = useRootSelector(entrySelector(asel.aircraftId));
   const dep = asel.window === EdstWindow.DEP;

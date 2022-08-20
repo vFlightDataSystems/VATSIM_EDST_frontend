@@ -49,7 +49,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   const route = removeDestFromRouteString(entry.formattedRoute.slice(0), entry.destination);
 
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onPar = !!entry.preferentialArrivalRoutes?.filter(par => par.eligible && entry.formattedRoute.includes(par.amendment))?.length;

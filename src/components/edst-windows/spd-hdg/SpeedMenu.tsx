@@ -36,7 +36,7 @@ export const SpeedMenu = () => {
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState<Sign>(Sign.none);
   const [amend, setAmend] = useState(true);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SPEED_MENU, "mouseup");
