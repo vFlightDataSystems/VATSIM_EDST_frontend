@@ -316,7 +316,13 @@ export const RouteMenu = () => {
               </EdstTooltip>
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <DownlinkSymbol disabled={!entry.cpdlcCapable} />
+              {entry.cpdlcCapable && (
+                <>
+                  <EdstButton content="Uplink" />
+                  <DownlinkSymbol />
+                </>
+              )}
+
               <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)} title={Tooltips.routeMenuAmend} />
             </OptionsBodyCol>
           </RouteMenuRow>
