@@ -90,7 +90,7 @@ export const PlansDisplayTable = () => {
           <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
             {p.cid} {p.aircraftId}
           </Col1>
-          <Col>{p.commandString}</Col>
+          <Col>{p.commandString.toUpperCase()}</Col>
           <Col2 expired={p.expirationTime - time < 0}>{formatTime(p.expirationTime, time)}</Col2>
         </BodyRowDiv>
       ))}
