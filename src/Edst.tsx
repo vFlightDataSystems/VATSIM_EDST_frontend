@@ -36,7 +36,7 @@ import { SigmetWindow } from "./components/edst-windows/SigmetWindow";
 import { Gpd } from "./components/edst-windows/Gpd";
 import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
-import { HubProvider } from "./hooks/useHub";
+import { HubProvider } from "./hooks/useHubConnection";
 import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
 import { EdstWindow } from "./enums/edstWindow";

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { useHub } from "./useHub";
+import { useHubConnection } from "./useHubConnection";
 import { ApiLocation } from "../types/apiTypes/apiLocation";
 import { HoldAnnotations } from "../enums/hold/holdAnnotations";
 import { useRootDispatch } from "../redux/hooks";
@@ -9,7 +9,7 @@ import { AircraftId } from "../types/aircraftId";
 
 export const useHubActions = () => {
   const dispatch = useRootDispatch();
-  const hubConnection = useHub();
+  const hubConnection = useHubConnection();
 
   const generateFrd = (location: ApiLocation) =>
     hubConnection?.invoke<string>("generateFrd", location).catch(error => {

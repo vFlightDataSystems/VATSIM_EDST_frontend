@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { ReactNode, createContext, useContext, useRef, useState, useEffect } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
@@ -19,7 +19,7 @@ import { setMcaRejectMessage } from "../redux/slices/appSlice";
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
 const useHubInit = () => {
-  const [, setHubConnected] = useState(false);
+  const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const nasToken = useRootSelector(nasTokenSelector)!;
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
@@ -37,10 +37,11 @@ const useHubInit = () => {
   };
 
   useEffect(() => {
-    if (!ATC_SERVER_URL || !nasToken) {
+    if (!ATC_SERVER_URL || !nasToken || hubConnected) {
       return;
     }
-    const hubConnection = new HubConnectionBuilder()
+
+    ref.current.hubConnection = new HubConnectionBuilder()
       .withUrl(ATC_SERVER_URL, {
         accessTokenFactory: getValidNasToken,
         transport: HttpTransportType.WebSockets,
@@ -48,7 +49,13 @@ const useHubInit = () => {
       })
       .withAutomaticReconnect()
       .build();
+  }, []);
 
+  const connectHub = async () => {
+    if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current.hubConnection) {
+      return Promise.reject();
+    }
+    const { hubConnection } = ref.current;
     async function start() {
       hubConnection.onclose(() => {
         log("ATC hub disconnected");
@@ -120,15 +127,23 @@ const useHubInit = () => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
     ref.current.hubConnection = hubConnection;
 
-    start().then();
-  }, []);
+    return start();
+  };
 
-  return ref.current.hubConnection;
+  const disconnectHub = async () => {
+    ref.current.hubConnection?.stop().then(() => setHubConnected(false));
+  };
+
+  return {
+    hubConnection: ref.current.hubConnection,
+    connectHub,
+    disconnectHub
+  };
 };
 
 type HubContextValue = ReturnType<typeof useHubInit>;
 
-const HubContext = createContext<HubContextValue>(null);
+const HubContext = createContext<HubContextValue>({ connectHub: Promise.reject, disconnectHub: Promise.reject, hubConnection: null });
 
 export const HubProvider = ({ children }: { children: ReactNode }) => {
   const hubConnection = useHubInit();
@@ -137,7 +152,15 @@ export const HubProvider = ({ children }: { children: ReactNode }) => {
   return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
 };
 
-export const useHub = () => {
-  return useContext(HubContext);
+export const useHubConnection = () => {
+  return useContext(HubContext).hubConnection;
+};
+
+export const useStartHubConnection = () => {
+  const context = useContext(HubContext);
+  return {
+    connectHub: context.connectHub,
+    disconnectHub: context.disconnectHub
+  };
 };
 /* eslint-enable no-console */
