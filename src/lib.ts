@@ -325,15 +325,6 @@ export function convertBeaconCodeToString(code?: number | null): string {
   return String(code ?? 0).padStart(4, "0");
 }
 
-/**
- * format altitude string to be displayed in ACL/DEP rows
- * @param alt
- */
-export function formatAltitude(alt: string): string {
-  const altNum = Number(alt);
-  return String(altNum >= 1000 ? altNum / 100 : altNum).padStart(3, "0");
-}
-
 export function probeConflicts(tracks: AircraftTrack[]): unknown {
   return null;
 }
