@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";

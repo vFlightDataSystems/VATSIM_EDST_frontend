@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 
 import styled from "styled-components";
-import { EdstButton } from "../resources/EdstButton";
-import { EdstTooltip } from "../resources/EdstTooltip";
+import { EdstButton } from "../utils/EdstButton";
+import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { setAclSort } from "../../redux/slices/aclSlice";

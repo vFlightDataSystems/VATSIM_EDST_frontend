@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Time } from "./Time";
 import { Tooltips } from "../tooltips";
-import { EdstTooltip } from "./resources/EdstTooltip";
+import { EdstTooltip } from "./utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { disabledHeaderButtonsSelector, openWindow, toggleWindow, windowsSelector, edstHeaderButton } from "../redux/slices/appSlice";
 import { planQueueSelector } from "../redux/slices/planSlice";

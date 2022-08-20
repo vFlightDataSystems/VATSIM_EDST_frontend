@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 import { useEventListener } from "usehooks-ts";
-import { EdstTooltip } from "../resources/EdstTooltip";
+import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";

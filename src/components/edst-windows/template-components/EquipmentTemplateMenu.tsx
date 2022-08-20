@@ -3,13 +3,13 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EdstButton, EdstTemplateButton85 } from "../../resources/EdstButton";
+import { EdstButton, EdstTemplateButton85 } from "../../utils/EdstButton";
 import { EquipmentNavTemplate } from "./EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "./EquipmentSurvTemplate";
 import { EquipmentCommTemplate } from "./EquipmentCommTemplate";
 import { EquipmentAppServTemplate } from "./EquipmentAppServTemplate";
 import { Tooltips } from "../../../tooltips";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import {
   OptionsBodyCol,
   OptionsBody,

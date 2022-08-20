@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, EdstButton20x20 } from "../../resources/EdstButton";
+import { EdstButton, EdstButton20x20 } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
 import { aselEntrySelector, updateEntry } from "../../../redux/slices/entrySlice";

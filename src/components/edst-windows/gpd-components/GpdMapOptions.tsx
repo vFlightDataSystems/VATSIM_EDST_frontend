@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 
-import { EdstButton } from "../../resources/EdstButton";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstButton } from "../../utils/EdstButton";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { zStackSelector, pushZStack, windowSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";

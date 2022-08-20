@@ -36,7 +36,7 @@ import { aclCleanup } from "../../redux/thunks/aclCleanup";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
-import { useStartHubConnection } from "../../hooks/useHubConnection";
+import { useHubConnector } from "../../hooks/useHubConnector";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
@@ -110,7 +110,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const [mcaInputValue, setMcaInputValue] = useState(mcaCommandString);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA, "mousedown");
   const hubActions = useHubActions();
-  const { connectHub, disconnectHub } = useStartHubConnection();
+  const { connectHub, disconnectHub } = useHubConnector();
 
   const accept = (message: string) => {
     dispatch(setMcaAcceptMessage(message));

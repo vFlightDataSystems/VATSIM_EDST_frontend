@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";

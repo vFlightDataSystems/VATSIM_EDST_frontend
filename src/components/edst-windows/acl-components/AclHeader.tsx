@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { WindowTitleBar } from "../WindowTitleBar";
-import { EdstWindowHeaderButton } from "../../resources/EdstButton";
+import { EdstWindowHeaderButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "../../../redux/slices/aclSlice";

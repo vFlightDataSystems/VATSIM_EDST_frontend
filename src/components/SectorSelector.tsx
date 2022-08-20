@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { EdstButton } from "./resources/EdstButton";
+import { EdstButton } from "./utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import {
   sectorPolygonSelector,
@@ -10,7 +10,7 @@ import {
   toggleSector
 } from "../redux/slices/sectorSlice";
 import { setShowSectorSelector } from "../redux/slices/appSlice";
-import { EdstTooltip } from "./resources/EdstTooltip";
+import { EdstTooltip } from "./utils/EdstTooltip";
 
 const SectorSelectorDiv = styled.div`
   color: #ffffff;

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import _ from "lodash";
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
-import { EdstTooltip } from "../../resources/EdstTooltip";
-import { EdstButton } from "../../resources/EdstButton";
+import { EdstTooltip } from "../../utils/EdstTooltip";
+import { EdstButton } from "../../utils/EdstButton";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdMapFeatureOptionsSelector, mapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";

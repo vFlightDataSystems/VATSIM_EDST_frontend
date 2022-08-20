@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-import { EdstButton } from "../../resources/EdstButton";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstButton } from "../../utils/EdstButton";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/aclSlice";

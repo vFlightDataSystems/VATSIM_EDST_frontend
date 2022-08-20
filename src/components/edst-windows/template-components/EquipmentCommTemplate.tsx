@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { useRootSelector } from "../../../redux/hooks";

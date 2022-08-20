@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { convertBeaconCodeToString, appendUpArrowToString, appendDownArrowToString } from "../../lib";
-import { EdstButton } from "../resources/EdstButton";
+import { EdstButton } from "../utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
-import { EdstTooltip } from "../resources/EdstTooltip";
+import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";

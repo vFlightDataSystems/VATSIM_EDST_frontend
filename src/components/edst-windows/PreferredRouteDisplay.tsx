@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { EdstButton } from "../resources/EdstButton";
+import { EdstButton } from "../utils/EdstButton";
 import { Tooltips } from "../../tooltips";
 import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "../../styles/optionMenuStyles";
 import { ApiPreferentialArrivalRoute } from "../../types/apiTypes/apiPreferentialArrivalRoute";

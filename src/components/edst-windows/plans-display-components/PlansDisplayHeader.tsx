@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { WindowTitleBar } from "../WindowTitleBar";
-import { EdstWindowHeaderButton } from "../../resources/EdstButton";
+import { EdstWindowHeaderButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "../../../redux/slices/planSlice";
@@ -11,7 +11,7 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { PlanRowField } from "../../../enums/planRowField";
 import { useHubActions } from "../../../hooks/useHubActions";
-import { DownlinkSymbol } from "../../resources/DownlinkSymbol";
+import { DownlinkSymbol } from "../../utils/DownlinkSymbol";
 
 const PlansDisplayHeaderDiv = styled(NoSelectDiv)``;
 

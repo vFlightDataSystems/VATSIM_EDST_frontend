@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { AclRow } from "./AclRow";
-import { EdstTooltip } from "../../resources/EdstTooltip";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "../../../redux/selectors";

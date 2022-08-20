@@ -36,13 +36,13 @@ import { SigmetWindow } from "./components/edst-windows/SigmetWindow";
 import { Gpd } from "./components/edst-windows/Gpd";
 import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
-import { HubProvider } from "./hooks/useHubConnection";
 import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
 import { EdstWindow } from "./enums/edstWindow";
 import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
 import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
 import { WEATHER_REFRESH_RATE } from "./constants";
+import { HubContextProvider } from "./contexts/HubContext";
 
 const Edst = () => {
   const dispatch = useRootDispatch();
@@ -122,11 +122,11 @@ const Edst = () => {
 };
 
 const EdstProvider = () => (
-  <HubProvider>
+  <HubContextProvider>
     <React.StrictMode>
       <Edst />
     </React.StrictMode>
-  </HubProvider>
+  </HubContextProvider>
 );
 
 export default EdstProvider;

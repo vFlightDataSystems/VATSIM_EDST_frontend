@@ -8,9 +8,9 @@ import { getClearedToFixRouteFixes, removeDepFromRouteString, removeDestFromRout
 import VATSIM_LOGO from "../../resources/images/VATSIM-social_icon.svg";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
-import { EdstButton, EdstRouteButton12x12 } from "../resources/EdstButton";
+import { EdstButton, EdstRouteButton12x12 } from "../utils/EdstButton";
 import { Tooltips } from "../../tooltips";
-import { EdstTooltip } from "../resources/EdstTooltip";
+import { EdstTooltip } from "../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
@@ -29,7 +29,7 @@ import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
 import { OPLUS_SYMBOL } from "../../constants";
-import { DownlinkSymbol } from "../resources/DownlinkSymbol";
+import { DownlinkSymbol } from "../utils/DownlinkSymbol";
 import { CreateOrAmendFlightplanDto } from "../../types/apiTypes/CreateOrAmendFlightplanDto";
 import { fetchFormatRoute } from "../../api/api";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { EdstTooltip } from "./resources/EdstTooltip";
+import { EdstTooltip } from "./utils/EdstTooltip";
 import { EdstInput } from "../styles/optionMenuStyles";
 
 type InputProps = {
