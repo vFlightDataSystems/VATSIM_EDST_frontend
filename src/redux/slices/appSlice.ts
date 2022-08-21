@@ -46,9 +46,9 @@ type OutageEntry = {
   acknowledged: boolean;
 };
 
-export type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
+type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
 
-export type AppState = {
+type AppState = {
   disabledHeaderButtons: edstHeaderButton[];
   windows: Record<EdstWindow, AppWindow>;
   anyDragging: boolean;
