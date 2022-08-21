@@ -8,6 +8,7 @@ import { DepRowField } from "../../enums/dep/depRowField";
 import { PlanRowField } from "../../enums/planRowField";
 import { openWindowThunk } from "../thunks/openWindowThunk";
 import { edstHeaderButton } from "../../enums/edstHeaderButton";
+import { OutageEntry } from "../../types/outageEntry";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -30,20 +31,6 @@ type AppWindow = {
   position: WindowPosition | null;
   isFullscreen: boolean;
   openedBy?: EdstWindow;
-};
-
-enum OutageType {
-  facilityDown,
-  facilityUp,
-  serviceDown,
-  serviceUp
-}
-
-type OutageEntry = {
-  message: string;
-  outageType: OutageType;
-  canDelete: boolean;
-  acknowledged: boolean;
 };
 
 type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
@@ -152,7 +139,7 @@ const appSlice = createSlice({
     setMcaCommandString(state, action: PayloadAction<string>) {
       state.mcaCommandString = action.payload;
     },
-    setmcaFeedbackString(state, action: PayloadAction<string>) {
+    setMcaFeedbackString(state, action: PayloadAction<string>) {
       state.mcaFeedbackString = action.payload;
     },
     closeAllWindows(state) {
@@ -205,7 +192,7 @@ export function setAsel(asel: Asel | null): RootThunkAction {
 export const setMcaResponse = (message: string): RootThunkAction => {
   return dispatch => {
     dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
-    dispatch(appSlice.actions.setmcaFeedbackString(message));
+    dispatch(appSlice.actions.setMcaFeedbackString(message));
   };
 };
 
