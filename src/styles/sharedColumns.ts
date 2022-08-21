@@ -5,15 +5,13 @@ export type ColProps = {
   hover?: boolean;
   disabled?: boolean;
   color?: string;
-  width?: number;
   selected?: boolean;
   hidden?: boolean;
   visibilityHidden?: boolean;
 };
 
 export const Col = styled.div.attrs((props: ColProps) => ({
-  // eslint-disable-next-line no-nested-ternary
-  width: props.visibilityHidden || props.hidden ? "30px" : props.width ? `${props.width}px` : "auto",
+  width: props.visibilityHidden || props.hidden ? "30px" : "auto",
   visibility: props.visibilityHidden ? "hidden" : "initial"
 }))<ColProps>`
   display: flex;
