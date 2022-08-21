@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { createContext, ReactNode, useEffect, useRef, useState } from "react";
+import React, { createContext, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
 import { log } from "../console";
@@ -15,6 +15,8 @@ import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThu
 import { setMcaRejectMessage } from "../redux/slices/appSlice";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { initThunk } from "../redux/thunks/initThunk";
+import { createSocket, disconnectSocket } from "../sharedState/socket";
+import { receiveSharedStateAircraft } from "../redux/thunks/receiveSharedStateAircraft";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
@@ -51,7 +53,17 @@ const useHubInit = () => {
       .build();
   }, []);
 
-  const connectHub = async () => {
+  const connectSocket = (artccId: string, sectorId: string) => {
+    const socket = createSocket(artccId, sectorId);
+    if (socket) {
+      socket.on("receiveAircraft", aircraft => {
+        dispatch(receiveSharedStateAircraft(aircraft));
+      });
+      socket.on("disconnect", console.log);
+    }
+  };
+
+  const connectHub = useCallback(async () => {
     if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current) {
       return Promise.reject();
     }
@@ -70,7 +82,7 @@ const useHubInit = () => {
         log("clearing session");
         dispatch(clearSession());
       });
-      hubConnection.on("receiveFlightplan", (topic: ApiTopic, flightplan: ApiFlightplan) => {
+      hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
         // log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
@@ -97,6 +109,7 @@ const useHubInit = () => {
                 const { sectorId } = sessionInfo.position.eramConfiguration;
                 dispatch(setArtccId(artccId));
                 dispatch(setSectorId(sectorId));
+                connectSocket(artccId, sectorId);
                 dispatch(setSession(sessionInfo));
                 dispatch(initThunk());
                 hubConnection
@@ -127,11 +140,12 @@ const useHubInit = () => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  };
+  }, []);
 
-  const disconnectHub = async () => {
+  const disconnectHub = useCallback(async () => {
     ref.current?.stop().then(() => setHubConnected(false));
-  };
+    disconnectSocket();
+  }, []);
 
   return {
     hubConnection: ref.current,
