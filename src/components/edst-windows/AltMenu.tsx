@@ -9,13 +9,13 @@ import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
 import { defaultInputFontSize, NoSelectDiv } from "../../styles/styles";
 import { edstFontGrey, edstFontYellow } from "../../styles/colors";
-import { Plan } from "../../redux/slices/planSlice";
 import { WindowPosition } from "../../types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { ALTITUDE_VALIDATION_EXPRESSIONS, UPLINK_SYMBOL } from "../../constants";
+import { Plan } from "../../types/plan";
 
 type AltMenuDivProps = { width?: string; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({

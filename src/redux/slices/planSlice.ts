@@ -1,16 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState } from "../store";
-import { UnixTime } from "../../types/unixTime";
-import { CreateOrAmendFlightplanDto } from "../../types/apiTypes/CreateOrAmendFlightplanDto";
-
-export type Plan = {
-  cid: string;
-  aircraftId: string;
-  amendedFlightplan: CreateOrAmendFlightplanDto;
-  commandString: string;
-  expirationTime: UnixTime;
-};
+import { Plan } from "../../types/plan";
 
 export type PlanState = {
   planQueue: Plan[];

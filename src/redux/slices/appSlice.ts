@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, RootThunkAction } from "../store";
-import { Plan } from "../../types/plan";
 import { WindowPosition } from "../../types/windowPosition";
 import { AircraftId } from "../../types/aircraftId";
 import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
@@ -50,7 +49,6 @@ export type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowFi
 
 export type AppState = {
   disabledHeaderButtons: edstHeaderButton[];
-  planQueue: Plan[];
   windows: Record<EdstWindow, AppWindow>;
   anyDragging: boolean;
   mraMsg: string;
@@ -120,7 +118,6 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
 
 const initialState: AppState = {
   disabledHeaderButtons: DISABLED_HEADER_BUTTONS,
-  planQueue: [],
   windows: initialWindowState,
   anyDragging: false,
   mraMsg: "",

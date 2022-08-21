@@ -11,4 +11,4 @@ export const ALTITUDE_VALIDATION_EXPRESSIONS = {
   hardAlt: ALT_EXPR,
   tempAlt: new RegExp(`T${ALT_EXPR.source}`),
   blockAlt: new RegExp(`${ALT_EXPR.source}B${ALT_EXPR.source}`)
-}
+};

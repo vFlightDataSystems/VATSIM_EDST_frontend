@@ -1,6 +1,10 @@
+import { CreateOrAmendFlightplanDto } from "./apiTypes/CreateOrAmendFlightplanDto";
+import { UnixTime } from "./unixTime";
+
 export type Plan = {
+  cid: string;
   aircraftId: string;
-  callsign: string;
-  planData: Record<string, unknown>;
-  msg: string;
+  amendedFlightplan: CreateOrAmendFlightplanDto;
+  commandString: string;
+  expirationTime: UnixTime;
 };
