@@ -4,7 +4,7 @@ import { Time } from "./Time";
 import { Tooltips } from "../tooltips";
 import { EdstTooltip } from "./utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { disabledHeaderButtonsSelector, openWindow, toggleWindow, windowsSelector, edstHeaderButton } from "../redux/slices/appSlice";
+import { disabledHeaderButtonsSelector, openWindow, toggleWindow, windowsSelector } from "../redux/slices/appSlice";
 import { planQueueSelector } from "../redux/slices/planSlice";
 import { sigmetSelector } from "../redux/slices/weatherSlice";
 import { edstFontGrey } from "../styles/colors";
@@ -12,6 +12,7 @@ import { sectorIdSelector } from "../redux/slices/sectorSlice";
 import { entriesSelector } from "../redux/slices/entrySlice";
 import { EdstWindow } from "../enums/edstWindow";
 import { eramFontFamily } from "../styles/styles";
+import { edstHeaderButton } from "../enums/edstHeaderButton";
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";

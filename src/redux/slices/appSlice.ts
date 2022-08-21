@@ -7,6 +7,7 @@ import { AclRowField } from "../../enums/acl/aclRowField";
 import { DepRowField } from "../../enums/dep/depRowField";
 import { PlanRowField } from "../../enums/planRowField";
 import { openWindowThunk } from "../thunks/openWindowThunk";
+import { edstHeaderButton } from "../../enums/edstHeaderButton";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -61,32 +62,7 @@ export type AppState = {
   outages: OutageEntry[];
 };
 
-export enum edstHeaderButton {
-  more = "more",
-  acl = "acl",
-  dep = "dep",
-  gpd = "gpd",
-  wx = "wx",
-  sig = "sig",
-  not = "not",
-  gi = "gi",
-  ua = "ua",
-  keep = "keep",
-  status = "status",
-  outage = "outage",
-  adsb = "adsb",
-  sat = "sat",
-  msg = "msg",
-  wind = "wind",
-  altim = "altim",
-  mca = "mca",
-  mra = "mra",
-  fel = "fel",
-  cpdlcHist = "cpdlcHist",
-  cpdlcMsgOut = "cpdlcMsgOut"
-}
-
-export const DISABLED_HEADER_BUTTONS = [
+const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.not,
   edstHeaderButton.ua,
   edstHeaderButton.keep,
