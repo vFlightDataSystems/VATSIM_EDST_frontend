@@ -23,7 +23,7 @@ const useHubInit = () => {
   const dispatch = useRootDispatch();
   const nasToken = useRootSelector(nasTokenSelector)!;
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
-  const ref = useRef<{ hubConnection: HubConnection | null }>({ hubConnection: null });
+  const ref = useRef<HubConnection | null>(null);
 
   const getValidNasToken = () => {
     const decodedToken = decodeJwt(nasToken);
@@ -41,7 +41,7 @@ const useHubInit = () => {
       return;
     }
 
-    ref.current.hubConnection = new HubConnectionBuilder()
+    ref.current = new HubConnectionBuilder()
       .withUrl(ATC_SERVER_URL, {
         accessTokenFactory: getValidNasToken,
         transport: HttpTransportType.WebSockets,
@@ -52,10 +52,10 @@ const useHubInit = () => {
   }, []);
 
   const connectHub = async () => {
-    if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current.hubConnection) {
+    if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current) {
       return Promise.reject();
     }
-    const { hubConnection } = ref.current;
+    const hubConnection = ref.current;
     async function start() {
       hubConnection.onclose(() => {
         log("ATC hub disconnected");
@@ -71,7 +71,7 @@ const useHubInit = () => {
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", (topic: ApiTopic, flightplan: ApiFlightplan) => {
-        log("received flightplan:", flightplan);
+        // log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
@@ -125,17 +125,16 @@ const useHubInit = () => {
     }
 
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
-    ref.current.hubConnection = hubConnection;
 
     return start();
   };
 
   const disconnectHub = async () => {
-    ref.current.hubConnection?.stop().then(() => setHubConnected(false));
+    ref.current?.stop().then(() => setHubConnected(false));
   };
 
   return {
-    hubConnection: ref.current.hubConnection,
+    hubConnection: ref.current,
     connectHub,
     disconnectHub
   };
