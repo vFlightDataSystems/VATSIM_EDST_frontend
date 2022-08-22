@@ -28,10 +28,10 @@ export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[]): RootTh
           depFilter(entry, newAircraftTrack, sectorData.artccId).then(result => {
             if (result) {
               dispatch(addEntryToDep(aircraftId));
+            } else {
+              dispatch(addEntryToAcl(aircraftId));
             }
           });
-        } else if (!entry.aclDisplay) {
-          dispatch(addEntryToAcl(aircraftId));
         }
       }
     });

@@ -47,8 +47,8 @@ import { HubContextProvider } from "./contexts/HubContext";
 const Edst = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
-  const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
+  const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLTextAreaElement> | null>(null);
   const bodyRef = React.useRef<HTMLDivElement>(null);
 

@@ -15,7 +15,7 @@ export const aircraftApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/route/` }),
   endpoints: builder => ({
     getRouteFixes: builder.query<RouteFix[], Params>({
-      query: params => ({ url: "route/get_route_data", params })
+      query: params => ({ url: "get_route_data", params })
     })
   })
 });
@@ -24,6 +24,6 @@ const { useGetRouteFixesQuery } = aircraftApi;
 
 export const useRouteFixes = (aircraftId: string) => {
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetRouteFixesQuery({ dep: entry.departure, dest: entry.destination, route: entry.route });
+  const { data } = useGetRouteFixesQuery({ dep: entry.departure, dest: entry.destination, route: entry.route.trim() });
   return data ?? [];
 };

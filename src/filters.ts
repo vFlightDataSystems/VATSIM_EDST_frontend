@@ -2,14 +2,14 @@ import { distance, Feature, point, Polygon, Position } from "@turf/turf";
 import { routeWillEnterAirspace } from "./lib";
 import { ApiAircraftTrack } from "./types/apiTypes/apiAircraftTrack";
 import { EdstEntry } from "./types/edstEntry";
-import { fetchAirportInfo, fetchRouteFixes } from "./api/api";
+import { fetchRouteFixes, memoizedFetchAirportInfo } from "./api/api";
 import { formatRoute } from "./formatRoute";
 
 const BOUNDARY_TIME_FILTER = 30; // minutes
 const AIRBORNE_GROUNDSPEED_FILTER = 30; // knots
 
 export const depFilter = async (entry: EdstEntry, track: ApiAircraftTrack, artccId: string) => {
-  const depInfo = await fetchAirportInfo(entry.departure);
+  const depInfo = await memoizedFetchAirportInfo(entry.departure);
   let depAirportDistance = 0;
   if (depInfo) {
     const pos = [track.location.lon, track.location.lat];

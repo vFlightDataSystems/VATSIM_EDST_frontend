@@ -74,6 +74,10 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     setOnPar(onPar);
   }, [currentRouteFixes, par, routeFixes]);
 
+  useEffect(() => {
+    setFreeTextContent(entry.freeTextContent);
+  }, [entry.freeTextContent]);
+
   const { holdAnnotations } = entry;
   const route = useMemo(() => {
     const route = currentRoute.replace(/^\.+/, "") ?? formattedRoute;
@@ -391,7 +395,11 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           <SpecialBox disabled />
           <InnerRow2 highlight={entry.aclHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={202}>
-              <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value)} />
+              <input
+                value={freeTextContent}
+                onChange={event => setFreeTextContent(event.target.value)}
+                onBlur={() => dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { freeTextContent } }))}
+              />
             </FreeTextRow>
           </InnerRow2>
         </BodyRowDiv>

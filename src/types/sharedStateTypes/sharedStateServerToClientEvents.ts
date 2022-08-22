@@ -1,5 +1,5 @@
 import { SharedStateAircraftDto } from "./sharedStateAircraftDto";
 
-export type sharedStateServerToClientEvents = {
+export type SharedStateServerToClientEvents = {
   receiveAircraft: (aircraft: SharedStateAircraftDto) => void;
 };

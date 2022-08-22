@@ -30,7 +30,6 @@ const entrySlice = createSlice({
     },
     setEntry(state, action: PayloadAction<EdstEntry>) {
       state[action.payload.aircraftId] = action.payload;
-      updateSharedAircraft(action.payload);
     },
     toggleSpa(state, action: PayloadAction<AircraftId>) {
       if (Object.keys(state).includes(action.payload)) {
@@ -49,7 +48,6 @@ const entrySlice = createSlice({
       if (Object.keys(state).includes(action.payload)) {
         state[action.payload].aclDisplay = true;
         state[action.payload].aclDeleted = false;
-        updateSharedAircraft(state[action.payload]);
       }
     },
     rmvEntryFromDep(state, action: PayloadAction<AircraftId>) {

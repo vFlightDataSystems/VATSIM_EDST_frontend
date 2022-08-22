@@ -10,9 +10,9 @@ import { entrySelector } from "../redux/slices/entrySlice";
 
 const baseUrl = process.env.REACT_APP_BACKEND_BASEURL!;
 
-type GetPdrParams = Record<"artccId" | "dep" | "aircraft" | "route", string>;
-type GetPdarParams = Record<"artccId" | "dep" | "dest" | "aircraft", string>;
-type GetParParams = Record<"artccId" | "dest" | "aircraft" | "route", string>;
+type GetPdrParams = Record<"artccId" | "departure" | "aircraft" | "route", string>;
+type GetPdarParams = Record<"artccId" | "departure" | "destination" | "aircraft", string>;
+type GetParParams = Record<"artccId" | "destination" | "aircraft" | "route", string>;
 
 // Define a service using a base URL and expected endpoints
 export const prefrouteApi = createApi({
@@ -36,7 +36,7 @@ const { useGetParQuery, useGetPdarQuery, useGetPdrQuery } = prefrouteApi;
 export const usePar = (aircraftId: string) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetParQuery({ artccId, dest: entry.destination, route: entry.route, aircraft: entry.aircraftType });
+  const { data } = useGetParQuery({ artccId, destination: entry.destination, route: entry.route.trim(), aircraft: entry.aircraftType });
 
   return data ?? [];
 };
@@ -44,7 +44,7 @@ export const usePar = (aircraftId: string) => {
 export const usePdar = (aircraftId: string) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetPdarQuery({ artccId, dep: entry.departure, dest: entry.destination, aircraft: entry.aircraftType });
+  const { data } = useGetPdarQuery({ artccId, departure: entry.departure, destination: entry.destination, aircraft: entry.aircraftType });
 
   return data ?? [];
 };
@@ -52,7 +52,7 @@ export const usePdar = (aircraftId: string) => {
 export const usePdr = (aircraftId: string) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetPdrQuery({ artccId, dep: entry.departure, route: entry.route, aircraft: entry.aircraftType });
+  const { data } = useGetPdrQuery({ artccId, departure: entry.departure, route: entry.route.trim(), aircraft: entry.aircraftType });
 
   return data ?? [];
 };
