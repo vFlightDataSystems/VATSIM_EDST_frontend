@@ -22,7 +22,6 @@ import {
   windowPositionSelector,
   zStackSelector
 } from "../../redux/slices/appSlice";
-import { toggleAltimeterThunk, toggleMetarThunk } from "../../redux/thunks/weatherThunks";
 import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontSize, eramFontFamily } from "../../styles/styles";
@@ -38,6 +37,8 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { useHubConnector } from "../../hooks/useHubConnector";
+import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
+import { fetchFormatRoute, fetchRouteFixes } from "../../api/api";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
@@ -170,18 +171,19 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
     );
   };
 
-  const flightplanReadout = (fid: string) => {
+  const flightplanReadout = async (fid: string) => {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry: EdstEntry | undefined = getEntryByFid(fid);
     if (entry) {
+      const formattedRoute = await fetchFormatRoute(entry.route, entry.departure, entry.destination);
       const msg =
         `${formatUtcMinutes(utcMinutes)}\n` +
         `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
           entry.assignedBeaconCode
         )} ${entry.speed} EXX00` +
         ` ${entry.altitude} ${entry.departure}./.` +
-        `${entry.currentRoute.replace(/^\.+/, "")}` +
+        `${formattedRoute.replace(/^\.+/, "")}` +
         `${entry.destination ?? ""}`;
       dispatch(setMraMessage(msg));
     }
@@ -190,23 +192,27 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const parseQU = async (args: string[]) => {
     if (args.length === 2) {
       const entry = getEntryByFid(args[1]);
-      if (entry && entry.aclDisplay && entry.currentRouteFixes?.map(fix => fix.name).includes(args[0])) {
-        const aircraftTrack = aircraftTracks[entry.aircraftId];
-        const frd = await hubActions.generateFrd(aircraftTrack.location);
-        const route = getClearedToFixRouteFixes(args[0], entry, frd)?.route;
-        if (route) {
-          const amendedFlightplan: ApiFlightplan = {
-            ...entry,
-            route: route
-              .split(/\.+/g)
-              .join(" ")
-              .trim()
-          };
-          hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
+      if (entry && entry.aclDisplay) {
+        const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
+        if (routeFixes?.map(fix => fix.name)?.includes(args[0])) {
+          const aircraftTrack = aircraftTracks[entry.aircraftId];
+          const frd = await hubActions.generateFrd(aircraftTrack.location);
+          const formattedRoute = await fetchFormatRoute(entry.route, entry.departure, entry.destination);
+          const route = getClearedToFixRouteFixes(args[0], entry, routeFixes, formattedRoute, frd)?.route;
+          if (route) {
+            const amendedFlightplan: ApiFlightplan = {
+              ...entry,
+              route: route
+                .split(/\.+/g)
+                .join(" ")
+                .trim()
+            };
+            hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
+          }
         }
+        reject("FORMAT");
       }
     }
-    reject("FORMAT");
   };
 
   const parseCommand = () => {
@@ -289,12 +295,12 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           parseQU(args).then();
           break; // end case QU
         case "QD": // altimeter request: QD <station>
-          dispatch(toggleAltimeterThunk(args));
+          dispatch(toggleAltimeter(args));
           dispatch(openWindowThunk(EdstWindow.ALTIMETER));
           accept("ALTIMETER REQ");
           break; // end case QD
         case "WR": // weather request: WR <station>
-          dispatch(toggleMetarThunk(args));
+          dispatch(toggleMetar(args));
           dispatch(openWindowThunk(EdstWindow.METAR));
           accept(`WEATHER STAT REQ\n${mcaInputValue}`);
           break; // end case WR
@@ -308,8 +314,11 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           break; // end case FR
         case "SR":
           if (args.length === 1) {
-            printFlightStrip(getEntryByFid(args[0]));
-            acceptDposKeyBD();
+            const entry = getEntryByFid(args[0]);
+            if (entry) {
+              printFlightStrip(entry);
+              acceptDposKeyBD();
+            }
           }
           break;
         default:

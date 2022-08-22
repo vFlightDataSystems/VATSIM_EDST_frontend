@@ -201,17 +201,18 @@ export function computeBoundaryTime(entry: EdstEntry, track: ApiAircraftTrack, p
 /**
  *
  * @param entry
+ * @param routeFixes
  * @param track
  * @returns {RouteFix[]}
  */
-export function computeCrossingTimes(entry: EdstEntry, track: ApiAircraftTrack): (RouteFix & { minutesAtFix: number })[] {
+export function computeCrossingTimes(entry: EdstEntry, routeFixes: RouteFix[], track: ApiAircraftTrack): (RouteFix & { minutesAtFix: number })[] {
   const newRouteFixes: (RouteFix & { minutesAtFix: number })[] = [];
-  if (entry.currentRouteFixes) {
+  if (routeFixes) {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    if (entry.currentRouteFixes.length > 0 && track.groundSpeed > 0) {
+    if (routeFixes.length > 0 && track.groundSpeed > 0) {
       const lineData = [[track.location.lon, track.location.lat]];
-      entry.currentRouteFixes.forEach(fix => {
+      routeFixes.forEach(fix => {
         lineData.push(fix.pos);
         newRouteFixes.push({
           ...fix,
@@ -263,16 +264,20 @@ export function removeDepFromRouteString(route: string, dep: string): string {
  *
  * @param clearedFixName - fix cleared direct to
  * @param entry - EDST entry
+ * @param routeFixes
+ * @param formattedRoute
  * @param frd - FixRadialDistance
  * @returns all fixes on the remaining route starting from clearedFixName
  */
 export function getClearedToFixRouteFixes(
   clearedFixName: string,
   entry: EdstEntry,
+  routeFixes: RouteFix[],
+  formattedRoute: string,
   frd: string | null
 ): { route: string; routeFixes: RouteFix[] } | null {
-  let newRoute = entry.currentRoute;
-  const { currentRouteFixes: routeFixes, destination } = entry;
+  let newRoute = formattedRoute.slice(0);
+  const { destination } = entry;
   if (newRoute && routeFixes) {
     const fixNames = routeFixes.map(e => e.name);
 

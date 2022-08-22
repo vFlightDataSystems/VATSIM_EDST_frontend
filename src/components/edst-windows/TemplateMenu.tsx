@@ -16,6 +16,7 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
+import { formatRoute } from "../../formatRoute";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;
@@ -107,11 +108,13 @@ export const TemplateMenu = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.TEMPLATE_MENU));
   const zStack = useRootSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
+  // TODO: use normal formatted route
+  const formattedRoute = entry ? formatRoute(entry.route) : "";
 
   const route =
     (asel?.window === EdstWindow.DEP
-      ? entry?.formattedRoute?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")
-      : entry?.currentRoute.replace(/^\.*/, "")?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")) ?? "";
+      ? formattedRoute?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")
+      : formattedRoute?.replace(/^\.*/, "")?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")) ?? "";
 
   const [aidInput, setAidInput] = useState(entry?.aircraftId ?? "");
   const [numInput, setNumInput] = useState(entry ? 1 : "");

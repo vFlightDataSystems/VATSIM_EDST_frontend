@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { metarSelector, delMetar } from "../../redux/slices/weatherSlice";
+import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,
@@ -17,17 +17,35 @@ import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { WindowPosition } from "../../types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../enums/edstWindow";
+import { useMetar } from "../../api/weatherApi";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
 `;
+
+type MetarRowProps = {
+  airport: string;
+  selected: boolean;
+  handleMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+};
+const MetarRow = ({ airport, selected, handleMouseDown }: MetarRowProps) => {
+  const airportMetar = useMetar(airport);
+
+  return !airportMetar ? null : (
+    <span style={{ margin: "6px 0" }}>
+      <FloatingWindowRow selected={selected} onMouseDown={handleMouseDown}>
+        {airportMetar}
+      </FloatingWindowRow>
+    </span>
+  );
+};
 
 export const MetarWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.METAR));
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
-  const metarMap = useRootSelector(metarSelector);
+  const metarAirports = useRootSelector(metarAirportsSelector);
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
@@ -64,13 +82,16 @@ export const MetarWindow = () => {
             <FloatingWindowHeaderBlock8x2 />
           </FloatingWindowHeaderColDiv20>
         </FloatingWindowHeaderDiv>
-        {Object.values(metarMap).length > 0 && (
+        {metarAirports.length > 0 && (
           <FloatingWindowBodyDiv>
-            {Object.entries(metarMap).map(([airport, airportMetarEntry]) => (
-              <span style={{ margin: "6px 0" }} key={airport}>
-                <FloatingWindowRow selected={selected === airport} onMouseDown={event => handleMouseDown(event, airport)}>
-                  {airportMetarEntry.metar}
-                </FloatingWindowRow>
+            {metarAirports.map(airport => (
+              <>
+                <MetarRow
+                  key={airport}
+                  airport={airport}
+                  selected={selected === airport}
+                  handleMouseDown={event => handleMouseDown(event, airport)}
+                />
                 {selected === airport && selectedPos && (
                   <FloatingWindowOptions
                     pos={{
@@ -85,7 +106,7 @@ export const MetarWindow = () => {
                     }}
                   />
                 )}
-              </span>
+              </>
             ))}
           </FloatingWindowBodyDiv>
         )}

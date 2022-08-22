@@ -1,15 +1,6 @@
-import { ApiAirportInfo } from "./apiTypes/apiAirportInfo";
-import { ApiPreferentialDepartureRoute } from "./apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "./apiTypes/apiPreferentialDepartureArrivalRoute";
-import { ApiPreferentialArrivalRoute } from "./apiTypes/apiPreferentialArrivalRoute";
 import { AclRouteDisplayOption } from "../enums/aclRouteDisplayOption";
 
 export type LocalVEdstEntry = {
-  depInfo: ApiAirportInfo | null;
-  destInfo: ApiAirportInfo | null;
-  preferentialDepartureRoutes: ApiPreferentialDepartureRoute[];
-  preferentialDepartureArrivalRoutes: ApiPreferentialDepartureArrivalRoute[];
-  preferentialArrivalRoutes: ApiPreferentialArrivalRoute[];
   freeTextContent: string;
   // -1: not acknowledged, 0: acknowledged but not on frequency, 1: on frequency
   vciStatus: -1 | 0 | 1;

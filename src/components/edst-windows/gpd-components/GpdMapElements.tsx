@@ -15,6 +15,8 @@ import { AirwayFix } from "../../../types/airwayFix";
 import { WindowPosition } from "../../../types/windowPosition";
 import { EdstEntry } from "../../../types/edstEntry";
 import { RouteFix } from "../../../types/routeFix";
+import { useRouteFixes } from "../../../api/aircraftApi";
+import { formatRoute } from "../../../formatRoute";
 
 type GpdFixProps = {
   lat: number | string;
@@ -28,8 +30,7 @@ function posToLatLng(pos: Position | { lat: number | string; lon: number | strin
   return { lat: Number(pos.lat), lng: Number(pos.lon) };
 }
 
-function getRouteLine(entry: EdstEntry, track: ApiAircraftTrack) {
-  const { formattedRoute, routeFixes } = entry;
+function getRouteLine(entry: EdstEntry, formattedRoute: string, routeFixes: RouteFix[], track: ApiAircraftTrack) {
   const fixNames = routeFixes.map(e => e.name);
   if (fixNames.length === 0) {
     return null;
@@ -78,6 +79,8 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
   const map = useMap();
+  const formattedRoute = formatRoute(entry.route);
+  const routeFixes = useRouteFixes(aircraftId);
 
   const updateHandler = useCallback(() => {
     const element: HTMLElement & any = ref.current?.getElement();
@@ -90,7 +93,7 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   // updates route line
   useEffect(() => {
     if (showRoute) {
-      setRouteLine(track ? getRouteLine(entry, track) : null);
+      setRouteLine(track ? getRouteLine(entry, formattedRoute, routeFixes, track) : null);
     }
   }, [posLatLng, showRoute]);
 

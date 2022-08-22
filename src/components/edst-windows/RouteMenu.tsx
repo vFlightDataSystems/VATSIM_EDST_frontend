@@ -5,7 +5,6 @@ import _ from "lodash";
 import styled from "styled-components";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
 import { getClearedToFixRouteFixes, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
-import VATSIM_LOGO from "../../resources/images/VATSIM-social_icon.svg";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
 import { EdstButton, EdstRouteButton12x12 } from "../utils/EdstButton";
@@ -32,6 +31,9 @@ import { OPLUS_SYMBOL } from "../../constants";
 import { DownlinkSymbol } from "../utils/DownlinkSymbol";
 import { CreateOrAmendFlightplanDto } from "../../types/apiTypes/CreateOrAmendFlightplanDto";
 import { fetchFormatRoute } from "../../api/api";
+import { usePar, usePdar, usePdr } from "../../api/prefrouteApi";
+import { useRouteFixes } from "../../api/aircraftApi";
+import { formatRoute } from "../../formatRoute";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -105,9 +107,16 @@ export const RouteMenu = () => {
   const [frd, setFrd] = useState<string | null>(null);
   const hubActions = useHubActions();
 
+  const pdrs = usePdr(entry.aircraftId);
+  const pdars = usePdar(entry.aircraftId);
+  const pars = usePar(entry.aircraftId);
+
+  const formattedRoute = formatRoute(entry.route);
+  const currentRouteFixes = useRouteFixes(entry.aircraftId);
+
   const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(
-    removeDestFromRouteString(asel.window === EdstWindow.DEP ? entry.formattedRoute : entry.currentRoute.replace(/^\.*/, "") ?? "", entry.destination)
+    removeDestFromRouteString(asel.window === EdstWindow.DEP ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
   );
   const [routeInput, setRouteInput] = useState<string>(
     asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : route + entry.destination
@@ -130,87 +139,64 @@ export const RouteMenu = () => {
 
   useEffect(() => {
     const dep = asel.window === EdstWindow.DEP;
-    let route = dep ? entry.formattedRoute : entry.currentRoute.replace(/^\.*/, "") ?? "";
+    let route = dep ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "";
     route = removeDestFromRouteString(route ?? "", entry.destination);
     if (dep) {
       setTrialPlan(false);
     }
     setRoute(route);
     setRouteInput(dep ? entry.departure + route + entry.destination : route + entry.destination);
-  }, [asel.window, entry.currentRoute, entry.departure, entry.destination, entry.route]);
+  }, [asel.window, formattedRoute, entry.departure, entry.destination, entry.route]);
 
-  const currentRouteFixNames: string[] = entry?.routeFixes?.map(fix => fix.name) ?? [];
-  let routeFixes = asel.window === EdstWindow.DEP || !entry.currentRouteFixes ? entry.routeFixes : entry.currentRouteFixes;
+  const currentRouteFixNames: string[] = currentRouteFixes.map(fix => fix.name) ?? [];
+  let routeFixes = currentRouteFixes;
   if (routeFixes.length > 1) {
+    // if first fix is FRD
     if (routeFixes?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
       routeFixes = routeFixes.slice(1);
     }
   }
 
-  let routesAvailable = entry.preferentialArrivalRoutes.length > 0;
+  let routesAvailable = pars.length > 0;
   if (asel.window === EdstWindow.DEP) {
-    routesAvailable = routesAvailable || entry.preferentialDepartureRoutes.length > 0 || entry.preferentialDepartureArrivalRoutes.length > 0;
+    routesAvailable = routesAvailable || pdrs.length > 0 || pdars.length > 0;
   }
 
-  // TODO: implement this
+  const amendPrefroute = async (amendedFlightplan: CreateOrAmendFlightplanDto) => {
+    if (!trialPlan) {
+      await hubActions.amendFlightplan(amendedFlightplan);
+    } else {
+      const route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+      dispatch(
+        addPlanThunk({
+          cid: entry.cid,
+          aircraftId: entry.aircraftId,
+          amendedFlightplan,
+          commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+          expirationTime: new Date().getTime() / 1000 + 120
+        })
+      );
+    }
+  };
+
   const clearedPrefroute = async (prefRoute: EdstPreferentialRoute) => {
     let amendedFlightplan: CreateOrAmendFlightplanDto;
-    let route: string;
     if (prefRoute.routeType === "pdar") {
       amendedFlightplan = { ...entry, route: prefRoute.route };
-      if (!trialPlan) {
-        await hubActions.amendFlightplan(amendedFlightplan);
-      } else {
-        route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
-        dispatch(
-          addPlanThunk({
-            cid: entry.cid,
-            aircraftId: entry.aircraftId,
-            amendedFlightplan,
-            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-            expirationTime: new Date().getTime() / 1000 + 120
-          })
-        );
-      }
+      await amendPrefroute(amendedFlightplan);
     } else if (prefRoute.routeType === "pdr") {
       amendedFlightplan = { ...entry, route: prefRoute.amendment.split(".").join(" ") + prefRoute.truncatedRoute };
-      if (!trialPlan) {
-        await hubActions.amendFlightplan(amendedFlightplan);
-      } else {
-        route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
-        dispatch(
-          addPlanThunk({
-            cid: entry.cid,
-            aircraftId: entry.aircraftId,
-            amendedFlightplan,
-            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-            expirationTime: new Date().getTime() / 1000 + 120
-          })
-        );
-      }
+      await amendPrefroute(amendedFlightplan);
     } else if (prefRoute.routeType === "par") {
       amendedFlightplan = { ...entry, route: prefRoute.truncatedRoute + prefRoute.amendment.split(".").join(" ") };
-      if (!trialPlan) {
-        await hubActions.amendFlightplan(amendedFlightplan);
-      } else {
-        route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
-        dispatch(
-          addPlanThunk({
-            cid: entry.cid,
-            aircraftId: entry.aircraftId,
-            amendedFlightplan,
-            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-            expirationTime: new Date().getTime() / 1000 + 120
-          })
-        );
-      }
+      await amendPrefroute(amendedFlightplan);
     }
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
 
   const clearedToFix = async (clearedFixName: string) => {
     const frd = await hubActions.generateFrd(aircraftTrack.location);
-    const route = getClearedToFixRouteFixes(clearedFixName, entry, frd)?.route;
+    const route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd)?.route;
     if (route) {
       const amendedFlightplan: ApiFlightplan = {
         ...entry,
@@ -395,9 +381,9 @@ export const RouteMenu = () => {
           ))}
           {routesAvailable && (
             <PreferredRouteDisplay
-              par={entry.preferentialArrivalRoutes.filter(parData => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
-              pdr={asel.window === EdstWindow.DEP ? entry.preferentialDepartureRoutes : []}
-              pdar={asel.window === EdstWindow.DEP ? entry.preferentialDepartureArrivalRoutes : []}
+              par={pars.filter(parData => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+              pdr={asel.window === EdstWindow.DEP ? pdrs : []}
+              pdar={asel.window === EdstWindow.DEP ? pdars : []}
               clearedPrefroute={clearedPrefroute}
             />
           )}

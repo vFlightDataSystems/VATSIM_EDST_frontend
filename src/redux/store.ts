@@ -9,6 +9,9 @@ import appReducer from "./slices/appSlice";
 import aircraftTrackReducer from "./slices/trackSlice";
 import weatherReducer from "./slices/weatherSlice";
 import authReducer from "./slices/authSlice";
+import { prefrouteApi } from "../api/prefrouteApi";
+import { aircraftApi } from "../api/aircraftApi";
+import { weatherApi } from "../api/weatherApi";
 
 const store = configureStore({
   reducer: {
@@ -21,9 +24,13 @@ const store = configureStore({
     entries: entryReducer,
     aircraftTracks: aircraftTrackReducer,
     weather: weatherReducer,
-    auth: authReducer
+    auth: authReducer,
+    [prefrouteApi.reducerPath]: prefrouteApi.reducer,
+    [aircraftApi.reducerPath]: aircraftApi.reducer,
+    [weatherApi.reducerPath]: weatherApi.reducer
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false })
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({ serializableCheck: false }).concat([prefrouteApi.middleware, aircraftApi.middleware, weatherApi.middleware])
 });
 export default store;
 

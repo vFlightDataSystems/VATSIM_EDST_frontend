@@ -24,8 +24,12 @@ export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[]): RootTh
           lastUpdated: new Date(aircraft.lastUpdatedAt).getTime()
         };
         newTracks[aircraftId] = newAircraftTrack;
-        if (entry && !entry.aclDisplay && depFilter(entry, newAircraftTrack, sectorData.artccId)) {
-          dispatch(addEntryToDep(aircraftId));
+        if (entry && !entry.aclDisplay) {
+          depFilter(entry, newAircraftTrack, sectorData.artccId).then(result => {
+            if (result) {
+              dispatch(addEntryToDep(aircraftId));
+            }
+          });
         } else if (!entry.aclDisplay) {
           dispatch(addEntryToAcl(aircraftId));
         }

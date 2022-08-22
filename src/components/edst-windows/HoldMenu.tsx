@@ -22,6 +22,7 @@ import { TurnDirection } from "../../enums/hold/turnDirection";
 import { HoldAnnotations } from "../../enums/hold/holdAnnotations";
 import { useHubActions } from "../../hooks/useHubActions";
 import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
+import { useRouteFixes } from "../../api/aircraftApi";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;
@@ -100,18 +101,19 @@ export const HoldMenu = () => {
   const [direction, setDirection] = useState<CompassDirection>(CompassDirection.NORTH);
   const [turns, setTurns] = useState<TurnDirection>(TurnDirection.RIGHT);
   const [efc, setEfc] = useState(utcMinutes);
-  const [routeFixes, setRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
+  const [holdRouteFixes, setHoldRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU, "mouseup");
   const hubActions = useHubActions();
+  const routeFixes = useRouteFixes(entry.aircraftId);
 
   useEffect(() => {
     if (!entry) {
       dispatch(closeWindow(EdstWindow.HOLD_MENU));
     } else {
-      const routeFixes = computeCrossingTimes(entry, track);
+      const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
       setFix(entry.holdAnnotations?.fix ?? null);
@@ -119,7 +121,7 @@ export const HoldMenu = () => {
       setDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
       setTurns(entry.holdAnnotations?.turns ?? TurnDirection.RIGHT);
       setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
-      setRouteFixes(routeFixes ?? null);
+      setHoldRouteFixes(holdRouteFixes ?? null);
     }
   }, []);
 
@@ -179,12 +181,12 @@ export const HoldMenu = () => {
             </OptionsBodyCol>
           </OptionsBodyRow>
           <FixContainer>
-            {routeFixes &&
-              _.range(0, Math.min(routeFixes.length || 0, 10)).map(i => (
+            {holdRouteFixes &&
+              _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map(i => (
                 <OptionsBodyRow key={i}>
-                  {_.range(0, Math.round((routeFixes.length || 0) / 10) + 1).map(j => {
-                    const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
-                    const minutesAtFix = routeFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
+                  {_.range(0, Math.round((holdRouteFixes.length || 0) / 10) + 1).map(j => {
+                    const fixName = holdRouteFixes?.[Number(i) + Number(j) * 10]?.name;
+                    const minutesAtFix = holdRouteFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
                     return (
                       fixName && (
                         <Col1

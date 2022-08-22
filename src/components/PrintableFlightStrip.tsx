@@ -2,17 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { convertBeaconCodeToString, formatUtcMinutes } from "../lib";
 import { EdstEntry } from "../types/edstEntry";
+import { formatRoute } from "../formatRoute";
 
-function getRouteString(entry: EdstEntry) {
+function getRouteString(entry: EdstEntry, formattedRoute: string) {
   return (
-    (entry.currentRoute.length
+    (formattedRoute.length > 0
       ? entry?.route?.concat(entry?.destination ?? "")
-      : entry?.currentRoute.replace(/^\.*/, "")?.concat(entry?.destination ?? "")) ?? ""
+      : formattedRoute.replace(/^\.*/, "")?.concat(entry?.destination ?? "")) ?? ""
   );
 }
 
-export function printFlightStrip(entry?: EdstEntry) {
+export function printFlightStrip(entry: EdstEntry) {
   if (entry) {
+    const formattedRoute = formatRoute(entry.route);
     const printDoc = document.getElementById("toPrint");
     if (printDoc) {
       ReactDOM.unmountComponentAtNode(printDoc);
@@ -46,7 +48,7 @@ export function printFlightStrip(entry?: EdstEntry) {
           nextTime: nextFix ? formatUtcMinutes(nextFix.minutesAtFix) : "", // next fix timestamp
           dofArrow: "", // direction of flight arrow
           reqAlt: "", // requested altitude
-          route: getRouteString(entry).replace(/\.+/g, " "), // route
+          route: getRouteString(entry, formattedRoute).replace(/\.+/g, " "), // route
           remarks: filterRemarks(entry.remarks), // remarks
           squawk: convertBeaconCodeToString(entry.assignedBeaconCode), // squawk code
           misc: "", // miscellaneous info

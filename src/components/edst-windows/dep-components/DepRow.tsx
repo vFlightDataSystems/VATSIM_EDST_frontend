@@ -7,8 +7,6 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
-import { ApiPreferentialDepartureRoute } from "../../../types/apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiTypes/apiPreferentialDepartureArrivalRoute";
 import { EdstEntry } from "../../../types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
@@ -25,11 +23,57 @@ import {
 import { EdstWindow } from "../../../enums/edstWindow";
 import { DepRowField } from "../../../enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL, SPA_INDICATOR } from "../../../constants";
+import { usePar, usePdar, usePdr } from "../../../api/prefrouteApi";
+import { useRouteFixes } from "../../../api/aircraftApi";
+import { ApiPreferentialDepartureRoute } from "../../../types/apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiTypes/apiPreferentialDepartureArrivalRoute";
+import { ApiPreferentialArrivalRoute } from "../../../types/apiTypes/apiPreferentialArrivalRoute";
+import { formatRoute } from "../../../formatRoute";
 
 type DepRowProps = {
   entry: EdstEntry;
   hidden: DepRowField[];
   index: number;
+};
+
+const checkParReroutePending = (pars: ApiPreferentialArrivalRoute[], currentFixNames: string[]) => {
+  const eligiblePar = pars.filter(par => par.eligible);
+  if (eligiblePar.length === 1) {
+    const par = eligiblePar[0];
+    if (currentFixNames.includes(par.triggeredFix)) {
+      return par.amendment;
+    }
+  }
+  return null;
+};
+
+const checkPdrReroutePending = (pdrs: ApiPreferentialDepartureRoute[]) => {
+  if (pdrs.length === 0) {
+    return null;
+  }
+  const eligibleRoutes = pdrs.filter(pdr => pdr.eligible);
+  if (eligibleRoutes.length > 0) {
+    const eligibleRnavRoutes = eligibleRoutes.filter(pdr => pdr.rnavRequired);
+    if (eligibleRnavRoutes.length > 0) {
+      return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
+    }
+    return eligibleRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
+  }
+  return null;
+};
+const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) => {
+  if (pdars.length === 0) {
+    return null;
+  }
+  const eligibleRoutes = pdars.filter(pdr => pdr.eligible);
+  if (eligibleRoutes.length > 0) {
+    const eligibleRnavRoutes = eligibleRoutes.filter(pdr => pdr.rnavRequired);
+    if (eligibleRnavRoutes.length > 0) {
+      return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
+    }
+    return eligibleRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
+  }
+  return null;
 };
 
 /**
@@ -41,70 +85,44 @@ type DepRowProps = {
 export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
+  const formattedRoute = formatRoute(entry.route);
+  const routeFixes = useRouteFixes(entry.aircraftId);
+  const currentFixNames = routeFixes.map(fix => fix.name);
+
   const [onPar, setOnPar] = useState(false);
   const [onPdr, setOnPdr] = useState(false);
   const [onPdar, setOnPdar] = useState(false);
+  const pdrs = usePdr(entry.aircraftId);
+  const pdars = usePdar(entry.aircraftId);
+  const pars = usePar(entry.aircraftId);
+
+  const [pendingPdr, setPendingPdr] = useState(checkPdrReroutePending(pdrs));
+  const [pendingPdar, setPendingPdar] = useState(checkPdarReroutePending(pdars));
+  const [pendingPar, setPendingPar] = useState(checkParReroutePending(pars, currentFixNames));
 
   const now = new Date().getTime();
-  const route = removeDestFromRouteString(entry.formattedRoute.slice(0), entry.destination);
+  const route = removeDestFromRouteString(formattedRoute.slice(0), entry.destination);
 
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onPar = !!entry.preferentialArrivalRoutes?.filter(par => par.eligible && entry.formattedRoute.includes(par.amendment))?.length;
-    const onPdar = !!entry.preferentialDepartureArrivalRoutes.filter(pdar => pdar.eligible && entry.formattedRoute === pdar.route).length;
+    const onPar = !!pars.filter(par => par.eligible && formattedRoute.includes(par.amendment))?.length;
+    const onPdar = !!pdars.filter(pdar => pdar.eligible && formattedRoute === pdar.route).length;
+    const onPdr = (pdrs.filter(pdr => route.startsWith(pdr.amendment))?.length ?? 0) > 0;
     setOnPar(onPar);
     setOnPdar(onPdar);
-
-    const onPdr = (entry.preferentialDepartureRoutes?.filter(pdr => route.startsWith(pdr.amendment))?.length ?? 0) > 0;
     setOnPdr(onPdr);
-  }, [entry.preferentialArrivalRoutes, entry.preferentialDepartureRoutes, entry.routeFixes, route]);
-
-  const checkParReroutePending = () => {
-    const currentFixNames = entry.routeFixes.map(fix => fix.name);
-    const eligiblePar = entry.preferentialArrivalRoutes.filter(par => par.eligible);
-    if (eligiblePar.length === 1) {
-      const par = eligiblePar[0];
-      if (currentFixNames.includes(par.triggeredFix)) {
-        return par.amendment;
-      }
+    if (!onPar) {
+      setPendingPar(checkParReroutePending(pars, currentFixNames));
     }
-    return null;
-  };
-
-  const checkPdrReroutePending = (routes: ApiPreferentialDepartureRoute[]) => {
-    if (routes.length === 0) {
-      return null;
+    if (!onPdar) {
+      setPendingPdar(checkPdarReroutePending(pdars));
     }
-    const eligibleRoutes = routes.filter(pdr => pdr.eligible);
-    if (eligibleRoutes.length > 0) {
-      const eligibleRnavRoutes = eligibleRoutes.filter(pdr => pdr.rnavRequired);
-      if (eligibleRnavRoutes.length > 0) {
-        return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
-      }
-      return eligibleRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].amendment;
+    if (!onPdr) {
+      setPendingPdr(checkPdrReroutePending(pdrs));
     }
-    return null;
-  };
-  const checkPdarReroutePending = (routes: ApiPreferentialDepartureArrivalRoute[]) => {
-    if (routes.length === 0) {
-      return null;
-    }
-    const eligibleRoutes = routes.filter(pdr => pdr.eligible);
-    if (eligibleRoutes.length > 0) {
-      const eligibleRnavRoutes = eligibleRoutes.filter(pdr => pdr.rnavRequired);
-      if (eligibleRnavRoutes.length > 0) {
-        return eligibleRnavRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
-      }
-      return eligibleRoutes.sort((u, v) => Number(u.order) - Number(v.order))[0].route;
-    }
-    return null;
-  };
-
-  const pendingPdr = checkPdrReroutePending(entry.preferentialDepartureRoutes);
-  const pendingPdar = checkPdarReroutePending(entry.preferentialDepartureArrivalRoutes);
-  const pendingPar = checkParReroutePending();
+  }, [pdrs, pdars, pars, routeFixes, route]);
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();

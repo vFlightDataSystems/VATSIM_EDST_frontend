@@ -1,26 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position } from "@turf/turf";
-import { RootState } from "../store";
-
-type AirportCode = string;
+import { RootState, RootThunkAction } from "../store";
 
 type WeatherState = {
-  altimeterMap: Record<AirportCode, AltimeterEntry>;
-  metarMap: Record<AirportCode, MetarEntry>;
+  altimeterAirports: string[];
+  metarAirports: string[];
   sigmetMap: Record<string, SigmetEntry>;
   airmetMap: Record<string, AirmetEntry>;
   viewSuppressedSigmet: boolean;
-};
-
-type MetarEntry = {
-  airport: AirportCode;
-  metar: string;
-};
-
-type AltimeterEntry = {
-  airport: AirportCode;
-  time: string;
-  altimeter: string;
 };
 
 export type ApiAirSigmet = {
@@ -40,23 +27,33 @@ type SigmetEntry = ApiAirSigmet & {
 
 type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Polygon | MultiPolygon> };
 
-const initialState: WeatherState = { altimeterMap: {}, metarMap: {}, sigmetMap: {}, airmetMap: {}, viewSuppressedSigmet: true };
+const initialState: WeatherState = { altimeterAirports: [], metarAirports: [], sigmetMap: {}, airmetMap: {}, viewSuppressedSigmet: true };
 
 const weatherSlice = createSlice({
   name: "weather",
   initialState,
   reducers: {
-    setMetar(state, action: PayloadAction<MetarEntry>) {
-      state.metarMap[action.payload.airport] = action.payload;
+    addMetar(state, action: PayloadAction<string>) {
+      if (!state.metarAirports.includes(action.payload)) {
+        state.metarAirports.push(action.payload);
+      }
     },
-    delMetar(state, action: PayloadAction<AirportCode>) {
-      delete state.metarMap[action.payload];
+    delMetar(state, action: PayloadAction<string>) {
+      const index = state.metarAirports.indexOf(action.payload);
+      if (index > -1) {
+        state.metarAirports.splice(index, 1);
+      }
     },
-    setAltimeter(state, action: PayloadAction<AltimeterEntry>) {
-      state.altimeterMap[action.payload.airport] = action.payload;
+    addAltimeter(state, action: PayloadAction<string>) {
+      if (!state.altimeterAirports.includes(action.payload)) {
+        state.altimeterAirports.push(action.payload);
+      }
     },
-    delAltimeter(state, action: PayloadAction<AirportCode>) {
-      delete state.altimeterMap[action.payload];
+    delAltimeter(state, action: PayloadAction<string>) {
+      const index = state.altimeterAirports.indexOf(action.payload);
+      if (index > -1) {
+        state.altimeterAirports.splice(index, 1);
+      }
     },
     addSigmets(state, action: PayloadAction<ApiAirSigmet[]>) {
       action.payload.forEach(s => {
@@ -95,10 +92,36 @@ const weatherSlice = createSlice({
   }
 });
 
+export function toggleAltimeter(airports: string[]): RootThunkAction {
+  return (dispatch, getState) => {
+    const { altimeterAirports } = getState().weather;
+    airports.forEach(airport => {
+      if (altimeterAirports.includes(airport)) {
+        dispatch(delAltimeter(airport));
+      } else {
+        dispatch(addAltimeter(airport));
+      }
+    });
+  };
+}
+
+export function toggleMetar(airports: string[]): RootThunkAction {
+  return (dispatch, getState) => {
+    const { metarAirports } = getState().weather;
+    airports.forEach(airport => {
+      if (metarAirports.includes(airport)) {
+        dispatch(delMetar(airport));
+      } else {
+        dispatch(addMetar(airport));
+      }
+    });
+  };
+}
+
 export const {
-  setMetar,
+  addMetar,
   delMetar,
-  setAltimeter,
+  addAltimeter,
   delAltimeter,
   addSigmets,
   setSigmetSuppressed,
@@ -107,8 +130,8 @@ export const {
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 
-export const altimeterSelector = (state: RootState) => state.weather.altimeterMap;
-export const metarSelector = (state: RootState) => state.weather.metarMap;
+export const altimeterAirportsSelector = (state: RootState) => state.weather.altimeterAirports;
+export const metarAirportsSelector = (state: RootState) => state.weather.metarAirports;
 export const sigmetSelector = (state: RootState) => state.weather.sigmetMap;
 export const airmetSelector = (state: RootState) => state.weather.airmetMap;
 export const viewSuppressedSigmetSelector = (state: RootState) => state.weather.viewSuppressedSigmet;

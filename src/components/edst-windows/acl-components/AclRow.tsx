@@ -29,6 +29,9 @@ import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
 import { SPA_INDICATOR, VCI_SYMBOL } from "../../../constants";
+import { usePar } from "../../../api/prefrouteApi";
+import { useRouteFixes } from "../../../api/aircraftApi";
+import { formatRoute } from "../../../formatRoute";
 
 type AclRowProps = {
   entry: EdstEntry;
@@ -57,18 +60,23 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
   const ref = useRef<HTMLDivElement>(null);
+  const par = usePar(entry.aircraftId);
+  const formattedRoute = formatRoute(entry.route);
+  const currentRoute = formattedRoute;
+  const routeFixes = useRouteFixes(entry.aircraftId);
+  const currentRouteFixes = routeFixes;
 
   useEffect(() => {
-    const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-    const availPar = entry.preferentialArrivalRoutes.filter(par => par.eligible && currentFixNames.includes(par.triggeredFix));
-    const onPar = availPar.some(par => entry.formattedRoute.includes(par.amendment));
+    const currentFixNames = (currentRouteFixes ?? routeFixes).map(fix => fix.name);
+    const availPar = par.filter(par => par.eligible && currentFixNames.includes(par.triggeredFix));
+    const onPar = availPar.some(par => formattedRoute.includes(par.amendment));
     setParAvail(availPar.length > 0);
     setOnPar(onPar);
-  }, [entry.currentRouteFixes, entry.preferentialArrivalRoutes, entry.routeFixes]);
+  }, [currentRouteFixes, par, routeFixes]);
 
   const { holdAnnotations } = entry;
   const route = useMemo(() => {
-    const route = entry.currentRoute.replace(/^\.+/, "") ?? entry.formattedRoute;
+    const route = currentRoute.replace(/^\.+/, "") ?? formattedRoute;
     return removeDestFromRouteString(route.slice(0), entry.destination);
   }, [entry]);
 
@@ -79,8 +87,8 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
 
   // TODO: move this to the route menu
   // const checkParReroutePending = () => {
-  //   const currentFixNames = (entry.currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-  //   const eligiblePar = entry?.preferentialArrivalRoutes?.filter(par => par.eligible);
+  //   const currentFixNames = (currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
+  //   const eligiblePar = par.filter(par => par.eligible);
   //   if (eligiblePar?.length === 1) {
   //     const par = eligiblePar[0];
   //     if (currentFixNames.includes(par.triggeredFix) && !entry.formattedRoute.includes(par.amendment)) {
@@ -241,8 +249,6 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   const isSelected = (aircraftId: string, field: AclRowField): boolean => {
     return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
   };
-
-  // console.log(entry.aircraftId, entry.preferentialArrivalRoutes);
 
   return (
     <BodyRowContainerDiv separator={index % 3 === 2} onContextMenu={event => event.preventDefault()}>
