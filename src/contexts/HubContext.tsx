@@ -59,7 +59,7 @@ const useHubInit = () => {
       socket.on("receiveAircraft", aircraft => {
         dispatch(receiveSharedStateAircraft(aircraft));
       });
-      socket.on("disconnect", console.log);
+      socket.on("disconnect", log);
     }
   };
 
