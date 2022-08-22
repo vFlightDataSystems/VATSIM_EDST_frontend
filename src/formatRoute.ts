@@ -19,7 +19,7 @@ function matchesAnyRouteSegment(segment: string) {
 }
 
 export function formatRoute(route: string, dep = "", dest = "") {
-  const formattedRoute = "";
+  let formattedRoute = "";
   const routeSegments = cleanRoute(route, dep, dest)
     .replace(/(\.|\s)+/, " ")
     .split(" ");
@@ -28,12 +28,12 @@ export function formatRoute(route: string, dep = "", dest = "") {
   routeSegments.forEach(segment => {
     isFix = matchesAnyRouteSegment(segment);
     if (matchesAnyRouteSegment(segment)) {
-      formattedRoute.concat(`..${segment}`);
+      formattedRoute += `..${segment}`;
     } else {
-      formattedRoute.concat(`.${segment}`);
+      formattedRoute += `.${segment}`;
     }
     prevIsFix = isFix;
   });
-  formattedRoute.concat(prevIsFix ? ".." : ".");
+  formattedRoute += prevIsFix ? ".." : ".";
   return formattedRoute;
 }
