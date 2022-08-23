@@ -42,7 +42,7 @@ function aircraftSelect(
             if (EDST_MENU_LIST.includes(triggerOpenWindow)) {
               dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, EdstWindow.DEP, false));
             } else {
-              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, EdstWindow.DEP));
+              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget));
             }
           }
           break;
@@ -66,7 +66,7 @@ function aircraftSelect(
             if (triggerOpenWindow in EDST_MENU_LIST) {
               dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, EdstWindow.ACL, false));
             } else {
-              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget, EdstWindow.ACL));
+              dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget));
             }
           }
           break;

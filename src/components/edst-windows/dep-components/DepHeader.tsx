@@ -3,7 +3,7 @@ import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { depManualPostingSelector, depSortDataSelector, setDepManualPosting } from "../../../redux/slices/depSlice";
+import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "../../../redux/slices/depSlice";
 import { closeAllMenus, closeWindow, depAselSelector } from "../../../redux/slices/appSlice";
 import { addDepEntryByFid } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
@@ -11,7 +11,7 @@ import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { AddFindInput } from "../../InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../enums/edstWindow";
-import { SortOptionValues } from "../../../enums/sortOptions";
+import { DepSortOptionValues } from "../../../enums/dep/depSortOption";
 
 type DepHeaderProps = {
   focused: boolean;
@@ -27,7 +27,7 @@ type DepHeaderProps = {
  */
 export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderProps) => {
   const asel = useRootSelector(depAselSelector);
-  const sortData = useRootSelector(depSortDataSelector);
+  const selectedSortOption = useRootSelector(depSortOptionSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
   const dispatch = useRootDispatch();
 
@@ -51,7 +51,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
           }
           dispatch(closeWindow(EdstWindow.DEP));
         }}
-        text={["Departure List", `${SortOptionValues[sortData.selectedOption]}`, `${manualPosting ? "Manual" : "Automatic"}`]}
+        text={["Departure List", `${DepSortOptionValues[selectedSortOption]}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton
@@ -62,7 +62,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
         />
         <EdstWindowHeaderButton
           id="dep-sort-button"
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.SORT_MENU, e.currentTarget, EdstWindow.DEP))}
+          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.DEP_SORT_MENU, e.currentTarget, EdstWindow.DEP))}
           content="Sort..."
           title={Tooltips.sort}
         />

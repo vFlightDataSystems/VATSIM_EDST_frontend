@@ -17,8 +17,8 @@ import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../enums/edstWindow";
 import { AclRowField } from "../../../enums/acl/aclRowField";
-import { SortOptions } from "../../../enums/sortOptions";
 import { VCI_SYMBOL } from "../../../constants";
+import { AclSortOption } from "../../../enums/acl/aclSortOption";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -62,7 +62,7 @@ export function AclTable() {
       hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.SPD), 1);
       hiddenCopy.splice(hiddenCopy.indexOf(AclRowField.HDG), 1);
       if (asel?.field === AclRowField.SPD) {
-        dispatch(closeWindow(EdstWindow.SORT_MENU));
+        dispatch(closeWindow(EdstWindow.ACL_SORT_MENU));
         dispatch(setAsel(null));
       }
       if (asel?.field === AclRowField.HDG) {
@@ -90,13 +90,11 @@ export function AclTable() {
 
   const sortFunc = (u: EdstEntry, v: EdstEntry) => {
     switch (sortData.selectedOption) {
-      case SortOptions.ACID:
+      case AclSortOption.ACID:
         return u.aircraftId.localeCompare(v.aircraftId);
-      case SortOptions.DESTINATION:
+      case AclSortOption.DESTINATION:
         return u.destination.localeCompare(v.destination);
-      case SortOptions.ORIGIN:
-        return u.departure.localeCompare(v.departure);
-      case SortOptions.BOUNDARY_TIME:
+      case AclSortOption.BOUNDARY_TIME:
         return u.boundaryTime - v.boundaryTime;
       default:
         return u.aircraftId.localeCompare(v.aircraftId);

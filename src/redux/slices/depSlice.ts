@@ -1,15 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { SortData } from "../../types/sortData";
-import { SortOptions } from "../../enums/sortOptions";
+import { DepSortOption } from "../../enums/dep/depSortOption";
 
 type DepState = {
-  sortData: SortData;
+  selectedSortOption: DepSortOption;
   manualPosting: boolean;
 };
 
 const initialState: DepState = {
-  sortData: { selectedOption: SortOptions.ACID, sector: false },
+  selectedSortOption: DepSortOption.ACID,
   manualPosting: true
 };
 
@@ -17,8 +16,8 @@ const depSlice = createSlice({
   name: "dep",
   initialState,
   reducers: {
-    setDepSort(state, action: PayloadAction<SortData>) {
-      state.sortData.selectedOption = action.payload.selectedOption;
+    setDepSort(state, action: PayloadAction<DepSortOption>) {
+      state.selectedSortOption = action.payload;
     },
     setDepManualPosting(state, action: PayloadAction<boolean>) {
       state.manualPosting = action.payload;
@@ -28,5 +27,5 @@ const depSlice = createSlice({
 
 export const { setDepSort, setDepManualPosting } = depSlice.actions;
 export default depSlice.reducer;
-export const depSortDataSelector = (state: RootState) => state.dep.sortData;
+export const depSortOptionSelector = (state: RootState) => state.dep.selectedSortOption;
 export const depManualPostingSelector = (state: RootState) => state.dep.manualPosting;

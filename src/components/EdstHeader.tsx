@@ -136,28 +136,28 @@ export const EdstHeader = () => {
             content={`ACL ${aclLen.toString().padStart(2, "0")}`}
             disabled={disabledHeaderButtons.includes(edstHeaderButton.acl)}
             title={Tooltips.acl}
-            onMouseDown={() => dispatch(openWindow({ window: EdstWindow.ACL }))}
+            onMouseDown={() => dispatch(openWindow(EdstWindow.ACL))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.DEP].open}
             content={`DEP ${depLen.toString().padStart(2, "0")}`}
             disabled={disabledHeaderButtons.includes(edstHeaderButton.dep)}
             title={Tooltips.dep}
-            onMouseDown={() => dispatch(openWindow({ window: EdstWindow.DEP }))}
+            onMouseDown={() => dispatch(openWindow(EdstWindow.DEP))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.GPD].open}
             content="GPD"
             disabled={process.env.NODE_ENV !== "development"}
             // title={Tooltips.gpd}
-            onMouseDown={() => dispatch(openWindow({ window: EdstWindow.GPD }))}
+            onMouseDown={() => dispatch(openWindow(EdstWindow.GPD))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.PLANS_DISPLAY].open}
             content="PLANS"
             disabled={planQueue.length === 0}
             title={Tooltips.plans}
-            onMouseDown={() => dispatch(openWindow({ window: EdstWindow.PLANS_DISPLAY }))}
+            onMouseDown={() => dispatch(openWindow(EdstWindow.PLANS_DISPLAY))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.METAR].open}

@@ -6,5 +6,5 @@ import { Plan } from "../../types/plan";
 
 export const addPlanThunk = createAsyncThunk<void, Plan>("plan/trial/route", async (plan, thunkAPI) => {
   thunkAPI.dispatch(addPlan(plan));
-  thunkAPI.dispatch(openWindow({ window: EdstWindow.PLANS_DISPLAY }));
+  thunkAPI.dispatch(openWindow(EdstWindow.PLANS_DISPLAY));
 });

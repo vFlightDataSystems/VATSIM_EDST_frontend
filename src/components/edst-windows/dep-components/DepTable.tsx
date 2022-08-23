@@ -8,12 +8,12 @@ import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { depManualPostingSelector, depSortDataSelector } from "../../../redux/slices/depSlice";
+import { depManualPostingSelector, depSortOptionSelector } from "../../../redux/slices/depSlice";
 import { EdstEntry } from "../../../types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { DepRowField } from "../../../enums/dep/depRowField";
-import { SortOptions } from "../../../enums/sortOptions";
 import { COMPLETED_CHECKMARK_SYMBOL } from "../../../constants";
+import { DepSortOption } from "../../../enums/dep/depSortOption";
 
 const DepBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -24,7 +24,7 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
 `;
 
 export function DepTable() {
-  const sortData = useRootSelector(depSortDataSelector);
+  const selectedSortOption = useRootSelector(depSortOptionSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
   const [hiddenList, setHiddenList] = useState<DepRowField[]>([]);
@@ -41,12 +41,12 @@ export function DepTable() {
   };
 
   const sortFunc = (u: EdstEntry, v: EdstEntry) => {
-    switch (sortData.selectedOption) {
-      case SortOptions.ACID:
+    switch (selectedSortOption) {
+      case DepSortOption.ACID:
         return u.aircraftId.localeCompare(v.aircraftId);
-      case SortOptions.DESTINATION:
+      case DepSortOption.DESTINATION:
         return u.destination.localeCompare(v.destination);
-      case SortOptions.ORIGIN:
+      case DepSortOption.ORIGIN:
         return u.departure?.localeCompare(v.departure);
       default:
         return u.aircraftId.localeCompare(v.aircraftId);

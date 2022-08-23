@@ -65,6 +65,6 @@ export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, trigg
       }
       dispatch(setWindowPosition({ window, pos: menuPos }));
     }
-    dispatch(openWindow({ window, openedBy: triggeredFromWindow }));
+    dispatch(openWindow(window));
   };
 }

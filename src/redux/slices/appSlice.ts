@@ -30,7 +30,6 @@ type AppWindow = {
   window: EdstWindow;
   position: WindowPosition | null;
   isFullscreen: boolean;
-  openedBy?: EdstWindow;
 };
 
 type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
@@ -112,14 +111,11 @@ const appSlice = createSlice({
         state.windows[action.payload].open = false;
       }
     },
-    openWindow(state, action: PayloadAction<{ window: EdstWindow; openedBy?: EdstWindow }>) {
-      state.windows[action.payload.window].open = true;
-      if (action.payload.openedBy) {
-        state.windows[action.payload.window].openedBy = action.payload.openedBy;
-      }
+    openWindow(state, action: PayloadAction<EdstWindow>) {
+      state.windows[action.payload].open = true;
       const zStack = new Set([...state.zStack]);
-      zStack.delete(action.payload.window);
-      state.zStack = [...zStack, action.payload.window];
+      zStack.delete(action.payload);
+      state.zStack = [...zStack, action.payload];
     },
     setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
       state.windows[action.payload.window].isFullscreen = action.payload.value;

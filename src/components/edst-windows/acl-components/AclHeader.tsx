@@ -13,7 +13,7 @@ import { AddFindInput } from "../../InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
 import { EdstWindow } from "../../../enums/edstWindow";
-import { SortOptionValues } from "../../../enums/sortOptions";
+import { AclSortOptionValues } from "../../../enums/acl/aclSortOption";
 
 type AclHeaderProps = {
   focused: boolean;
@@ -57,7 +57,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         }}
         text={[
           "Aircraft List",
-          `${sortData.sector ? "Sector/" : ""}${SortOptionValues[sortData.selectedOption]}`,
+          `${sortData.sector ? "Sector/" : ""}${AclSortOptionValues[sortData.selectedOption]}`,
           `${manualPosting ? "Manual" : "Automatic"}`
         ]}
       />
@@ -79,7 +79,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         <EdstWindowHeaderButton
           id="acl-sort-button"
           onMouseDown={(e: React.MouseEvent) => {
-            dispatch(openMenuThunk(EdstWindow.SORT_MENU, e.currentTarget, EdstWindow.ACL));
+            dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget, EdstWindow.ACL));
           }}
           content="Sort..."
           title={Tooltips.sort}

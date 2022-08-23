@@ -9,7 +9,6 @@ import { RouteMenu } from "./components/edst-windows/RouteMenu";
 import { Outage } from "./components/edst-windows/Outage";
 import { AltMenu } from "./components/edst-windows/AltMenu";
 import { PlanOptions } from "./components/edst-windows/PlanOptions";
-import { SortMenu } from "./components/edst-windows/SortMenu";
 import { PlansDisplay } from "./components/edst-windows/PlansDisplay";
 import { SpeedMenu } from "./components/edst-windows/spd-hdg/SpeedMenu";
 import { HeadingMenu } from "./components/edst-windows/spd-hdg/HeadingMenu";
@@ -43,6 +42,8 @@ import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
 import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
 import { WEATHER_REFRESH_RATE } from "./constants";
 import { HubContextProvider } from "./contexts/HubContext";
+import { AclSortMenu } from "./components/edst-windows/acl-components/AclSortMenu";
+import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMenu";
 
 const Edst = () => {
   const dispatch = useRootDispatch();
@@ -69,7 +70,7 @@ const Edst = () => {
       !windows[EdstWindow.ALTITUDE_MENU].open
     ) {
       if (!mcaInputRef?.current) {
-        dispatch(openWindow({ window: EdstWindow.MESSAGE_COMPOSE_AREA }));
+        dispatch(openWindow(EdstWindow.MESSAGE_COMPOSE_AREA));
         if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
           dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
         }
@@ -97,7 +98,8 @@ const Edst = () => {
         {windows[EdstWindow.GPD].open && <Gpd />}
         {windows[EdstWindow.PLANS_DISPLAY].open && <PlansDisplay />}
         {windows[EdstWindow.PLAN_OPTIONS].open && <PlanOptions />}
-        {windows[EdstWindow.SORT_MENU].open && <SortMenu />}
+        {windows[EdstWindow.ACL_SORT_MENU].open && <AclSortMenu />}
+        {windows[EdstWindow.DEP_SORT_MENU].open && <DepSortMenu />}
         {windows[EdstWindow.TOOLS_MENU].open && <ToolsMenu />}
         {windows[EdstWindow.GPD_MAP_OPTIONS_MENU].open && <GpdMapOptions />}
         {windows[EdstWindow.ROUTE_MENU].open && <RouteMenu />}

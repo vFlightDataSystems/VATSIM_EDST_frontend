@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { SortData } from "../../types/sortData";
-import { SortOptions } from "../../enums/sortOptions";
+import { AclSortData } from "../../types/aclSortData";
+import { AclSortOption } from "../../enums/acl/aclSortOption";
 
 type ToolsOptions = { displayCoordinationColumn: boolean; dropTrackDelete: boolean; iafDofManual: boolean; nonRvsmIndicator: boolean };
 
 export type AclState = {
-  sortData: SortData;
+  sortData: AclSortData;
   manualPosting: boolean;
   toolsOptions: ToolsOptions;
 };
 
 const initialState: AclState = {
-  sortData: { selectedOption: SortOptions.ACID, sector: false },
+  sortData: { selectedOption: AclSortOption.ACID, sector: false },
   manualPosting: true,
   toolsOptions: { displayCoordinationColumn: false, dropTrackDelete: false, iafDofManual: false, nonRvsmIndicator: false }
 };
@@ -21,7 +21,7 @@ const aclSlice = createSlice({
   name: "acl",
   initialState,
   reducers: {
-    setAclSort(state, action: PayloadAction<SortData>) {
+    setAclSort(state, action: PayloadAction<AclSortData>) {
       state.sortData = action.payload;
     },
     setAclManualPosting(state, action: PayloadAction<boolean>) {
