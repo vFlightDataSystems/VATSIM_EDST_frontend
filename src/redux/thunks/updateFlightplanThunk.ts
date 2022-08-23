@@ -4,36 +4,13 @@ import { RootState, RootThunkAction } from "../store";
 import { setEntry, updateEntry } from "../slices/entrySlice";
 import { EdstEntry } from "../../types/edstEntry";
 import { sharedState } from "../../sharedState/socket";
+import { LocalVEdstEntry } from "../../types/localVEdstEntry";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
   return _.assign(
     {
       ...fp,
-      aclDeleted: false,
-      aclDisplay: false,
-      boundaryTime: 0,
-      depDeleted: false,
-      depDisplay: false,
-      depStatus: -1,
-      freeTextContent: "",
-      holdAnnotations: null,
-      spa: false,
-      vciStatus: -1,
-      aclRouteDisplay: null,
-      assignedHeading: null,
-      assignedSpeed: null,
-      interimAltitude: null,
-      aclHighlighted: false,
-      depHighlighted: false,
-      keep: false,
-      pendingRemoval: null,
-      previousRoute: null,
-      remarksChecked: false,
-      scratchpadHeading: null,
-      scratchpadSpeed: null,
-      showFreeText: false,
-      cpdlcCapable: false,
-      voiceType: ""
+      ...new LocalVEdstEntry()
     },
     sharedState[fp.aircraftId]
   );
