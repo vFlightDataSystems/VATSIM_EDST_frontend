@@ -44,6 +44,7 @@ import { WEATHER_REFRESH_RATE } from "./constants";
 import { HubContextProvider } from "./contexts/HubContext";
 import { AclSortMenu } from "./components/edst-windows/acl-components/AclSortMenu";
 import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMenu";
+import { SocketContextProvider } from "./contexts/SocketContext";
 
 const Edst = () => {
   const dispatch = useRootDispatch();
@@ -124,11 +125,13 @@ const Edst = () => {
 };
 
 const EdstProvider = () => (
-  <HubContextProvider>
-    <React.StrictMode>
-      <Edst />
-    </React.StrictMode>
-  </HubContextProvider>
+  <SocketContextProvider>
+    <HubContextProvider>
+      <React.StrictMode>
+        <Edst />
+      </React.StrictMode>
+    </HubContextProvider>
+  </SocketContextProvider>
 );
 
 export default EdstProvider;

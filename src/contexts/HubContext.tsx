@@ -15,8 +15,8 @@ import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThu
 import { setMcaRejectMessage } from "../redux/slices/appSlice";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { initThunk } from "../redux/thunks/initThunk";
-import { createSocket, disconnectSocket } from "../sharedState/socket";
-import { receiveSharedStateAircraft } from "../redux/thunks/receiveSharedStateAircraft";
+import { disconnectSocket } from "../sharedState/socket";
+import { useSocketConnector } from "../hooks/useSocketConnector";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
@@ -26,6 +26,7 @@ const useHubInit = () => {
   const nasToken = useRootSelector(nasTokenSelector)!;
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
   const ref = useRef<HubConnection | null>(null);
+  const { connectSocket } = useSocketConnector();
 
   const getValidNasToken = () => {
     const decodedToken = decodeJwt(nasToken);
@@ -52,16 +53,6 @@ const useHubInit = () => {
       .withAutomaticReconnect()
       .build();
   }, []);
-
-  const connectSocket = (artccId: string, sectorId: string) => {
-    const socket = createSocket(artccId, sectorId);
-    if (socket) {
-      socket.on("receiveAircraft", aircraft => {
-        dispatch(receiveSharedStateAircraft(aircraft));
-      });
-      socket.on("disconnect", log);
-    }
-  };
 
   const connectHub = useCallback(async () => {
     if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current) {
@@ -109,7 +100,7 @@ const useHubInit = () => {
                 const { sectorId } = sessionInfo.position.eramConfiguration;
                 dispatch(setArtccId(artccId));
                 dispatch(setSectorId(sectorId));
-                connectSocket(artccId, sectorId);
+                connectSocket?.(artccId, sectorId);
                 dispatch(setSession(sessionInfo));
                 dispatch(initThunk());
                 hubConnection

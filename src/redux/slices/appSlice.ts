@@ -9,6 +9,7 @@ import { PlanRowField } from "../../enums/planRowField";
 import { openWindowThunk } from "../thunks/openWindowThunk";
 import { edstHeaderButton } from "../../enums/edstHeaderButton";
 import { OutageEntry } from "../../types/outageEntry";
+import { setSharedWindowIsOpen } from "../../sharedState/socket";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -101,14 +102,17 @@ const appSlice = createSlice({
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [...zStack, action.payload];
+      setSharedWindowIsOpen(action.payload, state.windows[action.payload].open);
     },
     closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
         action.payload.forEach(window => {
           state.windows[window].open = false;
+          setSharedWindowIsOpen(window, false);
         });
       } else {
         state.windows[action.payload].open = false;
+        setSharedWindowIsOpen(action.payload, false);
       }
     },
     openWindow(state, action: PayloadAction<EdstWindow>) {
@@ -116,6 +120,7 @@ const appSlice = createSlice({
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [...zStack, action.payload];
+      setSharedWindowIsOpen(action.payload, true);
     },
     setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
       state.windows[action.payload.window].isFullscreen = action.payload.value;
@@ -141,17 +146,20 @@ const appSlice = createSlice({
     closeAllWindows(state) {
       Object.values(EdstWindow).forEach(window => {
         state.windows[window].open = false;
+        setSharedWindowIsOpen(window, false);
       });
     },
     closeAllMenus(state) {
       EDST_MENU_LIST.forEach(menu => {
         state.windows[menu].open = false;
+        setSharedWindowIsOpen(menu, false);
       });
       state.asel = null;
     },
     closeAircraftMenus(state) {
       AIRCRAFT_MENUS.forEach(menu => {
         state.windows[menu].open = false;
+        setSharedWindowIsOpen(menu, false);
       });
     },
     setAsel(state, action: PayloadAction<Asel | null>) {

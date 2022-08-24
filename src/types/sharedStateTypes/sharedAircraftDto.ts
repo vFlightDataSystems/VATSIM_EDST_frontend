@@ -1,4 +1,4 @@
-export type SharedStateAircraftDto = {
+export type SharedAircraftDto = {
   aircraftId: string;
   spa: boolean;
   aclDisplay: boolean;

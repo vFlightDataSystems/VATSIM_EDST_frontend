@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState } from "../store";
 import { Plan } from "../../types/plan";
+import { cleanSharedPlanQueue, setSharedPlanQueue } from "../../sharedState/socket";
 
 export type PlanState = {
   planQueue: Plan[];
@@ -20,15 +21,22 @@ const planSlice = createSlice({
     addPlan(state, action: PayloadAction<Plan>) {
       state.planQueue.unshift(action.payload);
       state.selectedPlanIndex = 0;
+      setSharedPlanQueue(state.planQueue);
     },
     removePlan(state, action: PayloadAction<number>) {
       if (action.payload >= 0 && action.payload < state.planQueue.length) {
         state.selectedPlanIndex = null;
         state.planQueue.splice(action.payload, 1);
+        setSharedPlanQueue(state.planQueue);
       }
+    },
+    setPlanQueue(state, action: PayloadAction<Plan[]>) {
+      state.selectedPlanIndex = null;
+      state.planQueue = action.payload;
     },
     planCleanup(state) {
       _.assign(state, initialState);
+      cleanSharedPlanQueue();
     },
     setSelectedPlanIndex(state, action: PayloadAction<number | null>) {
       if (action.payload === null || (action.payload >= 0 && action.payload < state.planQueue.length)) {
@@ -38,7 +46,7 @@ const planSlice = createSlice({
   }
 });
 
-export const { addPlan, removePlan, setSelectedPlanIndex, planCleanup } = planSlice.actions;
+export const { addPlan, removePlan, setPlanQueue, setSelectedPlanIndex, planCleanup } = planSlice.actions;
 export default planSlice.reducer;
 
 export const selectedPlanIndexSelector = (state: RootState) => state.plan.selectedPlanIndex;

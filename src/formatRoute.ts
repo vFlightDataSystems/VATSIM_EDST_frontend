@@ -15,7 +15,7 @@ function cleanRoute(route: string, dep = "", dest = "") {
 }
 
 function matchesAnyRouteSegment(segment: string) {
-  return !!segment.match(new RegExp(`(${ROUTE_FORMAT_EXPRESSIONS.airway})|${ROUTE_FORMAT_EXPRESSIONS.sidStar}`));
+  return !!segment.match(ROUTE_FORMAT_EXPRESSIONS.airway) || !!segment.match(ROUTE_FORMAT_EXPRESSIONS.sidStar);
 }
 
 export function formatRoute(route: string, dep = "", dest = "") {
@@ -26,8 +26,8 @@ export function formatRoute(route: string, dep = "", dest = "") {
   let prevIsFix = true;
   let isFix = true;
   routeSegments.forEach(segment => {
-    isFix = matchesAnyRouteSegment(segment);
-    if (matchesAnyRouteSegment(segment)) {
+    isFix = !matchesAnyRouteSegment(segment);
+    if (isFix && prevIsFix) {
       formattedRoute += `..${segment}`;
     } else {
       formattedRoute += `.${segment}`;

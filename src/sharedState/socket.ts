@@ -1,8 +1,11 @@
 import io, { Socket } from "socket.io-client";
-import _ from "lodash";
 import { SharedStateServerToClientEvents } from "../types/sharedStateTypes/sharedStateServerToClientEvents";
 import { SharedStateClientToServerEvents } from "../types/sharedStateTypes/sharedStateClientToServerEvents";
-import { SharedStateAircraftDto } from "../types/sharedStateTypes/sharedStateAircraftDto";
+import { SharedAircraftDto } from "../types/sharedStateTypes/sharedAircraftDto";
+import { AclSortOption } from "../enums/acl/aclSortOption";
+import { DepSortOption } from "../enums/dep/depSortOption";
+import { Plan } from "../types/plan";
+import { EdstWindow } from "../enums/edstWindow";
 
 const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
@@ -10,7 +13,7 @@ const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
 let socket: Socket<SharedStateServerToClientEvents, SharedStateClientToServerEvents> | null = null;
 let ArtccSectorId = "";
 
-export const sharedState: Record<string, SharedStateAircraftDto> = {};
+export const sharedState: Record<string, SharedAircraftDto> = {};
 
 export function createSocket(artccId: string, sectorId: string) {
   ArtccSectorId = `${artccId}${sectorId}`;
@@ -30,9 +33,51 @@ export function createSocket(artccId: string, sectorId: string) {
   return socket;
 }
 
-export function updateSharedAircraft(aircraft: SharedStateAircraftDto) {
-  if (socket?.connected && !_.isEqual(sharedState[aircraft.aircraftId], aircraft)) {
+export function updateSharedAircraft(aircraft: SharedAircraftDto) {
+  if (socket?.connected) {
     socket.emit("updateAircraft", ArtccSectorId, aircraft);
+  }
+}
+
+export function setSharedAclSort(selectedOption: AclSortOption, sector: boolean) {
+  if (socket?.connected) {
+    socket.emit("setAclSort", selectedOption, sector);
+  }
+}
+
+export function setSharedDepSort(selectedOption: DepSortOption) {
+  if (socket?.connected) {
+    socket.emit("setDepSort", selectedOption);
+  }
+}
+
+export function setSharedPlanQueue(queue: Plan[]) {
+  if (socket?.connected) {
+    socket.emit("setPlanQueue", queue);
+  }
+}
+
+export function cleanSharedPlanQueue() {
+  if (socket?.connected) {
+    socket.emit("clearPlanQueue");
+  }
+}
+
+export function setSharedWindowIsOpen(window: EdstWindow, value: boolean) {
+  if (socket?.connected) {
+    socket.emit("setWindowIsOpen", window, value);
+  }
+}
+
+export function setSharedAclManualPosting(value: boolean) {
+  if (socket?.connected) {
+    socket.emit("setAclManualPosting", value);
+  }
+}
+
+export function setSharedDepManualPosting(value: boolean) {
+  if (socket?.connected) {
+    socket.emit("setDepManualPosting", value);
   }
 }
 
