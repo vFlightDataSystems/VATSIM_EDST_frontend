@@ -8,6 +8,7 @@ import { receiveAclStateThunk } from "../redux/thunks/sharedStateThunks/receiveA
 import { receivePlansDisplayStateThunk } from "../redux/thunks/sharedStateThunks/receivePlansDisplayStateThunk";
 import { receiveDepStateThunk } from "../redux/thunks/sharedStateThunks/receiveDepStateThunk";
 import { receiveGpdStateThunk } from "../redux/thunks/sharedStateThunks/receiveGpdStateThunk";
+import { pushZStack } from "../redux/slices/appSlice";
 
 type SocketContextValue = {
   connectSocket: ((artccId: string, sectorId: string) => void) | null;
@@ -39,6 +40,9 @@ export const SocketContextProvider = ({ children }: { children: ReactNode }) => 
         });
         socket.on("receivePlansDisplayState", state => {
           dispatch(receivePlansDisplayStateThunk(state));
+        });
+        socket.on("receiveBringWindowToFront", edstWindow => {
+          dispatch(pushZStack(edstWindow));
         });
         socket.on("disconnect", log);
       }
