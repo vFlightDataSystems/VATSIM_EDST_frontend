@@ -3,16 +3,21 @@ import { WindowPosition } from "../../types/windowPosition";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
 import { EdstWindow } from "../../enums/edstWindow";
 
-export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, triggeredFromWindow?: EdstWindow, plan = false): RootThunkAction {
+export function openMenuThunk(
+  window: EdstWindow,
+  eventTarget?: (EventTarget & HTMLElement) | null,
+  triggeredFromWindow?: EdstWindow,
+  plan = false
+): RootThunkAction {
   return dispatch => {
-    if (ref) {
+    if (eventTarget) {
       let menuPos: WindowPosition;
-      const { x, y, height, width } = ref.getBoundingClientRect();
+      const { x, y, height, width } = eventTarget.getBoundingClientRect();
       switch (window) {
         case EdstWindow.ALTITUDE_MENU:
           menuPos = {
             x: x + (plan ? 0 : width),
-            y: plan ? ref.offsetTop : y - 76,
+            y: plan ? eventTarget.offsetTop : y - 76,
             w: width,
             h: height
           };
@@ -22,7 +27,7 @@ export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, trigg
             triggeredFromWindow !== EdstWindow.DEP
               ? {
                   x: x - (plan ? 0 : 569),
-                  y: plan ? ref.offsetTop : y - 3 * height,
+                  y: plan ? eventTarget.offsetTop : y - 3 * height,
                   w: width,
                   h: height
                 }
@@ -36,7 +41,7 @@ export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, trigg
         case EdstWindow.PREV_ROUTE_MENU:
           menuPos = {
             x,
-            y: plan ? ref.offsetTop : y - 2 * height,
+            y: plan ? eventTarget.offsetTop : y - 2 * height,
             w: width,
             h: height
           };
@@ -60,7 +65,7 @@ export function openMenuThunk(window: EdstWindow, ref?: EventTarget & any, trigg
         default:
           menuPos = {
             x,
-            y: y + ref.offsetHeight
+            y: y + eventTarget.offsetHeight
           };
       }
       dispatch(setWindowPosition({ window, pos: menuPos }));

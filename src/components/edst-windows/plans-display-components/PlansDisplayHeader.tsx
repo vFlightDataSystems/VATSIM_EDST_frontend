@@ -55,7 +55,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
       <NoSelectDiv>
         <EdstWindowHeaderButton
           disabled={selectedPlanIndex === null}
-          onMouseDown={(e: React.MouseEvent) => {
+          onMouseDown={e => {
             if (selectedPlanIndex !== null) {
               dispatch(
                 setAsel({
@@ -87,7 +87,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
         />
         <EdstWindowHeaderButton disabled content="Tools..." />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.target, EdstWindow.PLANS_DISPLAY))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.PLANS_DISPLAY))}
           content="Template..."
           title={Tooltips.template}
         />

@@ -1,3 +1,4 @@
+import React from "react";
 import { RootThunkAction } from "../store";
 import { closeAircraftMenus, setAsel } from "../slices/appSlice";
 import { updateEntry } from "../slices/entrySlice";
@@ -10,7 +11,7 @@ import { AclAselActionTrigger } from "../../enums/acl/aclAselActionTrigger";
 import { DepAselActionTrigger } from "../../enums/dep/depAselActionTrigger";
 
 function aircraftSelect(
-  event: Event & any,
+  event: React.MouseEvent<HTMLElement>,
   edstWindow: EdstWindow,
   aircraftId: string,
   field: AclRowField | DepRowField,
@@ -81,7 +82,7 @@ function aircraftSelect(
 }
 
 export function gpdAircraftSelect(
-  event: Event & any,
+  event: React.MouseEvent<HTMLElement>,
   aircraftId: string,
   field: AclRowField,
   aselAction?: AclAselActionTrigger | null,
@@ -91,7 +92,7 @@ export function gpdAircraftSelect(
 }
 
 export function aclAircraftSelect(
-  event: Event & any,
+  event: React.MouseEvent<HTMLElement>,
   aircraftId: string,
   field: AclRowField,
   aselAction?: AclAselActionTrigger | null,
@@ -101,7 +102,7 @@ export function aclAircraftSelect(
 }
 
 export function depAircraftSelect(
-  event: Event & any,
+  event: React.MouseEvent<HTMLElement>,
   aircraftId: string,
   field: DepRowField,
   aselAction?: DepAselActionTrigger | null,

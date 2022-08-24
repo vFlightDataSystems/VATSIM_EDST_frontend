@@ -131,7 +131,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleHoldClick = (event: React.MouseEvent) => {
+  const handleHoldClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -189,7 +189,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleFidClick: MouseEventHandler = (event: React.MouseEvent & MouseEvent) => {
+  const handleFidClick: MouseEventHandler = (event: React.MouseEvent<HTMLElement>) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -206,7 +206,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleHeadingClick: MouseEventHandler = (event: React.MouseEvent & Event) => {
+  const handleHeadingClick: MouseEventHandler = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -224,7 +224,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleSpeedClick: MouseEventHandler = (event: React.MouseEvent & Event) => {
+  const handleSpeedClick: MouseEventHandler = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -242,7 +242,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleRouteClicked = (event: React.MouseEvent) => {
+  const handleRouteClicked = (event: React.MouseEvent<HTMLElement>) => {
     if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
       dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.HOLD_MENU));
     } else {
@@ -286,7 +286,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               visibilityHidden={hidden.includes(AclRowField.TYPE)}
               hover
               selected={isSelected(entry.aircraftId, AclRowField.TYPE)}
-              onMouseDown={(event: React.MouseEvent) => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
+              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
             >
               {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
@@ -296,9 +296,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               <AltColDiv
                 headerMouseDown={altMouseDown}
                 selected={isSelected(entry.aircraftId, AclRowField.ALT)}
-                onMouseDown={(event: React.MouseEvent) =>
-                  dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))
-                }
+                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
               >
                 {entry.altitude}
                 {entry.interimAltitude && `T${entry.interimAltitude}`}
@@ -311,7 +309,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               visibilityHidden={hidden.includes(AclRowField.CODE)}
               hover
               selected={isSelected(entry.aircraftId, AclRowField.CODE)}
-              onMouseDown={(event: React.MouseEvent) => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
+              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
             >
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>

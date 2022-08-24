@@ -147,7 +147,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
     }
   };
 
-  const handleFidClick = (event: React.MouseEvent) => {
+  const handleFidClick = (event: React.MouseEvent<HTMLElement>) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -197,7 +197,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
               visibilityHidden={hidden.includes(DepRowField.TYPE)}
               hover
               selected={isSelected(entry.aircraftId, DepRowField.TYPE)}
-              onMouseDown={(event: React.MouseEvent) => dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.TYPE))}
+              onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.TYPE))}
             >
               {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
@@ -206,9 +206,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
             <AltCol>
               <AltColDiv
                 selected={isSelected(entry.aircraftId, DepRowField.ALT)}
-                onMouseDown={(event: React.MouseEvent) =>
-                  dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.ALT, null, EdstWindow.ALTITUDE_MENU))
-                }
+                onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
               >
                 {entry.altitude}
               </AltColDiv>
@@ -219,7 +217,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
               visibilityHidden={hidden.includes(DepRowField.CODE)}
               hover
               selected={isSelected(entry.aircraftId, DepRowField.CODE)}
-              onMouseDown={(event: React.MouseEvent) => dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.CODE))}
+              onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.CODE))}
             >
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
@@ -228,9 +226,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
             <RouteCol
               hover
               selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}
-              onMouseDown={(event: React.MouseEvent) =>
-                dispatch(depAircraftSelect(event, entry.aircraftId, DepRowField.ROUTE, null, EdstWindow.ROUTE_MENU))
-              }
+              onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
             >
               <RouteSpan padding="0 2px">
                 <RouteSpan>

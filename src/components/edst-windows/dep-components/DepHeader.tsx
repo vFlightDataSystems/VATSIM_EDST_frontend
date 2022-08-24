@@ -56,13 +56,13 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget, EdstWindow.DEP))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget, EdstWindow.DEP))}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
           id="dep-sort-button"
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.DEP_SORT_MENU, e.currentTarget, EdstWindow.DEP))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.DEP_SORT_MENU, e.currentTarget, EdstWindow.DEP))}
           content="Sort..."
           title={Tooltips.sort}
         />
@@ -72,7 +72,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
           title={Tooltips.postingMode}
         />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.DEP))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.DEP))}
           content="Template..."
           title={Tooltips.template}
         />

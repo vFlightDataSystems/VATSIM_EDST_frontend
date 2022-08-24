@@ -60,13 +60,13 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
       <div>
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget))}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, EdstWindow.GPD, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, EdstWindow.GPD, false))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -74,7 +74,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton disabled content="Graphic..." />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.GPD, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.GPD, false))}
           content="Template..."
           title={Tooltips.template}
         />
@@ -89,14 +89,14 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         <EdstWindowHeaderButton disabled onMouseDown={handleRangeClick} content="Range" />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => {
+          onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU));
             dispatch(openMenuThunk(EdstWindow.GPD_MAP_OPTIONS_MENU, e.currentTarget, EdstWindow.GPD));
           }}
           content="Map Options..."
         />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => {
+          onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
             dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget, EdstWindow.GPD));
           }}

@@ -64,13 +64,13 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget))}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, EdstWindow.ACL, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, EdstWindow.ACL, false))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -78,14 +78,14 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton
           id="acl-sort-button"
-          onMouseDown={(e: React.MouseEvent) => {
+          onMouseDown={e => {
             dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget, EdstWindow.ACL));
           }}
           content="Sort..."
           title={Tooltips.sort}
         />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => {
+          onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
             dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget, EdstWindow.ACL));
           }}
@@ -97,7 +97,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           title={Tooltips.postingMode}
         />
         <EdstWindowHeaderButton
-          onMouseDown={(e: React.MouseEvent) => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.ACL, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.ACL, false))}
           content="Template..."
           title={Tooltips.template}
         />

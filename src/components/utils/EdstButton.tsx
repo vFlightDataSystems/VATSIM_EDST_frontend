@@ -67,7 +67,7 @@ type EdstButtonProps = {
   content?: string;
   id?: string;
   title?: string;
-  onMouseDown?: (event: React.MouseEvent) => void;
+  onMouseDown?: (event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
 export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
@@ -99,7 +99,7 @@ export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithC
       <EdstOuterHeaderButton
         disabled={props.disabled}
         id={id}
-        onMouseDownCapture={(event: React.MouseEvent) => {
+        onMouseDownCapture={event => {
           if (onMouseDown) {
             onMouseDown(event);
             event.stopPropagation();

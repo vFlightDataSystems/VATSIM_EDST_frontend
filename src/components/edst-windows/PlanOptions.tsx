@@ -4,7 +4,7 @@ import { EdstButton } from "../utils/EdstButton";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselSelector, closeWindow, setAsel, zStackSelector, pushZStack, windowPositionSelector } from "../../redux/slices/appSlice";
+import { aselSelector, closeWindow, setAsel, zStackSelector, pushZStack, windowPositionSelector, closeAllMenus } from "../../redux/slices/appSlice";
 import { rmvEntryFromAcl, rmvEntryFromDep, entrySelector, updateEntry } from "../../redux/slices/entrySlice";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
@@ -118,8 +118,9 @@ export const PlanOptions = () => {
               style={{ flexGrow: 1 }}
               title={Tooltips.planOptionsDelete}
               onMouseDown={() => {
-                dispatch(asel.window === EdstWindow.ACL ? rmvEntryFromAcl(asel.aircraftId) : rmvEntryFromDep(asel.aircraftId));
                 dispatch(setAsel(null));
+                dispatch(closeAllMenus());
+                dispatch(asel.window === EdstWindow.ACL ? rmvEntryFromAcl(asel.aircraftId) : rmvEntryFromDep(asel.aircraftId));
                 dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
               }}
             >

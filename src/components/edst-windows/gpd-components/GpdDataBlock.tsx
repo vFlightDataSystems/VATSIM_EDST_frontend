@@ -65,7 +65,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
 
   const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? (asel.field as AclRowField) : null;
 
-  const onCallsignMouseDown = (event: React.MouseEvent) => {
+  const onCallsignMouseDown = (event: React.MouseEvent<HTMLElement>) => {
     if (!anyDragging) {
       switch (event.button) {
         case 0:
