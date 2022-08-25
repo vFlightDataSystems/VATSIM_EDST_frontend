@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { AclSortData } from "../../typeDefinitions/types/aclSortData";
 import { AclSortOption } from "../../typeDefinitions/enums/acl/aclSortOption";
-import { setSharedAclManualPosting, setSharedAclSort } from "../../sharedState/socket";
+import sharedSocket from "../../sharedState/socket";
 
 type ToolsOptions = { displayCoordinationColumn: boolean; dropTrackDelete: boolean; iafDofManual: boolean; nonRvsmIndicator: boolean };
 
@@ -24,11 +24,11 @@ const aclSlice = createSlice({
   reducers: {
     setAclSort(state, action: PayloadAction<AclSortData>) {
       state.sortData = action.payload;
-      setSharedAclSort(action.payload.selectedOption, action.payload.sector);
+      sharedSocket.setSharedAclSort(action.payload.selectedOption, action.payload.sector);
     },
     setAclManualPosting(state, action: PayloadAction<boolean>) {
       state.manualPosting = action.payload;
-      setSharedAclManualPosting(action.payload);
+      sharedSocket.setSharedAclManualPosting(action.payload);
     },
     updateToolsOptions(state, action: PayloadAction<ToolsOptions>) {
       state.toolsOptions = action.payload;

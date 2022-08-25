@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState } from "../store";
 import { Plan } from "../../typeDefinitions/types/plan";
-import { cleanSharedPlanQueue, setSharedPlanQueue } from "../../sharedState/socket";
+import sharedSocket from "../../sharedState/socket";
 
 export type PlanState = {
   planQueue: Plan[];
@@ -21,13 +21,13 @@ const planSlice = createSlice({
     addPlan(state, action: PayloadAction<Plan>) {
       state.planQueue.unshift(action.payload);
       state.selectedPlanIndex = 0;
-      setSharedPlanQueue(state.planQueue);
+      sharedSocket.setSharedPlanQueue(state.planQueue);
     },
     removePlan(state, action: PayloadAction<number>) {
       if (action.payload >= 0 && action.payload < state.planQueue.length) {
         state.selectedPlanIndex = null;
         state.planQueue.splice(action.payload, 1);
-        setSharedPlanQueue(state.planQueue);
+        sharedSocket.setSharedPlanQueue(state.planQueue);
       }
     },
     setPlanQueue(state, action: PayloadAction<Plan[]>) {
@@ -36,7 +36,7 @@ const planSlice = createSlice({
     },
     planCleanup(state) {
       _.assign(state, initialState);
-      cleanSharedPlanQueue();
+      sharedSocket.cleanSharedPlanQueue();
     },
     setSelectedPlanIndex(state, action: PayloadAction<number | null>) {
       if (action.payload === null || (action.payload >= 0 && action.payload < state.planQueue.length)) {

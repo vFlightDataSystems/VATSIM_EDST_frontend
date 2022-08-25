@@ -3,7 +3,7 @@ import _ from "lodash";
 import { RootState } from "../store";
 import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
 import { AircraftId } from "../../typeDefinitions/types/aircraftId";
-import { updateSharedAircraft } from "../../sharedState/socket";
+import sharedSocket from "../../sharedState/socket";
 
 type EntryState = Record<AircraftId, EdstEntry>;
 
@@ -12,7 +12,7 @@ const initialState: EntryState = {};
 function entryUpdater(state: EntryState, aircraftId: AircraftId, data: Partial<EdstEntry>) {
   if (Object.keys(state).includes(aircraftId)) {
     state[aircraftId] = _.assign(state[aircraftId], data);
-    updateSharedAircraft(state[aircraftId]);
+    sharedSocket.updateSharedAircraft(state[aircraftId]);
   }
 }
 
@@ -34,14 +34,14 @@ const entrySlice = createSlice({
     toggleSpa(state, action: PayloadAction<AircraftId>) {
       if (Object.keys(state).includes(action.payload)) {
         state[action.payload].spa = !state[action.payload].spa;
-        updateSharedAircraft(state[action.payload]);
+        sharedSocket.updateSharedAircraft(state[action.payload]);
       }
     },
     rmvEntryFromAcl(state, action: PayloadAction<AircraftId>) {
       if (Object.keys(state).includes(action.payload)) {
         state[action.payload].aclDisplay = false;
         state[action.payload].aclDeleted = true;
-        updateSharedAircraft(state[action.payload]);
+        sharedSocket.updateSharedAircraft(state[action.payload]);
       }
     },
     addEntryToAcl(state, action: PayloadAction<AircraftId>) {
@@ -54,14 +54,14 @@ const entrySlice = createSlice({
       if (Object.keys(state).includes(action.payload)) {
         state[action.payload].depDisplay = false;
         state[action.payload].depDeleted = true;
-        updateSharedAircraft(state[action.payload]);
+        sharedSocket.updateSharedAircraft(state[action.payload]);
       }
     },
     addEntryToDep(state, action: PayloadAction<AircraftId>) {
       if (Object.keys(state).includes(action.payload)) {
         state[action.payload].depDisplay = true;
         state[action.payload].depDeleted = false;
-        updateSharedAircraft(state[action.payload]);
+        sharedSocket.updateSharedAircraft(state[action.payload]);
       }
     }
   }

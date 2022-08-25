@@ -3,8 +3,8 @@ import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightpla
 import { RootState, RootThunkAction } from "../store";
 import { setEntry, updateEntry } from "../slices/entrySlice";
 import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
-import { sharedState } from "../../sharedState/socket";
 import { LocalVEdstEntry } from "../../typeDefinitions/types/localVEdstEntry";
+import sharedSocket from "../../sharedState/socket";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
   return _.assign(
@@ -12,7 +12,7 @@ function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
       ...fp,
       ...new LocalVEdstEntry()
     },
-    sharedState[fp.aircraftId]
+    sharedSocket.getSharedAircraftState()[fp.aircraftId]
   );
 }
 

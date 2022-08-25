@@ -15,7 +15,7 @@ import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThu
 import { setMcaRejectMessage } from "../redux/slices/appSlice";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { initThunk } from "../redux/thunks/initThunk";
-import { disconnectSocket } from "../sharedState/socket";
+import sharedSocket from "../sharedState/socket";
 import { useSocketConnector } from "../hooks/useSocketConnector";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
@@ -135,7 +135,7 @@ const useHubInit = () => {
 
   const disconnectHub = useCallback(async () => {
     ref.current?.stop().then(() => setHubConnected(false));
-    disconnectSocket();
+    sharedSocket.disconnectSocket();
   }, []);
 
   return {

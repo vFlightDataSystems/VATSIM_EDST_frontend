@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { DepSortOption } from "../../typeDefinitions/enums/dep/depSortOption";
-import { setSharedDepManualPosting, setSharedDepSort } from "../../sharedState/socket";
+import sharedSocket from "../../sharedState/socket";
 
 type DepState = {
   selectedSortOption: DepSortOption;
@@ -19,11 +19,11 @@ const depSlice = createSlice({
   reducers: {
     setDepSort(state, action: PayloadAction<DepSortOption>) {
       state.selectedSortOption = action.payload;
-      setSharedDepSort(action.payload);
+      sharedSocket.setSharedDepSort(action.payload);
     },
     setDepManualPosting(state, action: PayloadAction<boolean>) {
       state.manualPosting = action.payload;
-      setSharedDepManualPosting(action.payload);
+      sharedSocket.setSharedDepManualPosting(action.payload);
     }
   }
 });

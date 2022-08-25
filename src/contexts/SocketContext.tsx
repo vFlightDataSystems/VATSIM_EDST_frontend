@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useCallback, useRef } from "react";
-import { createSocket } from "../sharedState/socket";
 import { receiveSharedStateAircraft } from "../redux/thunks/sharedStateThunks/receiveSharedStateAircraft";
 import { log } from "../console";
 import { useRootDispatch } from "../redux/hooks";
@@ -9,19 +8,20 @@ import { receivePlansDisplayStateThunk } from "../redux/thunks/sharedStateThunks
 import { receiveDepStateThunk } from "../redux/thunks/sharedStateThunks/receiveDepStateThunk";
 import { receiveGpdStateThunk } from "../redux/thunks/sharedStateThunks/receiveGpdStateThunk";
 import { pushZStack } from "../redux/slices/appSlice";
+import sharedSocket from "../sharedState/socket";
 
-type SocketContextValue = {
-  connectSocket: ((artccId: string, sectorId: string) => void) | null;
-};
+class SocketContextValue {
+  connectSocket: ((artccId: string, sectorId: string) => void) | null = null;
+}
 
-export const SocketContext = createContext<SocketContextValue>({ connectSocket: null });
+export const SocketContext = createContext<SocketContextValue>(new SocketContextValue());
 
 export const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useRootDispatch();
 
   const connectSocket = useCallback(
     (artccId: string, sectorId: string) => {
-      const socket = createSocket(artccId, sectorId);
+      const socket = sharedSocket.connect(artccId, sectorId);
       if (socket) {
         socket.on("receiveAircraft", aircraft => {
           dispatch(receiveSharedStateAircraft(aircraft));

@@ -13,6 +13,10 @@ import {
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { useSocketConnector } from "../../hooks/useSocketConnector";
+import { useHubConnection } from "../../hooks/useHubConnection";
+import { EdstButton } from "../utils/EdstButton";
+import { artccIdSelector, sectorIdSelector } from "../../redux/slices/sectorSlice";
 
 const StatusDiv = styled(FloatingWindowDiv)`
   width: 360px;
@@ -29,6 +33,17 @@ export const Status = () => {
   const ref = useRef(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.STATUS, "mousedown");
   const zStack = useRootSelector(zStackSelector);
+
+  const artccId = useRootSelector(artccIdSelector);
+  const sectorId = useRootSelector(sectorIdSelector);
+  const hubConnection = useHubConnection();
+  const { connectSocket } = useSocketConnector();
+
+  const onClickConnectSocket = () => {
+    if (hubConnection?.state === "Connected" && artccId && sectorId && connectSocket) {
+      connectSocket(artccId, sectorId);
+    }
+  };
 
   return (
     pos && (
@@ -61,6 +76,7 @@ export const Status = () => {
               Roadmap
             </a>
           </div>
+          <EdstButton onMouseDown={onClickConnectSocket}>Connect Shared State</EdstButton>
         </StatusBodyDiv>
       </StatusDiv>
     )
