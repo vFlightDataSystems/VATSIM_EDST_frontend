@@ -91,7 +91,7 @@ class SharedStateSocket {
     }
   }
 
-  public disconnectSocket() {
+  public disconnect() {
     if (this.socket?.connected) {
       this.socket.disconnect();
     }

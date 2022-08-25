@@ -15,18 +15,17 @@ import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThu
 import { setMcaRejectMessage } from "../redux/slices/appSlice";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { initThunk } from "../redux/thunks/initThunk";
-import sharedSocket from "../sharedState/socket";
 import { useSocketConnector } from "../hooks/useSocketConnector";
 
 const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
 
-const useHubInit = () => {
+const useHubContextInit = () => {
   const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const nasToken = useRootSelector(nasTokenSelector)!;
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
   const ref = useRef<HubConnection | null>(null);
-  const { connectSocket } = useSocketConnector();
+  const { connectSocket, disconnectSocket } = useSocketConnector();
 
   const getValidNasToken = () => {
     const decodedToken = decodeJwt(nasToken);
@@ -131,12 +130,12 @@ const useHubInit = () => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, []);
+  }, [connectSocket]);
 
   const disconnectHub = useCallback(async () => {
     ref.current?.stop().then(() => setHubConnected(false));
-    sharedSocket.disconnectSocket();
-  }, []);
+    disconnectSocket();
+  }, [disconnectSocket]);
 
   return {
     hubConnection: ref.current,
@@ -145,12 +144,12 @@ const useHubInit = () => {
   };
 };
 
-type HubContextValue = ReturnType<typeof useHubInit>;
+type HubContextValue = ReturnType<typeof useHubContextInit>;
 
 export const HubContext = createContext<HubContextValue>({ connectHub: Promise.reject, disconnectHub: Promise.reject, hubConnection: null });
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const hubConnection = useHubInit();
+  const hubConnection = useHubContextInit();
   log(hubConnection);
 
   return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;

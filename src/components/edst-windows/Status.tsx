@@ -37,10 +37,12 @@ export const Status = () => {
   const artccId = useRootSelector(artccIdSelector);
   const sectorId = useRootSelector(sectorIdSelector);
   const hubConnection = useHubConnection();
-  const { connectSocket } = useSocketConnector();
+  const { connectSocket, disconnectSocket, isConnected } = useSocketConnector();
 
-  const onClickConnectSocket = () => {
-    if (hubConnection?.state === "Connected" && artccId && sectorId && connectSocket) {
+  const onClickToggleSocket = () => {
+    if (isConnected) {
+      disconnectSocket();
+    } else if (hubConnection?.state === "Connected" && artccId && sectorId) {
       connectSocket(artccId, sectorId);
     }
   };
@@ -76,7 +78,7 @@ export const Status = () => {
               Roadmap
             </a>
           </div>
-          <EdstButton onMouseDown={onClickConnectSocket}>Connect Shared State</EdstButton>
+          <EdstButton onMouseDown={onClickToggleSocket}>{isConnected ? "Disable" : "Enable"} Shared State</EdstButton>
         </StatusBodyDiv>
       </StatusDiv>
     )
