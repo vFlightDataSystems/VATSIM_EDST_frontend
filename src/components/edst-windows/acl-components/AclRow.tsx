@@ -9,7 +9,7 @@ import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/s
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
-import { EdstEntry } from "../../../types/edstEntry";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
   AircraftTypeCol,
@@ -23,11 +23,11 @@ import {
   RouteSpan,
   SpecialBox
 } from "../../../styles/sharedColumns";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { AclRowField } from "../../../enums/acl/aclRowField";
-import { AclRouteDisplayOption } from "../../../enums/aclRouteDisplayOption";
-import { HoldDirectionValues } from "../../../enums/hold/holdDirectionValues";
-import { HoldTurnDirectionValues } from "../../../enums/hold/turnDirection";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
+import { AclRouteDisplayOption } from "../../../typeDefinitions/enums/aclRouteDisplayOption";
+import { HoldDirectionValues } from "../../../typeDefinitions/enums/hold/holdDirectionValues";
+import { HoldTurnDirectionValues } from "../../../typeDefinitions/enums/hold/turnDirection";
 import { SPA_INDICATOR, VCI_SYMBOL } from "../../../constants";
 import { usePar } from "../../../api/prefrouteApi";
 import { useRouteFixes } from "../../../api/aircraftApi";

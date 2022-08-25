@@ -1,4 +1,4 @@
-import { SharedUiState } from "../../../types/sharedStateTypes/sharedUiState";
+import { SharedUiState } from "../../../typeDefinitions/types/sharedStateTypes/sharedUiState";
 import { RootThunkAction } from "../../store";
 import { receiveAclStateThunk } from "./receiveAclStateThunk";
 import { receiveDepStateThunk } from "./receiveDepStateThunk";

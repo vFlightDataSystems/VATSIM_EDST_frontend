@@ -3,9 +3,9 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "../redux/slices/appSlice";
-import { WindowPosition } from "../types/windowPosition";
-import { DragPreviewStyle } from "../types/dragPreviewStyle";
-import { EdstWindow } from "../enums/edstWindow";
+import { WindowPosition } from "../typeDefinitions/types/windowPosition";
+import { DragPreviewStyle } from "../typeDefinitions/types/dragPreviewStyle";
+import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.STATUS,

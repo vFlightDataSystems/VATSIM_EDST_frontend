@@ -24,7 +24,7 @@ import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
   width: 900px;

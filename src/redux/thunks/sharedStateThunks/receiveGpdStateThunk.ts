@@ -1,6 +1,6 @@
-import { SharedGpdState } from "../../../types/sharedStateTypes/sharedGpdState";
+import { SharedGpdState } from "../../../typeDefinitions/types/sharedStateTypes/sharedGpdState";
 import { RootThunkAction } from "../../store";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { closeWindow, openWindow, pushZStack } from "../../slices/appSlice";
 
 export function receiveGpdStateThunk(gpdState: SharedGpdState): RootThunkAction {

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { DraggableDiv, edstFontFamily, eramFontFamily, NoSelectDiv } from "./styles";
-import { WindowPosition } from "../types/windowPosition";
+import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
 
 const floatingWindowTitleBackgroundColor = "#575757";

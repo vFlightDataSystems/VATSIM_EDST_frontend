@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import { WindowPosition } from "../../../types/windowPosition";
+import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
 
 type TrackLineDivProps = {
   pos: WindowPosition;

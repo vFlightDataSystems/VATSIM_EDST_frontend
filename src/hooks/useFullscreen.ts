@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { EdstWindow } from "../enums/edstWindow";
+import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { setIsFullscreen, windowIsFullscreenSelector } from "../redux/slices/appSlice";
 

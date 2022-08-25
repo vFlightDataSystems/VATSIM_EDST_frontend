@@ -8,8 +8,8 @@ import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "../..
 import { closeWindow, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { PlanRowField } from "../../../enums/planRowField";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { PlanRowField } from "../../../typeDefinitions/enums/planRowField";
 import { useHubActions } from "../../../hooks/useHubActions";
 import { DownlinkSymbol } from "../../utils/DownlinkSymbol";
 

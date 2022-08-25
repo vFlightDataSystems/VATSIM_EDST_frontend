@@ -2,7 +2,7 @@ import React, { JSXElementConstructor, PropsWithChildren, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { useFocused } from "../../hooks/useFocused";
 import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useDragging } from "../../hooks/useDragging";
 import { useFullscreen } from "../../hooks/useFullscreen";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";

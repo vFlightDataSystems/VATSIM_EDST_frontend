@@ -10,11 +10,11 @@ import { GpdDataBlock } from "./GpdDataBlock";
 import { getNextFix } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { aircraftTrackSelector } from "../../../redux/slices/trackSlice";
-import { ApiAircraftTrack } from "../../../types/apiTypes/apiAircraftTrack";
-import { AirwayFix } from "../../../types/airwayFix";
-import { WindowPosition } from "../../../types/windowPosition";
-import { EdstEntry } from "../../../types/edstEntry";
-import { RouteFix } from "../../../types/routeFix";
+import { ApiAircraftTrack } from "../../../typeDefinitions/types/apiTypes/apiAircraftTrack";
+import { AirwayFix } from "../../../typeDefinitions/types/airwayFix";
+import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
+import { RouteFix } from "../../../typeDefinitions/types/routeFix";
 import { useRouteFixes } from "../../../api/aircraftApi";
 import { formatRoute } from "../../../formatRoute";
 

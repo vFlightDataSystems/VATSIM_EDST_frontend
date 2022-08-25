@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { EdstButton } from "../utils/EdstButton";
 import { Tooltips } from "../../tooltips";
 import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "../../styles/optionMenuStyles";
-import { ApiPreferentialArrivalRoute } from "../../types/apiTypes/apiPreferentialArrivalRoute";
-import { ApiPreferentialDepartureRoute } from "../../types/apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../../types/apiTypes/apiPreferentialDepartureArrivalRoute";
-import { EdstPreferentialRoute } from "../../types/edstPreferentialRoute";
+import { ApiPreferentialArrivalRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialDepartureArrivalRoute";
+import { EdstPreferentialRoute } from "../../typeDefinitions/types/edstPreferentialRoute";
 
 const PrefrouteContainer = styled(ScrollContainer)`
   border: 2px solid #414141;

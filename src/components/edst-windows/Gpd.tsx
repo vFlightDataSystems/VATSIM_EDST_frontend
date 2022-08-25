@@ -10,7 +10,7 @@ import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 const GpdDiv = styled(ResizableFloatingWindowDiv)``;
 

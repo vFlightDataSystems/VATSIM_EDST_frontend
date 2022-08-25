@@ -4,11 +4,11 @@ import { closeAircraftMenus, setAsel } from "../slices/appSlice";
 import { updateEntry } from "../slices/entrySlice";
 import { openMenuThunk } from "./openMenuThunk";
 import { openWindowThunk } from "./openWindowThunk";
-import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
-import { AclRowField } from "../../enums/acl/aclRowField";
-import { DepRowField } from "../../enums/dep/depRowField";
-import { AclAselActionTrigger } from "../../enums/acl/aclAselActionTrigger";
-import { DepAselActionTrigger } from "../../enums/dep/depAselActionTrigger";
+import { EDST_MENU_LIST, EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
+import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
+import { AclAselActionTrigger } from "../../typeDefinitions/enums/acl/aclAselActionTrigger";
+import { DepAselActionTrigger } from "../../typeDefinitions/enums/dep/depAselActionTrigger";
 
 function aircraftSelect(
   event: React.MouseEvent<HTMLElement>,

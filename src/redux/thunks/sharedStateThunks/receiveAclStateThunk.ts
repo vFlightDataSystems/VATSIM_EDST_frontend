@@ -1,6 +1,6 @@
-import { SharedAclState } from "../../../types/sharedStateTypes/sharedAclState";
+import { SharedAclState } from "../../../typeDefinitions/types/sharedStateTypes/sharedAclState";
 import { RootThunkAction } from "../../store";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { setAclManualPosting, setAclSort } from "../../slices/aclSlice";
 import { closeWindow, openWindow, pushZStack } from "../../slices/appSlice";
 

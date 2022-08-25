@@ -7,7 +7,7 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
-import { EdstEntry } from "../../../types/edstEntry";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
   AircraftTypeCol,
@@ -20,14 +20,14 @@ import {
   RouteSpan,
   SpecialBox
 } from "../../../styles/sharedColumns";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { DepRowField } from "../../../enums/dep/depRowField";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL, SPA_INDICATOR } from "../../../constants";
 import { usePar, usePdar, usePdr } from "../../../api/prefrouteApi";
 import { useRouteFixes } from "../../../api/aircraftApi";
-import { ApiPreferentialDepartureRoute } from "../../../types/apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../../../types/apiTypes/apiPreferentialDepartureArrivalRoute";
-import { ApiPreferentialArrivalRoute } from "../../../types/apiTypes/apiPreferentialArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../../../typeDefinitions/types/apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../../../typeDefinitions/types/apiTypes/apiPreferentialDepartureArrivalRoute";
+import { ApiPreferentialArrivalRoute } from "../../../typeDefinitions/types/apiTypes/apiPreferentialArrivalRoute";
 import { formatRoute } from "../../../formatRoute";
 
 type DepRowProps = {

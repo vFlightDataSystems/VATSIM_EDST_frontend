@@ -6,7 +6,7 @@ import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstPrompt } from "./EdstPrompt";
 import { PromptProps } from "./promptProps";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {

@@ -1,7 +1,7 @@
-import { ApiAircraft } from "../../types/apiTypes/apiAircraft";
+import { ApiAircraft } from "../../typeDefinitions/types/apiTypes/apiAircraft";
 import { RootThunkAction } from "../store";
-import { AircraftId } from "../../types/aircraftId";
-import { AircraftTrack } from "../../types/aircraftTrack";
+import { AircraftId } from "../../typeDefinitions/types/aircraftId";
+import { AircraftTrack } from "../../typeDefinitions/types/aircraftTrack";
 import { depFilter } from "../../filters";
 import { addEntryToAcl, addEntryToDep } from "../slices/entrySlice";
 import { setTracks } from "../slices/trackSlice";

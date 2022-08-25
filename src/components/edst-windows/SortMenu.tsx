@@ -7,7 +7,7 @@ import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { SortBody, SortDiv, SortHeader } from "../../styles/sortStyles";
 import { OptionsBodyCol, OptionsBottomRow } from "../../styles/optionMenuStyles";
 

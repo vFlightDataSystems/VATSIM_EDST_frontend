@@ -1,7 +1,7 @@
 import { distance, Feature, point, Polygon, Position } from "@turf/turf";
 import { routeWillEnterAirspace } from "./lib";
-import { ApiAircraftTrack } from "./types/apiTypes/apiAircraftTrack";
-import { EdstEntry } from "./types/edstEntry";
+import { ApiAircraftTrack } from "./typeDefinitions/types/apiTypes/apiAircraftTrack";
+import { EdstEntry } from "./typeDefinitions/types/edstEntry";
 import { fetchRouteFixes, memoizedFetchAirportInfo } from "./api/api";
 import { formatRoute } from "./formatRoute";
 

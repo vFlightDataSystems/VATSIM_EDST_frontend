@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState } from "../store";
-import { Plan } from "../../types/plan";
+import { Plan } from "../../typeDefinitions/types/plan";
 import { cleanSharedPlanQueue, setSharedPlanQueue } from "../../sharedState/socket";
 
 export type PlanState = {

@@ -1,6 +1,6 @@
 import { RootThunkAction } from "../store";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 export function openWindowThunk(window: EdstWindow, eventTarget?: EventTarget & HTMLElement): RootThunkAction {
   return dispatch => {

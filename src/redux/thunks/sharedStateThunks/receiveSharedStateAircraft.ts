@@ -1,5 +1,5 @@
 import { RootThunkAction } from "../../store";
-import { SharedAircraftDto } from "../../../types/sharedStateTypes/sharedAircraftDto";
+import { SharedAircraftDto } from "../../../typeDefinitions/types/sharedStateTypes/sharedAircraftDto";
 import { updateEntry } from "../../slices/entrySlice";
 
 export function receiveSharedStateAircraft(aircraft: SharedAircraftDto): RootThunkAction {

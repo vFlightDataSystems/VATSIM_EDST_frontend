@@ -1,10 +1,10 @@
 import _ from "lodash";
-import { ApiFlightplan } from "../../types/apiTypes/apiFlightplan";
+import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
 import { RootState, RootThunkAction } from "../store";
 import { setEntry, updateEntry } from "../slices/entrySlice";
-import { EdstEntry } from "../../types/edstEntry";
+import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
 import { sharedState } from "../../sharedState/socket";
-import { LocalVEdstEntry } from "../../types/localVEdstEntry";
+import { LocalVEdstEntry } from "../../typeDefinitions/types/localVEdstEntry";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
   return _.assign(

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { convertBeaconCodeToString, formatUtcMinutes } from "../lib";
-import { EdstEntry } from "../types/edstEntry";
+import { EdstEntry } from "../typeDefinitions/types/edstEntry";
 import { formatRoute } from "../formatRoute";
 
 function getRouteString(entry: EdstEntry, formattedRoute: string) {

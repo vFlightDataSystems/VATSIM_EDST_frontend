@@ -3,7 +3,7 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { EdstPrompt } from "./EdstPrompt";
 import { FidRow } from "../../styles/optionMenuStyles";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { closeWindow, setAsel } from "../../redux/slices/appSlice";
 

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
 import { NoSelectDiv } from "../../styles/styles";
-import { WindowPosition } from "../../types/windowPosition";
+import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 
 type FloatingWindowOptionsBodyProps = { pos: WindowPosition };
 const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv).attrs((props: FloatingWindowOptionsBodyProps) => ({

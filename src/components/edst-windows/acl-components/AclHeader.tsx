@@ -12,8 +12,8 @@ import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { AddFindInput } from "../../InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { AclSortOptionValues } from "../../../enums/acl/aclSortOption";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { AclSortOptionValues } from "../../../typeDefinitions/enums/acl/aclSortOption";
 
 type AclHeaderProps = {
   focused: boolean;

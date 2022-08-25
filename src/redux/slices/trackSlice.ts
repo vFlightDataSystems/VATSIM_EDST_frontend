@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState } from "../store";
-import { AircraftId } from "../../types/aircraftId";
-import { AircraftTrack } from "../../types/aircraftTrack";
+import { AircraftId } from "../../typeDefinitions/types/aircraftId";
+import { AircraftTrack } from "../../typeDefinitions/types/aircraftTrack";
 
 type TrackState = Record<AircraftId, AircraftTrack>;
 

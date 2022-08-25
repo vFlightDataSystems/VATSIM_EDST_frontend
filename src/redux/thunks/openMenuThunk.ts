@@ -1,7 +1,7 @@
 import { RootThunkAction } from "../store";
-import { WindowPosition } from "../../types/windowPosition";
+import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 export function openMenuThunk(
   window: EdstWindow,

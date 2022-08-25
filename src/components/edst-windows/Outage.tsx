@@ -12,7 +12,7 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 const OutageDiv = styled(FloatingWindowDiv)`
   width: 340px;

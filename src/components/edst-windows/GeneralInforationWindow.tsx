@@ -15,9 +15,9 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
-import { WindowPosition } from "../../types/windowPosition";
+import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 enum giOption {
   printAll = "PRINT ALL"

@@ -1,11 +1,11 @@
 import io, { Socket } from "socket.io-client";
-import { SharedStateServerToClientEvents } from "../types/sharedStateTypes/sharedStateServerToClientEvents";
-import { SharedStateClientToServerEvents } from "../types/sharedStateTypes/sharedStateClientToServerEvents";
-import { SharedAircraftDto } from "../types/sharedStateTypes/sharedAircraftDto";
-import { AclSortOption } from "../enums/acl/aclSortOption";
-import { DepSortOption } from "../enums/dep/depSortOption";
-import { Plan } from "../types/plan";
-import { EdstWindow } from "../enums/edstWindow";
+import { SharedStateServerToClientEvents } from "../typeDefinitions/types/sharedStateTypes/sharedStateServerToClientEvents";
+import { SharedStateClientToServerEvents } from "../typeDefinitions/types/sharedStateTypes/sharedStateClientToServerEvents";
+import { SharedAircraftDto } from "../typeDefinitions/types/sharedStateTypes/sharedAircraftDto";
+import { AclSortOption } from "../typeDefinitions/enums/acl/aclSortOption";
+import { DepSortOption } from "../typeDefinitions/enums/dep/depSortOption";
+import { Plan } from "../typeDefinitions/types/plan";
+import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 
 const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;

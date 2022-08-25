@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React from "react";
-import { DragPreviewStyle } from "../types/dragPreviewStyle";
+import { DragPreviewStyle } from "../typeDefinitions/types/dragPreviewStyle";
 
 const EdstDraggingOutlineDiv = styled.div<{ absolute?: boolean }>`
   position: ${props => (props.absolute ? "absolute" : "fixed")};

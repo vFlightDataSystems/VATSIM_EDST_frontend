@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { AclSortData } from "../../types/aclSortData";
-import { AclSortOption } from "../../enums/acl/aclSortOption";
+import { AclSortData } from "../../typeDefinitions/types/aclSortData";
+import { AclSortOption } from "../../typeDefinitions/enums/acl/aclSortOption";
 import { setSharedAclManualPosting, setSharedAclSort } from "../../sharedState/socket";
 
 type ToolsOptions = { displayCoordinationColumn: boolean; dropTrackDelete: boolean; iafDofManual: boolean; nonRvsmIndicator: boolean };

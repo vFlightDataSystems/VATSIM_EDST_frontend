@@ -13,12 +13,12 @@ import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/bodyStyl
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
 import { aclManualPostingSelector, aclSortDataSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { EdstEntry } from "../../../types/edstEntry";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { AclRowField } from "../../../enums/acl/aclRowField";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { VCI_SYMBOL } from "../../../constants";
-import { AclSortOption } from "../../../enums/acl/aclSortOption";
+import { AclSortOption } from "../../../typeDefinitions/enums/acl/aclSortOption";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;

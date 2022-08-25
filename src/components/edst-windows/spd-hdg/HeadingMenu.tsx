@@ -16,7 +16,7 @@ import { mod } from "../../../lib";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 190px;

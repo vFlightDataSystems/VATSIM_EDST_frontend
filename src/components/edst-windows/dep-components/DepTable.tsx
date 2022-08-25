@@ -9,11 +9,11 @@ import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depManualPostingSelector, depSortOptionSelector } from "../../../redux/slices/depSlice";
-import { EdstEntry } from "../../../types/edstEntry";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
-import { DepRowField } from "../../../enums/dep/depRowField";
+import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL } from "../../../constants";
-import { DepSortOption } from "../../../enums/dep/depSortOption";
+import { DepSortOption } from "../../../typeDefinitions/enums/dep/depSortOption";
 
 const DepBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;

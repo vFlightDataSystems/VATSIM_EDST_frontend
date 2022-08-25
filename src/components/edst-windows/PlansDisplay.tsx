@@ -1,7 +1,7 @@
 import React from "react";
 import { PlansDisplayHeader } from "./plans-display-components/PlansDisplayHeader";
 import { PlansDisplayTable } from "./plans-display-components/PlansDisplayTable";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FullscreenWindow } from "./FullscreenWindow";
 
 export const PlansDisplay = () => (

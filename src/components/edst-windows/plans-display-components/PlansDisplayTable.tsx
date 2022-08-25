@@ -6,7 +6,7 @@ import { BodyRowDiv } from "../../../styles/bodyStyles";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { removePlanThunk } from "../../../redux/thunks/removePlanThunk";
-import { Plan } from "../../../types/plan";
+import { Plan } from "../../../typeDefinitions/types/plan";
 
 const PlansDisplayBody = styled(NoSelectDiv)`
   overflow: hidden;

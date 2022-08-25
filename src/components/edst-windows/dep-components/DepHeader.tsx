@@ -10,8 +10,8 @@ import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { AddFindInput } from "../../InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { DepSortOptionValues } from "../../../enums/dep/depSortOption";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { DepSortOptionValues } from "../../../typeDefinitions/enums/dep/depSortOption";
 
 type DepHeaderProps = {
   focused: boolean;

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { login as apiLogin } from "../../api/vNasDataApi";
 import { RootState } from "../store";
-import { ApiSessionInfo } from "../../types/apiTypes/apiSessionInfo";
+import { ApiSessionInfo } from "../../typeDefinitions/types/apiTypes/apiSessionInfo";
 
 export type AuthState = {
   vatsimToken: string | null;

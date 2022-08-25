@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, RootThunkAction } from "../store";
-import { WindowPosition } from "../../types/windowPosition";
-import { AircraftId } from "../../types/aircraftId";
-import { EDST_MENU_LIST, EdstWindow } from "../../enums/edstWindow";
-import { AclRowField } from "../../enums/acl/aclRowField";
-import { DepRowField } from "../../enums/dep/depRowField";
-import { PlanRowField } from "../../enums/planRowField";
+import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
+import { AircraftId } from "../../typeDefinitions/types/aircraftId";
+import { EDST_MENU_LIST, EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
+import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
+import { PlanRowField } from "../../typeDefinitions/enums/planRowField";
 import { openWindowThunk } from "../thunks/openWindowThunk";
-import { edstHeaderButton } from "../../enums/edstHeaderButton";
-import { OutageEntry } from "../../types/outageEntry";
+import { edstHeaderButton } from "../../typeDefinitions/enums/edstHeaderButton";
+import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
 import { setSharedWindowIsOpen } from "../../sharedState/socket";
 
 export const AIRCRAFT_MENUS = [

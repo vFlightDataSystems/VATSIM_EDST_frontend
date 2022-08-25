@@ -1,6 +1,6 @@
-import { SharedDepState } from "../../../types/sharedStateTypes/sharedDepState";
+import { SharedDepState } from "../../../typeDefinitions/types/sharedStateTypes/sharedDepState";
 import { RootThunkAction } from "../../store";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { setDepSort } from "../../slices/depSlice";
 import { setAclManualPosting } from "../../slices/aclSlice";
 import { closeWindow, openWindow, pushZStack } from "../../slices/appSlice";

@@ -13,11 +13,11 @@ import {
 } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import _ from "lodash";
-import { ApiAircraftTrack } from "./types/apiTypes/apiAircraftTrack";
-import { RouteFix } from "./types/routeFix";
-import { EdstEntry } from "./types/edstEntry";
-import { AircraftTrack } from "./types/aircraftTrack";
-import { RouteFixWithDistance } from "./types/routeFixWithDistance";
+import { ApiAircraftTrack } from "./typeDefinitions/types/apiTypes/apiAircraftTrack";
+import { RouteFix } from "./typeDefinitions/types/routeFix";
+import { EdstEntry } from "./typeDefinitions/types/edstEntry";
+import { AircraftTrack } from "./typeDefinitions/types/aircraftTrack";
+import { RouteFixWithDistance } from "./typeDefinitions/types/routeFixWithDistance";
 
 export const REMOVAL_TIMEOUT = 120000;
 

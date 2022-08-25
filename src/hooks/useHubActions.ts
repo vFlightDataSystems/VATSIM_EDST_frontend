@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 import { useHubConnection } from "./useHubConnection";
-import { ApiLocation } from "../types/apiTypes/apiLocation";
-import { HoldAnnotations } from "../enums/hold/holdAnnotations";
+import { ApiLocation } from "../typeDefinitions/types/apiTypes/apiLocation";
+import { HoldAnnotations } from "../typeDefinitions/enums/hold/holdAnnotations";
 import { useRootDispatch } from "../redux/hooks";
 import { setMcaAcceptMessage } from "../redux/slices/appSlice";
-import { CreateOrAmendFlightplanDto } from "../types/apiTypes/CreateOrAmendFlightplanDto";
-import { AircraftId } from "../types/aircraftId";
+import { CreateOrAmendFlightplanDto } from "../typeDefinitions/types/apiTypes/CreateOrAmendFlightplanDto";
+import { AircraftId } from "../typeDefinitions/types/aircraftId";
 
 export const useHubActions = () => {
   const dispatch = useRootDispatch();

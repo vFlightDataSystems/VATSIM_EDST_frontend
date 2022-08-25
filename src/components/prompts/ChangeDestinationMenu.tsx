@@ -4,7 +4,7 @@ import { useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { EdstPrompt } from "./EdstPrompt";
 import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;

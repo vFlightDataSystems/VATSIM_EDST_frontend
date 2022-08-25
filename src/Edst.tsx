@@ -37,7 +37,7 @@ import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
 import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
-import { EdstWindow } from "./enums/edstWindow";
+import { EdstWindow } from "./typeDefinitions/enums/edstWindow";
 import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
 import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
 import { WEATHER_REFRESH_RATE } from "./constants";

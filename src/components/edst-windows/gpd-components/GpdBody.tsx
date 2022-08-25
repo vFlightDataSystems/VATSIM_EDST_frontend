@@ -6,7 +6,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { GpdAircraftTrack, GpdPlanDisplay } from "./GpdMapElements";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { gpdPlanDataSelector, gpdSuppressedSelector } from "../../../redux/slices/gpdSlice";
-import { EdstEntry } from "../../../types/edstEntry";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 
 const center = { lat: 42.362944444444445, lng: -71.00638888888889 };
 

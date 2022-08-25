@@ -15,9 +15,9 @@ import {
 } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../EdstDraggingOutline";
 import { mod } from "../../lib";
-import { WindowPosition } from "../../types/windowPosition";
+import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
-import { EdstWindow } from "../../enums/edstWindow";
+import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useAltimeter } from "../../api/weatherApi";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`

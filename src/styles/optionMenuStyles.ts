@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { defaultInputFontSize, DraggableDiv, edstFontFamily } from "./styles";
 import { edstFontGrey } from "./colors";
-import { WindowPosition } from "../types/windowPosition";
+import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 
 export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?: boolean; diamond?: boolean }>`
   display: inline-flex;

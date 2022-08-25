@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import _ from "lodash";
 import { RootState } from "../store";
-import { EdstEntry } from "../../types/edstEntry";
-import { AircraftId } from "../../types/aircraftId";
+import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
+import { AircraftId } from "../../typeDefinitions/types/aircraftId";
 import { updateSharedAircraft } from "../../sharedState/socket";
 
 type EntryState = Record<AircraftId, EdstEntry>;

@@ -5,13 +5,13 @@ import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
 import { edstFontFamily } from "../../../styles/styles";
-import { WindowPosition } from "../../../types/windowPosition";
-import { EdstEntry } from "../../../types/edstEntry";
+import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
+import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
-import { EdstWindow } from "../../../enums/edstWindow";
-import { AclRowField } from "../../../enums/acl/aclRowField";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { LeaderLine } from "./LeaderLine";
-import { DragPreviewStyle } from "../../../types/dragPreviewStyle";
+import { DragPreviewStyle } from "../../../typeDefinitions/types/dragPreviewStyle";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 
 type GpdDataBlockProps = {

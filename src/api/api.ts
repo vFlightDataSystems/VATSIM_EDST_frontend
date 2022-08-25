@@ -1,8 +1,8 @@
 import _ from "lodash";
 import { ApiAirSigmet } from "../redux/slices/weatherSlice";
-import { ApiAircraft } from "../types/apiTypes/apiAircraft";
-import { RouteFix } from "../types/routeFix";
-import { ApiAirportInfo } from "../types/apiTypes/apiAirportInfo";
+import { ApiAircraft } from "../typeDefinitions/types/apiTypes/apiAircraft";
+import { RouteFix } from "../typeDefinitions/types/routeFix";
+import { ApiAirportInfo } from "../typeDefinitions/types/apiTypes/apiAirportInfo";
 
 const baseUrl = process.env.REACT_APP_BACKEND_BASEURL!;
 

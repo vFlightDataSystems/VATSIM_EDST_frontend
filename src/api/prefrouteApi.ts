@@ -1,9 +1,9 @@
 /* React-specific entry point that automatically generates
    hooks corresponding to the defined endpoints */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ApiPreferentialDepartureRoute } from "../types/apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../types/apiTypes/apiPreferentialDepartureArrivalRoute";
-import { ApiPreferentialArrivalRoute } from "../types/apiTypes/apiPreferentialArrivalRoute";
+import { ApiPreferentialDepartureRoute } from "../typeDefinitions/types/apiTypes/apiPreferentialDepartureRoute";
+import { ApiPreferentialDepartureArrivalRoute } from "../typeDefinitions/types/apiTypes/apiPreferentialDepartureArrivalRoute";
+import { ApiPreferentialArrivalRoute } from "../typeDefinitions/types/apiTypes/apiPreferentialArrivalRoute";
 import { useRootSelector } from "../redux/hooks";
 import { artccIdSelector } from "../redux/slices/sectorSlice";
 import { entrySelector } from "../redux/slices/entrySlice";

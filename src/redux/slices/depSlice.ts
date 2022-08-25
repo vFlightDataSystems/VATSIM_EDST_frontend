@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { DepSortOption } from "../../enums/dep/depSortOption";
+import { DepSortOption } from "../../typeDefinitions/enums/dep/depSortOption";
 import { setSharedDepManualPosting, setSharedDepSort } from "../../sharedState/socket";
 
 type DepState = {

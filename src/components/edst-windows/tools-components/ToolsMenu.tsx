@@ -18,7 +18,7 @@ import {
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { useDragging } from "../../../hooks/useDragging";
 import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 export const ToolsBody = styled(OptionsBody)`
   padding: 20px 0 4px 0;

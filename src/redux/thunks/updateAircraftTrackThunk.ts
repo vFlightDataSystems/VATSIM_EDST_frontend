@@ -1,6 +1,6 @@
-import { ApiAircraftTrack } from "../../types/apiTypes/apiAircraftTrack";
+import { ApiAircraftTrack } from "../../typeDefinitions/types/apiTypes/apiAircraftTrack";
 import { RootThunkAction } from "../store";
-import { EdstEntry } from "../../types/edstEntry";
+import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
 import { setTrack } from "../slices/trackSlice";
 import { depFilter, aclFilter } from "../../filters";
 import { addEntryToAcl, addEntryToDep, updateEntries } from "../slices/entrySlice";

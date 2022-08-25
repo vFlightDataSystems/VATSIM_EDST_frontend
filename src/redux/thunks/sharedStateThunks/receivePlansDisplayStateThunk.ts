@@ -1,6 +1,6 @@
-import { SharedPlansDisplayState } from "../../../types/sharedStateTypes/sharedPlansDisplayState";
+import { SharedPlansDisplayState } from "../../../typeDefinitions/types/sharedStateTypes/sharedPlansDisplayState";
 import { RootThunkAction } from "../../store";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { setPlanQueue } from "../../slices/planSlice";
 import { closeWindow, openWindow, pushZStack } from "../../slices/appSlice";
 

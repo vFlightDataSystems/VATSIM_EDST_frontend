@@ -9,7 +9,7 @@ import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
 import { gpdSuppressedSelector, toggleSuppressed } from "../../../redux/slices/gpdSlice";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { EdstWindow } from "../../../enums/edstWindow";
+import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 type GpdHeaderProps = {
   focused: boolean;
