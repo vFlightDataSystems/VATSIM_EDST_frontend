@@ -1,15 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, RootThunkAction } from "../store";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { AircraftId } from "../../typeDefinitions/types/aircraftId";
 import { EDST_MENU_LIST, EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
-import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
-import { PlanRowField } from "../../typeDefinitions/enums/planRowField";
 import { openWindowThunk } from "../thunks/openWindowThunk";
 import { edstHeaderButton } from "../../typeDefinitions/enums/edstHeaderButton";
 import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
 import sharedSocket from "../../sharedState/socket";
+import { Asel } from "../../types/asel";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -32,8 +29,6 @@ type AppWindow = {
   position: WindowPosition | null;
   isFullscreen: boolean;
 };
-
-type Asel = { aircraftId: AircraftId; window: EdstWindow; field: AclRowField | DepRowField | PlanRowField };
 
 type AppState = {
   disabledHeaderButtons: edstHeaderButton[];
@@ -185,10 +180,13 @@ const appSlice = createSlice({
   }
 });
 
-export function setAsel(asel: Asel | null): RootThunkAction {
+export function setAsel(asel: Asel | null, triggeredBySharedState?: boolean): RootThunkAction {
   return (dispatch, getState) => {
     if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
       dispatch(appSlice.actions.setAsel(asel));
+      if (!triggeredBySharedState) {
+        sharedSocket.setAircraftSelect(asel);
+      }
     }
   };
 }

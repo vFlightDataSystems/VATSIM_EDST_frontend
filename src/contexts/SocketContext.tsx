@@ -9,6 +9,7 @@ import { receiveDepStateThunk } from "../redux/thunks/sharedStateThunks/receiveD
 import { receiveGpdStateThunk } from "../redux/thunks/sharedStateThunks/receiveGpdStateThunk";
 import { pushZStack } from "../redux/slices/appSlice";
 import sharedSocket from "../sharedState/socket";
+import { sharedStateAircraftSelect } from "../redux/thunks/aircraftSelect";
 
 class SocketContextValue {
   connectSocket: (artccId: string, sectorId: string) => void = sharedSocket.connect;
@@ -50,6 +51,9 @@ const useSocketContextInit = () => {
         });
         socket.on("receiveBringWindowToFront", edstWindow => {
           dispatch(pushZStack(edstWindow));
+        });
+        socket.on("receiveAircraftSelect", asel => {
+          dispatch(sharedStateAircraftSelect(asel));
         });
         socket.on("disconnect", reason => {
           setIsConnected(false);

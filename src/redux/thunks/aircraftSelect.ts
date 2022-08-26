@@ -9,6 +9,7 @@ import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
 import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
 import { AclAselActionTrigger } from "../../typeDefinitions/enums/acl/aclAselActionTrigger";
 import { DepAselActionTrigger } from "../../typeDefinitions/enums/dep/depAselActionTrigger";
+import { Asel } from "../../types/asel";
 
 function aircraftSelect(
   event: React.MouseEvent<HTMLElement>,
@@ -109,4 +110,10 @@ export function depAircraftSelect(
   triggerOpenWindow?: EdstWindow | null
 ) {
   return aircraftSelect(event, EdstWindow.DEP, aircraftId, field, aselAction, triggerOpenWindow);
+}
+
+export function sharedStateAircraftSelect(value: Asel | null): RootThunkAction {
+  return dispatch => {
+    dispatch(setAsel(value, true));
+  };
 }

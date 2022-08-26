@@ -6,6 +6,7 @@ import { AclSortOption } from "../typeDefinitions/enums/acl/aclSortOption";
 import { DepSortOption } from "../typeDefinitions/enums/dep/depSortOption";
 import { Plan } from "../typeDefinitions/types/plan";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
+import { Asel } from "../types/asel";
 
 const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
@@ -88,6 +89,12 @@ class SharedStateSocket {
   public setSharedDepManualPosting(value: boolean) {
     if (this.socket?.connected) {
       this.socket.emit("setDepManualPosting", value);
+    }
+  }
+
+  public setAircraftSelect(value: Asel | null) {
+    if (this.socket?.connected) {
+      this.socket.emit("setAircraftSelect", value);
     }
   }
 

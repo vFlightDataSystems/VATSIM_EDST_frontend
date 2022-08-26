@@ -5,13 +5,15 @@ import { SharedGpdState } from "./sharedGpdState";
 import { SharedPlansDisplayState } from "./sharedPlansDisplayState";
 import { SharedUiState } from "./sharedUiState";
 import { EdstWindow } from "../../enums/edstWindow";
+import { Asel } from "../../../types/asel";
 
 export type SharedStateServerToClientEvents = {
-  receiveAircraft: (aircraft: SharedAircraftDto) => void;
+  receiveAircraft: (value: SharedAircraftDto) => void;
   receiveAclState: (value: SharedAclState) => void;
   receiveDepState: (value: SharedDepState) => void;
   receiveGpdState: (value: SharedGpdState) => void;
   receivePlansDisplayState: (value: SharedPlansDisplayState) => void;
-  receiveBringWindowToFront: (window: EdstWindow) => void;
+  receiveBringWindowToFront: (value: EdstWindow) => void;
+  receiveAircraftSelect: (value: Asel | null) => void;
   receiveUiState: (value: SharedUiState) => void;
 };
