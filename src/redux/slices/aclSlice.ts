@@ -6,7 +6,7 @@ import sharedSocket from "../../sharedState/socket";
 
 type ToolsOptions = { displayCoordinationColumn: boolean; dropTrackDelete: boolean; iafDofManual: boolean; nonRvsmIndicator: boolean };
 
-export type AclState = {
+type AclState = {
   sortData: AclSortData;
   manualPosting: boolean;
   toolsOptions: ToolsOptions;
