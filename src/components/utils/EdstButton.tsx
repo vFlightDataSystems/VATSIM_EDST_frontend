@@ -88,10 +88,14 @@ export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<Edst
     </EdstTooltip>
   );
 };
-export const EdstButton12x12 = (props: EdstButtonProps) => <EdstButton width="12px" height="12px" {...props} />;
-export const EdstButton20x20 = (props: EdstButtonProps) => <EdstButton width="20px" height="20px" {...props} />;
-export const EdstRouteButton12x12 = (props: EdstButtonProps) => <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props} />;
-export const EdstTemplateButton85 = (props: EdstButtonProps) => <EdstButton width="85px" margin="0 4px" {...props} />;
+
+type EdstButtonFixedSizeProps = Omit<EdstButtonProps, "width" | "height">;
+export const EdstButton12x12 = (props: EdstButtonFixedSizeProps) => <EdstButton width="12px" height="12px" {...props} />;
+export const EdstButton20x20 = (props: EdstButtonFixedSizeProps) => <EdstButton width="20px" height="20px" {...props} />;
+export const EdstRouteButton12x12 = (props: Omit<EdstButtonFixedSizeProps, "padding" | "margin">) => (
+  <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props} />
+);
+export const EdstTemplateButton85 = (props: EdstButtonFixedSizeProps) => <EdstButton width="85px" margin="0 4px" {...props} />;
 
 export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
   return (
@@ -114,7 +118,7 @@ export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithC
   );
 };
 
-const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => (
+const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<Omit<EdstButtonProps, "margin">>) => (
   <EdstTooltip title={props.title}>
     <EdstOuterButton disabled={props.disabled} margin="0 2px" id={id} onMouseDownCapture={onMouseDown}>
       <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} flexGrow={0}>
@@ -123,6 +127,6 @@ const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButt
     </EdstOuterButton>
   </EdstTooltip>
 );
-export const HoldDirButton2ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="2ch" {...props} />;
-export const HoldDirButton22ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="2.2ch" {...props} />;
-export const HoldDirButton6ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="6ch" {...props} />;
+export const HoldDirButton2ch = (props: PropsWithChildren<EdstButtonFixedSizeProps>) => <HoldDirButton width="2ch" {...props} />;
+export const HoldDirButton22ch = (props: PropsWithChildren<EdstButtonFixedSizeProps>) => <HoldDirButton width="2.2ch" {...props} />;
+export const HoldDirButton6ch = (props: PropsWithChildren<EdstButtonFixedSizeProps>) => <HoldDirButton width="6ch" {...props} />;
