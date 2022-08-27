@@ -10,6 +10,6 @@ export const refreshSigmets = createAsyncThunk("weather/refreshSigmets", async (
   });
 });
 
-export const refreshWeatherThunk: RootThunkAction = (dispatch) => {
+export const refreshWeatherThunk: RootThunkAction = dispatch => {
   dispatch(refreshSigmets());
 };
