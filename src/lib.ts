@@ -84,7 +84,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | n
   let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
   routeFixesToProcess.unshift({ pos, name: "ppos" });
   if (routeFixesToProcess.length > 1) {
-    const nextFix = getNextFix(routeFixesToProcess, pos) as RouteFix;
+    const nextFix = getNextFix(routeFixesToProcess, pos);
     const index = fixNames.indexOf(nextFix.name);
     routeFixesToProcess = routeFixesToProcess.slice(index);
     routeFixesToProcess.unshift({ name: "ppos", pos });
