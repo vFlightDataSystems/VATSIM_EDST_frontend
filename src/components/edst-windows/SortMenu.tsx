@@ -18,7 +18,7 @@ type SortMenuProps = {
 
 export const SortMenu = ({ edstWindow, onSubmit, children }: PropsWithChildren<SortMenuProps>) => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector(windowSelector(EdstWindow.ACL_SORT_MENU));
+  const windowProps = useRootSelector(windowSelector(edstWindow));
   const zStack = useRootSelector(zStackSelector);
 
   const ref = useRef<HTMLDivElement>(null);
