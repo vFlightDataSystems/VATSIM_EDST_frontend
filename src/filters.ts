@@ -1,5 +1,5 @@
-import { distance, Feature, point, Polygon, Position } from "@turf/turf";
-import { routeWillEnterAirspace } from "./lib";
+import { distance, Feature, point, Polygon } from "@turf/turf";
+import { locationToPosition, routeWillEnterAirspace } from "./lib";
 import { ApiAircraftTrack } from "./typeDefinitions/types/apiTypes/apiAircraftTrack";
 import { EdstEntry } from "./typeDefinitions/types/edstEntry";
 import { fetchRouteFixes, memoizedFetchAirportInfo } from "./api/api";
@@ -12,7 +12,7 @@ export const depFilter = async (entry: EdstEntry, track: ApiAircraftTrack, artcc
   const depInfo = await memoizedFetchAirportInfo(entry.departure);
   let depAirportDistance = 0;
   if (depInfo) {
-    const pos = [track.location.lon, track.location.lat];
+    const pos = locationToPosition(track.location);
     const depPos = [depInfo.lon, depInfo.lat];
     depAirportDistance = distance(point(depPos), point(pos), { units: "nauticalmiles" });
   }
@@ -22,7 +22,7 @@ export const depFilter = async (entry: EdstEntry, track: ApiAircraftTrack, artcc
 export const aclFilter = async (entry: EdstEntry, track: ApiAircraftTrack, polygons: Feature<Polygon>[]) => {
   const currentRoute = formatRoute(entry.route);
   const currentRouteFixes = await fetchRouteFixes(currentRoute, entry.departure, entry.destination);
-  const pos: Position = [track.location.lon, track.location.lat];
+  const pos = locationToPosition(track.location);
   const willEnterAirspace = routeWillEnterAirspace(currentRoute, currentRouteFixes, polygons, pos);
   return track.altitudeAgl > 500 && entry.boundaryTime < BOUNDARY_TIME_FILTER && willEnterAirspace; // && Number(track.groundSpeed) > AIRBORNE_GROUNDSPEED_FILTER;
 };

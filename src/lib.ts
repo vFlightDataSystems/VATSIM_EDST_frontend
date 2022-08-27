@@ -3,6 +3,8 @@ import {
   distance,
   Feature,
   length,
+  lineIntersect,
+  lineSlice,
   lineString,
   Point,
   point,
@@ -16,8 +18,8 @@ import _ from "lodash";
 import { ApiAircraftTrack } from "./typeDefinitions/types/apiTypes/apiAircraftTrack";
 import { RouteFix } from "./typeDefinitions/types/routeFix";
 import { EdstEntry } from "./typeDefinitions/types/edstEntry";
-import { AircraftTrack } from "./typeDefinitions/types/aircraftTrack";
 import { RouteFixWithDistance } from "./typeDefinitions/types/routeFixWithDistance";
+import { ApiLocation } from "./typeDefinitions/types/apiTypes/apiLocation";
 
 export const REMOVAL_TIMEOUT = 120000;
 
@@ -82,7 +84,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | n
   let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
   routeFixesToProcess.unshift({ pos, name: "ppos" });
   if (routeFixesToProcess.length > 1) {
-    const nextFix = getNextFix(route, routeFixesToProcess, pos) as RouteFix;
+    const nextFix = getNextFix(routeFixesToProcess, pos) as RouteFix;
     const index = fixNames.indexOf(nextFix.name);
     routeFixesToProcess = routeFixesToProcess.slice(index);
     routeFixesToProcess.unshift({ name: "ppos", pos });
@@ -116,7 +118,7 @@ export function getRouteFixesDistance(routeFixes: RouteFix[], pos: Position): Ro
  * @param dest - ICAO string of destination airport
  * @returns {currentRoute: string, currentRouteFixes: RouteFix[]}
  */
-export function getRemainingRouteFixes(
+export function getEnteringRouteFixes(
   route: string,
   routeFixes: RouteFixWithDistance[],
   pos: Position,
@@ -160,11 +162,10 @@ export function getRemainingRouteFixes(
 
 /**
  * returns the next fix on the route from present position
- * @param route
  * @param routeFixes
  * @param pos
  */
-export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position): RouteFixWithDistance | null {
+export function getNextFix(routeFixes: RouteFix[], pos: Position) {
   const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
   if (routeFixesWithDistance.length > 1) {
     const fixNames = routeFixes.map(e => e.name);
@@ -179,7 +180,7 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
     const lineDistance = pointToLineDistance(pos, line, { units: "nauticalmiles" });
     return lineDistance >= closestFix.dist ? closestFix : followingFix;
   }
-  return routeFixesWithDistance[0];
+  return routeFixesWithDistance[0] ?? null;
 }
 
 /**
@@ -190,7 +191,7 @@ export function getNextFix(route: string, routeFixes: RouteFix[], pos: Position)
  * @returns {number} - minutes until the aircraft enters the airspace
  */
 export function computeBoundaryTime(entry: EdstEntry, track: ApiAircraftTrack, polygons: Feature<Polygon>[]): number {
-  const pos = [track.location.lon, track.location.lat];
+  const pos = locationToPosition(track.location);
   const posPoint = point(pos);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -211,12 +212,12 @@ export function computeCrossingTimes(entry: EdstEntry, routeFixes: RouteFix[], t
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     if (routeFixes.length > 0 && track.groundSpeed > 0) {
-      const lineData = [[track.location.lon, track.location.lat]];
+      const lineData = [locationToPosition(track.location)];
       routeFixes.forEach(fix => {
         lineData.push(fix.pos);
         newRouteFixes.push({
           ...fix,
-          minutesAtFix: Math.floor(utcMinutes + (60 * length(lineString(lineData), { units: "nauticalmiles" })) / track.groundSpeed)
+          minutesAtFix: Math.floor(utcMinutes + length(lineString(lineData), { units: "nauticalmiles" }) * (60 / track.groundSpeed))
         });
       });
     }
@@ -330,6 +331,57 @@ export function convertBeaconCodeToString(code?: number | null): string {
   return String(code ?? 0).padStart(4, "0");
 }
 
-export function probeConflicts(tracks: AircraftTrack[]): unknown {
+export function locationToPosition(location: ApiLocation): Position {
+  return [Number(location.lon), Number(location.lat)];
+}
+
+export function getRemainingFixesFromPpos(routeFixes: RouteFix[], pos: Position) {
+  const fixNames = routeFixes.map(e => e.name);
+  if (fixNames.length === 0) {
+    return null;
+  }
+  const nextFix = getNextFix(routeFixes, pos);
+  if (nextFix) {
+    const index = fixNames.indexOf(nextFix.name);
+    const routeFixesToDisplay = routeFixes.slice(index);
+    routeFixesToDisplay.unshift({ name: "ppos", pos });
+    return routeFixesToDisplay;
+  }
+  return null;
+}
+
+export function getRouteLineString(routeFixes: RouteFix[], pos: Position) {
+  const remainingFixes = getRemainingFixesFromPpos(routeFixes, pos);
+  const positions = remainingFixes?.map(fix => fix.pos);
+  return positions ? lineString(positions) : null;
+}
+
+type ProbeConflictArgs = {
+  fixes: RouteFix[];
+  track: ApiAircraftTrack;
+};
+
+export function probeConflict(ac1: ProbeConflictArgs, ac2: ProbeConflictArgs) {
+  const pos1 = locationToPosition(ac1.track.location);
+  const pos2 = locationToPosition(ac2.track.location);
+  const routeLine1 = getRouteLineString(ac1.fixes, pos1);
+  const routeLine2 = getRouteLineString(ac2.fixes, pos2);
+
+  if (routeLine1 && routeLine2 && ac1.track.groundSpeed > 0 && ac2.track.groundSpeed > 0) {
+    const intersections = lineIntersect(routeLine1, routeLine2);
+    if (intersections.features.length > 0) {
+      const routeToIntersection1 = lineSlice(pos1, intersections.features[0].geometry, routeLine1);
+      const routeToIntersection2 = lineSlice(pos2, intersections.features[0].geometry, routeLine2);
+      // minutes until the aircraft reaches intersection based on ground speed
+      const timeToFix1 = length(routeToIntersection1, { units: "nauticalmiles" }) * (60 / ac1.track.groundSpeed);
+      const timeToFix2 = length(routeToIntersection2, { units: "nauticalmiles" }) * (60 / ac2.track.groundSpeed);
+      if (timeToFix1 - timeToFix1 < 3) {
+        return [
+          { routeToIntersection: routeToIntersection1, intersection: intersections.features[0].geometry, timeToFix: timeToFix1 },
+          { routeToIntersection: routeToIntersection2, intersection: intersections.features[0].geometry, timeToFix: timeToFix2 }
+        ];
+      }
+    }
+  }
   return null;
 }

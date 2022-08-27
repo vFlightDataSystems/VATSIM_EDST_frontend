@@ -7,21 +7,14 @@ import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { getNextFix } from "../../../lib";
+import { locationToPosition, getRemainingFixesFromPpos } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { aircraftTrackSelector } from "../../../redux/slices/trackSlice";
-import { ApiAircraftTrack } from "../../../typeDefinitions/types/apiTypes/apiAircraftTrack";
 import { AirwayFix } from "../../../typeDefinitions/types/airwayFix";
 import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
-import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { RouteFix } from "../../../typeDefinitions/types/routeFix";
 import { useRouteFixes } from "../../../api/aircraftApi";
-import { formatRoute } from "../../../formatRoute";
-
-type GpdFixProps = {
-  lat: number | string;
-  lon: number | string;
-};
+import { ApiLocation } from "../../../typeDefinitions/types/apiTypes/apiLocation";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): LatLngExpression {
   if (Array.isArray(pos)) {
@@ -30,24 +23,22 @@ function posToLatLng(pos: Position | { lat: number | string; lon: number | strin
   return { lat: Number(pos.lat), lng: Number(pos.lon) };
 }
 
-function getRouteLine(entry: EdstEntry, formattedRoute: string, routeFixes: RouteFix[], track: ApiAircraftTrack) {
-  const fixNames = routeFixes.map(e => e.name);
-  if (fixNames.length === 0) {
-    return null;
-  }
-  const pos = [Number(track.location.lon), Number(track.location.lat)];
-  const nextFix = getNextFix(formattedRoute, routeFixes, pos);
-  if (nextFix) {
-    const index = fixNames.indexOf(nextFix.name);
-    const routeFixesToDisplay = routeFixes.slice(index);
-    routeFixesToDisplay.unshift({ name: "ppos", pos });
-    return routeFixesToDisplay;
-  }
-  return null;
+function locationToLatLng(location: ApiLocation) {
+  return posToLatLng(locationToPosition(location));
 }
 
-export const GpdNavaid = ({ lat, lon }: GpdFixProps) => {
-  const posLatLng = posToLatLng([Number(lon), Number(lat)]);
+/**
+ * format beacon code into 4 digit octal string
+ * @param code
+ */
+export function convertBeaconCodeToString(code?: number | null): string {
+  return String(code ?? 0).padStart(4, "0");
+}
+
+type GpdFixProps = ApiLocation;
+
+export const GpdNavaid = (location: GpdFixProps) => {
+  const posLatLng = locationToLatLng(location);
   return <Marker position={posLatLng} icon={vorIcon} />;
 };
 
@@ -79,7 +70,6 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
   const map = useMap();
-  const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(aircraftId);
 
   const updateHandler = useCallback(() => {
@@ -93,7 +83,7 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   // updates route line
   useEffect(() => {
     if (showRoute) {
-      setRouteLine(track ? getRouteLine(entry, formattedRoute, routeFixes, track) : null);
+      setRouteLine(track ? getRemainingFixesFromPpos(routeFixes, locationToPosition(track.location)) : null);
     }
   }, [posLatLng, showRoute]);
 
