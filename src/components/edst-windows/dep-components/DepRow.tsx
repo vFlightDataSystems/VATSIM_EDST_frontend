@@ -206,7 +206,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
             <AltCol>
               <AltColDiv
                 selected={isSelected(entry.aircraftId, DepRowField.ALT)}
-                onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
+                onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.ALT, EdstWindow.ALTITUDE_MENU))}
               >
                 {entry.altitude}
               </AltColDiv>
@@ -226,7 +226,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
             <RouteCol
               hover
               selected={isSelected(entry.aircraftId, DepRowField.ROUTE)}
-              onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
+              onMouseDown={e => dispatch(depAircraftSelect(e, entry.aircraftId, DepRowField.ROUTE, EdstWindow.ROUTE_MENU))}
             >
               <RouteSpan padding="0 2px">
                 <RouteSpan>

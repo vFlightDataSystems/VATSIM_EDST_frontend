@@ -1,14 +1,11 @@
 import React from "react";
 import { RootThunkAction } from "../store";
 import { closeAircraftMenus, setAsel } from "../slices/appSlice";
-import { updateEntry } from "../slices/entrySlice";
 import { openMenuThunk } from "./openMenuThunk";
 import { openWindowThunk } from "./openWindowThunk";
 import { EDST_MENU_LIST, EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
 import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
-import { AclAselActionTrigger } from "../../typeDefinitions/enums/acl/aclAselActionTrigger";
-import { DepAselActionTrigger } from "../../typeDefinitions/enums/dep/depAselActionTrigger";
 import { Asel } from "../../types/asel";
 
 function aircraftSelect(
@@ -16,7 +13,6 @@ function aircraftSelect(
   edstWindow: EdstWindow,
   aircraftId: string,
   field: AclRowField | DepRowField,
-  aselAction: AclAselActionTrigger | DepAselActionTrigger | null = null,
   triggerOpenWindow: EdstWindow | null = null
 ): RootThunkAction {
   return (dispatch, getState) => {
@@ -28,17 +24,8 @@ function aircraftSelect(
     if (asel?.aircraftId === aircraftId && asel?.field === field && asel?.window === edstWindow) {
       dispatch(setAsel(null));
     } else {
-      const entry = state.entries[aircraftId];
       switch (edstWindow) {
         case EdstWindow.DEP:
-          if (
-            !state.dep.manualPosting &&
-            field === DepRowField.FID &&
-            aselAction === DepAselActionTrigger.SET_DEP_STATUS_NEUTRAL &&
-            entry.depStatus === -1
-          ) {
-            dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
-          }
           dispatch(setAsel({ aircraftId, field: field as DepRowField, window: EdstWindow.DEP }));
           if (triggerOpenWindow) {
             if (EDST_MENU_LIST.includes(triggerOpenWindow)) {
@@ -55,14 +42,6 @@ function aircraftSelect(
           dispatch(setAsel({ aircraftId, field, window: EdstWindow.GPD }));
           break;
         case EdstWindow.ACL:
-          if (
-            !state.acl.manualPosting &&
-            field === AclRowField.FID &&
-            aselAction === AclAselActionTrigger.SET_VCI_NEUTRAL &&
-            entry?.vciStatus === -1
-          ) {
-            dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
-          }
           dispatch(setAsel({ aircraftId, field, window: EdstWindow.ACL }));
           if (triggerOpenWindow) {
             if (triggerOpenWindow in EDST_MENU_LIST) {
@@ -86,30 +65,27 @@ export function gpdAircraftSelect(
   event: React.MouseEvent<HTMLElement>,
   aircraftId: string,
   field: AclRowField,
-  aselAction?: AclAselActionTrigger | null,
   triggerOpenWindow?: EdstWindow | null
 ) {
-  return aircraftSelect(event, EdstWindow.GPD, aircraftId, field, aselAction, triggerOpenWindow);
+  return aircraftSelect(event, EdstWindow.GPD, aircraftId, field, triggerOpenWindow);
 }
 
 export function aclAircraftSelect(
   event: React.MouseEvent<HTMLElement>,
   aircraftId: string,
   field: AclRowField,
-  aselAction?: AclAselActionTrigger | null,
   triggerOpenWindow?: EdstWindow | null
 ) {
-  return aircraftSelect(event, EdstWindow.ACL, aircraftId, field, aselAction, triggerOpenWindow);
+  return aircraftSelect(event, EdstWindow.ACL, aircraftId, field, triggerOpenWindow);
 }
 
 export function depAircraftSelect(
   event: React.MouseEvent<HTMLElement>,
   aircraftId: string,
   field: DepRowField,
-  aselAction?: DepAselActionTrigger | null,
   triggerOpenWindow?: EdstWindow | null
 ) {
-  return aircraftSelect(event, EdstWindow.DEP, aircraftId, field, aselAction, triggerOpenWindow);
+  return aircraftSelect(event, EdstWindow.DEP, aircraftId, field, triggerOpenWindow);
 }
 
 export function sharedStateAircraftSelect(value: Asel | null): RootThunkAction {

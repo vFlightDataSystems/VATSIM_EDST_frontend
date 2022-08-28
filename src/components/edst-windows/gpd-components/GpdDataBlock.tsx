@@ -150,7 +150,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           <DataBlockRow>
             <DataBlockElement
               selected={selectedField === AclRowField.ALT}
-              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
+              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ALT, EdstWindow.ALTITUDE_MENU))}
             >
               {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`}
             </DataBlockElement>
@@ -158,7 +158,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           <DataBlockRow>
             <DataBlockElement
               selected={selectedField === AclRowField.ROUTE}
-              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU))}
+              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, EdstWindow.ROUTE_MENU))}
             >
               {entry.destination}
             </DataBlockElement>

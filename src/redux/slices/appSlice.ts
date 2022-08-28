@@ -183,6 +183,9 @@ const appSlice = createSlice({
 export function setAsel(asel: Asel | null, triggeredBySharedState?: boolean): RootThunkAction {
   return (dispatch, getState) => {
     if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
+      if (asel === null) {
+        dispatch(closeAllMenus());
+      }
       dispatch(appSlice.actions.setAsel(asel));
       if (!triggeredBySharedState) {
         sharedSocket.setAircraftSelect(asel);

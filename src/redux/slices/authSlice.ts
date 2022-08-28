@@ -3,7 +3,7 @@ import { login as apiLogin } from "../../api/vNasDataApi";
 import { RootState } from "../store";
 import { ApiSessionInfo } from "../../typeDefinitions/types/apiTypes/apiSessionInfo";
 
-export type AuthState = {
+type AuthState = {
   vatsimToken: string | null;
   nasToken: string | null;
   session: ApiSessionInfo | null;

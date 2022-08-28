@@ -136,7 +136,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     switch (event.button) {
       case 0:
         if (!entry.holdAnnotations) {
-          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.HOLD_MENU));
+          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, EdstWindow.HOLD_MENU));
         } else {
           dispatch(
             updateEntry({
@@ -147,11 +147,11 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         }
         break;
       case 1:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.HOLD_MENU));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, EdstWindow.HOLD_MENU));
         break;
       case 2:
         if (entry?.holdAnnotations) {
-          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, null, EdstWindow.CANCEL_HOLD_MENU));
+          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, EdstWindow.CANCEL_HOLD_MENU));
         }
         break;
       default:
@@ -210,7 +210,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HDG, null, EdstWindow.HEADING_MENU));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HDG, EdstWindow.HEADING_MENU));
         break;
       case 1:
         if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
@@ -228,7 +228,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.SPD, null, EdstWindow.SPEED_MENU));
+        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.SPD, EdstWindow.SPEED_MENU));
         break;
       case 1:
         if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
@@ -244,9 +244,9 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
 
   const handleRouteClicked = (event: React.MouseEvent<HTMLElement>) => {
     if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
-      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.HOLD_MENU));
+      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, EdstWindow.HOLD_MENU));
     } else {
-      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, null, EdstWindow.ROUTE_MENU));
+      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, EdstWindow.ROUTE_MENU));
     }
   };
 
@@ -296,7 +296,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
               <AltColDiv
                 headerMouseDown={altMouseDown}
                 selected={isSelected(entry.aircraftId, AclRowField.ALT)}
-                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, null, EdstWindow.ALTITUDE_MENU))}
+                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, EdstWindow.ALTITUDE_MENU))}
               >
                 {entry.altitude}
                 {entry.interimAltitude && `T${entry.interimAltitude}`}
