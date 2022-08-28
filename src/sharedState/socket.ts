@@ -100,6 +100,7 @@ class SharedStateSocket {
 
   public disconnect() {
     if (this.socket?.connected) {
+      this.socket.removeAllListeners();
       this.socket.disconnect();
     }
   }

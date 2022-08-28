@@ -3,12 +3,7 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
-export function openMenuThunk(
-  window: EdstWindow,
-  eventTarget?: (EventTarget & HTMLElement) | null,
-  triggeredFromWindow?: EdstWindow,
-  plan = false
-): RootThunkAction {
+export function openMenuThunk(window: EdstWindow, eventTarget?: (EventTarget & HTMLElement) | null, plan = false): RootThunkAction {
   return dispatch => {
     if (eventTarget) {
       let menuPos: WindowPosition;
@@ -23,20 +18,12 @@ export function openMenuThunk(
           };
           break;
         case EdstWindow.ROUTE_MENU:
-          menuPos =
-            triggeredFromWindow !== EdstWindow.DEP
-              ? {
-                  x: x - (plan ? 0 : 569),
-                  y: plan ? eventTarget.offsetTop : y - 3 * height,
-                  w: width,
-                  h: height
-                }
-              : {
-                  x: x - 1,
-                  y: 200,
-                  w: width,
-                  h: height
-                };
+          menuPos = {
+            x: x - (plan ? 0 : 569),
+            y: plan ? eventTarget.offsetTop : y - 3 * height,
+            w: width,
+            h: height
+          };
           break;
         case EdstWindow.PREV_ROUTE_MENU:
           menuPos = {

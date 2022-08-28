@@ -395,7 +395,7 @@ export const RouteMenu = () => {
                 margin="0 4px 0 0"
                 content="Previous Route"
                 onMouseDown={() => {
-                  dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, EdstWindow.ROUTE_MENU, true));
+                  dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, true));
                   dispatch(closeWindow(EdstWindow.ROUTE_MENU));
                 }}
                 title={Tooltips.routeMenuPrevRoute}

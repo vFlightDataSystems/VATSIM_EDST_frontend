@@ -64,7 +64,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
                   field: PlanRowField.FID
                 })
               );
-              dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget, EdstWindow.PLANS_DISPLAY));
+              dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget));
             }
           }}
           content="Plan Options..."
@@ -87,7 +87,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
         />
         <EdstWindowHeaderButton disabled content="Tools..." />
         <EdstWindowHeaderButton
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.PLANS_DISPLAY))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget))}
           content="Template..."
           title={Tooltips.template}
         />

@@ -34,7 +34,7 @@ export const PlanOptions = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
 
   const openMenu = (menu: EdstWindow) => {
-    dispatch(openMenuThunk(menu, ref.current, EdstWindow.PLAN_OPTIONS, true));
+    dispatch(openMenuThunk(menu, ref.current, true));
     dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
   };
 

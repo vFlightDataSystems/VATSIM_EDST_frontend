@@ -66,7 +66,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, EdstWindow.GPD, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, false))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -74,7 +74,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton disabled content="Graphic..." />
         <EdstWindowHeaderButton
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.GPD, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, false))}
           content="Template..."
           title={Tooltips.template}
         />
@@ -91,14 +91,14 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         <EdstWindowHeaderButton
           onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU));
-            dispatch(openMenuThunk(EdstWindow.GPD_MAP_OPTIONS_MENU, e.currentTarget, EdstWindow.GPD));
+            dispatch(openMenuThunk(EdstWindow.GPD_MAP_OPTIONS_MENU, e.currentTarget));
           }}
           content="Map Options..."
         />
         <EdstWindowHeaderButton
           onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
-            dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget, EdstWindow.GPD));
+            dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget));
           }}
           content="Tools..."
         />

@@ -70,7 +70,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, EdstWindow.ACL, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, false))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -79,7 +79,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         <EdstWindowHeaderButton
           id="acl-sort-button"
           onMouseDown={e => {
-            dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget, EdstWindow.ACL));
+            dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget));
           }}
           content="Sort..."
           title={Tooltips.sort}
@@ -87,7 +87,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         <EdstWindowHeaderButton
           onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
-            dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget, EdstWindow.ACL));
+            dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget));
           }}
           content="Tools..."
         />
@@ -97,7 +97,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           title={Tooltips.postingMode}
         />
         <EdstWindowHeaderButton
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, EdstWindow.ACL, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, false))}
           content="Template..."
           title={Tooltips.template}
         />

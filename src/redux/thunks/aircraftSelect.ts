@@ -26,10 +26,10 @@ function aircraftSelect(
     } else {
       switch (edstWindow) {
         case EdstWindow.DEP:
-          dispatch(setAsel({ aircraftId, field: field as DepRowField, window: EdstWindow.DEP }));
+          dispatch(setAsel({ aircraftId, field, window: EdstWindow.DEP }));
           if (triggerOpenWindow) {
             if (EDST_MENU_LIST.includes(triggerOpenWindow)) {
-              dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, EdstWindow.DEP, false));
+              dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, false));
             } else {
               dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget));
             }
@@ -37,7 +37,7 @@ function aircraftSelect(
           break;
         case EdstWindow.GPD:
           if (triggerOpenWindow && EDST_MENU_LIST.includes(triggerOpenWindow)) {
-            dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, EdstWindow.GPD, false));
+            dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, false));
           }
           dispatch(setAsel({ aircraftId, field, window: EdstWindow.GPD }));
           break;
@@ -45,7 +45,7 @@ function aircraftSelect(
           dispatch(setAsel({ aircraftId, field, window: EdstWindow.ACL }));
           if (triggerOpenWindow) {
             if (triggerOpenWindow in EDST_MENU_LIST) {
-              dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, EdstWindow.ACL, false));
+              dispatch(openMenuThunk(triggerOpenWindow, event.currentTarget, false));
             } else {
               dispatch(openWindowThunk(triggerOpenWindow, event.currentTarget));
             }
