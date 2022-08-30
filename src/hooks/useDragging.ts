@@ -51,7 +51,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
     return () => {
       dispatch(setAnyDragging(false));
     };
-  }, []);
+  }, [dispatch]);
 
   const draggingHandler = useCallback(
     (event: MouseEvent) => {
@@ -121,7 +121,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
         window.addEventListener("mousemove", draggingHandler);
       }
     },
-    [anyDragging, dispatch, draggingHandler, edstWindow, element, ppos]
+    [anyDragging, dispatch, draggingHandler, edstWindow, element, ppos, zStack]
   );
 
   const stopDrag = useCallback(() => {

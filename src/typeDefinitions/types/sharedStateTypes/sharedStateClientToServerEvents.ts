@@ -3,7 +3,7 @@ import { EdstWindow } from "../../enums/edstWindow";
 import { AclSortOption } from "../../enums/acl/aclSortOption";
 import { DepSortOption } from "../../enums/dep/depSortOption";
 import { Plan } from "../plan";
-import { Asel } from "../../../types/asel";
+import { Asel } from "../asel";
 
 export type SharedStateClientToServerEvents = {
   updateAircraft: (sectorId: string, payload: SharedAircraftDto) => void;
@@ -12,7 +12,8 @@ export type SharedStateClientToServerEvents = {
   setAclManualPosting: (value: boolean) => void;
   setDepManualPosting: (value: boolean) => void;
   setPlanQueue: (value: Plan[]) => void;
+  openWindow: (window: EdstWindow) => void;
+  closeWindow: (window: EdstWindow) => void;
+  setAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   clearPlanQueue: () => void;
-  setWindowIsOpen: (window: EdstWindow, value: boolean) => void;
-  setAircraftSelect: (asel: Asel | null) => void;
 };

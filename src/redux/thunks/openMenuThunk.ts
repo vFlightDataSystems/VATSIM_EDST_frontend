@@ -2,17 +2,18 @@ import { RootThunkAction } from "../store";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import sharedSocket from "../../sharedState/socket";
 
-export function openMenuThunk(window: EdstWindow, eventTarget?: (EventTarget & HTMLElement) | null, plan = false): RootThunkAction {
+export function openMenuThunk(window: EdstWindow, element: HTMLElement | null, triggeredBySharedState?: boolean, plan = false): RootThunkAction {
   return dispatch => {
-    if (eventTarget) {
+    if (element) {
       let menuPos: WindowPosition;
-      const { x, y, height, width } = eventTarget.getBoundingClientRect();
+      const { x, y, height, width } = element.getBoundingClientRect();
       switch (window) {
         case EdstWindow.ALTITUDE_MENU:
           menuPos = {
             x: x + (plan ? 0 : width),
-            y: plan ? eventTarget.offsetTop : y - 76,
+            y: plan ? element.offsetTop : y - 76,
             w: width,
             h: height
           };
@@ -20,7 +21,7 @@ export function openMenuThunk(window: EdstWindow, eventTarget?: (EventTarget & H
         case EdstWindow.ROUTE_MENU:
           menuPos = {
             x: x - (plan ? 0 : 569),
-            y: plan ? eventTarget.offsetTop : y - 3 * height,
+            y: plan ? element.offsetTop : y - 3 * height,
             w: width,
             h: height
           };
@@ -28,7 +29,7 @@ export function openMenuThunk(window: EdstWindow, eventTarget?: (EventTarget & H
         case EdstWindow.PREV_ROUTE_MENU:
           menuPos = {
             x,
-            y: plan ? eventTarget.offsetTop : y - 2 * height,
+            y: plan ? element.offsetTop : y - 2 * height,
             w: width,
             h: height
           };
@@ -52,11 +53,14 @@ export function openMenuThunk(window: EdstWindow, eventTarget?: (EventTarget & H
         default:
           menuPos = {
             x,
-            y: y + eventTarget.offsetHeight
+            y: y + element.offsetHeight
           };
       }
       dispatch(setWindowPosition({ window, pos: menuPos }));
     }
     dispatch(openWindow(window));
+    if (!triggeredBySharedState) {
+      sharedSocket.openSharedWindow(window);
+    }
   };
 }

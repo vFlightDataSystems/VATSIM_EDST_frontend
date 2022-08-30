@@ -17,14 +17,7 @@ import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea
 import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
-import {
-  mcaCommandStringSelector,
-  openWindow,
-  pushZStack,
-  setMcaCommandString,
-  showSectorSelectorSelector,
-  windowsSelector
-} from "./redux/slices/appSlice";
+import { mcaCommandStringSelector, pushZStack, setMcaCommandString, showSectorSelectorSelector, windowsSelector } from "./redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "./redux/hooks";
 import { ToolsMenu } from "./components/edst-windows/tools-components/ToolsMenu";
 import { AltimeterWindow } from "./components/edst-windows/AltimeterWindow";
@@ -45,10 +38,13 @@ import { HubContextProvider } from "./contexts/HubContext";
 import { AclSortMenu } from "./components/edst-windows/acl-components/AclSortMenu";
 import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMenu";
 import { SocketContextProvider } from "./contexts/SocketContext";
+import { openWindowThunk } from "./redux/thunks/openWindowThunk";
+import { aselEntrySelector } from "./redux/slices/entrySlice";
 
 const Edst = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
+  const aselEntry = useRootSelector(aselEntrySelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLTextAreaElement> | null>(null);
@@ -71,7 +67,7 @@ const Edst = () => {
       !windows[EdstWindow.ALTITUDE_MENU].open
     ) {
       if (!mcaInputRef?.current) {
-        dispatch(openWindow(EdstWindow.MESSAGE_COMPOSE_AREA));
+        dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
         if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
           dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
         }
@@ -98,19 +94,19 @@ const Edst = () => {
         {windows[EdstWindow.DEP].open && <Dep />}
         {windows[EdstWindow.GPD].open && <Gpd />}
         {windows[EdstWindow.PLANS_DISPLAY].open && <PlansDisplay />}
-        {windows[EdstWindow.PLAN_OPTIONS].open && <PlanOptions />}
+        {windows[EdstWindow.PLAN_OPTIONS].open && aselEntry && <PlanOptions />}
         {windows[EdstWindow.ACL_SORT_MENU].open && <AclSortMenu />}
         {windows[EdstWindow.DEP_SORT_MENU].open && <DepSortMenu />}
         {windows[EdstWindow.TOOLS_MENU].open && <ToolsMenu />}
         {windows[EdstWindow.GPD_MAP_OPTIONS_MENU].open && <GpdMapOptions />}
-        {windows[EdstWindow.ROUTE_MENU].open && <RouteMenu />}
+        {windows[EdstWindow.ROUTE_MENU].open && aselEntry && <RouteMenu />}
         {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
         {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
-        {windows[EdstWindow.HOLD_MENU].open && <HoldMenu />}
-        {windows[EdstWindow.CANCEL_HOLD_MENU].open && <CancelHoldMenu />}
-        {windows[EdstWindow.SPEED_MENU].open && <SpeedMenu />}
-        {windows[EdstWindow.HEADING_MENU].open && <HeadingMenu />}
-        {windows[EdstWindow.ALTITUDE_MENU].open && <AltMenu />}
+        {windows[EdstWindow.HOLD_MENU].open && aselEntry && <HoldMenu />}
+        {windows[EdstWindow.CANCEL_HOLD_MENU].open && aselEntry && <CancelHoldMenu />}
+        {windows[EdstWindow.SPEED_MENU].open && aselEntry && <SpeedMenu />}
+        {windows[EdstWindow.HEADING_MENU].open && aselEntry && <HeadingMenu />}
+        {windows[EdstWindow.ALTITUDE_MENU].open && aselEntry && <AltMenu />}
         {windows[EdstWindow.STATUS].open && <Status />}
         {windows[EdstWindow.OUTAGE].open && <Outage />}
         {windows[EdstWindow.ALTIMETER].open && <AltimeterWindow />}

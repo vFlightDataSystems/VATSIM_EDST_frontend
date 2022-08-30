@@ -7,12 +7,13 @@ import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redu
 import { edstFontFamily } from "../../../styles/styles";
 import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
-import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
+import { aclAircraftSelect, gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { LeaderLine } from "./LeaderLine";
 import { DragPreviewStyle } from "../../../typeDefinitions/types/dragPreviewStyle";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
+import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 
 type GpdDataBlockProps = {
   entry: EdstEntry;
@@ -63,13 +64,20 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
   const [offset, setOffset] = useState({ x: 24, y: -30 });
   const leaderLineOffset = { x: offset.x, y: offset.y + 6 };
 
-  const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? (asel.field as AclRowField) : null;
+  const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? asel.field : null;
 
-  const onCallsignMouseDown = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow) => {
+    dispatch(aclAircraftSelect(entry.aircraftId, field, eventId));
+    if (opensWindow && !(selectedField === field)) {
+      dispatch(openMenuThunk(opensWindow, element));
+    }
+  };
+
+  const onCallsignClick = (event: React.MouseEvent<HTMLElement>) => {
     if (!anyDragging) {
       switch (event.button) {
         case 0:
-          dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.FID));
+          dispatch(gpdAircraftSelect(entry.aircraftId, AclRowField.FID, null));
           break;
         case 1:
           toggleShowRoute();
@@ -80,18 +88,15 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
     }
   };
 
-  const draggingHandler = useCallback(
-    (event: MouseEvent) => {
-      if (event) {
-        setDragPreviewStyle(prevStyle => ({
-          ...prevStyle!,
-          left: event.pageX + prevStyle!.relX,
-          top: event.pageY + prevStyle!.relY
-        }));
-      }
-    },
-    [ref]
-  );
+  const draggingHandler = useCallback((event: MouseEvent) => {
+    if (event) {
+      setDragPreviewStyle(prevStyle => ({
+        ...prevStyle!,
+        left: event.pageX + prevStyle!.relX,
+        top: event.pageY + prevStyle!.relY
+      }));
+    }
+  }, []);
 
   const startDrag = useCallback(
     (event: React.MouseEvent) => {
@@ -143,14 +148,14 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} absolute />}
         <DataBlockDiv ref={ref} pos={pos} offset={offset} onMouseMove={event => !dragPreviewStyle && startDrag(event)}>
           <DataBlockRow>
-            <DataBlockElement selected={selectedField === AclRowField.FID} onMouseUp={onCallsignMouseDown}>
+            <DataBlockElement selected={selectedField === AclRowField.FID} onMouseUp={onCallsignClick}>
               {entry.aircraftId}
             </DataBlockElement>
           </DataBlockRow>
           <DataBlockRow>
             <DataBlockElement
               selected={selectedField === AclRowField.ALT}
-              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ALT, EdstWindow.ALTITUDE_MENU))}
+              onMouseUp={event => handleClick(event.currentTarget, AclRowField.ALT, "gpd-alt-asel", EdstWindow.ALTITUDE_MENU)}
             >
               {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`}
             </DataBlockElement>
@@ -158,13 +163,13 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           <DataBlockRow>
             <DataBlockElement
               selected={selectedField === AclRowField.ROUTE}
-              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, EdstWindow.ROUTE_MENU))}
+              onMouseUp={event => handleClick(event.currentTarget, AclRowField.ROUTE, "gpd-route-asel", EdstWindow.ROUTE_MENU)}
             >
               {entry.destination}
             </DataBlockElement>
             <DataBlockElement
               selected={selectedField === AclRowField.SPD}
-              onMouseUp={event => dispatch(gpdAircraftSelect(event, entry.aircraftId, AclRowField.SPD))}
+              onMouseUp={event => handleClick(event.currentTarget, AclRowField.SPD, "gpd-spd-asel")}
             >
               {entry.speed}
             </DataBlockElement>

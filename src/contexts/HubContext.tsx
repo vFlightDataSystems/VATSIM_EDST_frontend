@@ -27,21 +27,21 @@ const useHubContextInit = () => {
   const ref = useRef<HubConnection | null>(null);
   const { connectSocket, disconnectSocket } = useSocketConnector();
 
-  const getValidNasToken = () => {
-    const decodedToken = decodeJwt(nasToken);
-    if (decodedToken.exp! - Math.trunc(Date.now() / 1000) < 0) {
-      console.log("Refreshed NAS token");
-      return refreshToken(vatsimToken).then(r => {
-        return r.data;
-      });
-    }
-    return nasToken;
-  };
-
   useEffect(() => {
-    if (!ATC_SERVER_URL || !nasToken || hubConnected) {
+    if (!ATC_SERVER_URL || !nasToken) {
       return;
     }
+
+    const getValidNasToken = () => {
+      const decodedToken = decodeJwt(nasToken);
+      if (decodedToken.exp! - Math.trunc(Date.now() / 1000) < 0) {
+        console.log("Refreshed NAS token");
+        return refreshToken(vatsimToken).then(r => {
+          return r.data;
+        });
+      }
+      return nasToken;
+    };
 
     ref.current = new HubConnectionBuilder()
       .withUrl(ATC_SERVER_URL, {
@@ -51,7 +51,7 @@ const useHubContextInit = () => {
       })
       .withAutomaticReconnect()
       .build();
-  }, []);
+  }, [nasToken, vatsimToken]);
 
   const connectHub = useCallback(async () => {
     if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current) {
@@ -130,7 +130,7 @@ const useHubContextInit = () => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, [connectSocket]);
+  }, [connectSocket, dispatch, hubConnected, nasToken]);
 
   const disconnectHub = useCallback(async () => {
     ref.current?.stop().then(() => setHubConnected(false));

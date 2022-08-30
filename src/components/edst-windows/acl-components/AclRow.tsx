@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useMemo, useRef, useState } from "react";
+import React, { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
@@ -32,6 +32,8 @@ import { SPA_INDICATOR, VCI_SYMBOL } from "../../../constants";
 import { usePar } from "../../../api/prefrouteApi";
 import { useRouteFixes } from "../../../api/aircraftApi";
 import { formatRoute } from "../../../formatRoute";
+import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
+import { useAselEventListener } from "../../../hooks/useAselEventListener";
 
 type AclRowProps = {
   entry: EdstEntry;
@@ -60,6 +62,45 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
   const ref = useRef<HTMLDivElement>(null);
+
+  const isSelected = useCallback(
+    (field: AclRowField): boolean => {
+      return asel?.window === EdstWindow.ACL && asel?.aircraftId === entry.aircraftId && asel?.field === field;
+    },
+    [asel?.aircraftId, asel?.field, asel?.window, entry.aircraftId]
+  );
+
+  const handleClick = useCallback(
+    (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow, triggeredBySharedState?: boolean) => {
+      dispatch(aclAircraftSelect(entry.aircraftId, field, eventId, triggeredBySharedState));
+      if (opensWindow && !isSelected(field)) {
+        dispatch(openMenuThunk(opensWindow, element, triggeredBySharedState));
+      }
+    },
+    [dispatch, entry.aircraftId, isSelected]
+  );
+
+  const handleRouteClick = (element: HTMLElement, triggeredBySharedState?: boolean) => {
+    if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
+      handleClick(element, AclRowField.ROUTE, "acl-route-asel-hold", EdstWindow.HOLD_MENU, triggeredBySharedState);
+    } else {
+      handleClick(element, AclRowField.ROUTE, "acl-route-asel", EdstWindow.ROUTE_MENU, triggeredBySharedState);
+    }
+  };
+
+  const altRef = useRef<HTMLDivElement>(null);
+  const spdRef = useRef<HTMLDivElement>(null);
+  const hdgRef = useRef<HTMLDivElement>(null);
+  const holdRef = useRef<HTMLDivElement>(null);
+  const routeRef = useRef<HTMLDivElement>(null);
+
+  useAselEventListener<AclRowField>(altRef.current, entry.aircraftId, "acl-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener<AclRowField>(spdRef.current, entry.aircraftId, "acl-spd-asel", AclRowField.SPD, EdstWindow.SPEED_MENU, handleClick);
+  useAselEventListener<AclRowField>(hdgRef.current, entry.aircraftId, "acl-hdg-asel", AclRowField.HDG, EdstWindow.HEADING_MENU, handleClick);
+  useAselEventListener<AclRowField>(routeRef.current, entry.aircraftId, "acl-route-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener<AclRowField>(routeRef.current, entry.aircraftId, "acl-route-asel-hold", AclRowField.ROUTE, EdstWindow.HOLD_MENU, handleClick);
+  useAselEventListener<AclRowField>(holdRef.current, entry.aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
+
   const par = usePar(entry.aircraftId);
   const formattedRoute = formatRoute(entry.route);
   const currentRoute = formattedRoute;
@@ -72,7 +113,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     const onPar = availPar.some(par => formattedRoute.includes(par.amendment));
     setParAvail(availPar.length > 0);
     setOnPar(onPar);
-  }, [currentRouteFixes, par, routeFixes]);
+  }, [currentRouteFixes, formattedRoute, par, routeFixes]);
 
   useEffect(() => {
     setFreeTextContent(entry.freeTextContent);
@@ -82,7 +123,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   const route = useMemo(() => {
     const route = currentRoute.replace(/^\.+/, "") ?? formattedRoute;
     return removeDestFromRouteString(route.slice(0), entry.destination);
-  }, [entry]);
+  }, [currentRoute, entry.destination, formattedRoute]);
 
   const now = new Date().getTime();
 
@@ -136,7 +177,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     switch (event.button) {
       case 0:
         if (!entry.holdAnnotations) {
-          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, EdstWindow.HOLD_MENU));
+          handleClick(event.currentTarget, AclRowField.HOLD, "acl-hold-asel-hold", EdstWindow.HOLD_MENU);
         } else {
           dispatch(
             updateEntry({
@@ -147,11 +188,11 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         }
         break;
       case 1:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, EdstWindow.HOLD_MENU));
+        handleClick(event.currentTarget, AclRowField.HOLD, "acl-hold-asel-hold", EdstWindow.HOLD_MENU);
         break;
       case 2:
         if (entry?.holdAnnotations) {
-          dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HOLD, EdstWindow.CANCEL_HOLD_MENU));
+          handleClick(event.currentTarget, AclRowField.HOLD, "acl-hold-asel-cancel-hold", EdstWindow.CANCEL_HOLD_MENU);
         }
         break;
       default:
@@ -201,7 +242,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         if (!manualPosting && event.detail === 2 && entry.vciStatus < 0) {
           dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
         }
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.FID));
+        handleClick(event.currentTarget, AclRowField.FID, null);
         break;
     }
   };
@@ -210,7 +251,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.HDG, EdstWindow.HEADING_MENU));
+        handleClick(event.currentTarget, AclRowField.HDG, "acl-hdg-asel", EdstWindow.HEADING_MENU);
         break;
       case 1:
         if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
@@ -228,7 +269,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.SPD, EdstWindow.SPEED_MENU));
+        handleClick(event.currentTarget, AclRowField.SPD, "acl-spd-asel", EdstWindow.SPEED_MENU);
         break;
       case 1:
         if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
@@ -240,18 +281,6 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
       default:
         break;
     }
-  };
-
-  const handleRouteClicked = (event: React.MouseEvent<HTMLElement>) => {
-    if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
-      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, EdstWindow.HOLD_MENU));
-    } else {
-      dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ROUTE, EdstWindow.ROUTE_MENU));
-    }
-  };
-
-  const isSelected = (aircraftId: string, field: AclRowField): boolean => {
-    return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
   };
 
   return (
@@ -269,7 +298,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         <SpecialBox disabled />
         <InnerRow highlight={entry.aclHighlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.aclFlightId} onMouseDown={handleFidClick}>
-            <FidCol hover selected={isSelected(entry.aircraftId, AclRowField.FID)}>
+            <FidCol hover selected={isSelected(AclRowField.FID)}>
               {entry.cid} {entry.aircraftId}
               {/* eslint-disable-next-line no-nested-ternary */}
               <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
@@ -285,8 +314,8 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             <AircraftTypeCol
               visibilityHidden={hidden.includes(AclRowField.TYPE)}
               hover
-              selected={isSelected(entry.aircraftId, AclRowField.TYPE)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.TYPE))}
+              selected={isSelected(AclRowField.TYPE)}
+              onMouseDown={event => handleClick(event.currentTarget, AclRowField.TYPE, null)}
             >
               {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
@@ -294,9 +323,10 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           <EdstTooltip title={Tooltips.aclAlt}>
             <AltCol>
               <AltColDiv
+                ref={altRef}
                 headerMouseDown={altMouseDown}
-                selected={isSelected(entry.aircraftId, AclRowField.ALT)}
-                onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.ALT, EdstWindow.ALTITUDE_MENU))}
+                selected={isSelected(AclRowField.ALT)}
+                onMouseDown={event => handleClick(event.currentTarget, AclRowField.ALT, "acl-alt-asel", EdstWindow.ALTITUDE_MENU)}
               >
                 {entry.altitude}
                 {entry.interimAltitude && `T${entry.interimAltitude}`}
@@ -308,8 +338,8 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             <CodeCol
               visibilityHidden={hidden.includes(AclRowField.CODE)}
               hover
-              selected={isSelected(entry.aircraftId, AclRowField.CODE)}
-              onMouseDown={event => dispatch(aclAircraftSelect(event, entry.aircraftId, AclRowField.CODE))}
+              selected={isSelected(AclRowField.CODE)}
+              onMouseDown={event => handleClick(event.currentTarget, AclRowField.CODE, null)}
             >
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
@@ -319,9 +349,10 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           </SpecialBox>
           <EdstTooltip title={Tooltips.aclHdg}>
             <HdgCol
+              ref={hdgRef}
               hover
               visibilityHidden={hidden.includes(AclRowField.HDG)}
-              selected={isSelected(entry.aircraftId, AclRowField.HDG)}
+              selected={isSelected(AclRowField.HDG)}
               onMouseDown={handleHeadingClick}
               scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
             >
@@ -331,9 +362,10 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           <HdgSpdSlashCol>/</HdgSpdSlashCol>
           <EdstTooltip title={Tooltips.aclSpd}>
             <SpdCol
+              ref={spdRef}
               hover
               visibilityHidden={hidden.includes(AclRowField.SPD)}
-              selected={isSelected(entry.aircraftId, AclRowField.SPD)}
+              selected={isSelected(AclRowField.SPD)}
               onMouseDown={handleSpeedClick}
               scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}
             >
@@ -345,7 +377,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           </SpecialBox>
           <SpecialBox disabled />
           {anyHolding && (
-            <SpecialBox color={edstFontBrown} selected={isSelected(entry.aircraftId, AclRowField.HOLD)} onMouseDown={handleHoldClick}>
+            <SpecialBox ref={holdRef} color={edstFontBrown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}
@@ -355,7 +387,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             </RemarksBox>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclRoute}>
-            <RouteCol hover selected={isSelected(entry.aircraftId, AclRowField.ROUTE)} onMouseDown={handleRouteClicked}>
+            <RouteCol ref={routeRef} hover selected={isSelected(AclRowField.ROUTE)} onMouseDown={event => handleRouteClick(event.currentTarget)}>
               <RouteSpan padding="0 2px">
                 {entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations &&
                   holdAnnotations &&
@@ -370,7 +402,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
                 {entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute && <span>{entry.route}</span>}
                 {!entry.aclRouteDisplay && (
                   <>
-                    <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(entry.aircraftId, AclRowField.ROUTE)}>
+                    <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(AclRowField.ROUTE)}>
                       {entry.departure}
                     </RouteDepAirportSpan>
                     ./.

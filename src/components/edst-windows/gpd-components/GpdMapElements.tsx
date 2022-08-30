@@ -85,7 +85,7 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
     if (showRoute) {
       setRouteLine(track ? getRemainingFixesFromPpos(routeFixes, locationToPosition(track.location)) : null);
     }
-  }, [posLatLng, showRoute]);
+  }, [posLatLng, routeFixes, showRoute, track]);
 
   useEffect(() => {
     updateHandler();

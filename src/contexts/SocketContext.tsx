@@ -7,7 +7,7 @@ import { receiveAclStateThunk } from "../redux/thunks/sharedStateThunks/receiveA
 import { receivePlansDisplayStateThunk } from "../redux/thunks/sharedStateThunks/receivePlansDisplayStateThunk";
 import { receiveDepStateThunk } from "../redux/thunks/sharedStateThunks/receiveDepStateThunk";
 import { receiveGpdStateThunk } from "../redux/thunks/sharedStateThunks/receiveGpdStateThunk";
-import { pushZStack } from "../redux/slices/appSlice";
+import { closeWindow, openWindow } from "../redux/slices/appSlice";
 import sharedSocket from "../sharedState/socket";
 import { sharedStateAircraftSelect } from "../redux/thunks/aircraftSelect";
 
@@ -43,17 +43,22 @@ const useSocketContextInit = () => {
         socket.on("receiveDepState", state => {
           dispatch(receiveDepStateThunk(state));
         });
-        socket.on("receiveGpdState", state => {
-          dispatch(receiveGpdStateThunk(state));
+        socket.on("receiveGpdState", () => {
+          dispatch(receiveGpdStateThunk());
         });
         socket.on("receivePlansDisplayState", state => {
           dispatch(receivePlansDisplayStateThunk(state));
         });
-        socket.on("receiveBringWindowToFront", edstWindow => {
-          dispatch(pushZStack(edstWindow));
+        socket.on("receiveOpenWindow", edstWindow => {
+          dispatch(openWindow(edstWindow));
         });
-        socket.on("receiveAircraftSelect", asel => {
-          dispatch(sharedStateAircraftSelect(asel));
+        socket.on("receiveCloseWindow", edstWindow => {
+          dispatch(closeWindow(edstWindow, true));
+        });
+        socket.on("receiveAircraftSelect", (asel, eventId) => {
+          if (eventId === null) {
+            dispatch(sharedStateAircraftSelect(asel));
+          }
         });
         socket.on("disconnect", reason => {
           setIsConnected(false);
@@ -66,7 +71,7 @@ const useSocketContextInit = () => {
 
   const disconnectSocket = useCallback(() => {
     sharedSocket.disconnect();
-  }, [dispatch]);
+  }, []);
 
   return { connectSocket, disconnectSocket, isConnected };
 };

@@ -66,7 +66,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         />
         <EdstWindowHeaderButton
           disabled={asel === null}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget))}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -74,7 +74,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton disabled content="Graphic..." />
         <EdstWindowHeaderButton
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget, false))}
+          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget))}
           content="Template..."
           title={Tooltips.template}
         />

@@ -4,7 +4,7 @@ import { Time } from "./Time";
 import { Tooltips } from "../tooltips";
 import { EdstTooltip } from "./utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { disabledHeaderButtonsSelector, openWindow, toggleWindow, windowsSelector } from "../redux/slices/appSlice";
+import { disabledHeaderButtonsSelector, toggleWindow, windowsSelector } from "../redux/slices/appSlice";
 import { planQueueSelector } from "../redux/slices/planSlice";
 import { sigmetSelector } from "../redux/slices/weatherSlice";
 import { edstFontGrey } from "../styles/colors";
@@ -13,6 +13,7 @@ import { entriesSelector } from "../redux/slices/entrySlice";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 import { eramFontFamily } from "../styles/styles";
 import { edstHeaderButton } from "../typeDefinitions/enums/edstHeaderButton";
+import { openWindowThunk } from "../redux/thunks/openWindowThunk";
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";
@@ -136,28 +137,28 @@ export const EdstHeader = () => {
             content={`ACL ${aclLen.toString().padStart(2, "0")}`}
             disabled={disabledHeaderButtons.includes(edstHeaderButton.acl)}
             title={Tooltips.acl}
-            onMouseDown={() => dispatch(openWindow(EdstWindow.ACL))}
+            onMouseDown={() => dispatch(openWindowThunk(EdstWindow.ACL))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.DEP].open}
             content={`DEP ${depLen.toString().padStart(2, "0")}`}
             disabled={disabledHeaderButtons.includes(edstHeaderButton.dep)}
             title={Tooltips.dep}
-            onMouseDown={() => dispatch(openWindow(EdstWindow.DEP))}
+            onMouseDown={() => dispatch(openWindowThunk(EdstWindow.DEP))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.GPD].open}
             content="GPD"
             disabled={process.env.NODE_ENV !== "development"}
             // title={Tooltips.gpd}
-            onMouseDown={() => dispatch(openWindow(EdstWindow.GPD))}
+            onMouseDown={() => dispatch(openWindowThunk(EdstWindow.GPD))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.PLANS_DISPLAY].open}
             content="PLANS"
             disabled={planQueue.length === 0}
             title={Tooltips.plans}
-            onMouseDown={() => dispatch(openWindow(EdstWindow.PLANS_DISPLAY))}
+            onMouseDown={() => dispatch(openWindowThunk(EdstWindow.PLANS_DISPLAY))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.METAR].open}

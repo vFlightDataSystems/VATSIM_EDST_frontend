@@ -133,7 +133,7 @@ export const RouteMenu = () => {
       setFrd(await hubActions.generateFrd(aircraftTrack.location));
     }
     updateFrd().then();
-  }, [entry.aircraftId]);
+  }, [aircraftTrack.location, entry.aircraftId, hubActions]);
 
   const { appendOplus, appendStar } = useMemo(() => append, [append]);
 
@@ -395,7 +395,7 @@ export const RouteMenu = () => {
                 margin="0 4px 0 0"
                 content="Previous Route"
                 onMouseDown={() => {
-                  dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, true));
+                  dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, false, true));
                   dispatch(closeWindow(EdstWindow.ROUTE_MENU));
                 }}
                 title={Tooltips.routeMenuPrevRoute}

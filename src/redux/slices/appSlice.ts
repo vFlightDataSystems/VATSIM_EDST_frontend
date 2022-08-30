@@ -6,7 +6,7 @@ import { openWindowThunk } from "../thunks/openWindowThunk";
 import { edstHeaderButton } from "../../typeDefinitions/enums/edstHeaderButton";
 import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
 import sharedSocket from "../../sharedState/socket";
-import { Asel } from "../../types/asel";
+import { Asel } from "../../typeDefinitions/types/asel";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -92,22 +92,13 @@ const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    toggleWindow(state, action: PayloadAction<EdstWindow>) {
-      state.windows[action.payload].open = !state.windows[action.payload].open;
-      const zStack = new Set([...state.zStack]);
-      zStack.delete(action.payload);
-      state.zStack = [...zStack, action.payload];
-      sharedSocket.setSharedWindowIsOpen(action.payload, state.windows[action.payload].open);
-    },
     closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
         action.payload.forEach(window => {
           state.windows[window].open = false;
-          sharedSocket.setSharedWindowIsOpen(window, false);
         });
       } else {
         state.windows[action.payload].open = false;
-        sharedSocket.setSharedWindowIsOpen(action.payload, false);
       }
     },
     openWindow(state, action: PayloadAction<EdstWindow>) {
@@ -115,7 +106,6 @@ const appSlice = createSlice({
       const zStack = new Set([...state.zStack]);
       zStack.delete(action.payload);
       state.zStack = [...zStack, action.payload];
-      sharedSocket.setSharedWindowIsOpen(action.payload, true);
     },
     setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
       state.windows[action.payload.window].isFullscreen = action.payload.value;
@@ -141,20 +131,17 @@ const appSlice = createSlice({
     closeAllWindows(state) {
       Object.values(EdstWindow).forEach(window => {
         state.windows[window].open = false;
-        sharedSocket.setSharedWindowIsOpen(window, false);
       });
     },
     closeAllMenus(state) {
       EDST_MENU_LIST.forEach(menu => {
         state.windows[menu].open = false;
-        sharedSocket.setSharedWindowIsOpen(menu, false);
       });
       state.asel = null;
     },
     closeAircraftMenus(state) {
       AIRCRAFT_MENUS.forEach(menu => {
         state.windows[menu].open = false;
-        sharedSocket.setSharedWindowIsOpen(menu, false);
       });
     },
     setAsel(state, action: PayloadAction<Asel | null>) {
@@ -180,15 +167,13 @@ const appSlice = createSlice({
   }
 });
 
-export function setAsel(asel: Asel | null, triggeredBySharedState?: boolean): RootThunkAction {
+export function setAsel(asel: Asel | null, eventId?: string | null, triggeredBySharedState?: boolean): RootThunkAction {
   return (dispatch, getState) => {
     if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
-      if (asel === null) {
-        dispatch(closeAllMenus());
-      }
+      dispatch(closeAircraftMenus());
       dispatch(appSlice.actions.setAsel(asel));
       if (!triggeredBySharedState) {
-        sharedSocket.setAircraftSelect(asel);
+        sharedSocket.setAircraftSelect(asel, eventId ?? null);
       }
     }
   };
@@ -212,6 +197,28 @@ export const setMraMessage = (message: string): RootThunkAction => {
   };
 };
 
+export const closeWindow = (edstWindow: EdstWindow, triggeredBySharedState?: boolean): RootThunkAction => {
+  return dispatch => {
+    dispatch(appSlice.actions.closeWindow(edstWindow));
+    if (!triggeredBySharedState) {
+      sharedSocket.closeSharedWindow(edstWindow);
+    }
+  };
+};
+
+export const toggleWindow = (edstWindow: EdstWindow): RootThunkAction => {
+  return (dispatch, getState) => {
+    const isOpen = getState().app.windows[edstWindow].open;
+    if (isOpen) {
+      dispatch(closeWindow(edstWindow, false));
+      sharedSocket.closeSharedWindow(edstWindow);
+    } else {
+      dispatch(openWindow(edstWindow));
+      sharedSocket.openSharedWindow(edstWindow);
+    }
+  };
+};
+
 export const {
   setIsFullscreen,
   setTooltipsEnabled,
@@ -219,8 +226,6 @@ export const {
   setWindowPosition,
   setMcaCommandString,
   openWindow,
-  closeWindow,
-  toggleWindow,
   closeAllWindows,
   closeAllMenus,
   closeAircraftMenus,

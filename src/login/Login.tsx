@@ -31,6 +31,7 @@ const LoginPanel = styled.div`
   }
 `;
 
+// noinspection CssUnknownTarget
 const LoginBackground = styled.div`
   height: 100vh;
   width: 100vw;
@@ -64,14 +65,15 @@ const Login = () => {
     if (code) {
       dispatch(login({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
     }
-  }, [code]);
+  }, [code, dispatch]);
 
   useEffect(() => {
     if (vatsimToken) {
       navigate("/", { replace: true });
     }
-  }, [vatsimToken]);
+  }, [navigate, vatsimToken]);
 
+  // noinspection HtmlUnknownTarget
   return (
     <>
       <LoginBackground />

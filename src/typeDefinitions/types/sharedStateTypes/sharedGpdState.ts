@@ -1,3 +1,1 @@
-export class SharedGpdState {
-  open = false;
-}
+export class SharedGpdState {}

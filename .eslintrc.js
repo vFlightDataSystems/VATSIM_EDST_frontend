@@ -29,6 +29,8 @@ module.exports = {
   },
   rules: {
     "react/jsx-filename-extension": [2, { extensions: [".js", ".jsx", ".ts", ".tsx"] }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "import/extensions": [
       "error",
       "ignorePackages",

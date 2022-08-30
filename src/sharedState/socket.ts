@@ -6,17 +6,13 @@ import { AclSortOption } from "../typeDefinitions/enums/acl/aclSortOption";
 import { DepSortOption } from "../typeDefinitions/enums/dep/depSortOption";
 import { Plan } from "../typeDefinitions/types/plan";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { Asel } from "../types/asel";
+import { Asel } from "../typeDefinitions/types/asel";
 
 const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
 
 class SharedStateSocket {
-  private socket: Socket<SharedStateServerToClientEvents, SharedStateClientToServerEvents> | null = null;
-
-  public getSocket() {
-    return this.socket;
-  }
+  socket: Socket<SharedStateServerToClientEvents, SharedStateClientToServerEvents> | null = null;
 
   artccSectorId = "";
 
@@ -74,9 +70,15 @@ class SharedStateSocket {
     }
   }
 
-  public setSharedWindowIsOpen(window: EdstWindow, value: boolean) {
+  public openSharedWindow(window: EdstWindow) {
     if (this.socket?.connected) {
-      this.socket.emit("setWindowIsOpen", window, value);
+      this.socket.emit("openWindow", window);
+    }
+  }
+
+  public closeSharedWindow(window: EdstWindow) {
+    if (this.socket?.connected) {
+      this.socket.emit("closeWindow", window);
     }
   }
 
@@ -92,9 +94,9 @@ class SharedStateSocket {
     }
   }
 
-  public setAircraftSelect(value: Asel | null) {
+  public setAircraftSelect(value: Asel | null, eventId: string | null) {
     if (this.socket?.connected) {
-      this.socket.emit("setAircraftSelect", value);
+      this.socket.emit("setAircraftSelect", value, eventId);
     }
   }
 

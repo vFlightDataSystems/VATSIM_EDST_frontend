@@ -14,5 +14,5 @@ export const useCenterCursor = (element: RefObject<HTMLElement>, deps: any[] = [
       const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
       invoke("set_cursor_position", newCursorPos).then();
     }
-  }, deps);
+  }, [element, deps]);
 };
