@@ -102,7 +102,6 @@ class SharedStateSocket {
   }
 
   public dispatchUiEvent(eventId: SharedUiEvent) {
-    console.log(eventId);
     if (this.socket?.connected) {
       this.socket.emit("dispatchUiEvent", eventId);
     }
