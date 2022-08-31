@@ -111,6 +111,7 @@ class SharedStateSocket {
     if (this.socket?.connected) {
       this.socket.removeAllListeners();
       this.socket.disconnect();
+      this.socket = null;
     }
   }
 }

@@ -71,6 +71,7 @@ const useSocketContextInit = () => {
 
   const disconnectSocket = useCallback(() => {
     sharedSocket.disconnect();
+    setIsConnected(false);
   }, []);
 
   return { connectSocket, disconnectSocket, isConnected };
