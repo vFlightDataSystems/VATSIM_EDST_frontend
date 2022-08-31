@@ -38,7 +38,7 @@ export const SpeedMenu = () => {
   const [amend, setAmend] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  useCenterCursor(ref, [asel]);
+  useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SPEED_MENU, "mouseup");
 
   useEffect(() => {

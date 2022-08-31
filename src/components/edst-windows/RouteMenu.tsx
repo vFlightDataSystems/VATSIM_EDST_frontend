@@ -125,7 +125,7 @@ export const RouteMenu = () => {
   const [append, setAppend] = useState({ appendOplus: false, appendStar: false });
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  useCenterCursor(ref, [asel]);
+  useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU, "mouseup");
 
   useEffect(() => {

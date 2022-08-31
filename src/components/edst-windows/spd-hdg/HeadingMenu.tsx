@@ -34,7 +34,7 @@ export const HeadingMenu = () => {
   const [amend, setAmend] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  useCenterCursor(ref, [asel]);
+  useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HEADING_MENU, "mouseup");
 
   useEffect(() => {

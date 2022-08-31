@@ -134,7 +134,7 @@ export const TemplateMenu = () => {
 
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  useCenterCursor(ref, [asel]);
+  useCenterCursor(ref, [asel?.aircraftId]);
 
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TEMPLATE_MENU, "mouseup");
 
@@ -145,7 +145,7 @@ export const TemplateMenu = () => {
       }
     }
     updateFrd().then();
-  }, [entry?.aircraftId]);
+  }, [aircraftTrack, entry?.aircraftId, generateFrd]);
 
   return (
     pos && (

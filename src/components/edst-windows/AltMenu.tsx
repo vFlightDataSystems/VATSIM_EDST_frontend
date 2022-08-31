@@ -197,7 +197,7 @@ export const AltMenu = () => {
 
   const assignedAltitude = Number.isFinite(+entry.altitude) ? +entry.altitude : 200;
 
-  useCenterCursor(ref, [asel]);
+  useCenterCursor(ref, [asel.aircraftId]);
 
   const handleAltClick = (alt: string | number) => {
     const amendedFlightplan = { ...entry, altitude: alt.toString().toUpperCase() };

@@ -33,7 +33,7 @@ export const PlanOptions = () => {
   const focused = useFocused(ref);
   const entry = useRootSelector(entrySelector(asel.aircraftId));
   const dep = asel.window === EdstWindow.DEP;
-  useCenterCursor(ref, [asel]);
+  useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
 
   const openMenu = useCallback(
