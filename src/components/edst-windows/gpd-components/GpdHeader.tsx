@@ -45,7 +45,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
 
   const handleClick = useCallback(
     (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element, true));
+      dispatch(openMenuThunk(edstWindow, element));
     },
     [dispatch]
   );

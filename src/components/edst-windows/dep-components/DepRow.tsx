@@ -137,7 +137,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
     (element: HTMLElement, field: DepRowField, eventId: string | null, opensWindow?: EdstWindow, triggeredBySharedState?: boolean) => {
       dispatch(depAircraftSelect(entry.aircraftId, field, eventId, triggeredBySharedState));
       if (opensWindow && !isSelected(field)) {
-        dispatch(openMenuThunk(opensWindow, element, true));
+        dispatch(openMenuThunk(opensWindow, element, true, false, true));
       }
     },
     [dispatch, entry.aircraftId, isSelected]
@@ -145,8 +145,8 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   const altRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener<DepRowField>(altRef.current, entry.aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener<DepRowField>(routeRef.current, entry.aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener<DepRowField>(altRef, entry.aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener<DepRowField>(routeRef, entry.aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();

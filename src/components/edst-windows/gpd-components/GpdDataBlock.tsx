@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
@@ -7,13 +7,14 @@ import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redu
 import { edstFontFamily } from "../../../styles/styles";
 import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
-import { aclAircraftSelect, gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
+import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { LeaderLine } from "./LeaderLine";
 import { DragPreviewStyle } from "../../../typeDefinitions/types/dragPreviewStyle";
 import { EdstDraggingOutline } from "../../EdstDraggingOutline";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
+import { useAselEventListener } from "../../../hooks/useAselEventListener";
 
 type GpdDataBlockProps = {
   entry: EdstEntry;
@@ -64,14 +65,27 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
   const [offset, setOffset] = useState({ x: 24, y: -30 });
   const leaderLineOffset = { x: offset.x, y: offset.y + 6 };
 
-  const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? asel.field : null;
+  const selectedField = useMemo(() => (asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? asel.field : null), [
+    asel?.aircraftId,
+    asel?.field,
+    asel?.window,
+    entry.aircraftId
+  ]);
 
-  const handleClick = (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow) => {
-    dispatch(aclAircraftSelect(entry.aircraftId, field, eventId));
-    if (opensWindow && !(selectedField === field)) {
-      dispatch(openMenuThunk(opensWindow, element));
-    }
-  };
+  const handleClick = useCallback(
+    (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow) => {
+      dispatch(gpdAircraftSelect(entry.aircraftId, field, eventId));
+      if (opensWindow && !(selectedField === field)) {
+        dispatch(openMenuThunk(opensWindow, element));
+      }
+    },
+    [dispatch, entry.aircraftId, selectedField]
+  );
+
+  const altRef = useRef<HTMLDivElement>(null);
+  const destRef = useRef<HTMLDivElement>(null);
+  useAselEventListener<AclRowField>(altRef, entry.aircraftId, "gpd-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener<AclRowField>(altRef, entry.aircraftId, "gpd-dest-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
   const onCallsignClick = (event: React.MouseEvent<HTMLElement>) => {
     if (!anyDragging) {
@@ -154,6 +168,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           </DataBlockRow>
           <DataBlockRow>
             <DataBlockElement
+              ref={altRef}
               selected={selectedField === AclRowField.ALT}
               onMouseUp={event => handleClick(event.currentTarget, AclRowField.ALT, "gpd-alt-asel", EdstWindow.ALTITUDE_MENU)}
             >
@@ -162,8 +177,9 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
           </DataBlockRow>
           <DataBlockRow>
             <DataBlockElement
+              ref={destRef}
               selected={selectedField === AclRowField.ROUTE}
-              onMouseUp={event => handleClick(event.currentTarget, AclRowField.ROUTE, "gpd-route-asel", EdstWindow.ROUTE_MENU)}
+              onMouseUp={event => handleClick(event.currentTarget, AclRowField.ROUTE, "gpd-dest-asel", EdstWindow.ROUTE_MENU)}
             >
               {entry.destination}
             </DataBlockElement>
