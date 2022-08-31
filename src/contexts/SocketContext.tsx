@@ -53,7 +53,7 @@ const useSocketContextInit = () => {
           dispatch(openWindow(edstWindow));
         });
         socket.on("receiveCloseWindow", edstWindow => {
-          dispatch(closeWindow(edstWindow, true));
+          dispatch(closeWindow(edstWindow, false));
         });
         socket.on("receiveAircraftSelect", (asel, eventId) => {
           if (eventId === null) {

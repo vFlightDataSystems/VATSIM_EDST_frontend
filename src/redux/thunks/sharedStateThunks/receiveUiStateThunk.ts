@@ -13,7 +13,7 @@ export function receiveUiStateThunk(uiState: SharedUiState): RootThunkAction {
     dispatch(receiveDepStateThunk(uiState.dep));
     dispatch(receiveGpdStateThunk());
     dispatch(receivePlansDisplayStateThunk(uiState.plansDisplay));
-    dispatch(setAsel(uiState.asel, null, true));
+    dispatch(setAsel(uiState.asel, null, false));
     uiState.openWindows.forEach(edstWindow => {
       dispatch(openWindow(edstWindow));
     });

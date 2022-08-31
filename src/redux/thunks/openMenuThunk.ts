@@ -7,7 +7,7 @@ import sharedSocket from "../../sharedState/socket";
 export function openMenuThunk(
   window: EdstWindow,
   element: HTMLElement | null,
-  triggeredBySharedState?: boolean,
+  triggerSharedState = false,
   plan = false,
   centerMenu = false
 ): RootThunkAction {
@@ -32,10 +32,6 @@ export function openMenuThunk(
                 x: x - 1,
                 y: 200
               };
-          menuPos = {
-            x: x - (plan ? 0 : 569),
-            y: plan ? element.offsetTop : y - 3 * height
-          };
           break;
         case EdstWindow.PREV_ROUTE_MENU:
           menuPos = {
@@ -64,7 +60,7 @@ export function openMenuThunk(
       dispatch(setWindowPosition({ window, pos: menuPos }));
     }
     dispatch(openWindow(window));
-    if (!triggeredBySharedState) {
+    if (triggerSharedState) {
       sharedSocket.openSharedWindow(window);
     }
   };

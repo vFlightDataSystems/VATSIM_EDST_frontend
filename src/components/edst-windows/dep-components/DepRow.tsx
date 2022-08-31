@@ -134,10 +134,10 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
   );
 
   const handleClick = useCallback(
-    (element: HTMLElement, field: DepRowField, eventId: string | null, opensWindow?: EdstWindow, triggeredBySharedState?: boolean) => {
-      dispatch(depAircraftSelect(entry.aircraftId, field, eventId, triggeredBySharedState));
+    (element: HTMLElement, field: DepRowField, eventId: string | null, opensWindow?: EdstWindow, triggerSharedState = true) => {
+      dispatch(depAircraftSelect(entry.aircraftId, field, eventId, triggerSharedState));
       if (opensWindow && !isSelected(field)) {
-        dispatch(openMenuThunk(opensWindow, element, true, false, true));
+        dispatch(openMenuThunk(opensWindow, element, false, false, true));
       }
     },
     [dispatch, entry.aircraftId, isSelected]

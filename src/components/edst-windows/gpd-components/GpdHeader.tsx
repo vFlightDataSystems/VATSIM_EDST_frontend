@@ -45,7 +45,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
 
   const handleClick = useCallback(
     (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element));
+      dispatch(openMenuThunk(edstWindow, element, true));
     },
     [dispatch]
   );
@@ -112,8 +112,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         />
         <EdstWindowHeaderButton
           onMouseDown={e => {
-            dispatch(closeWindow(EdstWindow.TOOLS_MENU));
-            dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget));
+            handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
           }}
           content="Tools..."
         />

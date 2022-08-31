@@ -4,13 +4,13 @@ import { SharedUiEvent } from "../typeDefinitions/types/sharedStateTypes/sharedU
 
 export function useSharedUiListener<T = any>(
   eventId: SharedUiEvent,
-  handler: (arg: T, eventId: SharedUiEvent, triggeredBySharedState?: boolean) => void,
+  handler: (arg: T, eventId: SharedUiEvent, triggerSharedState?: boolean) => void,
   arg: T
 ) {
   useEffect(() => {
     const eventHandler = (evId: SharedUiEvent) => {
       if (evId === eventId && handler && arg) {
-        handler(arg, eventId, true);
+        handler(arg, eventId, false);
       }
     };
     if (eventId) {
@@ -24,7 +24,7 @@ export function useSharedUiListener<T = any>(
   }, [arg, eventId, handler]);
 }
 
-export function useSharedUiListenerWithElement<T extends Array<any>>(
+export function useSharedUiListenerWithElement<T = any>(
   eventId?: SharedUiEvent,
   element?: HTMLElement | null,
   handler?: (element: HTMLElement, args: T) => void,

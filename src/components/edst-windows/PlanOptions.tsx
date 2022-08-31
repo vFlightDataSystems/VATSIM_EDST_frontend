@@ -37,10 +37,10 @@ export const PlanOptions = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
 
   const openMenu = useCallback(
-    (menu: EdstWindow, eventId: SharedUiEvent, triggeredBySharedState?: boolean) => {
-      dispatch(openMenuThunk(menu, ref.current, true, true));
-      dispatch(closeWindow(EdstWindow.PLAN_OPTIONS, true));
-      if (eventId && !triggeredBySharedState) {
+    (menu: EdstWindow, eventId: SharedUiEvent, triggerSharedState = true) => {
+      dispatch(openMenuThunk(menu, ref.current, false, true));
+      dispatch(closeWindow(EdstWindow.PLAN_OPTIONS, false));
+      if (eventId && triggerSharedState) {
         socket.dispatchUiEvent(eventId);
       }
     },

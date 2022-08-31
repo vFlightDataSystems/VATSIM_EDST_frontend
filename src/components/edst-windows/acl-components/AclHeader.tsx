@@ -45,7 +45,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
 
   const handleClick = useCallback(
     (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element, true));
+      dispatch(openMenuThunk(edstWindow, element));
     },
     [dispatch]
   );
@@ -95,7 +95,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           sharedUiEventHandlerArgs={EdstWindow.ACL_SORT_MENU}
           id="acl-sort-button"
           onMouseDown={e => {
-            dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget));
+            dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget, true));
           }}
           content="Sort..."
           title={Tooltips.sort}

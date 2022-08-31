@@ -71,20 +71,20 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
   );
 
   const handleClick = useCallback(
-    (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow, triggeredBySharedState?: boolean) => {
-      dispatch(aclAircraftSelect(entry.aircraftId, field, eventId, triggeredBySharedState));
+    (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow, triggerSharedState = true) => {
+      dispatch(aclAircraftSelect(entry.aircraftId, field, eventId, triggerSharedState));
       if (opensWindow && !isSelected(field)) {
-        dispatch(openMenuThunk(opensWindow, element, triggeredBySharedState));
+        dispatch(openMenuThunk(opensWindow, element));
       }
     },
     [dispatch, entry.aircraftId, isSelected]
   );
 
-  const handleRouteClick = (element: HTMLElement, triggeredBySharedState?: boolean) => {
+  const handleRouteClick = (element: HTMLElement, triggerSharedState = true) => {
     if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
-      handleClick(element, AclRowField.ROUTE, "acl-route-asel-hold", EdstWindow.HOLD_MENU, triggeredBySharedState);
+      handleClick(element, AclRowField.ROUTE, "acl-route-asel-hold", EdstWindow.HOLD_MENU, triggerSharedState);
     } else {
-      handleClick(element, AclRowField.ROUTE, "acl-route-asel", EdstWindow.ROUTE_MENU, triggeredBySharedState);
+      handleClick(element, AclRowField.ROUTE, "acl-route-asel", EdstWindow.ROUTE_MENU, triggerSharedState);
     }
   };
 

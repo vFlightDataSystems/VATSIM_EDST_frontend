@@ -10,33 +10,33 @@ function aircraftSelect(
   aircraftId: string,
   field: AclRowField | DepRowField,
   eventId: string | null,
-  triggeredBySharedState?: boolean
+  triggerSharedState = true
 ): RootThunkAction {
   return (dispatch, getState) => {
     const state = getState();
     const { asel } = state.app;
     if (asel?.aircraftId === aircraftId && asel?.field === field && asel?.window === edstWindow) {
-      dispatch(setAsel(null, null, triggeredBySharedState));
+      dispatch(setAsel(null, null, triggerSharedState));
     } else {
-      dispatch(setAsel({ aircraftId, field, window: edstWindow }, eventId, triggeredBySharedState));
+      dispatch(setAsel({ aircraftId, field, window: edstWindow }, eventId, triggerSharedState));
     }
   };
 }
 
-export function aclAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggeredBySharedState?: boolean) {
-  return aircraftSelect(EdstWindow.ACL, aircraftId, field, eventId, triggeredBySharedState);
+export function aclAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggerSharedState = true) {
+  return aircraftSelect(EdstWindow.ACL, aircraftId, field, eventId, triggerSharedState);
 }
 
-export function depAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggeredBySharedState?: boolean) {
-  return aircraftSelect(EdstWindow.DEP, aircraftId, field, eventId, triggeredBySharedState);
+export function depAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggerSharedState = true) {
+  return aircraftSelect(EdstWindow.DEP, aircraftId, field, eventId, triggerSharedState);
 }
 
-export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggeredBySharedState?: boolean) {
-  return aircraftSelect(EdstWindow.GPD, aircraftId, field, eventId, triggeredBySharedState);
+export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggerSharedState = true) {
+  return aircraftSelect(EdstWindow.GPD, aircraftId, field, eventId, triggerSharedState);
 }
 
 export function sharedStateAircraftSelect(value: Asel | null): RootThunkAction {
   return dispatch => {
-    dispatch(setAsel(value, null, true));
+    dispatch(setAsel(value, null, false));
   };
 }

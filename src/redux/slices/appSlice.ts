@@ -151,37 +151,37 @@ const appSlice = createSlice({
   }
 });
 
-export const closeAllWindows = (triggeredBySharedState?: boolean): RootThunkAction => {
+export const closeAllWindows = (triggerSharedState = false): RootThunkAction => {
   return dispatch => {
     Object.values(EdstWindow).forEach(window => {
-      dispatch(closeWindow(window, triggeredBySharedState));
+      dispatch(closeWindow(window, triggerSharedState));
     });
   };
 };
 
-export const closeAllMenus = (triggeredBySharedState?: boolean): RootThunkAction => {
+export const closeAllMenus = (triggerSharedState = true): RootThunkAction => {
   return dispatch => {
     EDST_MENU_LIST.forEach(window => {
-      dispatch(closeWindow(window, triggeredBySharedState));
+      dispatch(closeWindow(window, triggerSharedState));
     });
-    dispatch(setAsel(null, null, triggeredBySharedState));
+    dispatch(setAsel(null, null, triggerSharedState));
   };
 };
 
-export const closeAircraftMenus = (triggeredBySharedState?: boolean): RootThunkAction => {
+export const closeAircraftMenus = (triggerSharedState = false): RootThunkAction => {
   return dispatch => {
     AIRCRAFT_MENUS.forEach(window => {
-      dispatch(closeWindow(window, triggeredBySharedState));
+      dispatch(closeWindow(window, triggerSharedState));
     });
   };
 };
 
-export function setAsel(asel: Asel | null, eventId?: string | null, triggeredBySharedState?: boolean): RootThunkAction {
+export function setAsel(asel: Asel | null, eventId?: string | null, triggerSharedState = true): RootThunkAction {
   return (dispatch, getState) => {
     if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
-      dispatch(closeAircraftMenus(true));
+      dispatch(closeAircraftMenus());
       dispatch(appSlice.actions.setAsel(asel));
-      if (!triggeredBySharedState) {
+      if (triggerSharedState) {
         sharedSocket.setAircraftSelect(asel, eventId ?? null);
       }
     }
@@ -206,10 +206,10 @@ export const setMraMessage = (message: string): RootThunkAction => {
   };
 };
 
-export const closeWindow = (edstWindow: EdstWindow, triggeredBySharedState?: boolean): RootThunkAction => {
+export const closeWindow = (edstWindow: EdstWindow, triggerSharedState = true): RootThunkAction => {
   return dispatch => {
     dispatch(appSlice.actions.closeWindow(edstWindow));
-    if (!triggeredBySharedState) {
+    if (triggerSharedState) {
       sharedSocket.closeSharedWindow(edstWindow);
     }
   };

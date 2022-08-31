@@ -3,7 +3,7 @@ import sharedStateSocket from "../sharedState/socket";
 import { Asel } from "../typeDefinitions/types/asel";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 
-type Handler<F> = (element: HTMLElement, field: F, eventId: string | null, opensWindow?: EdstWindow, triggeredBySharedState?: boolean) => void;
+type Handler<F> = (element: HTMLElement, field: F, eventId: string | null, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
 
 export function useAselEventListener<F>(
   ref: RefObject<HTMLElement>,
@@ -16,7 +16,7 @@ export function useAselEventListener<F>(
   useEffect(() => {
     const eventHandler = (asel: Asel | null, evId: string | null) => {
       if (ref.current && eventId === evId && asel?.aircraftId === aircraftId) {
-        handler(ref.current, field, eventId, opensWindow, true);
+        handler(ref.current, field, eventId, opensWindow, false);
       }
     };
     sharedStateSocket.socket?.on("receiveAircraftSelect", eventHandler);
