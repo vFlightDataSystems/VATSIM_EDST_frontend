@@ -4,6 +4,7 @@ import { AclSortOption } from "../../enums/acl/aclSortOption";
 import { DepSortOption } from "../../enums/dep/depSortOption";
 import { Plan } from "../plan";
 import { Asel } from "../asel";
+import { SharedUiEvent } from "./sharedUiEvent";
 
 export type SharedStateClientToServerEvents = {
   updateAircraft: (sectorId: string, payload: SharedAircraftDto) => void;
@@ -16,4 +17,5 @@ export type SharedStateClientToServerEvents = {
   closeWindow: (window: EdstWindow) => void;
   setAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   clearPlanQueue: () => void;
+  dispatchUiEvent: (eventId: SharedUiEvent) => void;
 };

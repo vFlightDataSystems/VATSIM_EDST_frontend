@@ -128,22 +128,6 @@ const appSlice = createSlice({
     setMcaFeedbackString(state, action: PayloadAction<string>) {
       state.mcaFeedbackString = action.payload;
     },
-    closeAllWindows(state) {
-      Object.values(EdstWindow).forEach(window => {
-        state.windows[window].open = false;
-      });
-    },
-    closeAllMenus(state) {
-      EDST_MENU_LIST.forEach(menu => {
-        state.windows[menu].open = false;
-      });
-      state.asel = null;
-    },
-    closeAircraftMenus(state) {
-      AIRCRAFT_MENUS.forEach(menu => {
-        state.windows[menu].open = false;
-      });
-    },
     setAsel(state, action: PayloadAction<Asel | null>) {
       state.asel = action.payload;
     },
@@ -167,10 +151,35 @@ const appSlice = createSlice({
   }
 });
 
+export const closeAllWindows = (triggeredBySharedState?: boolean): RootThunkAction => {
+  return dispatch => {
+    Object.values(EdstWindow).forEach(window => {
+      dispatch(closeWindow(window, triggeredBySharedState));
+    });
+  };
+};
+
+export const closeAllMenus = (triggeredBySharedState?: boolean): RootThunkAction => {
+  return dispatch => {
+    EDST_MENU_LIST.forEach(window => {
+      dispatch(closeWindow(window, triggeredBySharedState));
+    });
+    dispatch(setAsel(null, null, triggeredBySharedState));
+  };
+};
+
+export const closeAircraftMenus = (triggeredBySharedState?: boolean): RootThunkAction => {
+  return dispatch => {
+    AIRCRAFT_MENUS.forEach(window => {
+      dispatch(closeWindow(window, triggeredBySharedState));
+    });
+  };
+};
+
 export function setAsel(asel: Asel | null, eventId?: string | null, triggeredBySharedState?: boolean): RootThunkAction {
   return (dispatch, getState) => {
     if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
-      dispatch(closeAircraftMenus());
+      dispatch(closeAircraftMenus(true));
       dispatch(appSlice.actions.setAsel(asel));
       if (!triggeredBySharedState) {
         sharedSocket.setAircraftSelect(asel, eventId ?? null);
@@ -210,7 +219,7 @@ export const toggleWindow = (edstWindow: EdstWindow): RootThunkAction => {
   return (dispatch, getState) => {
     const isOpen = getState().app.windows[edstWindow].open;
     if (isOpen) {
-      dispatch(closeWindow(edstWindow, false));
+      dispatch(closeWindow(edstWindow));
       sharedSocket.closeSharedWindow(edstWindow);
     } else {
       dispatch(openWindow(edstWindow));
@@ -226,9 +235,6 @@ export const {
   setWindowPosition,
   setMcaCommandString,
   openWindow,
-  closeAllWindows,
-  closeAllMenus,
-  closeAircraftMenus,
   setAnyDragging,
   pushZStack,
   addOutageMessage,

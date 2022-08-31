@@ -6,6 +6,7 @@ import { SharedPlansDisplayState } from "./sharedPlansDisplayState";
 import { SharedUiState } from "./sharedUiState";
 import { EdstWindow } from "../../enums/edstWindow";
 import { Asel } from "../asel";
+import { SharedUiEvent } from "./sharedUiEvent";
 
 export type SharedStateServerToClientEvents = {
   receiveAircraft: (value: SharedAircraftDto) => void;
@@ -17,4 +18,5 @@ export type SharedStateServerToClientEvents = {
   receiveCloseWindow: (window: EdstWindow) => void;
   receiveAircraftSelect: (value: Asel | null, eventId: string | null) => void;
   receiveUiState: (value: SharedUiState) => void;
+  receiveUiEvent: (eventId: SharedUiEvent) => void;
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
@@ -39,6 +39,13 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
     }
   };
 
+  const handleClick = useCallback(
+    (element: HTMLElement, edstWindow: EdstWindow) => {
+      dispatch(openMenuThunk(edstWindow, element, true));
+    },
+    [dispatch]
+  );
+
   return (
     <NoSelectDiv>
       <WindowTitleBar
@@ -55,14 +62,20 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
       />
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton
+          sharedUiEventId="openDepPlanOptions"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget))}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
+          sharedUiEventId="openDepSortMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.DEP_SORT_MENU}
           id="dep-sort-button"
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.DEP_SORT_MENU, e.currentTarget))}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.DEP_SORT_MENU)}
           content="Sort..."
           title={Tooltips.sort}
         />
@@ -72,7 +85,10 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
           title={Tooltips.postingMode}
         />
         <EdstWindowHeaderButton
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget))}
+          sharedUiEventId="openDepTemplateMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
           content="Template..."
           title={Tooltips.template}
         />

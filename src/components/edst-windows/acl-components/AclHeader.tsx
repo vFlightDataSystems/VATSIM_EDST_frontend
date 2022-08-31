@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../utils/EdstButton";
@@ -43,6 +43,13 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
     }
   };
 
+  const handleClick = useCallback(
+    (element: HTMLElement, edstWindow: EdstWindow) => {
+      dispatch(openMenuThunk(edstWindow, element, true));
+    },
+    [dispatch]
+  );
+
   return (
     <AclHeaderDiv>
       <WindowTitleBar
@@ -63,12 +70,18 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
       />
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton
+          sharedUiEventId="openAclPlanOptions"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget))}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButton
+          sharedUiEventId="openAclHoldMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.HOLD_MENU}
           disabled={asel === null}
           onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget))}
           content="Hold..."
@@ -77,6 +90,9 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
         <EdstWindowHeaderButton disabled content="Show" />
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton
+          sharedUiEventId="openAclSortMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.ACL_SORT_MENU}
           id="acl-sort-button"
           onMouseDown={e => {
             dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget));
@@ -85,6 +101,9 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           title={Tooltips.sort}
         />
         <EdstWindowHeaderButton
+          sharedUiEventId="openAclToolsMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
           onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
             dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget));
@@ -97,6 +116,9 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           title={Tooltips.postingMode}
         />
         <EdstWindowHeaderButton
+          sharedUiEventId="openAclTemplateMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
           onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget))}
           content="Template..."
           title={Tooltips.template}
