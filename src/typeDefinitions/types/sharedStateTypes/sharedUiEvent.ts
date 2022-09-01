@@ -18,6 +18,8 @@ export type SharedUiEvent =
   | "openGpdMapOptions"
   | "openGpdToolsMenu"
   | "openGpdTemplateMenu"
+  | "openPlansDisplayPlanOptions"
+  | "openPlansDisplayTemplateMenu"
   | "planOptionsOpenAltitude"
   | "planOptionsOpenRoute"
   | "planOptionsOpenPrevRoute";

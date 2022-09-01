@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { WindowTitleBar } from "../WindowTitleBar";
 import { EdstWindowHeaderButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "../../../redux/slices/planSlice";
-import { closeWindow, setAsel } from "../../../redux/slices/appSlice";
+import { closeWindow } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { PlanRowField } from "../../../typeDefinitions/enums/planRowField";
 import { useHubActions } from "../../../hooks/useHubActions";
 import { DownlinkSymbol } from "../../utils/DownlinkSymbol";
 
@@ -34,6 +33,13 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
   const interimDisabled = true;
   const { amendFlightplan } = useHubActions();
 
+  const handleClick = useCallback(
+    (element: HTMLElement, edstWindow: EdstWindow) => {
+      dispatch(openMenuThunk(edstWindow, element));
+    },
+    [dispatch]
+  );
+
   const handleAmendClick = () => {
     if (selectedPlanIndex !== null) {
       const amendedFlightplan = planQueue[selectedPlanIndex]?.amendedFlightplan;
@@ -54,19 +60,11 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
       />
       <NoSelectDiv>
         <EdstWindowHeaderButton
+          sharedUiEventId="openPlansDisplayPlanOptions"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
           disabled={selectedPlanIndex === null}
-          onMouseDown={e => {
-            if (selectedPlanIndex !== null) {
-              dispatch(
-                setAsel({
-                  aircraftId: planQueue[selectedPlanIndex].aircraftId,
-                  window: EdstWindow.PLANS_DISPLAY,
-                  field: PlanRowField.FID
-                })
-              );
-              dispatch(openMenuThunk(EdstWindow.PLAN_OPTIONS, e.currentTarget));
-            }
-          }}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
@@ -87,7 +85,10 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Pla
         />
         <EdstWindowHeaderButton disabled content="Tools..." />
         <EdstWindowHeaderButton
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget))}
+          sharedUiEventId="openPlansDisplayTemplateMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
           content="Template..."
           title={Tooltips.template}
         />
