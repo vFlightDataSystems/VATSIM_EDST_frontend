@@ -29,8 +29,14 @@ const useSocketContextInit = () => {
   const connectSocket = useCallback(
     (artccId: string, sectorId: string) => {
       const socket = sharedSocket.connect(artccId, sectorId);
-      if (socket?.connected) {
+      if (socket) {
         setIsConnected(true);
+        socket.on("connect", () => {
+          setIsConnected(true);
+        });
+        socket.on("disconnect", () => {
+          setIsConnected(false);
+        });
         socket.on("receiveAircraft", aircraft => {
           dispatch(receiveSharedStateAircraft(aircraft));
         });
@@ -71,7 +77,6 @@ const useSocketContextInit = () => {
 
   const disconnectSocket = useCallback(() => {
     sharedSocket.disconnect();
-    setIsConnected(false);
   }, []);
 
   return { connectSocket, disconnectSocket, isConnected };
