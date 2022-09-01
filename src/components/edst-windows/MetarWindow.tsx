@@ -87,13 +87,14 @@ export const MetarWindow = () => {
             {metarAirports.map(airport => (
               <>
                 <MetarRow
-                  key={airport}
+                  key={`metar-${airport}`}
                   airport={airport}
                   selected={selected === airport}
                   handleMouseDown={event => handleMouseDown(event, airport)}
                 />
                 {selected === airport && selectedPos && (
                   <FloatingWindowOptions
+                    key={`delete-metar-${airport}`}
                     pos={{
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y

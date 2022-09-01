@@ -27,7 +27,7 @@ class SharedStateSocket {
   public connect(artccId: string, sectorId: string) {
     this.artccSectorId = `${artccId}${sectorId}`;
     if (SHARED_STATE_SERVER_URL && SHARED_STATE_AUTH_TOKEN) {
-      this.socket = io(SHARED_STATE_SERVER_URL, {
+      const socket = io(SHARED_STATE_SERVER_URL, {
         auth: {
           token: SHARED_STATE_AUTH_TOKEN
         },
@@ -35,9 +35,12 @@ class SharedStateSocket {
           sectorId: this.artccSectorId
         }
       });
-      this.socket?.on("receiveAircraft", aircraft => {
-        this.sharedAircraftState[aircraft.aircraftId] = aircraft;
-      });
+      if (socket?.connected) {
+        this.socket = socket;
+        this.socket?.on("receiveAircraft", aircraft => {
+          this.sharedAircraftState[aircraft.aircraftId] = aircraft;
+        });
+      }
     }
     return this.socket;
   }

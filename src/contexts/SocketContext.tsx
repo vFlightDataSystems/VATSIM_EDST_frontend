@@ -29,7 +29,7 @@ const useSocketContextInit = () => {
   const connectSocket = useCallback(
     (artccId: string, sectorId: string) => {
       const socket = sharedSocket.connect(artccId, sectorId);
-      if (socket) {
+      if (socket?.connected) {
         setIsConnected(true);
         socket.on("receiveAircraft", aircraft => {
           dispatch(receiveSharedStateAircraft(aircraft));

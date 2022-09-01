@@ -108,13 +108,14 @@ export const AltimeterWindow = () => {
             {altimeterAirports.map(airport => (
               <>
                 <AltimeterRow
-                  key={airport}
+                  key={`altim-${airport}`}
                   airport={airport}
                   selected={selected === airport}
                   handleMouseDown={event => handleMouseDown(event, airport)}
                 />
                 {selected && selectedPos && (
                   <FloatingWindowOptions
+                    key={`delete-altim-${airport}`}
                     pos={{
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
