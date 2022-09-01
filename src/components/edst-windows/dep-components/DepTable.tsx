@@ -1,14 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { DepRow } from "./DepRow";
-import { useRootSelector } from "../../../redux/hooks";
+import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGrey } from "../../../styles/colors";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { depManualPostingSelector, depSortOptionSelector } from "../../../redux/slices/depSlice";
+import { depHiddenColumnsSelector, depManualPostingSelector, depSortOptionSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
@@ -24,21 +24,11 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
 `;
 
 export function DepTable() {
+  const dispatch = useRootDispatch();
   const selectedSortOption = useRootSelector(depSortOptionSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
-  const [hiddenList, setHiddenList] = useState<DepRowField[]>([]);
-
-  const toggleHideColumn = (field: DepRowField) => {
-    const hiddenCopy = hiddenList.slice(0);
-    const index = hiddenCopy.indexOf(field);
-    if (index > -1) {
-      hiddenCopy.splice(index, 1);
-    } else {
-      hiddenCopy.push(field);
-    }
-    setHiddenList(hiddenCopy);
-  };
+  const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
 
   const sortFunc = (u: EdstEntry, v: EdstEntry) => {
     switch (selectedSortOption) {
@@ -64,29 +54,29 @@ export function DepTable() {
         <DepFidCol>Flight ID</DepFidCol>
         <SpecialBox />
         <SpecialBox />
-        <AircraftTypeCol hidden={hiddenList.includes(DepRowField.TYPE)}>
-          <div onMouseDown={() => toggleHideColumn(DepRowField.TYPE)}>T{!hiddenList.includes(DepRowField.TYPE) && "ype"}</div>
+        <AircraftTypeCol hidden={hiddenColumns.includes(DepRowField.TYPE)}>
+          <div onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>T{!hiddenColumns.includes(DepRowField.TYPE) && "ype"}</div>
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>
-        <CodeCol hover hidden={hiddenList.includes(DepRowField.CODE)} onMouseDown={() => toggleHideColumn(DepRowField.CODE)}>
-          C{!hiddenList.includes(DepRowField.CODE) && "ode"}
+        <CodeCol hover hidden={hiddenColumns.includes(DepRowField.CODE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.CODE))}>
+          C{!hiddenColumns.includes(DepRowField.CODE) && "ode"}
         </CodeCol>
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
         {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
-          <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} hidden={hiddenList} />
+          <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
         {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
           ([i, entry]: [string, EdstEntry]) => (
-            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} hidden={hiddenList} />
+            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
           )
         )}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
           Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.depStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
-            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} hidden={hiddenList} />
+            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
           ))}
       </ScrollContainer>
     </DepBodyStyleDiv>

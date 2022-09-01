@@ -1,21 +1,21 @@
 import { SharedAircraftDto } from "./sharedAircraftDto";
 import { EdstWindow } from "../../enums/edstWindow";
-import { AclSortOption } from "../../enums/acl/aclSortOption";
-import { DepSortOption } from "../../enums/dep/depSortOption";
-import { Plan } from "../plan";
 import { Asel } from "../asel";
 import { SharedUiEvent } from "./sharedUiEvent";
+import { AclState } from "../../../redux/slices/aclSlice";
+import { DepState } from "../../../redux/slices/depSlice";
+import { GpdState } from "../../../redux/slices/gpdSlice";
+import { PlanState } from "../../../redux/slices/planSlice";
 
 export type SharedStateClientToServerEvents = {
   updateAircraft: (sectorId: string, payload: SharedAircraftDto) => void;
-  setAclSort: (sortOption: AclSortOption, sector: boolean) => void;
-  setDepSort: (sortOption: DepSortOption) => void;
-  setAclManualPosting: (value: boolean) => void;
-  setDepManualPosting: (value: boolean) => void;
-  setPlanQueue: (value: Plan[]) => void;
+  setAclState: (value: AclState) => void;
+  setDepState: (value: DepState) => void;
+  setGpdState: (value: GpdState) => void;
+  setPlanState: (value: PlanState) => void;
+  setAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   openWindow: (window: EdstWindow) => void;
   closeWindow: (window: EdstWindow) => void;
-  setAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   clearPlanQueue: () => void;
   dispatchUiEvent: (eventId: SharedUiEvent) => void;
 };

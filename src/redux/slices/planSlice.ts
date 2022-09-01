@@ -18,35 +18,40 @@ const planSlice = createSlice({
   name: "plan",
   initialState,
   reducers: {
+    setPlanState(state, action: PayloadAction<PlanState>) {
+      _.assign(state, action.payload);
+    },
     addPlan(state, action: PayloadAction<Plan>) {
       state.planQueue.unshift(action.payload);
       state.selectedPlanIndex = 0;
-      sharedSocket.setSharedPlanQueue(state.planQueue);
+      sharedSocket.setPlanState(state);
     },
     removePlan(state, action: PayloadAction<number>) {
       if (action.payload >= 0 && action.payload < state.planQueue.length) {
         state.selectedPlanIndex = null;
         state.planQueue.splice(action.payload, 1);
-        sharedSocket.setSharedPlanQueue(state.planQueue);
+        sharedSocket.setPlanState(state);
       }
     },
     setPlanQueue(state, action: PayloadAction<Plan[]>) {
       state.selectedPlanIndex = null;
       state.planQueue = action.payload;
+      sharedSocket.setPlanState(state);
     },
     planCleanup(state) {
       _.assign(state, initialState);
-      sharedSocket.cleanSharedPlanQueue();
+      sharedSocket.setPlanState(state);
     },
     setSelectedPlanIndex(state, action: PayloadAction<number | null>) {
       if (action.payload === null || (action.payload >= 0 && action.payload < state.planQueue.length)) {
         state.selectedPlanIndex = action.payload;
       }
+      sharedSocket.setPlanState(state);
     }
   }
 });
 
-export const { addPlan, removePlan, setPlanQueue, setSelectedPlanIndex, planCleanup } = planSlice.actions;
+export const { setPlanState, addPlan, removePlan, setPlanQueue, setSelectedPlanIndex, planCleanup } = planSlice.actions;
 export default planSlice.reducer;
 
 export const selectedPlanIndexSelector = (state: RootState) => state.plan.selectedPlanIndex;

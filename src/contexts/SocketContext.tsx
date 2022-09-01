@@ -3,13 +3,13 @@ import { receiveSharedStateAircraft } from "../redux/thunks/sharedStateThunks/re
 import { log } from "../console";
 import { useRootDispatch } from "../redux/hooks";
 import { receiveUiStateThunk } from "../redux/thunks/sharedStateThunks/receiveUiStateThunk";
-import { receiveAclStateThunk } from "../redux/thunks/sharedStateThunks/receiveAclStateThunk";
-import { receivePlansDisplayStateThunk } from "../redux/thunks/sharedStateThunks/receivePlansDisplayStateThunk";
-import { receiveDepStateThunk } from "../redux/thunks/sharedStateThunks/receiveDepStateThunk";
-import { receiveGpdStateThunk } from "../redux/thunks/sharedStateThunks/receiveGpdStateThunk";
 import { closeWindow, openWindow } from "../redux/slices/appSlice";
 import sharedSocket from "../sharedState/socket";
 import { sharedStateAircraftSelect } from "../redux/thunks/aircraftSelect";
+import { setAclState } from "../redux/slices/aclSlice";
+import { setDepState } from "../redux/slices/depSlice";
+import { setGpdState } from "../redux/slices/gpdSlice";
+import { setPlanState } from "../redux/slices/planSlice";
 
 class SocketContextValue {
   connectSocket: (artccId: string, sectorId: string) => void = sharedSocket.connect;
@@ -38,16 +38,16 @@ const useSocketContextInit = () => {
           dispatch(receiveUiStateThunk(state));
         });
         socket.on("receiveAclState", state => {
-          dispatch(receiveAclStateThunk(state));
+          dispatch(setAclState(state));
         });
         socket.on("receiveDepState", state => {
-          dispatch(receiveDepStateThunk(state));
+          dispatch(setDepState(state));
         });
-        socket.on("receiveGpdState", () => {
-          dispatch(receiveGpdStateThunk());
+        socket.on("receiveGpdState", state => {
+          dispatch(setGpdState(state));
         });
         socket.on("receivePlansDisplayState", state => {
-          dispatch(receivePlansDisplayStateThunk(state));
+          dispatch(setPlanState(state));
         });
         socket.on("receiveOpenWindow", edstWindow => {
           dispatch(openWindow(edstWindow));

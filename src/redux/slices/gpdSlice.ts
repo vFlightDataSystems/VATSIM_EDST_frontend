@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import _ from "lodash";
 import { RootState } from "../store";
+import sharedSocket from "../../sharedState/socket";
 
 export enum SectorType {
   ultraLow = "UL",
@@ -9,7 +11,7 @@ export enum SectorType {
   lowHigh = "LH"
 }
 
-export enum mapFeatureOption {
+export enum MapFeatureOption {
   ultraLowSectors = "Ultra Low",
   lowSectors = "Low",
   highSectors = "High",
@@ -28,7 +30,7 @@ export enum mapFeatureOption {
   waypointLabels = "Waypoint Labels"
 }
 
-export type MapFeatureOptions = Partial<Record<mapFeatureOption, boolean>>;
+export type MapFeatureOptions = Partial<Record<MapFeatureOption, boolean>>;
 
 export type AircraftDisplayOptions = {
   aircraftListFilter: ["Aircraft List Filter", boolean];
@@ -51,8 +53,8 @@ export type GpdState = {
 };
 
 const initialMapFeatureOptionsState = {
-  [mapFeatureOption.lowSectors]: true,
-  [mapFeatureOption.highSectors]: true
+  [MapFeatureOption.lowSectors]: true,
+  [MapFeatureOption.highSectors]: true
 };
 
 const initialState: GpdState = {
@@ -75,30 +77,40 @@ const gpdSlice = createSlice({
   name: "gpd",
   initialState,
   reducers: {
+    setGpdState(state, action: PayloadAction<GpdState>) {
+      _.assign(state, action.payload);
+    },
     addGpdPlanData(state, action: PayloadAction<Record<string, unknown>>) {
       state.planData.push(action.payload);
+      sharedSocket.setGpdState(state);
     },
     removeGpdPlanData(state, action: PayloadAction<number>) {
       if (action.payload < state.planData.length - 1 && action.payload >= 0) {
         state.planData.splice(action.payload);
       }
+      sharedSocket.setGpdState(state);
     },
     setMapFeatureOptions(state, action: PayloadAction<MapFeatureOptions>) {
       state.mapFeatureOptions = action.payload;
+      sharedSocket.setGpdState(state);
     },
     setAircraftDisplayOptions(state, action: PayloadAction<AircraftDisplayOptions>) {
       state.aircraftDisplayOptions = action.payload;
+      sharedSocket.setGpdState(state);
     },
     setSuppressed(state, action: PayloadAction<boolean>) {
       state.suppressed = action.payload;
+      sharedSocket.setGpdState(state);
     },
     toggleSuppressed(state) {
       state.suppressed = !state.suppressed;
+      sharedSocket.setGpdState(state);
     }
   }
 });
 
 export const {
+  setGpdState,
   addGpdPlanData,
   removeGpdPlanData,
   setMapFeatureOptions,

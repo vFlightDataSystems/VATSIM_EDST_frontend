@@ -45,7 +45,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
 
   const handleClick = useCallback(
     (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element, true));
+      dispatch(openMenuThunk(edstWindow, element));
     },
     [dispatch]
   );
@@ -105,12 +105,18 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
         <EdstWindowHeaderButton disabled onMouseDown={handleRangeClick} content="Range" />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
         <EdstWindowHeaderButton
+          sharedUiEventId="openGpdMapOptions"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.GPD_MAP_OPTIONS_MENU}
           onMouseDown={e => {
             handleClick(e.currentTarget, EdstWindow.GPD_MAP_OPTIONS_MENU);
           }}
           content="Map Options..."
         />
         <EdstWindowHeaderButton
+          sharedUiEventId="openGpdToolsMenu"
+          sharedUiEventHandler={handleClick}
+          sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
           onMouseDown={e => {
             handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
           }}

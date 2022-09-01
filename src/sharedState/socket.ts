@@ -2,12 +2,13 @@ import io, { Socket } from "socket.io-client";
 import { SharedStateServerToClientEvents } from "../typeDefinitions/types/sharedStateTypes/sharedStateServerToClientEvents";
 import { SharedStateClientToServerEvents } from "../typeDefinitions/types/sharedStateTypes/sharedStateClientToServerEvents";
 import { SharedAircraftDto } from "../typeDefinitions/types/sharedStateTypes/sharedAircraftDto";
-import { AclSortOption } from "../typeDefinitions/enums/acl/aclSortOption";
-import { DepSortOption } from "../typeDefinitions/enums/dep/depSortOption";
-import { Plan } from "../typeDefinitions/types/plan";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 import { Asel } from "../typeDefinitions/types/asel";
 import { SharedUiEvent } from "../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
+import { AclState } from "../redux/slices/aclSlice";
+import { DepState } from "../redux/slices/depSlice";
+import { PlanState } from "../redux/slices/planSlice";
+import { GpdState } from "../redux/slices/gpdSlice";
 
 const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
@@ -47,27 +48,27 @@ class SharedStateSocket {
     }
   }
 
-  public setSharedAclSort(selectedOption: AclSortOption, sector: boolean) {
+  public setAclState(state: AclState) {
     if (this.socket?.connected) {
-      this.socket.emit("setAclSort", selectedOption, sector);
+      this.socket.emit("setAclState", state);
     }
   }
 
-  public setSharedDepSort(selectedOption: DepSortOption) {
+  public setDepState(state: DepState) {
     if (this.socket?.connected) {
-      this.socket.emit("setDepSort", selectedOption);
+      this.socket.emit("setDepState", state);
     }
   }
 
-  public setSharedPlanQueue(queue: Plan[]) {
+  public setPlanState(state: PlanState) {
     if (this.socket?.connected) {
-      this.socket.emit("setPlanQueue", queue);
+      this.socket.emit("setPlanState", state);
     }
   }
 
-  public cleanSharedPlanQueue() {
+  public setGpdState(state: GpdState) {
     if (this.socket?.connected) {
-      this.socket.emit("clearPlanQueue");
+      this.socket.emit("setGpdState", state);
     }
   }
 
@@ -80,18 +81,6 @@ class SharedStateSocket {
   public closeSharedWindow(window: EdstWindow) {
     if (this.socket?.connected) {
       this.socket.emit("closeWindow", window);
-    }
-  }
-
-  public setSharedAclManualPosting(value: boolean) {
-    if (this.socket?.connected) {
-      this.socket.emit("setAclManualPosting", value);
-    }
-  }
-
-  public setSharedDepManualPosting(value: boolean) {
-    if (this.socket?.connected) {
-      this.socket.emit("setDepManualPosting", value);
     }
   }
 

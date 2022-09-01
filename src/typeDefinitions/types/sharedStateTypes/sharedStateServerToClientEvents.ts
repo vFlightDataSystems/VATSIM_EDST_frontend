@@ -1,22 +1,22 @@
 import { SharedAircraftDto } from "./sharedAircraftDto";
-import { SharedAclState } from "./sharedAclState";
-import { SharedDepState } from "./sharedDepState";
-import { SharedGpdState } from "./sharedGpdState";
-import { SharedPlansDisplayState } from "./sharedPlansDisplayState";
 import { SharedUiState } from "./sharedUiState";
 import { EdstWindow } from "../../enums/edstWindow";
 import { Asel } from "../asel";
 import { SharedUiEvent } from "./sharedUiEvent";
+import { AclState } from "../../../redux/slices/aclSlice";
+import { DepState } from "../../../redux/slices/depSlice";
+import { GpdState } from "../../../redux/slices/gpdSlice";
+import { PlanState } from "../../../redux/slices/planSlice";
 
 export type SharedStateServerToClientEvents = {
-  receiveAircraft: (value: SharedAircraftDto) => void;
-  receiveAclState: (value: SharedAclState) => void;
-  receiveDepState: (value: SharedDepState) => void;
-  receiveGpdState: (value: SharedGpdState) => void;
-  receivePlansDisplayState: (value: SharedPlansDisplayState) => void;
+  receiveAircraft: (aircraft: SharedAircraftDto) => void;
+  receiveAclState: (value: AclState) => void;
+  receiveDepState: (value: DepState) => void;
+  receiveGpdState: (value: GpdState) => void;
+  receivePlansDisplayState: (value: PlanState) => void;
   receiveOpenWindow: (window: EdstWindow) => void;
   receiveCloseWindow: (window: EdstWindow) => void;
-  receiveAircraftSelect: (value: Asel | null, eventId: string | null) => void;
+  receiveAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   receiveUiState: (value: SharedUiState) => void;
   receiveUiEvent: (eventId: SharedUiEvent) => void;
 };

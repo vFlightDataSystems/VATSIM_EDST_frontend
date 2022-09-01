@@ -1,11 +1,11 @@
-import React, { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { convertBeaconCodeToString, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aselSelector } from "../../../redux/slices/appSlice";
-import { aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
+import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
 import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
 import { edstFontBrown } from "../../../styles/colors";
@@ -39,23 +39,22 @@ type AclRowProps = {
   entry: EdstEntry;
   index: number;
   anyHolding: boolean;
-  hidden: AclRowField[];
   altMouseDown: boolean;
 };
 
 /**
  * Single ACL row
  * @param entry
- * @param hidden array of ACL fields hidden by the user
  * @param altMouseDown boolean indicating where mouse is pressed on the ACL header Alt column
  * @param index row index
  * @param anyHolding boolean whether any aircraft is currently in a hold, an extra column will be displayed if true
  */
-export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRowProps) => {
+export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) => {
   const asel = useRootSelector(aselSelector);
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
+  const hiddenColumns = useRootSelector(aclHiddenColumnsSelector);
   const [parAvail, setParAvail] = useState(false);
   const [onPar, setOnPar] = useState(false);
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
@@ -230,7 +229,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleFidClick: MouseEventHandler = (event: React.MouseEvent<HTMLElement>) => {
+  const handleFidClick = (event: React.MouseEvent<HTMLElement>) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -247,7 +246,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
     }
   };
 
-  const handleHeadingClick: MouseEventHandler = (event: React.MouseEvent<HTMLElement>) => {
+  const handleHeadingClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -259,13 +258,18 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         }
         break;
       case 2:
+        if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: null } }));
+        } else if (entry.assignedHeading) {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { assignedHeading: null } }));
+        }
         break;
       default:
         break;
     }
   };
 
-  const handleSpeedClick: MouseEventHandler = (event: React.MouseEvent<HTMLElement>) => {
+  const handleSpeedClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -277,6 +281,11 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
         }
         break;
       case 2:
+        if (displayScratchSpd && (displayScratchSpd || entry.assignedSpeed === null)) {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: null } }));
+        } else if (entry.assignedSpeed) {
+          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { assignedSpeed: null } }));
+        }
         break;
       default:
         break;
@@ -312,7 +321,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclType}>
             <AircraftTypeCol
-              visibilityHidden={hidden.includes(AclRowField.TYPE)}
+              visibilityHidden={hiddenColumns.includes(AclRowField.TYPE)}
               hover
               selected={isSelected(AclRowField.TYPE)}
               onMouseDown={event => handleClick(event.currentTarget, AclRowField.TYPE, null)}
@@ -336,7 +345,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclCode}>
             <CodeCol
-              visibilityHidden={hidden.includes(AclRowField.CODE)}
+              visibilityHidden={hiddenColumns.includes(AclRowField.CODE)}
               hover
               selected={isSelected(AclRowField.CODE)}
               onMouseDown={event => handleClick(event.currentTarget, AclRowField.CODE, null)}
@@ -351,7 +360,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             <HdgCol
               ref={hdgRef}
               hover
-              visibilityHidden={hidden.includes(AclRowField.HDG)}
+              visibilityHidden={hiddenColumns.includes(AclRowField.HDG)}
               selected={isSelected(AclRowField.HDG)}
               onMouseDown={handleHeadingClick}
               scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
@@ -364,7 +373,7 @@ export const AclRow = ({ entry, hidden, altMouseDown, index, anyHolding }: AclRo
             <SpdCol
               ref={spdRef}
               hover
-              visibilityHidden={hidden.includes(AclRowField.SPD)}
+              visibilityHidden={hiddenColumns.includes(AclRowField.SPD)}
               selected={isSelected(AclRowField.SPD)}
               onMouseDown={handleSpeedClick}
               scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}

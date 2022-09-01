@@ -5,7 +5,7 @@ import { EdstTooltip } from "../../utils/EdstTooltip";
 import { EdstButton } from "../../utils/EdstButton";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { gpdMapFeatureOptionsSelector, mapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";
+import { gpdMapFeatureOptionsSelector, MapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 export const GpdMapFeaturesMenu = () => {
@@ -15,15 +15,15 @@ export const GpdMapFeaturesMenu = () => {
 
   return (
     <>
-      {Object.values(mapFeatureOption).map(option => {
+      {Object.values(MapFeatureOption).map(option => {
         return (
           <OptionsBodyRow key={option}>
             <EdstTooltip
               style={{ flexGrow: 1 }}
-              onMouseDown={() => setCurrentOptions(prev => ({ ...prev, [option as mapFeatureOption]: !currentOptions[option as mapFeatureOption] }))}
+              onMouseDown={() => setCurrentOptions(prev => ({ ...prev, [option as MapFeatureOption]: !currentOptions[option as MapFeatureOption] }))}
             >
               <OptionsFlexCol>
-                <OptionSelectedIndicator selected={currentOptions[option as mapFeatureOption]} />
+                <OptionSelectedIndicator selected={currentOptions[option as MapFeatureOption]} />
                 {option}
               </OptionsFlexCol>
             </EdstTooltip>

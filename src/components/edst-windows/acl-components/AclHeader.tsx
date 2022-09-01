@@ -83,7 +83,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.HOLD_MENU}
           disabled={asel === null}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.HOLD_MENU, e.currentTarget))}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -95,7 +95,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           sharedUiEventHandlerArgs={EdstWindow.ACL_SORT_MENU}
           id="acl-sort-button"
           onMouseDown={e => {
-            dispatch(openMenuThunk(EdstWindow.ACL_SORT_MENU, e.currentTarget, true));
+            handleClick(e.currentTarget, EdstWindow.ACL_SORT_MENU);
           }}
           content="Sort..."
           title={Tooltips.sort}
@@ -106,7 +106,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
           onMouseDown={e => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
-            dispatch(openMenuThunk(EdstWindow.TOOLS_MENU, e.currentTarget));
+            handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
           }}
           content="Tools..."
         />
@@ -119,7 +119,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderPro
           sharedUiEventId="openAclTemplateMenu"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={e => dispatch(openMenuThunk(EdstWindow.TEMPLATE_MENU, e.currentTarget))}
+          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
           content="Template..."
           title={Tooltips.template}
         />

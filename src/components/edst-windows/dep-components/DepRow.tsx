@@ -31,10 +31,10 @@ import { ApiPreferentialArrivalRoute } from "../../../typeDefinitions/types/apiT
 import { formatRoute } from "../../../formatRoute";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
+import { depHiddenColumnsSelector } from "../../../redux/slices/depSlice";
 
 type DepRowProps = {
   entry: EdstEntry;
-  hidden: DepRowField[];
   index: number;
 };
 
@@ -81,12 +81,12 @@ const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) 
 /**
  * Single ACL row
  * @param entry
- * @param hidden array of DEP fields hidden by the user
  * @param index row index
  */
-export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
+export const DepRow = ({ entry, index }: DepRowProps) => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
+  const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
   const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(entry.aircraftId);
   const currentFixNames = routeFixes.map(fix => fix.name);
@@ -214,7 +214,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depType}>
             <AircraftTypeCol
-              visibilityHidden={hidden.includes(DepRowField.TYPE)}
+              visibilityHidden={hiddenColumns.includes(DepRowField.TYPE)}
               hover
               selected={isSelected(DepRowField.TYPE)}
               onMouseDown={e => handleClick(e.currentTarget, DepRowField.TYPE, null)}
@@ -235,7 +235,7 @@ export const DepRow = ({ entry, hidden, index }: DepRowProps) => {
           </EdstTooltip>
           <EdstTooltip title={Tooltips.depCode}>
             <CodeCol
-              visibilityHidden={hidden.includes(DepRowField.CODE)}
+              visibilityHidden={hiddenColumns.includes(DepRowField.CODE)}
               hover
               selected={isSelected(DepRowField.CODE)}
               onMouseDown={e => handleClick(e.currentTarget, DepRowField.CODE, null)}

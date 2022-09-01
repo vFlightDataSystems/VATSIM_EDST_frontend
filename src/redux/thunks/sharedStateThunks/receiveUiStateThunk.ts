@@ -1,18 +1,18 @@
 import { SharedUiState } from "../../../typeDefinitions/types/sharedStateTypes/sharedUiState";
 import { RootThunkAction } from "../../store";
-import { receiveAclStateThunk } from "./receiveAclStateThunk";
-import { receiveDepStateThunk } from "./receiveDepStateThunk";
-import { receiveGpdStateThunk } from "./receiveGpdStateThunk";
-import { receivePlansDisplayStateThunk } from "./receivePlansDisplayStateThunk";
 import { closeAllWindows, openWindow, setAsel } from "../../slices/appSlice";
+import { setAclState } from "../../slices/aclSlice";
+import { setDepState } from "../../slices/depSlice";
+import { setGpdState } from "../../slices/gpdSlice";
+import { setPlanState } from "../../slices/planSlice";
 
 export function receiveUiStateThunk(uiState: SharedUiState): RootThunkAction {
   return dispatch => {
     dispatch(closeAllWindows());
-    dispatch(receiveAclStateThunk(uiState.acl));
-    dispatch(receiveDepStateThunk(uiState.dep));
-    dispatch(receiveGpdStateThunk());
-    dispatch(receivePlansDisplayStateThunk(uiState.plansDisplay));
+    dispatch(setAclState(uiState.acl));
+    dispatch(setDepState(uiState.dep));
+    dispatch(setGpdState(uiState.gpd));
+    dispatch(setPlanState(uiState.plansDisplay));
     dispatch(setAsel(uiState.asel, null, false));
     uiState.openWindows.forEach(edstWindow => {
       dispatch(openWindow(edstWindow));

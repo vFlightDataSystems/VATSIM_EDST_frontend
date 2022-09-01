@@ -41,7 +41,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderPro
 
   const handleClick = useCallback(
     (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element, true));
+      dispatch(openMenuThunk(edstWindow, element));
     },
     [dispatch]
   );
