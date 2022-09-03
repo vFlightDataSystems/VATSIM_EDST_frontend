@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -106,16 +106,10 @@ export const AltimeterWindow = () => {
         {altimeterAirports.length > 0 && (
           <FloatingWindowBodyDiv>
             {altimeterAirports.map(airport => (
-              <>
-                <AltimeterRow
-                  key={`altim-${airport}`}
-                  airport={airport}
-                  selected={selected === airport}
-                  handleMouseDown={event => handleMouseDown(event, airport)}
-                />
+              <Fragment key={airport}>
+                <AltimeterRow airport={airport} selected={selected === airport} handleMouseDown={event => handleMouseDown(event, airport)} />
                 {selected && selectedPos && (
                   <FloatingWindowOptions
-                    key={`delete-altim-${airport}`}
                     pos={{
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
@@ -128,7 +122,7 @@ export const AltimeterWindow = () => {
                     }}
                   />
                 )}
-              </>
+              </Fragment>
             ))}
           </FloatingWindowBodyDiv>
         )}

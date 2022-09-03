@@ -59,6 +59,7 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
+    "react/display-name": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "prefer-destructuring": "off"
   }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -29,7 +29,12 @@ type MetarRowProps = {
   handleMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
 };
 const MetarRow = ({ airport, selected, handleMouseDown }: MetarRowProps) => {
+  const dispatch = useRootDispatch();
   const airportMetar = useMetar(airport);
+
+  if (!airportMetar) {
+    dispatch(delMetar(airport));
+  }
 
   return !airportMetar ? null : (
     <span style={{ margin: "6px 0" }}>
@@ -85,16 +90,10 @@ export const MetarWindow = () => {
         {metarAirports.length > 0 && (
           <FloatingWindowBodyDiv>
             {metarAirports.map(airport => (
-              <>
-                <MetarRow
-                  key={`metar-${airport}`}
-                  airport={airport}
-                  selected={selected === airport}
-                  handleMouseDown={event => handleMouseDown(event, airport)}
-                />
+              <Fragment key={airport}>
+                <MetarRow airport={airport} selected={selected === airport} handleMouseDown={event => handleMouseDown(event, airport)} />
                 {selected === airport && selectedPos && (
                   <FloatingWindowOptions
-                    key={`delete-metar-${airport}`}
                     pos={{
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
@@ -107,7 +106,7 @@ export const MetarWindow = () => {
                     }}
                   />
                 )}
-              </>
+              </Fragment>
             ))}
           </FloatingWindowBodyDiv>
         )}

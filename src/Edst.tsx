@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 
 import { useEventListener, useInterval } from "usehooks-ts";
 import { EdstHeader } from "./components/EdstHeader";
@@ -47,8 +47,8 @@ const Edst = () => {
   const aselEntry = useRootSelector(aselEntrySelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
-  const [mcaInputRef, setMcaInputRef] = useState<React.RefObject<HTMLTextAreaElement> | null>(null);
-  const bodyRef = React.useRef<HTMLDivElement>(null);
+  const mcaInputRef = useRef<HTMLTextAreaElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   useInterval(() => {
     fetchAllAircraft().then(aircraftList => {
@@ -113,7 +113,7 @@ const Edst = () => {
         {windows[EdstWindow.METAR].open && <MetarWindow />}
         {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
         {windows[EdstWindow.GI].open && <GIWindow />}
-        {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea setMcaInputRef={setMcaInputRef} />}
+        {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea ref={mcaInputRef} />}
         {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
       </EdstBodyDiv>
     </EdstDiv>

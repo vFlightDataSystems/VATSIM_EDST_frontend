@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import styled from "styled-components";
 import _ from "lodash";
 import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
@@ -39,6 +39,7 @@ import { useHubActions } from "../../hooks/useHubActions";
 import { useHubConnector } from "../../hooks/useHubConnector";
 import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
 import { fetchFormatRoute, fetchRouteFixes } from "../../api/api";
+import { useOnUnmount } from "../../hooks/useOnUnmount";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
@@ -77,10 +78,6 @@ const ResponseFeedbackRowDiv = styled.div`
   flex-grow: 1;
 `;
 
-type MessageComposeAreaProps = {
-  setMcaInputRef: (ref: React.RefObject<HTMLTextAreaElement> | null) => void;
-};
-
 const AcceptCheckmarkSpan = styled.span`
   color: #00ad00;
   height: 1em;
@@ -99,7 +96,7 @@ const RejectCrossSpan = styled.span`
   }
 `;
 
-export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) => {
+export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputRef) => {
   const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
@@ -108,12 +105,13 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const aircraftTracks = useRootSelector(aircraftTracksSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const [mcaInputValue, setMcaInputValue] = useState(mcaCommandString);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA, "mousedown");
   const hubActions = useHubActions();
   const { connectHub, disconnectHub } = useHubConnector();
+
+  useOnUnmount(() => dispatch(setMcaCommandString(mcaInputValue)));
 
   const rows = 3;
 
@@ -128,14 +126,6 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   const reject = (message: string) => {
     dispatch(setMcaRejectMessage(message));
   };
-
-  useEffect(() => {
-    setMcaInputRef(inputRef);
-    return () => {
-      dispatch(setMcaCommandString(mcaInputValue));
-      setMcaInputRef(null);
-    };
-  }, [dispatch, mcaInputValue, setMcaInputRef]);
 
   const toggleVci = (fid: string) => {
     const entry: EdstEntry | undefined = Object.values(entries)?.find(
@@ -215,6 +205,54 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
     }
   };
 
+  const parseUU = (args: string[]) => {
+    switch (args.length) {
+      case 0:
+        dispatch(openWindowThunk(EdstWindow.ACL));
+        acceptDposKeyBD();
+        break;
+      case 1:
+        switch (args[0]) {
+          case "C":
+            dispatch(aclCleanup);
+            break;
+          case "D":
+            dispatch(openWindowThunk(EdstWindow.DEP));
+            break;
+          case "P":
+            dispatch(openWindowThunk(EdstWindow.ACL));
+            dispatch(setAclManualPosting(!manualPosting));
+            break;
+          case "G":
+            dispatch(openWindowThunk(EdstWindow.GPD));
+            break;
+          case "R":
+            FULLSCREEN_WINDOWS.forEach(window => dispatch(setIsFullscreen({ window, value: true })));
+            dispatch(setWindowPosition({ window: EdstWindow.MESSAGE_COMPOSE_AREA, pos: defaultWindowPositions[EdstWindow.MESSAGE_COMPOSE_AREA]! }));
+            break;
+          case "X":
+            dispatch(closeAllWindows());
+            break;
+          default:
+            dispatch(addAclEntryByFid(args[0]));
+            break;
+        }
+        acceptDposKeyBD();
+        break;
+      case 2:
+        if (args[0] === "H") {
+          toggleHighlightEntry(args[1]);
+          acceptDposKeyBD();
+        } else {
+          dispatch(setMcaRejectMessage(`REJECT\n${mcaInputValue}`));
+        }
+        break;
+      default:
+        // TODO: give error msg
+        dispatch(setMcaRejectMessage(`REJECT\n${mcaInputValue}`));
+    }
+  };
+
   const parseCommand = () => {
     // TODO: rename command variable
     const [command, ...args] = mcaInputValue
@@ -243,53 +281,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
             .catch(() => reject("SIGN OUT"));
           break;
         case "UU":
-          switch (args.length) {
-            case 0:
-              dispatch(openWindowThunk(EdstWindow.ACL));
-              acceptDposKeyBD();
-              break;
-            case 1:
-              switch (args[0]) {
-                case "C":
-                  dispatch(aclCleanup);
-                  break;
-                case "D":
-                  dispatch(openWindowThunk(EdstWindow.DEP));
-                  break;
-                case "P":
-                  dispatch(openWindowThunk(EdstWindow.ACL));
-                  dispatch(setAclManualPosting(!manualPosting));
-                  break;
-                case "G":
-                  dispatch(openWindowThunk(EdstWindow.GPD));
-                  break;
-                case "R":
-                  FULLSCREEN_WINDOWS.forEach(window => dispatch(setIsFullscreen({ window, value: true })));
-                  dispatch(
-                    setWindowPosition({ window: EdstWindow.MESSAGE_COMPOSE_AREA, pos: defaultWindowPositions[EdstWindow.MESSAGE_COMPOSE_AREA]! })
-                  );
-                  break;
-                case "X":
-                  dispatch(closeAllWindows());
-                  break;
-                default:
-                  dispatch(addAclEntryByFid(args[0]));
-                  break;
-              }
-              acceptDposKeyBD();
-              break;
-            case 2:
-              if (args[0] === "H") {
-                toggleHighlightEntry(args[1]);
-                acceptDposKeyBD();
-              } else {
-                dispatch(setMcaRejectMessage(`REJECT\n${mcaInputValue}`));
-              }
-              break;
-            default:
-              // TODO: give error msg
-              dispatch(setMcaRejectMessage(`REJECT\n${mcaInputValue}`));
-          }
+          parseUU(args);
           break; // end case UU
         case "QU": // cleared direct to fix: QU <fix> <fid>
           parseQU(args).then();
@@ -306,8 +298,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
           if (args.length === 1) {
-            flightplanReadout(args[0]);
-            accept(`READOUT\n${mcaInputValue}`);
+            flightplanReadout(args[0]).then(() => accept(`READOUT\n${mcaInputValue}`));
           } else {
             setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaInputValue}`);
           }
@@ -339,8 +330,8 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<any>) => {
-    if (event.shiftKey && inputRef.current) {
-      inputRef.current.blur();
+    if (event.shiftKey) {
+      (inputRef as React.RefObject<HTMLTextAreaElement>)?.current?.blur();
     }
     if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
       dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
@@ -383,7 +374,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
         <MessageComposeInputAreaDiv>
           <textarea
             ref={inputRef}
-            tabIndex={document.activeElement === inputRef.current ? -1 : undefined}
+            tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
             value={mcaInputValue}
             onChange={handleInputChange}
             onKeyDownCapture={handleKeyDown}
@@ -400,4 +391,4 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
       </MessageComposeAreaDiv>
     )
   );
-};
+});
