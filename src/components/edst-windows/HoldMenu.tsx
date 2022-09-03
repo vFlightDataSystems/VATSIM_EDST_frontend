@@ -123,7 +123,7 @@ export const HoldMenu = () => {
       setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
       setHoldRouteFixes(holdRouteFixes ?? null);
     }
-  }, []);
+  }, [dispatch, entry, routeFixes, track]);
 
   const clearedHold = () => {
     if (entry) {

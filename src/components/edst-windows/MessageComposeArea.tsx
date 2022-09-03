@@ -135,7 +135,7 @@ export const MessageComposeArea = ({ setMcaInputRef }: MessageComposeAreaProps) 
       dispatch(setMcaCommandString(mcaInputValue));
       setMcaInputRef(null);
     };
-  }, []);
+  }, [dispatch, mcaInputValue, setMcaInputRef]);
 
   const toggleVci = (fid: string) => {
     const entry: EdstEntry | undefined = Object.values(entries)?.find(
