@@ -22,7 +22,7 @@ export const weatherApi = createApi({
         return { url: `metar/airport/${airport}` };
       },
       transformResponse: (response: string[], meta, airport) => {
-        if (response) {
+        if (response?.[0]) {
           if (airport.length === 3) {
             airport = `K${airport}`;
           }
@@ -47,7 +47,7 @@ export const weatherApi = createApi({
         return { url: `metar/airport/${airport}` };
       },
       transformResponse: (response: string[], meta, airport) => {
-        if (response) {
+        if (response?.[0]) {
           if (airport.length === 3) {
             airport = `K${airport}`;
           }
