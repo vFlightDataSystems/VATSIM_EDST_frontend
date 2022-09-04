@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import _ from "lodash";
 import { RootState } from "../store";
 import { AclSortData } from "../../typeDefinitions/types/aclSortData";
 import { AclSortOption } from "../../typeDefinitions/enums/acl/aclSortOption";
@@ -27,7 +26,7 @@ const aclSlice = createSlice({
   initialState,
   reducers: {
     setAclState(state, action: PayloadAction<AclState>) {
-      _.assign(state, action.payload);
+      return action.payload;
     },
     setAclSort(state, action: PayloadAction<AclSortData>) {
       state.sortData = action.payload;

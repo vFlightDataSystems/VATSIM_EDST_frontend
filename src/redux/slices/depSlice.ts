@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import _ from "lodash";
 import { RootState } from "../store";
 import { DepSortOption } from "../../typeDefinitions/enums/dep/depSortOption";
 import sharedSocket from "../../sharedState/socket";
@@ -22,7 +21,7 @@ const depSlice = createSlice({
   initialState,
   reducers: {
     setDepState(state, action: PayloadAction<DepState>) {
-      _.assign(state, action.payload);
+      return action.payload;
     },
     setDepSort(state, action: PayloadAction<DepSortOption>) {
       state.selectedSortOption = action.payload;

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import _ from "lodash";
 import { RootState } from "../store";
 import sharedSocket from "../../sharedState/socket";
 
@@ -78,7 +77,7 @@ const gpdSlice = createSlice({
   initialState,
   reducers: {
     setGpdState(state, action: PayloadAction<GpdState>) {
-      _.assign(state, action.payload);
+      return action.payload;
     },
     addGpdPlanData(state, action: PayloadAction<Record<string, unknown>>) {
       state.planData.push(action.payload);
