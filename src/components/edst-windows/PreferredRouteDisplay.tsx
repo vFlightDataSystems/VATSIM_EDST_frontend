@@ -98,7 +98,7 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
           />
         </Col>
       </Row>
-      <PrefrouteContainer maxHeight={100}>
+      <PrefrouteContainer maxHeight="6em">
         {eligibleOnly && eligibleRoutes.length === 0 && <PrefrouteRow>No Eligible APRs: Select ALL to display Ineligible APRs</PrefrouteRow>}
         {Object.entries(routes).map(([i, r]: [string, EdstPreferentialRoute]) => {
           return (

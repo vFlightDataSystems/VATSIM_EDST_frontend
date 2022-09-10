@@ -82,7 +82,7 @@ export const GIWindow = () => {
         </FloatingWindowHeaderDiv>
         {Object.values(airmetMap).length > 0 && (
           <FloatingWindowBodyDiv>
-            <ScrollContainer maxHeight={600}>
+            <ScrollContainer maxHeight="600px">
               {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
                 <span style={{ margin: "6px 0" }} key={airmetId}>
                   <FloatingWindowRow selected={selectedOption === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>

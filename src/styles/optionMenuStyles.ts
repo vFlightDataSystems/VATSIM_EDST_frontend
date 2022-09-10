@@ -224,13 +224,13 @@ export const EdstTextArea = styled.textarea`
     outline: 1px solid #ffffff;
   }
 `;
-export const ScrollContainer = styled.div<{ maxHeight?: number }>`
+export const ScrollContainer = styled.div<{ maxHeight?: string }>`
   height: auto;
   display: block;
   overflow: scroll;
   scrollbar-width: none;
 
-  max-height: ${props => (props.maxHeight ? `${props.maxHeight}px` : "auto")};
+  max-height: ${props => props.maxHeight ?? "auto"};
 
   &::-webkit-scrollbar {
     display: none;

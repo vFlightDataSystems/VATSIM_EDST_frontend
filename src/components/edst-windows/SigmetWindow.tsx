@@ -93,7 +93,7 @@ export const SigmetWindow = () => {
         </FloatingWindowHeaderDiv>
         {Object.values(sigmetList).length > 0 && (
           <FloatingWindowBodyDiv>
-            <ScrollContainer maxHeight={600}>
+            <ScrollContainer maxHeight="600px">
               {Object.entries(sigmetList).map(
                 ([sigmetId, sigmetEntry]) =>
                   (!sigmetEntry.suppressed || viewSuppressed) && (
