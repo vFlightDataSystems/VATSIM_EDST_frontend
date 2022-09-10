@@ -113,8 +113,6 @@ export const RouteMenu = () => {
 
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
-
-  const [displayRawRoute, setDisplayRawRoute] = useState(false);
   const [route, setRoute] = useState<string>(
     removeDestFromRouteString(asel.window === EdstWindow.DEP ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
   );
@@ -129,10 +127,7 @@ export const RouteMenu = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU, "mouseup");
 
   useEffect(() => {
-    async function updateFrd() {
-      setFrd(await hubActions.generateFrd(aircraftTrack.location));
-    }
-    updateFrd().then();
+    hubActions.generateFrd(aircraftTrack.location).then(frd => setFrd(frd));
   }, [aircraftTrack.location, entry.aircraftId, hubActions]);
 
   const { appendOplus, appendStar } = useMemo(() => append, [append]);
@@ -326,11 +321,7 @@ export const RouteMenu = () => {
                   </EdstTooltip>
                 )}
                 <EdstTooltip title={Tooltips.routeMenuRouteInput} style={{ display: "flex", justifyContent: "left", flexGrow: "1" }}>
-                  <Input
-                    value={displayRawRoute ? entry.route : routeInput}
-                    onChange={event => !displayRawRoute && setRouteInput(event.target.value)}
-                    onKeyDown={event => !displayRawRoute && handleInputKeyDown(event)}
-                  />
+                  <Input value={routeInput} onChange={event => setRouteInput(event.target.value)} onKeyDown={event => handleInputKeyDown(event)} />
                 </EdstTooltip>
               </InputContainer>
             </OptionsBodyCol>

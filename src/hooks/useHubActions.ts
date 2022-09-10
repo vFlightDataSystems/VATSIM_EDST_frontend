@@ -11,7 +11,7 @@ export const useHubActions = () => {
   const dispatch = useRootDispatch();
   const hubConnection = useHubConnection();
 
-  const generateFrd = (location: ApiLocation) =>
+  const generateFrd = async (location: ApiLocation) =>
     hubConnection?.invoke<string>("generateFrd", location).catch(error => {
       console.log(error);
       return null;
