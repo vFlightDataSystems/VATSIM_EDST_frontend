@@ -18,5 +18,5 @@ export type SharedStateServerToClientEvents = {
   receiveCloseWindow: (window: EdstWindow) => void;
   receiveAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   receiveUiState: (value: SharedUiState) => void;
-  receiveUiEvent: (eventId: SharedUiEvent) => void;
+  receiveUiEvent: (eventId: SharedUiEvent, arg?: any) => void;
 };

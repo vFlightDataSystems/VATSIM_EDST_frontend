@@ -7,6 +7,8 @@ import { ApiPreferentialArrivalRoute } from "../../typeDefinitions/types/apiType
 import { ApiPreferentialDepartureRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialDepartureArrivalRoute";
 import { EdstPreferentialRoute } from "../../typeDefinitions/types/edstPreferentialRoute";
+import { useSharedUiListener } from "../../hooks/useSharedUiListener";
+import socket from "../../sharedState/socket";
 
 const PrefrouteContainer = styled(ScrollContainer)`
   border: 2px solid #414141;
@@ -65,6 +67,8 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
   const routes = computeRouteList(par, pdr, pdar);
   const eligibleRoutes = routes.filter(r => r.eligible);
 
+  useSharedUiListener("routeMenuSetEligibleOnly", setEligibleOnly);
+
   return (
     <div>
       <Row bottomBorder />
@@ -76,14 +80,20 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
             selected={eligibleOnly}
             margin="0 6px"
             width="85px"
-            onMouseDown={() => setEligibleOnly(true)}
+            onMouseDown={() => {
+              socket.dispatchUiEvent("routeMenuSetEligibleOnly", true);
+              setEligibleOnly(true);
+            }}
             title={Tooltips.routeMenuPreferredEligible}
           />
           <EdstButton
             content="ALL"
             selected={!eligibleOnly}
             width="75px"
-            onMouseDown={() => setEligibleOnly(false)}
+            onMouseDown={() => {
+              socket.dispatchUiEvent("routeMenuSetEligibleOnly", false);
+              setEligibleOnly(false);
+            }}
             title={Tooltips.routeMenuPreferredAll}
           />
         </Col>

@@ -17,5 +17,5 @@ export type SharedStateClientToServerEvents = {
   openWindow: (window: EdstWindow) => void;
   closeWindow: (window: EdstWindow) => void;
   clearPlanQueue: () => void;
-  dispatchUiEvent: (eventId: SharedUiEvent) => void;
+  dispatchUiEvent: (eventId: SharedUiEvent, arg?: any) => void;
 };

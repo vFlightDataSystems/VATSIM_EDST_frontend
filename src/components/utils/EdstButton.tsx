@@ -116,7 +116,7 @@ export function EdstWindowHeaderButton<T>({
 }: PropsWithChildren<EdstButtonProps<T>>) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useSharedUiListenerWithElement<any>(sharedUiEventId, ref.current, sharedUiEventHandler, sharedUiEventHandlerArgs);
+  useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler, sharedUiEventHandlerArgs);
   return (
     <EdstTooltip title={props.title}>
       <EdstOuterHeaderButton

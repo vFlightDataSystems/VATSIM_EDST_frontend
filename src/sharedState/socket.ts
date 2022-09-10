@@ -91,9 +91,9 @@ class SharedStateSocket {
     }
   }
 
-  public dispatchUiEvent(eventId: SharedUiEvent) {
+  public dispatchUiEvent(eventId: SharedUiEvent, arg?: any) {
     if (this.socket?.connected) {
-      this.socket.emit("dispatchUiEvent", eventId);
+      this.socket.emit("dispatchUiEvent", eventId, arg);
     }
   }
 

@@ -14,7 +14,6 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useSharedUiListener } from "../../hooks/useSharedUiListener";
-import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
 import socket from "../../sharedState/socket";
 
 const PlanOptionsDiv = styled(OptionsMenu)`
@@ -37,18 +36,17 @@ export const PlanOptions = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
 
   const openMenu = useCallback(
-    (menu: EdstWindow, eventId: SharedUiEvent, triggerSharedState = true) => {
+    (menu: EdstWindow, triggerSharedState = true) => {
       dispatch(openMenuThunk(menu, ref.current, false, true));
       dispatch(closeWindow(EdstWindow.PLAN_OPTIONS, false));
-      if (eventId && triggerSharedState) {
-        socket.dispatchUiEvent(eventId);
+      if (triggerSharedState) {
+        socket.dispatchUiEvent("planOptionsOpenMenu", menu);
       }
     },
     [dispatch]
   );
 
-  useSharedUiListener("planOptionsOpenAltitude", openMenu, EdstWindow.ALTITUDE_MENU);
-  useSharedUiListener("planOptionsOpenRoute", openMenu, EdstWindow.ROUTE_MENU);
+  useSharedUiListener<EdstWindow>("planOptionsOpenMenu", openMenu);
 
   const onKeepClick = () => {
     dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { keep: true } }));
@@ -89,11 +87,7 @@ export const PlanOptions = () => {
             </OptionsBodyRow>
           )}
           <OptionsBodyRow>
-            <EdstTooltip
-              style={{ flexGrow: 1 }}
-              title={Tooltips.planOptionsRoute}
-              onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU, "planOptionsOpenRoute")}
-            >
+            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsRoute} onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU)}>
               <OptionsBodyCol hover>Route...</OptionsBodyCol>
             </EdstTooltip>
           </OptionsBodyRow>
@@ -102,7 +96,7 @@ export const PlanOptions = () => {
               style={{ flexGrow: 1 }}
               title={Tooltips.planOptionsPrevRoute}
               disabled={!!entry?.previousRoute}
-              onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU, "planOptionsOpenPrevRoute")}
+              onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU)}
             >
               <OptionsBodyCol hover>Previous Route</OptionsBodyCol>
             </EdstTooltip>

@@ -20,6 +20,9 @@ export type SharedUiEvent =
   | "openGpdTemplateMenu"
   | "openPlansDisplayPlanOptions"
   | "openPlansDisplayTemplateMenu"
-  | "planOptionsOpenAltitude"
-  | "planOptionsOpenRoute"
-  | "planOptionsOpenPrevRoute";
+  | "planOptionsOpenMenu"
+  // route menu button click
+  | "routeMenuSetTrialPlan"
+  | "routeMenuClickAppendStar"
+  | "routeMenuClickAppendOplus"
+  | "routeMenuSetEligibleOnly";

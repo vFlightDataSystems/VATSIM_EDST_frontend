@@ -34,6 +34,8 @@ import { fetchFormatRoute } from "../../api/api";
 import { usePar, usePdar, usePdr } from "../../api/prefrouteApi";
 import { useRouteFixes } from "../../api/aircraftApi";
 import { formatRoute } from "../../formatRoute";
+import { useSharedUiListener } from "../../hooks/useSharedUiListener";
+import socket from "../../sharedState/socket";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -97,6 +99,10 @@ const DctCol = styled(OptionsBodyCol)`
   margin: auto 12px;
 `;
 
+type Append = { appendOplus: boolean; appendStar: boolean };
+const toggleAppendStar = (prev: Append) => ({ appendStar: !prev.appendStar, appendOplus: false });
+const toggleAppendOplus = (prev: Append) => ({ appendStar: false, appendOplus: !prev.appendOplus });
+
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ROUTE_MENU));
@@ -130,7 +136,7 @@ export const RouteMenu = () => {
     hubActions.generateFrd(aircraftTrack.location).then(frd => setFrd(frd));
   }, [aircraftTrack.location, entry.aircraftId, hubActions]);
 
-  const { appendOplus, appendStar } = useMemo(() => append, [append]);
+  const { appendOplus, appendStar } = append;
 
   useEffect(() => {
     const dep = asel.window === EdstWindow.DEP;
@@ -250,6 +256,10 @@ export const RouteMenu = () => {
     }
   };
 
+  useSharedUiListener("routeMenuSetTrialPlan", setTrialPlan);
+  useSharedUiListener("routeMenuClickAppendStar", setAppend, toggleAppendStar);
+  useSharedUiListener("routeMenuClickAppendOplus", setAppend, toggleAppendOplus);
+
   return (
     pos && (
       <RouteMenuDiv
@@ -273,7 +283,10 @@ export const RouteMenu = () => {
               <EdstButton
                 content="Trial Plan"
                 selected={trialPlan}
-                onMouseDown={() => setTrialPlan(true)}
+                onMouseDown={() => {
+                  socket.dispatchUiEvent("routeMenuSetTrialPlan", true);
+                  setTrialPlan(true);
+                }}
                 title={Tooltips.routeMenuPlanData}
                 disabled={asel.window === EdstWindow.DEP}
               />
@@ -303,8 +316,15 @@ export const RouteMenu = () => {
                   <DownlinkSymbol />
                 </>
               )}
-
-              <EdstButton content="Amend" selected={!trialPlan} onMouseDown={() => setTrialPlan(false)} title={Tooltips.routeMenuAmend} />
+              <EdstButton
+                content="Amend"
+                selected={!trialPlan}
+                onMouseDown={() => {
+                  socket.dispatchUiEvent("routeMenuSetTrialPlan", false);
+                  setTrialPlan(false);
+                }}
+                title={Tooltips.routeMenuAmend}
+              />
             </OptionsBodyCol>
           </RouteMenuRow>
           <RouteMenuRow>
@@ -335,13 +355,25 @@ export const RouteMenu = () => {
             </EdstTooltip>
           </RouteMenuRow>
           <RouteMenuRow bottomBorder>
-            <EdstTooltip title={Tooltips.routeMenuAppendStar} onMouseDown={() => setAppend({ appendStar: !appendStar, appendOplus: false })}>
+            <EdstTooltip
+              title={Tooltips.routeMenuAppendStar}
+              onMouseDown={() => {
+                socket.dispatchUiEvent("routeMenuClickAppendStar");
+                setAppend(toggleAppendStar);
+              }}
+            >
               <ButtonCol hover>
                 <EdstRouteButton12x12 disabled selected={appendStar} />
                 Append *
               </ButtonCol>
             </EdstTooltip>
-            <EdstTooltip title={Tooltips.routeMenuAppendOplus} onMouseDown={() => setAppend({ appendOplus: !appendOplus, appendStar: false })}>
+            <EdstTooltip
+              title={Tooltips.routeMenuAppendOplus}
+              onMouseDown={() => {
+                socket.dispatchUiEvent("routeMenuClickAppendOplus");
+                setAppend(toggleAppendOplus);
+              }}
+            >
               <ButtonCol hover>
                 <EdstRouteButton12x12 disabled selected={appendOplus} />
                 Append<span>&nbsp;{OPLUS_SYMBOL}</span>
@@ -382,7 +414,7 @@ export const RouteMenu = () => {
             <OptionsBodyCol>
               <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
               <EdstButton
-                disabled={entry?.previousRoute === undefined}
+                disabled={entry.previousRoute === null}
                 margin="0 4px 0 0"
                 content="Previous Route"
                 onMouseDown={() => {
