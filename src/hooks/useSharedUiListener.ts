@@ -9,7 +9,7 @@ export function useSharedUiListener<T = any>(
 ) {
   useEffect(() => {
     const eventHandler = (evId: SharedUiEvent) => {
-      if (evId === eventId && handler && arg) {
+      if (evId === eventId && handler && arg !== undefined) {
         handler(arg, eventId, false);
       }
     };
@@ -32,7 +32,7 @@ export function useSharedUiListenerWithElement<T = any>(
 ) {
   useEffect(() => {
     const eventHandler = (evId: SharedUiEvent) => {
-      if (evId === eventId && element && handler && args) {
+      if (evId === eventId && element && handler && args !== undefined) {
         handler(element, args);
       }
     };
