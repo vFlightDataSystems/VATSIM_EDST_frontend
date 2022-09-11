@@ -1,10 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position } from "@turf/turf";
-import { RootState, RootThunkAction } from "../store";
+import { RootState } from "../store";
 
 type WeatherState = {
-  altimeterAirports: string[];
-  metarAirports: string[];
   sigmetMap: Record<string, SigmetEntry>;
   airmetMap: Record<string, AirmetEntry>;
   viewSuppressedSigmet: boolean;
@@ -27,40 +25,21 @@ type SigmetEntry = ApiAirSigmet & {
 
 type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Polygon | MultiPolygon> };
 
-const initialState: WeatherState = { altimeterAirports: [], metarAirports: [], sigmetMap: {}, airmetMap: {}, viewSuppressedSigmet: true };
+const initialState: WeatherState = {
+  sigmetMap: {},
+  airmetMap: {},
+  viewSuppressedSigmet: true
+};
 
 const weatherSlice = createSlice({
   name: "weather",
   initialState,
   reducers: {
-    addMetar(state, action: PayloadAction<string>) {
-      if (!state.metarAirports.includes(action.payload)) {
-        state.metarAirports.push(action.payload);
-      }
-    },
-    delMetar(state, action: PayloadAction<string>) {
-      const index = state.metarAirports.indexOf(action.payload);
-      if (index > -1) {
-        state.metarAirports.splice(index, 1);
-      }
-    },
-    addAltimeter(state, action: PayloadAction<string>) {
-      if (!state.altimeterAirports.includes(action.payload)) {
-        state.altimeterAirports.push(action.payload);
-      }
-    },
-    delAltimeter(state, action: PayloadAction<string>) {
-      const index = state.altimeterAirports.indexOf(action.payload);
-      if (index > -1) {
-        state.altimeterAirports.splice(index, 1);
-      }
-    },
     addSigmets(state, action: PayloadAction<ApiAirSigmet[]>) {
       action.payload.forEach(s => {
         const polygons = lineToPolygon(lineString(s.area));
         const observationTime = s.text.match(/\d{6}/)?.[0];
         if (observationTime) {
-          // eslint-disable-next-line prefer-destructuring
           s.text = s.text.slice(s.text.lastIndexOf(observationTime) + 2).split(/\n\s*\n/)[0];
           if (/\sSIG\w?\s/.test(s.text)) {
             state.sigmetMap[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
@@ -92,46 +71,9 @@ const weatherSlice = createSlice({
   }
 });
 
-export function toggleAltimeter(airports: string[]): RootThunkAction {
-  return (dispatch, getState) => {
-    const { altimeterAirports } = getState().weather;
-    airports.forEach(airport => {
-      if (altimeterAirports.includes(airport)) {
-        dispatch(delAltimeter(airport));
-      } else {
-        dispatch(addAltimeter(airport));
-      }
-    });
-  };
-}
-
-export function toggleMetar(airports: string[]): RootThunkAction {
-  return (dispatch, getState) => {
-    const { metarAirports } = getState().weather;
-    airports.forEach(airport => {
-      if (metarAirports.includes(airport)) {
-        dispatch(delMetar(airport));
-      } else {
-        dispatch(addMetar(airport));
-      }
-    });
-  };
-}
-
-export const {
-  addMetar,
-  delMetar,
-  addAltimeter,
-  delAltimeter,
-  addSigmets,
-  setSigmetSuppressed,
-  setSigmetAcknowledged,
-  setViewSuppressedSigmet
-} = weatherSlice.actions;
+export const { addSigmets, setSigmetSuppressed, setSigmetAcknowledged, setViewSuppressedSigmet } = weatherSlice.actions;
 export default weatherSlice.reducer;
 
-export const altimeterAirportsSelector = (state: RootState) => state.weather.altimeterAirports;
-export const metarAirportsSelector = (state: RootState) => state.weather.metarAirports;
 export const sigmetSelector = (state: RootState) => state.weather.sigmetMap;
 export const airmetSelector = (state: RootState) => state.weather.airmetMap;
 export const viewSuppressedSigmetSelector = (state: RootState) => state.weather.viewSuppressedSigmet;

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
+import { delMetar, metarAirportsSelector } from "../../redux/slices/metarSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
 import {
   FloatingWindowBodyDiv,

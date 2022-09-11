@@ -37,9 +37,10 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { useHubConnector } from "../../hooks/useHubConnector";
-import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
 import { fetchFormatRoute, fetchRouteFixes } from "../../api/api";
 import { useOnUnmount } from "../../hooks/useOnUnmount";
+import { toggleAltimeter } from "../../redux/slices/altimeterSlice";
+import { toggleMetar } from "../../redux/slices/metarSlice";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
