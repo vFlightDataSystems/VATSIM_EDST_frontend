@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -30,16 +30,18 @@ type MetarRowProps = {
 };
 const MetarRow = ({ airport, selected, handleMouseDown }: MetarRowProps) => {
   const dispatch = useRootDispatch();
-  const airportMetar = useMetar(airport);
+  const { data: airportMetar, isFetching } = useMetar(airport);
 
-  if (!airportMetar) {
-    dispatch(delMetar(airport));
-  }
+  useEffect(() => {
+    if (!airportMetar && !isFetching) {
+      dispatch(delMetar(airport));
+    }
+  }, [isFetching, airportMetar, dispatch, airport]);
 
   return !airportMetar ? null : (
     <span style={{ margin: "6px 0" }}>
       <FloatingWindowRow selected={selected} onMouseDown={handleMouseDown}>
-        {airportMetar}
+        {airportMetar ?? "..."}
       </FloatingWindowRow>
     </span>
   );

@@ -67,11 +67,9 @@ export const weatherApi = createApi({
 const { useGetMetarEntryQuery, useGetAltimeterEntryQuery } = weatherApi;
 
 export const useAltimeter = (airport: string) => {
-  const { data } = useGetAltimeterEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
-  return data ?? null;
+  return useGetAltimeterEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
 };
 
 export const useMetar = (airport: string) => {
-  const { data } = useGetMetarEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
-  return data ?? null;
+  return useGetMetarEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
 };

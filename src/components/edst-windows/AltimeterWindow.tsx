@@ -36,7 +36,7 @@ type AltimeterRowProps = {
   handleMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
 };
 const AltimeterRow = ({ airport, selected, handleMouseDown }: AltimeterRowProps) => {
-  const airportAltimeterEntry = useAltimeter(airport);
+  const { data: airportAltimeterEntry } = useAltimeter(airport);
 
   const now = new Date();
   const utcMinutesNow = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -108,7 +108,7 @@ export const AltimeterWindow = () => {
             {altimeterAirports.map(airport => (
               <Fragment key={airport}>
                 <AltimeterRow airport={airport} selected={selected === airport} handleMouseDown={event => handleMouseDown(event, airport)} />
-                {selected && selectedPos && (
+                {selected === airport && selectedPos && (
                   <FloatingWindowOptions
                     pos={{
                       x: selectedPos.x + selectedPos.w!,
