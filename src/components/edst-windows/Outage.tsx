@@ -6,7 +6,7 @@ import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
   FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivRect,
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
@@ -37,11 +37,11 @@ export const Outage = () => {
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+          <FloatingWindowHeaderColDivRect>M</FloatingWindowHeaderColDivRect>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>OUTAGE</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.OUTAGE))}>
+          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.OUTAGE))}>
             <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDiv20>
+          </FloatingWindowHeaderColDivRect>
         </FloatingWindowHeaderDiv>
         <FloatingWindowBodyDiv>OUTAGE TEST</FloatingWindowBodyDiv>
       </OutageDiv>

@@ -5,14 +5,13 @@ import { eramFontFamily, NoSelectDiv } from "../styles/styles";
 
 const TimeStyle = styled(NoSelectDiv)`
   font-family: ${eramFontFamily};
-  display: inline-flex;
-  justify-content: center;
-  height: 30px;
-  line-height: 28px;
-  width: 90px;
-  margin: 0 1px;
   color: ${edstFontGrey};
+  text-align: center;
+  align-items: center;
+  width: 90px;
+  margin: 1px;
   font-size: 20px;
+  line-height: 20px;
 `;
 
 export function Time() {

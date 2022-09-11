@@ -9,7 +9,7 @@ import {
   FloatingWindowDiv,
   FloatingWindowHeaderBlock8x2,
   FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivRect,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
 } from "../../styles/floatingWindowStyles";
@@ -81,11 +81,11 @@ export const MetarWindow = () => {
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+          <FloatingWindowHeaderColDivRect>M</FloatingWindowHeaderColDivRect>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>WX</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.METAR))}>
+          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.METAR))}>
             <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDiv20>
+          </FloatingWindowHeaderColDivRect>
         </FloatingWindowHeaderDiv>
         {metarAirports.length > 0 && (
           <FloatingWindowBodyDiv>

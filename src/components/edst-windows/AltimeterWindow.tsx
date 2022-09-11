@@ -8,7 +8,7 @@ import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
   FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivRect,
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
@@ -97,11 +97,11 @@ export const AltimeterWindow = () => {
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+          <FloatingWindowHeaderColDivRect>M</FloatingWindowHeaderColDivRect>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>ALTIM SET</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTIMETER))}>
+          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTIMETER))}>
             <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDiv20>
+          </FloatingWindowHeaderColDivRect>
         </FloatingWindowHeaderDiv>
         {altimeterAirports.length > 0 && (
           <FloatingWindowBodyDiv>

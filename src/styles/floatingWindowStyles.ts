@@ -49,16 +49,19 @@ export const FloatingWindowBodyDiv = styled.div`
 `;
 
 export const FloatingWindowHeaderDiv = styled.div`
+  height: 1em;
+  line-height: 1em;
   background-color: ${floatingWindowTitleBackgroundColor};
   justify-content: space-between;
   display: flex;
 `;
 
 const FloatingWindowHeaderColDiv = styled.div`
-  height: 1em;
+  height: auto;
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   background-color: ${floatingWindowTitleBackgroundColor};
   border: 1px solid #adadad;
 
@@ -69,8 +72,8 @@ const FloatingWindowHeaderColDiv = styled.div`
 export const FloatingWindowHeaderColDiv16ch = styled(FloatingWindowHeaderColDiv)`
   width: 1.6ch;
 `;
-export const FloatingWindowHeaderColDiv20 = styled(FloatingWindowHeaderColDiv)`
-  width: 20px;
+export const FloatingWindowHeaderColDivRect = styled(FloatingWindowHeaderColDiv)`
+  width: 1em;
 `;
 export const FloatingWindowHeaderColDivFlex = styled(FloatingWindowHeaderColDiv)`
   flex-grow: 1;
@@ -83,7 +86,7 @@ const FloatingWindowHeaderBlock = styled.span`
   pointer-events: none;
 `;
 export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
-  width: 8px;
+  width: 50%;
   height: 2px;
 `;
 

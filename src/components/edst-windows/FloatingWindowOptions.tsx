@@ -23,7 +23,7 @@ type FloatingWindowOptionDivProps = { unselected?: boolean };
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: FloatingWindowOptionDivProps) => ({
   backgroundColor: props.unselected ? "#000000" : "#575757"
 }))<FloatingWindowOptionDivProps>`
-  height: 1.2em;
+  height: 1em;
   background-color: ${props => props.backgroundColor};
   border: 1px solid #adadad;
   text-indent: 4px;

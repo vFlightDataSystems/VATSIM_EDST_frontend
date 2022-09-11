@@ -8,7 +8,7 @@ import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
   FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivRect,
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
@@ -74,11 +74,11 @@ export const GIWindow = () => {
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>
+          <FloatingWindowHeaderColDivRect onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDivRect>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>General Information</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.GI))}>
+          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.GI))}>
             <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDiv20>
+          </FloatingWindowHeaderColDivRect>
         </FloatingWindowHeaderDiv>
         {Object.values(airmetMap).length > 0 && (
           <FloatingWindowBodyDiv>

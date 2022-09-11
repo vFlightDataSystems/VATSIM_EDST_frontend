@@ -6,7 +6,7 @@ import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
   FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivRect,
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
@@ -59,11 +59,11 @@ export const Status = () => {
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDiv20>M</FloatingWindowHeaderColDiv20>
+          <FloatingWindowHeaderColDivRect>M</FloatingWindowHeaderColDivRect>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>STATUS</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.STATUS))}>
+          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.STATUS))}>
             <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDiv20>
+          </FloatingWindowHeaderColDivRect>
         </FloatingWindowHeaderDiv>
         <StatusBodyDiv>
           {/* <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>Change Sectors</EdstButton> */}

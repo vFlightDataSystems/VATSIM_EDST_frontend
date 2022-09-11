@@ -14,7 +14,7 @@ import {
   FloatingWindowBodyDiv,
   FloatingWindowDiv,
   FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDiv20,
+  FloatingWindowHeaderColDivRect,
   FloatingWindowHeaderColDivFlex,
   FloatingWindowHeaderDiv,
   FloatingWindowRow
@@ -85,11 +85,11 @@ export const SigmetWindow = () => {
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDiv20 onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDiv20>
+          <FloatingWindowHeaderColDivRect onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDivRect>
           <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>SIGMETS SECTOR {sectorId}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv20 onMouseDown={() => dispatch(closeWindow(EdstWindow.SIGMETS))}>
+          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.SIGMETS))}>
             <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDiv20>
+          </FloatingWindowHeaderColDivRect>
         </FloatingWindowHeaderDiv>
         {Object.values(sigmetList).length > 0 && (
           <FloatingWindowBodyDiv>

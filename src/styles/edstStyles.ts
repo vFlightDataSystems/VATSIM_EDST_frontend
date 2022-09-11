@@ -30,9 +30,9 @@ export const EdstBodyDiv = styled.div`
   overflow: hidden;
   position: absolute;
   display: flex;
-  top: 36px;
+  top: 2em;
   left: 0;
-  height: calc(100% - 36px);
+  height: calc(100% - 2em);
   width: 100%;
   flex-grow: 1;
 `;
