@@ -8,7 +8,7 @@ import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSe
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
 import { useDragging } from "../../hooks/useDragging";

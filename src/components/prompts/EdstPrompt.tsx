@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useRef } from "react";
 import styled from "styled-components";
 import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { EdstButton } from "../utils/EdstButton";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";

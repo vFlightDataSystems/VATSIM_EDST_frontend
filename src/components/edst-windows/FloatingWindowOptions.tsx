@@ -19,9 +19,9 @@ const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv).attrs((props: FloatingW
   top: ${props => props.top};
 `;
 
-type FloatingWindowOptionDivProps = { unselected?: boolean };
+type FloatingWindowOptionDivProps = { unselected?: boolean; backgroundColor?: string };
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: FloatingWindowOptionDivProps) => ({
-  backgroundColor: props.unselected ? "#000000" : "#575757"
+  backgroundColor: props.backgroundColor ?? (props.unselected ? "#000000" : "#575757")
 }))<FloatingWindowOptionDivProps>`
   height: 1em;
   background-color: ${props => props.backgroundColor};
@@ -40,6 +40,7 @@ type FloatingWindowOptionsProps = {
   options?: string[];
   selectedOptions?: string[];
   handleOptionClick?: (option?: string) => void;
+  backgroundColors?: Record<string, string>;
 };
 
 export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsProps) => {
@@ -77,6 +78,7 @@ export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsPr
       {props.options?.map(option => (
         <FloatingWindowOptionDiv
           unselected={!(props.selectedOptions?.includes(option) ?? true)}
+          backgroundColor={props?.backgroundColors?.[option]}
           key={option}
           onMouseDown={() => props.handleOptionClick?.(option)}
         >

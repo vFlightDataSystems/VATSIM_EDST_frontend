@@ -9,8 +9,8 @@ import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, push
 import { aselEntrySelector, updateEntry } from "../../../redux/slices/entrySlice";
 import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
-import { InputContainer } from "../../InputComponents";
-import { EdstDraggingOutline } from "../../EdstDraggingOutline";
+import { InputContainer } from "../../utils/InputComponents";
+import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
 import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";

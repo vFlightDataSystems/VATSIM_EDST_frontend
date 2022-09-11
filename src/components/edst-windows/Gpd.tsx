@@ -8,7 +8,7 @@ import { GpdBody } from "./gpd-components/GpdBody";
 import { useFocused } from "../../hooks/useFocused";
 import { useDragging } from "../../hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useFullscreen } from "../../hooks/useFullscreen";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 

@@ -10,23 +10,16 @@ import {
   viewSuppressedSigmetSelector
 } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
-import {
-  FloatingWindowBodyDiv,
-  FloatingWindowDiv,
-  FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDivRect,
-  FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderDiv,
-  FloatingWindowRow
-} from "../../styles/floatingWindowStyles";
+import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
-enum sigmetOption {
+enum SigmetOption {
   viewSuppressed = "VIEW SUPPRESS",
   hideSuppressed = "HIDE SUPPRESS",
   printAll = "PRINT ALL"
@@ -84,13 +77,12 @@ export const SigmetWindow = () => {
         id="edst-status"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDivRect onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDivRect>
-          <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>SIGMETS SECTOR {sectorId}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.SIGMETS))}>
-            <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDivRect>
-        </FloatingWindowHeaderDiv>
+        <FloatingWindowHeader
+          title={`SIGMETS SECTOR ${sectorId}`}
+          handleOptionsMouseDown={handleOptionsMouseDown}
+          onClose={() => dispatch(closeWindow(EdstWindow.SIGMETS))}
+          startDrag={startDrag}
+        />
         {Object.values(sigmetList).length > 0 && (
           <FloatingWindowBodyDiv>
             <ScrollContainer maxHeight="600px">
@@ -133,14 +125,14 @@ export const SigmetWindow = () => {
             }}
             header="SIGMETS"
             closeOptions={() => setShowOptions(false)}
-            options={Object.values(sigmetOption)}
-            selectedOptions={[viewSuppressed ? sigmetOption.viewSuppressed : sigmetOption.hideSuppressed]}
+            options={Object.values(SigmetOption)}
+            selectedOptions={[viewSuppressed ? SigmetOption.viewSuppressed : SigmetOption.hideSuppressed]}
             handleOptionClick={option => {
               switch (option!) {
-                case sigmetOption.viewSuppressed:
+                case SigmetOption.viewSuppressed:
                   dispatch(setViewSuppressedSigmet(true));
                   break;
-                case sigmetOption.hideSuppressed:
+                case SigmetOption.hideSuppressed:
                   dispatch(setViewSuppressedSigmet(false));
                   break;
                 default:

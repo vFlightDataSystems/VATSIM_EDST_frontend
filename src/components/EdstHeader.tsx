@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Time } from "./Time";
+import { Time } from "./utils/Time";
 import { Tooltips } from "../tooltips";
 import { EdstTooltip } from "./utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";

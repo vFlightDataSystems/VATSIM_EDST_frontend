@@ -2,21 +2,15 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../redux/slices/appSlice";
-import {
-  FloatingWindowBodyDiv,
-  FloatingWindowDiv,
-  FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDivRect,
-  FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderDiv
-} from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useSocketConnector } from "../../hooks/useSocketConnector";
 import { useHubConnection } from "../../hooks/useHubConnection";
 import { EdstButton } from "../utils/EdstButton";
 import { artccIdSelector, sectorIdSelector } from "../../redux/slices/sectorSlice";
+import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
 const StatusDiv = styled(FloatingWindowDiv)`
   width: 360px;
@@ -58,13 +52,7 @@ export const Status = () => {
         id="edst-status"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDivRect>M</FloatingWindowHeaderColDivRect>
-          <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>STATUS</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.STATUS))}>
-            <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDivRect>
-        </FloatingWindowHeaderDiv>
+        <FloatingWindowHeader title="STATUS" onClose={() => dispatch(closeWindow(EdstWindow.STATUS))} startDrag={startDrag} />
         <StatusBodyDiv>
           {/* <EdstButton onMouseDown={() => dispatch(setShowSectorSelector(true))}>Change Sectors</EdstButton> */}
           <div>

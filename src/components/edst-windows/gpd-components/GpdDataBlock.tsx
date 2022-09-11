@@ -12,7 +12,7 @@ import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { LeaderLine } from "./LeaderLine";
 import { DragPreviewStyle } from "../../../typeDefinitions/types/dragPreviewStyle";
-import { EdstDraggingOutline } from "../../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
 

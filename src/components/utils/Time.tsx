@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { edstFontGrey } from "../styles/colors";
-import { eramFontFamily, NoSelectDiv } from "../styles/styles";
+import { edstFontGrey } from "../../styles/colors";
+import { eramFontFamily, NoSelectDiv } from "../../styles/styles";
 
 const TimeStyle = styled(NoSelectDiv)`
   font-family: ${eramFontFamily};

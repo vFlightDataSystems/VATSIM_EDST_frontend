@@ -14,7 +14,7 @@ import {
   OptionsMenu,
   OptionsMenuHeader
 } from "../../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
 import { useDragging } from "../../../hooks/useDragging";
 import { useFocused } from "../../../hooks/useFocused";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";

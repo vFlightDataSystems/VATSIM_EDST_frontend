@@ -4,20 +4,13 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { airmetSelector, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
-import {
-  FloatingWindowBodyDiv,
-  FloatingWindowDiv,
-  FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDivRect,
-  FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderDiv,
-  FloatingWindowRow
-} from "../../styles/floatingWindowStyles";
+import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
 enum giOption {
   printAll = "PRINT ALL"
@@ -32,19 +25,19 @@ export const GIWindow = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.GI));
   const airmetMap = useRootSelector(airmetSelector);
   const zStack = useRootSelector(zStackSelector);
+  const [selectedAirmet, setSelectedAirmet] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI, "mousedown");
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, airmetId: string) => {
     setShowOptions(false);
-    if (selectedOption !== airmetId) {
+    if (selectedAirmet !== airmetId) {
       if (!airmetMap[airmetId].acknowledged) {
         dispatch(setSigmetAcknowledged({ id: airmetId, value: true }));
       }
-      setSelectedOption(airmetId);
+      setSelectedAirmet(airmetId);
       // figure out how to align this correctly :/
       setSelectedPos({
         x: event.currentTarget.offsetLeft,
@@ -52,13 +45,12 @@ export const GIWindow = () => {
         w: event.currentTarget.clientWidth + 23
       });
     } else {
-      setSelectedOption(null);
+      setSelectedAirmet(null);
       setSelectedPos(null);
     }
   };
 
   const handleOptionsMouseDown = () => {
-    setSelectedOption(null);
     setShowOptions(true);
   };
 
@@ -73,19 +65,18 @@ export const GIWindow = () => {
         id="edst-status"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDivRect onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDivRect>
-          <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>General Information</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.GI))}>
-            <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDivRect>
-        </FloatingWindowHeaderDiv>
+        <FloatingWindowHeader
+          title="General Information"
+          handleOptionsMouseDown={handleOptionsMouseDown}
+          onClose={() => dispatch(closeWindow(EdstWindow.GI))}
+          startDrag={startDrag}
+        />
         {Object.values(airmetMap).length > 0 && (
           <FloatingWindowBodyDiv>
             <ScrollContainer maxHeight="600px">
               {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
                 <span style={{ margin: "6px 0" }} key={airmetId}>
-                  <FloatingWindowRow selected={selectedOption === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
+                  <FloatingWindowRow selected={selectedAirmet === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
                     {airmetEntry.text}
                   </FloatingWindowRow>
                 </span>

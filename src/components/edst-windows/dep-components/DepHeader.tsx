@@ -8,7 +8,7 @@ import { closeAllMenus, closeWindow, depAselSelector } from "../../../redux/slic
 import { addDepEntryByFid } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
-import { AddFindInput } from "../../InputComponents";
+import { AddFindInput } from "../../utils/InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { DepSortOptionValues } from "../../../typeDefinitions/enums/dep/depSortOption";

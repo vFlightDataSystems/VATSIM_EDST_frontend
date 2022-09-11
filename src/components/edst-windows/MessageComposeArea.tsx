@@ -27,7 +27,7 @@ import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontSize, eramFontFamily } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
 import { EdstEntry } from "../../typeDefinitions/types/edstEntry";

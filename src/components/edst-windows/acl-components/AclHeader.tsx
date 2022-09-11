@@ -9,7 +9,7 @@ import { aclAselSelector, closeAllMenus, closeWindow } from "../../../redux/slic
 import { addAclEntryByFid } from "../../../redux/thunks/entriesThunks";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
-import { AddFindInput } from "../../InputComponents";
+import { AddFindInput } from "../../utils/InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";

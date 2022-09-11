@@ -2,17 +2,11 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import {
-  FloatingWindowBodyDiv,
-  FloatingWindowDiv,
-  FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDivRect,
-  FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderDiv
-} from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
 const OutageDiv = styled(FloatingWindowDiv)`
   width: 340px;
@@ -36,13 +30,7 @@ export const Outage = () => {
         id="edst-outage"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeaderDiv>
-          <FloatingWindowHeaderColDivRect>M</FloatingWindowHeaderColDivRect>
-          <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>OUTAGE</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDivRect onMouseDown={() => dispatch(closeWindow(EdstWindow.OUTAGE))}>
-            <FloatingWindowHeaderBlock8x2 />
-          </FloatingWindowHeaderColDivRect>
-        </FloatingWindowHeaderDiv>
+        <FloatingWindowHeader title="OUTAGE" onClose={() => dispatch(closeWindow(EdstWindow.OUTAGE))} startDrag={startDrag} />
         <FloatingWindowBodyDiv>OUTAGE TEST</FloatingWindowBodyDiv>
       </OutageDiv>
     )

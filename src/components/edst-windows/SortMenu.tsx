@@ -3,7 +3,7 @@ import React, { PropsWithChildren, useRef } from "react";
 import { EdstButton } from "../utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, zStackSelector, pushZStack, windowSelector } from "../../redux/slices/appSlice";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";

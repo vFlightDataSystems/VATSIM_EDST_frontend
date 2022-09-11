@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import "../../css/styles.scss";
 import _ from "lodash";
@@ -15,7 +15,7 @@ import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
 import { edstFontGrey } from "../../styles/colors";
-import { EdstDraggingOutline } from "../EdstDraggingOutline";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
 import { EdstPreferentialRoute } from "../../typeDefinitions/types/edstPreferentialRoute";
