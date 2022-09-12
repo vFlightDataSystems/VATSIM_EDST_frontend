@@ -142,7 +142,7 @@ export const AltimeterWindow = () => {
               y: ref.current!.clientTop
             }}
             header="AS"
-            closeOptions={() => setShowOptions(false)}
+            onClose={() => setShowOptions(false)}
             options={options}
             defaultBackgroundColor={edstFontGreen}
             backgroundColors={{

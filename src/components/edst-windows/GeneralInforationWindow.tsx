@@ -91,7 +91,7 @@ export const GIWindow = () => {
               y: ref.current!.clientTop
             }}
             header="GI"
-            closeOptions={() => setShowOptions(false)}
+            onClose={() => setShowOptions(false)}
             options={GiOptions}
           />
         )}

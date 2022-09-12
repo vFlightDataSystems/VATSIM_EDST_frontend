@@ -35,7 +35,7 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: Fl
 
 type FloatingWindowOptionsProps<T extends Record<string, string>> = {
   pos: WindowPosition;
-  closeOptions?: () => void;
+  onClose?: () => void;
   header?: string;
   options?: T;
   handleOptionClick?: (option?: keyof T) => void;
@@ -70,7 +70,7 @@ export function FloatingWindowOptions<T extends Record<string, string> = Record<
       {props.header && (
         <FloatingWindowHeaderDiv ref={headerRef}>
           <FloatingWindowHeaderColDivFlex>{props.header}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv16ch onMouseDown={props.closeOptions} ref={xRef}>
+          <FloatingWindowHeaderColDiv16ch onMouseDown={props.onClose} ref={xRef}>
             X
           </FloatingWindowHeaderColDiv16ch>
         </FloatingWindowHeaderDiv>

@@ -125,7 +125,7 @@ export const SigmetWindow = () => {
               y: ref.current!.clientTop
             }}
             header="SIGMETS"
-            closeOptions={() => setShowOptions(false)}
+            onClose={() => setShowOptions(false)}
             options={SigmetOptions}
             backgroundColors={{
               [viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#575757"

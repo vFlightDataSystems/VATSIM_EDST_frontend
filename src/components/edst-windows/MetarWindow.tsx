@@ -124,7 +124,7 @@ export const MetarWindow = () => {
               y: ref.current!.clientTop
             }}
             header="WX"
-            closeOptions={() => setShowOptions(false)}
+            onClose={() => setShowOptions(false)}
             options={options}
             defaultBackgroundColor={edstFontGreen}
             backgroundColors={{
