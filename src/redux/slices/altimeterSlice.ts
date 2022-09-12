@@ -51,4 +51,4 @@ export function toggleAltimeter(airports: string[]): RootThunkAction {
 export const { addAltimeter, delAltimeter } = altimeterSlice.actions;
 export default altimeterSlice.reducer;
 
-export const altimeterAirportsSelector = (state: RootState) => state.altimeter.airports;
+export const altimeterStateSelector = (state: RootState) => state.altimeter;

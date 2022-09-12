@@ -19,11 +19,11 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
-enum SigmetOption {
-  viewSuppressed = "VIEW SUPPRESS",
-  hideSuppressed = "HIDE SUPPRESS",
-  printAll = "PRINT ALL"
-}
+const SigmetOptions = {
+  viewSuppressed: "VIEW SUPPRESS",
+  hideSuppressed: "HIDE SUPPRESS",
+  printAll: "PRINT ALL"
+};
 
 const SigmetDiv = styled(FloatingWindowDiv)`
   width: 1100px;
@@ -103,7 +103,8 @@ export const SigmetWindow = () => {
                             x: ref.current!.clientLeft + ref.current!.clientWidth,
                             y: ref.current!.clientTop
                           }}
-                          options={[!sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE"]}
+                          defaultBackgroundColor="#575757"
+                          options={{ toggleSuppressed: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE" }}
                           handleOptionClick={() => {
                             dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
                             setSelectedOption(null);
@@ -125,14 +126,16 @@ export const SigmetWindow = () => {
             }}
             header="SIGMETS"
             closeOptions={() => setShowOptions(false)}
-            options={Object.values(SigmetOption)}
-            selectedOptions={[viewSuppressed ? SigmetOption.viewSuppressed : SigmetOption.hideSuppressed]}
+            options={SigmetOptions}
+            backgroundColors={{
+              [viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#575757"
+            }}
             handleOptionClick={option => {
               switch (option!) {
-                case SigmetOption.viewSuppressed:
+                case "viewSuppressed":
                   dispatch(setViewSuppressedSigmet(true));
                   break;
-                case SigmetOption.hideSuppressed:
+                case "hideSuppressed":
                   dispatch(setViewSuppressedSigmet(false));
                   break;
                 default:

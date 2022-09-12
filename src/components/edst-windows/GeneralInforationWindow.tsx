@@ -12,9 +12,9 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
-enum giOption {
-  printAll = "PRINT ALL"
-}
+const GiOptions = {
+  printAll: "PRINT ALL"
+};
 
 const GIDiv = styled(FloatingWindowDiv)`
   width: 1200px;
@@ -91,9 +91,8 @@ export const GIWindow = () => {
               y: ref.current!.clientTop
             }}
             header="GI"
-            selectedOptions={[]}
             closeOptions={() => setShowOptions(false)}
-            options={Object.values(giOption)}
+            options={GiOptions}
           />
         )}
       </GIDiv>

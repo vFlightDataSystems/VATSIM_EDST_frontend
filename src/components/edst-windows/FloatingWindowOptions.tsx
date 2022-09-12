@@ -19,9 +19,9 @@ const FloatingWindowOptionsBodyDiv = styled(NoSelectDiv).attrs((props: FloatingW
   top: ${props => props.top};
 `;
 
-type FloatingWindowOptionDivProps = { unselected?: boolean; backgroundColor?: string };
+type FloatingWindowOptionDivProps = { backgroundColor?: string };
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: FloatingWindowOptionDivProps) => ({
-  backgroundColor: props.backgroundColor ?? (props.unselected ? "#000000" : "#575757")
+  backgroundColor: props.backgroundColor ?? "#000000"
 }))<FloatingWindowOptionDivProps>`
   height: 1em;
   background-color: ${props => props.backgroundColor};
@@ -33,17 +33,17 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: Fl
   }
 `;
 
-type FloatingWindowOptionsProps = {
+type FloatingWindowOptionsProps<T extends Record<string, string>> = {
   pos: WindowPosition;
   closeOptions?: () => void;
   header?: string;
-  options?: string[];
-  selectedOptions?: string[];
-  handleOptionClick?: (option?: string) => void;
-  backgroundColors?: Record<string, string>;
+  options?: T;
+  handleOptionClick?: (option?: keyof T) => void;
+  defaultBackgroundColor?: string;
+  backgroundColors?: Partial<T>;
 };
 
-export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsProps) => {
+export function FloatingWindowOptions<T extends Record<string, string> = Record<string, string>>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
@@ -75,16 +75,15 @@ export const FloatingWindowOptions = ({ pos, ...props }: FloatingWindowOptionsPr
           </FloatingWindowHeaderColDiv16ch>
         </FloatingWindowHeaderDiv>
       )}
-      {props.options?.map(option => (
+      {Object.entries(props.options ?? {}).map(([key, value]) => (
         <FloatingWindowOptionDiv
-          unselected={!(props.selectedOptions?.includes(option) ?? true)}
-          backgroundColor={props?.backgroundColors?.[option]}
-          key={option}
-          onMouseDown={() => props.handleOptionClick?.(option)}
+          backgroundColor={props?.backgroundColors?.[key] ?? props.defaultBackgroundColor}
+          key={key}
+          onMouseDown={() => props.handleOptionClick?.(key)}
         >
-          {option}
+          {value}
         </FloatingWindowOptionDiv>
       ))}
     </FloatingWindowOptionsBodyDiv>
   );
-};
+}

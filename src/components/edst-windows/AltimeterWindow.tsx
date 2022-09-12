@@ -10,8 +10,9 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useAltimeter } from "../../api/weatherApi";
-import { altimeterAirportsSelector, delAltimeter } from "../../redux/slices/altimeterSlice";
+import { altimeterStateSelector, delAltimeter } from "../../redux/slices/altimeterSlice";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
+import { edstFontGreen } from "../../styles/colors";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   width: 180px;
@@ -55,24 +56,26 @@ const AltimeterRow = ({ airport, selected, handleMouseDown }: AltimeterRowProps)
   );
 };
 
-enum AltimeterOption {
-  lines = "LINES",
-  col = "COL",
-  font = "FONT",
-  bright = "BRIGHT",
-  template = "TEMPLATE"
-}
-
 export const AltimeterWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTIMETER));
+
   const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
-  const altimeterAirports = useRootSelector(altimeterAirportsSelector);
+  const state = useRootSelector(altimeterStateSelector);
   const zStack = useRootSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
+  const [showTemplate, setShowTemplate] = useState(false);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER, "mousedown");
+
+  const options = {
+    lines: `LINES ${state.lines}`,
+    columns: `COL ${state.columns}`,
+    font: `FONT ${state.fontSize}`,
+    bright: `BRIGHT ${state.brightness}`,
+    template: "TEMPLATE"
+  };
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selectedAirport !== airport) {
@@ -109,9 +112,9 @@ export const AltimeterWindow = () => {
           onClose={() => dispatch(closeWindow(EdstWindow.ALTIMETER))}
           startDrag={startDrag}
         />
-        {altimeterAirports.length > 0 && (
+        {state.airports.length > 0 && (
           <FloatingWindowBodyDiv>
-            {altimeterAirports.map(airport => (
+            {state.airports.map(airport => (
               <Fragment key={airport}>
                 <AltimeterRow airport={airport} selected={selectedAirport === airport} handleMouseDown={event => handleMouseDown(event, airport)} />
                 {selectedAirport === airport && selectedPos && (
@@ -120,7 +123,7 @@ export const AltimeterWindow = () => {
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
                     }}
-                    options={[`DELETE ${airport}`]}
+                    options={{ delete: `DELETE ${airport}` }}
                     handleOptionClick={() => {
                       dispatch(delAltimeter(airport));
                       setSelectedAirport(null);
@@ -140,8 +143,11 @@ export const AltimeterWindow = () => {
             }}
             header="AS"
             closeOptions={() => setShowOptions(false)}
-            options={Object.values(AltimeterOption)}
-            selectedOptions={[]}
+            options={options}
+            defaultBackgroundColor={edstFontGreen}
+            backgroundColors={{
+              template: "#000000"
+            }}
           />
         )}
       </AltimeterDiv>

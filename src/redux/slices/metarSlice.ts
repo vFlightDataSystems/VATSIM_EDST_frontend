@@ -49,4 +49,4 @@ export function toggleMetar(airports: string[]): RootThunkAction {
 export const { addMetar, delMetar } = metarSlice.actions;
 export default metarSlice.reducer;
 
-export const metarAirportsSelector = (state: RootState) => state.metar.airports;
+export const metarStateSelector = (state: RootState) => state.metar;

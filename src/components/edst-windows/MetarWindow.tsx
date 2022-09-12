@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { delMetar, metarAirportsSelector } from "../../redux/slices/metarSlice";
+import { delMetar, metarStateSelector } from "../../redux/slices/metarSlice";
 import { FloatingWindowOptions } from "./FloatingWindowOptions";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
@@ -11,6 +11,7 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useMetar } from "../../api/weatherApi";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
+import { edstFontGreen } from "../../styles/colors";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
@@ -44,12 +45,19 @@ export const MetarWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.METAR));
   const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
-  const metarAirports = useRootSelector(metarAirportsSelector);
+  const state = useRootSelector(metarStateSelector);
   const zStack = useRootSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
+
+  const options = {
+    lines: `LINES ${state.lines}`,
+    font: `FONT ${state.fontSize}`,
+    bright: `BRIGHT ${state.brightness}`,
+    printAll: "PRINT ALL"
+  };
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
     if (selectedAirport !== airport) {
@@ -86,9 +94,9 @@ export const MetarWindow = () => {
           onClose={() => dispatch(closeWindow(EdstWindow.METAR))}
           startDrag={startDrag}
         />
-        {metarAirports.length > 0 && (
+        {state.airports.length > 0 && (
           <FloatingWindowBodyDiv>
-            {metarAirports.map(airport => (
+            {state.airports.map(airport => (
               <Fragment key={airport}>
                 <MetarRow airport={airport} selected={selectedAirport === airport} handleMouseDown={event => handleMouseDown(event, airport)} />
                 {selectedAirport === airport && selectedPos && (
@@ -97,7 +105,7 @@ export const MetarWindow = () => {
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
                     }}
-                    options={[`DELETE ${airport}`]}
+                    options={{ delete: `DELETE ${airport}` }}
                     handleOptionClick={() => {
                       dispatch(delMetar(airport));
                       setSelectedAirport(null);
@@ -115,10 +123,13 @@ export const MetarWindow = () => {
               x: ref.current!.clientLeft + ref.current!.clientWidth,
               y: ref.current!.clientTop
             }}
-            header="AS"
+            header="WX"
             closeOptions={() => setShowOptions(false)}
-            options={[]}
-            selectedOptions={[]}
+            options={options}
+            defaultBackgroundColor={edstFontGreen}
+            backgroundColors={{
+              printAll: "#000000"
+            }}
           />
         )}
       </MetarDiv>
