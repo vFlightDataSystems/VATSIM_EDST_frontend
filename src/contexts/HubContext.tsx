@@ -6,7 +6,7 @@ import { log } from "../console";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
 import { refreshToken } from "../api/vNasDataApi";
-import { ApiSessionInfo } from "../typeDefinitions/types/apiTypes/apiSessionInfo";
+import { ApiSessionInfoDto } from "../typeDefinitions/types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "../typeDefinitions/types/apiTypes/apiTopic";
 import { ApiFlightplan } from "../typeDefinitions/types/apiTypes/apiFlightplan";
 import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
@@ -63,7 +63,7 @@ const useHubContextInit = () => {
         log("ATC hub disconnected");
       });
 
-      hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfo) => {
+      hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
         log(sessionInfo);
         dispatch(setSession(sessionInfo));
       });
@@ -91,15 +91,15 @@ const useHubContextInit = () => {
         .start()
         .then(() => {
           hubConnection
-            .invoke<ApiSessionInfo>("getSessionInfo")
+            .invoke<ApiSessionInfoDto>("getSessionInfo")
             .then(sessionInfo => {
               log(sessionInfo);
-              if (sessionInfo.position.eramConfiguration) {
-                const { artccId } = sessionInfo;
-                const { sectorId } = sessionInfo.position.eramConfiguration;
+              if (sessionInfo?.positions?.[0]?.position?.eramConfiguration) {
+                const artccId = sessionInfo.artccId;
+                const sectorId = sessionInfo.positions[0].position.eramConfiguration.sectorId;
                 dispatch(setArtccId(artccId));
                 dispatch(setSectorId(sectorId));
-                connectSocket?.(artccId, sectorId);
+                connectSocket(artccId, sectorId);
                 dispatch(setSession(sessionInfo));
                 dispatch(initThunk());
                 hubConnection
@@ -107,7 +107,7 @@ const useHubContextInit = () => {
                   .then(() => {
                     log(`joined session ${sessionInfo.id}`);
                     hubConnection
-                      .invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.facilityId))
+                      .invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId))
                       .then(() => log("subscribe succeeded."))
                       .catch(console.log);
                   })

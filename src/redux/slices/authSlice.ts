@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { login as apiLogin } from "../../api/vNasDataApi";
 import { RootState } from "../store";
-import { ApiSessionInfo } from "../../typeDefinitions/types/apiTypes/apiSessionInfo";
+import { ApiSessionInfoDto } from "../../typeDefinitions/types/apiTypes/apiSessionInfoDto";
 
 type AuthState = {
   vatsimToken: string | null;
   nasToken: string | null;
-  session: ApiSessionInfo | null;
+  session: ApiSessionInfoDto | null;
   isRefreshingSession: boolean;
 };
 
@@ -42,7 +42,7 @@ export const authSlice = createSlice({
     });
   },
   reducers: {
-    setSession(state, action: PayloadAction<ApiSessionInfo>) {
+    setSession(state, action: PayloadAction<ApiSessionInfoDto>) {
       state.session = action.payload;
     },
     clearSession(state) {
