@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { delMetar, metarStateSelector } from "../../redux/slices/metarSlice";
-import { FloatingWindowOptions } from "./FloatingWindowOptions";
+import { FloatingWindowOptions } from "../utils/FloatingWindowOptions";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";

@@ -5,7 +5,7 @@ import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useDragging } from "../../hooks/useDragging";
 import { useFullscreen } from "../../hooks/useFullscreen";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
+import { EdstDraggingOutline } from "./EdstDraggingOutline";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 
 type FullscreenWindowProps = PropsWithChildren<{

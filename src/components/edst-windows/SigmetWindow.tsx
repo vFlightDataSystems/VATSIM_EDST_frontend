@@ -9,7 +9,7 @@ import {
   sigmetSelector,
   viewSuppressedSigmetSelector
 } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptions } from "./FloatingWindowOptions";
+import { FloatingWindowOptions } from "../utils/FloatingWindowOptions";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
