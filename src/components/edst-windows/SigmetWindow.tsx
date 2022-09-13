@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -19,12 +19,6 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
-const SigmetOptions = {
-  viewSuppressed: "VIEW SUPPRESS",
-  hideSuppressed: "HIDE SUPPRESS",
-  printAll: "PRINT ALL"
-};
-
 const SigmetDiv = styled(FloatingWindowDiv)`
   width: 1100px;
 `;
@@ -41,6 +35,15 @@ export const SigmetWindow = () => {
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS, "mousedown");
+
+  const SigmetOptions = useMemo(
+    () => ({
+      viewSuppressed: { value: "VIEW SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(true)) },
+      hideSuppressed: { value: "HIDE SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(false)) },
+      printAll: { value: "PRINT ALL" }
+    }),
+    [dispatch]
+  );
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
@@ -104,11 +107,15 @@ export const SigmetWindow = () => {
                             y: ref.current!.clientTop
                           }}
                           defaultBackgroundColor="#575757"
-                          options={{ toggleSuppressed: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE" }}
-                          handleOptionClick={() => {
-                            dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
-                            setSelectedOption(null);
-                            setSelectedPos(null);
+                          options={{
+                            toggleSuppressed: {
+                              value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",
+                              onMouseDown: () => {
+                                dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
+                                setSelectedOption(null);
+                                setSelectedPos(null);
+                              }
+                            }
                           }}
                         />
                       )}
@@ -129,18 +136,6 @@ export const SigmetWindow = () => {
             options={SigmetOptions}
             backgroundColors={{
               [viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#575757"
-            }}
-            handleOptionClick={option => {
-              switch (option!) {
-                case "viewSuppressed":
-                  dispatch(setViewSuppressedSigmet(true));
-                  break;
-                case "hideSuppressed":
-                  dispatch(setViewSuppressedSigmet(false));
-                  break;
-                default:
-                  break;
-              }
             }}
           />
         )}

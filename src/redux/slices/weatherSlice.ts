@@ -17,7 +17,7 @@ export type ApiAirSigmet = {
   sectorIntersects?: Record<string, boolean>;
 };
 
-type SigmetEntry = ApiAirSigmet & {
+export type SigmetEntry = ApiAirSigmet & {
   suppressed: boolean;
   acknowledged: boolean;
   polygons: Feature<Polygon | MultiPolygon>;

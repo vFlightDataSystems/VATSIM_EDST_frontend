@@ -53,10 +53,10 @@ export const MetarWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
 
   const options = {
-    lines: `LINES ${state.lines}`,
-    font: `FONT ${state.fontSize}`,
-    bright: `BRIGHT ${state.brightness}`,
-    printAll: "PRINT ALL"
+    lines: { value: `LINES ${state.lines}` },
+    font: { value: `FONT ${state.fontSize}` },
+    bright: { value: `BRIGHT ${state.brightness}` },
+    printAll: { value: "PRINT ALL" }
   };
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
@@ -105,11 +105,16 @@ export const MetarWindow = () => {
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
                     }}
-                    options={{ delete: `DELETE ${airport}` }}
-                    handleOptionClick={() => {
-                      dispatch(delMetar(airport));
-                      setSelectedAirport(null);
-                      setSelectedPos(null);
+                    defaultBackgroundColor="#575757"
+                    options={{
+                      delete: {
+                        value: `DELETE ${airport}`,
+                        onMouseDown: () => {
+                          dispatch(delMetar(airport));
+                          setSelectedAirport(null);
+                          setSelectedPos(null);
+                        }
+                      }
                     }}
                   />
                 )}

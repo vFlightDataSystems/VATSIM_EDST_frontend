@@ -12,10 +12,6 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 
-const GiOptions = {
-  printAll: "PRINT ALL"
-};
-
 const GIDiv = styled(FloatingWindowDiv)`
   width: 1200px;
 `;
@@ -30,6 +26,10 @@ export const GIWindow = () => {
   const [, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI, "mousedown");
+
+  const GiOptions = {
+    printAll: { value: "PRINT ALL" }
+  };
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, airmetId: string) => {
     setShowOptions(false);

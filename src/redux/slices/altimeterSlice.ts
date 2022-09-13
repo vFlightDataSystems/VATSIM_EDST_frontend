@@ -39,6 +39,9 @@ export function toggleAltimeter(airports: string[]): RootThunkAction {
   return (dispatch, getState) => {
     const currentAirports = getState().altimeter.airports;
     airports.forEach(airport => {
+      if (airport.length === 4 && airport.startsWith("K")) {
+        airport = airport.slice(1);
+      }
       if (currentAirports.includes(airport)) {
         dispatch(delAltimeter(airport));
       } else {

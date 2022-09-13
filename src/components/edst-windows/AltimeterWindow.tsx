@@ -13,14 +13,15 @@ import { useAltimeter } from "../../api/weatherApi";
 import { altimeterStateSelector, delAltimeter } from "../../redux/slices/altimeterSlice";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 import { edstFontGreen } from "../../styles/colors";
+import { AltimeterStationTemplate } from "./AltimeterStationTemplate";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
-  width: 180px;
+  width: 200px;
 `;
 
-const AltimCol = styled.span<{ underline?: boolean; reportingStation?: boolean }>`
+const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
   margin: 0 4px;
-  ${props => props.reportingStation && { margin: "0 20px 0 12px" }};
+  ${props => props.isReportingStation && { margin: "0 20px 0 12px" }};
   ${props => props.underline && { "text-decoration": "underline" }};
 `;
 
@@ -42,7 +43,7 @@ const AltimeterRow = ({ airport, selected, handleMouseDown }: AltimeterRowProps)
   return (
     <div>
       <FloatingWindowRow selected={selected} onMouseDown={handleMouseDown}>
-        <AltimCol reportingStation>{airport}</AltimCol>
+        <AltimCol isReportingStation>{airport}</AltimCol>
         <AltimCol underline={observationTime ? mod(Number(utcMinutesNow) - observationTime, 1440) > 60 : false}>
           {airportAltimeterEntry?.time ?? ""}
         </AltimCol>
@@ -70,11 +71,17 @@ export const AltimeterWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER, "mousedown");
 
   const options = {
-    lines: `LINES ${state.lines}`,
-    columns: `COL ${state.columns}`,
-    font: `FONT ${state.fontSize}`,
-    bright: `BRIGHT ${state.brightness}`,
-    template: "TEMPLATE"
+    lines: { value: `LINES ${state.lines}` },
+    columns: { value: `COL ${state.columns}` },
+    font: { value: `FONT ${state.fontSize}` },
+    bright: { value: `BRIGHT ${state.brightness}` },
+    template: {
+      value: "TEMPLATE",
+      onMouseDown: () => {
+        setShowOptions(false);
+        setShowTemplate(true);
+      }
+    }
   };
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
@@ -123,11 +130,16 @@ export const AltimeterWindow = () => {
                       x: selectedPos.x + selectedPos.w!,
                       y: selectedPos.y
                     }}
-                    options={{ delete: `DELETE ${airport}` }}
-                    handleOptionClick={() => {
-                      dispatch(delAltimeter(airport));
-                      setSelectedAirport(null);
-                      setSelectedPos(null);
+                    defaultBackgroundColor="#575757"
+                    options={{
+                      delete: {
+                        value: `DELETE ${airport}`,
+                        onMouseDown: () => {
+                          dispatch(delAltimeter(airport));
+                          setSelectedAirport(null);
+                          setSelectedPos(null);
+                        }
+                      }
                     }}
                   />
                 )}
@@ -148,6 +160,15 @@ export const AltimeterWindow = () => {
             backgroundColors={{
               template: "#000000"
             }}
+          />
+        )}
+        {showTemplate && (
+          <AltimeterStationTemplate
+            pos={{
+              x: ref.current!.clientLeft + ref.current!.clientWidth,
+              y: ref.current!.clientTop
+            }}
+            onClose={() => setShowTemplate(false)}
           />
         )}
       </AltimeterDiv>

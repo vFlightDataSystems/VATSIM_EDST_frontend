@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { MouseEventHandler, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
@@ -33,17 +33,21 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: Fl
   }
 `;
 
-type FloatingWindowOptionsProps<T extends Record<string, string>> = {
+type Option = {
+  value: string;
+  onMouseDown?: MouseEventHandler;
+};
+
+type FloatingWindowOptionsProps<T extends Record<string, Option>> = {
   pos: WindowPosition;
   onClose?: () => void;
   header?: string;
   options?: T;
-  handleOptionClick?: (option?: keyof T) => void;
   defaultBackgroundColor?: string;
-  backgroundColors?: Partial<T>;
+  backgroundColors?: Partial<Record<keyof T, string>>;
 };
 
-export function FloatingWindowOptions<T extends Record<string, string> = Record<string, string>>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
+export function FloatingWindowOptions<T extends Record<string, Option>>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
@@ -75,13 +79,13 @@ export function FloatingWindowOptions<T extends Record<string, string> = Record<
           </FloatingWindowHeaderColDiv16ch>
         </FloatingWindowHeaderDiv>
       )}
-      {Object.entries(props.options ?? {}).map(([key, value]) => (
+      {Object.entries(props.options ?? {}).map(([key, option]) => (
         <FloatingWindowOptionDiv
           backgroundColor={props?.backgroundColors?.[key] ?? props.defaultBackgroundColor}
           key={key}
-          onMouseDown={() => props.handleOptionClick?.(key)}
+          onMouseDown={option.onMouseDown}
         >
-          {value}
+          {option.value}
         </FloatingWindowOptionDiv>
       ))}
     </FloatingWindowOptionsBodyDiv>

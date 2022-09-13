@@ -187,8 +187,8 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
     border: 1px solid #adadad;
   }
 `;
-export const EdstInput = styled.input<{ width?: number }>`
-  width: ${props => (props.width ? `${props.width}px` : "calc(100% - 7px)")};
+export const EdstInput = styled.input<{ width?: string }>`
+  width: ${props => props.width ?? "calc(100% - 7px)"};
   font-size: ${defaultInputFontSize};
   outline: none;
   display: flex;
