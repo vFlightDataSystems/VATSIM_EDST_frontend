@@ -145,14 +145,18 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
 
   const handleHotboxMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
-    if (event.button === 0) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { showFreeText: !entry.showFreeText } }));
-    }
-    if (event.button === 1) {
-      dispatch(toggleSpa(entry.aircraftId));
-    }
-    if (event.button === 2) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclHighlighted: !entry.aclHighlighted } }));
+    switch (event.button) {
+      case 0:
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { showFreeText: !entry.showFreeText } }));
+        break;
+      case 1:
+        dispatch(toggleSpa(entry.aircraftId));
+        break;
+      case 2:
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclHighlighted: !entry.aclHighlighted } }));
+        break;
+      default:
+        break;
     }
   };
 
