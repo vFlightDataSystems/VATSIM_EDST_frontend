@@ -97,7 +97,7 @@ export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean; suppr
   border: 1px solid transparent;
   color: #919191;
   margin: 4px 21px 0 0;
-  height: 1em;
+  min-height: 1em;
 
   ${props =>
     props.selected && {
