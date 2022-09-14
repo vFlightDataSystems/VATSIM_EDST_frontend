@@ -9,10 +9,17 @@ type AltimeterState = {
   airports: string[];
 };
 
+export type AltimCountableKeys = keyof Omit<AltimeterState, "airports" | "columns" | "lines">;
+
+const maxValues: Record<AltimCountableKeys, number> = {
+  brightness: 100,
+  fontSize: 5
+};
+
 const initialState: AltimeterState = {
   brightness: 80,
   columns: 1,
-  lines: 10,
+  lines: 5,
   fontSize: 2,
   airports: []
 };
@@ -30,6 +37,16 @@ const altimeterSlice = createSlice({
       const index = state.airports.indexOf(action.payload);
       if (index > -1) {
         state.airports.splice(index, 1);
+      }
+    },
+    decValue(state, action: PayloadAction<AltimCountableKeys>) {
+      if (state[action.payload] > 1) {
+        state[action.payload] -= 1;
+      }
+    },
+    incValue(state, action: PayloadAction<AltimCountableKeys>) {
+      if (state[action.payload] < maxValues[action.payload]) {
+        state[action.payload] += 1;
       }
     }
   }
@@ -51,7 +68,7 @@ export function toggleAltimeter(airports: string[]): RootThunkAction {
   };
 }
 
-export const { addAltimeter, delAltimeter } = altimeterSlice.actions;
+export const { addAltimeter, delAltimeter, incValue: incAltimStateValue, decValue: decAltimStateValue } = altimeterSlice.actions;
 export default altimeterSlice.reducer;
 
 export const altimeterStateSelector = (state: RootState) => state.altimeter;

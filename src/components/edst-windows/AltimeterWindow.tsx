@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -10,13 +10,12 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useAltimeter } from "../../api/weatherApi";
-import { altimeterStateSelector, delAltimeter } from "../../redux/slices/altimeterSlice";
+import { AltimCountableKeys, altimeterStateSelector, decAltimStateValue, delAltimeter, incAltimStateValue } from "../../redux/slices/altimeterSlice";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
-import { edstFontGreen } from "../../styles/colors";
-import { AltimeterStationTemplate } from "./AltimeterStationTemplate";
+import { optionsBackgroundGreen } from "../../styles/colors";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
-  width: 200px;
+  min-width: 200px;
 `;
 
 const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
@@ -41,19 +40,21 @@ const AltimeterRow = ({ airport, selected, handleMouseDown }: AltimeterRowProps)
     : null;
 
   return (
-    <div>
-      <FloatingWindowRow selected={selected} onMouseDown={handleMouseDown}>
-        <AltimCol isReportingStation>{airport}</AltimCol>
-        <AltimCol underline={observationTime ? mod(Number(utcMinutesNow) - observationTime, 1440) > 60 : false}>
-          {airportAltimeterEntry?.time ?? ""}
-        </AltimCol>
-        {!airportAltimeterEntry || (observationTime && mod(Number(utcMinutesNow) - observationTime, 1440) > 120) ? (
-          "-M-"
-        ) : (
-          <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>{airportAltimeterEntry.altimeter.slice(1)}</AltimCol>
-        )}
-      </FloatingWindowRow>
-    </div>
+    <FloatingWindowRow selected={selected} onMouseDown={handleMouseDown}>
+      {airport && (
+        <>
+          <AltimCol isReportingStation>{airport}</AltimCol>
+          <AltimCol underline={observationTime ? mod(Number(utcMinutesNow) - observationTime, 1440) > 60 : false}>
+            {airportAltimeterEntry?.time ?? ""}
+          </AltimCol>
+          {!airportAltimeterEntry || (observationTime && mod(Number(utcMinutesNow) - observationTime, 1440) > 120) ? (
+            "-M-"
+          ) : (
+            <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>{airportAltimeterEntry.altimeter.slice(1)}</AltimCol>
+          )}
+        </>
+      )}
+    </FloatingWindowRow>
   );
 };
 
@@ -65,38 +66,59 @@ export const AltimeterWindow = () => {
   const state = useRootSelector(altimeterStateSelector);
   const zStack = useRootSelector(zStackSelector);
   const [showOptions, setShowOptions] = useState(false);
-  const [showTemplate, setShowTemplate] = useState(false);
   const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER, "mousedown");
 
-  const options = {
-    lines: { value: `LINES ${state.lines}` },
-    columns: { value: `COL ${state.columns}` },
-    font: { value: `FONT ${state.fontSize}` },
-    bright: { value: `BRIGHT ${state.brightness}` },
-    template: {
-      value: "TEMPLATE",
-      onMouseDown: () => {
-        setShowOptions(false);
-        setShowTemplate(true);
+  const handleOptionClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>, key: AltimCountableKeys) => {
+      switch (event.button) {
+        case 0:
+          dispatch(decAltimStateValue(key));
+          break;
+        case 1:
+          dispatch(incAltimStateValue(key));
+          break;
+        default:
+          break;
       }
-    }
-  };
+    },
+    [dispatch]
+  );
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
-    if (selectedAirport !== airport) {
-      setSelectedAirport(airport);
-      setSelectedPos({
-        x: event.currentTarget.offsetLeft,
-        y: event.currentTarget.offsetTop,
-        w: event.currentTarget.offsetWidth
-      });
-    } else {
-      setSelectedAirport(null);
-      setSelectedPos(null);
-    }
-  };
+  const options: FloatingWindowOptions = useMemo(
+    () => ({
+      lines: { value: `LINES ${state.lines}` },
+      columns: { value: `COL ${state.columns}` },
+      font: {
+        value: `FONT ${state.fontSize}`,
+        onMouseDown: event => handleOptionClick(event, "fontSize")
+      },
+      bright: { value: `BRIGHT ${state.brightness}`, onMouseDown: event => handleOptionClick(event, "brightness") },
+      template: {
+        value: "TEMPLATE"
+      }
+    }),
+    [handleOptionClick, state.brightness, state.columns, state.fontSize, state.lines]
+  );
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
+      setShowOptions(false);
+      if (selectedAirport !== airport) {
+        setSelectedAirport(airport);
+        setSelectedPos({
+          x: event.currentTarget.offsetLeft,
+          y: event.currentTarget.offsetTop,
+          w: event.currentTarget.offsetWidth
+        });
+      } else {
+        setSelectedAirport(null);
+        setSelectedPos(null);
+      }
+    },
+    [selectedAirport]
+  );
 
   const handleOptionsMouseDown = () => {
     setShowOptions(true);
@@ -156,19 +178,10 @@ export const AltimeterWindow = () => {
             header="AS"
             onClose={() => setShowOptions(false)}
             options={options}
-            defaultBackgroundColor={edstFontGreen}
+            defaultBackgroundColor={optionsBackgroundGreen}
             backgroundColors={{
               template: "#000000"
             }}
-          />
-        )}
-        {showTemplate && (
-          <AltimeterStationTemplate
-            pos={{
-              x: ref.current!.clientLeft + ref.current!.clientWidth,
-              y: ref.current!.clientTop
-            }}
-            onClose={() => setShowTemplate(false)}
           />
         )}
       </AltimeterDiv>

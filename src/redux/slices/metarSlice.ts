@@ -8,6 +8,13 @@ type MetarState = {
   airports: string[];
 };
 
+export type MetarCountableKeys = keyof Omit<MetarState, "airports" | "lines">;
+
+const maxValues: Record<MetarCountableKeys, number> = {
+  brightness: 100,
+  fontSize: 5
+};
+
 const initialState: MetarState = {
   brightness: 80,
   lines: 10,
@@ -29,6 +36,16 @@ const metarSlice = createSlice({
       if (index > -1) {
         state.airports.splice(index, 1);
       }
+    },
+    decValue(state, action: PayloadAction<MetarCountableKeys>) {
+      if (state[action.payload] > 1) {
+        state[action.payload] -= 1;
+      }
+    },
+    incValue(state, action: PayloadAction<MetarCountableKeys>) {
+      if (state[action.payload] < maxValues[action.payload]) {
+        state[action.payload] += 1;
+      }
     }
   }
 });
@@ -49,7 +66,7 @@ export function toggleMetar(airports: string[]): RootThunkAction {
   };
 }
 
-export const { addMetar, delMetar } = metarSlice.actions;
+export const { addMetar, delMetar, incValue: incMetarStateValue, decValue: decMetarStateValue } = metarSlice.actions;
 export default metarSlice.reducer;
 
 export const metarStateSelector = (state: RootState) => state.metar;

@@ -33,12 +33,14 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: Fl
   }
 `;
 
-type Option = {
+type FloatingWindowOption = {
   value: string;
-  onMouseDown?: MouseEventHandler;
+  onMouseDown?: MouseEventHandler<HTMLElement>;
 };
 
-type FloatingWindowOptionsProps<T extends Record<string, Option>> = {
+export type FloatingWindowOptions = Record<string, FloatingWindowOption>;
+
+type FloatingWindowOptionsProps<T extends FloatingWindowOptions> = {
   pos: WindowPosition;
   onClose?: () => void;
   header?: string;
@@ -47,7 +49,7 @@ type FloatingWindowOptionsProps<T extends Record<string, Option>> = {
   backgroundColors?: Partial<Record<keyof T, string>>;
 };
 
-export function FloatingWindowOptions<T extends Record<string, Option>>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
+export function FloatingWindowOptions<T extends FloatingWindowOptions>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
