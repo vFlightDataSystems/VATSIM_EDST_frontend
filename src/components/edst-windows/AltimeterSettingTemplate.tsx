@@ -48,7 +48,7 @@ type AltimeterStationTemplateProps = {
   onClose: () => void;
 };
 
-export const AltimeterStationTemplate = ({ pos, ...props }: AltimeterStationTemplateProps) => {
+export const AltimeterSettingTemplate = ({ pos, ...props }: AltimeterStationTemplateProps) => {
   const { lines, columns, airports } = useRootSelector(altimeterStateSelector);
   const ref = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
