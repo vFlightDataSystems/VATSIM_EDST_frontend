@@ -3,7 +3,6 @@ import { RootState, RootThunkAction } from "../store";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { EDST_MENU_LIST, EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { openWindowThunk } from "../thunks/openWindowThunk";
-import { edstHeaderButton } from "../../typeDefinitions/enums/edstHeaderButton";
 import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
 import sharedSocket from "../../sharedState/socket";
 import { Asel } from "../../typeDefinitions/types/asel";
@@ -31,7 +30,6 @@ type AppWindow = {
 };
 
 type AppState = {
-  disabledHeaderButtons: edstHeaderButton[];
   windows: Record<EdstWindow, AppWindow>;
   anyDragging: boolean;
   mraMsg: string;
@@ -43,19 +41,6 @@ type AppState = {
   zStack: EdstWindow[];
   outages: OutageEntry[];
 };
-
-const DISABLED_HEADER_BUTTONS = [
-  edstHeaderButton.not,
-  edstHeaderButton.ua,
-  edstHeaderButton.keep,
-  edstHeaderButton.adsb,
-  edstHeaderButton.sat,
-  edstHeaderButton.msg,
-  edstHeaderButton.wind,
-  edstHeaderButton.fel,
-  edstHeaderButton.cpdlcHist,
-  edstHeaderButton.cpdlcMsgOut
-];
 
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
   [EdstWindow.STATUS]: { x: 400, y: 100 },
@@ -75,7 +60,6 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
 ) as Record<EdstWindow, AppWindow>;
 
 const initialState: AppState = {
-  disabledHeaderButtons: DISABLED_HEADER_BUTTONS,
   windows: initialWindowState,
   anyDragging: false,
   mraMsg: "",
@@ -258,4 +242,3 @@ export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
 export const tooltipsEnabledSelector = (state: RootState) => state.app.tooltipsEnabled;
 export const showSectorSelectorSelector = (state: RootState) => state.app.showSectorSelector;
-export const disabledHeaderButtonsSelector = (state: RootState) => state.app.disabledHeaderButtons;

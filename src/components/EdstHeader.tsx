@@ -4,7 +4,7 @@ import { Time } from "./utils/Time";
 import { Tooltips } from "../tooltips";
 import { EdstTooltip } from "./utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { disabledHeaderButtonsSelector, toggleWindow, windowsSelector } from "../redux/slices/appSlice";
+import { toggleWindow, windowsSelector } from "../redux/slices/appSlice";
 import { planQueueSelector } from "../redux/slices/planSlice";
 import { sigmetSelector } from "../redux/slices/weatherSlice";
 import { edstFontGrey } from "../styles/colors";
@@ -14,6 +14,19 @@ import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
 import { eramFontFamily } from "../styles/styles";
 import { edstHeaderButton } from "../typeDefinitions/enums/edstHeaderButton";
 import { openWindowThunk } from "../redux/thunks/openWindowThunk";
+
+const DISABLED_HEADER_BUTTONS = [
+  edstHeaderButton.not,
+  edstHeaderButton.ua,
+  edstHeaderButton.keep,
+  edstHeaderButton.adsb,
+  edstHeaderButton.sat,
+  edstHeaderButton.msg,
+  edstHeaderButton.wind,
+  edstHeaderButton.fel,
+  edstHeaderButton.cpdlcHist,
+  edstHeaderButton.cpdlcMsgOut
+];
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";
@@ -102,13 +115,13 @@ const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) =
     </ColButton>
   </EdstTooltip>
 );
+
 const EdstHeaderButton50 = (props: EdstHeaderButtonProps) => <EdstHeaderButton width={50} {...props} />;
 
 export const EdstHeader = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const windows = useRootSelector(windowsSelector);
-  const disabledHeaderButtons = useRootSelector(disabledHeaderButtonsSelector);
 
   const sectorId = useRootSelector(sectorIdSelector);
   const entries = useRootSelector(entriesSelector);
@@ -129,7 +142,7 @@ export const EdstHeader = () => {
           <ColButton
             width={50}
             open={windows[EdstWindow.MORE].open}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.more)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.more)}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.MORE))}
           >
             MORE
@@ -137,14 +150,14 @@ export const EdstHeader = () => {
           <EdstHeaderButton
             open={windows[EdstWindow.ACL].open}
             content={`ACL ${aclLen.toString().padStart(2, "0")}`}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.acl)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.acl)}
             title={Tooltips.acl}
             onMouseDown={() => dispatch(openWindowThunk(EdstWindow.ACL))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.DEP].open}
             content={`DEP ${depLen.toString().padStart(2, "0")}`}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.dep)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.dep)}
             title={Tooltips.dep}
             onMouseDown={() => dispatch(openWindowThunk(EdstWindow.DEP))}
           />
@@ -165,7 +178,7 @@ export const EdstHeader = () => {
           <EdstHeaderButton
             open={windows[EdstWindow.METAR].open}
             content="WX REPORT"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.wx)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.wx)}
             // title={Tooltips.wx}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.METAR))}
           />
@@ -174,35 +187,35 @@ export const EdstHeader = () => {
             borderColor={sigLen > 0 ? YELLOW : undefined}
             color={sigLen > 0 ? YELLOW : undefined}
             content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, "0") : "✓"}`}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.sig)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.sig)}
             // title={Tooltips.sig}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.SIGMETS))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.NOTAMS].open}
             content={`NOT ${notLen > 0 ? notLen.toString().padStart(2, "0") : ""}`}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.not)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.not)}
             // title={Tooltips.not}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.NOTAMS))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.GI].open}
             content={`GI ${giLen > 0 ? giLen.toString().padStart(2, "0") : ""}`}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.gi)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.gi)}
             // title={Tooltips.gi}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.GI))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.UA].open}
             content="UA"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.ua)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.ua)}
             // title={Tooltips.ua}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.UA))}
           />
           <EdstHeaderButton
             open={false}
             content="KEEP ALL"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.keep)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.keep)}
             // title={Tooltips.keep}
             // onMouseDown={() => props.toggleWindow('keep')}
           />
@@ -211,14 +224,14 @@ export const EdstHeader = () => {
           <EdstHeaderButton
             open={windows[EdstWindow.STATUS].open}
             content="STATUS ACTIVE"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.status)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.status)}
             title={Tooltips.statusActive}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.STATUS))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.OUTAGE].open}
             content={`OUTAGE ${sectorId}`}
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.outage)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.outage)}
             title={Tooltips.statusOutage}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.OUTAGE))}
           />
@@ -226,14 +239,14 @@ export const EdstHeader = () => {
           <EdstHeaderButton50
             open={windows[EdstWindow.ADSB].open}
             content="NON-ADSB"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.adsb)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.adsb)}
             // title={Tooltips.adsb}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.ADSB))}
           />
           <EdstHeaderButton50
             open={windows[EdstWindow.SAT].open}
             content="SAT COMM"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.sat)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.sat)}
             // title={Tooltips.sat}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.SAT))}
           />
@@ -242,7 +255,7 @@ export const EdstHeader = () => {
             // backgroundColor={YELLOW}
             // borderColor={YELLOW}
             content="MSG WAIT"
-            disabled={disabledHeaderButtons.includes(edstHeaderButton.msg)}
+            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.msg)}
             // title={Tooltips.msg}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.MSG))}
           />
@@ -254,49 +267,49 @@ export const EdstHeader = () => {
             <EdstHeaderButton
               open={windows[EdstWindow.WIND].open}
               content="WIND"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.wind)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.wind)}
               // title={Tooltips.wind}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.WIND))}
             />
             <EdstHeaderButton
               open={windows[EdstWindow.ALTIMETER].open}
               content="ALTIM SET"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.altim)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.altim)}
               // title={Tooltips.alt}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.ALTIMETER))}
             />
             <EdstHeaderButton
               open={windows[EdstWindow.MESSAGE_COMPOSE_AREA].open}
               content="MCA"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.mca)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.mca)}
               title={Tooltips.mca}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.MESSAGE_COMPOSE_AREA))}
             />
             <EdstHeaderButton
               open={windows[EdstWindow.MESSAGE_RESPONSE_AREA].open}
               content="RA"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.mra)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.mra)}
               title={Tooltips.ra}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.MESSAGE_RESPONSE_AREA))}
             />
             <EdstHeaderButton
               open={windows[EdstWindow.FEL].open}
               content="FEL"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.fel)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.fel)}
               // title={Tooltips.fel}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.FEL))}
             />
             <EdstHeaderButton
               open={windows[EdstWindow.CPDLC_HIST].open}
               content="CPDLC HIST"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.cpdlcHist)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.cpdlcHist)}
               // title={Tooltips.cpdlc_hist}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.CPDLC_HIST))}
             />
             <EdstHeaderButton
               open={windows[EdstWindow.CPDLC_MSG].open}
               content="CPDLC MSGOUT"
-              disabled={disabledHeaderButtons.includes(edstHeaderButton.cpdlcMsgOut)}
+              disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.cpdlcMsgOut)}
               // title={Tooltips.cpdlc_msg_out}
               onMouseDown={() => dispatch(toggleWindow(EdstWindow.CPDLC_MSG))}
             />
