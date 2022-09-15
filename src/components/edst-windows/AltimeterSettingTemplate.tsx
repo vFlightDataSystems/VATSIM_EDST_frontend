@@ -5,8 +5,8 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { defaultFontSize, eramFontFamily, NoSelectDiv } from "../../styles/styles";
 import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
 import { useRootSelector } from "../../redux/hooks";
-import { altimeterStateSelector } from "../../redux/slices/altimeterSlice";
 import { edstFontGrey } from "../../styles/colors";
+import { altimeterAirportsSelector } from "../../redux/slices/weatherSlice";
 
 type AltimeterStationTemplateDivProps = { pos: WindowPosition };
 const AltimeterStationTemplateDiv = styled(NoSelectDiv).attrs((props: AltimeterStationTemplateDivProps) => ({
@@ -49,10 +49,11 @@ type AltimeterStationTemplateProps = {
 };
 
 export const AltimeterSettingTemplate = ({ pos, ...props }: AltimeterStationTemplateProps) => {
-  const { lines, columns, airports } = useRootSelector(altimeterStateSelector);
+  const airports = useRootSelector(altimeterAirportsSelector);
   const ref = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
-  const rows = columns === 1 ? 30 : lines;
+  const rows = 30;
+  const columns = 1;
   const [inputValues, setInputValues] = useState<string[]>(_.range(rows * columns).map(i => airports[i] ?? ""));
 
   const updateInput = (index: number, value: string) => {

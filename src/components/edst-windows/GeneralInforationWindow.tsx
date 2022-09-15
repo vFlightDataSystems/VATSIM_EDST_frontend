@@ -3,14 +3,16 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { airmetSelector, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptions } from "../utils/FloatingWindowOptions";
+import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
+import { optionsBackgroundGreen } from "../../styles/colors";
 
 const GIDiv = styled(FloatingWindowDiv)`
   width: 1200px;
@@ -22,12 +24,20 @@ export const GIWindow = () => {
   const airmetMap = useRootSelector(airmetSelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedAirmet, setSelectedAirmet] = useState<string | null>(null);
-  const [showOptions, setShowOptions] = useState(false);
-  const [, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI, "mousedown");
 
-  const GiOptions = {
+  const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.GI));
+  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.GI);
+
+  const options: FloatingWindowOptions = {
+    lines: { value: `LINES ${windowOptions.lines}` },
+    font: {
+      value: `FONT ${windowOptions.fontSize}`,
+      onMouseDown: event => windowOptionClickHandler(event, "fontSize")
+    },
+    bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
     printAll: { value: "PRINT ALL" }
   };
 
@@ -38,15 +48,8 @@ export const GIWindow = () => {
         dispatch(setSigmetAcknowledged({ id: airmetId, value: true }));
       }
       setSelectedAirmet(airmetId);
-      // figure out how to align this correctly :/
-      setSelectedPos({
-        x: event.currentTarget.offsetLeft,
-        y: event.currentTarget.clientTop - 1,
-        w: event.currentTarget.clientWidth + 23
-      });
     } else {
       setSelectedAirmet(null);
-      setSelectedPos(null);
     }
   };
 
@@ -54,13 +57,15 @@ export const GIWindow = () => {
     setShowOptions(true);
   };
 
+  const zIndex = zStack.indexOf(EdstWindow.GI);
+
   return (
     pos && (
       <GIDiv
         ref={ref}
         pos={pos}
         zIndex={zStack.indexOf(EdstWindow.GI)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.GI) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.GI))}
+        onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(EdstWindow.GI))}
         anyDragging={anyDragging}
         id="edst-status"
       >
@@ -84,15 +89,20 @@ export const GIWindow = () => {
             </ScrollContainer>
           </FloatingWindowBodyDiv>
         )}
-        {showOptions && (
-          <FloatingWindowOptions
+        {showOptions && ref.current && (
+          <FloatingWindowOptionContainer
             pos={{
-              x: ref.current!.clientLeft + ref.current!.clientWidth,
-              y: ref.current!.clientTop
+              x: pos.x + ref.current.clientWidth,
+              y: pos.y
             }}
+            zIndex={zIndex}
             header="GI"
             onClose={() => setShowOptions(false)}
-            options={GiOptions}
+            options={options}
+            defaultBackgroundColor={optionsBackgroundGreen}
+            backgroundColors={{
+              printAll: "#000000"
+            }}
           />
         )}
       </GIDiv>

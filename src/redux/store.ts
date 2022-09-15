@@ -8,8 +8,7 @@ import planReducer from "./slices/planSlice";
 import appReducer from "./slices/appSlice";
 import aircraftTrackReducer from "./slices/trackSlice";
 import weatherReducer from "./slices/weatherSlice";
-import altimeterReducer from "./slices/altimeterSlice";
-import metarReducer from "./slices/metarSlice";
+import windowOptionsReducer from "./slices/windowOptionsSlice";
 import authReducer from "./slices/authSlice";
 import { prefrouteApi } from "../api/prefrouteApi";
 import { aircraftApi } from "../api/aircraftApi";
@@ -26,8 +25,7 @@ const store = configureStore({
     entries: entryReducer,
     aircraftTracks: aircraftTrackReducer,
     weather: weatherReducer,
-    altimeter: altimeterReducer,
-    metar: metarReducer,
+    windowOptions: windowOptionsReducer,
     auth: authReducer,
     [prefrouteApi.reducerPath]: prefrouteApi.reducer,
     [aircraftApi.reducerPath]: aircraftApi.reducer,

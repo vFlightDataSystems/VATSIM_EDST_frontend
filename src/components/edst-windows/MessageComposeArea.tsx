@@ -1,6 +1,5 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import _ from "lodash";
 import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
@@ -26,7 +25,7 @@ import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontSize, eramFontFamily } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { edstFontGrey } from "../../styles/colors";
+import { edstFontGrey, optionsBackgroundGreen } from "../../styles/colors";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
@@ -39,8 +38,10 @@ import { useHubActions } from "../../hooks/useHubActions";
 import { useHubConnector } from "../../hooks/useHubConnector";
 import { fetchFormatRoute, fetchRouteFixes } from "../../api/api";
 import { useOnUnmount } from "../../hooks/useOnUnmount";
-import { toggleAltimeter } from "../../redux/slices/altimeterSlice";
-import { toggleMetar } from "../../redux/slices/metarSlice";
+import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
+import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
@@ -48,29 +49,36 @@ const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   font-family: ${eramFontFamily};
 `;
 
-const MessageComposeInputAreaDiv = styled.div`
+type MessageComposeInputAreaDivProps = { width?: number; height?: number };
+const MessageComposeInputAreaDiv = styled.div.attrs(({ width = 50, height = 2 }: MessageComposeInputAreaDivProps) => ({
+  width: `${width}ch`,
+  height: `${height}em`
+}))<MessageComposeInputAreaDivProps>`
   line-height: 1;
-  width: 100%;
+  width: auto;
   height: auto;
   border-bottom: 1px solid #adadad;
 
   textarea {
-    height: 2.2em;
+    height: ${props => props.height};
     resize: none;
     white-space: initial;
     overflow: hidden;
-    width: 45ch;
+    width: ${props => props.width};
     font-family: ${eramFontFamily};
     font-size: ${defaultFontSize};
     color: ${edstFontGrey};
     outline: none;
     border: none;
-    //caret: underscore;
+    caret: underscore;
     background-color: #000000;
     text-transform: uppercase;
   }
 `;
 
+const FeedbackContainerDiv = styled.div`
+  min-height: calc(3em + 12px);
+`;
 const ResponseFeedbackRowDiv = styled.div`
   height: 1em;
   line-height: 1;
@@ -114,7 +122,22 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
 
   useOnUnmount(() => dispatch(setMcaCommandString(mcaInputValue)));
 
-  const rows = 3;
+  const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
+  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.MESSAGE_COMPOSE_AREA);
+
+  const options: FloatingWindowOptions = useMemo(
+    () => ({
+      lines: { value: `PA LINES ${windowOptions.lines}`, onMouseDown: event => windowOptionClickHandler(event, "lines") },
+      width: { value: `WIDTH ${windowOptions.width}`, onMouseDown: event => windowOptionClickHandler(event, "width") },
+      font: {
+        value: `FONT ${windowOptions.fontSize}`,
+        onMouseDown: event => windowOptionClickHandler(event, "fontSize")
+      },
+      bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") }
+    }),
+    [windowOptionClickHandler, windowOptions.brightness, windowOptions.fontSize, windowOptions.lines, windowOptions.width]
+  );
 
   const accept = (message: string) => {
     dispatch(setMcaAcceptMessage(message));
@@ -165,7 +188,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   const flightplanReadout = async (fid: string) => {
     const now = new Date();
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const entry: EdstEntry | undefined = getEntryByFid(fid);
+    const entry = getEntryByFid(fid);
     if (entry) {
       const formattedRoute = await fetchFormatRoute(entry.route, entry.departure, entry.destination);
       const msg =
@@ -298,10 +321,12 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
           accept(`WEATHER STAT REQ\n${mcaInputValue}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
-          if (args.length === 1) {
+          if (args.length === 0) {
+            reject(`READOUT\n${mcaInputValue}`);
+          } else if (args.length === 1) {
             flightplanReadout(args[0]).then(() => accept(`READOUT\n${mcaInputValue}`));
           } else {
-            setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaInputValue}`);
+            dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaInputValue}`));
           }
           break; // end case FR
         case "SR":
@@ -310,7 +335,11 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
             if (entry) {
               printFlightStrip(entry);
               acceptDposKeyBD();
+            } else {
+              reject(mcaInputValue);
             }
+          } else {
+            reject(mcaInputValue);
           }
           break;
         default:
@@ -356,40 +385,62 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
 
+  const onMcaMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    switch (event.button) {
+      case 1:
+        setShowOptions(true);
+        break;
+      default:
+        startDrag(event);
+        if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
+          dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+        }
+        break;
+    }
+  };
+
+  const zIndex = zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA);
+
   return (
     pos && (
-      <MessageComposeAreaDiv
-        ref={ref}
-        anyDragging={anyDragging}
-        id="edst-mca"
-        pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA)}
-        onMouseDown={event => {
-          startDrag(event);
-          if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) > 0) {
-            dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-          }
-        }}
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <MessageComposeInputAreaDiv>
-          <textarea
-            ref={inputRef}
-            tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
-            value={mcaInputValue}
-            onChange={handleInputChange}
-            onKeyDownCapture={handleKeyDown}
+      <>
+        <MessageComposeAreaDiv ref={ref} anyDragging={anyDragging} id="edst-mca" pos={pos} zIndex={zIndex} onMouseDown={onMcaMouseDown}>
+          {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+          <MessageComposeInputAreaDiv height={windowOptions.lines} width={windowOptions.width}>
+            <textarea
+              ref={inputRef}
+              tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
+              value={mcaInputValue}
+              onChange={handleInputChange}
+              onKeyDownCapture={handleKeyDown}
+            />
+          </MessageComposeInputAreaDiv>
+          <FeedbackContainerDiv>
+            <ResponseFeedbackRowDiv>
+              {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
+              {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
+              {feedbackRows[0]}
+            </ResponseFeedbackRowDiv>
+            {feedbackRows.slice(1, 30).map(s => (
+              <ResponseFeedbackRowDiv key={s}>{s}</ResponseFeedbackRowDiv>
+            ))}
+          </FeedbackContainerDiv>
+        </MessageComposeAreaDiv>
+        {showOptions && ref.current && (
+          <FloatingWindowOptionContainer
+            pos={{
+              x: pos.x + ref.current.clientWidth,
+              y: pos.y
+            }}
+            zIndex={zIndex}
+            header="MCA"
+            onClose={() => setShowOptions(false)}
+            options={options}
+            defaultBackgroundColor={optionsBackgroundGreen}
           />
-        </MessageComposeInputAreaDiv>
-        <ResponseFeedbackRowDiv>
-          {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
-          {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
-          {feedbackRows[0]}
-        </ResponseFeedbackRowDiv>
-        {_.range(1, rows).map(i => (
-          <ResponseFeedbackRowDiv key={i}>{feedbackRows[i]}</ResponseFeedbackRowDiv>
-        ))}
-      </MessageComposeAreaDiv>
+        )}
+      </>
     )
   );
 });

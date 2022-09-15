@@ -1,28 +1,36 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { decMetarStateValue, delMetar, incMetarStateValue, MetarCountableKeys, metarStateSelector } from "../../redux/slices/metarSlice";
-import { FloatingWindowOptions } from "../utils/FloatingWindowOptions";
+import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useMetar } from "../../api/weatherApi";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 import { optionsBackgroundGreen } from "../../styles/colors";
+import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
 `;
 
+const MetarRowDiv = styled(FloatingWindowRow)`
+  margin: 10px 21px 0 0;
+`;
+
 type MetarRowProps = {
   airport: string;
   selected: boolean;
-  handleMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+  handleMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  onDelete: () => void;
 };
-const MetarRow = ({ airport, selected, handleMouseDown }: MetarRowProps) => {
+const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const { data: airportMetar, isFetching } = useMetar(airport);
 
@@ -32,12 +40,31 @@ const MetarRow = ({ airport, selected, handleMouseDown }: MetarRowProps) => {
     }
   }, [isFetching, airportMetar, dispatch, airport]);
 
+  const zIndex = zStack.indexOf(EdstWindow.METAR);
+  const rect = ref.current?.getBoundingClientRect();
+
   return !airportMetar ? null : (
-    <span style={{ margin: "6px 0" }}>
-      <FloatingWindowRow selected={selected} onMouseDown={handleMouseDown}>
+    <>
+      <MetarRowDiv ref={ref} selected={selected} onMouseDown={handleMouseDown}>
         {airportMetar ?? "..."}
-      </FloatingWindowRow>
-    </span>
+      </MetarRowDiv>
+      {selected && rect && (
+        <FloatingWindowOptionContainer
+          pos={{
+            x: rect.left + rect.width,
+            y: rect.top
+          }}
+          zIndex={zIndex}
+          defaultBackgroundColor="#575757"
+          options={{
+            delete: {
+              value: `DELETE ${airport}`,
+              onMouseDown: onDelete
+            }
+          }}
+        />
+      )}
+    </>
   );
 };
 
@@ -45,41 +72,26 @@ export const MetarWindow = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.METAR));
   const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
-  const state = useRootSelector(metarStateSelector);
+  const airports = useRootSelector(metarAirportsSelector);
   const zStack = useRootSelector(zStackSelector);
-  const [showOptions, setShowOptions] = useState(false);
-  const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
 
-  const handleOptionClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>, key: MetarCountableKeys) => {
-      switch (event.button) {
-        case 0:
-          dispatch(decMetarStateValue(key));
-          break;
-        case 1:
-          dispatch(incMetarStateValue(key));
-          break;
-        default:
-          break;
-      }
-    },
-    [dispatch]
-  );
+  const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.METAR));
+  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.METAR);
 
   const options: FloatingWindowOptions = useMemo(
     () => ({
-      lines: { value: `LINES ${state.lines}` },
+      lines: { value: `LINES ${windowOptions.lines}` },
       font: {
-        value: `FONT ${state.fontSize}`,
-        onMouseDown: event => handleOptionClick(event, "fontSize")
+        value: `FONT ${windowOptions.fontSize}`,
+        onMouseDown: event => windowOptionClickHandler(event, "fontSize")
       },
-      bright: { value: `BRIGHT ${state.brightness}`, onMouseDown: event => handleOptionClick(event, "brightness") },
-
+      bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
       printAll: { value: "PRINT ALL" }
     }),
-    [handleOptionClick, state.brightness, state.fontSize, state.lines]
+    [windowOptionClickHandler, windowOptions.brightness, windowOptions.fontSize, windowOptions.lines]
   );
 
   const handleMouseDown = useCallback(
@@ -87,14 +99,8 @@ export const MetarWindow = () => {
       setShowOptions(false);
       if (selectedAirport !== airport) {
         setSelectedAirport(airport);
-        setSelectedPos({
-          x: event.currentTarget.offsetLeft,
-          y: event.currentTarget.offsetTop,
-          w: event.currentTarget.offsetWidth
-        });
       } else {
         setSelectedAirport(null);
-        setSelectedPos(null);
       }
     },
     [selectedAirport]
@@ -104,12 +110,14 @@ export const MetarWindow = () => {
     setShowOptions(true);
   };
 
+  const zIndex = zStack.indexOf(EdstWindow.METAR);
+
   return (
     pos && (
       <MetarDiv
         pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.METAR)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.METAR) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.METAR))}
+        zIndex={zIndex}
+        onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(EdstWindow.METAR))}
         ref={ref}
         anyDragging={anyDragging}
         id="edst-status"
@@ -121,40 +129,29 @@ export const MetarWindow = () => {
           onClose={() => dispatch(closeWindow(EdstWindow.METAR))}
           startDrag={startDrag}
         />
-        {state.airports.length > 0 && (
+        {airports.length > 0 && (
           <FloatingWindowBodyDiv>
-            {state.airports.map(airport => (
-              <Fragment key={airport}>
-                <MetarRow airport={airport} selected={selectedAirport === airport} handleMouseDown={event => handleMouseDown(event, airport)} />
-                {selectedAirport === airport && selectedPos && (
-                  <FloatingWindowOptions
-                    pos={{
-                      x: selectedPos.x + selectedPos.w!,
-                      y: selectedPos.y
-                    }}
-                    defaultBackgroundColor="#575757"
-                    options={{
-                      delete: {
-                        value: `DELETE ${airport}`,
-                        onMouseDown: () => {
-                          dispatch(delMetar(airport));
-                          setSelectedAirport(null);
-                          setSelectedPos(null);
-                        }
-                      }
-                    }}
-                  />
-                )}
-              </Fragment>
+            {airports.map(airport => (
+              <MetarRow
+                key={airport}
+                airport={airport}
+                selected={selectedAirport === airport}
+                handleMouseDown={event => handleMouseDown(event, airport)}
+                onDelete={() => {
+                  dispatch(delMetar(airport));
+                  setSelectedAirport(null);
+                }}
+              />
             ))}
           </FloatingWindowBodyDiv>
         )}
-        {showOptions && (
-          <FloatingWindowOptions
+        {showOptions && ref.current && (
+          <FloatingWindowOptionContainer
             pos={{
-              x: ref.current!.clientLeft + ref.current!.clientWidth,
-              y: ref.current!.clientTop
+              x: pos.x + ref.current.clientWidth,
+              y: pos.y
             }}
+            zIndex={zIndex}
             header="WX"
             onClose={() => setShowOptions(false)}
             options={options}

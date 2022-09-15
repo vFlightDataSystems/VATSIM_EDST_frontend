@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -6,22 +6,67 @@ import {
   setSigmetAcknowledged,
   setSigmetSuppressed,
   setViewSuppressedSigmet,
+  SigmetEntry,
   sigmetSelector,
   viewSuppressedSigmetSelector
 } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptions } from "../utils/FloatingWindowOptions";
+import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
+import { optionsBackgroundGreen } from "../../styles/colors";
 
 const SigmetDiv = styled(FloatingWindowDiv)`
   width: 1100px;
 `;
+
+const SigmetRowDiv = styled(FloatingWindowRow)`
+  margin: 6px 21px 0 0;
+`;
+
+type SigmetRowProps = {
+  sigmetEntry: SigmetEntry;
+  selected: boolean;
+  handleMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  onDelete: () => void;
+};
+const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onDelete }: SigmetRowProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const zStack = useRootSelector(zStackSelector);
+
+  const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
+  const rect = ref.current?.getBoundingClientRect();
+
+  return (
+    <>
+      <SigmetRowDiv ref={ref} selected={selected} suppressed={sigmetEntry.suppressed} onMouseDown={handleMouseDown}>
+        {sigmetEntry.text}
+      </SigmetRowDiv>
+      {selected && rect && (
+        <FloatingWindowOptionContainer
+          pos={{
+            x: rect.left + rect.width,
+            y: rect.top
+          }}
+          zIndex={zIndex}
+          defaultBackgroundColor="#575757"
+          options={{
+            toggleSuppressed: {
+              value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",
+              onMouseDown: onDelete
+            }
+          }}
+        />
+      )}
+    </>
+  );
+};
 
 export const SigmetWindow = () => {
   const dispatch = useRootDispatch();
@@ -30,52 +75,52 @@ export const SigmetWindow = () => {
   const viewSuppressed = useRootSelector(viewSuppressedSigmetSelector);
   const sigmetList = useRootSelector(sigmetSelector);
   const zStack = useRootSelector(zStackSelector);
-  const [showOptions, setShowOptions] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedPos, setSelectedPos] = useState<WindowPosition | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS, "mousedown");
 
-  const SigmetOptions = useMemo(
-    () => ({
-      viewSuppressed: { value: "VIEW SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(true)) },
-      hideSuppressed: { value: "HIDE SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(false)) },
-      printAll: { value: "PRINT ALL" }
-    }),
-    [dispatch]
-  );
+  const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.SIGMETS));
+  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.SIGMETS);
+
+  const options: FloatingWindowOptions = {
+    lines: { value: `LINES ${windowOptions.lines}` },
+    font: {
+      value: `FONT ${windowOptions.fontSize}`,
+      onMouseDown: event => windowOptionClickHandler(event, "fontSize")
+    },
+    bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
+    viewSuppressed: { value: "VIEW SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(true)) },
+    hideSuppressed: { value: "HIDE SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(false)) },
+    printAll: { value: "PRINT ALL" }
+  };
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
-    if (selectedOption !== sigmetId) {
+    if (selectedEntry !== sigmetId) {
       if (!sigmetList[sigmetId].acknowledged) {
         dispatch(setSigmetAcknowledged({ id: sigmetId, value: true }));
       }
-      setSelectedOption(sigmetId);
-      // figure out how to align this correctly :/
-      setSelectedPos({
-        x: event.currentTarget.offsetLeft,
-        y: event.currentTarget.clientTop - 1,
-        w: event.currentTarget.clientWidth + 23
-      });
+      setSelectedEntry(sigmetId);
     } else {
-      setSelectedOption(null);
-      setSelectedPos(null);
+      setSelectedEntry(null);
     }
   };
 
   const handleOptionsMouseDown = () => {
-    setSelectedOption(null);
+    setSelectedEntry(null);
     setShowOptions(true);
   };
+
+  const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
 
   return (
     pos && (
       <SigmetDiv
         ref={ref}
         pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.SIGMETS)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.SIGMETS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SIGMETS))}
+        zIndex={zIndex}
+        onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SIGMETS))}
         anyDragging={anyDragging}
         id="edst-status"
       >
@@ -92,50 +137,36 @@ export const SigmetWindow = () => {
               {Object.entries(sigmetList).map(
                 ([sigmetId, sigmetEntry]) =>
                   (!sigmetEntry.suppressed || viewSuppressed) && (
-                    <span style={{ margin: "6px 0" }} key={sigmetId}>
-                      <FloatingWindowRow
-                        selected={selectedOption === sigmetId}
-                        suppressed={sigmetEntry.suppressed}
-                        onMouseDown={event => handleEntryMouseDown(event, sigmetId)}
-                      >
-                        {sigmetEntry.text}
-                      </FloatingWindowRow>
-                      {selectedOption === sigmetId && selectedPos && (
-                        <FloatingWindowOptions
-                          pos={{
-                            x: ref.current!.clientLeft + ref.current!.clientWidth,
-                            y: ref.current!.clientTop
-                          }}
-                          defaultBackgroundColor="#575757"
-                          options={{
-                            toggleSuppressed: {
-                              value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",
-                              onMouseDown: () => {
-                                dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
-                                setSelectedOption(null);
-                                setSelectedPos(null);
-                              }
-                            }
-                          }}
-                        />
-                      )}
-                    </span>
+                    <SigmetRow
+                      key={sigmetId}
+                      sigmetEntry={sigmetEntry}
+                      selected={selectedEntry === sigmetId}
+                      handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
+                      onDelete={() => {
+                        dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
+                        setSelectedEntry(null);
+                      }}
+                    />
                   )
               )}
             </ScrollContainer>
           </FloatingWindowBodyDiv>
         )}
-        {showOptions && (
-          <FloatingWindowOptions
+        {showOptions && ref.current && (
+          <FloatingWindowOptionContainer
             pos={{
-              x: ref.current!.clientLeft + ref.current!.clientWidth,
-              y: ref.current!.clientTop
+              x: pos.x + ref.current.clientWidth,
+              y: pos.y
             }}
+            zIndex={zIndex}
             header="SIGMETS"
             onClose={() => setShowOptions(false)}
-            options={SigmetOptions}
+            defaultBackgroundColor={optionsBackgroundGreen}
+            options={options}
             backgroundColors={{
-              [viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#575757"
+              [viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#575757",
+              [!viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#000000",
+              printAll: "#000000"
             }}
           />
         )}

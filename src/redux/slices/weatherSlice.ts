@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position } from "@turf/turf";
-import { RootState } from "../store";
+import { RootState, RootThunkAction } from "../store";
 
 type WeatherState = {
   sigmetMap: Record<string, SigmetEntry>;
   airmetMap: Record<string, AirmetEntry>;
+  altimeterAirports: string[];
+  metarAirports: string[];
   viewSuppressedSigmet: boolean;
 };
 
@@ -28,6 +30,8 @@ type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Pol
 const initialState: WeatherState = {
   sigmetMap: {},
   airmetMap: {},
+  altimeterAirports: [],
+  metarAirports: [],
   viewSuppressedSigmet: true
 };
 
@@ -67,13 +71,78 @@ const weatherSlice = createSlice({
     },
     setViewSuppressedSigmet(state, action: PayloadAction<boolean>) {
       state.viewSuppressedSigmet = action.payload;
+    },
+    addAltimeter(state, action: PayloadAction<string>) {
+      if (!state.altimeterAirports.includes(action.payload)) {
+        state.altimeterAirports.push(action.payload);
+      }
+    },
+    delAltimeter(state, action: PayloadAction<string>) {
+      const index = state.altimeterAirports.indexOf(action.payload);
+      if (index > -1) {
+        state.altimeterAirports.splice(index, 1);
+      }
+    },
+    addMetar(state, action: PayloadAction<string>) {
+      if (!state.metarAirports.includes(action.payload)) {
+        state.metarAirports.push(action.payload);
+      }
+    },
+    delMetar(state, action: PayloadAction<string>) {
+      const index = state.metarAirports.indexOf(action.payload);
+      if (index > -1) {
+        state.metarAirports.splice(index, 1);
+      }
     }
   }
 });
 
-export const { addSigmets, setSigmetSuppressed, setSigmetAcknowledged, setViewSuppressedSigmet } = weatherSlice.actions;
+export function toggleAltimeter(airports: string[]): RootThunkAction {
+  return (dispatch, getState) => {
+    const currentAirports = getState().weather.altimeterAirports;
+    airports.forEach(airport => {
+      if (airport.length === 4 && airport.startsWith("K")) {
+        airport = airport.slice(1);
+      }
+      if (currentAirports.includes(airport)) {
+        dispatch(delAltimeter(airport));
+      } else {
+        dispatch(addAltimeter(airport));
+      }
+    });
+  };
+}
+
+export function toggleMetar(airports: string[]): RootThunkAction {
+  return (dispatch, getState) => {
+    const currentAirports = getState().weather.metarAirports;
+    airports.forEach(airport => {
+      if (airport.length === 4 && airport.startsWith("K")) {
+        airport = airport.slice(1);
+      }
+      if (currentAirports.includes(airport)) {
+        dispatch(delMetar(airport));
+      } else {
+        dispatch(addMetar(airport));
+      }
+    });
+  };
+}
+
+export const {
+  addSigmets,
+  setSigmetSuppressed,
+  setSigmetAcknowledged,
+  setViewSuppressedSigmet,
+  addAltimeter,
+  delAltimeter,
+  addMetar,
+  delMetar
+} = weatherSlice.actions;
 export default weatherSlice.reducer;
 
 export const sigmetSelector = (state: RootState) => state.weather.sigmetMap;
 export const airmetSelector = (state: RootState) => state.weather.airmetMap;
+export const altimeterAirportsSelector = (state: RootState) => state.weather.altimeterAirports;
+export const metarAirportsSelector = (state: RootState) => state.weather.metarAirports;
 export const viewSuppressedSigmetSelector = (state: RootState) => state.weather.viewSuppressedSigmet;
