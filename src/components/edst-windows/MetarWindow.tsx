@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
@@ -11,13 +11,14 @@ import { useMetar } from "../../api/weatherApi";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
 import { useWindowOptions } from "../../hooks/useWindowOptions";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
 `;
 
 const MetarRowDiv = styled(FloatingWindowRow)`
-  margin: 10px 21px 0 0;
+  margin: 6px 21px 0 0;
 `;
 
 type MetarRowProps = {
@@ -76,6 +77,7 @@ export const MetarWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.METAR));
   const extraOptions = useMemo(
     () => ({
       printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
@@ -120,22 +122,24 @@ export const MetarWindow = () => {
           onClose={() => dispatch(closeWindow(EdstWindow.METAR))}
           startDrag={startDrag}
         />
-        {airports.length > 0 && (
-          <FloatingWindowBodyDiv>
-            {airports.map(airport => (
-              <MetarRow
-                key={airport}
-                airport={airport}
-                selected={selectedAirport === airport}
-                handleMouseDown={event => handleMouseDown(event, airport)}
-                onDelete={() => {
-                  dispatch(delMetar(airport));
-                  setSelectedAirport(null);
-                }}
-              />
-            ))}
-          </FloatingWindowBodyDiv>
-        )}
+        <ThemeProvider theme={windowOptions}>
+          {airports.length > 0 && (
+            <FloatingWindowBodyDiv>
+              {airports.map(airport => (
+                <MetarRow
+                  key={airport}
+                  airport={airport}
+                  selected={selectedAirport === airport}
+                  handleMouseDown={event => handleMouseDown(event, airport)}
+                  onDelete={() => {
+                    dispatch(delMetar(airport));
+                    setSelectedAirport(null);
+                  }}
+                />
+              ))}
+            </FloatingWindowBodyDiv>
+          )}
+        </ThemeProvider>
         {showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

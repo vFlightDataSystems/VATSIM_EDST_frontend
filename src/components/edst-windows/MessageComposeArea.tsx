@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
@@ -25,7 +25,6 @@ import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontSize, eramFontFamily } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
@@ -44,6 +43,7 @@ import { useWindowOptions } from "../../hooks/useWindowOptions";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
+  color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});
   background-color: #000000;
   border: 1px solid #adadad;
   font-family: ${eramFontFamily};
@@ -60,6 +60,7 @@ const MessageComposeInputAreaDiv = styled.div.attrs(({ width = 50, height = 2 }:
   border-bottom: 1px solid #adadad;
 
   textarea {
+    color: inherit;
     height: ${props => props.height};
     resize: none;
     white-space: initial;
@@ -67,7 +68,6 @@ const MessageComposeInputAreaDiv = styled.div.attrs(({ width = 50, height = 2 }:
     width: ${props => props.width};
     font-family: ${eramFontFamily};
     font-size: ${defaultFontSize};
-    color: ${edstFontGrey};
     outline: none;
     border: none;
     caret: underscore;
@@ -312,6 +312,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
             reject(`READOUT\n${mcaInputValue}`);
           } else if (args.length === 1) {
             flightplanReadout(args[0]).then(() => accept(`READOUT\n${mcaInputValue}`));
+            dispatch(openWindowThunk(EdstWindow.MESSAGE_RESPONSE_AREA));
           } else {
             dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaInputValue}`));
           }
@@ -392,28 +393,30 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   return (
     pos && (
       <>
-        <MessageComposeAreaDiv ref={ref} anyDragging={anyDragging} id="edst-mca" pos={pos} zIndex={zIndex} onMouseDown={onMcaMouseDown}>
-          {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-          <MessageComposeInputAreaDiv height={windowOptions.lines} width={windowOptions.width}>
-            <textarea
-              ref={inputRef}
-              tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
-              value={mcaInputValue}
-              onChange={handleInputChange}
-              onKeyDownCapture={handleKeyDown}
-            />
-          </MessageComposeInputAreaDiv>
-          <FeedbackContainerDiv>
-            <ResponseFeedbackRowDiv>
-              {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
-              {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
-              {feedbackRows[0]}
-            </ResponseFeedbackRowDiv>
-            {feedbackRows.slice(1, 30).map(s => (
-              <ResponseFeedbackRowDiv key={s}>{s}</ResponseFeedbackRowDiv>
-            ))}
-          </FeedbackContainerDiv>
-        </MessageComposeAreaDiv>
+        <ThemeProvider theme={windowOptions}>
+          <MessageComposeAreaDiv ref={ref} anyDragging={anyDragging} id="edst-mca" pos={pos} zIndex={zIndex} onMouseDown={onMcaMouseDown}>
+            {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+            <MessageComposeInputAreaDiv height={windowOptions.lines} width={windowOptions.width}>
+              <textarea
+                ref={inputRef}
+                tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
+                value={mcaInputValue}
+                onChange={handleInputChange}
+                onKeyDownCapture={handleKeyDown}
+              />
+            </MessageComposeInputAreaDiv>
+            <FeedbackContainerDiv>
+              <ResponseFeedbackRowDiv>
+                {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
+                {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
+                {feedbackRows[0]}
+              </ResponseFeedbackRowDiv>
+              {feedbackRows.slice(1, 30).map(s => (
+                <ResponseFeedbackRowDiv key={s}>{s}</ResponseFeedbackRowDiv>
+              ))}
+            </FeedbackContainerDiv>
+          </MessageComposeAreaDiv>
+        </ThemeProvider>
         {showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

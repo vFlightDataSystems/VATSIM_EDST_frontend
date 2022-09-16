@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { DraggableDiv, edstFontFamily, eramFontFamily, NoSelectDiv } from "./styles";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
@@ -49,15 +49,15 @@ export const FloatingWindowBodyDiv = styled.div`
 `;
 
 export const FloatingWindowHeaderDiv = styled.div`
-  height: 1em;
-  line-height: 1em;
+  //height: 1em;
   background-color: ${floatingWindowTitleBackgroundColor};
   justify-content: space-between;
   display: flex;
 `;
 
 const FloatingWindowHeaderColDiv = styled.div`
-  height: auto;
+  height: 1em;
+  padding-bottom: 1px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -73,6 +73,7 @@ export const FloatingWindowHeaderColDiv16ch = styled(FloatingWindowHeaderColDiv)
   width: 1.6ch;
 `;
 export const FloatingWindowHeaderColDivRect = styled(FloatingWindowHeaderColDiv)`
+  height: 1em;
   width: 1em;
 `;
 export const FloatingWindowHeaderColDivFlex = styled(FloatingWindowHeaderColDiv)`
@@ -95,15 +96,16 @@ export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean; suppr
   font-size: 16px;
   padding: 0 30px 0 10px;
   border: 1px solid transparent;
-  color: #919191;
   margin: 4px 21px 0 0;
   min-height: 1em;
+  color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});
 
   ${props =>
-    props.selected && {
-      "background-color": "#919191",
-      color: "#000000"
-    }};
+    props.selected &&
+    css`
+      background-color: rgba(173, 173, 173, ${(props.theme.brightness ?? 80) / 100});
+      color: #000000;
+    `};
   ${props =>
     props.suppressed && {
       color: "#575757"

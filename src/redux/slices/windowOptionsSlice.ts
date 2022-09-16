@@ -129,12 +129,12 @@ const minOptionValues = {
   },
   [EdstWindow.GI]: {
     brightness: 2,
-    lines: 1,
+    lines: 3,
     fontSize: 1
   },
   [EdstWindow.SIGMETS]: {
     brightness: 2,
-    lines: 1,
+    lines: 3,
     fontSize: 1
   }
 };

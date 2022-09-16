@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { airmetSelector, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
@@ -11,6 +11,7 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 import { useWindowOptions } from "../../hooks/useWindowOptions";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 const GIDiv = styled(FloatingWindowDiv)`
   width: 1200px;
@@ -26,6 +27,7 @@ export const GIWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.GI));
   const extraOptions = useMemo(
     () => ({
       printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
@@ -70,19 +72,21 @@ export const GIWindow = () => {
           onClose={() => dispatch(closeWindow(EdstWindow.GI))}
           startDrag={startDrag}
         />
-        {Object.values(airmetMap).length > 0 && (
-          <FloatingWindowBodyDiv>
-            <ScrollContainer maxHeight="600px">
-              {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
-                <span style={{ margin: "6px 0" }} key={airmetId}>
-                  <FloatingWindowRow selected={selectedAirmet === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
-                    {airmetEntry.text}
-                  </FloatingWindowRow>
-                </span>
-              ))}
-            </ScrollContainer>
-          </FloatingWindowBodyDiv>
-        )}
+        <ThemeProvider theme={windowOptions}>
+          {Object.values(airmetMap).length > 0 && (
+            <FloatingWindowBodyDiv>
+              <ScrollContainer maxHeight="600px">
+                {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
+                  <span style={{ margin: "6px 0" }} key={airmetId}>
+                    <FloatingWindowRow selected={selectedAirmet === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
+                      {airmetEntry.text}
+                    </FloatingWindowRow>
+                  </span>
+                ))}
+              </ScrollContainer>
+            </FloatingWindowBodyDiv>
+          )}
+        </ThemeProvider>
         {showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

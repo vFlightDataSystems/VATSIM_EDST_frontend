@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import {
@@ -19,6 +19,7 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 import { useWindowOptions } from "../../hooks/useWindowOptions";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 const SigmetDiv = styled(FloatingWindowDiv)`
   width: 1100px;
@@ -78,6 +79,7 @@ export const SigmetWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.SIGMETS));
   const extraOptions = useMemo(
     () => ({
       viewSuppressed: {
@@ -133,27 +135,29 @@ export const SigmetWindow = () => {
           onClose={() => dispatch(closeWindow(EdstWindow.SIGMETS))}
           startDrag={startDrag}
         />
-        {Object.values(sigmetList).length > 0 && (
-          <FloatingWindowBodyDiv>
-            <ScrollContainer maxHeight="600px">
-              {Object.entries(sigmetList).map(
-                ([sigmetId, sigmetEntry]) =>
-                  (!sigmetEntry.suppressed || viewSuppressed) && (
-                    <SigmetRow
-                      key={sigmetId}
-                      sigmetEntry={sigmetEntry}
-                      selected={selectedEntry === sigmetId}
-                      handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
-                      onDelete={() => {
-                        dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
-                        setSelectedEntry(null);
-                      }}
-                    />
-                  )
-              )}
-            </ScrollContainer>
-          </FloatingWindowBodyDiv>
-        )}
+        <ThemeProvider theme={windowOptions}>
+          {Object.values(sigmetList).length > 0 && (
+            <FloatingWindowBodyDiv>
+              <ScrollContainer maxHeight="600px">
+                {Object.entries(sigmetList).map(
+                  ([sigmetId, sigmetEntry]) =>
+                    (!sigmetEntry.suppressed || viewSuppressed) && (
+                      <SigmetRow
+                        key={sigmetId}
+                        sigmetEntry={sigmetEntry}
+                        selected={selectedEntry === sigmetId}
+                        handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
+                        onDelete={() => {
+                          dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
+                          setSelectedEntry(null);
+                        }}
+                      />
+                    )
+                )}
+              </ScrollContainer>
+            </FloatingWindowBodyDiv>
+          )}
+        </ThemeProvider>
         {showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { mraMsgSelector, pushZStack, setMraMessage, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -24,6 +24,7 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv).attrs(({ width }: Messa
   overflow-wrap: anywhere;
   white-space: pre-line;
   font-family: ${eramFontFamily};
+  color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});
 `;
 
 export const MessageResponseArea = () => {
@@ -64,18 +65,20 @@ export const MessageResponseArea = () => {
   return (
     pos && (
       <>
-        <MessageResponseAreaDiv
-          width={windowOptions.width}
-          pos={pos}
-          zIndex={zIndex}
-          ref={ref}
-          anyDragging={anyDragging}
-          id="edst-mra"
-          onMouseDown={onMraMouseDown}
-        >
-          {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-          {msg}
-        </MessageResponseAreaDiv>
+        <ThemeProvider theme={windowOptions}>
+          <MessageResponseAreaDiv
+            width={windowOptions.width}
+            pos={pos}
+            zIndex={zIndex}
+            ref={ref}
+            anyDragging={anyDragging}
+            id="edst-mra"
+            onMouseDown={onMraMouseDown}
+          >
+            {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+            {msg}
+          </MessageResponseAreaDiv>
+        </ThemeProvider>
         {showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

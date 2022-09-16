@@ -10,7 +10,7 @@ type FloatingWindowHeaderProps = {
   title: string;
   handleOptionsMouseDown?: () => void;
   onClose: () => void;
-  startDrag: (event: React.MouseEvent<HTMLDivElement>) => void;
+  startDrag: React.MouseEventHandler<HTMLDivElement>;
 };
 
 export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, startDrag }: FloatingWindowHeaderProps) => {
