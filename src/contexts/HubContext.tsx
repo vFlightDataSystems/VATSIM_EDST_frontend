@@ -94,9 +94,10 @@ const useHubContextInit = () => {
             .invoke<ApiSessionInfoDto>("getSessionInfo")
             .then(sessionInfo => {
               log(sessionInfo);
-              if (sessionInfo?.positions?.[0]?.position?.eramConfiguration) {
+              const primaryPosition = sessionInfo?.positions.slice(0).filter(pos => pos.isPrimary)?.[0]?.position;
+              if (primaryPosition?.eramConfiguration) {
                 const artccId = sessionInfo.artccId;
-                const sectorId = sessionInfo.positions[0].position.eramConfiguration.sectorId;
+                const sectorId = primaryPosition.eramConfiguration.sectorId;
                 dispatch(setArtccId(artccId));
                 dispatch(setSectorId(sectorId));
                 connectSocket(artccId, sectorId);

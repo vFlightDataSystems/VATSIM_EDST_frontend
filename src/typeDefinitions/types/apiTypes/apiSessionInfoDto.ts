@@ -2,6 +2,7 @@ import { ApiControllerPosition } from "./apiControllerPosition";
 
 type ApiPositionSpecDto = {
   facilityId: string;
+  isPrimary: boolean;
   position: ApiControllerPosition;
 };
 
