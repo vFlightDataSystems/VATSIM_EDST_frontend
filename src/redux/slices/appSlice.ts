@@ -32,6 +32,7 @@ type AppWindow = {
 type AppState = {
   windows: Record<EdstWindow, AppWindow>;
   anyDragging: boolean;
+  commandHistory: string[];
   mraMsg: string;
   mcaCommandString: string;
   mcaFeedbackString: string;
@@ -45,7 +46,7 @@ type AppState = {
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
   [EdstWindow.STATUS]: { x: 400, y: 100 },
   [EdstWindow.OUTAGE]: { x: 400, y: 100 },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 600 }
+  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 400 }
 };
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
@@ -62,6 +63,7 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
 const initialState: AppState = {
   windows: initialWindowState,
   anyDragging: false,
+  commandHistory: [],
   mraMsg: "",
   mcaCommandString: "",
   mcaFeedbackString: "",
@@ -107,6 +109,7 @@ const appSlice = createSlice({
       state.mraMsg = action.payload;
     },
     setMcaCommandString(state, action: PayloadAction<string>) {
+      state.commandHistory = [action.payload, ...state.commandHistory.slice(0, 30)];
       state.mcaCommandString = action.payload;
     },
     setMcaFeedbackString(state, action: PayloadAction<string>) {
