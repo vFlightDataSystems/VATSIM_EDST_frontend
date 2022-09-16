@@ -66,18 +66,18 @@ type SharedUiEventProps<T> = {
   sharedUiEventHandlerArgs: T;
 };
 
-type EdstButtonProps<T = any> = {
-  disabled?: boolean;
-  selected?: boolean;
-  width?: string;
-  height?: string;
-  margin?: string;
-  padding?: string;
-  content?: string;
-  id?: string;
-  title?: string;
-  onMouseDown?: (event: React.MouseEvent<HTMLDivElement>) => void;
-} & Partial<SharedUiEventProps<T>>;
+type EdstButtonProps = Partial<{
+  disabled: boolean;
+  selected: boolean;
+  width: string;
+  height: string;
+  margin: string;
+  padding: string;
+  content: string;
+  id: string;
+  title: string;
+  onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+}>;
 
 export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
   return (
@@ -106,14 +106,15 @@ export const EdstRouteButton12x12 = (props: Omit<EdstButtonFixedSizeProps, "padd
 );
 export const EdstTemplateButton85 = (props: EdstButtonFixedSizeProps) => <EdstButton width="85px" margin="0 4px" {...props} />;
 
+type EdstWindowHeaderButtonProps<T> = EdstButtonProps & Partial<SharedUiEventProps<T>>;
 export function EdstWindowHeaderButton<T>({
   onMouseDown,
   id,
-  sharedUiEventId,
-  sharedUiEventHandler,
-  sharedUiEventHandlerArgs,
+  sharedUiEventId = undefined,
+  sharedUiEventHandler = undefined,
+  sharedUiEventHandlerArgs = undefined,
   ...props
-}: PropsWithChildren<EdstButtonProps<T>>) {
+}: PropsWithChildren<EdstWindowHeaderButtonProps<T>>) {
   const ref = useRef<HTMLDivElement>(null);
 
   useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler, sharedUiEventHandlerArgs);

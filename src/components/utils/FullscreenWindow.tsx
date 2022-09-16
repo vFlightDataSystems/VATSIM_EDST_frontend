@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, PropsWithChildren, useRef } from "react";
+import React, { ComponentType, PropsWithChildren, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { useFocused } from "../../hooks/useFocused";
 import { pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -10,8 +10,8 @@ import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 
 type FullscreenWindowProps = PropsWithChildren<{
   edstWindow: EdstWindow;
-  HeaderComponent: JSXElementConstructor<HeaderComponentProps>;
-  BodyComponent: JSXElementConstructor<unknown>;
+  HeaderComponent: ComponentType<HeaderComponentProps>;
+  BodyComponent: ComponentType<unknown>;
 }>;
 
 type HeaderComponentProps = {
