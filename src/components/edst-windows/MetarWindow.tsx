@@ -2,17 +2,15 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useMetar } from "../../api/weatherApi";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
-import { optionsBackgroundGreen } from "../../styles/colors";
 import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
+import { useWindowOptions } from "../../hooks/useWindowOptions";
 
 const MetarDiv = styled(FloatingWindowDiv)`
   width: 400px;
@@ -55,10 +53,10 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
             y: rect.top
           }}
           zIndex={zIndex}
-          defaultBackgroundColor="#575757"
           options={{
             delete: {
               value: `DELETE ${airport}`,
+              backgroundColor: "#575757",
               onMouseDown: onDelete
             }
           }}
@@ -78,21 +76,14 @@ export const MetarWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.METAR, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.METAR));
-  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.METAR);
-
-  const options: FloatingWindowOptions = useMemo(
+  const extraOptions = useMemo(
     () => ({
-      lines: { value: `LINES ${windowOptions.lines}` },
-      font: {
-        value: `FONT ${windowOptions.fontSize}`,
-        onMouseDown: event => windowOptionClickHandler(event, "fontSize")
-      },
-      bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
-      printAll: { value: "PRINT ALL" }
+      printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
     }),
-    [windowOptionClickHandler, windowOptions.brightness, windowOptions.fontSize, windowOptions.lines]
+    []
   );
+
+  const options = useWindowOptions(EdstWindow.METAR, extraOptions);
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
@@ -155,10 +146,6 @@ export const MetarWindow = () => {
             header="WX"
             onClose={() => setShowOptions(false)}
             options={options}
-            defaultBackgroundColor={optionsBackgroundGreen}
-            backgroundColors={{
-              printAll: "#000000"
-            }}
           />
         )}
       </MetarDiv>

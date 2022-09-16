@@ -73,7 +73,7 @@ const initialState = {
 };
 
 type WindowOptions = typeof initialState;
-export type ModifiableWindowOptions = typeof maxOptionValues;
+export type ModifiableWindowOptions = WindowOptions;
 
 const maxOptionValues = {
   [EdstWindow.ALTIMETER]: {

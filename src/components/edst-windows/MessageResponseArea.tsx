@@ -1,16 +1,15 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { mraMsgSelector, windowPositionSelector, zStackSelector, pushZStack, setMraMessage } from "../../redux/slices/appSlice";
+import { mraMsgSelector, pushZStack, setMraMessage, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { eramFontFamily } from "../../styles/styles";
+import { useWindowOptions } from "../../hooks/useWindowOptions";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
-import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
-import { optionsBackgroundGreen } from "../../styles/colors";
 
 type MessageResponseAreaDivProps = { width: number };
 const MessageResponseAreaDiv = styled(FloatingWindowDiv).attrs(({ width }: MessageResponseAreaDivProps) => ({
@@ -37,20 +36,13 @@ export const MessageResponseArea = () => {
 
   const [showOptions, setShowOptions] = useState(false);
   const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.MESSAGE_RESPONSE_AREA));
-  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.MESSAGE_RESPONSE_AREA);
-
-  const options: FloatingWindowOptions = useMemo(
+  const extraOptions = useMemo(
     () => ({
-      width: { value: `WIDTH ${windowOptions.width}`, onMouseDown: event => windowOptionClickHandler(event, "width") },
-      font: {
-        value: `FONT ${windowOptions.fontSize}`,
-        onMouseDown: event => windowOptionClickHandler(event, "fontSize")
-      },
-      bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
-      clear: { value: "CLEAR", onMouseDown: () => dispatch(setMraMessage("")) }
+      clear: { value: "CLEAR", backgroundColor: "#000000", onMouseDown: () => dispatch(setMraMessage("")) }
     }),
-    [dispatch, windowOptionClickHandler, windowOptions.brightness, windowOptions.fontSize, windowOptions.width]
+    [dispatch]
   );
+  const options = useWindowOptions(EdstWindow.MESSAGE_RESPONSE_AREA, extraOptions);
 
   const onMraMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -94,10 +86,6 @@ export const MessageResponseArea = () => {
             header="RA"
             onClose={() => setShowOptions(false)}
             options={options}
-            defaultBackgroundColor={optionsBackgroundGreen}
-            backgroundColors={{
-              clear: "#000000"
-            }}
           />
         )}
       </>

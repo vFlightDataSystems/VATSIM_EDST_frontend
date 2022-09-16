@@ -16,10 +16,8 @@ const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: bool
   height: auto;
 `;
 
-type FloatingWindowOptionDivProps = { backgroundColor?: string };
-const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: FloatingWindowOptionDivProps) => ({
-  backgroundColor: props.backgroundColor ?? "#000000"
-}))<FloatingWindowOptionDivProps>`
+type FloatingWindowOptionDivProps = { backgroundColor: string };
+const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOptionDivProps>`
   height: 1em;
   background-color: ${props => props.backgroundColor};
   padding-right: 16px;
@@ -33,6 +31,7 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv).attrs((props: Fl
 
 type FloatingWindowOption = {
   value: string;
+  backgroundColor?: string;
   onMouseDown?: MouseEventHandler<HTMLDivElement>;
 };
 
@@ -44,8 +43,6 @@ type FloatingWindowOptionsProps<T extends FloatingWindowOptions> = {
   onClose?: () => void;
   header?: string;
   options?: T;
-  defaultBackgroundColor?: string;
-  backgroundColors?: Partial<Record<keyof T, string>>;
 };
 
 export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
@@ -81,11 +78,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
         </FloatingWindowHeaderDiv>
       )}
       {Object.entries(props.options ?? {}).map(([key, option]) => (
-        <FloatingWindowOptionDiv
-          backgroundColor={props?.backgroundColors?.[key] ?? props.defaultBackgroundColor}
-          key={key}
-          onMouseDown={option.onMouseDown}
-        >
+        <FloatingWindowOptionDiv backgroundColor={option.backgroundColor ?? "#000000"} key={key} onMouseDown={option.onMouseDown}>
           {option.value}
         </FloatingWindowOptionDiv>
       ))}

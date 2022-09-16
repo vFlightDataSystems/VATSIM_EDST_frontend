@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { FloatingWindowOptions, FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { mod } from "../../lib";
@@ -10,10 +10,8 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useAltimeter } from "../../api/weatherApi";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
-import { optionsBackgroundGreen } from "../../styles/colors";
 import { altimeterAirportsSelector, delAltimeter } from "../../redux/slices/weatherSlice";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
+import { useWindowOptions } from "../../hooks/useWindowOptions";
 
 const AltimeterDiv = styled(FloatingWindowDiv)`
   min-width: 200px;
@@ -70,10 +68,10 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
             x: rect.left + rect.width,
             y: rect.top
           }}
-          defaultBackgroundColor="#575757"
           options={{
             delete: {
               value: `DELETE ${airport}`,
+              backgroundColor: "#575757",
               onMouseDown: onDelete
             }
           }}
@@ -94,24 +92,14 @@ export const AltimeterWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.ALTIMETER));
-  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.ALTIMETER);
-
-  const options: FloatingWindowOptions = useMemo(
+  const extraOptions = useMemo(
     () => ({
-      lines: { value: `LINES ${windowOptions.lines}` },
-      columns: { value: `COL ${windowOptions.columns}` },
-      font: {
-        value: `FONT ${windowOptions.fontSize}`,
-        onMouseDown: event => windowOptionClickHandler(event, "fontSize")
-      },
-      bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
-      template: {
-        value: "TEMPLATE"
-      }
+      template: { value: "TEMPLATE", backgroundColor: "#000000" }
     }),
-    [windowOptionClickHandler, windowOptions.brightness, windowOptions.columns, windowOptions.fontSize, windowOptions.lines]
+    []
   );
+
+  const options = useWindowOptions(EdstWindow.ALTIMETER, extraOptions);
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
@@ -174,10 +162,6 @@ export const AltimeterWindow = () => {
             header="AS"
             onClose={() => setShowOptions(false)}
             options={options}
-            defaultBackgroundColor={optionsBackgroundGreen}
-            backgroundColors={{
-              template: "#000000"
-            }}
           />
         )}
       </AltimeterDiv>

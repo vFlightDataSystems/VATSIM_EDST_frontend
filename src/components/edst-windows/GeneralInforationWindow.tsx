@@ -1,18 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { airmetSelector, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
-import { optionsBackgroundGreen } from "../../styles/colors";
+import { useWindowOptions } from "../../hooks/useWindowOptions";
 
 const GIDiv = styled(FloatingWindowDiv)`
   width: 1200px;
@@ -28,18 +26,14 @@ export const GIWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GI, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.GI));
-  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.GI);
+  const extraOptions = useMemo(
+    () => ({
+      printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
+    }),
+    []
+  );
 
-  const options: FloatingWindowOptions = {
-    lines: { value: `LINES ${windowOptions.lines}` },
-    font: {
-      value: `FONT ${windowOptions.fontSize}`,
-      onMouseDown: event => windowOptionClickHandler(event, "fontSize")
-    },
-    bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
-    printAll: { value: "PRINT ALL" }
-  };
+  const options = useWindowOptions(EdstWindow.GI, extraOptions);
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, airmetId: string) => {
     setShowOptions(false);
@@ -99,10 +93,6 @@ export const GIWindow = () => {
             header="GI"
             onClose={() => setShowOptions(false)}
             options={options}
-            defaultBackgroundColor={optionsBackgroundGreen}
-            backgroundColors={{
-              printAll: "#000000"
-            }}
           />
         )}
       </GIDiv>

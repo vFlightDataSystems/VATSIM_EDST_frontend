@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -10,7 +10,7 @@ import {
   sigmetSelector,
   viewSuppressedSigmetSelector
 } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
@@ -18,9 +18,7 @@ import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
-import { optionsBackgroundGreen } from "../../styles/colors";
+import { useWindowOptions } from "../../hooks/useWindowOptions";
 
 const SigmetDiv = styled(FloatingWindowDiv)`
   width: 1100px;
@@ -55,10 +53,10 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onDelete }: SigmetR
             y: rect.top
           }}
           zIndex={zIndex}
-          defaultBackgroundColor="#575757"
           options={{
             toggleSuppressed: {
               value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",
+              backgroundColor: "#575757",
               onMouseDown: onDelete
             }
           }}
@@ -80,20 +78,24 @@ export const SigmetWindow = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.SIGMETS));
-  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.SIGMETS);
+  const extraOptions = useMemo(
+    () => ({
+      viewSuppressed: {
+        value: "VIEW SUPPRESS",
+        backgroundColor: viewSuppressed ? "#575757" : "#000000",
+        onMouseDown: () => dispatch(setViewSuppressedSigmet(true))
+      },
+      hideSuppressed: {
+        value: "HIDE SUPPRESS",
+        backgroundColor: !viewSuppressed ? "#575757" : "#000000",
+        onMouseDown: () => dispatch(setViewSuppressedSigmet(false))
+      },
+      printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
+    }),
+    [dispatch, viewSuppressed]
+  );
 
-  const options: FloatingWindowOptions = {
-    lines: { value: `LINES ${windowOptions.lines}` },
-    font: {
-      value: `FONT ${windowOptions.fontSize}`,
-      onMouseDown: event => windowOptionClickHandler(event, "fontSize")
-    },
-    bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") },
-    viewSuppressed: { value: "VIEW SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(true)) },
-    hideSuppressed: { value: "HIDE SUPPRESS", onMouseDown: () => dispatch(setViewSuppressedSigmet(false)) },
-    printAll: { value: "PRINT ALL" }
-  };
+  const options = useWindowOptions(EdstWindow.SIGMETS, extraOptions);
 
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
@@ -161,13 +163,7 @@ export const SigmetWindow = () => {
             zIndex={zIndex}
             header="SIGMETS"
             onClose={() => setShowOptions(false)}
-            defaultBackgroundColor={optionsBackgroundGreen}
             options={options}
-            backgroundColors={{
-              [viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#575757",
-              [!viewSuppressed ? "viewSuppressed" : "hideSuppressed"]: "#000000",
-              printAll: "#000000"
-            }}
           />
         )}
       </SigmetDiv>

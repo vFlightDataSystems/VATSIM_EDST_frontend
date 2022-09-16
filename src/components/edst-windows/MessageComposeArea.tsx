@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import styled from "styled-components";
 import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
@@ -25,7 +25,7 @@ import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
 import { defaultFontSize, eramFontFamily } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { edstFontGrey, optionsBackgroundGreen } from "../../styles/colors";
+import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
@@ -39,9 +39,9 @@ import { useHubConnector } from "../../hooks/useHubConnector";
 import { fetchFormatRoute, fetchRouteFixes } from "../../api/api";
 import { useOnUnmount } from "../../hooks/useOnUnmount";
 import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptionContainer, FloatingWindowOptions } from "../utils/FloatingWindowOptionContainer";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
+import { useWindowOptions } from "../../hooks/useWindowOptions";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useWindowOptionClickHandler } from "../../hooks/useWindowOptionClickHandler";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
@@ -124,20 +124,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
 
   const [showOptions, setShowOptions] = useState(false);
   const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
-  const windowOptionClickHandler = useWindowOptionClickHandler(EdstWindow.MESSAGE_COMPOSE_AREA);
-
-  const options: FloatingWindowOptions = useMemo(
-    () => ({
-      lines: { value: `PA LINES ${windowOptions.lines}`, onMouseDown: event => windowOptionClickHandler(event, "lines") },
-      width: { value: `WIDTH ${windowOptions.width}`, onMouseDown: event => windowOptionClickHandler(event, "width") },
-      font: {
-        value: `FONT ${windowOptions.fontSize}`,
-        onMouseDown: event => windowOptionClickHandler(event, "fontSize")
-      },
-      bright: { value: `BRIGHT ${windowOptions.brightness}`, onMouseDown: event => windowOptionClickHandler(event, "brightness") }
-    }),
-    [windowOptionClickHandler, windowOptions.brightness, windowOptions.fontSize, windowOptions.lines, windowOptions.width]
-  );
+  const options = useWindowOptions(EdstWindow.MESSAGE_COMPOSE_AREA);
 
   const accept = (message: string) => {
     dispatch(setMcaAcceptMessage(message));
@@ -437,7 +424,6 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
             header="MCA"
             onClose={() => setShowOptions(false)}
             options={options}
-            defaultBackgroundColor={optionsBackgroundGreen}
           />
         )}
       </>
