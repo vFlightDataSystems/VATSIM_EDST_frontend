@@ -375,6 +375,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
 
   const onMcaMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
+    event.stopPropagation();
     switch (event.button) {
       case 1:
         setShowOptions(true);
@@ -389,12 +390,13 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   };
 
   const zIndex = zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA);
+  const rect = ref.current?.getBoundingClientRect();
 
   return (
     pos && (
       <>
         <ThemeProvider theme={windowOptions}>
-          <MessageComposeAreaDiv ref={ref} anyDragging={anyDragging} id="edst-mca" pos={pos} zIndex={zIndex} onMouseDown={onMcaMouseDown}>
+          <MessageComposeAreaDiv ref={ref} anyDragging={anyDragging} id="edst-mca" pos={pos} zIndex={zIndex} onMouseDownCapture={onMcaMouseDown}>
             {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
             <MessageComposeInputAreaDiv height={windowOptions.lines} width={windowOptions.width}>
               <textarea
@@ -417,14 +419,14 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
             </FeedbackContainerDiv>
           </MessageComposeAreaDiv>
         </ThemeProvider>
-        {showOptions && ref.current && (
+        {showOptions && rect && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + ref.current.clientWidth,
+              x: pos.x + rect.width,
               y: pos.y
             }}
             zIndex={zIndex}
-            header="MCA"
+            title="MCA"
             onClose={() => setShowOptions(false)}
             options={options}
           />

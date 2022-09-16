@@ -34,40 +34,52 @@ export const WINDOW_OPTION_PREFIXES = {
     brightness: "BRIGHT",
     lines: "LINES",
     fontSize: "FONT"
+  },
+  [EdstWindow.STATUS]: {
+    fontSize: "FONT"
+  },
+  [EdstWindow.OUTAGE]: {
+    fontSize: "FONT"
   }
 };
 
 const initialState = {
   [EdstWindow.ALTIMETER]: {
-    brightness: 80,
-    columns: 1,
     lines: 5,
-    fontSize: 2
+    columns: 1,
+    fontSize: 2,
+    brightness: 80
   },
   [EdstWindow.METAR]: {
-    brightness: 80,
     lines: 5,
-    fontSize: 2
+    fontSize: 2,
+    brightness: 80
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
-    brightness: 80,
     lines: 2,
     width: 45,
-    fontSize: 2
+    fontSize: 2,
+    brightness: 80
   },
   [EdstWindow.MESSAGE_RESPONSE_AREA]: {
-    brightness: 80,
     width: 45,
-    fontSize: 2
+    fontSize: 2,
+    brightness: 80
   },
   [EdstWindow.GI]: {
-    brightness: 80,
     lines: 10,
-    fontSize: 2
+    fontSize: 2,
+    brightness: 80
   },
   [EdstWindow.SIGMETS]: {
-    brightness: 80,
     lines: 10,
+    fontSize: 2,
+    brightness: 80
+  },
+  [EdstWindow.STATUS]: {
+    fontSize: 2
+  },
+  [EdstWindow.OUTAGE]: {
     fontSize: 2
   }
 };
@@ -86,7 +98,7 @@ const maxOptionValues = {
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     brightness: 100,
-    lines: 30,
+    lines: 2,
     width: 50,
     fontSize: 3
   },
@@ -104,6 +116,12 @@ const maxOptionValues = {
     brightness: 100,
     lines: 21,
     fontSize: 3
+  },
+  [EdstWindow.STATUS]: {
+    fontSize: 3
+  },
+  [EdstWindow.OUTAGE]: {
+    fontSize: 3
   }
 };
 
@@ -118,7 +136,7 @@ const minOptionValues = {
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     brightness: 2,
-    lines: 1,
+    lines: 2,
     width: 30,
     fontSize: 1
   },
@@ -135,6 +153,12 @@ const minOptionValues = {
   [EdstWindow.SIGMETS]: {
     brightness: 2,
     lines: 3,
+    fontSize: 1
+  },
+  [EdstWindow.STATUS]: {
+    fontSize: 1
+  },
+  [EdstWindow.OUTAGE]: {
     fontSize: 1
   }
 };

@@ -1,22 +1,14 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
+import { zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
+import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { mod } from "../../lib";
-import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useAltimeter } from "../../api/weatherApi";
-import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
 import { altimeterAirportsSelector, delAltimeter } from "../../redux/slices/weatherSlice";
-import { useWindowOptions } from "../../hooks/useWindowOptions";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-
-const AltimeterDiv = styled(FloatingWindowDiv)`
-  min-width: 200px;
-`;
+import { FloatingWindow } from "../utils/FloatingWindow";
 
 const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
   margin: 0 4px;
@@ -84,24 +76,16 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
 
 export const AltimeterWindow = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTIMETER));
-
-  const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
-  const airports = useRootSelector(altimeterAirportsSelector);
-  const zStack = useRootSelector(zStackSelector);
-  const ref = useRef<HTMLDivElement>(null);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ALTIMETER, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.ALTIMETER));
+  const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
+  const airports = useRootSelector(altimeterAirportsSelector);
   const extraOptions = useMemo(
     () => ({
       template: { value: "TEMPLATE", backgroundColor: "#000000" }
     }),
     []
   );
-
-  const options = useWindowOptions(EdstWindow.ALTIMETER, extraOptions);
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
@@ -115,60 +99,32 @@ export const AltimeterWindow = () => {
     [selectedAirport]
   );
 
-  const handleOptionsMouseDown = () => {
-    setShowOptions(true);
-  };
-
-  const zIndex = zStack.indexOf(EdstWindow.ALTIMETER);
-
   return (
-    pos && (
-      <AltimeterDiv
-        pos={pos}
-        zIndex={zIndex}
-        onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ALTIMETER))}
-        ref={ref}
-        anyDragging={anyDragging}
-        id="edst-altimeter"
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeader
-          title="ALTIM SET"
-          handleOptionsMouseDown={handleOptionsMouseDown}
-          onClose={() => dispatch(closeWindow(EdstWindow.ALTIMETER))}
-          startDrag={startDrag}
-        />
-        <ThemeProvider theme={windowOptions}>
-          {airports.length > 0 && (
-            <FloatingWindowBodyDiv>
-              {airports.map(airport => (
-                <AltimeterRow
-                  key={airport}
-                  airport={airport}
-                  selected={selectedAirport === airport}
-                  handleMouseDown={event => handleMouseDown(event, airport)}
-                  onDelete={() => {
-                    dispatch(delAltimeter(airport));
-                    setSelectedAirport(null);
-                  }}
-                />
-              ))}
-            </FloatingWindowBodyDiv>
-          )}
-        </ThemeProvider>
-        {showOptions && ref.current && (
-          <FloatingWindowOptionContainer
-            pos={{
-              x: pos.x + ref.current.clientWidth,
-              y: pos.y
-            }}
-            zIndex={zIndex}
-            header="AS"
-            onClose={() => setShowOptions(false)}
-            options={options}
-          />
-        )}
-      </AltimeterDiv>
-    )
+    <FloatingWindow
+      title="ALTIM SET"
+      optionsHeaderTitle="AS"
+      minWidth="200px"
+      window={EdstWindow.ALTIMETER}
+      extraOptions={extraOptions}
+      showOptions={showOptions}
+      setShowOptions={setShowOptions}
+    >
+      {airports.length > 0 && (
+        <>
+          {airports.map(airport => (
+            <AltimeterRow
+              key={airport}
+              airport={airport}
+              selected={selectedAirport === airport}
+              handleMouseDown={event => handleMouseDown(event, airport)}
+              onDelete={() => {
+                dispatch(delAltimeter(airport));
+                setSelectedAirport(null);
+              }}
+            />
+          ))}
+        </>
+      )}
+    </FloatingWindow>
   );
 };

@@ -60,6 +60,8 @@ const useHubContextInit = () => {
     const hubConnection = ref.current;
     async function start() {
       hubConnection.onclose(() => {
+        dispatch(setArtccId(""));
+        dispatch(setSectorId(""));
         log("ATC hub disconnected");
       });
 

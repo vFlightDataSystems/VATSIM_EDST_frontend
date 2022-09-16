@@ -5,7 +5,12 @@ import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./c
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
-export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | null; zIndex: number; fullscreen?: boolean }>`
+export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | null; zIndex: number; fullscreen?: boolean; minWidth?: string }>`
+  ${props =>
+    props.minWidth &&
+    css`
+      min-width: ${props.minWidth};
+    `};
   font-family: ${eramFontFamily};
   z-index: ${props => 10000 + props.zIndex};
   position: ${props => (!props.fullscreen ? "fixed" : "absolute")};
@@ -77,6 +82,8 @@ export const FloatingWindowHeaderColDivRect = styled(FloatingWindowHeaderColDiv)
   width: 1em;
 `;
 export const FloatingWindowHeaderColDivFlex = styled(FloatingWindowHeaderColDiv)`
+  padding-left: 6px;
+  padding-right: 6px;
   flex-grow: 1;
 `;
 

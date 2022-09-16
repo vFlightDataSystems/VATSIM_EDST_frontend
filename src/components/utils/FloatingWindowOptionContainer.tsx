@@ -1,6 +1,7 @@
 import React, { MouseEventHandler, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
+import { useEventListener } from "usehooks-ts";
 import {
   FloatingWindowDiv,
   FloatingWindowHeaderColDiv16ch,
@@ -41,7 +42,7 @@ type FloatingWindowOptionsProps<T extends FloatingWindowOptions> = {
   pos: WindowPosition;
   zIndex: number;
   onClose?: () => void;
-  header?: string;
+  title?: string;
   options?: T;
 };
 
@@ -65,23 +66,41 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
         invoke("set_cursor_position", newCursorPos).then();
       }
     }
-  }, []);
+  }, [pos]);
+
+  useEventListener("mousedown", () => props.onClose?.());
 
   return (
-    <FloatingWindowOptionsBodyDiv pos={pos} ref={ref} zIndex={props.zIndex + 1} offsetPos={!props.header}>
-      {props.header && (
+    <FloatingWindowOptionsBodyDiv
+      onMouseDown={event => event.stopPropagation()}
+      pos={pos}
+      ref={ref}
+      zIndex={props.zIndex + 1}
+      offsetPos={!props.title}
+    >
+      {props.title && (
         <FloatingWindowHeaderDiv ref={headerRef}>
-          <FloatingWindowHeaderColDivFlex>{props.header}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv16ch onMouseDown={props.onClose} ref={xRef}>
+          <FloatingWindowHeaderColDivFlex>{props.title}</FloatingWindowHeaderColDivFlex>
+          <FloatingWindowHeaderColDiv16ch onMouseDownCapture={props.onClose} ref={xRef}>
             X
           </FloatingWindowHeaderColDiv16ch>
         </FloatingWindowHeaderDiv>
       )}
-      {Object.entries(props.options ?? {}).map(([key, option]) => (
-        <FloatingWindowOptionDiv backgroundColor={option.backgroundColor ?? "#000000"} key={key} onMouseDown={option.onMouseDown}>
-          {option.value}
-        </FloatingWindowOptionDiv>
-      ))}
+      {props.options &&
+        Object.entries(props.options).map(([key, option]) => (
+          <FloatingWindowOptionDiv
+            backgroundColor={option.backgroundColor ?? "#000000"}
+            key={key}
+            onMouseDownCapture={event => {
+              if (option.onMouseDown) {
+                option.onMouseDown(event);
+                event.stopPropagation();
+              }
+            }}
+          >
+            {option.value}
+          </FloatingWindowOptionDiv>
+        ))}
     </FloatingWindowOptionsBodyDiv>
   );
 }

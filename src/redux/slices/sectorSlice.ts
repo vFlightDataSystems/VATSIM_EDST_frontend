@@ -18,7 +18,7 @@ const initialState: SectorDataState = {
   profiles: [],
   selectedSectorIds: [],
   sectorId: "",
-  artccId: "ZBW"
+  artccId: ""
 };
 
 const sectorSlice = createSlice({

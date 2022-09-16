@@ -47,6 +47,7 @@ export const MessageResponseArea = () => {
 
   const onMraMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
+    event.stopPropagation();
     switch (event.button) {
       case 1:
         setShowOptions(true);
@@ -61,6 +62,7 @@ export const MessageResponseArea = () => {
   };
 
   const zIndex = zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA);
+  const rect = ref.current?.getBoundingClientRect();
 
   return (
     pos && (
@@ -73,20 +75,20 @@ export const MessageResponseArea = () => {
             ref={ref}
             anyDragging={anyDragging}
             id="edst-mra"
-            onMouseDown={onMraMouseDown}
+            onMouseDownCapture={onMraMouseDown}
           >
             {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
             {msg}
           </MessageResponseAreaDiv>
         </ThemeProvider>
-        {showOptions && ref.current && (
+        {showOptions && rect && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + ref.current.clientWidth,
+              x: pos.x + rect.width,
               y: pos.y
             }}
             zIndex={zIndex}
-            header="RA"
+            title="RA"
             onClose={() => setShowOptions(false)}
             options={options}
           />

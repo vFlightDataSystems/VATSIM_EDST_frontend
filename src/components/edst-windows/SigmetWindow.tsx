@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled, { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
+import { zStackSelector } from "../../redux/slices/appSlice";
 import {
   setSigmetAcknowledged,
   setSigmetSuppressed,
@@ -11,19 +11,11 @@ import {
   viewSuppressedSigmetSelector
 } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { FloatingWindowBodyDiv, FloatingWindowDiv, FloatingWindowRow } from "../../styles/floatingWindowStyles";
+import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { FloatingWindowHeader } from "../utils/FloatingWindowHeader";
-import { useWindowOptions } from "../../hooks/useWindowOptions";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-
-const SigmetDiv = styled(FloatingWindowDiv)`
-  width: 1100px;
-`;
+import { FloatingWindow } from "../utils/FloatingWindow";
 
 const SigmetRowDiv = styled(FloatingWindowRow)`
   margin: 6px 21px 0 0;
@@ -69,17 +61,12 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onDelete }: SigmetR
 
 export const SigmetWindow = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.SIGMETS));
   const sectorId = useRootSelector(sectorIdSelector);
   const viewSuppressed = useRootSelector(viewSuppressedSigmetSelector);
   const sigmetList = useRootSelector(sigmetSelector);
-  const zStack = useRootSelector(zStackSelector);
   const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
-  const ref = useRef<HTMLDivElement>(null);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SIGMETS, "mousedown");
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.SIGMETS));
   const extraOptions = useMemo(
     () => ({
       viewSuppressed: {
@@ -97,8 +84,6 @@ export const SigmetWindow = () => {
     [dispatch, viewSuppressed]
   );
 
-  const options = useWindowOptions(EdstWindow.SIGMETS, extraOptions);
-
   const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, sigmetId: string) => {
     setShowOptions(false);
     if (selectedEntry !== sigmetId) {
@@ -111,66 +96,40 @@ export const SigmetWindow = () => {
     }
   };
 
-  const handleOptionsMouseDown = () => {
+  const setShowOptionsHandler = (value: boolean) => {
     setSelectedEntry(null);
-    setShowOptions(true);
+    setShowOptions(value);
   };
 
-  const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
-
   return (
-    pos && (
-      <SigmetDiv
-        ref={ref}
-        pos={pos}
-        zIndex={zIndex}
-        onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SIGMETS))}
-        anyDragging={anyDragging}
-        id="edst-status"
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeader
-          title={`SIGMETS SECTOR ${sectorId}`}
-          handleOptionsMouseDown={handleOptionsMouseDown}
-          onClose={() => dispatch(closeWindow(EdstWindow.SIGMETS))}
-          startDrag={startDrag}
-        />
-        <ThemeProvider theme={windowOptions}>
-          {Object.values(sigmetList).length > 0 && (
-            <FloatingWindowBodyDiv>
-              <ScrollContainer maxHeight="600px">
-                {Object.entries(sigmetList).map(
-                  ([sigmetId, sigmetEntry]) =>
-                    (!sigmetEntry.suppressed || viewSuppressed) && (
-                      <SigmetRow
-                        key={sigmetId}
-                        sigmetEntry={sigmetEntry}
-                        selected={selectedEntry === sigmetId}
-                        handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
-                        onDelete={() => {
-                          dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
-                          setSelectedEntry(null);
-                        }}
-                      />
-                    )
-                )}
-              </ScrollContainer>
-            </FloatingWindowBodyDiv>
+    <FloatingWindow
+      title={`SIGMETS SECTOR ${sectorId}`}
+      optionsHeaderTitle="SIGMETS"
+      minWidth="1100px"
+      window={EdstWindow.SIGMETS}
+      extraOptions={extraOptions}
+      showOptions={showOptions}
+      setShowOptions={setShowOptionsHandler}
+    >
+      {Object.values(sigmetList).length > 0 && (
+        <ScrollContainer maxHeight="600px">
+          {Object.entries(sigmetList).map(
+            ([sigmetId, sigmetEntry]) =>
+              (!sigmetEntry.suppressed || viewSuppressed) && (
+                <SigmetRow
+                  key={sigmetId}
+                  sigmetEntry={sigmetEntry}
+                  selected={selectedEntry === sigmetId}
+                  handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
+                  onDelete={() => {
+                    dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
+                    setSelectedEntry(null);
+                  }}
+                />
+              )
           )}
-        </ThemeProvider>
-        {showOptions && ref.current && (
-          <FloatingWindowOptionContainer
-            pos={{
-              x: pos.x + ref.current.clientWidth,
-              y: pos.y
-            }}
-            zIndex={zIndex}
-            header="SIGMETS"
-            onClose={() => setShowOptions(false)}
-            options={options}
-          />
-        )}
-      </SigmetDiv>
-    )
+        </ScrollContainer>
+      )}
+    </FloatingWindow>
   );
 };
