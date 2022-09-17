@@ -105,7 +105,7 @@ export const SigmetWindow = () => {
     <FloatingWindow
       title={`SIGMETS SECTOR ${sectorId}`}
       optionsHeaderTitle="SIGMETS"
-      minWidth="1100px"
+      width="1100px"
       window={EdstWindow.SIGMETS}
       extraOptions={extraOptions}
       showOptions={showOptions}

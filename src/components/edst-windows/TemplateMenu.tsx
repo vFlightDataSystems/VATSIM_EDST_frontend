@@ -121,7 +121,7 @@ export const TemplateMenu = () => {
   const [saiInput, setSaiInput] = useState("");
   const [typeInput, setTypeInput] = useState(entry?.aircraftType ?? "");
   const [equipInput, setEquipInput] = useState(entry?.faaEquipmentSuffix ?? "");
-  const [beaconInput, setBeaconInput] = useState(convertBeaconCodeToString(entry?.assignedBeaconCode));
+  const [beaconInput, setBeaconInput] = useState(convertBeaconCodeToString(entry?.assignedBeaconCode ?? null));
   const [speedInput, setSpeedInput] = useState(entry?.speed ?? "");
   const [frdInput, setFrdInput] = useState("");
   const [timeInput, setTimeInput] = useState("EXX00");

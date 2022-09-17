@@ -6,7 +6,7 @@ import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { eramFontFamily } from "../../styles/styles";
+import { eramFontFamily, floatingFontSizes } from "../../styles/styles";
 import { useWindowOptions } from "../../hooks/useWindowOptions";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
@@ -15,7 +15,8 @@ type MessageResponseAreaDivProps = { width: number };
 const MessageResponseAreaDiv = styled(FloatingWindowDiv).attrs(({ width }: MessageResponseAreaDivProps) => ({
   width: `${width}ch`
 }))<MessageResponseAreaDivProps>`
-  line-height: 1;
+  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
+  line-height: 1em;
   padding: 0 2px;
   min-height: 4em;
   width: ${props => props.width};
@@ -47,10 +48,10 @@ export const MessageResponseArea = () => {
 
   const onMraMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    event.stopPropagation();
     switch (event.button) {
       case 1:
         setShowOptions(true);
+        event.stopPropagation();
         break;
       default:
         startDrag(event);

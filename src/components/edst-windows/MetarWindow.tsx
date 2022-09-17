@@ -84,15 +84,20 @@ export const MetarWindow = () => {
     [selectedAirport]
   );
 
+  const setShowOptionsHandler = (value: boolean) => {
+    setSelectedAirport(null);
+    setShowOptions(value);
+  };
+
   return (
     <FloatingWindow
       title="WX"
       optionsHeaderTitle="WX"
-      minWidth="400px"
+      width="400px"
       window={EdstWindow.METAR}
       extraOptions={extraOptions}
       showOptions={showOptions}
-      setShowOptions={setShowOptions}
+      setShowOptions={setShowOptionsHandler}
     >
       {airports.length > 0 && (
         <>

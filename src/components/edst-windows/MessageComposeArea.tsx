@@ -22,7 +22,7 @@ import {
 } from "../../redux/slices/appSlice";
 import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
 import { printFlightStrip } from "../PrintableFlightStrip";
-import { defaultFontSize, eramFontFamily } from "../../styles/styles";
+import { eramFontFamily, floatingFontSizes } from "../../styles/styles";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
@@ -49,14 +49,16 @@ const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   background-color: #000000;
   border: 1px solid #adadad;
   font-family: ${eramFontFamily};
+  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
 `;
 
-type MessageComposeInputAreaDivProps = { width?: number; height?: number };
-const MessageComposeInputAreaDiv = styled.div.attrs(({ width = 50, height = 2 }: MessageComposeInputAreaDivProps) => ({
+type MessageComposeInputAreaDivProps = { width: number; height: number };
+const MessageComposeInputAreaDiv = styled.div.attrs(({ width, height }: MessageComposeInputAreaDivProps) => ({
   width: `${width}ch`,
   height: `${height}em`
 }))<MessageComposeInputAreaDivProps>`
-  line-height: 1;
+  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
+  line-height: 1em;
   width: auto;
   height: auto;
   border-bottom: 1px solid #adadad;
@@ -69,7 +71,7 @@ const MessageComposeInputAreaDiv = styled.div.attrs(({ width = 50, height = 2 }:
     overflow: hidden;
     width: ${props => props.width};
     font-family: ${eramFontFamily};
-    font-size: ${defaultFontSize};
+    font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
     outline: none;
     border: none;
     caret: underscore;
@@ -377,10 +379,10 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
 
   const onMcaMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    event.stopPropagation();
     switch (event.button) {
       case 1:
         setShowOptions(true);
+        event.stopPropagation();
         break;
       default:
         startDrag(event);

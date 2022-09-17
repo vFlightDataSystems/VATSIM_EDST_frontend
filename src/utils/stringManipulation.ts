@@ -26,6 +26,6 @@ export function appendDownArrowToString(s: string): string {
  * format beacon code into 4 digit octal string
  * @param code
  */
-export function convertBeaconCodeToString(code?: number | null): string {
+export function convertBeaconCodeToString(code: number | null): string {
   return String(code ?? 0).padStart(4, "0");
 }

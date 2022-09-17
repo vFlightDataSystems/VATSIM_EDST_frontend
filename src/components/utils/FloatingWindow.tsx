@@ -13,7 +13,8 @@ import { FloatingWindowHeader } from "./FloatingWindowHeader";
 type FloatingWindowBodyProps = PropsWithChildren<{
   title: string;
   optionsHeaderTitle: string;
-  minWidth: string;
+  minWidth?: string;
+  width?: string;
   maxWidth?: string;
   window: keyof ModifiableWindowOptions;
   extraOptions?: FloatingWindowOptions;
@@ -42,6 +43,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
     pos && (
       <FloatingWindowDiv
         minWidth={props.minWidth}
+        width={props.width}
         maxWidth={props.maxWidth}
         pos={pos}
         zIndex={zIndex}

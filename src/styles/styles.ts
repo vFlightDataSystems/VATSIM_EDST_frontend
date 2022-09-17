@@ -6,6 +6,8 @@ export const eramFontFamily = "ERAM";
 export const defaultFontSize = "17px";
 export const defaultInputFontSize = "17px";
 
+export const floatingFontSizes = ["14px", "17px", "20px"];
+
 export const NoSelectDiv = styled.div`
   -webkit-touch-callout: none;
   -webkit-user-select: none;

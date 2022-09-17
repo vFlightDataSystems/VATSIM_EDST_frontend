@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { DraggableDiv, edstFontFamily, eramFontFamily, NoSelectDiv } from "./styles";
+import { DraggableDiv, edstFontFamily, eramFontFamily, floatingFontSizes, NoSelectDiv } from "./styles";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
 
@@ -10,13 +10,15 @@ type FloatingWindowDivProps = {
   zIndex: number;
   fullscreen?: boolean;
   minWidth?: string;
+  width?: string;
   maxWidth?: string;
 };
 export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
   ${props =>
     css`
-      ${props.minWidth && { "min-width": "auto" }};
-      ${props.maxWidth && { "max-width": "auto" }};
+      ${props.minWidth && { "min-width": props.minWidth }};
+      ${props.width && { width: props.width }};
+      ${props.maxWidth && { width: props.maxWidth }};
     `};
   font-family: ${eramFontFamily};
   z-index: ${props => 10000 + props.zIndex};
@@ -106,8 +108,8 @@ export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
 `;
 
 export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean; suppressed?: boolean }>`
+  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
   justify-content: center;
-  font-size: 16px;
   padding: 0 30px 0 10px;
   border: 1px solid transparent;
   margin: 4px 21px 0 0;

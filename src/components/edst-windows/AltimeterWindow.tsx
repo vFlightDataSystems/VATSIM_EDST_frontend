@@ -99,6 +99,11 @@ export const AltimeterWindow = () => {
     [selectedAirport]
   );
 
+  const setShowOptionsHandler = (value: boolean) => {
+    setSelectedAirport(null);
+    setShowOptions(value);
+  };
+
   return (
     <FloatingWindow
       title="ALTIM SET"
@@ -107,7 +112,7 @@ export const AltimeterWindow = () => {
       window={EdstWindow.ALTIMETER}
       extraOptions={extraOptions}
       showOptions={showOptions}
-      setShowOptions={setShowOptions}
+      setShowOptions={setShowOptionsHandler}
     >
       {airports.length > 0 && (
         <>

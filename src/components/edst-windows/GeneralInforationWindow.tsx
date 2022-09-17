@@ -31,15 +31,20 @@ export const GIWindow = () => {
     }
   };
 
+  const setShowOptionsHandler = (value: boolean) => {
+    setSelectedAirmet(null);
+    setShowOptions(value);
+  };
+
   return (
     <FloatingWindow
       title="General Information"
       optionsHeaderTitle="GI"
-      minWidth="1200px"
+      width="1100px"
       window={EdstWindow.GI}
       extraOptions={extraOptions}
       showOptions={showOptions}
-      setShowOptions={setShowOptions}
+      setShowOptions={setShowOptionsHandler}
     >
       {Object.values(airmetMap).length > 0 && (
         <ScrollContainer maxHeight="600px">
