@@ -14,7 +14,7 @@ import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
-import { ALTITUDE_VALIDATION_EXPRESSIONS, UPLINK_SYMBOL } from "../../constants";
+import { ALTITUDE_VALIDATION_EXPRESSIONS, UPLINK_SYMBOL } from "../../utils/constants";
 import { Plan } from "../../typeDefinitions/types/plan";
 
 type AltMenuDivProps = { width?: string; pos: WindowPosition };

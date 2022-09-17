@@ -12,3 +12,5 @@ export const ALTITUDE_VALIDATION_EXPRESSIONS = {
   tempAlt: new RegExp(`T${ALT_EXPR.source}`),
   blockAlt: new RegExp(`${ALT_EXPR.source}B${ALT_EXPR.source}`)
 };
+
+export const REMOVAL_TIMEOUT = 120000;

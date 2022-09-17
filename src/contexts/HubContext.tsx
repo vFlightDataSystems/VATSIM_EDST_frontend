@@ -2,7 +2,7 @@
 import React, { createContext, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { decodeJwt } from "jose";
-import { log } from "../console";
+import { log } from "../utils/console";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
 import { refreshToken } from "../api/vNasDataApi";

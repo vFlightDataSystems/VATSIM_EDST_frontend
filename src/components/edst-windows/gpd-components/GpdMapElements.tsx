@@ -7,7 +7,6 @@ import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { locationToPosition, getRemainingFixesFromPpos } from "../../../lib";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { aircraftTrackSelector } from "../../../redux/slices/trackSlice";
 import { AirwayFix } from "../../../typeDefinitions/types/airwayFix";
@@ -15,6 +14,8 @@ import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
 import { RouteFix } from "../../../typeDefinitions/types/routeFix";
 import { useRouteFixes } from "../../../api/aircraftApi";
 import { ApiLocation } from "../../../typeDefinitions/types/apiTypes/apiLocation";
+import { locationToPosition } from "../../../utils/locationToPosition";
+import { getRemainingFixesFromPpos } from "../../../utils/fixes";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): LatLngExpression {
   if (Array.isArray(pos)) {

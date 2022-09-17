@@ -2,7 +2,7 @@ import { ApiAircraftTrack } from "../../typeDefinitions/types/apiTypes/apiAircra
 import { RootThunkAction } from "../store";
 import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
 import { setTrack } from "../slices/trackSlice";
-import { depFilter, aclFilter } from "../../filters";
+import { depFilter, aclFilter } from "../../utils/filters";
 import { addEntryToAcl, addEntryToDep, updateEntries } from "../slices/entrySlice";
 
 export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): RootThunkAction {

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { convertBeaconCodeToString, formatUtcMinutes, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -28,12 +27,14 @@ import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { AclRouteDisplayOption } from "../../../typeDefinitions/enums/aclRouteDisplayOption";
 import { HoldDirectionValues } from "../../../typeDefinitions/enums/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "../../../typeDefinitions/enums/hold/turnDirection";
-import { SPA_INDICATOR, VCI_SYMBOL } from "../../../constants";
+import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "../../../utils/constants";
 import { usePar } from "../../../api/prefrouteApi";
 import { useRouteFixes } from "../../../api/aircraftApi";
-import { formatRoute } from "../../../formatRoute";
+import { formatRoute } from "../../../utils/formatRoute";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
+import { convertBeaconCodeToString, removeDestFromRouteString } from "../../../utils/stringManipulation";
+import { formatUtcMinutes } from "../../../utils/formatUtcMinutes";
 
 type AclRowProps = {
   entry: EdstEntry;

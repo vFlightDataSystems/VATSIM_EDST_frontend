@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { convertBeaconCodeToString, REMOVAL_TIMEOUT, removeDestFromRouteString } from "../../../lib";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { rmvEntryFromDep, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
@@ -22,16 +21,17 @@ import {
 } from "../../../styles/sharedColumns";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
-import { COMPLETED_CHECKMARK_SYMBOL, SPA_INDICATOR } from "../../../constants";
+import { COMPLETED_CHECKMARK_SYMBOL, REMOVAL_TIMEOUT, SPA_INDICATOR } from "../../../utils/constants";
 import { usePar, usePdar, usePdr } from "../../../api/prefrouteApi";
 import { useRouteFixes } from "../../../api/aircraftApi";
 import { ApiPreferentialDepartureRoute } from "../../../typeDefinitions/types/apiTypes/apiPreferentialDepartureRoute";
 import { ApiPreferentialDepartureArrivalRoute } from "../../../typeDefinitions/types/apiTypes/apiPreferentialDepartureArrivalRoute";
 import { ApiPreferentialArrivalRoute } from "../../../typeDefinitions/types/apiTypes/apiPreferentialArrivalRoute";
-import { formatRoute } from "../../../formatRoute";
+import { formatRoute } from "../../../utils/formatRoute";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { depHiddenColumnsSelector } from "../../../redux/slices/depSlice";
+import { convertBeaconCodeToString, removeDestFromRouteString } from "../../../utils/stringManipulation";
 
 type DepRowProps = {
   entry: EdstEntry;

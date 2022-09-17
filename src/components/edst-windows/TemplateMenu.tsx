@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { convertBeaconCodeToString, appendUpArrowToString, appendDownArrowToString } from "../../lib";
 import { EdstButton } from "../utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
@@ -16,7 +15,8 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
-import { formatRoute } from "../../formatRoute";
+import { formatRoute } from "../../utils/formatRoute";
+import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "../../utils/stringManipulation";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 850px;

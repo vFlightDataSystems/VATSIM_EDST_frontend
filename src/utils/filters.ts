@@ -1,9 +1,10 @@
 import { distance, Feature, point, Polygon } from "@turf/turf";
-import { locationToPosition, routeWillEnterAirspace } from "./lib";
-import { ApiAircraftTrack } from "./typeDefinitions/types/apiTypes/apiAircraftTrack";
-import { EdstEntry } from "./typeDefinitions/types/edstEntry";
-import { fetchRouteFixes, memoizedFetchAirportInfo } from "./api/api";
+import { ApiAircraftTrack } from "../typeDefinitions/types/apiTypes/apiAircraftTrack";
+import { EdstEntry } from "../typeDefinitions/types/edstEntry";
+import { fetchRouteFixes, memoizedFetchAirportInfo } from "../api/api";
 import { formatRoute } from "./formatRoute";
+import { routeWillEnterAirspace } from "./routeWillEnterAirspace";
+import { locationToPosition } from "./locationToPosition";
 
 const BOUNDARY_TIME_FILTER = 30; // minutes
 const AIRBORNE_GROUNDSPEED_FILTER = 30; // knots

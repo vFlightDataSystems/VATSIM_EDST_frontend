@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { computeCrossingTimes, formatUtcMinutes } from "../../lib";
 import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch } from "../utils/EdstButton";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
@@ -23,6 +22,8 @@ import { HoldAnnotations } from "../../typeDefinitions/enums/hold/holdAnnotation
 import { useHubActions } from "../../hooks/useHubActions";
 import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 import { useRouteFixes } from "../../api/aircraftApi";
+import { computeCrossingTimes } from "../../utils/computeCrossingTimes";
+import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;

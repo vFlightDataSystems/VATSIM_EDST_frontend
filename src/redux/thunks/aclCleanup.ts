@@ -1,6 +1,6 @@
 import { RootThunkAction } from "../store";
-import { REMOVAL_TIMEOUT } from "../../lib";
 import { rmvEntryFromAcl } from "../slices/entrySlice";
+import { REMOVAL_TIMEOUT } from "../../utils/constants";
 
 export const aclCleanup: RootThunkAction = (dispatch, getState) => {
   const state = getState();

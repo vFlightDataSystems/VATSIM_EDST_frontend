@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
-import { convertBeaconCodeToString, formatUtcMinutes, getClearedToFixRouteFixes } from "../../lib";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
@@ -41,6 +40,9 @@ import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { useWindowOptions } from "../../hooks/useWindowOptions";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { convertBeaconCodeToString } from "../../utils/stringManipulation";
+import { getClearedToFixRouteFixes } from "../../utils/fixes";
+import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});

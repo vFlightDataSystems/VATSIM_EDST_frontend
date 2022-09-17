@@ -12,7 +12,7 @@ import { depHiddenColumnsSelector, depManualPostingSelector, depSortOptionSelect
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
-import { COMPLETED_CHECKMARK_SYMBOL } from "../../../constants";
+import { COMPLETED_CHECKMARK_SYMBOL } from "../../../utils/constants";
 import { DepSortOption } from "../../../typeDefinitions/enums/dep/depSortOption";
 
 const DepBodyStyleDiv = styled(NoSelectDiv)`

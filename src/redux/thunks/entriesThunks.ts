@@ -1,10 +1,10 @@
 import { RootThunkAction } from "../store";
 import { addEntryToAcl, addEntryToDep } from "../slices/entrySlice";
 import { setAsel } from "../slices/appSlice";
-import { convertBeaconCodeToString } from "../../lib";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
 import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
+import { convertBeaconCodeToString } from "../../utils/stringManipulation";
 
 function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
   return (dispatch, getState) => {

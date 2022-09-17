@@ -33,7 +33,7 @@ import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircra
 import { EdstWindow } from "./typeDefinitions/enums/edstWindow";
 import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
 import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
-import { WEATHER_REFRESH_RATE } from "./constants";
+import { WEATHER_REFRESH_RATE } from "./utils/constants";
 import { HubContextProvider } from "./contexts/HubContext";
 import { AclSortMenu } from "./components/edst-windows/acl-components/AclSortMenu";
 import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMenu";

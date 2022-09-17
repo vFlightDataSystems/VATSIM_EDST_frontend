@@ -22,7 +22,7 @@ import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
-import { VCI_SYMBOL } from "../../../constants";
+import { VCI_SYMBOL } from "../../../utils/constants";
 import { AclSortOption } from "../../../typeDefinitions/enums/acl/aclSortOption";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`

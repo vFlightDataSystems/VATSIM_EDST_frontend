@@ -4,7 +4,6 @@ import "../../css/styles.scss";
 import _ from "lodash";
 import styled from "styled-components";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
-import { getClearedToFixRouteFixes, removeDepFromRouteString, removeDestFromRouteString } from "../../lib";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
 import { EdstButton, EdstRouteButton12x12 } from "../utils/EdstButton";
@@ -27,15 +26,17 @@ import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
-import { OPLUS_SYMBOL } from "../../constants";
+import { OPLUS_SYMBOL } from "../../utils/constants";
 import { DownlinkSymbol } from "../utils/DownlinkSymbol";
 import { CreateOrAmendFlightplanDto } from "../../typeDefinitions/types/apiTypes/CreateOrAmendFlightplanDto";
 import { fetchFormatRoute } from "../../api/api";
 import { usePar, usePdar, usePdr } from "../../api/prefrouteApi";
 import { useRouteFixes } from "../../api/aircraftApi";
-import { formatRoute } from "../../formatRoute";
+import { formatRoute } from "../../utils/formatRoute";
 import { useSharedUiListener } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
+import { removeDepFromRouteString, removeDestFromRouteString } from "../../utils/stringManipulation";
+import { getClearedToFixRouteFixes } from "../../utils/fixes";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;

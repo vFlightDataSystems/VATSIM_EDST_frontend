@@ -4,11 +4,11 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
-import { mod } from "../../lib";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useAltimeter } from "../../api/weatherApi";
 import { altimeterAirportsSelector, delAltimeter } from "../../redux/slices/weatherSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
+import { mod } from "../../utils/mod";
 
 const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
   margin: 0 4px;

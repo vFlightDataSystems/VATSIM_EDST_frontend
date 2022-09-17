@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useCallback, useState } from "react";
 import { receiveSharedStateAircraft } from "../redux/thunks/sharedStateThunks/receiveSharedStateAircraft";
-import { log } from "../console";
+import { log } from "../utils/console";
 import { useRootDispatch } from "../redux/hooks";
 import { receiveUiStateThunk } from "../redux/thunks/sharedStateThunks/receiveUiStateThunk";
 import { closeWindow, openWindow } from "../redux/slices/appSlice";
