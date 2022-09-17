@@ -38,6 +38,7 @@ type StopDragOn = "mousedown" | "mouseup";
  */
 export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
   const dispatch = useRootDispatch();
+  const [currentStopDragOn, setCurrentStopDragOn] = useState(stopDragOn);
   const zStack = useRootSelector(zStackSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
   const [dragging, setDragging] = useState(false);
@@ -76,8 +77,11 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
 
   const startDrag = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if (element.current && ppos && !anyDragging) {
+      if (element.current && ppos && !anyDragging && (event.button === 0 || event.button === 1)) {
         event.stopPropagation();
+        if (event.button === 1) {
+          setCurrentStopDragOn("mousedown");
+        }
         if (zStack.indexOf(edstWindow) < zStack.length - 1) {
           dispatch(pushZStack(edstWindow));
         }
@@ -145,8 +149,9 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
     }
   }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, element]);
 
-  useEventListener(stopDragOn, () => {
-    if (dragPreviewStyle) {
+  useEventListener(currentStopDragOn, event => {
+    if (dragPreviewStyle && event.button === 0) {
+      setCurrentStopDragOn(stopDragOn);
       stopDrag();
     }
   });
