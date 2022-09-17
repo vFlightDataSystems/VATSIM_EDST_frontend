@@ -100,7 +100,9 @@ export const AltimeterWindow = () => {
   );
 
   const setShowOptionsHandler = (value: boolean) => {
-    setSelectedAirport(null);
+    if (value) {
+      setSelectedAirport(null);
+    }
     setShowOptions(value);
   };
 

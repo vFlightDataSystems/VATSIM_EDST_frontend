@@ -32,7 +32,9 @@ export const GIWindow = () => {
   };
 
   const setShowOptionsHandler = (value: boolean) => {
-    setSelectedAirmet(null);
+    if (value) {
+      setSelectedAirmet(null);
+    }
     setShowOptions(value);
   };
 

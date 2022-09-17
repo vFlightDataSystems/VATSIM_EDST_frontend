@@ -94,7 +94,6 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
             onMouseDownCapture={event => {
               if (option.onMouseDown) {
                 option.onMouseDown(event);
-                event.stopPropagation();
               }
             }}
           >

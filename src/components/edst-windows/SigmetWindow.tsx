@@ -97,7 +97,9 @@ export const SigmetWindow = () => {
   };
 
   const setShowOptionsHandler = (value: boolean) => {
-    setSelectedEntry(null);
+    if (value) {
+      setSelectedEntry(null);
+    }
     setShowOptions(value);
   };
 

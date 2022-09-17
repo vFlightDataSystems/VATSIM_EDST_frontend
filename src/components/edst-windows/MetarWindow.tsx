@@ -85,7 +85,9 @@ export const MetarWindow = () => {
   );
 
   const setShowOptionsHandler = (value: boolean) => {
-    setSelectedAirport(null);
+    if (value) {
+      setSelectedAirport(null);
+    }
     setShowOptions(value);
   };
 
