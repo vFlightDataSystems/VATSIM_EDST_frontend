@@ -3,7 +3,7 @@ import { booleanPointInPolygon, distance, Feature, lineString, point, pointToLin
 import { RouteFixWithDistance } from "../typeDefinitions/types/routeFixWithDistance";
 import { RouteFix } from "../typeDefinitions/types/routeFix";
 import { EdstEntry } from "../typeDefinitions/types/edstEntry";
-import { removeDestFromRouteString } from "./stringManipulation";
+import { removeStringFromEnd } from "./stringManipulation";
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
@@ -144,7 +144,7 @@ export function getClearedToFixRouteFixes(
         break;
       }
     }
-    newRoute = removeDestFromRouteString(newRoute.slice(0), destination);
+    newRoute = removeStringFromEnd(newRoute.slice(0), destination);
     return {
       route: newRoute,
       routeFixes: routeFixes.slice(index)

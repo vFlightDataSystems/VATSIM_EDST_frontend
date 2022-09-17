@@ -33,7 +33,7 @@ import { useRouteFixes } from "../../../api/aircraftApi";
 import { formatRoute } from "../../../utils/formatRoute";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
-import { convertBeaconCodeToString, removeDestFromRouteString } from "../../../utils/stringManipulation";
+import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
 import { formatUtcMinutes } from "../../../utils/formatUtcMinutes";
 
 type AclRowProps = {
@@ -122,7 +122,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
   const { holdAnnotations } = entry;
   const route = useMemo(() => {
     const route = currentRoute.replace(/^\.+/, "") ?? formattedRoute;
-    return removeDestFromRouteString(route.slice(0), entry.destination);
+    return removeStringFromEnd(route.slice(0), entry.destination);
   }, [currentRoute, entry.destination, formattedRoute]);
 
   const now = new Date().getTime();

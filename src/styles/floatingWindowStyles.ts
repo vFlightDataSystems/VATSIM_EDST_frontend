@@ -5,11 +5,18 @@ import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./c
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
-export const FloatingWindowDiv = styled(DraggableDiv)<{ pos?: WindowPosition | null; zIndex: number; fullscreen?: boolean; minWidth?: string }>`
+type FloatingWindowDivProps = {
+  pos?: WindowPosition | null;
+  zIndex: number;
+  fullscreen?: boolean;
+  minWidth?: string;
+  maxWidth?: string;
+};
+export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
   ${props =>
-    props.minWidth &&
     css`
-      min-width: ${props.minWidth};
+      ${props.minWidth && { "min-width": "auto" }};
+      ${props.maxWidth && { "max-width": "auto" }};
     `};
   font-family: ${eramFontFamily};
   z-index: ${props => 10000 + props.zIndex};

@@ -31,7 +31,7 @@ import { formatRoute } from "../../../utils/formatRoute";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { depHiddenColumnsSelector } from "../../../redux/slices/depSlice";
-import { convertBeaconCodeToString, removeDestFromRouteString } from "../../../utils/stringManipulation";
+import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
 
 type DepRowProps = {
   entry: EdstEntry;
@@ -103,7 +103,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
   const [pendingPar, setPendingPar] = useState(checkParReroutePending(pars, currentFixNames));
 
   const now = new Date().getTime();
-  const route = removeDestFromRouteString(formattedRoute.slice(0), entry.destination);
+  const route = removeStringFromEnd(formattedRoute.slice(0), entry.destination);
 
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
   const ref = useRef<HTMLDivElement>(null);

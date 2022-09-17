@@ -35,7 +35,7 @@ import { useRouteFixes } from "../../api/aircraftApi";
 import { formatRoute } from "../../utils/formatRoute";
 import { useSharedUiListener } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
-import { removeDepFromRouteString, removeDestFromRouteString } from "../../utils/stringManipulation";
+import { removeStringFromStart, removeStringFromEnd } from "../../utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "../../utils/fixes";
 
 const RouteMenuDiv = styled(OptionsMenu)`
@@ -121,7 +121,7 @@ export const RouteMenu = () => {
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
   const [route, setRoute] = useState<string>(
-    removeDestFromRouteString(asel.window === EdstWindow.DEP ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
+    removeStringFromEnd(asel.window === EdstWindow.DEP ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
   );
   const [routeInput, setRouteInput] = useState<string>(
     asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : route + entry.destination
@@ -142,7 +142,7 @@ export const RouteMenu = () => {
   useEffect(() => {
     const dep = asel.window === EdstWindow.DEP;
     let route = dep ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "";
-    route = removeDestFromRouteString(route ?? "", entry.destination);
+    route = removeStringFromEnd(route ?? "", entry.destination);
     if (dep) {
       setTrialPlan(false);
     }
@@ -227,9 +227,9 @@ export const RouteMenu = () => {
   const handleInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       const frd = await hubActions.generateFrd(aircraftTrack.location);
-      let newRoute = removeDestFromRouteString(routeInput, entry.destination);
+      let newRoute = removeStringFromEnd(routeInput, entry.destination);
       if (asel.window === EdstWindow.DEP) {
-        newRoute = removeDepFromRouteString(newRoute, entry.departure);
+        newRoute = removeStringFromStart(newRoute, entry.departure);
       } else {
         newRoute = `${frd}..${newRoute.replace(/^\.+/g, "")}`;
       }

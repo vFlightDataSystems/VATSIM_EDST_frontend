@@ -14,6 +14,7 @@ type FloatingWindowBodyProps = PropsWithChildren<{
   title: string;
   optionsHeaderTitle: string;
   minWidth: string;
+  maxWidth?: string;
   window: keyof ModifiableWindowOptions;
   extraOptions?: FloatingWindowOptions;
   showOptions: boolean;
@@ -41,6 +42,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
     pos && (
       <FloatingWindowDiv
         minWidth={props.minWidth}
+        maxWidth={props.maxWidth}
         pos={pos}
         zIndex={zIndex}
         onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(edstWindow))}

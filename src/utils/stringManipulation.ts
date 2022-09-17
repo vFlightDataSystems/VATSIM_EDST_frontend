@@ -1,21 +1,9 @@
-/**
- *
- * @param route
- * @param dest - destination airport
- * @returns {string} route string with destination removed from end of route
- */
-export function removeDestFromRouteString(route: string, dest: string): string {
-  if (route.endsWith(dest)) {
-    route = route.slice(0, -dest.length);
-  }
-  return route;
+export function removeStringFromEnd(str: string, end: string): string {
+  return str.endsWith(end) ? str.slice(0, -end.length) : str;
 }
 
-export function removeDepFromRouteString(route: string, dep: string): string {
-  if (route.startsWith(dep)) {
-    route = route.slice(dep.length);
-  }
-  return route;
+export function removeStringFromStart(str: string, start: string): string {
+  return str.startsWith(start) ? str.slice(start.length) : str;
 }
 
 /**
