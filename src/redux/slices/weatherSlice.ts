@@ -72,6 +72,11 @@ const weatherSlice = createSlice({
     setViewSuppressedSigmet(state, action: PayloadAction<boolean>) {
       state.viewSuppressedSigmet = action.payload;
     },
+    delAirmet(state, action: PayloadAction<string>) {
+      if (Object.keys(state.airmetMap).includes(action.payload)) {
+        delete state.airmetMap[action.payload];
+      }
+    },
     addAltimeter(state, action: PayloadAction<string>) {
       if (!state.altimeterAirports.includes(action.payload)) {
         state.altimeterAirports.push(action.payload);
@@ -134,6 +139,7 @@ export const {
   setSigmetSuppressed,
   setSigmetAcknowledged,
   setViewSuppressedSigmet,
+  delAirmet,
   addAltimeter,
   delAltimeter,
   addMetar,

@@ -1,10 +1,54 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { airmetSelector, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
+import { airmetSelector, delAirmet, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
 import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
+import { zStackSelector } from "../../redux/slices/appSlice";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
+
+type GIRowProps = {
+  text: string;
+  selected: boolean;
+  handleMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  onDelete: () => void;
+};
+const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const zStack = useRootSelector(zStackSelector);
+
+  const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
+  const rect = ref.current?.getBoundingClientRect();
+
+  return (
+    <>
+      <FloatingWindowRow ref={ref} selected={selected} onMouseDown={handleMouseDown}>
+        {text}
+      </FloatingWindowRow>
+      {selected && rect && (
+        <FloatingWindowOptionContainer
+          pos={{
+            x: rect.left + rect.width,
+            y: rect.top
+          }}
+          zIndex={zIndex}
+          options={{
+            delete: {
+              value: "DELETE",
+              backgroundColor: "#575757",
+              onMouseDown: onDelete
+            },
+            print: {
+              value: "PRINT",
+              backgroundColor: "#575757"
+            }
+          }}
+        />
+      )}
+    </>
+  );
+};
 
 export const GIWindow = () => {
   const dispatch = useRootDispatch();
@@ -51,9 +95,16 @@ export const GIWindow = () => {
       {Object.values(airmetMap).length > 0 && (
         <ScrollContainer maxHeight="600px">
           {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
-            <FloatingWindowRow key={airmetId} selected={selectedAirmet === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
-              {airmetEntry.text}
-            </FloatingWindowRow>
+            <GIRow
+              key={airmetId}
+              text={airmetEntry.text}
+              selected={selectedAirmet === airmetId}
+              handleMouseDown={event => handleEntryMouseDown(event, airmetId)}
+              onDelete={() => {
+                dispatch(delAirmet(airmetId));
+                setSelectedAirmet(null);
+              }}
+            />
           ))}
         </ScrollContainer>
       )}

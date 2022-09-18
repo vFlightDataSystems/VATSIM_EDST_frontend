@@ -25,9 +25,9 @@ type SigmetRowProps = {
   sigmetEntry: SigmetEntry;
   selected: boolean;
   handleMouseDown: React.MouseEventHandler<HTMLDivElement>;
-  onDelete: () => void;
+  onSuppress: () => void;
 };
-const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onDelete }: SigmetRowProps) => {
+const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: SigmetRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
 
@@ -50,7 +50,7 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onDelete }: SigmetR
             toggleSuppressed: {
               value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",
               backgroundColor: "#575757",
-              onMouseDown: onDelete
+              onMouseDown: onSuppress
             }
           }}
         />
@@ -123,7 +123,7 @@ export const SigmetWindow = () => {
                   sigmetEntry={sigmetEntry}
                   selected={selectedEntry === sigmetId}
                   handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
-                  onDelete={() => {
+                  onSuppress={() => {
                     dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
                     setSelectedEntry(null);
                   }}
