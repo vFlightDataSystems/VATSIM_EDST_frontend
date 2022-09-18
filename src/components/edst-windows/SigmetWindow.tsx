@@ -18,7 +18,7 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
 
 const SigmetRowDiv = styled(FloatingWindowRow)`
-  margin: 6px 21px 0 0;
+  margin-top: 6px;
 `;
 
 type SigmetRowProps = {
@@ -107,7 +107,7 @@ export const SigmetWindow = () => {
     <FloatingWindow
       title={`SIGMETS SECTOR ${sectorId}`}
       optionsHeaderTitle="SIGMETS"
-      width="1100px"
+      width="130ch"
       window={EdstWindow.SIGMETS}
       extraOptions={extraOptions}
       showOptions={showOptions}

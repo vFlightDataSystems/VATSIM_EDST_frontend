@@ -27,7 +27,7 @@ export const Status = () => {
     <FloatingWindow
       title="STATUS"
       optionsHeaderTitle="STATUS"
-      minWidth="360px"
+      width="40ch"
       window={EdstWindow.STATUS}
       showOptions={showOptions}
       setShowOptions={setShowOptions}

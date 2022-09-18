@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
@@ -8,10 +7,6 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useMetar } from "../../api/weatherApi";
 import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
-
-const MetarRowDiv = styled(FloatingWindowRow)`
-  margin: 6px 21px 0 0;
-`;
 
 type MetarRowProps = {
   airport: string;
@@ -36,9 +31,9 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
 
   return !airportMetar ? null : (
     <>
-      <MetarRowDiv ref={ref} selected={selected} onMouseDown={handleMouseDown}>
+      <FloatingWindowRow ref={ref} selected={selected} onMouseDown={handleMouseDown}>
         {airportMetar ?? "..."}
-      </MetarRowDiv>
+      </FloatingWindowRow>
       {selected && rect && (
         <FloatingWindowOptionContainer
           pos={{
@@ -95,7 +90,7 @@ export const MetarWindow = () => {
     <FloatingWindow
       title="WX"
       optionsHeaderTitle="WX"
-      width="400px"
+      width="40ch"
       window={EdstWindow.METAR}
       extraOptions={extraOptions}
       showOptions={showOptions}

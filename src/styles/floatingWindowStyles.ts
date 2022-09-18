@@ -52,9 +52,13 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)`
   height: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
 `;
 
+export const FloatingWindowBodyContainer = styled.div<{ width: string }>`
+  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
+  width: ${props => props.width};
+`;
 export const FloatingWindowBodyDiv = styled.div`
   background-color: #000000;
-  padding: 0 0 4px 6px;
+  padding: 4px 1em 4px 1ch;
   border-left: 1px solid #adadad;
   border-bottom: 1px solid #adadad;
   border-right: 1px solid #adadad;
@@ -108,12 +112,11 @@ export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
 `;
 
 export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean; suppressed?: boolean }>`
-  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
+  padding: 0 1.4ch;
   justify-content: center;
-  padding: 0 30px 0 10px;
   border: 1px solid transparent;
-  margin: 4px 21px 0 0;
   min-height: 1em;
+  flex-flow: column;
   color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});
 
   ${props =>

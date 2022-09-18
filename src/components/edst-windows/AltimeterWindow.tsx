@@ -11,8 +11,8 @@ import { FloatingWindow } from "../utils/FloatingWindow";
 import { mod } from "../../utils/mod";
 
 const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
-  margin: 0 4px;
-  ${props => props.isReportingStation && { margin: "0 20px 0 12px" }};
+  margin-left: 2ch;
+  ${props => props.isReportingStation && { margin: "0 2ch 0 0" }};
   ${props => props.underline && { "text-decoration": "underline" }};
 `;
 
@@ -110,7 +110,7 @@ export const AltimeterWindow = () => {
     <FloatingWindow
       title="ALTIM SET"
       optionsHeaderTitle="AS"
-      minWidth="200px"
+      width="24ch"
       window={EdstWindow.ALTIMETER}
       extraOptions={extraOptions}
       showOptions={showOptions}

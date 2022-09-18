@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useRef } from "react";
 import { ThemeProvider } from "styled-components";
 import { ModifiableWindowOptions, windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
+import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
 import { FloatingWindowOptionContainer, FloatingWindowOptions } from "./FloatingWindowOptionContainer";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { useDragging } from "../../hooks/useDragging";
@@ -13,9 +13,7 @@ import { FloatingWindowHeader } from "./FloatingWindowHeader";
 type FloatingWindowBodyProps = PropsWithChildren<{
   title: string;
   optionsHeaderTitle: string;
-  minWidth?: string;
-  width?: string;
-  maxWidth?: string;
+  width: string;
   window: keyof ModifiableWindowOptions;
   extraOptions?: FloatingWindowOptions;
   showOptions: boolean;
@@ -42,9 +40,6 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
   return (
     pos && (
       <FloatingWindowDiv
-        minWidth={props.minWidth}
-        width={props.width}
-        maxWidth={props.maxWidth}
         pos={pos}
         zIndex={zIndex}
         onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
@@ -58,7 +53,11 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
           onClose={() => dispatch(closeWindow(edstWindow))}
           startDrag={startDrag}
         />
-        <ThemeProvider theme={windowOptions}>{children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}</ThemeProvider>
+        <ThemeProvider theme={windowOptions}>
+          <FloatingWindowBodyContainer width={props.width}>
+            {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
+          </FloatingWindowBodyContainer>
+        </ThemeProvider>
         {props.showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

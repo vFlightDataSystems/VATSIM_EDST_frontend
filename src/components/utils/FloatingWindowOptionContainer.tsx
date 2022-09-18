@@ -9,9 +9,11 @@ import {
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
+import { defaultFontSize } from "../../styles/styles";
 
 const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: boolean }>`
   // position: ${props => (props.offsetPos ? "relative" : "fixed")};
+  font-size: ${defaultFontSize};
   display: inline-flex;
   flex-flow: column;
   height: auto;

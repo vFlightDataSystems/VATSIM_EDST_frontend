@@ -40,9 +40,9 @@ export const GIWindow = () => {
 
   return (
     <FloatingWindow
+      width="120ch"
       title="General Information"
       optionsHeaderTitle="GI"
-      width="1100px"
       window={EdstWindow.GI}
       extraOptions={extraOptions}
       showOptions={showOptions}
@@ -51,11 +51,9 @@ export const GIWindow = () => {
       {Object.values(airmetMap).length > 0 && (
         <ScrollContainer maxHeight="600px">
           {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
-            <span style={{ margin: "6px 0" }} key={airmetId}>
-              <FloatingWindowRow selected={selectedAirmet === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
-                {airmetEntry.text}
-              </FloatingWindowRow>
-            </span>
+            <FloatingWindowRow key={airmetId} selected={selectedAirmet === airmetId} onMouseDown={event => handleEntryMouseDown(event, airmetId)}>
+              {airmetEntry.text}
+            </FloatingWindowRow>
           ))}
         </ScrollContainer>
       )}

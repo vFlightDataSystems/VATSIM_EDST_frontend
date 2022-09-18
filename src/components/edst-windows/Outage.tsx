@@ -9,7 +9,7 @@ export const Outage = () => {
     <FloatingWindow
       title="OUTAGE"
       optionsHeaderTitle="OUTAGE"
-      minWidth="340px"
+      width="40ch"
       window={EdstWindow.OUTAGE}
       showOptions={showOptions}
       setShowOptions={setShowOptions}
