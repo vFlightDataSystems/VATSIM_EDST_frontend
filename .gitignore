@@ -30,3 +30,5 @@ yarn-error.log*
 /.idea/workspace.xml
 /.idea/codeStyles/Project.xml
 /.idea/VATSIM_EDST_frontend.iml
+/.idea/
+/package-lock.json
