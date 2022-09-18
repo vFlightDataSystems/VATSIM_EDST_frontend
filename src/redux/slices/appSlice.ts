@@ -22,6 +22,11 @@ export const AIRCRAFT_MENUS = [
 
 export const FULLSCREEN_WINDOWS = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
 
+type GIEntry = {
+  text: string;
+  acknowledged: boolean;
+};
+
 type AppWindow = {
   open: boolean;
   window: EdstWindow;
@@ -36,6 +41,7 @@ type AppState = {
   mraMsg: string;
   mcaCommandString: string;
   mcaFeedbackString: string;
+  giEntryMap: Record<string, GIEntry>;
   tooltipsEnabled: boolean;
   showSectorSelector: boolean;
   asel: Asel | null;
@@ -67,6 +73,7 @@ const initialState: AppState = {
   mraMsg: "",
   mcaCommandString: "",
   mcaFeedbackString: "",
+  giEntryMap: {},
   tooltipsEnabled: true,
   showSectorSelector: false,
   asel: null,
@@ -89,9 +96,7 @@ const appSlice = createSlice({
     },
     openWindow(state, action: PayloadAction<EdstWindow>) {
       state.windows[action.payload].open = true;
-      const zStack = new Set([...state.zStack]);
-      zStack.delete(action.payload);
-      state.zStack = [...zStack, action.payload];
+      state.zStack = [...state.zStack.filter(window => window !== action.payload), action.payload];
     },
     setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
       state.windows[action.payload.window].isFullscreen = action.payload.value;
@@ -115,6 +120,15 @@ const appSlice = createSlice({
     setMcaFeedbackString(state, action: PayloadAction<string>) {
       state.mcaFeedbackString = action.payload;
     },
+    addGIEntries(state, action: PayloadAction<Record<string, GIEntry>>) {
+      state.giEntryMap = { ...action.payload, ...state.giEntryMap };
+    },
+    setGIEntryAcknowledged(state, action: PayloadAction<string>) {
+      state.giEntryMap[action.payload].acknowledged = true;
+    },
+    delGIEntry(state, action: PayloadAction<string>) {
+      delete state.giEntryMap[action.payload];
+    },
     setAsel(state, action: PayloadAction<Asel | null>) {
       state.asel = action.payload;
     },
@@ -122,15 +136,13 @@ const appSlice = createSlice({
       state.anyDragging = action.payload;
     },
     pushZStack(state, action: PayloadAction<EdstWindow>) {
-      const zStack = new Set([...state.zStack]);
-      zStack.delete(action.payload);
-      state.zStack = [...zStack, action.payload];
+      state.zStack = [...state.zStack.filter(window => window !== action.payload), action.payload];
     },
     addOutageMessage(state, action: PayloadAction<OutageEntry>) {
       state.outages = [...state.outages, action.payload];
     },
     // removes outage message at index
-    removeOutageMessage(state, action: PayloadAction<number>) {
+    delOutageMessage(state, action: PayloadAction<number>) {
       if (action.payload > -1 && action.payload < state.outages.length) {
         state.outages.splice(action.payload, 1);
       }
@@ -224,14 +236,18 @@ export const {
   openWindow,
   setAnyDragging,
   pushZStack,
+  addGIEntries,
+  setGIEntryAcknowledged,
+  delGIEntry,
   addOutageMessage,
-  removeOutageMessage
+  delOutageMessage
 } = appSlice.actions;
 export default appSlice.reducer;
 
 export const mcaCommandStringSelector = (state: RootState) => state.app.mcaCommandString;
 export const mcaFeedbackSelector = (state: RootState) => state.app.mcaFeedbackString;
 export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
+export const giEntryMapSelector = (state: RootState) => state.app.giEntryMap;
 export const windowSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window];
 export const windowPositionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].position;
 export const windowIsFullscreenSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].isFullscreen;

@@ -1,11 +1,10 @@
 import React, { useMemo, useRef, useState } from "react";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { airmetSelector, delAirmet, setSigmetAcknowledged } from "../../redux/slices/weatherSlice";
 import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
 import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
-import { zStackSelector } from "../../redux/slices/appSlice";
+import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 
 type GIRowProps = {
@@ -52,8 +51,8 @@ const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
 
 export const GIWindow = () => {
   const dispatch = useRootDispatch();
-  const airmetMap = useRootSelector(airmetSelector);
-  const [selectedAirmet, setSelectedAirmet] = useState<string | null>(null);
+  const giEntryMap = useRootSelector(giEntryMapSelector);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
 
   const [showOptions, setShowOptions] = useState(false);
   const extraOptions = useMemo(
@@ -63,21 +62,21 @@ export const GIWindow = () => {
     []
   );
 
-  const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, airmetId: string) => {
+  const handleEntryMouseDown = (event: React.MouseEvent<HTMLDivElement>, id: string) => {
     setShowOptions(false);
-    if (selectedAirmet !== airmetId) {
-      if (!airmetMap[airmetId].acknowledged) {
-        dispatch(setSigmetAcknowledged({ id: airmetId, value: true }));
+    if (selectedMessageId !== id) {
+      if (!giEntryMap[id].acknowledged) {
+        dispatch(setGIEntryAcknowledged(id));
       }
-      setSelectedAirmet(airmetId);
+      setSelectedMessageId(id);
     } else {
-      setSelectedAirmet(null);
+      setSelectedMessageId(null);
     }
   };
 
   const setShowOptionsHandler = (value: boolean) => {
     if (value) {
-      setSelectedAirmet(null);
+      setSelectedMessageId(null);
     }
     setShowOptions(value);
   };
@@ -92,17 +91,17 @@ export const GIWindow = () => {
       showOptions={showOptions}
       setShowOptions={setShowOptionsHandler}
     >
-      {Object.values(airmetMap).length > 0 && (
+      {Object.values(giEntryMap).length > 0 && (
         <ScrollContainer maxHeight="600px">
-          {Object.entries(airmetMap).map(([airmetId, airmetEntry]) => (
+          {Object.entries(giEntryMap).map(([id, entry]) => (
             <GIRow
-              key={airmetId}
-              text={airmetEntry.text}
-              selected={selectedAirmet === airmetId}
-              handleMouseDown={event => handleEntryMouseDown(event, airmetId)}
+              key={id}
+              text={entry.text}
+              selected={selectedMessageId === id}
+              handleMouseDown={event => handleEntryMouseDown(event, id)}
               onDelete={() => {
-                dispatch(delAirmet(airmetId));
-                setSelectedAirmet(null);
+                dispatch(delGIEntry(id));
+                setSelectedMessageId(null);
               }}
             />
           ))}

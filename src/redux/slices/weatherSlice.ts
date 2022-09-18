@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Feature, lineString, lineToPolygon, MultiPolygon, Polygon, Position } from "@turf/turf";
+import { Feature, MultiPolygon, Polygon, Position } from "@turf/turf";
 import { RootState, RootThunkAction } from "../store";
 
 type WeatherState = {
@@ -11,7 +11,7 @@ type WeatherState = {
 };
 
 export type ApiAirSigmet = {
-  airsigmet_type: string;
+  airsigmet_type: "AIRMET" | "SIGMET";
   text: string;
   area: Position[];
   hazard: { severity: string; type: string };
@@ -25,7 +25,7 @@ export type SigmetEntry = ApiAirSigmet & {
   polygons: Feature<Polygon | MultiPolygon>;
 };
 
-type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Polygon | MultiPolygon> };
+export type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Polygon | MultiPolygon> };
 
 const initialState: WeatherState = {
   sigmetMap: {},
@@ -39,25 +39,11 @@ const weatherSlice = createSlice({
   name: "weather",
   initialState,
   reducers: {
-    addSigmets(state, action: PayloadAction<ApiAirSigmet[]>) {
-      action.payload.forEach(s => {
-        const polygons = lineToPolygon(lineString(s.area));
-        const observationTime = s.text.match(/\d{6}/)?.[0];
-        if (observationTime) {
-          s.text = s.text.slice(s.text.lastIndexOf(observationTime) + 2).split(/\n\s*\n/)[0];
-          if (/\sSIG\w?\s/.test(s.text)) {
-            state.sigmetMap[s.text] = { suppressed: false, acknowledged: false, polygons, ...s };
-          } else {
-            const splitText = s.text.split("\n");
-            const regions = splitText[2].split("...")[1];
-            const validUntil = splitText[1].match(/VALID UNTIL \d+/)?.[0];
-            if (validUntil) {
-              s.text = `GI ${splitText[0]} ${splitText[1].replace(validUntil, "").trim()} WITHIN ${regions} ${validUntil}`;
-              state.airmetMap[s.text] = { acknowledged: false, polygons, ...s };
-            }
-          }
-        }
-      });
+    addAirmets(state, action: PayloadAction<Record<string, AirmetEntry>>) {
+      state.airmetMap = { ...state.airmetMap, ...action.payload };
+    },
+    addSigmets(state, action: PayloadAction<Record<string, SigmetEntry>>) {
+      state.sigmetMap = { ...state.sigmetMap, ...action.payload };
     },
     setSigmetSuppressed(state, action: PayloadAction<{ id: string; value: boolean }>) {
       if (Object.keys(state.sigmetMap).includes(action.payload.id)) {
@@ -135,6 +121,7 @@ export function toggleMetar(airports: string[]): RootThunkAction {
 }
 
 export const {
+  addAirmets,
   addSigmets,
   setSigmetSuppressed,
   setSigmetAcknowledged,
