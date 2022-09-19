@@ -16,7 +16,9 @@ const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
 class SharedStateSocket {
   socket: Socket<SharedStateServerToClientEvents, SharedStateClientToServerEvents> | null = null;
 
-  artccSectorId = "";
+  artccId = "";
+
+  sectorId = "";
 
   private sharedAircraftState: Record<string, SharedAircraftDto> = {};
 
@@ -25,14 +27,16 @@ class SharedStateSocket {
   }
 
   public connect(artccId: string, sectorId: string) {
-    this.artccSectorId = `${artccId}${sectorId}`;
+    this.artccId = artccId;
+    this.sectorId = sectorId;
     if (SHARED_STATE_SERVER_URL && SHARED_STATE_AUTH_TOKEN) {
       this.socket = io(SHARED_STATE_SERVER_URL, {
         auth: {
           token: SHARED_STATE_AUTH_TOKEN
         },
         query: {
-          sectorId: this.artccSectorId
+          artccId,
+          sectorId
         }
       });
       this.socket.connect();
@@ -45,7 +49,7 @@ class SharedStateSocket {
 
   public updateSharedAircraft(aircraft: SharedAircraftDto) {
     if (this.socket?.connected) {
-      this.socket.emit("updateAircraft", this.artccSectorId, aircraft);
+      this.socket.emit("updateAircraft", aircraft);
     }
   }
 

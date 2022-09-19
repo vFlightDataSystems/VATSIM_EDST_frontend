@@ -8,7 +8,7 @@ import { GpdState } from "../../../redux/slices/gpdSlice";
 import { PlanState } from "../../../redux/slices/planSlice";
 
 export type SharedStateClientToServerEvents = {
-  updateAircraft: (sectorId: string, payload: SharedAircraftDto) => void;
+  updateAircraft: (payload: SharedAircraftDto) => void;
   setAclState: (value: AclState) => void;
   setDepState: (value: DepState) => void;
   setGpdState: (value: GpdState) => void;
