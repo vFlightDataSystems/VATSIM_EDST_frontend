@@ -43,6 +43,8 @@ import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 import { convertBeaconCodeToString } from "../../utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "../../utils/fixes";
 import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
+import socket from "../../sharedState/socket";
+import { GI_EXPR } from "../../utils/constants";
 
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});
@@ -268,6 +270,15 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
     }
   };
 
+  const parseGI = (recipient: string, message: string) => {
+    if (recipient.match(/\d{2}/)) {
+      socket.sendGIMessage(recipient, message);
+      accept(mcaInputValue);
+    } else {
+      reject(`SECTOR NOT ADAPTED\n${mcaInputValue}`);
+    }
+  };
+
   const parseCommand = () => {
     // TODO: rename command variable
     const [command, ...args] = mcaInputValue
@@ -275,6 +286,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
       .split(/\s+/)
       .map(s => s.toUpperCase());
     // console.log(command, args)
+    let match;
     if (command.match(/\/\/\w+/)) {
       toggleVci(command.slice(2));
       acceptDposKeyBD();
@@ -294,6 +306,14 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
           disconnectHub()
             .then(() => accept("SIGN OUT"))
             .catch(() => reject("SIGN OUT"));
+          break;
+        case "GI": // send GI message
+          match = GI_EXPR.exec(mcaInputValue.toUpperCase());
+          if (match?.length === 3) {
+            parseGI(match[1], match[2]);
+          } else {
+            reject(`FORMAT\n${mcaInputValue}`);
+          }
           break;
         case "UU":
           parseUU(args);

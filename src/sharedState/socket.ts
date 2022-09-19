@@ -101,6 +101,12 @@ class SharedStateSocket {
     }
   }
 
+  public sendGIMessage(recipient: string, message: string) {
+    if (this.socket?.connected) {
+      this.socket.emit("sendGIMessage", recipient, message);
+    }
+  }
+
   public disconnect() {
     if (this.socket?.connected) {
       this.socket.removeAllListeners();

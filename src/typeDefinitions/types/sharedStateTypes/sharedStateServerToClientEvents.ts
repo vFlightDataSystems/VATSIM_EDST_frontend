@@ -19,4 +19,5 @@ export type SharedStateServerToClientEvents = {
   receiveAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
   receiveUiState: (value: SharedUiState) => void;
   receiveUiEvent: (eventId: SharedUiEvent, arg?: any) => void;
+  receiveGIMessage: (sender: string, message: string) => void;
 };

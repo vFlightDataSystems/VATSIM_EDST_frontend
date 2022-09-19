@@ -75,7 +75,7 @@ const useHubContextInit = () => {
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
-        // log("received flightplan:", flightplan);
+        log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {

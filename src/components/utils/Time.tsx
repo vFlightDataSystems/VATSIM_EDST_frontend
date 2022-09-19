@@ -22,8 +22,8 @@ export function Time() {
   }, []);
   return (
     <TimeStyle>
-      {`0${date.getUTCHours()}`.slice(-2)}
-      {`0${date.getUTCMinutes()}`.slice(-2)} {`0${date.getUTCSeconds()}`.slice(-2)}
+      {String(date.getUTCHours()).padStart(2, "0")}
+      {String(date.getUTCMinutes()).padStart(2, "0")} {String(date.getUTCSeconds()).padStart(2, "0")}
     </TimeStyle>
   );
 }

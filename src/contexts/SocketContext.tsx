@@ -3,7 +3,7 @@ import { receiveSharedStateAircraft } from "../redux/thunks/sharedStateThunks/re
 import { log } from "../utils/console";
 import { useRootDispatch } from "../redux/hooks";
 import { receiveUiStateThunk } from "../redux/thunks/sharedStateThunks/receiveUiStateThunk";
-import { closeWindow, openWindow } from "../redux/slices/appSlice";
+import { addGIEntries, closeWindow, openWindow } from "../redux/slices/appSlice";
 import sharedSocket from "../sharedState/socket";
 import { sharedStateAircraftSelect } from "../redux/thunks/aircraftSelect";
 import { setAclState } from "../redux/slices/aclSlice";
@@ -65,6 +65,12 @@ const useSocketContextInit = () => {
           if (eventId === null) {
             dispatch(sharedStateAircraftSelect(asel));
           }
+        });
+        socket.on("receiveGIMessage", (sender, message) => {
+          const date = new Date();
+          const formattedMsg = `GI ${sender} ${String(date.getUTCHours()).padStart(2, "0") +
+            String(date.getUTCMinutes()).padStart(2, "0")} ${message}`;
+          dispatch(addGIEntries({ [formattedMsg]: { text: formattedMsg, acknowledged: false } }));
         });
         socket.on("disconnect", reason => {
           setIsConnected(false);
