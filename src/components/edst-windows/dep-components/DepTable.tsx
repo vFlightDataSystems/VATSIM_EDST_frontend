@@ -43,8 +43,8 @@ export const DepTable = () => {
     }
   };
 
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: EdstEntry) => entry.depDisplay), [entries]);
-  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: EdstEntry) => entry.spa)), [entryList]);
+  const entryList = useMemo(() => Object.values(entries)?.filter(entry => entry.status === "Proposed" && !entry.deleted), [entries]);
+  const spaEntryList = useMemo(() => Object.entries(entryList.filter(entry => entry.spa)), [entryList]);
 
   return (
     <DepBodyStyleDiv>
@@ -64,18 +64,16 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
+        {spaEntryList?.map(([i, entry]) => (
           <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
-          ([i, entry]: [string, EdstEntry]) => (
-            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
-          )
-        )}
+        {Object.entries(entryList?.filter(entry => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(([i, entry]) => (
+          <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
+        ))}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
-          Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.depStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
+          Object.entries(entryList?.filter(entry => !entry.spa && entry.depStatus === -1))?.map(([i, entry]) => (
             <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
           ))}
       </ScrollContainer>

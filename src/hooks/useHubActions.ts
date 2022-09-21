@@ -11,6 +11,10 @@ export const useHubActions = () => {
   const dispatch = useRootDispatch();
   const hubConnection = useHubConnection();
 
+  const activateFlightplan = (aircraftId: AircraftId) => {
+    hubConnection?.invoke("activateFlightplan", aircraftId).then(console.log);
+  };
+
   const generateFrd = async (location: ApiLocation) =>
     hubConnection?.invoke<string>("generateFrd", location).catch(error => {
       console.log(error);
@@ -24,7 +28,7 @@ export const useHubActions = () => {
   };
 
   const setHoldAnnotations = async (aircraftId: AircraftId, annotations: HoldAnnotations) => {
-    hubConnection?.invoke("activateFlightplan", aircraftId).then(console.log);
+    activateFlightplan(aircraftId);
     return hubConnection
       ?.invoke<void>("setHoldAnnotations", aircraftId, annotations)
       .then(() => dispatch(setMcaAcceptMessage(`HOLD\n${aircraftId}`)))
@@ -44,6 +48,7 @@ export const useHubActions = () => {
     });
 
   return {
+    activateFlightplan,
     generateFrd,
     amendFlightplan,
     setHoldAnnotations,

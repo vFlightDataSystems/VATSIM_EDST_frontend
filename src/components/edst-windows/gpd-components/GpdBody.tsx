@@ -17,8 +17,8 @@ type MapConfiguratorProps = {
 const MapConfigurator = ({ zoomLevel }: MapConfiguratorProps) => {
   const map = useMap();
   useEffect(() => {
-    map.setZoom(zoomLevel); // eslint-disable-next-line
-  }, [zoomLevel]);
+    map.setZoom(zoomLevel);
+  }, [map, zoomLevel]);
   return null;
 };
 
@@ -39,7 +39,7 @@ export const GpdBody = ({ zoomLevel }: { zoomLevel: number }) => {
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
 
-  const entryList = Object.values(entries)?.filter((entry: EdstEntry) => entry.aclDisplay);
+  const entryList = Object.values(entries)?.filter((entry: EdstEntry) => entry.status === "Active");
 
   return (
     <GpdBodyDiv>

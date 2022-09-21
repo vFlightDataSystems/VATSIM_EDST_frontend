@@ -162,12 +162,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
       entry => String(entry?.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
     if (entry) {
-      if (entry.aclDisplay) {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclHighlighted: !entry.aclHighlighted } }));
-      }
-      if (entry.depDisplay) {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { depHighlighted: !entry.depHighlighted } }));
-      }
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
     }
   };
 
@@ -199,7 +194,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   const parseQU = async (args: string[]) => {
     if (args.length === 2) {
       const entry = getEntryByFid(args[1]);
-      if (entry && entry.aclDisplay) {
+      if (entry && entry.status === "Active") {
         const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
         if (routeFixes?.map(fix => fix.name)?.includes(args[0])) {
           const aircraftTrack = aircraftTracks[entry.aircraftId];

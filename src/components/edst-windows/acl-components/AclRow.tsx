@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { rmvEntryFromAcl, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
+import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
@@ -154,7 +154,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
         dispatch(toggleSpa(entry.aircraftId));
         break;
       case 2:
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclHighlighted: !entry.aclHighlighted } }));
+        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
         break;
       default:
         break;
@@ -239,7 +239,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(rmvEntryFromAcl(entry.aircraftId));
+          dispatch(delEntry(entry.aircraftId));
         }
         break;
       default:
@@ -310,7 +310,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
         <AclCol1 border />
         <AclCol1 border />
         <SpecialBox disabled />
-        <InnerRow highlight={entry.aclHighlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
+        <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.aclFlightId} onMouseDown={handleFidClick}>
             <FidCol hover selected={isSelected(AclRowField.FID)}>
               {entry.cid} {entry.aircraftId}
@@ -437,7 +437,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
           <AclCol1 />
           <AclCol1 />
           <SpecialBox disabled />
-          <InnerRow2 highlight={entry.aclHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
+          <InnerRow2 highlight={entry.highlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={202}>
               <input
                 value={freeTextContent}

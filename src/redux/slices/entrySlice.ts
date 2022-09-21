@@ -37,37 +37,13 @@ const entrySlice = createSlice({
         sharedSocket.updateSharedAircraft(state[action.payload]);
       }
     },
-    rmvEntryFromAcl(state, action: PayloadAction<AircraftId>) {
-      if (Object.keys(state).includes(action.payload)) {
-        state[action.payload].aclDisplay = false;
-        state[action.payload].aclDeleted = true;
-        sharedSocket.updateSharedAircraft(state[action.payload]);
-      }
-    },
-    addEntryToAcl(state, action: PayloadAction<AircraftId>) {
-      if (Object.keys(state).includes(action.payload)) {
-        state[action.payload].aclDisplay = true;
-        state[action.payload].aclDeleted = false;
-      }
-    },
-    rmvEntryFromDep(state, action: PayloadAction<AircraftId>) {
-      if (Object.keys(state).includes(action.payload)) {
-        state[action.payload].depDisplay = false;
-        state[action.payload].depDeleted = true;
-        sharedSocket.updateSharedAircraft(state[action.payload]);
-      }
-    },
-    addEntryToDep(state, action: PayloadAction<AircraftId>) {
-      if (Object.keys(state).includes(action.payload)) {
-        state[action.payload].depDisplay = true;
-        state[action.payload].depDeleted = false;
-        sharedSocket.updateSharedAircraft(state[action.payload]);
-      }
+    delEntry(state, action: PayloadAction<AircraftId>) {
+      entryUpdater(state, action.payload, { deleted: true });
     }
   }
 });
 
-export const { setEntry, updateEntry, toggleSpa, rmvEntryFromAcl, rmvEntryFromDep, addEntryToAcl, addEntryToDep, updateEntries } = entrySlice.actions;
+export const { setEntry, updateEntry, delEntry, toggleSpa, updateEntries } = entrySlice.actions;
 export default entrySlice.reducer;
 
 export const entriesSelector = (state: RootState) => state.entries;

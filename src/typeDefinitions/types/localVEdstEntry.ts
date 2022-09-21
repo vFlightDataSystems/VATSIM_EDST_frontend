@@ -9,9 +9,7 @@ export class LocalVEdstEntry {
   // -1: not acknowledged, 0: acknowledged but not checked, 1: verified
   depStatus: -1 | 0 | 1 = -1;
 
-  aclHighlighted = false;
-
-  depHighlighted = false;
+  highlighted = false;
 
   // what data to display in ACL route column
   aclRouteDisplay: AclRouteDisplayOption | null = null;
@@ -36,13 +34,7 @@ export class LocalVEdstEntry {
 
   voiceType?: string;
 
-  aclDisplay = false;
-
-  aclDeleted = false;
-
-  depDisplay = false;
-
-  depDeleted = false;
+  deleted = false;
 
   keep = false;
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { rmvEntryFromDep, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
+import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
@@ -157,7 +157,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
       dispatch(toggleSpa(entry.aircraftId));
     }
     if (event.button === 2) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { depHighlighted: !entry.depHighlighted } }));
+      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
     }
   };
 
@@ -176,7 +176,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(rmvEntryFromDep(entry.aircraftId));
+          dispatch(delEntry(entry.aircraftId));
         }
         break;
       default:
@@ -195,7 +195,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
           </RadioCol>
         </EdstTooltip>
         <DepCol2>0000</DepCol2>
-        <InnerRow highlight={entry.depHighlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
+        <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.depFlightId}>
             <DepFidCol
               hover
@@ -276,7 +276,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
         <BodyRowDiv>
           <RadioCol disabled />
           <DepCol2 />
-          <InnerRow2 highlight={entry.depHighlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
+          <InnerRow2 highlight={entry.highlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={202}>
               <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value.toUpperCase())} />
             </FreeTextRow>

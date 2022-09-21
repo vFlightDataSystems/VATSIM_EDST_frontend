@@ -40,6 +40,7 @@ import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMen
 import { SocketContextProvider } from "./contexts/SocketContext";
 import { openWindowThunk } from "./redux/thunks/openWindowThunk";
 import { aselEntrySelector } from "./redux/slices/entrySlice";
+import { useHubActions } from "./hooks/useHubActions";
 
 const Edst = () => {
   const dispatch = useRootDispatch();
@@ -49,10 +50,11 @@ const Edst = () => {
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaInputRef = useRef<HTMLTextAreaElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const hubActions = useHubActions();
 
   useInterval(() => {
     fetchAllAircraft().then(aircraftList => {
-      dispatch(updateSweatboxAircraftThunk(aircraftList));
+      dispatch(updateSweatboxAircraftThunk(aircraftList, hubActions.activateFlightplan));
     });
   }, 5000);
 

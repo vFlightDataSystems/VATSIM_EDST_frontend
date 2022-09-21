@@ -109,7 +109,7 @@ export const RouteMenu = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ROUTE_MENU));
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const aircraftTrack = useRootSelector(aselTrackSelector)!;
+  const aircraftTrack = useRootSelector(aselTrackSelector);
   const zStack = useRootSelector(zStackSelector);
   const [frd, setFrd] = useState<string | null>(null);
   const hubActions = useHubActions();
@@ -134,8 +134,10 @@ export const RouteMenu = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU, "mouseup");
 
   useEffect(() => {
-    hubActions.generateFrd(aircraftTrack.location).then(frd => setFrd(frd));
-  }, [aircraftTrack.location, entry.aircraftId, hubActions]);
+    if (aircraftTrack) {
+      hubActions.generateFrd(aircraftTrack.location).then(frd => setFrd(frd));
+    }
+  }, [aircraftTrack, entry.aircraftId, hubActions]);
 
   const { appendOplus, appendStar } = append;
 
@@ -197,7 +199,7 @@ export const RouteMenu = () => {
   };
 
   const clearedToFix = async (clearedFixName: string) => {
-    const frd = await hubActions.generateFrd(aircraftTrack.location);
+    const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
     const route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd)?.route;
     if (route) {
       const amendedFlightplan: ApiFlightplan = {
@@ -226,7 +228,7 @@ export const RouteMenu = () => {
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = async event => {
     if (event.key === "Enter") {
-      const frd = await hubActions.generateFrd(aircraftTrack.location);
+      const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
       let newRoute = removeStringFromEnd(routeInput, entry.destination);
       if (asel.window === EdstWindow.DEP) {
         newRoute = removeStringFromStart(newRoute, entry.departure);

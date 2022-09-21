@@ -81,8 +81,8 @@ export const AclTable = () => {
         return u.aircraftId.localeCompare(v.aircraftId);
     }
   };
-  const entryList = useMemo(() => Object.values(entries)?.filter((entry: EdstEntry) => entry.aclDisplay), [entries]);
-  const spaEntryList = useMemo(() => Object.entries(entryList.filter((entry: EdstEntry) => entry.spa)), [entryList]);
+  const entryList = useMemo(() => Object.values(entries)?.filter(entry => entry.status === "Active" && !entry.deleted), [entries]);
+  const spaEntryList = useMemo(() => Object.entries(entryList.filter(entry => entry.spa)), [entryList]);
 
   return (
     <AclBodyStyleDiv>
@@ -139,18 +139,16 @@ export const AclTable = () => {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList?.map(([i, entry]: [string, EdstEntry]) => (
+        {spaEntryList?.map(([i, entry]) => (
           <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && (entry.vciStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(
-          ([i, entry]: [string, EdstEntry]) => (
-            <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
-          )
-        )}
+        {Object.entries(entryList?.filter(entry => !entry.spa && (entry.vciStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(([i, entry]) => (
+          <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
+        ))}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
-          Object.entries(entryList?.filter((entry: EdstEntry) => !entry.spa && entry.vciStatus === -1))?.map(([i, entry]: [string, EdstEntry]) => (
+          Object.entries(entryList?.filter(entry => !entry.spa && entry.vciStatus === -1))?.map(([i, entry]) => (
             <AclRow key={entry.aircraftId} index={Number(i)} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
           ))}
       </ScrollContainer>

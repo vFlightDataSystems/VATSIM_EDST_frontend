@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useInterval } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planQueueSelector, selectedPlanIndexSelector, setSelectedPlanIndex } from "../../../redux/slices/planSlice";
 import { BodyRowDiv } from "../../../styles/bodyStyles";
 import { NoSelectDiv } from "../../../styles/styles";
 import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { removePlanThunk } from "../../../redux/thunks/removePlanThunk";
-import { Plan } from "../../../typeDefinitions/types/plan";
 
 const PlansDisplayBody = styled(NoSelectDiv)`
   overflow: hidden;
@@ -65,10 +65,7 @@ export const PlansDisplayTable = () => {
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
 
   const [time, setTime] = useState(new Date().getTime() / 1000);
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date().getTime() / 1000), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  useInterval(() => setTime(new Date().getTime() / 1000), 1000);
 
   const handleMouseDown = (event: React.MouseEvent, index: number) => {
     event.preventDefault();
@@ -86,7 +83,7 @@ export const PlansDisplayTable = () => {
 
   return (
     <PlansDisplayBody>
-      {planQueue?.map((p: Plan, i) => (
+      {planQueue?.map((p, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <BodyRowDiv key={i}>
           <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>

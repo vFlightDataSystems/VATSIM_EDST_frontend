@@ -4,7 +4,7 @@ import { HoldAnnotations } from "../../enums/hold/holdAnnotations";
 export type ApiFlightplan = {
   aircraftId: AircraftId;
   cid: string;
-  status: any;
+  status: "Proposed" | "Active" | "Tentative";
   assignedBeaconCode: number | null;
   equipment: string;
   aircraftType: string;

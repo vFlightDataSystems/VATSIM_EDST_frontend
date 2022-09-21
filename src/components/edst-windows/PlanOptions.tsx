@@ -5,7 +5,7 @@ import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselSelector, closeAllMenus, closeWindow, pushZStack, setAsel, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { entrySelector, rmvEntryFromAcl, rmvEntryFromDep, updateEntry } from "../../redux/slices/entrySlice";
+import { delEntry, entrySelector, updateEntry } from "../../redux/slices/entrySlice";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
@@ -134,7 +134,7 @@ export const PlanOptions = () => {
               onMouseDown={() => {
                 dispatch(setAsel(null));
                 dispatch(closeAllMenus());
-                dispatch(asel.window === EdstWindow.ACL ? rmvEntryFromAcl(asel.aircraftId) : rmvEntryFromDep(asel.aircraftId));
+                dispatch(delEntry(entry.aircraftId));
                 dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
               }}
             >

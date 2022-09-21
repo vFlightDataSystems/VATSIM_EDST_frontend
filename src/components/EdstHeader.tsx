@@ -58,14 +58,14 @@ const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   }
 `;
 
-type ColButtonProps = {
-  width?: number;
-  color?: string;
-  open?: boolean;
-  fontWeight?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-};
+type ColButtonProps = Partial<{
+  width: number;
+  color: string;
+  open: boolean;
+  fontWeight: string;
+  backgroundColor: string;
+  borderColor: string;
+}>;
 
 const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   width: `${props.width ?? 66}px`,
@@ -96,17 +96,17 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   }
 `;
 
-type EdstHeaderButtonProps = {
-  title?: string;
-  width?: number;
+type EdstHeaderButtonProps = Partial<{
+  title: string;
+  width: number;
   open: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  color?: string;
-  disabled?: boolean;
-  content?: string;
-  onMouseDown?: () => void;
-};
+  backgroundColor: string;
+  borderColor: string;
+  color: string;
+  disabled: boolean;
+  content: string;
+  onMouseDown: () => void;
+}>;
 
 const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) => (
   <EdstTooltip title={title}>
@@ -125,8 +125,8 @@ export const EdstHeader = () => {
 
   const sectorId = useRootSelector(sectorIdSelector);
   const entries = useRootSelector(entriesSelector);
-  const aclLen = Object.values(entries).filter(entry => entry.aclDisplay).length;
-  const depLen = Object.values(entries).filter(entry => entry.depDisplay).length;
+  const aclLen = Object.values(entries).filter(entry => entry.status === "Active" && !entry.deleted).length;
+  const depLen = Object.values(entries).filter(entry => entry.status === "Proposed" && !entry.deleted).length;
   const sigmets = useRootSelector(sigmetSelector);
   const sigLen = Object.values(sigmets).filter(sigmetEntry => !sigmetEntry.acknowledged).length;
   const notLen = 0;
