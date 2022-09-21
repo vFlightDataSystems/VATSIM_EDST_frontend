@@ -171,7 +171,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
     }
   };
 
-  const handleFidClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleFidClick: React.MouseEventHandler<HTMLDivElement> = event => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:

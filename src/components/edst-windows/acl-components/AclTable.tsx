@@ -33,7 +33,7 @@ const AclBodyStyleDiv = styled(NoSelectDiv)`
   color: ${edstFontGrey};
 `;
 
-export function AclTable() {
+export const AclTable = () => {
   const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
@@ -104,8 +104,8 @@ export function AclTable() {
           <SpecialBox disabled />
           {/* hotbox column */}
           <SpecialBox disabled />
-          <AircraftTypeCol hidden={hiddenColumns.includes(AclRowField.TYPE)}>
-            <div onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.TYPE))}>T{!hiddenColumns.includes(AclRowField.TYPE) && "ype"}</div>
+          <AircraftTypeCol hidden={hiddenColumns.includes(AclRowField.TYPE)} onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.TYPE))}>
+            T{!hiddenColumns.includes(AclRowField.TYPE) && "ype"}
           </AircraftTypeCol>
           <AltCol hover headerCol onMouseDown={() => setAltMouseDown(true)} onMouseUp={() => setAltMouseDown(false)}>
             Alt.
@@ -156,4 +156,4 @@ export function AclTable() {
       </ScrollContainer>
     </AclBodyStyleDiv>
   );
-}
+};

@@ -5,14 +5,12 @@ import { ApiSessionInfoDto } from "../../typeDefinitions/types/apiTypes/apiSessi
 
 type AuthState = {
   vatsimToken: string | null;
-  nasToken: string | null;
   session: ApiSessionInfoDto | null;
   isRefreshingSession: boolean;
 };
 
 const initialState: AuthState = {
   vatsimToken: null,
-  nasToken: null,
   session: null,
   isRefreshingSession: false
 };
@@ -33,7 +31,6 @@ export const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       if (action.payload.ok) {
         state.vatsimToken = action.payload.vatsimToken;
-        state.nasToken = action.payload.nasToken;
       } else {
         // TODO: inform user that login failed
         // eslint-disable-next-line no-console
@@ -55,4 +52,3 @@ export const { setSession, clearSession } = authSlice.actions;
 export default authSlice.reducer;
 
 export const vatsimTokenSelector = (state: RootState) => state.auth.vatsimToken;
-export const nasTokenSelector = (state: RootState) => state.auth.nasToken;

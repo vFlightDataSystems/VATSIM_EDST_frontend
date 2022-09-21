@@ -11,14 +11,9 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../../hooks/useHubActions";
 import { DownlinkSymbol } from "../../utils/DownlinkSymbol";
+import { HeaderComponentProps } from "../../utils/FullscreenWindow";
 
 const PlansDisplayHeaderDiv = styled(NoSelectDiv)``;
-
-type PlansDisplayHeaderProps = {
-  focused: boolean;
-  toggleFullscreen: () => void;
-  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
-};
 
 /**
  * Plans Display title bar and header row with add/find input field
@@ -26,7 +21,7 @@ type PlansDisplayHeaderProps = {
  * @param toggleFullscreen eventHandler to toggle maximized mode of Plans Display window
  * @param startDrag startDrag event handler
  */
-export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: PlansDisplayHeaderProps) => {
+export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: HeaderComponentProps) => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);

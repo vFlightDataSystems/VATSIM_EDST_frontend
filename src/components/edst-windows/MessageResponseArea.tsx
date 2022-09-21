@@ -46,7 +46,7 @@ export const MessageResponseArea = () => {
   );
   const options = useWindowOptions(EdstWindow.MESSAGE_RESPONSE_AREA, extraOptions);
 
-  const onMraMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+  const onMraMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     switch (event.button) {
       case 1:

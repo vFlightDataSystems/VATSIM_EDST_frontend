@@ -77,7 +77,7 @@ const FlexCol = styled(TemplateCol)`
 type TemplateInputProps = {
   title?: string;
   value: string | number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   rows?: number;
 };
 

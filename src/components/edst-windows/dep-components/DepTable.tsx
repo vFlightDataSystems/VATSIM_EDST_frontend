@@ -23,7 +23,7 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
   color: ${edstFontGrey};
 `;
 
-export function DepTable() {
+export const DepTable = () => {
   const dispatch = useRootDispatch();
   const selectedSortOption = useRootSelector(depSortOptionSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
@@ -54,8 +54,8 @@ export function DepTable() {
         <DepFidCol>Flight ID</DepFidCol>
         <SpecialBox />
         <SpecialBox />
-        <AircraftTypeCol hidden={hiddenColumns.includes(DepRowField.TYPE)}>
-          <div onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>T{!hiddenColumns.includes(DepRowField.TYPE) && "ype"}</div>
+        <AircraftTypeCol hidden={hiddenColumns.includes(DepRowField.TYPE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>
+          T{!hiddenColumns.includes(DepRowField.TYPE) && "ype"}
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>
         <CodeCol hover hidden={hiddenColumns.includes(DepRowField.CODE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.CODE))}>
@@ -81,4 +81,4 @@ export function DepTable() {
       </ScrollContainer>
     </DepBodyStyleDiv>
   );
-}
+};

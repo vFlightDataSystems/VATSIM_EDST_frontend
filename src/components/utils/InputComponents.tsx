@@ -6,8 +6,8 @@ import { EdstInput } from "../../styles/optionMenuStyles";
 type InputProps = {
   title?: string;
   value: string | number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onKeyDown: (event: React.KeyboardEvent) => void;
+  onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onKeyDown: React.KeyboardEventHandler<HTMLInputElement>;
   rows?: number;
 };
 

@@ -14,7 +14,7 @@ import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 type GpdHeaderProps = {
   focused: boolean;
   toggleFullscreen: () => void;
-  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
+  startDrag: React.MouseEventHandler<HTMLDivElement>;
   zoomLevel: number;
   setZoomLevel: React.Dispatch<React.SetStateAction<number>>;
 };

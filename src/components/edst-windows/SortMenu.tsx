@@ -11,12 +11,12 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { SortBody, SortDiv, SortHeader } from "../../styles/sortStyles";
 import { OptionsBodyCol, OptionsBottomRow } from "../../styles/optionMenuStyles";
 
-type SortMenuProps = {
+type SortMenuProps = PropsWithChildren<{
   edstWindow: EdstWindow.ACL_SORT_MENU | EdstWindow.DEP_SORT_MENU;
   onSubmit: () => void;
-};
+}>;
 
-export const SortMenu = ({ edstWindow, onSubmit, children }: PropsWithChildren<SortMenuProps>) => {
+export const SortMenu = ({ edstWindow, onSubmit, children }: SortMenuProps) => {
   const dispatch = useRootDispatch();
   const windowProps = useRootSelector(windowSelector(edstWindow));
   const zStack = useRootSelector(zStackSelector);

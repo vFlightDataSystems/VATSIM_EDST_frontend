@@ -221,7 +221,7 @@ export const AltMenu = () => {
     dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
   };
 
-  const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
+  const handleScroll: React.WheelEventHandler<HTMLDivElement> = e => {
     const newDeltaY = Math.min(Math.max((assignedAltitude - 560) * 10, deltaY + e.deltaY), (assignedAltitude - 40) * 10);
     setDeltaY(newDeltaY);
   };

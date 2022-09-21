@@ -31,13 +31,14 @@ type StopDragOn = "mousedown" | "mouseup";
 
 /**
  * hook to provide startDrag/endDrag functions with a previewStyle to render the previewWindow
- * @param element ref to a DOM element
+ * @param ref ref to a DOM element
  * @param edstWindow window for which to trigger dragging events
  * @param stopDragOn whether to listen for stopDrag onMouseDown or onMouseUp
  * @returns
  */
-export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
+export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
   const dispatch = useRootDispatch();
+  // on middleClick I always want to stop drag onmouseup
   const [currentStopDragOn, setCurrentStopDragOn] = useState(stopDragOn);
   const zStack = useRootSelector(zStackSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
@@ -56,7 +57,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
 
   const draggingHandler = useCallback(
     (event: MouseEvent) => {
-      if (event && element.current) {
+      if (event && ref.current) {
         if (repositionCursor) {
           setDragPreviewStyle(prevStyle => ({
             ...prevStyle!,
@@ -64,7 +65,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
             top: event.clientY
           }));
         } else {
-          const { clientWidth: width, clientHeight: height } = element.current;
+          const { clientWidth: width, clientHeight: height } = ref.current;
           setDragPreviewStyle(prevStyle => ({
             ...prevStyle!,
             ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height)
@@ -72,12 +73,12 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
         }
       }
     },
-    [element, repositionCursor]
+    [ref, repositionCursor]
   );
 
-  const startDrag = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      if (element.current && ppos && !anyDragging && (event.button === 0 || event.button === 1)) {
+  const startDrag: React.MouseEventHandler<HTMLDivElement> = useCallback(
+    event => {
+      if (ref.current && ppos && !anyDragging && (event.button === 0 || event.button === 1)) {
         event.stopPropagation();
         if (event.button === 1) {
           setCurrentStopDragOn("mousedown");
@@ -111,13 +112,13 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
           relX,
           relY,
           height:
-            element.current.clientHeight +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("border")) +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("margin")) * 2,
+            ref.current.clientHeight +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("border")) +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("margin")) * 2,
           width:
-            element.current.clientWidth +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("border")) +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("margin")) * 2
+            ref.current.clientWidth +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("border")) +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("margin")) * 2
         };
         setDragPreviewStyle(style);
         setDragging(true);
@@ -125,11 +126,11 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
         window.addEventListener("mousemove", draggingHandler);
       }
     },
-    [anyDragging, dispatch, draggingHandler, edstWindow, element, ppos, zStack]
+    [anyDragging, dispatch, draggingHandler, edstWindow, ref, ppos, zStack]
   );
 
   const stopDrag = useCallback(() => {
-    if (dragging && element?.current && dragPreviewStyle) {
+    if (dragging && ref?.current && dragPreviewStyle) {
       const { left: x, top: y } = dragPreviewStyle;
       const newPos = { x: x + 1, y };
       // eslint-disable-next-line no-underscore-dangle
@@ -147,7 +148,7 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
       setDragPreviewStyle(null);
       window.removeEventListener("mousemove", draggingHandler);
     }
-  }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, element]);
+  }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, ref]);
 
   useEventListener(currentStopDragOn, event => {
     if (dragPreviewStyle && event.button === 0) {

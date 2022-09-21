@@ -176,7 +176,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     }
   };
 
-  const handleHoldClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleHoldClick: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -251,7 +251,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     }
   };
 
-  const handleHeadingClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleHeadingClick: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -274,7 +274,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     }
   };
 
-  const handleSpeedClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleSpeedClick: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     switch (event.button) {
       case 0:

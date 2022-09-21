@@ -27,16 +27,16 @@ const TooltipBody = styled.div`
   font-size: inherit;
 `;
 
-type EdstTooltipProps = {
+type EdstTooltipProps = PropsWithChildren<{
   title?: string;
   content?: string;
   onMouseDown?: React.EventHandler<React.MouseEvent>;
   onContextMenu?: React.EventHandler<React.MouseEvent>;
   disabled?: boolean;
   style?: React.CSSProperties;
-};
+}>;
 
-export const EdstTooltip = ({ title, content, style, ...props }: PropsWithChildren<EdstTooltipProps>) => {
+export const EdstTooltip = ({ title, content, style, ...props }: EdstTooltipProps) => {
   const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 

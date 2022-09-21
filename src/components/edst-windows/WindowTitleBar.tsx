@@ -84,7 +84,7 @@ type WindowTitleBarProps = {
   focused: boolean;
   closeWindow: () => void;
   toggleFullscreen: () => void;
-  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
+  startDrag: React.MouseEventHandler<HTMLDivElement>;
   text: string[];
 };
 

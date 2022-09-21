@@ -14,12 +14,7 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AclSortOptionValues } from "../../../typeDefinitions/enums/acl/aclSortOption";
-
-type AclHeaderProps = {
-  focused: boolean;
-  toggleFullscreen: () => void;
-  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
-};
+import { HeaderComponentProps } from "../../utils/FullscreenWindow";
 
 const AclHeaderDiv = styled(NoSelectDiv)``;
 
@@ -29,7 +24,7 @@ const AclHeaderDiv = styled(NoSelectDiv)``;
  * @param toggleFullscreen event handler to toggle maximized mode of ACL window
  * @param startDrag startDrag event handler
  */
-export const AclHeader = ({ focused, toggleFullscreen, startDrag }: AclHeaderProps) => {
+export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderComponentProps) => {
   const asel = useRootSelector(aclAselSelector);
   const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);

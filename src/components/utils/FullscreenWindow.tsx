@@ -8,17 +8,17 @@ import { useFullscreen } from "../../hooks/useFullscreen";
 import { EdstDraggingOutline } from "./EdstDraggingOutline";
 import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 
+export type HeaderComponentProps = {
+  focused: boolean;
+  toggleFullscreen: () => void;
+  startDrag: React.MouseEventHandler<HTMLDivElement>;
+};
+
 type FullscreenWindowProps = PropsWithChildren<{
   edstWindow: EdstWindow;
   HeaderComponent: ComponentType<HeaderComponentProps>;
   BodyComponent: ComponentType<unknown>;
 }>;
-
-type HeaderComponentProps = {
-  focused: boolean;
-  toggleFullscreen: () => void;
-  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
-};
 
 export const FullscreenWindow = ({ edstWindow, HeaderComponent, BodyComponent, ...props }: FullscreenWindowProps) => {
   const dispatch = useRootDispatch();

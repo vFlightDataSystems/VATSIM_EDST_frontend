@@ -6,7 +6,7 @@ import { useRootSelector } from "../redux/hooks";
 const PrivateRoute = () => {
   const token = useRootSelector(vatsimTokenSelector);
 
-  // User needs a valid session and an ARTCC id before viewing EDST
+  // User needs a valid token before viewing EDST
   return token ? <Outlet /> : <Navigate to="/login" replace />;
 };
 

@@ -87,7 +87,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
   useAselEventListener<AclRowField>(altRef, entry.aircraftId, "gpd-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
   useAselEventListener<AclRowField>(altRef, entry.aircraftId, "gpd-dest-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
-  const onCallsignClick = (event: React.MouseEvent<HTMLElement>) => {
+  const onCallsignClick: React.MouseEventHandler<HTMLDivElement> = event => {
     if (!anyDragging) {
       switch (event.button) {
         case 0:

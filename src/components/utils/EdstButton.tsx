@@ -6,7 +6,7 @@ import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/shar
 import { useSharedUiListenerWithElement } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
 
-type EdstOuterButtonProps = { width?: string; height?: string; margin?: string; disabled?: boolean };
+type EdstOuterButtonProps = Partial<{ width: string; height: string; margin: string; disabled: boolean }>;
 const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
   width: props.width ?? "auto",
   height: props.height ?? "auto",
@@ -33,7 +33,7 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
   margin-bottom: 1px;
 `;
 
-type EdstInnerButtonProps = { selected?: boolean; flexGrow?: number; width?: string; height?: string; padding?: string; disabled?: boolean };
+type EdstInnerButtonProps = Partial<{ selected: boolean; flexGrow: number; width: string; height: string; padding: string; disabled: boolean }>;
 const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
   width: props.width ?? "auto",
   height: props.height ?? "auto",
@@ -66,20 +66,22 @@ type SharedUiEventProps<T> = {
   sharedUiEventHandlerArgs: T;
 };
 
-type EdstButtonProps = Partial<{
-  disabled: boolean;
-  selected: boolean;
-  width: string;
-  height: string;
-  margin: string;
-  padding: string;
-  content: string;
-  id: string;
-  title: string;
-  onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
-}>;
+type EdstButtonProps = PropsWithChildren<
+  Partial<{
+    disabled: boolean;
+    selected: boolean;
+    width: string;
+    height: string;
+    margin: string;
+    padding: string;
+    content: string;
+    id: string;
+    title: string;
+    onMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  }>
+>;
 
-export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
+export const EdstButton = ({ onMouseDown, id, ...props }: EdstButtonProps) => {
   return (
     <EdstTooltip title={props.title}>
       <EdstOuterButton
@@ -114,7 +116,7 @@ export function EdstWindowHeaderButton<T>({
   sharedUiEventHandler = undefined,
   sharedUiEventHandlerArgs = undefined,
   ...props
-}: PropsWithChildren<EdstWindowHeaderButtonProps<T>>) {
+}: EdstWindowHeaderButtonProps<T>) {
   const ref = useRef<HTMLDivElement>(null);
 
   useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler, sharedUiEventHandlerArgs);
@@ -142,7 +144,7 @@ export function EdstWindowHeaderButton<T>({
   );
 }
 
-const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<Omit<EdstButtonProps, "margin">>) => (
+const HoldDirButton = ({ onMouseDown, id, ...props }: Omit<EdstButtonProps, "margin">) => (
   <EdstTooltip title={props.title}>
     <EdstOuterButton disabled={props.disabled} margin="0 2px" id={id} onMouseDownCapture={onMouseDown}>
       <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} flexGrow={0}>
@@ -151,6 +153,6 @@ const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<Omit<Eds
     </EdstOuterButton>
   </EdstTooltip>
 );
-export const HoldDirButton2ch = (props: PropsWithChildren<EdstButtonFixedSizeProps>) => <HoldDirButton width="2ch" {...props} />;
-export const HoldDirButton22ch = (props: PropsWithChildren<EdstButtonFixedSizeProps>) => <HoldDirButton width="2.2ch" {...props} />;
-export const HoldDirButton6ch = (props: PropsWithChildren<EdstButtonFixedSizeProps>) => <HoldDirButton width="6ch" {...props} />;
+export const HoldDirButton2ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2ch" {...props} />;
+export const HoldDirButton22ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2.2ch" {...props} />;
+export const HoldDirButton6ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="6ch" {...props} />;

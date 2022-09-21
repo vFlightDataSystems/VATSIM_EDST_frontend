@@ -118,7 +118,7 @@ export const SectorSelector = () => {
   const profiles = useRootSelector(sectorProfilesSelector);
   const selectedSectors = useRootSelector(selectedSectorsSelector);
 
-  const onProfileChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const onProfileChange: React.ChangeEventHandler<HTMLSelectElement> = event => {
     if (!event.target.value) {
       dispatch(setSelectedSectors([]));
     } else if (event.target.value === "All") {

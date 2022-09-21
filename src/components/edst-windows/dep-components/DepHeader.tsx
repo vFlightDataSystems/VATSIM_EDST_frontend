@@ -12,12 +12,7 @@ import { AddFindInput } from "../../utils/InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { DepSortOptionValues } from "../../../typeDefinitions/enums/dep/depSortOption";
-
-type DepHeaderProps = {
-  focused: boolean;
-  toggleFullscreen: () => void;
-  startDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
-};
+import { HeaderComponentProps } from "../../utils/FullscreenWindow";
 
 /**
  * DEP title bar and header row with add/find input field
@@ -25,7 +20,7 @@ type DepHeaderProps = {
  * @param toggleFullscreen eventHandler to toggle maximized mode of DEP window
  * @param startDrag startDrag event handler
  */
-export const DepHeader = ({ focused, toggleFullscreen, startDrag }: DepHeaderProps) => {
+export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderComponentProps) => {
   const asel = useRootSelector(depAselSelector);
   const selectedSortOption = useRootSelector(depSortOptionSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);

@@ -54,32 +54,32 @@ const MessageComposeAreaDiv = styled(FloatingWindowDiv)`
   font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
 `;
 
-type MessageComposeInputAreaDivProps = { width: number; height: number };
-const MessageComposeInputAreaDiv = styled.div.attrs(({ width, height }: MessageComposeInputAreaDivProps) => ({
-  width: `${width}ch`,
-  height: `${height}em`
-}))<MessageComposeInputAreaDivProps>`
+const MessageComposeInputAreaDiv = styled.div`
   font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
   line-height: 1em;
   width: auto;
   height: auto;
   border-bottom: 1px solid #adadad;
+`;
 
-  textarea {
-    color: inherit;
-    height: ${props => props.height};
-    resize: none;
-    white-space: initial;
-    overflow: hidden;
-    width: ${props => props.width};
-    font-family: ${eramFontFamily};
-    font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
-    outline: none;
-    border: none;
-    caret: underscore;
-    background-color: #000000;
-    text-transform: uppercase;
-  }
+type McaTextAreaProps = { width: number; height: number };
+const McaTextArea = styled.textarea.attrs(({ width, height }: McaTextAreaProps) => ({
+  width: `${width}ch`,
+  height: `${height}em`
+}))<McaTextAreaProps>`
+  color: inherit;
+  height: ${props => props.height};
+  width: ${props => props.width};
+  resize: none;
+  white-space: initial;
+  overflow: hidden;
+  font-family: ${eramFontFamily};
+  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
+  outline: none;
+  border: none;
+  caret: underscore;
+  background-color: #000000;
+  text-transform: uppercase;
 `;
 
 const FeedbackContainerDiv = styled.div`
@@ -107,7 +107,7 @@ const RejectCrossSpan = styled.span`
   height: 1em;
 
   ::before {
-    content: "\u2715"; // apparently this is literally just the character X (xray)
+    content: "\u2715";
   }
 `;
 
@@ -300,7 +300,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
         case "SI":
           connectHub()
             .then(() => accept("SIGN IN"))
-            .catch(() => reject("SIGN IN"));
+            .catch(reason => reject(`SIGN IN\n${reason?.message ?? "UNKNOWN ERROR"}`));
           break;
         case "SO":
           disconnectHub()
@@ -362,7 +362,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
     setMcaInputValue("");
   };
 
-  const handleInputChange = (event: React.ChangeEvent<any>) => {
+  const handleInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = event => {
     event.preventDefault();
     if (event.target.value.match(/\n$/)) {
       setMcaInputValue(event.target.value.trim());
@@ -371,7 +371,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<any>) => {
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = event => {
     if (event.shiftKey) {
       (inputRef as React.RefObject<HTMLTextAreaElement>)?.current?.blur();
     }
@@ -397,7 +397,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
 
-  const onMcaMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+  const onMcaMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     switch (event.button) {
       case 1:
@@ -422,9 +422,11 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
         <ThemeProvider theme={windowOptions}>
           <MessageComposeAreaDiv ref={ref} anyDragging={anyDragging} id="edst-mca" pos={pos} zIndex={zIndex} onMouseDownCapture={onMcaMouseDown}>
             {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-            <MessageComposeInputAreaDiv height={windowOptions.lines} width={windowOptions.width}>
-              <textarea
+            <MessageComposeInputAreaDiv>
+              <McaTextArea
                 ref={inputRef}
+                height={windowOptions.lines}
+                width={windowOptions.width}
                 tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
                 value={mcaInputValue}
                 onChange={handleInputChange}
