@@ -101,9 +101,11 @@ class SharedStateSocket {
     }
   }
 
-  public sendGIMessage(recipient: string, message: string) {
+  public sendGIMessage(recipient: string, message: string, callback: (rejectReason?: string) => void) {
     if (this.socket?.connected) {
-      this.socket.emit("sendGIMessage", recipient, message);
+      this.socket.emit("sendGIMessage", recipient, message, callback);
+    } else {
+      callback("NOT CONNECTED");
     }
   }
 

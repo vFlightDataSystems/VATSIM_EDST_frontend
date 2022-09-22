@@ -13,6 +13,6 @@ export const ALTITUDE_VALIDATION_EXPRESSIONS = {
   blockAlt: new RegExp(`${ALT_EXPR.source}B${ALT_EXPR.source}`)
 };
 
-export const GI_EXPR = /GI (\d{2}|[A-Z]{4}) `(.*)/gm;
+export const GI_EXPR = /GI (C|\d{2}|[A-Z]{4}) `(.*)/gm;
 
 export const REMOVAL_TIMEOUT = 120000;

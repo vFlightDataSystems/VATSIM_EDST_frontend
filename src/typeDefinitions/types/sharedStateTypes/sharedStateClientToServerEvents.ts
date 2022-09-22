@@ -18,5 +18,5 @@ export type SharedStateClientToServerEvents = {
   closeWindow: (window: EdstWindow) => void;
   clearPlanQueue: () => void;
   dispatchUiEvent: (eventId: SharedUiEvent, arg?: any) => void;
-  sendGIMessage: (recipient: string, message: string) => void;
+  sendGIMessage: (recipient: string, message: string, callback: (rejectReason?: string) => void) => void;
 };

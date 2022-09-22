@@ -266,17 +266,19 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   };
 
   const parseGI = (recipient: string, message: string) => {
-    if (recipient.match(/\d{2}/)) {
-      socket.sendGIMessage(recipient, message);
-      accept(mcaInputValue);
-    } else {
-      reject(`SECTOR NOT ADAPTED\n${mcaInputValue}`);
-    }
+    const callback = (rejectReason?: string) => {
+      if (rejectReason) {
+        reject(rejectReason);
+      } else {
+        accept(mcaInputValue);
+      }
+    };
+    socket.sendGIMessage(recipient, message, callback);
   };
 
-  const parseCommand = () => {
+  const parseCommand = (input: string) => {
     // TODO: rename command variable
-    const [command, ...args] = mcaInputValue
+    const [command, ...args] = input
       .trim()
       .split(/\s+/)
       .map(s => s.toUpperCase());
@@ -303,11 +305,11 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
             .catch(() => reject("SIGN OUT"));
           break;
         case "GI": // send GI message
-          match = GI_EXPR.exec(mcaInputValue.toUpperCase());
+          match = GI_EXPR.exec(input.toUpperCase());
           if (match?.length === 3) {
             parseGI(match[1], match[2]);
           } else {
-            reject(`FORMAT\n${mcaInputValue}`);
+            reject(`FORMAT\n${input}`);
           }
           break;
         case "UU":
@@ -324,16 +326,16 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
         case "WR": // weather request: WR <station>
           dispatch(toggleMetar(args));
           dispatch(openWindowThunk(EdstWindow.METAR));
-          accept(`WEATHER STAT REQ\n${mcaInputValue}`);
+          accept(`WEATHER STAT REQ\n${input}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
           if (args.length === 0) {
-            reject(`READOUT\n${mcaInputValue}`);
+            reject(`READOUT\n${input}`);
           } else if (args.length === 1) {
-            flightplanReadout(args[0]).then(() => accept(`READOUT\n${mcaInputValue}`));
+            flightplanReadout(args[0]).then(() => accept(`READOUT\n${input}`));
             dispatch(openWindowThunk(EdstWindow.MESSAGE_RESPONSE_AREA));
           } else {
-            dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${mcaInputValue}`));
+            dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${input}`));
           }
           break; // end case FR
         case "SR":
@@ -343,18 +345,17 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
               printFlightStrip(entry);
               acceptDposKeyBD();
             } else {
-              reject(mcaInputValue);
+              reject(input);
             }
           } else {
-            reject(mcaInputValue);
+            reject(input);
           }
           break;
         default:
           // TODO: give better error msg
-          reject(mcaInputValue);
+          reject(input);
       }
     }
-    setMcaInputValue("");
   };
 
   const handleInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = event => {
@@ -376,7 +377,8 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
     switch (event.key) {
       case "Enter":
         if (mcaInputValue.length > 0) {
-          parseCommand();
+          parseCommand(mcaInputValue);
+          setMcaInputValue("");
         } else {
           dispatch(setMcaRejectMessage(""));
         }
