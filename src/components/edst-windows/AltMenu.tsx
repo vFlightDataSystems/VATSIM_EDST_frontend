@@ -14,7 +14,7 @@ import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
-import { ALTITUDE_VALIDATION_EXPRESSIONS, UPLINK_SYMBOL } from "../../utils/constants";
+import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "../../utils/constants";
 import { Plan } from "../../typeDefinitions/types/plan";
 
 type AltMenuDivProps = { width?: string; pos: WindowPosition };
@@ -291,7 +291,7 @@ export const AltMenu = () => {
             <AltMenuRow disabled>
               <AltMenuRowCol>PD</AltMenuRowCol>
               <AltMenuRowCol>TFC</AltMenuRowCol>
-              <AltMenuRowCol width="0.4ch">{UPLINK_SYMBOL}</AltMenuRowCol>
+              <AltMenuRowCol width="0.4ch">{DOWNLINK_SYMBOL}</AltMenuRowCol>
             </AltMenuRow>
             <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>

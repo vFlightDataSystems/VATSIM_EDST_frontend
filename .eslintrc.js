@@ -52,6 +52,7 @@ module.exports = {
     "no-use-before-define": "off",
     "import/prefer-default-export": "off",
     "react/function-component-definition": "off",
+    "react/destructuring-assignment": "off",
     "no-shadow": "off",
     "@typescript-eslint/no-explicit-any": ["off"],
     "jsx-a11y/label-has-associated-control": "off",

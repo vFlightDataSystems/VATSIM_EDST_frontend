@@ -176,9 +176,7 @@ export const HoldMenu = () => {
                   setFix(null);
                   setEfc(utcMinutes + 30);
                 }}
-              >
-                Present Position
-              </EdstButton>
+              />
             </OptionsBodyCol>
           </OptionsBodyRow>
           <FixContainer>

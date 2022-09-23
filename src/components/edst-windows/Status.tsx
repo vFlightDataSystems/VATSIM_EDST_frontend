@@ -43,7 +43,7 @@ export const Status = () => {
           Roadmap
         </a>
       </div>
-      <EdstButton onMouseDown={onClickToggleSocket}>{isConnected ? "Disable" : "Enable"} Shared State</EdstButton>
+      <EdstButton onMouseDown={onClickToggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
     </FloatingWindow>
   );
 };
