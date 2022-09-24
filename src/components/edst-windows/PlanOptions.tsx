@@ -15,6 +15,7 @@ import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useSharedUiListener } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
+import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
 
 const PlanOptionsDiv = styled(OptionsMenu)`
   width: 220px;
@@ -36,7 +37,7 @@ export const PlanOptions = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
 
   const openMenu = useCallback(
-    (menu: EdstWindow, triggerSharedState = true) => {
+    (menu: EdstWindow, eventId?: SharedUiEvent, triggerSharedState = true) => {
       dispatch(openMenuThunk(menu, ref.current, false, true));
       dispatch(closeWindow(EdstWindow.PLAN_OPTIONS, false));
       if (triggerSharedState) {
@@ -71,11 +72,7 @@ export const PlanOptions = () => {
             {entry.cid} {entry.aircraftId}
           </FidRow>
           <OptionsBodyRow>
-            <EdstTooltip
-              style={{ flexGrow: 1 }}
-              title={Tooltips.planOptionsAlt}
-              onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU, "planOptionsOpenAltitude")}
-            >
+            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsAlt} onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)}>
               <OptionsBodyCol hover>Altitude...</OptionsBodyCol>
             </EdstTooltip>
           </OptionsBodyRow>
