@@ -10,7 +10,7 @@ type TrackLineDivProps = {
 const LeaderLineDiv = styled.div<TrackLineDivProps>`
   transform-origin: bottom left;
   transform: ${props => `rotate(${props.angle}deg)`};
-  position: absolute;
+  position: fixed;
   ${props => ({
     left: `${props.pos.x}px`,
     top: `${props.pos.y}px`

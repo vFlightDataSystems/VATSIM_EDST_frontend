@@ -85,7 +85,7 @@ const Edst = () => {
   return (
     <EdstDiv
       ref={bodyRef}
-      onContextMenu={event => process.env.NODE_ENV !== "development" && event.preventDefault()}
+      onContextMenu={event => event.preventDefault()}
       tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
     >
       <EdstHeader />

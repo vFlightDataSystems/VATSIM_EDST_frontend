@@ -1,6 +1,6 @@
-import { GeoJSON, Marker, Polyline, useMap } from "react-leaflet";
+import { GeoJSON, Marker, Polyline, useMapEvent } from "react-leaflet";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Feature, Polygon, Position } from "@turf/turf";
+import { Position } from "@turf/turf";
 import L, { LatLngExpression } from "leaflet";
 import { useBoolean } from "usehooks-ts";
 import { useRootSelector } from "../../../redux/hooks";
@@ -28,14 +28,6 @@ function locationToLatLng(location: ApiLocation) {
   return posToLatLng(locationToPosition(location));
 }
 
-/**
- * format beacon code into 4 digit octal string
- * @param code
- */
-export function convertBeaconCodeToString(code?: number | null): string {
-  return String(code ?? 0).padStart(4, "0");
-}
-
 type GpdFixProps = ApiLocation;
 
 export const GpdNavaid = (location: GpdFixProps) => {
@@ -48,7 +40,9 @@ export const GpdFix = ({ lat, lon }: GpdFixProps) => {
   return <Marker position={posLatLng} icon={fixIcon} />;
 };
 
-export const GpdAirwayPolyline = ({ segments }: { segments: AirwayFix[] }) => {
+export type GpdAirwayPolylineProps = { segments: AirwayFix[] };
+
+export const GpdAirwayPolyline = ({ segments }: GpdAirwayPolylineProps) => {
   return (
     <Polyline
       positions={segments.sort((u, v) => Number(u.sequence) - Number(v.sequence)).map(segment => posToLatLng({ lat: segment.lat, lon: segment.lon }))}
@@ -57,11 +51,15 @@ export const GpdAirwayPolyline = ({ segments }: { segments: AirwayFix[] }) => {
   );
 };
 
-export const GpdMapSectorPolygon = ({ sector }: { sector: Feature<Polygon> }) => {
-  return <GeoJSON data={sector} pathOptions={{ color: "#ADADAD", weight: 1, opacity: 0.3, fill: false }} />;
+type GpdPolygonProps = { data: any };
+
+export const GpdPolygon = ({ data }: GpdPolygonProps) => {
+  return <GeoJSON data={data} pathOptions={{ color: "#ADADAD", weight: 1, opacity: 0.3, fill: false }} />;
 };
 
-export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
+type GpdAircraftTrackProps = { aircraftId: string };
+
+export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
   const entry = useRootSelector(entrySelector(aircraftId));
   const track = useRootSelector(aircraftTrackSelector(aircraftId));
   const [routeLine, setRouteLine] = useState<RouteFix[] | null>(null);
@@ -70,16 +68,17 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);
-  const map = useMap();
   const routeFixes = useRouteFixes(aircraftId);
 
   const updateHandler = useCallback(() => {
-    const element: HTMLElement & any = ref.current?.getElement();
-    if (element) {
+    const rect = ref.current?.getElement()?.getBoundingClientRect();
+    if (rect) {
       // eslint-disable-next-line no-underscore-dangle
-      setTrackPos(element._leaflet_pos);
+      setTrackPos({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
     }
   }, []);
+
+  useMapEvent("moveend", updateHandler);
 
   // updates route line
   useEffect(() => {
@@ -90,14 +89,9 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
 
   useEffect(() => {
     updateHandler();
-    map.on({ zoom: updateHandler }); // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    updateHandler();
   }, [posLatLng, updateHandler]);
 
-  return track && posLatLng ? (
+  return posLatLng ? (
     <>
       <Marker
         position={posLatLng}
@@ -106,8 +100,10 @@ export const GpdAircraftTrack = ({ aircraftId }: { aircraftId: string }) => {
         ref={ref}
         riseOnHover
         eventHandlers={{
-          contextmenu: toggleShowDataBlock,
-          mousedown: event => event.originalEvent.button === 1 && toggleShowRoute()
+          mousedown: event => {
+            event.originalEvent.button === 1 && toggleShowRoute();
+            event.originalEvent.button === 2 && toggleShowDataBlock();
+          }
         }}
       />
       {showDataBlock && <GpdDataBlock entry={entry} pos={trackPos} toggleShowRoute={toggleShowRoute} />}

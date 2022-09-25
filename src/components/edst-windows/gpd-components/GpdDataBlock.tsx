@@ -31,7 +31,7 @@ const DataBlockDiv = styled.div<{ pos: WindowPosition; offset: { x: number; y: n
   font-size: 16px;
   line-height: 1;
   width: auto;
-  position: absolute;
+  position: fixed;
   font-family: ${edstFontFamily};
   color: #adadad;
 `;
@@ -159,8 +159,8 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
     pos && (
       <>
         <LeaderLine pos={pos} offset={leaderLineOffset} toggleShowRoute={toggleShowRoute} />
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} absolute />}
-        <DataBlockDiv ref={ref} pos={pos} offset={offset} onMouseMove={event => !dragPreviewStyle && startDrag(event)}>
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        <DataBlockDiv ref={ref} pos={pos} offset={offset} onMouseMove={event => !dragPreviewStyle && startDrag(event)} tabIndex={0}>
           <DataBlockRow>
             <DataBlockElement selected={selectedField === AclRowField.FID} onMouseUp={onCallsignClick}>
               {entry.aircraftId}
