@@ -15,3 +15,7 @@ export const fixIcon = L.divIcon({
   className: "plus-icon",
   iconSize: [12, 12]
 });
+
+export const emptyIcon = L.divIcon({
+  iconSize: [0, 0]
+});

@@ -1,28 +1,26 @@
 import styled from "styled-components";
 import React from "react";
-import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
+import { DataBlockOffset } from "./GpdMapElements";
 
-type TrackLineDivProps = {
-  pos: WindowPosition;
+type LeaderLineDivProps = {
   angle: number;
   length: number;
 };
-const LeaderLineDiv = styled.div<TrackLineDivProps>`
+const LeaderLineDiv = styled.div<LeaderLineDivProps>`
   transform-origin: bottom left;
   transform: ${props => `rotate(${props.angle}deg)`};
-  position: fixed;
-  ${props => ({
-    left: `${props.pos.x}px`,
-    top: `${props.pos.y}px`
-  })}
   height: 1px;
   width: ${props => `${props.length}px`};
   background-color: #adadad;
 `;
-type LeaderLineProps = { pos: WindowPosition; offset: { x: number; y: number }; toggleShowRoute(): void };
-export const LeaderLine = ({ pos, offset, toggleShowRoute }: LeaderLineProps) => {
-  const angle = Math.atan2(offset.y, offset.x) * (180 / Math.PI);
-  const length = Math.sqrt(offset.x ** 2 + offset.y ** 2);
+type LeaderLineProps = {
+  offset: DataBlockOffset;
+  toggleShowRoute: () => void;
+};
 
-  return <LeaderLineDiv angle={angle} length={length} pos={pos} onMouseDown={event => event.button === 1 && toggleShowRoute()} />;
+export const LeaderLine = ({ offset, toggleShowRoute }: LeaderLineProps) => {
+  const angle = Math.atan2(offset.y + 6, offset.x) * (180 / Math.PI);
+  const length = Math.sqrt(offset.x ** 2 + (offset.y + 6) ** 2);
+
+  return <LeaderLineDiv angle={angle} length={length} onMouseDown={event => event.button === 1 && toggleShowRoute()} />;
 };

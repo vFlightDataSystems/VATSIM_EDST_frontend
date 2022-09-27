@@ -2,36 +2,28 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
+import { useMap } from "react-leaflet";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
 import { edstFontFamily } from "../../../styles/styles";
-import { WindowPosition } from "../../../typeDefinitions/types/windowPosition";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
-import { LeaderLine } from "./LeaderLine";
 import { DragPreviewStyle } from "../../../typeDefinitions/types/dragPreviewStyle";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
+import { DataBlockOffset, GpdTooltipWrapper } from "./GpdMapElements";
+import { LeaderLine } from "./LeaderLine";
 
-type GpdDataBlockProps = {
-  entry: EdstEntry;
-  pos: WindowPosition | null;
-  toggleShowRoute(): void;
-};
-
-const DataBlockDiv = styled.div<{ pos: WindowPosition; offset: { x: number; y: number } }>`
-  z-index: 999;
-  ${props => ({
-    left: props.pos.x + props.offset.x,
-    top: props.pos.y + props.offset.y
-  })}
+const DataBlockDiv = styled.div<{ offset: DataBlockOffset }>`
+  position: relative;
+  left: ${props => props.offset.x}px;
+  top: ${props => props.offset.y}px;
   font-size: 16px;
   line-height: 1;
-  width: auto;
-  position: fixed;
+  width: 9ch;
   font-family: ${edstFontFamily};
   color: #adadad;
 `;
@@ -41,7 +33,7 @@ const DataBlockRow = styled.div`
   width: 9ch;
 `;
 
-const DataBlockElement = styled.span<{ selected?: boolean }>`
+const DataBlockElement = styled.span<{ selected: boolean }>`
   height: 1em;
   color: ${props => (props.selected ? "#000000" : "#ADADAD")};
   background-color: ${props => (props.selected ? "#ADADAD" : "transparent")};
@@ -56,14 +48,20 @@ const DataBlockElement = styled.span<{ selected?: boolean }>`
   }
 `;
 
-export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps) => {
+type GpdDataBlockProps = {
+  entry: EdstEntry;
+  offset: DataBlockOffset;
+  setOffset: (offset: DataBlockOffset) => void;
+  toggleShowRoute: () => void;
+};
+
+export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
+  const map = useMap();
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
   const ref = useRef<HTMLDivElement>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
-  const [offset, setOffset] = useState({ x: 24, y: -30 });
-  const leaderLineOffset = { x: offset.x, y: offset.y + 6 };
 
   const selectedField = useMemo(() => (asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? asel.field : null), [
     asel?.aircraftId,
@@ -114,7 +112,8 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
 
   const startDrag = useCallback(
     (event: React.MouseEvent) => {
-      const ppos = pos ? { x: pos.x + offset.x, y: pos.y + offset.y } : null;
+      const pos = ref.current?.getBoundingClientRect();
+      const ppos = pos ? { x: pos.left, y: pos.top } : null;
       if (event.buttons && ref.current && ppos) {
         // eslint-disable-next-line no-underscore-dangle
         if (window.__TAURI__) {
@@ -133,15 +132,18 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
         setDragPreviewStyle(style);
         dispatch(setAnyDragging(true));
         window.addEventListener("mousemove", draggingHandler);
+        map.dragging.disable();
       }
     },
-    [dispatch, draggingHandler, ref, pos, offset]
+    [dispatch, draggingHandler, map]
   );
 
   const stopDrag = useCallback(() => {
-    if (ref?.current && dragPreviewStyle && pos) {
-      const { left: x, top: y } = dragPreviewStyle;
-      const newOffset = { x: x + 1 - pos.x, y: y - pos.y };
+    map.dragging.enable();
+    if (ref.current && dragPreviewStyle) {
+      const pos = ref.current.getBoundingClientRect();
+      const ppos = { x: pos.left, y: pos.top };
+      const newOffset = { x: offset.x - ppos.x + dragPreviewStyle.left + 1, y: offset.y - ppos.y + dragPreviewStyle.top };
       // eslint-disable-next-line no-underscore-dangle
       if (window.__TAURI__) {
         invoke("set_cursor_grab", { value: false }).then();
@@ -151,16 +153,16 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
       setDragPreviewStyle(null);
       window.removeEventListener("mousemove", draggingHandler);
     }
-  }, [dispatch, dragPreviewStyle, draggingHandler, ref, pos]);
+  }, [dispatch, dragPreviewStyle, draggingHandler, map, offset, setOffset]);
 
   useEventListener("mouseup", stopDrag);
 
   return (
-    pos && (
-      <>
-        <LeaderLine pos={pos} offset={leaderLineOffset} toggleShowRoute={toggleShowRoute} />
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <DataBlockDiv ref={ref} pos={pos} offset={offset} onMouseMove={event => !dragPreviewStyle && startDrag(event)} tabIndex={0}>
+    <>
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <GpdTooltipWrapper>
+        <LeaderLine offset={offset} toggleShowRoute={toggleShowRoute} />
+        <DataBlockDiv ref={ref} offset={offset} onMouseMoveCapture={event => !dragPreviewStyle && startDrag(event)}>
           <DataBlockRow>
             <DataBlockElement selected={selectedField === AclRowField.FID} onMouseUp={onCallsignClick}>
               {entry.aircraftId}
@@ -191,7 +193,7 @@ export const GpdDataBlock = ({ entry, pos, toggleShowRoute }: GpdDataBlockProps)
             </DataBlockElement>
           </DataBlockRow>
         </DataBlockDiv>
-      </>
-    )
+      </GpdTooltipWrapper>
+    </>
   );
 };
