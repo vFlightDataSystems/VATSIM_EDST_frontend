@@ -1,9 +1,8 @@
-import { GeoJSON, Marker, Polyline, Tooltip } from "react-leaflet";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { GeoJSON, Marker, Polyline } from "react-leaflet";
+import React, { useEffect, useRef, useState } from "react";
 import { Position } from "@turf/turf";
 import L from "leaflet";
 import { useBoolean } from "usehooks-ts";
-import styled from "styled-components";
 import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
@@ -27,29 +26,6 @@ function posToLatLng(pos: Position | { lat: number | string; lon: number | strin
 function locationToLatLng(location: ApiLocation) {
   return posToLatLng(locationToPosition(location));
 }
-
-const GpdTooltip = styled(Tooltip)`
-  &::before {
-    all: unset;
-  }
-  background: transparent;
-  border: none;
-`;
-
-type GpdTooltipWrapperProps = {
-  position?: L.LatLngExpression;
-  children: React.ReactNode;
-};
-
-export const GpdTooltipWrapper = ({ position, children }: GpdTooltipWrapperProps) => {
-  const ref = useRef<L.Tooltip>(null);
-
-  return (
-    <GpdTooltip ref={ref} offset={[-12, 26]} position={position} permanent interactive opacity={1} direction="right">
-      {children}
-    </GpdTooltip>
-  );
-};
 
 type GpdFixProps = ApiLocation;
 
@@ -88,7 +64,7 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
   const entry = useRootSelector(entrySelector(aircraftId));
   const track = useRootSelector(aircraftTrackSelector(aircraftId));
   const [routeLine, setRouteLine] = useState<RouteFix[] | null>(null);
-  const posLatLng = useMemo(() => (track?.location ? posToLatLng({ ...track.location }) : null), [track?.location]);
+  const posLatLng = track?.location ? posToLatLng({ ...track.location }) : null;
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<L.Marker | null>(null);

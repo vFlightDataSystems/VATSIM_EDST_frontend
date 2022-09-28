@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
-import { useMap } from "react-leaflet";
+import { Tooltip, useMap } from "react-leaflet";
+import L from "leaflet";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
 import { edstFontFamily } from "../../../styles/styles";
@@ -14,7 +15,7 @@ import { DragPreviewStyle } from "../../../typeDefinitions/types/dragPreviewStyl
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
-import { DataBlockOffset, GpdTooltipWrapper } from "./GpdMapElements";
+import { DataBlockOffset } from "./GpdMapElements";
 import { LeaderLine } from "./LeaderLine";
 
 const DataBlockDiv = styled.div<{ offset: DataBlockOffset }>`
@@ -47,6 +48,30 @@ const DataBlockElement = styled.span<{ selected: boolean }>`
     border: 1px solid #adadad;
   }
 `;
+
+type GpdTooltipWrapperProps = {
+  children: React.ReactNode;
+};
+
+const GpdTooltip = styled(Tooltip)`
+  &::before {
+    all: unset;
+  }
+  background: transparent;
+  border: none;
+  width: 0;
+  height: 0;
+`;
+
+const GpdTooltipWrapper = ({ children }: GpdTooltipWrapperProps) => {
+  const ref = useRef<L.Tooltip>(null);
+
+  return (
+    <GpdTooltip ref={ref} permanent interactive opacity={1} direction="center">
+      {children}
+    </GpdTooltip>
+  );
+};
 
 type GpdDataBlockProps = {
   entry: EdstEntry;
@@ -143,7 +168,7 @@ export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdD
     if (ref.current && dragPreviewStyle) {
       const pos = ref.current.getBoundingClientRect();
       const ppos = { x: pos.left, y: pos.top };
-      const newOffset = { x: offset.x - ppos.x + dragPreviewStyle.left + 1, y: offset.y - ppos.y + dragPreviewStyle.top };
+      const newOffset = { x: offset.x - ppos.x + dragPreviewStyle.left, y: offset.y - ppos.y + dragPreviewStyle.top };
       // eslint-disable-next-line no-underscore-dangle
       if (window.__TAURI__) {
         invoke("set_cursor_grab", { value: false }).then();
