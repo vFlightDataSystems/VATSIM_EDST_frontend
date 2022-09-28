@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 
 import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
@@ -17,7 +17,6 @@ const GpdDiv = styled(ResizableFloatingWindowDiv)``;
 export const Gpd = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  const [zoomLevel, setZoomLevel] = useState(6);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.GPD));
@@ -36,14 +35,8 @@ export const Gpd = () => {
       onMouseDown={onMouseDownHandler}
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <GpdHeader
-        focused={focused}
-        toggleFullscreen={toggleFullscreen}
-        startDrag={e => !isFullscreen && startDrag(e)}
-        zoomLevel={zoomLevel}
-        setZoomLevel={setZoomLevel}
-      />
-      <GpdBody zoomLevel={zoomLevel} />
+      <GpdHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={e => !isFullscreen && startDrag(e)} />
+      <GpdBody />
     </GpdDiv>
   );
 };

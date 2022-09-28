@@ -5,7 +5,7 @@ import { EdstTooltip } from "../../utils/EdstTooltip";
 import { EdstButton } from "../../utils/EdstButton";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { gpdMapFeatureOptionsSelector, MapFeatureOption, setMapFeatureOptions } from "../../../redux/slices/gpdSlice";
+import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "../../../redux/slices/gpdSlice";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 export const GpdMapFeaturesMenu = () => {
@@ -36,7 +36,7 @@ export const GpdMapFeaturesMenu = () => {
             content="OK"
             onMouseDown={() => {
               // set data when OK is pressed
-              dispatch(setMapFeatureOptions(currentOptions));
+              dispatch(setGpdMapFeatureOptions(currentOptions));
               dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU));
             }}
           />

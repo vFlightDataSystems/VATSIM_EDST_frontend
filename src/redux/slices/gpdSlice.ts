@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import L from "leaflet";
 import { RootState } from "../store";
 import sharedSocket from "../../sharedState/socket";
+
+const BOSCenter = { lat: 42.362944444444445, lng: -71.00638888888889 };
 
 export enum SectorType {
   ultraLow = "UL",
@@ -47,6 +50,8 @@ export type GpdState = {
   gpdConfiguration: GpdConfiguration;
   mapFeatureOptions: MapFeatureOptions;
   aircraftDisplayOptions: AircraftDisplayOptions;
+  center: L.LatLngExpression | undefined;
+  zoomLevel: number;
   suppressed: boolean;
   planData: Record<string, unknown>[];
 };
@@ -68,6 +73,8 @@ const initialState: GpdState = {
     mspLabels: ["MSP/MEP Labels", false],
     routePreviewMinutes: ["Route Preview (minutes)", 0]
   },
+  center: BOSCenter,
+  zoomLevel: 7,
   suppressed: false,
   planData: []
 };
@@ -89,20 +96,28 @@ const gpdSlice = createSlice({
       }
       sharedSocket.setGpdState(state);
     },
-    setMapFeatureOptions(state, action: PayloadAction<MapFeatureOptions>) {
+    setGpdMapFeatureOptions(state, action: PayloadAction<MapFeatureOptions>) {
       state.mapFeatureOptions = action.payload;
       sharedSocket.setGpdState(state);
     },
-    setAircraftDisplayOptions(state, action: PayloadAction<AircraftDisplayOptions>) {
+    setGpdAircraftDisplayOptions(state, action: PayloadAction<AircraftDisplayOptions>) {
       state.aircraftDisplayOptions = action.payload;
       sharedSocket.setGpdState(state);
     },
-    setSuppressed(state, action: PayloadAction<boolean>) {
+    setGpdSuppressed(state, action: PayloadAction<boolean>) {
       state.suppressed = action.payload;
       sharedSocket.setGpdState(state);
     },
-    toggleSuppressed(state) {
+    toggleGpdSuppressed(state) {
       state.suppressed = !state.suppressed;
+      sharedSocket.setGpdState(state);
+    },
+    setGpdCenter(state, action: PayloadAction<L.LatLngExpression>) {
+      state.center = action.payload;
+      sharedSocket.setGpdState(state);
+    },
+    setGpdZoomLevel(state, action: PayloadAction<number>) {
+      state.zoomLevel = action.payload;
       sharedSocket.setGpdState(state);
     }
   }
@@ -112,10 +127,12 @@ export const {
   setGpdState,
   addGpdPlanData,
   removeGpdPlanData,
-  setMapFeatureOptions,
-  setAircraftDisplayOptions,
-  setSuppressed,
-  toggleSuppressed
+  setGpdMapFeatureOptions,
+  setGpdAircraftDisplayOptions,
+  setGpdSuppressed,
+  toggleGpdSuppressed,
+  setGpdCenter,
+  setGpdZoomLevel
 } = gpdSlice.actions;
 export default gpdSlice.reducer;
 
@@ -123,3 +140,5 @@ export const gpdMapFeatureOptionsSelector = (state: RootState) => state.gpd.mapF
 export const gpdSuppressedSelector = (state: RootState) => state.gpd.suppressed;
 export const gpdAircraftDisplayOptionsSelector = (state: RootState) => state.gpd.aircraftDisplayOptions;
 export const gpdPlanDataSelector = (state: RootState) => state.gpd.planData;
+export const gpdCenterSelector = (state: RootState) => state.gpd.center;
+export const gpdZoomLevelSelector = (state: RootState) => state.gpd.zoomLevel;

@@ -2,23 +2,30 @@ import React, { useEffect } from "react";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import styled from "styled-components";
-import { useRootSelector } from "../../../redux/hooks";
+import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "./GpdMapElements";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { gpdPlanDataSelector, gpdSuppressedSelector } from "../../../redux/slices/gpdSlice";
-import artccBoundaries from "../../../data/ArtccBoundaries.json";
+import {
+  gpdCenterSelector,
+  gpdPlanDataSelector,
+  gpdSuppressedSelector,
+  gpdZoomLevelSelector,
+  setGpdCenter,
+  setGpdZoomLevel
+} from "../../../redux/slices/gpdSlice";
+import { getArtccBoundaries } from "../../../api/vNasDataApi";
 
-const center = { lat: 42.362944444444445, lng: -71.00638888888889 };
-
-type MapConfiguratorProps = {
-  zoomLevel: number;
-};
-
-const MapConfigurator = ({ zoomLevel }: MapConfiguratorProps) => {
+const MapConfigurator = () => {
+  const dispatch = useRootDispatch();
+  const zoomLevel = useRootSelector(gpdZoomLevelSelector);
   const map = useMap();
   useEffect(() => {
     map.setZoom(zoomLevel);
   }, [map, zoomLevel]);
+  map.on("moveend", () => {
+    dispatch(setGpdZoomLevel(map.getZoom()));
+    dispatch(setGpdCenter(map.getCenter()));
+  });
   return null;
 };
 
@@ -34,18 +41,34 @@ const GpdBodyDiv = styled.div`
   }
 `;
 
-export const GpdBody = ({ zoomLevel }: { zoomLevel: number }) => {
+export const GpdBody = () => {
   const entries = useRootSelector(entriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
+  const center = useRootSelector(gpdCenterSelector);
+  const zoomLevel = useRootSelector(gpdZoomLevelSelector);
+  const [artccBoundaries, setArtccBoundaries] = React.useState<GeoJSON.FeatureCollection>();
+
+  useEffect(() => {
+    getArtccBoundaries().then(data => setArtccBoundaries(data));
+  }, []);
 
   const entryList = Object.values(entries)?.filter(entry => entry.status === "Active");
 
   return (
     <GpdBodyDiv>
-      <MapContainer center={center} doubleClickZoom={false} zoomControl={false} zoomAnimation={false} zoom={6} placeholder maxZoom={10} minZoom={5}>
-        <MapConfigurator zoomLevel={zoomLevel} />
-        <GpdPolygon data={artccBoundaries} />
+      <MapContainer
+        center={center}
+        doubleClickZoom={false}
+        zoomControl={false}
+        zoomAnimation={false}
+        zoom={zoomLevel}
+        placeholder
+        maxZoom={9}
+        minZoom={6}
+      >
+        <MapConfigurator />
+        {artccBoundaries && <GpdPolygon data={artccBoundaries} />}
         {!suppressed && entryList.map(entry => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
         {displayData && <GpdPlanDisplay displayData={displayData} />}
       </MapContainer>

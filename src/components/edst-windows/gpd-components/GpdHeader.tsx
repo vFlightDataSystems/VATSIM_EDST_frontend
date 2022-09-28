@@ -7,7 +7,7 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { closeAllMenus, closeWindow, gpdAselSelector } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/styles";
 import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
-import { gpdSuppressedSelector, toggleSuppressed } from "../../../redux/slices/gpdSlice";
+import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "../../../redux/slices/gpdSlice";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
@@ -15,13 +15,12 @@ type GpdHeaderProps = {
   focused: boolean;
   toggleFullscreen: () => void;
   startDrag: React.MouseEventHandler<HTMLDivElement>;
-  zoomLevel: number;
-  setZoomLevel: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const GpdDiv = styled(NoSelectDiv)``;
 
-export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, setZoomLevel }: GpdHeaderProps) => {
+export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderProps) => {
+  const zoomLevel = useRootSelector(gpdZoomLevelSelector);
   const asel = useRootSelector(gpdAselSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const dispatch = useRootDispatch();
@@ -29,10 +28,10 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
   const handleRangeClick = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
-        setZoomLevel(Math.min(zoomLevel + 1, 10));
+        dispatch(setGpdZoomLevel(Math.min(zoomLevel + 1, 9)));
         break;
       case 1:
-        setZoomLevel(Math.max(zoomLevel - 1, 4));
+        dispatch(setGpdZoomLevel(Math.max(zoomLevel - 1, 6)));
         break;
       default:
         break;
@@ -40,7 +39,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
   };
 
   const handleSuppressClick = () => {
-    dispatch(toggleSuppressed());
+    dispatch(toggleGpdSuppressed());
   };
 
   const handleClick = useCallback(
@@ -102,7 +101,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag, zoomLevel, set
       </div>
       <WindowHeaderRowDiv>
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
-        <EdstWindowHeaderButton disabled onMouseDown={handleRangeClick} content="Range" />
+        <EdstWindowHeaderButton onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
         <EdstWindowHeaderButton
           sharedUiEventId="openGpdMapOptions"
