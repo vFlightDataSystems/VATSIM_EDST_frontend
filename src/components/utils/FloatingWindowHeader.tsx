@@ -16,7 +16,15 @@ type FloatingWindowHeaderProps = {
 export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, startDrag }: FloatingWindowHeaderProps) => {
   return (
     <FloatingWindowHeaderDiv>
-      <FloatingWindowHeaderColDivRect onMouseDown={handleOptionsMouseDown}>M</FloatingWindowHeaderColDivRect>
+      <FloatingWindowHeaderColDivRect
+        onMouseDownCapture={event => {
+          // TODO: a click event will not close any option menus this way, needs fixing
+          event.stopPropagation();
+          handleOptionsMouseDown?.();
+        }}
+      >
+        M
+      </FloatingWindowHeaderColDivRect>
       <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>{title}</FloatingWindowHeaderColDivFlex>
       <FloatingWindowHeaderColDivRect onMouseDown={onClose}>
         <FloatingWindowHeaderBlock8x2 />
