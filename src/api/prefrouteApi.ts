@@ -7,6 +7,7 @@ import { ApiPreferentialArrivalRoute } from "../typeDefinitions/types/apiTypes/a
 import { useRootSelector } from "../redux/hooks";
 import { artccIdSelector } from "../redux/slices/sectorSlice";
 import { entrySelector } from "../redux/slices/entrySlice";
+import { AircraftId } from "../typeDefinitions/types/aircraftId";
 
 const baseUrl = process.env.REACT_APP_BACKEND_BASEURL!;
 
@@ -33,7 +34,7 @@ export const prefrouteApi = createApi({
 
 const { useGetParQuery, useGetPdarQuery, useGetPdrQuery } = prefrouteApi;
 
-export const usePar = (aircraftId: string) => {
+export const usePar = (aircraftId: AircraftId) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
   const { data } = useGetParQuery({ artccId, destination: entry.destination, route: entry.route.trim(), aircraft: entry.aircraftType });
@@ -41,7 +42,7 @@ export const usePar = (aircraftId: string) => {
   return data ?? [];
 };
 
-export const usePdar = (aircraftId: string) => {
+export const usePdar = (aircraftId: AircraftId) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
   const { data } = useGetPdarQuery({ artccId, departure: entry.departure, destination: entry.destination, aircraft: entry.aircraftType });
@@ -49,7 +50,7 @@ export const usePdar = (aircraftId: string) => {
   return data ?? [];
 };
 
-export const usePdr = (aircraftId: string) => {
+export const usePdr = (aircraftId: AircraftId) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
   const { data } = useGetPdrQuery({ artccId, departure: entry.departure, route: entry.route.trim(), aircraft: entry.aircraftType });

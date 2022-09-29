@@ -13,7 +13,7 @@ import {
   setGpdCenter,
   setGpdZoomLevel
 } from "../../../redux/slices/gpdSlice";
-import { getArtccBoundaries } from "../../../api/vNasDataApi";
+import { useArtccBoundaries } from "../../../api/gpdApi";
 
 const MapConfigurator = () => {
   const dispatch = useRootDispatch();
@@ -47,11 +47,7 @@ export const GpdBody = () => {
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const center = useRootSelector(gpdCenterSelector);
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
-  const [artccBoundaries, setArtccBoundaries] = React.useState<GeoJSON.FeatureCollection>();
-
-  useEffect(() => {
-    getArtccBoundaries().then(data => setArtccBoundaries(data));
-  }, []);
+  const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
 
   const entryList = Object.values(entries)?.filter(entry => entry.status === "Active");
 
@@ -68,7 +64,7 @@ export const GpdBody = () => {
         minZoom={6}
       >
         <MapConfigurator />
-        {artccBoundaries && <GpdPolygon data={artccBoundaries} />}
+        {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}
         {!suppressed && entryList.map(entry => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
         {displayData && <GpdPlanDisplay displayData={displayData} />}
       </MapContainer>

@@ -13,6 +13,7 @@ import authReducer from "./slices/authSlice";
 import { prefrouteApi } from "../api/prefrouteApi";
 import { aircraftApi } from "../api/aircraftApi";
 import { weatherApi } from "../api/weatherApi";
+import { gpdApi } from "../api/gpdApi";
 
 const store = configureStore({
   reducer: {
@@ -29,7 +30,8 @@ const store = configureStore({
     auth: authReducer,
     [prefrouteApi.reducerPath]: prefrouteApi.reducer,
     [aircraftApi.reducerPath]: aircraftApi.reducer,
-    [weatherApi.reducerPath]: weatherApi.reducer
+    [weatherApi.reducerPath]: weatherApi.reducer,
+    [gpdApi.reducerPath]: gpdApi.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({ serializableCheck: false }).concat([prefrouteApi.middleware, aircraftApi.middleware, weatherApi.middleware])

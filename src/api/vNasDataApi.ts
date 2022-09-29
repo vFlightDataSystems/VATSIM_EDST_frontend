@@ -19,8 +19,3 @@ export const refreshToken = async (vatsimToken: string) => {
     r.text().then(data => ({ data, statusText: r.statusText, ok: r.ok }))
   );
 };
-
-export const getArtccBoundaries = async () => {
-  const url = "https://data-api.virtualnas.net/Files/ArtccBoundaries.geojson";
-  return fetch(url).then(response => response.json());
-};
