@@ -6,6 +6,8 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "./GpdMapElements";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import {
+  GPD_MAX_ZOOM,
+  GPD_MIN_ZOOM,
   gpdCenterSelector,
   gpdPlanDataSelector,
   gpdSuppressedSelector,
@@ -19,9 +21,11 @@ const MapConfigurator = () => {
   const dispatch = useRootDispatch();
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
   const map = useMap();
+
   useEffect(() => {
     map.setZoom(zoomLevel);
   }, [map, zoomLevel]);
+
   map.on("moveend", () => {
     dispatch(setGpdZoomLevel(map.getZoom()));
     dispatch(setGpdCenter(map.getCenter()));
@@ -31,6 +35,8 @@ const MapConfigurator = () => {
 
 const GpdBodyDiv = styled.div`
   overflow: hidden;
+  min-width: 500px;
+  min-height: 500px;
   width: 100%;
   height: 100%;
 
@@ -60,8 +66,8 @@ export const GpdBody = () => {
         zoomAnimation={false}
         zoom={zoomLevel}
         placeholder
-        maxZoom={9}
-        minZoom={6}
+        maxZoom={GPD_MAX_ZOOM}
+        minZoom={GPD_MIN_ZOOM}
       >
         <MapConfigurator />
         {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}

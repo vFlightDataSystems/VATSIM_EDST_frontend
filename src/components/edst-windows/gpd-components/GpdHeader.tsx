@@ -28,10 +28,10 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
   const handleRangeClick = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
-        dispatch(setGpdZoomLevel(Math.min(zoomLevel + 1, 9)));
+        dispatch(setGpdZoomLevel(zoomLevel + 1));
         break;
       case 1:
-        dispatch(setGpdZoomLevel(Math.max(zoomLevel - 1, 6)));
+        dispatch(setGpdZoomLevel(zoomLevel - 1));
         break;
       default:
         break;

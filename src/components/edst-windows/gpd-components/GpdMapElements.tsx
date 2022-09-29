@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Position } from "@turf/turf";
 import L from "leaflet";
 import { useBoolean } from "usehooks-ts";
-import { GeoJSONProps } from "react-leaflet/lib/GeoJSON";
 import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
@@ -53,7 +52,7 @@ export const GpdAirwayPolyline = ({ segments }: GpdAirwayPolylineProps) => {
 
 export type DataBlockOffset = { x: number; y: number };
 
-type GpdPolygonProps = { data: GeoJSONProps["data"] };
+type GpdPolygonProps = { data: GeoJSON.FeatureCollection };
 
 export const GpdPolygon = ({ data }: GpdPolygonProps) => {
   return <GeoJSON data={data} pathOptions={{ color: "#ADADAD", weight: 1, opacity: 0.3, fill: false }} />;

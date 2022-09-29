@@ -3,6 +3,9 @@ import L from "leaflet";
 import { RootState } from "../store";
 import sharedSocket from "../../sharedState/socket";
 
+export const GPD_MIN_ZOOM = 4;
+export const GPD_MAX_ZOOM = 9;
+
 const BOSCenter = { lat: 42.362944444444445, lng: -71.00638888888889 };
 
 export enum SectorType {
@@ -117,8 +120,10 @@ const gpdSlice = createSlice({
       sharedSocket.setGpdState(state);
     },
     setGpdZoomLevel(state, action: PayloadAction<number>) {
-      state.zoomLevel = action.payload;
-      sharedSocket.setGpdState(state);
+      if (action.payload >= GPD_MIN_ZOOM && action.payload <= GPD_MAX_ZOOM) {
+        state.zoomLevel = action.payload;
+        sharedSocket.setGpdState(state);
+      }
     }
   }
 });
