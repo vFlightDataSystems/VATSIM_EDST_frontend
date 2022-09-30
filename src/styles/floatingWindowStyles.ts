@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import { DraggableDiv, edstFontFamily, eramFontFamily, floatingFontSizes, NoSelectDiv } from "./styles";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
+import { WindowDimension } from "../typeDefinitions/types/windowDimension";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
@@ -33,7 +34,8 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
     }}
 `;
 
-export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)`
+type ResizableFloatingWindowDivProps = { dimension: WindowDimension };
+export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFloatingWindowDivProps>`
   font-family: ${edstFontFamily};
   display: flex;
   white-space: nowrap;
@@ -48,8 +50,8 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)`
   min-width: 600px;
   min-height: 200px;
   resize: ${props => (!props.fullscreen ? "both" : "none")};
-  width: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
-  height: ${props => (props.fullscreen ? "calc(100% - 10px)" : "auto")};
+  width: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.width)};
+  height: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};
 `;
 
 export const FloatingWindowBodyContainer = styled.div<{ width: string }>`

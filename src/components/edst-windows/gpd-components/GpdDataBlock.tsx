@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
-import L from "leaflet";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
 import { edstFontFamily } from "../../../styles/styles";
@@ -49,11 +48,7 @@ const DataBlockElement = styled.span<{ selected: boolean }>`
   }
 `;
 
-type GpdTooltipWrapperProps = {
-  children: React.ReactNode;
-};
-
-const GpdTooltip = styled(Tooltip)`
+const InvisibleTooltip = styled(Tooltip)`
   &::before {
     all: unset;
   }
@@ -63,13 +58,14 @@ const GpdTooltip = styled(Tooltip)`
   height: 0;
 `;
 
-const GpdTooltipWrapper = ({ children }: GpdTooltipWrapperProps) => {
-  const ref = useRef<L.Tooltip>(null);
-
+type PersistentInvisibleTooltipProps = {
+  children: React.ReactNode;
+};
+const PersistentInvisibleTooltip = ({ children }: PersistentInvisibleTooltipProps) => {
   return (
-    <GpdTooltip ref={ref} permanent interactive opacity={1} direction="center">
+    <InvisibleTooltip permanent interactive opacity={1} direction="center">
       {children}
-    </GpdTooltip>
+    </InvisibleTooltip>
   );
 };
 
@@ -185,7 +181,7 @@ export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdD
   return (
     <>
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <GpdTooltipWrapper>
+      <PersistentInvisibleTooltip>
         <LeaderLine offset={offset} toggleShowRoute={toggleShowRoute} />
         <DataBlockDiv ref={ref} offset={offset} onMouseMoveCapture={event => !dragPreviewStyle && startDrag(event)}>
           <DataBlockRow>
@@ -218,7 +214,7 @@ export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdD
             </DataBlockElement>
           </DataBlockRow>
         </DataBlockDiv>
-      </GpdTooltipWrapper>
+      </PersistentInvisibleTooltip>
     </>
   );
 };
