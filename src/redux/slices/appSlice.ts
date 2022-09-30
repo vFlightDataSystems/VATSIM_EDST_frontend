@@ -6,6 +6,7 @@ import { openWindowThunk } from "../thunks/openWindowThunk";
 import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
 import sharedSocket from "../../sharedState/socket";
 import { Asel } from "../../typeDefinitions/types/asel";
+import { WindowDimension } from "../../typeDefinitions/types/windowDimension";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -30,7 +31,8 @@ type GIEntry = {
 type AppWindow = {
   open: boolean;
   window: EdstWindow;
-  position: WindowPosition | null;
+  position: WindowPosition;
+  dimension: WindowDimension;
   isFullscreen: boolean;
 };
 
@@ -52,7 +54,10 @@ type AppState = {
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
   [EdstWindow.STATUS]: { x: 400, y: 100 },
   [EdstWindow.OUTAGE]: { x: 400, y: 100 },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 400 }
+  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 400 },
+  [EdstWindow.GPD]: { x: 0, y: 34 },
+  [EdstWindow.ACL]: { x: 0, y: 34 },
+  [EdstWindow.DEP]: { x: 0, y: 34 }
 };
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
@@ -61,7 +66,8 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
     {
       open: false,
       isFullscreen: FULLSCREEN_WINDOWS.includes(value),
-      position: defaultWindowPositions[value] ?? { x: 100, y: 100 }
+      position: defaultWindowPositions[value] ?? { x: 100, y: 100 },
+      dimension: { width: "auto", height: "auto" }
     } as AppWindow
   ])
 ) as Record<EdstWindow, AppWindow>;
@@ -107,8 +113,11 @@ const appSlice = createSlice({
     setShowSectorSelector(state, action: PayloadAction<boolean>) {
       state.showSectorSelector = action.payload;
     },
-    setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: WindowPosition | null }>) {
+    setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: WindowPosition }>) {
       state.windows[action.payload.window].position = action.payload.pos;
+    },
+    setWindowDimension(state, action: PayloadAction<{ window: EdstWindow; dim: WindowDimension }>) {
+      state.windows[action.payload.window].dimension = action.payload.dim;
     },
     setMraMessage(state, action: PayloadAction<string>) {
       state.mraMsg = action.payload;
@@ -232,6 +241,7 @@ export const {
   setTooltipsEnabled,
   setShowSectorSelector,
   setWindowPosition,
+  setWindowDimension,
   setMcaCommandString,
   openWindow,
   setAnyDragging,
@@ -250,6 +260,7 @@ export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
 export const giEntryMapSelector = (state: RootState) => state.app.giEntryMap;
 export const windowSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window];
 export const windowPositionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].position;
+export const windowDimensionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].dimension;
 export const windowIsFullscreenSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].isFullscreen;
 export const aselSelector = (state: RootState) => state.app.asel;
 export const aclAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.ACL ? state.app.asel : null);
