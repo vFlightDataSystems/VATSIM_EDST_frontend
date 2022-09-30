@@ -8,7 +8,7 @@ import { SharedUiEvent } from "../typeDefinitions/types/sharedStateTypes/sharedU
 import { AclState } from "../redux/slices/aclSlice";
 import { DepState } from "../redux/slices/depSlice";
 import { PlanState } from "../redux/slices/planSlice";
-import { GpdState } from "../redux/slices/gpdSlice";
+import { SharedGpdState } from "../redux/slices/gpdSlice";
 
 const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
@@ -71,7 +71,7 @@ class SharedStateSocket {
     }
   }
 
-  public setGpdState(state: GpdState) {
+  public setGpdState(state: SharedGpdState) {
     if (this.socket?.connected) {
       this.socket.emit("setGpdState", state);
     }

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import L from "leaflet";
+import _ from "lodash";
 import { RootState } from "../store";
 import sharedSocket from "../../sharedState/socket";
 
@@ -59,6 +60,8 @@ export type GpdState = {
   planData: Record<string, unknown>[];
 };
 
+export type SharedGpdState = Omit<GpdState, "center" | "zoomLevel">;
+
 const initialMapFeatureOptionsState = {
   [MapFeatureOption.lowSectors]: true,
   [MapFeatureOption.highSectors]: true
@@ -86,8 +89,8 @@ const gpdSlice = createSlice({
   name: "gpd",
   initialState,
   reducers: {
-    setGpdState(state, action: PayloadAction<GpdState>) {
-      return action.payload;
+    setGpdState(state, action: PayloadAction<SharedGpdState>) {
+      _.assign(state, action.payload);
     },
     addGpdPlanData(state, action: PayloadAction<Record<string, unknown>>) {
       state.planData.push(action.payload);

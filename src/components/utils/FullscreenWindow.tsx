@@ -59,7 +59,7 @@ export const FullscreenWindow = ({ edstWindow, HeaderComponent, BodyComponent, .
       anyDragging={anyDragging}
       fullscreen={isFullscreen}
       zIndex={zStack.indexOf(edstWindow)}
-      onMouseDown={onMouseDownHandler}
+      onMouseDownCapture={onMouseDownHandler}
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <HeaderComponent

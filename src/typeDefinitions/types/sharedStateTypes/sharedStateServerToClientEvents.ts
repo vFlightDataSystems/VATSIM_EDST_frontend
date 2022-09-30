@@ -5,14 +5,14 @@ import { Asel } from "../asel";
 import { SharedUiEvent } from "./sharedUiEvent";
 import { AclState } from "../../../redux/slices/aclSlice";
 import { DepState } from "../../../redux/slices/depSlice";
-import { GpdState } from "../../../redux/slices/gpdSlice";
+import { SharedGpdState } from "../../../redux/slices/gpdSlice";
 import { PlanState } from "../../../redux/slices/planSlice";
 
 export type SharedStateServerToClientEvents = {
   receiveAircraft: (aircraft: SharedAircraftDto) => void;
   receiveAclState: (value: AclState) => void;
   receiveDepState: (value: DepState) => void;
-  receiveGpdState: (value: GpdState) => void;
+  receiveGpdState: (value: SharedGpdState) => void;
   receivePlansDisplayState: (value: PlanState) => void;
   receiveOpenWindow: (window: EdstWindow) => void;
   receiveCloseWindow: (window: EdstWindow) => void;
