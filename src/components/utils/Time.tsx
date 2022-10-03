@@ -5,11 +5,12 @@ import { NoSelectDiv } from "../../styles/NoSelectDiv";
 const TimeStyle = styled(NoSelectDiv)`
   font-family: ${props => props.theme.fontProperties.eramFontFamily};
   color: ${props => props.theme.colors.grey};
-  text-align: center;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  width: 90px;
+  width: 8ch;
   margin: 1px;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1em;
   height: 100%;
 `;
