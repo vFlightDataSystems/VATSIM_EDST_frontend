@@ -6,10 +6,9 @@ import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "../../../redux/selectors";
 import { aselSelector, setAsel } from "../../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../../styles/styles";
-import { edstFontGrey, edstFontOrange, edstFontRed, edstFontYellow } from "../../../styles/colors";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
-import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/bodyStyles";
+import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/styles";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
 import {
   aclHiddenColumnsSelector,
@@ -24,13 +23,14 @@ import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { VCI_SYMBOL } from "../../../utils/constants";
 import { AclSortOption } from "../../../typeDefinitions/enums/acl/aclSortOption";
+import { colors } from "../../../edstTheme";
 
 const AclBodyStyleDiv = styled(NoSelectDiv)`
   white-space: nowrap;
   overflow: hidden;
   flex-flow: column;
   display: flex;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
 `;
 
 export const AclTable = () => {
@@ -90,9 +90,9 @@ export const AclTable = () => {
         <RadioCol header green>
           {VCI_SYMBOL}
         </RadioCol>
-        <AclCol1 color={edstFontRed}>R</AclCol1>
-        <AclCol1 color={edstFontYellow}>Y</AclCol1>
-        <AclCol1 color={edstFontOrange}>A</AclCol1>
+        <AclCol1 color={colors.red}>R</AclCol1>
+        <AclCol1 color={colors.yellow}>Y</AclCol1>
+        <AclCol1 color={colors.orange}>A</AclCol1>
         <InnerRow>
           <SpecialBox disabled />
           <FidCol>Flight ID</FidCol>

@@ -1,8 +1,8 @@
 import styled, { css } from "styled-components";
-import { DraggableDiv, edstFontFamily, eramFontFamily, floatingFontSizes, NoSelectDiv } from "./styles";
+import { DraggableDiv, NoSelectDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
-import { edstFontGrey, edstWindowBorderColor, edstWindowOutlineColor } from "./colors";
 import { WindowDimension } from "../typeDefinitions/types/windowDimension";
+import { borderHover } from "./styles";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
@@ -21,7 +21,8 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
       ${props.width && { width: props.width }};
       ${props.maxWidth && { width: props.maxWidth }};
     `};
-  font-family: ${eramFontFamily};
+  font-family: ${props => props.theme.fontProperties.eramFontFamily};
+  font-size: ${props => props.theme.fontProperties.fontSize};
   z-index: ${props => 10000 + props.zIndex};
   position: ${props => (!props.fullscreen ? "fixed" : "absolute")};
   color: #adadad;
@@ -36,16 +37,17 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
 
 type ResizableFloatingWindowDivProps = { dimension: WindowDimension };
 export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFloatingWindowDivProps>`
-  font-family: ${edstFontFamily};
+  font-family: ${props => props.theme.fontProperties.edstFontFamily};
+  font-size: ${props => props.theme.fontProperties.fontSize};
   display: flex;
   white-space: nowrap;
   flex-flow: column;
   overflow: hidden;
   margin: 2px;
   flex-grow: 1;
-  border: 3px solid ${edstWindowBorderColor};
-  outline: 1px solid ${edstWindowOutlineColor};
-  color: ${edstFontGrey};
+  border: 3px solid ${props => props.theme.colors.windowBorderColor};
+  outline: 1px solid ${props => props.theme.colors.windowOutlineColor};
+  color: ${props => props.theme.colors.grey};
   background-color: #000000;
   min-width: 600px;
   min-height: 200px;
@@ -54,8 +56,9 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFlo
   height: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};
 `;
 
-export const FloatingWindowBodyContainer = styled.div<{ width: string }>`
-  font-size: ${props => floatingFontSizes[props.theme.fontSize - 1]};
+type FloatingWindowBodyContainerProps = { width: string; fontSize: number };
+export const FloatingWindowBodyContainer = styled.div<FloatingWindowBodyContainerProps>`
+  font-size: ${props => props.theme.fontProperties.floatingFontSizes[props.fontSize - 1]};
   width: ${props => props.width};
 `;
 export const FloatingWindowBodyDiv = styled.div`
@@ -85,9 +88,7 @@ const FloatingWindowHeaderColDiv = styled.div`
   background-color: ${floatingWindowTitleBackgroundColor};
   border: 1px solid #adadad;
 
-  &:hover {
-    border: 1px solid #ffffff;
-  }
+  ${borderHover}
 `;
 export const FloatingWindowHeaderColDiv16ch = styled(FloatingWindowHeaderColDiv)`
   width: 1.6ch;
@@ -113,25 +114,24 @@ export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
   height: 2px;
 `;
 
-export const FloatingWindowRow = styled(NoSelectDiv)<{ selected?: boolean; suppressed?: boolean }>`
+type FloatingWindowRowProps = { brightness: number; selected?: boolean; suppressed?: boolean };
+export const FloatingWindowRow = styled(NoSelectDiv)<FloatingWindowRowProps>`
   padding: 0 1.4ch;
   justify-content: center;
   border: 1px solid transparent;
   min-height: 1em;
   flex-flow: column;
-  color: rgba(173, 173, 173, ${props => (props.theme.brightness ?? 80) / 100});
+  color: rgba(173, 173, 173, ${props => props.brightness / 100});
 
   ${props =>
     props.selected &&
     css`
-      background-color: rgba(173, 173, 173, ${(props.theme.brightness ?? 80) / 100});
+      background-color: rgba(173, 173, 173, ${props.brightness / 100});
       color: #000000;
     `};
   ${props =>
     props.suppressed && {
       color: "#575757"
     }};
-  &:hover {
-    border: 1px solid #ffffff;
-  }
+  ${borderHover}
 `;

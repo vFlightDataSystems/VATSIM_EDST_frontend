@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 
 import { useEventListener, useInterval } from "usehooks-ts";
+import styled, { ThemeProvider } from "styled-components";
+import { HubConnectionState } from "@microsoft/signalr";
 import { EdstHeader } from "./components/EdstHeader";
 import { Acl } from "./components/edst-windows/Acl";
 import { Dep } from "./components/edst-windows/Dep";
@@ -41,6 +43,20 @@ import { SocketContextProvider } from "./contexts/SocketContext";
 import { openWindowThunk } from "./redux/thunks/openWindowThunk";
 import { aselEntrySelector } from "./redux/slices/entrySlice";
 import { useHubActions } from "./hooks/useHubActions";
+import { edstTheme } from "./edstTheme";
+import { useHubConnection } from "./hooks/useHubConnection";
+
+const NotConnectedDiv = styled.div`
+  font-family: "Consolas", monospace;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  z-index: 100000;
+  pointer-events: none;
+  color: ${props => props.theme.colors.yellow};
+`;
 
 const Edst = () => {
   const dispatch = useRootDispatch();
@@ -49,6 +65,7 @@ const Edst = () => {
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const mcaInputRef = useRef<HTMLTextAreaElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const hubConnection = useHubConnection();
   const hubActions = useHubActions();
 
   useInterval(() => {
@@ -82,42 +99,45 @@ const Edst = () => {
   useEventListener("keydown", handleKeyDown);
 
   return (
-    <EdstDiv
-      ref={bodyRef}
-      onContextMenu={event => event.preventDefault()}
-      tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
-    >
-      <EdstHeader />
-      <div id="toPrint" />
-      <EdstBodyDiv>
-        {showSectorSelector && <SectorSelector />}
-        {windows[EdstWindow.ACL].open && <Acl />}
-        {windows[EdstWindow.DEP].open && <Dep />}
-        {windows[EdstWindow.GPD].open && <Gpd />}
-        {windows[EdstWindow.PLANS_DISPLAY].open && <PlansDisplay />}
-        {windows[EdstWindow.PLAN_OPTIONS].open && aselEntry && <PlanOptions />}
-        {windows[EdstWindow.ACL_SORT_MENU].open && <AclSortMenu />}
-        {windows[EdstWindow.DEP_SORT_MENU].open && <DepSortMenu />}
-        {windows[EdstWindow.TOOLS_MENU].open && <ToolsMenu />}
-        {windows[EdstWindow.GPD_MAP_OPTIONS_MENU].open && <GpdMapOptions />}
-        {windows[EdstWindow.ROUTE_MENU].open && aselEntry && <RouteMenu />}
-        {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
-        {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
-        {windows[EdstWindow.HOLD_MENU].open && aselEntry && <HoldMenu />}
-        {windows[EdstWindow.CANCEL_HOLD_MENU].open && aselEntry && <CancelHoldMenu />}
-        {windows[EdstWindow.SPEED_MENU].open && aselEntry && <SpeedMenu />}
-        {windows[EdstWindow.HEADING_MENU].open && aselEntry && <HeadingMenu />}
-        {windows[EdstWindow.ALTITUDE_MENU].open && aselEntry && <AltMenu />}
-        {windows[EdstWindow.STATUS].open && <Status />}
-        {windows[EdstWindow.OUTAGE].open && <Outage />}
-        {windows[EdstWindow.ALTIMETER].open && <AltimeterWindow />}
-        {windows[EdstWindow.METAR].open && <MetarWindow />}
-        {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
-        {windows[EdstWindow.GI].open && <GIWindow />}
-        {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea ref={mcaInputRef} />}
-        {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
-      </EdstBodyDiv>
-    </EdstDiv>
+    <ThemeProvider theme={edstTheme}>
+      <EdstDiv
+        ref={bodyRef}
+        onContextMenu={event => event.preventDefault()}
+        tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
+      >
+        <EdstHeader />
+        {hubConnection?.state !== HubConnectionState.Connected && <NotConnectedDiv>HOST PROCESS COMMUNICATION DOWN</NotConnectedDiv>}
+        <div id="toPrint" />
+        <EdstBodyDiv>
+          {showSectorSelector && <SectorSelector />}
+          {windows[EdstWindow.ACL].open && <Acl />}
+          {windows[EdstWindow.DEP].open && <Dep />}
+          {windows[EdstWindow.GPD].open && <Gpd />}
+          {windows[EdstWindow.PLANS_DISPLAY].open && <PlansDisplay />}
+          {windows[EdstWindow.PLAN_OPTIONS].open && aselEntry && <PlanOptions />}
+          {windows[EdstWindow.ACL_SORT_MENU].open && <AclSortMenu />}
+          {windows[EdstWindow.DEP_SORT_MENU].open && <DepSortMenu />}
+          {windows[EdstWindow.TOOLS_MENU].open && <ToolsMenu />}
+          {windows[EdstWindow.GPD_MAP_OPTIONS_MENU].open && <GpdMapOptions />}
+          {windows[EdstWindow.ROUTE_MENU].open && aselEntry && <RouteMenu />}
+          {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
+          {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
+          {windows[EdstWindow.HOLD_MENU].open && aselEntry && <HoldMenu />}
+          {windows[EdstWindow.CANCEL_HOLD_MENU].open && aselEntry && <CancelHoldMenu />}
+          {windows[EdstWindow.SPEED_MENU].open && aselEntry && <SpeedMenu />}
+          {windows[EdstWindow.HEADING_MENU].open && aselEntry && <HeadingMenu />}
+          {windows[EdstWindow.ALTITUDE_MENU].open && aselEntry && <AltMenu />}
+          {windows[EdstWindow.STATUS].open && <Status />}
+          {windows[EdstWindow.OUTAGE].open && <Outage />}
+          {windows[EdstWindow.ALTIMETER].open && <AltimeterWindow />}
+          {windows[EdstWindow.METAR].open && <MetarWindow />}
+          {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
+          {windows[EdstWindow.GI].open && <GIWindow />}
+          {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea ref={mcaInputRef} />}
+          {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
+        </EdstBodyDiv>
+      </EdstDiv>
+    </ThemeProvider>
   );
 };
 

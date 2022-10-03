@@ -3,12 +3,12 @@ import {
   decOptionValue,
   incOptionValue,
   ModifiableWindowOptions,
-  WINDOW_OPTION_PREFIXES,
+  windowOptionLabel,
   windowOptionsSelector
 } from "../redux/slices/windowOptionsSlice";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { FloatingWindowOptions } from "../components/utils/FloatingWindowOptionContainer";
-import { optionsBackgroundGreen } from "../styles/colors";
+import { colors } from "../edstTheme";
 
 type PickByValue<T, V> = Pick<T, { [K in keyof T]: T[K] extends V ? K : never }[keyof T]>;
 type Entries<T> = {
@@ -45,15 +45,15 @@ export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(window
         getEntries(windowOptions).map(([key, value]) => [
           key,
           {
-            value: `${(WINDOW_OPTION_PREFIXES[window] as Record<any, any>)[key]} ${value}`,
-            backgroundColor: optionsBackgroundGreen,
+            value: `${windowOptionLabel[key as keyof typeof windowOptionLabel]} ${value}`,
+            backgroundColor: colors.optionsBackgroundGreen,
             onMouseDown: event => clickHandler(event, key)
           }
         ])
       ),
       ...extraOptions
     }),
-    [clickHandler, extraOptions, window, windowOptions]
+    [clickHandler, extraOptions, windowOptions]
   );
 
   return options;

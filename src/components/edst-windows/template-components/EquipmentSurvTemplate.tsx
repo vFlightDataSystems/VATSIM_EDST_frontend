@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./EqpStyled";
+import { borderHover } from "../../../styles/styles";
 
 const ContentCol = styled.div`
   justify-content: left;
@@ -17,9 +18,7 @@ const ContentCol = styled.div`
   padding: 1px 6px;
   text-indent: 0;
 
-  &:hover {
-    border: 1px solid #adadad;
-  }
+  ${borderHover}
 `;
 
 enum TransponderCat {
@@ -61,26 +60,39 @@ enum AdsbV {
   V2 = "V2"
 }
 
-export const EquipmentSurvTemplate = () => {
+export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10b = entry?.equipment
-    ?.split("/")
-    ?.slice(2)?.[0]
-    ?.match(/[A-Z]\d?/g);
+  const [transponderCategory, setTransponderCategory] = useState<TransponderCat | null>(null);
+  const [adsbBType, setAdsbBType] = useState<AdsbB | null>(null);
+  const [adsbUType, setAdsbUType] = useState<AdsbU | null>(null);
+  const [adsbVType, setAdsbVType] = useState<AdsbV | null>(null);
 
-  const transponderType = field10b?.[0];
-  const [transponderCategory, setTransponderCategory] = useState<TransponderCat | null>(
-    transponderType && Object.keys(TransponderCat).includes(transponderType) ? (transponderType as TransponderCat) : null
-  );
-  const adsbBInitialType = Object.keys(AdsbB).filter(t => field10b?.includes(t))?.[0];
-  const adsbUInitialType = Object.keys(AdsbU).filter(t => field10b?.includes(t))?.[0];
-  const adsbVInitialType = Object.keys(AdsbV).filter(t => field10b?.includes(t))?.[0];
-  const [adsbBType, setAdsbBType] = useState<AdsbB | null>((adsbBInitialType as AdsbB) ?? null);
-  const [adsbUType, setAdsbUType] = useState<AdsbU | null>((adsbUInitialType as AdsbU) ?? null);
-  const [adsbVType, setAdsbVType] = useState<AdsbV | null>((adsbVInitialType as AdsbV) ?? null);
+  useEffect(() => {
+    const field10b = entry?.equipment
+      ?.split("/")
+      ?.slice(2)?.[0]
+      ?.match(/[A-Z]\d?/g);
+
+    const transponderType = field10b?.[0];
+
+    const transponderCategory = transponderType && Object.keys(TransponderCat).includes(transponderType) ? (transponderType as TransponderCat) : null;
+    const adsbBInitialType = (Object.keys(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
+    const adsbUInitialType = (Object.keys(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
+    const adsbVInitialType = (Object.keys(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
+
+    const reset = () => {
+      setTransponderCategory(transponderCategory);
+      setAdsbBType(adsbBInitialType);
+      setAdsbUType(adsbUInitialType);
+      setAdsbVType(adsbVInitialType);
+    };
+
+    setReset(reset);
+    reset();
+  }, [entry?.equipment, setReset]);
 
   return (
-    <div>
+    <>
       <OptionsBodyRow margin="10px 0 0 0">
         <EqpCol>
           <EqpColTitle>TRANSPONDER CATEGORY</EqpColTitle>
@@ -221,6 +233,6 @@ export const EquipmentSurvTemplate = () => {
           </EqpInputContainer60>
         </EdstTooltip>
       </EqpInputRow>
-    </div>
+    </>
   );
 };

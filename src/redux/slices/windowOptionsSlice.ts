@@ -2,45 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
-export const WINDOW_OPTION_PREFIXES = {
-  [EdstWindow.ALTIMETER]: {
-    brightness: "BRIGHT",
-    columns: "COL",
-    lines: "LINES",
-    fontSize: "FONT"
-  },
-  [EdstWindow.METAR]: {
-    brightness: "BRIGHT",
-    lines: "LINES",
-    fontSize: "FONT"
-  },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: {
-    brightness: "BRIGHT",
-    lines: "PA LINES",
-    width: "WIDTH",
-    fontSize: "FONT"
-  },
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: {
-    brightness: "BRIGHT",
-    width: "WIDTH",
-    fontSize: "FONT"
-  },
-  [EdstWindow.GI]: {
-    brightness: "BRIGHT",
-    lines: "LINES",
-    fontSize: "FONT"
-  },
-  [EdstWindow.SIGMETS]: {
-    brightness: "BRIGHT",
-    lines: "LINES",
-    fontSize: "FONT"
-  },
-  [EdstWindow.STATUS]: {
-    fontSize: "FONT"
-  },
-  [EdstWindow.OUTAGE]: {
-    fontSize: "FONT"
-  }
+export const windowOptionLabel = {
+  brightness: "BRIGHT",
+  fontSize: "FONT",
+  columns: "COL",
+  lines: "LINES",
+  paLines: "PA LINES",
+  width: "WIDTH"
 };
 
 const initialState = {
@@ -56,7 +24,7 @@ const initialState = {
     brightness: 80
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
-    lines: 2,
+    paLines: 2,
     width: 45,
     fontSize: 2,
     brightness: 80
@@ -84,7 +52,7 @@ const initialState = {
   }
 };
 
-type WindowOptions = typeof initialState;
+export type WindowOptions = typeof initialState;
 export type ModifiableWindowOptions = WindowOptions;
 
 const maxOptionValues = {
@@ -98,7 +66,7 @@ const maxOptionValues = {
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     brightness: 100,
-    lines: 2,
+    paLines: 2,
     width: 50,
     fontSize: 3
   },
@@ -136,7 +104,7 @@ const minOptionValues = {
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     brightness: 2,
-    lines: 2,
+    paLines: 2,
     width: 30,
     fontSize: 1
   },

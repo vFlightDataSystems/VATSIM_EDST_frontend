@@ -9,11 +9,11 @@ import {
   FloatingWindowHeaderDiv
 } from "../../styles/floatingWindowStyles";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { defaultFontSize } from "../../styles/styles";
+import { borderHover } from "../../styles/styles";
 
 const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: boolean }>`
   // position: ${props => (props.offsetPos ? "relative" : "fixed")};
-  font-size: ${defaultFontSize};
+  font-size: ${props => props.theme.fontProperties.fontSize};
   display: inline-flex;
   flex-flow: column;
   height: auto;
@@ -27,9 +27,7 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOp
   border: 1px solid #adadad;
   text-indent: 6px;
   align-items: center;
-  &:hover {
-    border: 1px solid #ffffff;
-  }
+  ${borderHover}
 `;
 
 type FloatingWindowOption = {

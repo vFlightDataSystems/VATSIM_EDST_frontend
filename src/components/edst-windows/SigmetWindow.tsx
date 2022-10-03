@@ -16,6 +16,7 @@ import { ScrollContainer } from "../../styles/optionMenuStyles";
 import { sectorIdSelector } from "../../redux/slices/sectorSlice";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 const SigmetRowDiv = styled(FloatingWindowRow)`
   margin-top: 6px;
@@ -30,13 +31,20 @@ type SigmetRowProps = {
 const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: SigmetRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.SIGMETS));
 
   const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
   const rect = ref.current?.getBoundingClientRect();
 
   return (
     <>
-      <SigmetRowDiv ref={ref} selected={selected} suppressed={sigmetEntry.suppressed} onMouseDown={handleMouseDown}>
+      <SigmetRowDiv
+        ref={ref}
+        brightness={windowOptions.brightness}
+        selected={selected}
+        suppressed={sigmetEntry.suppressed}
+        onMouseDown={handleMouseDown}
+      >
         {sigmetEntry.text}
       </SigmetRowDiv>
       {selected && rect && (

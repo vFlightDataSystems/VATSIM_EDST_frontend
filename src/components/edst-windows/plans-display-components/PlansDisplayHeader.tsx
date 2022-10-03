@@ -6,7 +6,7 @@ import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "../../../redux/slices/planSlice";
 import { closeWindow } from "../../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../../styles/styles";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../../hooks/useHubActions";

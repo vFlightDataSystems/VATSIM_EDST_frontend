@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 import { EqpCol } from "./EqpStyled";
 
@@ -19,15 +19,9 @@ enum AppCategory {
   S = "S"
 }
 
-export const EquipmentAppServTemplate = () => {
+export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10a = entry?.equipment
-    ?.split("/")
-    ?.slice(1)?.[0]
-    ?.split("-")?.[1]
-    ?.match(/[A-Z]\d?/g);
-  const appCats = field10a?.[0]?.split("")?.filter(s => Object.keys(AppCategory).includes(s)) as AppCategory[];
-  const [appCategories, setAppCategories] = useState<AppCategory[]>(appCats ?? []);
+  const [appCategories, setAppCategories] = useState<AppCategory[]>([]);
 
   const toggleCategory = (cat: AppCategory) => {
     const appCats = [...appCategories];
@@ -39,6 +33,22 @@ export const EquipmentAppServTemplate = () => {
       setAppCategories(appCats);
     }
   };
+
+  useEffect(() => {
+    const field10a = entry?.equipment
+      ?.split("/")
+      ?.slice(1)?.[0]
+      ?.split("-")?.[1]
+      ?.match(/[A-Z]\d?/g);
+    const appCats = (field10a?.[0]?.split("")?.filter(s => Object.keys(AppCategory).includes(s)) ?? []) as AppCategory[];
+
+    const reset = () => {
+      setAppCategories(appCats);
+    };
+
+    setReset(reset);
+    reset();
+  }, [entry?.equipment, setReset]);
 
   return (
     <div>

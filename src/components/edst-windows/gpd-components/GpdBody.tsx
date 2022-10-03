@@ -23,7 +23,9 @@ const MapConfigurator = () => {
   const map = useMap();
 
   useEffect(() => {
-    map.setZoom(zoomLevel);
+    if (map.getZoom() !== zoomLevel) {
+      map.setZoom(zoomLevel);
+    }
   }, [map, zoomLevel]);
 
   map.on("moveend", () => {

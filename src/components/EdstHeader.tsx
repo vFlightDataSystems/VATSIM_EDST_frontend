@@ -7,13 +7,12 @@ import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { toggleWindow, windowsSelector } from "../redux/slices/appSlice";
 import { planQueueSelector } from "../redux/slices/planSlice";
 import { sigmetSelector } from "../redux/slices/weatherSlice";
-import { edstFontGrey } from "../styles/colors";
 import { sectorIdSelector } from "../redux/slices/sectorSlice";
 import { entriesSelector } from "../redux/slices/entrySlice";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { eramFontFamily } from "../styles/styles";
 import { edstHeaderButton } from "../typeDefinitions/enums/edstHeaderButton";
 import { openWindowThunk } from "../redux/thunks/openWindowThunk";
+import { borderHover } from "../styles/styles";
 
 const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.not,
@@ -32,34 +31,32 @@ const YELLOW = "#A3A300";
 // const RED = "#590000";
 
 const EdstHeaderDiv = styled.div`
-  margin-top: 2px;
-  font-family: ${eramFontFamily};
+  height: auto;
+  font-family: ${props => props.theme.fontProperties.eramFontFamily};
   width: 100vw;
   position: absolute;
 `;
 
 const EdstHeaderRow = styled.div`
+  margin-top: 2px;
   z-index: 20001;
-  //height: 2em;
-  line-height: 13px;
-  font-size: 14px;
   justify-content: space-between;
+  height: auto;
   display: flex;
 `;
 
 const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   z-index: 20001;
-  margin: 1px;
   display: inline-flex;
-  ${props => props.bottomRow && { "margin-left": "73px" }};
+  ${props => props.bottomRow && { "margin-left": "calc(8ch + 4px)" }};
 
   span {
-    display: inline-flex;
+    height: 2em;
   }
 `;
 
 type ColButtonProps = Partial<{
-  width: number;
+  width: string;
   color: string;
   open: boolean;
   fontWeight: string;
@@ -68,28 +65,26 @@ type ColButtonProps = Partial<{
 }>;
 
 const ColButton = styled.button.attrs((props: ColButtonProps) => ({
-  width: `${props.width ?? 66}px`,
+  width: props.width ?? "8ch",
   backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
-  color: props.color ?? edstFontGrey,
   fontWeight: props.fontWeight ?? "normal",
   border: `1px solid ${props.borderColor ?? "#adadad"}`
 }))<ColButtonProps>`
+  color: ${props => props.color ?? props.theme.colors.grey};
+  padding: 0;
+  border: none;
   display: flex;
+  height: 2em;
   justify-content: center;
-  line-height: inherit;
+  line-height: 1em;
   font-size: inherit;
   width: ${props => props.width};
-  height: 2em;
   margin: 0 1px;
   border: ${props => props.border};
   background-color: ${props => props.backgroundColor};
-  color: ${props => props.color};
   font-weight: ${props => props.fontWeight};
 
-  &:hover {
-    border: 1px solid #ffffff;
-  }
-
+  ${borderHover};
   &:disabled {
     border: 1px solid #707070;
     color: #707070;
@@ -98,7 +93,7 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
 
 type EdstHeaderButtonProps = Partial<{
   title: string;
-  width: number;
+  width: string;
   open: boolean;
   backgroundColor: string;
   borderColor: string;
@@ -116,7 +111,7 @@ const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) =
   </EdstTooltip>
 );
 
-const EdstHeaderButton50 = (props: EdstHeaderButtonProps) => <EdstHeaderButton width={50} {...props} />;
+const EdstHeaderButton6 = (props: EdstHeaderButtonProps) => <EdstHeaderButton width="6ch" {...props} />;
 
 export const EdstHeader = () => {
   const dispatch = useRootDispatch();
@@ -136,11 +131,11 @@ export const EdstHeader = () => {
     <EdstHeaderDiv>
       <EdstHeaderRow>
         <EdstHeaderCol>
-          <ColButton width={18} fontWeight="normal" disabled>
-            {"\u{1F873}"}
+          <ColButton width="2ch" fontWeight="bolder" disabled>
+            {"\u{1F863}"}
           </ColButton>
           <ColButton
-            width={50}
+            width="6ch"
             open={windows[EdstWindow.MORE].open}
             disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.more)}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.MORE))}
@@ -236,21 +231,21 @@ export const EdstHeader = () => {
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.OUTAGE))}
           />
           <Time />
-          <EdstHeaderButton50
+          <EdstHeaderButton6
             open={windows[EdstWindow.ADSB].open}
             content="NON-ADSB"
             disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.adsb)}
             // title={Tooltips.adsb}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.ADSB))}
           />
-          <EdstHeaderButton50
+          <EdstHeaderButton6
             open={windows[EdstWindow.SAT].open}
             content="SAT COMM"
             disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.sat)}
             // title={Tooltips.sat}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.SAT))}
           />
-          <EdstHeaderButton50
+          <EdstHeaderButton6
             open={windows[EdstWindow.MSG].open}
             // backgroundColor={YELLOW}
             // borderColor={YELLOW}

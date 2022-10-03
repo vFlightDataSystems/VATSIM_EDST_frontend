@@ -4,7 +4,7 @@ import { Tooltips } from "../../../tooltips";
 import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aselSelector } from "../../../redux/slices/appSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
+import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";

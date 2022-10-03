@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useRef } from "react";
-import { ThemeProvider } from "styled-components";
 import { ModifiableWindowOptions, windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -53,11 +52,9 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
           onClose={() => dispatch(closeWindow(edstWindow))}
           startDrag={startDrag}
         />
-        <ThemeProvider theme={windowOptions}>
-          <FloatingWindowBodyContainer width={props.width}>
-            {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
-          </FloatingWindowBodyContainer>
-        </ThemeProvider>
+        <FloatingWindowBodyContainer width={props.width} fontSize={windowOptions.fontSize}>
+          {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
+        </FloatingWindowBodyContainer>
         {props.showOptions && ref.current && (
           <FloatingWindowOptionContainer
             pos={{

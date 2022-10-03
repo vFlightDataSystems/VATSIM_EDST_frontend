@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
@@ -70,24 +70,16 @@ const satCatText = {
   M3: "(IRIDIUM)"
 };
 
-export const EquipmentCommTemplate = () => {
+export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10a = entry?.equipment
-    ?.split("/")
-    ?.slice(1)?.[0]
-    ?.split("-")?.[1]
-    ?.match(/[A-Z]\d?/g);
-  const voiceCat = field10a?.[0]?.split("")?.filter(s => Object.keys(VoiceCat).includes(s)) as VoiceCat[];
-  const [voiceCategories, setVoiceCategories] = useState<VoiceCat[]>(voiceCat ?? []);
 
-  const cpdlcCats = field10a?.filter(s => Object.keys(CpdlcCat).includes(s)) as CpdlcCat[];
-  const [cpdlcCategories, setCpdlcCategories] = useState<CpdlcCat[]>(cpdlcCats ?? []);
+  const [voiceCategories, setVoiceCategories] = useState<VoiceCat[]>([]);
 
-  const acarsCats = field10a?.filter(s => Object.keys(AcarsCat).includes(s)) as AcarsCat[];
-  const [acarsCategories, setAcarsCategories] = useState<AcarsCat[]>(acarsCats ?? []);
+  const [cpdlcCategories, setCpdlcCategories] = useState<CpdlcCat[]>([]);
 
-  const satCats = field10a?.filter(s => Object.keys(SatCat).includes(s)) as SatCat[];
-  const [satelliteCategories, setSatelliteCategories] = useState<SatCat[]>(satCats ?? []);
+  const [acarsCategories, setAcarsCategories] = useState<AcarsCat[]>([]);
+
+  const [satelliteCategories, setSatelliteCategories] = useState<SatCat[]>([]);
 
   const toggleCategory = (cat: CpdlcCat | AcarsCat | SatCat | VoiceCat) => {
     if (Object.keys(CpdlcCat).includes(cat)) {
@@ -129,8 +121,31 @@ export const EquipmentCommTemplate = () => {
     }
   };
 
+  useEffect(() => {
+    const field10a = entry?.equipment
+      ?.split("/")
+      ?.slice(1)?.[0]
+      ?.split("-")?.[1]
+      ?.match(/[A-Z]\d?/g);
+
+    const voiceCats = (field10a?.[0]?.split("")?.filter(s => Object.keys(VoiceCat).includes(s)) ?? []) as VoiceCat[];
+    const cpdlcCats = (field10a?.filter(s => Object.keys(CpdlcCat).includes(s)) ?? []) as CpdlcCat[];
+    const acarsCats = (field10a?.filter(s => Object.keys(AcarsCat).includes(s)) ?? []) as AcarsCat[];
+    const satCats = (field10a?.filter(s => Object.keys(SatCat).includes(s)) ?? []) as SatCat[];
+
+    const reset = () => {
+      setVoiceCategories(voiceCats);
+      setCpdlcCategories(cpdlcCats);
+      setAcarsCategories(acarsCats);
+      setSatelliteCategories(satCats);
+    };
+
+    setReset(reset);
+    reset();
+  }, [entry?.equipment, setReset]);
+
   return (
-    <div>
+    <>
       <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
         <EqpCol2>
           <EqpColTitle>VOICE CATEGORY</EqpColTitle>
@@ -213,6 +228,6 @@ export const EquipmentCommTemplate = () => {
           </EqpInputContainer60>
         </EdstTooltip>
       </EqpInputRow>
-    </div>
+    </>
   );
 };

@@ -147,7 +147,6 @@ export const HubContext = createContext<HubContextValue>({ connectHub: Promise.r
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const hubConnection = useHubContextInit();
-  log(hubConnection);
 
   return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
 };

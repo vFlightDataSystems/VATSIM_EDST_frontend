@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
+import { borderHover } from "../../../styles/styles";
 
 export const Row = styled(OptionsBodyRow)`
   padding: 4px 0;
@@ -46,9 +47,7 @@ export const ScrollCol = styled.div`
   border: 1px solid transparent;
   width: 42px;
 
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
+  ${borderHover};
 `;
 export const ScrollCol2 = styled(ScrollCol)`
   width: 30px;

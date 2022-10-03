@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { EdstInput, OptionsBodyRow } from "../../../styles/optionMenuStyles";
-import { edstFontGrey } from "../../../styles/colors";
+import { borderHover } from "../../../styles/styles";
 
 export const EqpRow = styled(OptionsBodyRow)`
   display: flex;
@@ -29,7 +29,7 @@ export const EqpInput = styled(EdstInput)`
   font-size: 16px;
   outline: none;
   flex: 1;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
   background-color: #000000;
   width: calc(100% - 7px);
   display: flex;
@@ -44,12 +44,6 @@ export const EqpCol = styled.div`
   width: auto;
   min-width: 15%;
   height: 100%;
-`;
-export const EqpColRow = styled(EqpRow)`
-  align-items: center;
-  float: left;
-  display: inline-flex;
-  text-indent: 6px;
 `;
 export const EqpColTitle = styled(EqpCol)`
   text-indent: 0;
@@ -67,7 +61,5 @@ export const EqpContentCol = styled.div`
   padding: 1px 6px;
   text-indent: 0;
 
-  &:hover {
-    border: 1px solid #adadad;
-  }
+  ${borderHover}
 `;

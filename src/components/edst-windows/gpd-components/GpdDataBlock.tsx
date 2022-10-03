@@ -5,7 +5,6 @@ import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
-import { edstFontFamily } from "../../../styles/styles";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
@@ -24,7 +23,7 @@ const DataBlockDiv = styled.div<{ offset: DataBlockOffset }>`
   font-size: 16px;
   line-height: 1;
   width: 9ch;
-  font-family: ${edstFontFamily};
+  font-family: ${props => props.theme.fontProperties.edstFontFamily};
   color: #adadad;
 `;
 
@@ -35,8 +34,8 @@ const DataBlockRow = styled.div`
 
 const DataBlockElement = styled.span<{ selected: boolean }>`
   height: 1em;
-  color: ${props => (props.selected ? "#000000" : "#ADADAD")};
-  background-color: ${props => (props.selected ? "#ADADAD" : "transparent")};
+  color: ${props => (props.selected ? "#000000" : props.theme.colors.grey)};
+  background-color: ${props => (props.selected ? props.theme.colors.grey : "transparent")};
   border: 1px solid transparent;
   margin: 0 1px;
   padding: 0 1px;

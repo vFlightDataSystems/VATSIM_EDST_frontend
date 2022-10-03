@@ -42,11 +42,12 @@ const TemplateRowDiv = styled.div<{ alignRight?: boolean }>`
 type TemplateColProps = {
   bottomRow?: boolean;
   alignRight?: boolean;
-  width?: number;
+  width?: string;
   textIndent?: boolean;
 };
 
-const TemplateCol = styled.div.attrs((props: TemplateColProps) => ({ width: props.width ? `${props.width}px` : "auto" }))<TemplateColProps>`
+const TemplateCol = styled.div.attrs((props: TemplateColProps) => ({ width: props.width ?? "auto" }))<TemplateColProps>`
+  font-size: ${props => props.theme.fontProperties.inputFontSize};
   align-items: center;
   vertical-align: center;
   padding: 0 2px;
@@ -163,35 +164,35 @@ export const TemplateMenu = () => {
         </OptionsMenuHeader>
         <TemplateBodyDiv>
           <TemplateRowDiv>
-            <TemplateCol width={90} textIndent>
+            <TemplateCol width="9ch" textIndent>
               AID
             </TemplateCol>
-            <TemplateCol width={50} textIndent>
+            <TemplateCol width="5ch" textIndent>
               NUM
             </TemplateCol>
-            <TemplateCol width={50} textIndent>
+            <TemplateCol width="5ch" textIndent>
               SAI
             </TemplateCol>
-            <TemplateCol width={62} textIndent>
+            <TemplateCol width="7ch" textIndent>
               TYP
             </TemplateCol>
-            <TemplateCol width={66}>
+            <TemplateCol width="8ch">
               <EdstButton
                 content="EQP..."
                 onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
                 title={Tooltips.templateMenuEqpButton}
               />
             </TemplateCol>
-            <TemplateCol width={60} textIndent>
+            <TemplateCol width="7ch" textIndent>
               BCN
             </TemplateCol>
-            <TemplateCol width={70} textIndent>
+            <TemplateCol width="6ch" textIndent>
               SPD
             </TemplateCol>
-            <TemplateCol width={120} textIndent>
+            <TemplateCol width="14ch" textIndent>
               FIX
             </TemplateCol>
-            <TemplateCol width={70} textIndent>
+            <TemplateCol width="8ch" textIndent>
               TIM
             </TemplateCol>
             <FlexCol textIndent>ALT</FlexCol>
@@ -200,47 +201,47 @@ export const TemplateMenu = () => {
             </TemplateCol>
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateCol width={90}>
+            <TemplateCol width="9ch">
               <EdstTooltip title={Tooltips.templateMenuAid}>
                 <TemplateInput value={aidInput} onChange={event => setAidInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={50}>
+            <TemplateCol width="5ch">
               <EdstTooltip title={Tooltips.templateMenuNum}>
                 <TemplateInput value={numInput} onChange={event => setNumInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={50}>
+            <TemplateCol width="5ch">
               <EdstTooltip title={Tooltips.templateMenuSai}>
                 <TemplateInput value={saiInput} onChange={event => setSaiInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={60}>
+            <TemplateCol width="7ch">
               <EdstTooltip title={Tooltips.templateMenuTyp}>
                 <TemplateInput value={typeInput} onChange={event => setTypeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={69}>
+            <TemplateCol width="8ch">
               <EdstTooltip title={Tooltips.templateMenuEqpBox}>
                 <TemplateInput value={equipInput} onChange={event => setEquipInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={60}>
+            <TemplateCol width="7ch">
               <EdstTooltip title={Tooltips.templateMenuBcn}>
                 <TemplateInput value={beaconInput} onChange={event => setBeaconInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={70}>
+            <TemplateCol width="6ch">
               <EdstTooltip title={Tooltips.templateMenuSpd}>
                 <TemplateInput value={speedInput} onChange={event => setSpeedInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={120}>
+            <TemplateCol width="14ch">
               <EdstTooltip title={Tooltips.templateMenuFix}>
                 <TemplateInput value={frdInput} onChange={event => setFrdInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width={70}>
+            <TemplateCol width="8ch">
               <EdstTooltip title={Tooltips.templateMenuTim}>
                 <TemplateInput value={timeInput} onChange={event => setTimeInput(event.target.value)} />
               </EdstTooltip>
@@ -252,7 +253,7 @@ export const TemplateMenu = () => {
             </FlexCol>
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateCol width={50} textIndent>
+            <TemplateCol width="5ch" textIndent>
               RTE
             </TemplateCol>
           </TemplateRowDiv>
@@ -260,7 +261,7 @@ export const TemplateMenu = () => {
             <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={event => setRouteInput(event.target.value)} rows={3} />
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateCol width={50} textIndent>
+            <TemplateCol width="5ch" textIndent>
               RMK
             </TemplateCol>
             <TemplateRowDiv alignRight />

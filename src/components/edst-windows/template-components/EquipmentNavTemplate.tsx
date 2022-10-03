@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EdstInput, OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
 import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
 
@@ -37,21 +37,13 @@ const rnavCatText = {
   X: "(MNPS APPROVED)"
 };
 
-export const EquipmentNavTemplate = () => {
+export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const field10a = entry?.equipment
-    ?.split("/")
-    ?.slice(1)?.[0]
-    ?.split("-")?.[1]
-    ?.match(/[A-Z]\d?/g);
-  const navaidCats = field10a?.filter(s => Object.keys(NavCat).includes(s)) as NavCat[];
-  const [navCategories, setNavCategories] = useState<NavCat[]>(navaidCats ?? []);
+  const [navCategories, setNavCategories] = useState<NavCat[]>([]);
 
-  const rnavCats = field10a?.filter(s => Object.keys(RnavCat).includes(s)) as RnavCat[];
-  const [rnavCategories, setRnavCategories] = useState<RnavCat[]>(rnavCats ?? []);
+  const [rnavCategories, setRnavCategories] = useState<RnavCat[]>([]);
 
-  const initialRvsm = !!field10a?.includes("W");
-  const [rvsm, setRvsm] = useState<boolean>(initialRvsm);
+  const [rvsm, setRvsm] = useState<boolean>(false);
 
   const toggleCategory = (cat: NavCat | RnavCat) => {
     if (Object.keys(NavCat).includes(cat)) {
@@ -75,8 +67,28 @@ export const EquipmentNavTemplate = () => {
     }
   };
 
+  useEffect(() => {
+    const field10a = entry?.equipment
+      ?.split("/")
+      ?.slice(1)?.[0]
+      ?.split("-")?.[1]
+      ?.match(/[A-Z]\d?/g);
+    const navaidCats = (field10a?.filter(s => Object.keys(NavCat).includes(s)) ?? []) as NavCat[];
+    const rnavCats = (field10a?.filter(s => Object.keys(RnavCat).includes(s)) ?? []) as RnavCat[];
+    const initialRvsm = !!field10a?.includes("W");
+
+    const reset = () => {
+      setNavCategories(navaidCats);
+      setRnavCategories(rnavCats);
+      setRvsm(initialRvsm);
+    };
+
+    setReset(reset);
+    reset();
+  }, [entry?.equipment, setReset]);
+
   return (
-    <div>
+    <>
       <OptionsBodyRow margin="10px 0 0 0" padding="4px 0 0 0">
         <EqpCol>
           <EqpColTitle>NAVAIDS</EqpColTitle>
@@ -196,6 +208,6 @@ export const EquipmentNavTemplate = () => {
           </EqpInputContainer60>
         </EdstTooltip>
       </EqpInputRow>
-    </div>
+    </>
   );
 };

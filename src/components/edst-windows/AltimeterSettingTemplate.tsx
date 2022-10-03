@@ -2,10 +2,9 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import _ from "lodash";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { defaultFontSize, eramFontFamily, NoSelectDiv } from "../../styles/styles";
+import { NoSelectDiv } from "../../styles/NoSelectDiv";
 import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
 import { useRootSelector } from "../../redux/hooks";
-import { edstFontGrey } from "../../styles/colors";
 import { altimeterAirportsSelector } from "../../redux/slices/weatherSlice";
 
 type AltimeterStationTemplateDivProps = { pos: WindowPosition };
@@ -38,9 +37,9 @@ const AltimeterStationTemplateInput = styled.input`
   background-color: #000000;
   border: 1px solid #adadad;
 
-  font-family: ${eramFontFamily};
-  font-size: ${defaultFontSize};
-  color: ${edstFontGrey};
+  font-family: ${props => props.theme.fontProperties.eramFontFamily};
+  font-size: ${props => props.theme.fontProperties.fontSize};
+  color: ${props => props.theme.colors.grey};
 `;
 
 type AltimeterStationTemplateProps = {

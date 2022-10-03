@@ -7,7 +7,6 @@ import { useRootSelector } from "../../../redux/hooks";
 import { entrySelector } from "../../../redux/slices/entrySlice";
 import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
 import { aircraftTrackSelector } from "../../../redux/slices/trackSlice";
 import { AirwayFix } from "../../../typeDefinitions/types/airwayFix";
 import { RouteFix } from "../../../typeDefinitions/types/routeFix";
@@ -15,6 +14,7 @@ import { useRouteFixes } from "../../../api/aircraftApi";
 import { ApiLocation } from "../../../typeDefinitions/types/apiTypes/apiLocation";
 import { locationToPosition } from "../../../utils/locationToPosition";
 import { getRemainingFixesFromPpos } from "../../../utils/fixes";
+import { colors } from "../../../edstTheme";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): L.LatLngExpression {
   if (Array.isArray(pos)) {
@@ -45,7 +45,7 @@ export const GpdAirwayPolyline = ({ segments }: GpdAirwayPolylineProps) => {
   return (
     <Polyline
       positions={segments.sort((u, v) => Number(u.sequence) - Number(v.sequence)).map(segment => posToLatLng({ lat: segment.lat, lon: segment.lon }))}
-      pathOptions={{ color: edstFontGrey, weight: 0.4 }}
+      pathOptions={{ color: colors.grey, weight: 0.4 }}
     />
   );
 };
@@ -98,7 +98,7 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
         )}
       </Marker>
       {showRoute && routeLine && (
-        <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))} pathOptions={{ color: edstFontGreen, weight: 1.1 }} />
+        <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))} pathOptions={{ color: colors.green, weight: 1.1 }} />
       )}
     </>
   ) : null;

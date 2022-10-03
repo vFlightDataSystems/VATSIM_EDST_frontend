@@ -7,14 +7,14 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "../../../redux/slices/aclSlice";
 import { aclAselSelector, closeAllMenus, closeWindow } from "../../../redux/slices/appSlice";
 import { addAclEntryByFid } from "../../../redux/thunks/entriesThunks";
-import { NoSelectDiv } from "../../../styles/styles";
-import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { AddFindInput } from "../../utils/InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { aclCleanup } from "../../../redux/thunks/aclCleanup";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AclSortOptionValues } from "../../../typeDefinitions/enums/acl/aclSortOption";
 import { HeaderComponentProps } from "../../utils/FullscreenWindow";
+import { EdstWindowHeaderRowDiv } from "../../../styles/edstStyles";
 
 const AclHeaderDiv = styled(NoSelectDiv)``;
 
@@ -63,7 +63,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           `${manualPosting ? "Manual" : "Automatic"}`
         ]}
       />
-      <WindowHeaderRowDiv>
+      <EdstWindowHeaderRowDiv>
         <EdstWindowHeaderButton
           sharedUiEventId="openAclPlanOptions"
           sharedUiEventHandler={handleClick}
@@ -119,12 +119,12 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           title={Tooltips.template}
         />
         <EdstWindowHeaderButton onMouseDown={() => dispatch(aclCleanup)} content="Clean Up" title={Tooltips.aclCleanUp} />
-      </WindowHeaderRowDiv>
-      <WindowHeaderRowDiv bottomRow>
+      </EdstWindowHeaderRowDiv>
+      <EdstWindowHeaderRowDiv bottomRow>
         Add/Find
         <AddFindInput value={searchStr} onChange={e => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
         Facilities:
-      </WindowHeaderRowDiv>
+      </EdstWindowHeaderRowDiv>
     </AclHeaderDiv>
   );
 };

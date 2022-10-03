@@ -43,7 +43,7 @@ const EqpTemplateBottomRow = styled(EqpTemplateRow)`
   border-top: 1px solid #adadad;
 `;
 
-enum menuOptions {
+enum MenuOptions {
   surv,
   nav,
   comm,
@@ -75,16 +75,21 @@ export const EquipmentTemplateRow = ({ margin, tooltip, toggleSelect, selected, 
   );
 };
 
+export type EquipmentTemplateBodyProps = {
+  setReset: (callback?: () => void) => void;
+};
+
 export const EquipmentTemplateMenu = () => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector(windowPositionSelector(EdstWindow.EQUIPMENT_TEMPLATE_MENU));
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
-  const [selectedMenu, setSelectedMenu] = useState<menuOptions>(menuOptions.nav);
+  const [selectedMenu, setSelectedMenu] = useState<MenuOptions>(MenuOptions.nav);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.EQUIPMENT_TEMPLATE_MENU, "mouseup");
+  const resetRef = useRef<() => void>();
 
   return (
     pos && (
@@ -106,37 +111,61 @@ export const EquipmentTemplateMenu = () => {
           <FidRow>{entry && `${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix}`}</FidRow>
           <EqpTemplateRow>
             <EdstTemplateButton85
-              selected={selectedMenu === menuOptions.surv}
+              selected={selectedMenu === MenuOptions.surv}
               content="SURV"
-              onMouseDown={() => setSelectedMenu(menuOptions.surv)}
+              onMouseDown={() => setSelectedMenu(MenuOptions.surv)}
               title={Tooltips.equipmentTemplateMenuSurv}
             />
             <EdstTemplateButton85
-              selected={selectedMenu === menuOptions.nav}
+              selected={selectedMenu === MenuOptions.nav}
               content="NAV"
-              onMouseDown={() => setSelectedMenu(menuOptions.nav)}
+              onMouseDown={() => setSelectedMenu(MenuOptions.nav)}
               title={Tooltips.equipmentTemplateMenuNAV}
             />
             <EdstTemplateButton85
-              selected={selectedMenu === menuOptions.comm}
+              selected={selectedMenu === MenuOptions.comm}
               content="COMM"
-              onMouseDown={() => setSelectedMenu(menuOptions.comm)}
+              onMouseDown={() => setSelectedMenu(MenuOptions.comm)}
               title={Tooltips.equipmentTemplateMenuComm}
             />
             <EdstTemplateButton85
-              selected={selectedMenu === menuOptions.appServ}
+              selected={selectedMenu === MenuOptions.appServ}
               content="APP/SERV"
-              onMouseDown={() => setSelectedMenu(menuOptions.appServ)}
+              onMouseDown={() => setSelectedMenu(MenuOptions.appServ)}
               title={Tooltips.equipmentTemplateMenuAppServ}
             />
             <OptionsBodyCol alignRight>
-              <EdstButton content="Reset" />
+              <EdstButton content="Reset" onMouseDown={resetRef.current} />
             </OptionsBodyCol>
           </EqpTemplateRow>
-          {selectedMenu === menuOptions.surv && <EquipmentSurvTemplate />}
-          {selectedMenu === menuOptions.nav && <EquipmentNavTemplate />}
-          {selectedMenu === menuOptions.comm && <EquipmentCommTemplate />}
-          {selectedMenu === menuOptions.appServ && <EquipmentAppServTemplate />}
+          {selectedMenu === MenuOptions.surv && (
+            <EquipmentSurvTemplate
+              setReset={callback => {
+                resetRef.current = callback;
+              }}
+            />
+          )}
+          {selectedMenu === MenuOptions.nav && (
+            <EquipmentNavTemplate
+              setReset={callback => {
+                resetRef.current = callback;
+              }}
+            />
+          )}
+          {selectedMenu === MenuOptions.comm && (
+            <EquipmentCommTemplate
+              setReset={callback => {
+                resetRef.current = callback;
+              }}
+            />
+          )}
+          {selectedMenu === MenuOptions.appServ && (
+            <EquipmentAppServTemplate
+              setReset={callback => {
+                resetRef.current = callback;
+              }}
+            />
+          )}
           <EqpTemplateBottomRow>
             <OptionsBodyCol>
               <EdstButton disabled content="OK" />

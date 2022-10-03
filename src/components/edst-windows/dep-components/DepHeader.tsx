@@ -6,13 +6,13 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "../../../redux/slices/depSlice";
 import { closeAllMenus, closeWindow, depAselSelector } from "../../../redux/slices/appSlice";
 import { addDepEntryByFid } from "../../../redux/thunks/entriesThunks";
-import { NoSelectDiv } from "../../../styles/styles";
-import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { AddFindInput } from "../../utils/InputComponents";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { DepSortOptionValues } from "../../../typeDefinitions/enums/dep/depSortOption";
 import { HeaderComponentProps } from "../../utils/FullscreenWindow";
+import { EdstWindowHeaderRowDiv } from "../../../styles/edstStyles";
 
 /**
  * DEP title bar and header row with add/find input field
@@ -55,7 +55,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         }}
         text={["Departure List", `${DepSortOptionValues[selectedSortOption]}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
-      <WindowHeaderRowDiv>
+      <EdstWindowHeaderRowDiv>
         <EdstWindowHeaderButton
           sharedUiEventId="openDepPlanOptions"
           sharedUiEventHandler={handleClick}
@@ -87,11 +87,11 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           content="Template..."
           title={Tooltips.template}
         />
-      </WindowHeaderRowDiv>
-      <WindowHeaderRowDiv bottomRow>
+      </EdstWindowHeaderRowDiv>
+      <EdstWindowHeaderRowDiv bottomRow>
         Add/Find
         <AddFindInput value={searchStr} onChange={e => setSearchString(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} />
-      </WindowHeaderRowDiv>
+      </EdstWindowHeaderRowDiv>
     </NoSelectDiv>
   );
 };

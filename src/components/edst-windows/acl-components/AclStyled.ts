@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
-import { edstFontGreen, edstFontGrey, edstFontYellow } from "../../../styles/colors";
 import { Col, ColProps, SpecialBox } from "../../../styles/sharedColumns";
+import { colors } from "../../../edstTheme";
 
 export const AclCol1 = styled(Col)<{ border?: boolean }>`
   margin: 0 2px;
@@ -11,14 +11,11 @@ export const AclCol1 = styled(Col)<{ border?: boolean }>`
     }};
 `;
 type RadioColProps = { green?: boolean; header?: boolean; keep?: boolean };
-export const RadioCol = styled(AclCol1).attrs((props: RadioColProps) => ({
-  color: props.green ? edstFontGreen : edstFontGrey,
-  hoverBorderColor: props.green ? edstFontGreen : "#F0F0F0"
-}))<RadioColProps>`
-  color: ${props => props.color};
+export const RadioCol = styled(AclCol1)<RadioColProps>`
+  color: ${props => (props.green ? props.theme.colors.green : props.theme.colors.grey)};
   width: 10px;
   &:hover {
-    border: 1px solid ${props => props.hoverBorderColor};
+    border: 1px solid ${props => (props.green ? props.theme.colors.green : "#F0F0F0")};
   }
   ${props =>
     props.header &&
@@ -40,8 +37,8 @@ export const CoralBox = styled(SpecialBox)`
 export const RemarksBox = styled(SpecialBox)<{ unchecked?: boolean }>(props => {
   return (
     props.unchecked && {
-      color: edstFontYellow,
-      border: `1px solid ${edstFontYellow}`
+      color: colors.yellow,
+      border: `1px solid ${colors.yellow}`
     }
   );
 });
@@ -55,12 +52,12 @@ export const PointOutCol = styled(Col)`
 const HdgSpdCol = styled(Col).attrs((props: ColProps) => ({
   width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
 }))<{ scratchpad?: boolean }>`
-  ${props => props.scratchpad && { color: edstFontYellow }}
+  ${props => props.scratchpad && { color: colors.yellow }}
   ${props =>
     props.selected &&
     css`
       color: #000000;
-      background-color: ${props.scratchpad ? edstFontYellow : "#ADADAD"};
+      background-color: ${props.scratchpad ? colors.yellow : "#ADADAD"};
     `}};
 `;
 export const HdgCol = styled(HdgSpdCol)`

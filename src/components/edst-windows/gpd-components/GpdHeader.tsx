@@ -5,11 +5,11 @@ import { EdstWindowHeaderButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { closeAllMenus, closeWindow, gpdAselSelector } from "../../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../../styles/styles";
-import { WindowHeaderRowDiv } from "../../../styles/edstWindowStyles";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "../../../redux/slices/gpdSlice";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { EdstWindowHeaderRowDiv } from "../../../styles/edstStyles";
 
 type GpdHeaderProps = {
   focused: boolean;
@@ -99,7 +99,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           // title={Tooltips.gpdCleanUp}
         />
       </div>
-      <WindowHeaderRowDiv>
+      <EdstWindowHeaderRowDiv>
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
         <EdstWindowHeaderButton onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
@@ -122,7 +122,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           content="Tools..."
         />
         <EdstWindowHeaderButton disabled content="Saved Map" />
-      </WindowHeaderRowDiv>
+      </EdstWindowHeaderRowDiv>
     </GpdDiv>
   );
 };

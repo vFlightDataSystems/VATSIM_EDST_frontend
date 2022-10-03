@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { edstFontBlue } from "./colors";
+import { borderHover } from "./styles";
 
 export type ColProps = {
   hover?: boolean;
@@ -33,7 +33,7 @@ export const Col = styled.div.attrs((props: ColProps) => ({
       "background-color": "#ADADAD",
       color: "#000000"
     }};
-  ${props => props.hover && { "&:hover": { border: "1px solid #F0F0F0" } }};
+  ${props => props.hover && borderHover};
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
@@ -43,9 +43,7 @@ export const FidCol = styled(Col)`
 export const SpecialBox = styled(Col)`
   margin: 0 1px;
   width: 1ch;
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
+  ${borderHover}
 `;
 export const HotBox = styled(SpecialBox)`
   border-top: 1px solid #575757;
@@ -69,9 +67,7 @@ export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
     display: flex;
     padding: 0 2px;
 
-    &:hover {
-      border: 1px solid #f0f0f0;
-    }
+    ${borderHover}
   }
 `;
 export const CodeCol = styled(Col).attrs((props: ColProps) => ({
@@ -93,9 +89,7 @@ export const AltCol = styled(Col)<{ headerCol?: boolean }>`
 export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
   border: 1px solid transparent;
   ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
+  ${borderHover}
 `;
 type RouteColProps = { padding?: string };
 export const RouteCol = styled(Col).attrs((props: RouteColProps) => ({
@@ -122,18 +116,18 @@ export const RouteSpan = styled(RouteCol).attrs((props: RouteSpanProps) => ({
   text-overflow: ellipsis;
 `;
 export const EmbeddedRouteTextSpan = styled(RouteSpan)`
-  color: ${edstFontBlue};
+  color: ${props => props.theme.colors.blue};
   ${props =>
     props.selected && {
-      "background-color": edstFontBlue,
+      "background-color": props.theme.colors.blue,
       color: "#000000"
     }}
 `;
 export const RouteDepAirportSpan = styled(RouteSpan)<{ amendmentPending?: boolean }>`
   ${props =>
     props.amendmentPending && {
-      color: props.selected ? "#000000" : edstFontBlue,
-      "background-color": props.selected ? edstFontBlue : "#transparent"
+      color: props.selected ? "#000000" : props.theme.colors.blue,
+      "background-color": props.selected ? props.theme.colors.blue : "#transparent"
     }}
   }
 `;

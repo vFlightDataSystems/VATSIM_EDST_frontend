@@ -55,9 +55,9 @@ export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>>
   [EdstWindow.STATUS]: { x: 400, y: 100 },
   [EdstWindow.OUTAGE]: { x: 400, y: 100 },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 400 },
-  [EdstWindow.GPD]: { x: 0, y: 34 },
-  [EdstWindow.ACL]: { x: 0, y: 34 },
-  [EdstWindow.DEP]: { x: 0, y: 34 }
+  [EdstWindow.GPD]: { x: 0, y: 38 },
+  [EdstWindow.ACL]: { x: 0, y: 38 },
+  [EdstWindow.DEP]: { x: 0, y: 38 }
 };
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(

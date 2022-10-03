@@ -5,9 +5,8 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aselSelector } from "../../../redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/bodyStyles";
+import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
 import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
-import { edstFontBrown } from "../../../styles/colors";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
@@ -35,6 +34,7 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
 import { formatUtcMinutes } from "../../../utils/formatUtcMinutes";
+import { colors } from "../../../edstTheme";
 
 type AclRowProps = {
   entry: EdstEntry;
@@ -391,7 +391,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
           </SpecialBox>
           <SpecialBox disabled />
           {anyHolding && (
-            <SpecialBox ref={holdRef} color={edstFontBrown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
+            <SpecialBox ref={holdRef} color={colors.brown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}

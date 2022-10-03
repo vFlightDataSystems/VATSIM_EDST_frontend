@@ -2,10 +2,9 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { DepRow } from "./DepRow";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { NoSelectDiv } from "../../../styles/styles";
-import { edstFontGrey } from "../../../styles/colors";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
-import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/bodyStyles";
+import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/styles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depHiddenColumnsSelector, depManualPostingSelector, depSortOptionSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
@@ -20,7 +19,7 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
   overflow: hidden;
   flex-flow: column;
   display: flex;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
 `;
 
 export const DepTable = () => {

@@ -3,17 +3,17 @@ import styled from "styled-components";
 import { useInterval } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planQueueSelector, selectedPlanIndexSelector, setSelectedPlanIndex } from "../../../redux/slices/planSlice";
-import { BodyRowDiv } from "../../../styles/bodyStyles";
-import { NoSelectDiv } from "../../../styles/styles";
-import { edstFontGreen, edstFontGrey } from "../../../styles/colors";
+import { BodyRowDiv, borderHover } from "../../../styles/styles";
+import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { removePlanThunk } from "../../../redux/thunks/removePlanThunk";
+import { colors } from "../../../edstTheme";
 
 const PlansDisplayBody = styled(NoSelectDiv)`
   overflow: hidden;
   display: block;
   flex-flow: column;
   border-top: 1px solid #adadad;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
 `;
 
 type ColProps = Partial<{ hover: boolean; disabled: boolean; color: string; width: number; selected: boolean }>;
@@ -36,7 +36,7 @@ const Col = styled.div<ColProps>`
       "background-color": props.color ?? "#ADADAD",
       color: "#000000"
     }};
-  ${props => props.hover && { "&:hover": { border: "1px solid #F0F0F0" } }}
+  ${props => props.hover && borderHover};
 `;
 const Col1 = styled(Col)`
   width: 20ch;
@@ -86,7 +86,7 @@ export const PlansDisplayTable = () => {
       {planQueue?.map((p, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <BodyRowDiv key={i}>
-          <Col1 selected={selectedPlanIndex === i} color={edstFontGreen} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
+          <Col1 selected={selectedPlanIndex === i} color={colors.green} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
             {p.cid} {p.aircraftId}
           </Col1>
           <Col>{p.commandString.toUpperCase()}</Col>

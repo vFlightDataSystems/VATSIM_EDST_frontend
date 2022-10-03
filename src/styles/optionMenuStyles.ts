@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { defaultInputFontSize, DraggableDiv, edstFontFamily } from "./styles";
-import { edstFontGrey } from "./colors";
+import { DraggableDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
+import { borderHover, outlineHover } from "./styles";
 
 export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?: boolean; diamond?: boolean }>`
   display: inline-flex;
@@ -36,7 +36,8 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?:
     }}
 `;
 export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
-  font-family: ${edstFontFamily};
+  font-family: ${props => props.theme.fontProperties.edstFontFamily};
+  font-size: ${props => props.theme.fontProperties.fontSize};
   z-index: ${props => 10000 + props.zIndex};
   overflow: hidden;
   position: fixed;
@@ -50,6 +51,7 @@ export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: 
     }}
 `;
 export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
+  font-size: ${props => props.theme.fontProperties.fontSize};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,6 +64,7 @@ export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
   border-right: 1px solid #575757;
 `;
 export const OptionsBody = styled.div`
+  font-size: ${props => props.theme.fontProperties.fontSize};
   background-color: #000000;
   padding: 2px 0;
   border-top: 1px solid #575757;
@@ -115,14 +118,14 @@ export const OptionsBottomRow = styled(OptionsBodyRow)`
 export const UnderlineRow = styled(OptionsBodyRow)`
   pointer-events: none;
   justify-content: center;
-  height: 30px;
+  height: 1.2em;
   margin-bottom: 4px;
 
   &:before {
     content: "";
     position: absolute;
     width: 18%;
-    height: 30px;
+    height: 1.2em;
     left: 41%;
     border-bottom: 1px solid #adadad;
   }
@@ -158,7 +161,7 @@ export const OptionsBodyCol = styled.div<{
   margin: ${props => props.margin ?? "0 4px"};
   max-width: ${props => (props.maxWidth ? `${props.maxWidth}px` : "auto")};
   max-height: ${props => (props.maxHeight ? `${props.maxHeight}px` : "auto")};
-  ${props => props.hover && { "&:hover": { border: "1px solid #F0F0F0" } }}
+  ${props => props.hover && borderHover};
   ${props => props.padding && { padding: props.padding }};
   ${props => props.margin && { margin: props.margin }};
 
@@ -183,17 +186,15 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
   height: 22px;
   padding: 0 5px;
 
-  &:hover {
-    border: 1px solid #adadad;
-  }
+  ${borderHover}
 `;
 export const EdstInput = styled.input<{ width?: string }>`
   width: ${props => props.width ?? "calc(100% - 7px)"};
-  font-size: ${defaultInputFontSize};
+  font-size: ${props => props.theme.fontProperties.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
   border-top: 2px solid #575757;
   border-left: 2px solid #575757;
   border-bottom: 2px solid #888888;
@@ -202,17 +203,15 @@ export const EdstInput = styled.input<{ width?: string }>`
   resize: none;
   text-transform: uppercase;
 
-  &:hover {
-    outline: 1px solid #ffffff;
-  }
+  ${outlineHover}
 `;
 export const EdstTextArea = styled.textarea`
   width: calc(100% - 7px);
-  font-size: ${defaultInputFontSize};
+  font-family: ${props => props.theme.fontProperties.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
   border-top: 2px solid #575757;
   border-left: 2px solid #575757;
   border-bottom: 2px solid #888888;
@@ -220,9 +219,7 @@ export const EdstTextArea = styled.textarea`
   background-color: #000000;
   resize: none;
 
-  &:hover {
-    outline: 1px solid #ffffff;
-  }
+  ${outlineHover}
 `;
 export const ScrollContainer = styled.div<{ maxHeight?: string }>`
   height: auto;

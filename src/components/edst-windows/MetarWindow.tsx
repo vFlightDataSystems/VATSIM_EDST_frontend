@@ -7,6 +7,7 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useMetar } from "../../api/weatherApi";
 import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 type MetarRowProps = {
   airport: string;
@@ -18,6 +19,7 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.METAR));
   const { data: airportMetar, isFetching } = useMetar(airport);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
 
   return !airportMetar ? null : (
     <>
-      <FloatingWindowRow ref={ref} selected={selected} onMouseDown={handleMouseDown}>
+      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={handleMouseDown}>
         {airportMetar ?? "..."}
       </FloatingWindowRow>
       {selected && rect && (

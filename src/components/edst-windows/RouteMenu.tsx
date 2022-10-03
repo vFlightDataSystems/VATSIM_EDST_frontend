@@ -13,7 +13,6 @@ import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
 import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
-import { edstFontGrey } from "../../styles/colors";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
@@ -25,7 +24,6 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { useFocused } from "../../hooks/useFocused";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
-import { defaultFontSize, defaultInputFontSize } from "../../styles/styles";
 import { OPLUS_SYMBOL } from "../../utils/constants";
 import { DownlinkSymbol } from "../utils/DownlinkSymbol";
 import { CreateOrAmendFlightplanDto } from "../../typeDefinitions/types/apiTypes/CreateOrAmendFlightplanDto";
@@ -37,6 +35,7 @@ import { useSharedUiListener } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
 import { removeStringFromStart, removeStringFromEnd } from "../../utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "../../utils/fixes";
+import { borderHover } from "../../styles/styles";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -60,31 +59,29 @@ const InputContainer = styled.div`
 `;
 const Input = styled.input`
   //cursor: default;
-  font-size: ${defaultInputFontSize};
+  font-size: ${props => props.theme.fontProperties.inputFontSize};
   outline: none;
   flex: 1;
   width: 100%;
-  color: ${edstFontGrey};
+  color: ${props => props.theme.colors.grey};
   background-color: #000000;
   border: 1px solid transparent;
 
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
+  ${borderHover}
 `;
 const PposDiv = styled.div`
   border: 2px solid transparent;
   border-right: none;
   padding: 0 2px;
   width: 120px;
-  font-size: ${defaultFontSize};
+  font-size: ${props => props.theme.fontProperties.fontSize};
   color: #575757;
 `;
 const ButtonCol = styled(OptionsBodyCol)`
   padding: 0 4px;
   display: flex;
   flex-grow: 0;
-  min-height: 22px;
+  min-height: 1.2em;
 `;
 const DisplayRouteDiv = styled(OptionsBodyCol)`
   border: 2px solid #414141;

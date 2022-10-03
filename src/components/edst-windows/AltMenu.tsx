@@ -7,8 +7,7 @@ import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { defaultInputFontSize, NoSelectDiv } from "../../styles/styles";
-import { edstFontGrey, edstFontYellow } from "../../styles/colors";
+import { NoSelectDiv } from "../../styles/NoSelectDiv";
 import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
 import { useCenterCursor } from "../../hooks/useCenterCursor";
@@ -16,6 +15,8 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "../../utils/constants";
 import { Plan } from "../../typeDefinitions/types/plan";
+import { colors } from "../../edstTheme";
+import { borderHover } from "../../styles/styles";
 
 type AltMenuDivProps = { width?: string; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
@@ -48,9 +49,7 @@ const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
   width: ${props => props.width};
   flex-grow: ${props => props.flexGrow};
 
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
+  ${borderHover}
 `;
 
 const AltMenuSelectContainer = styled.div`
@@ -82,23 +81,18 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
     pointer-events: none;
     color: #adadad;
   }
-  ${props =>
-    props.hover && {
-      "&:hover": {
-        border: "1px solid #F0F0F0"
-      }
-    }};
+  ${props => props.hover && borderHover};
   ${props =>
     props.selected && {
       border: "1px solid #FFFFFF",
       "background-color": "#AD6C6C"
     }};
   input {
-    font-size: ${defaultInputFontSize};
+    font-family: ${props => props.theme.fontProperties.inputFontSize};
     outline: none;
     display: flex;
     overflow: hidden;
-    color: ${edstFontGrey};
+    color: ${props => props.theme.colors.grey};
     resize: none;
     text-transform: uppercase;
     background-color: #000000;
@@ -127,12 +121,7 @@ const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
   /*border: none;*/
   border: 1px solid #000000;
 
-  ${props =>
-    props.hover && {
-      "&:hover": {
-        border: "1px solid #F0F0F0"
-      }
-    }};
+  ${props => props.hover && borderHover};
 `;
 
 const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; selected?: boolean }>`
@@ -146,12 +135,7 @@ const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; 
     outline: 1px solid #f0f0f0;
   }
 
-  ${props =>
-    props.borderHover && {
-      "&:hover": {
-        border: "1px solid #F0F0F0"
-      }
-    }};
+  ${props => props.borderHover && borderHover};
   ${props =>
     props.selected && {
       "background-color": "#AD6C6C",
@@ -268,7 +252,7 @@ export const AltMenu = () => {
               />
             </AltMenuRow>
             {showInvalid && (
-              <AltMenuRow bgBlack color={edstFontYellow}>
+              <AltMenuRow bgBlack color={colors.yellow}>
                 INVALID
               </AltMenuRow>
             )}

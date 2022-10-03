@@ -6,6 +6,7 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
 import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
+import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
 type GIRowProps = {
   text: string;
@@ -16,13 +17,14 @@ type GIRowProps = {
 const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
+  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.GI));
 
-  const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
+  const zIndex = zStack.indexOf(EdstWindow.GI);
   const rect = ref.current?.getBoundingClientRect();
 
   return (
     <>
-      <FloatingWindowRow ref={ref} selected={selected} onMouseDown={handleMouseDown}>
+      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={handleMouseDown}>
         {text}
       </FloatingWindowRow>
       {selected && rect && (
