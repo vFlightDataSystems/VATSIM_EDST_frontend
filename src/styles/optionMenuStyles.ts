@@ -207,7 +207,7 @@ export const EdstInput = styled.input<{ width?: string }>`
 `;
 export const EdstTextArea = styled.textarea`
   width: calc(100% - 7px);
-  font-family: ${props => props.theme.fontProperties.inputFontSize};
+  font-size: ${props => props.theme.fontProperties.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
