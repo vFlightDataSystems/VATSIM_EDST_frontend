@@ -1,4 +1,5 @@
 import React, { PropsWithChildren, useRef } from "react";
+import { useResizeDetector } from "react-resize-detector";
 import { ModifiableWindowOptions, windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -29,6 +30,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
 
   const windowOptions = useRootSelector(windowOptionsSelector(edstWindow));
   const options = useWindowOptions(edstWindow, props.extraOptions);
+  const { width } = useResizeDetector({ targetRef: ref });
 
   const zIndex = zStack.indexOf(edstWindow);
 
@@ -55,10 +57,10 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
         <FloatingWindowBodyContainer width={props.width} fontSize={windowOptions.fontSize}>
           {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
         </FloatingWindowBodyContainer>
-        {props.showOptions && ref.current && (
+        {props.showOptions && width && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + ref.current.clientWidth,
+              x: pos.x + width,
               y: pos.y
             }}
             zIndex={zIndex}

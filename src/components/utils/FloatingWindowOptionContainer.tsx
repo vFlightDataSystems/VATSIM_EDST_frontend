@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useRef } from "react";
+import React, { MouseEventHandler, useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
@@ -12,7 +12,6 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { borderHover } from "../../styles/styles";
 
 const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: boolean }>`
-  // position: ${props => (props.offsetPos ? "relative" : "fixed")};
   font-size: ${props => props.theme.fontProperties.fontSize};
   display: inline-flex;
   flex-flow: column;
@@ -29,6 +28,26 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOp
   align-items: center;
   ${borderHover}
 `;
+
+type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
+const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const callback = useCallback(() => {
+    // eslint-disable-next-line no-underscore-dangle
+    if (window.__TAURI__ && ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      invoke("set_cursor_position", newCursorPos).then();
+    }
+  }, []);
+
+  return (
+    <FloatingWindowOptionDiv ref={ref} backgroundColor={option.backgroundColor ?? "#000000"} onMouseDownCapture={option.onMouseDown}>
+      {option.value}
+    </FloatingWindowOptionDiv>
+  );
+};
 
 type FloatingWindowOption = {
   value: string;
@@ -50,6 +69,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
   const ref = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__) {
@@ -65,6 +85,13 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
         const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
         invoke("set_cursor_position", newCursorPos).then();
       }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.left = `${pos.x}px`;
+      ref.current.style.top = `${pos.y}px`;
     }
   }, [pos]);
 
@@ -86,20 +113,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
           </FloatingWindowHeaderColDiv16ch>
         </FloatingWindowHeaderDiv>
       )}
-      {props.options &&
-        Object.entries(props.options).map(([key, option]) => (
-          <FloatingWindowOptionDiv
-            backgroundColor={option.backgroundColor ?? "#000000"}
-            key={key}
-            onMouseDownCapture={event => {
-              if (option.onMouseDown) {
-                option.onMouseDown(event);
-              }
-            }}
-          >
-            {option.value}
-          </FloatingWindowOptionDiv>
-        ))}
+      {props.options && Object.entries(props.options).map(([key, option]) => <FloatingWindowOptionRow key={key} option={option} />)}
     </FloatingWindowOptionsBodyDiv>
   );
 }

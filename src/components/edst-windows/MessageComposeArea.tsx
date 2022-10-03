@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useState } from "react";
 import styled from "styled-components";
+import { useResizeDetector } from "react-resize-detector";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
@@ -125,6 +126,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA, "mousedown");
   const hubActions = useHubActions();
   const { connectHub, disconnectHub } = useHubConnector();
+  const { width } = useResizeDetector({ targetRef: ref });
 
   useOnUnmount(() => dispatch(setMcaCommandString(mcaInputValue)));
 
@@ -411,7 +413,6 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   };
 
   const zIndex = zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA);
-  const rect = ref.current?.getBoundingClientRect();
 
   return (
     pos && (
@@ -449,10 +450,10 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
             ))}
           </FeedbackContainerDiv>
         </MessageComposeAreaDiv>
-        {showOptions && rect && (
+        {showOptions && width && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + rect.width,
+              x: pos.x + width + 2,
               y: pos.y
             }}
             zIndex={zIndex}

@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
+import { useResizeDetector } from "react-resize-detector";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { mraMsgSelector, pushZStack, setMraMessage, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
@@ -34,6 +35,7 @@ export const MessageResponseArea = () => {
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_RESPONSE_AREA, "mousedown");
+  const { width } = useResizeDetector({ targetRef: ref });
 
   const [showOptions, setShowOptions] = useState(false);
   const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.MESSAGE_RESPONSE_AREA));
@@ -62,7 +64,6 @@ export const MessageResponseArea = () => {
   };
 
   const zIndex = zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA);
-  const rect = ref.current?.getBoundingClientRect();
 
   return (
     pos && (
@@ -79,10 +80,10 @@ export const MessageResponseArea = () => {
           {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
           {msg}
         </MessageResponseAreaDiv>
-        {showOptions && rect && (
+        {showOptions && width && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + rect.width,
+              x: pos.x + width + 6,
               y: pos.y
             }}
             zIndex={zIndex}
