@@ -104,6 +104,7 @@ export const HoldMenu = () => {
   const [efc, setEfc] = useState(utcMinutes);
   const [holdRouteFixes, setHoldRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const holdRef = useRef<HoldAnnotations | null>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU, "mouseup");
@@ -111,9 +112,7 @@ export const HoldMenu = () => {
   const routeFixes = useRouteFixes(entry.aircraftId);
 
   useEffect(() => {
-    if (!entry) {
-      dispatch(closeWindow(EdstWindow.HOLD_MENU));
-    } else {
+    if (!_.isEqual(entry.holdAnnotations, holdRef.current)) {
       const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -124,6 +123,7 @@ export const HoldMenu = () => {
       setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
       setHoldRouteFixes(holdRouteFixes ?? null);
     }
+    holdRef.current = entry.holdAnnotations;
   }, [dispatch, entry, routeFixes, track]);
 
   const clearedHold = () => {
