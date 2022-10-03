@@ -48,7 +48,7 @@ const EdstHeaderRow = styled.div`
 const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   z-index: 20001;
   display: inline-flex;
-  ${props => props.bottomRow && { "margin-left": "calc(8ch + 4px)" }};
+  ${props => props.bottomRow && { "margin-left": "calc(8ch + 2px)" }};
 
   span {
     height: 2em;
