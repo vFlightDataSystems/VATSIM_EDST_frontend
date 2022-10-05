@@ -4,7 +4,7 @@ import { EdstTooltip } from "./EdstTooltip";
 import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
 import { useSharedUiListenerWithElement } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
-import { borderHover } from "../../styles/styles";
+import { borderHover, buttonBorder2px, buttonBorderInverted2px } from "../../styles/styles";
 
 type EdstOuterButtonProps = Partial<{ width: string; height: string; margin: string; disabled: boolean }>;
 const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
@@ -45,10 +45,7 @@ const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
   align-items: center;
   color: ${props => (props.selected ? "#000000" : props.theme.colors.grey)};
   background-color: ${props => (props.selected ? props.theme.colors.grey : "#000000")};
-  border-bottom: 2px solid ${props => (props.selected ? "#888888" : "#575757")};
-  border-right: 2px solid ${props => (props.selected ? "#888888" : "#575757")};
-  border-top: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
-  border-left: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
+  ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
   padding: ${props => props.padding};
   width: ${props => props.width};
   height: ${props => props.height};
@@ -102,7 +99,7 @@ export const EdstButton20x20 = (props: EdstButtonFixedSizeProps) => <EdstButton 
 export const EdstRouteButton12x12 = (props: Omit<EdstButtonFixedSizeProps, "padding" | "margin">) => (
   <EdstButton12x12 padding="0 4px" margin="auto 5px 0 auto" {...props} />
 );
-export const EdstTemplateButton85 = (props: EdstButtonFixedSizeProps) => <EdstButton width="85px" margin="0 4px" {...props} />;
+export const EdstTemplateButton10ch = (props: EdstButtonFixedSizeProps) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
 type EdstWindowHeaderButtonProps<T> = EdstButtonProps & Partial<SharedUiEventProps<T>>;
 export function EdstWindowHeaderButton<T>({
