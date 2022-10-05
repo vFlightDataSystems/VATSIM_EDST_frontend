@@ -1,25 +1,18 @@
 import styled from "styled-components";
 import { DraggableDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
-import { borderHover, outlineHover } from "./styles";
+import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "./styles";
 
 export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?: boolean; diamond?: boolean }>`
   display: inline-flex;
-  border-bottom: 2px solid #575757;
-  border-right: 2px solid #575757;
-  border-top: 2px solid #888888;
-  border-left: 2px solid #888888;
+  ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
   width: 8px;
   height: 8px;
   margin-right: 8px;
 
   ${props =>
     props.selected && {
-      "background-color": "#ADADAD",
-      "border-bottom": "2px solid #888888",
-      "border-right": "2px solid #888888",
-      "border-top": "2px solid #575757",
-      "border-left": "2px solid #575757"
+      "background-color": "#ADADAD"
     }}
 
   ${props =>
@@ -50,6 +43,10 @@ export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: 
       top: `${props.pos.y}px`
     }}
 `;
+
+const optionsMenuHeaderBorder = createBorder("1px", "#adadad", "#575757");
+const optionsMenuBodyBorder = createBorder("1px", "#575757", "#414141");
+
 export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
   font-size: ${props => props.theme.fontProperties.fontSize};
   display: flex;
@@ -58,19 +55,13 @@ export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
   background-color: ${props => (props.focused ? "#008585" : "#888888")};
   color: #000000;
   height: 17px;
-  border-top: 1px solid #adadad;
-  border-left: 1px solid #adadad;
-  border-bottom: 1px solid #575757;
-  border-right: 1px solid #575757;
+  ${optionsMenuHeaderBorder};
 `;
 export const OptionsBody = styled.div`
   font-size: ${props => props.theme.fontProperties.fontSize};
   background-color: #000000;
   padding: 2px 0;
-  border-top: 1px solid #575757;
-  border-left: 1px solid #575757;
-  border-bottom: 1px solid #414141;
-  border-right: 1px solid #414141;
+  ${optionsMenuBodyBorder};
 
   *[disabled] {
     pointer-events: none;
@@ -139,8 +130,8 @@ export const FidRow = styled(OptionsBodyRow)`
 export const OptionsBodyCol = styled.div<{
   selected?: boolean;
   alignRight?: boolean;
-  maxWidth?: number;
-  maxHeight?: number;
+  maxWidth?: string;
+  maxHeight?: string;
   margin?: string;
   padding?: string;
   hover?: boolean;
@@ -159,8 +150,8 @@ export const OptionsBodyCol = styled.div<{
   white-space: nowrap;
   overflow: hidden;
   margin: ${props => props.margin ?? "0 4px"};
-  max-width: ${props => (props.maxWidth ? `${props.maxWidth}px` : "auto")};
-  max-height: ${props => (props.maxHeight ? `${props.maxHeight}px` : "auto")};
+  max-width: ${props => props.maxWidth ?? "auto"};
+  max-height: ${props => props.maxHeight ?? "auto"};
   ${props => props.hover && borderHover};
   ${props => props.padding && { padding: props.padding }};
   ${props => props.margin && { margin: props.margin }};
@@ -195,10 +186,7 @@ export const EdstInput = styled.input<{ width?: string }>`
   display: flex;
   overflow: hidden;
   color: ${props => props.theme.colors.grey};
-  border-top: 2px solid #575757;
-  border-left: 2px solid #575757;
-  border-bottom: 2px solid #888888;
-  border-right: 2px solid #888888;
+  ${buttonBorder2px};
   background-color: #000000;
   resize: none;
   text-transform: uppercase;
@@ -212,10 +200,7 @@ export const EdstTextArea = styled.textarea`
   display: flex;
   overflow: hidden;
   color: ${props => props.theme.colors.grey};
-  border-top: 2px solid #575757;
-  border-left: 2px solid #575757;
-  border-bottom: 2px solid #888888;
-  border-right: 2px solid #888888;
+  ${buttonBorder2px};
   background-color: #000000;
   resize: none;
 

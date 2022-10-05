@@ -35,7 +35,7 @@ import { useSharedUiListener } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
 import { removeStringFromStart, removeStringFromEnd } from "../../utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "../../utils/fixes";
-import { borderHover } from "../../styles/styles";
+import { borderHover, buttonBorderInverted2px } from "../../styles/styles";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -52,10 +52,7 @@ const InputContainer = styled.div`
   flex-grow: 1;
   padding: 0;
   overflow: hidden;
-  border-top: 2px solid #575757;
-  border-left: 2px solid #575757;
-  border-bottom: 2px solid #888888;
-  border-right: 2px solid #888888;
+  ${buttonBorderInverted2px};
 `;
 const Input = styled.input`
   //cursor: default;
@@ -291,14 +288,14 @@ export const RouteMenu = () => {
                 disabled={asel.window === EdstWindow.DEP}
               />
             </OptionsBodyCol>
-            <OptionsBodyCol maxWidth={24} maxHeight={24}>
+            <OptionsBodyCol maxWidth="24px" maxHeight="24px">
               <EdstTooltip>
                 <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
                   <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
                 </a>
               </EdstTooltip>
             </OptionsBodyCol>
-            <OptionsBodyCol maxWidth={24} maxHeight={24}>
+            <OptionsBodyCol maxWidth="24px" maxHeight="24px">
               <EdstTooltip>
                 <a
                   href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}

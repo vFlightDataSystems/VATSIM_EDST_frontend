@@ -1,5 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import { createBorder } from "../../styles/styles";
+
+const buttonBorder = createBorder("1px", "#adadad", "#575757");
+const blockBorder = createBorder("1px", "#adadad", "#575757");
+const blockBorderInverted = createBorder("1px", "#575757", "#adadad");
+const blockBorderBlue = createBorder("1px", "#adadad", "#005757");
+const blockBorderBlueInverted = createBorder("1px", "#005757", "#adadad");
 
 const WindowTitleBarDiv = styled.div`
   display: flex;
@@ -18,10 +25,7 @@ const WindowTitleBarCol = styled.div<{ middle?: boolean; focused?: boolean }>`
   button {
     vertical-align: center;
     background-color: #888888;
-    border-top: 1px solid #adadad;
-    border-left: 1px solid #adadad;
-    border-bottom: 1px solid #575757;
-    border-right: 1px solid #575757;
+    ${buttonBorder};
 
     ${props =>
       props.focused && {
@@ -49,16 +53,10 @@ const Block = styled.div<{ focused?: boolean; flexGrow?: number }>`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid ${props => (props.focused ? "#005757" : "#575757")};
-  border-right: 1px solid ${props => (props.focused ? "#005757" : "#575757")};
-  border-top: 1px solid #adadad;
-  border-left: 1px solid #adadad;
+  ${props => (props.focused ? blockBorderBlue : blockBorder)};
 
   &:is(button):active {
-    border-bottom: 1px solid #adadad;
-    border-right: 1px solid #adadad;
-    border-top: 1px solid ${props => (props.focused ? "#005757" : "#575757")};
-    border-left: 1px solid ${props => (props.focused ? "#005757" : "#575757")};
+    ${props => (props.focused ? blockBorderBlueInverted : blockBorderInverted)};
   }
 `;
 const Block3x3 = styled(Block)`
@@ -70,10 +68,7 @@ const Block8x3 = styled(Block)`
   height: 3px;
 `;
 const InvertedBlock = styled(Block)`
-  border-top: 1px solid ${props => (props.focused ? "#005757" : "#575757")};
-  border-left: 1px solid ${props => (props.focused ? "#005757" : "#575757")};
-  border-bottom: 1px solid #adadad;
-  border-right: 1px solid #adadad;
+  ${props => (props.focused ? blockBorderBlueInverted : blockBorderInverted)};
 `;
 const InvertedBlock8x8 = styled(InvertedBlock)`
   width: 8px;

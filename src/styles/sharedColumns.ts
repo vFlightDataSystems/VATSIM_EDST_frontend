@@ -1,5 +1,7 @@
 import styled from "styled-components";
-import { borderHover } from "./styles";
+import { borderHover, createBorder } from "./styles";
+
+const hotboxBorder = createBorder("1px", "#575757", "#414141");
 
 export type ColProps = {
   hover?: boolean;
@@ -37,7 +39,7 @@ export const Col = styled.div.attrs((props: ColProps) => ({
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
-  width: 130px;
+  width: 14ch;
   padding: 0 2px;
 `;
 export const SpecialBox = styled(Col)`
@@ -46,10 +48,7 @@ export const SpecialBox = styled(Col)`
   ${borderHover}
 `;
 export const HotBox = styled(SpecialBox)`
-  border-top: 1px solid #575757;
-  border-left: 1px solid #575757;
-  border-bottom: 1px solid #414141;
-  border-right: 1px solid #414141;
+  ${hotboxBorder}
 `;
 export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
   width: props.visibilityHidden || props.hidden ? "3ch" : "100px"

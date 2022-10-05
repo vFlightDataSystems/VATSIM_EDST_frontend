@@ -12,6 +12,17 @@ export const outlineHover = css`
   }
 `;
 
+export const createBorder = (width: string, topLeftColor: string, bottomRightColor: string) => css`
+  border-bottom: ${width} solid ${bottomRightColor};
+  border-right: ${width} solid ${bottomRightColor};
+  border-top: ${width} solid ${topLeftColor};
+  border-left: ${width} solid ${topLeftColor};
+`;
+
+export const buttonBorder2px = createBorder("2px", "#888888", "#575757");
+
+export const buttonBorderInverted2px = createBorder("2px", "#575757", "#888888");
+
 type BodyRowContainerProps = { separator?: boolean };
 export const BodyRowContainerDiv = styled.div<BodyRowContainerProps>`
   margin: 3px 0;

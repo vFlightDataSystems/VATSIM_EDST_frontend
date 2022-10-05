@@ -1,10 +1,9 @@
 import styled, { css } from "styled-components";
 import { Col, FidCol } from "../../../styles/sharedColumns";
+import { borderHover } from "../../../styles/styles";
 
 export const DepFidCol = styled(FidCol)`
   justify-content: left;
-  width: 130px;
-  padding: 0 2px;
   margin-right: 30px;
 `;
 export const DepCol1 = styled(Col)<{ border?: boolean }>`
@@ -25,9 +24,7 @@ export const RadioCol = styled(DepCol1)<{ checked?: boolean; header?: boolean; k
   border-bottom: 1px solid #414141;
   border-right: 1px solid #414141;
 
-  &:hover {
-    border: 1px solid #f0f0f0;
-  }
+  ${borderHover};
 
   ${props => props.disabled && { "border-color": "transparent" }};
   ${props =>
