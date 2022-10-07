@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useCallback, useEffect, useRef } from "react";
+import React, { MouseEventHandler, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
@@ -32,15 +32,25 @@ const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOp
 type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
 const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const prevOptionValueRef = useRef<string>(option.value);
+  const posRef = useRef<WindowPosition>();
 
-  const callback = useCallback(() => {
+  useEffect(() => {
     // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      invoke("set_cursor_position", newCursorPos).then();
+      if (!posRef.current) {
+        posRef.current = { x: rect.left, y: rect.top };
+      } else if (posRef.current.x !== rect.left || posRef.current.y !== rect.top) {
+        if (option.value !== prevOptionValueRef.current) {
+          const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          invoke("set_cursor_position", newCursorPos).then();
+          prevOptionValueRef.current = option.value;
+        }
+      }
+      posRef.current = { x: rect.left, y: rect.top };
     }
-  }, []);
+  });
 
   return (
     <FloatingWindowOptionDiv ref={ref} backgroundColor={option.backgroundColor ?? "#000000"} onMouseDownCapture={option.onMouseDown}>
@@ -87,13 +97,6 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
       }
     }
   }, []);
-
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.style.left = `${pos.x}px`;
-      ref.current.style.top = `${pos.y}px`;
-    }
-  }, [pos]);
 
   useEventListener("mousedown", () => props.onClose?.());
 
