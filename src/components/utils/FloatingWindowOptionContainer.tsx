@@ -33,22 +33,22 @@ type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
 const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const prevOptionValueRef = useRef<string>(option.value);
-  const posRef = useRef<WindowPosition>();
+  const prevPosRef = useRef<WindowPosition>();
 
   useEffect(() => {
     // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      if (!posRef.current) {
-        posRef.current = { x: rect.left, y: rect.top };
-      } else if (posRef.current.x !== rect.left || posRef.current.y !== rect.top) {
+      if (!prevPosRef.current) {
+        prevPosRef.current = { x: rect.left, y: rect.top };
+      } else if (prevPosRef.current.x !== rect.left || prevPosRef.current.y !== rect.top) {
         if (option.value !== prevOptionValueRef.current) {
           const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
           invoke("set_cursor_position", newCursorPos).then();
           prevOptionValueRef.current = option.value;
         }
       }
-      posRef.current = { x: rect.left, y: rect.top };
+      prevPosRef.current = { x: rect.left, y: rect.top };
     }
   });
 

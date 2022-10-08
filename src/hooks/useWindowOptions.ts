@@ -23,7 +23,7 @@ export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(window
   const dispatch = useRootDispatch();
   const windowOptions = useRootSelector(windowOptionsSelector(window));
 
-  const clickHandler = useCallback(
+  const mouseDownHandler = useCallback(
     (event: React.MouseEvent<HTMLElement>, key: keyof ModifiableWindowOptions[T]) => {
       switch (event.button) {
         case 0:
@@ -47,13 +47,13 @@ export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(window
           {
             value: `${windowOptionLabel[key as keyof typeof windowOptionLabel]} ${value}`,
             backgroundColor: colors.optionsBackgroundGreen,
-            onMouseDown: event => clickHandler(event, key)
+            onMouseDown: event => mouseDownHandler(event, key)
           }
         ])
       ),
       ...extraOptions
     }),
-    [clickHandler, extraOptions, windowOptions]
+    [mouseDownHandler, extraOptions, windowOptions]
   );
 
   return options;
