@@ -38,7 +38,7 @@ const LoginBackground = styled.div`
   position: fixed;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url(${process.env.PUBLIC_URL}/img/EDST_SEND_ROUTE.jpg);
+  background-image: url(${import.meta.env.PUBLIC_URL}/img/EDST_SEND_ROUTE.jpg);
 `;
 
 const Button = styled.button`
@@ -63,7 +63,7 @@ const Login = () => {
 
   useEffect(() => {
     if (code) {
-      dispatch(login({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
+      dispatch(login({ code, redirectUrl: encodeURIComponent(`${import.meta.env.REACT_APP_DOMAIN}/login`) }));
     }
   }, [code, dispatch]);
 
@@ -85,8 +85,8 @@ const Login = () => {
             disabled={code !== null}
             onClick={() => {
               window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${
-                process.env.REACT_APP_VATSIM_CLIENT_ID
-              }&redirect_uri=${encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`)}&response_type=code&scope=vatsim_details`;
+                import.meta.env.REACT_APP_VATSIM_CLIENT_ID
+              }&redirect_uri=${encodeURIComponent(`${import.meta.env.REACT_APP_DOMAIN}/login`)}&response_type=code&scope=vatsim_details`;
             }}
           >
             {code ? (

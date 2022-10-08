@@ -10,8 +10,8 @@ import { DepState } from "../redux/slices/depSlice";
 import { PlanState } from "../redux/slices/planSlice";
 import { SharedGpdState } from "../redux/slices/gpdSlice";
 
-const SHARED_STATE_SERVER_URL = process.env.REACT_APP_SHARED_STATE_URL;
-const SHARED_STATE_AUTH_TOKEN = process.env.REACT_APP_SHARED_STATE_AUTH_KEY;
+const SHARED_STATE_SERVER_URL = import.meta.env.REACT_APP_SHARED_STATE_URL;
+const SHARED_STATE_AUTH_TOKEN = import.meta.env.REACT_APP_SHARED_STATE_AUTH_KEY;
 
 class SharedStateSocket {
   socket: Socket<SharedStateServerToClientEvents, SharedStateClientToServerEvents> | null = null;

@@ -33,7 +33,6 @@ export const authSlice = createSlice({
         state.vatsimToken = action.payload.vatsimToken;
       } else {
         // TODO: inform user that login failed
-        // eslint-disable-next-line no-console
         console.log(`Failed to log in: ${action.payload.statusText}`);
       }
     });

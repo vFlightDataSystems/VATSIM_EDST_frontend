@@ -2,7 +2,7 @@
    hooks corresponding to the defined endpoints */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseUrl = process.env.REACT_APP_BACKEND_BASEURL!;
+const baseUrl = import.meta.env.REACT_APP_BACKEND_BASEURL!;
 
 type AltimeterEntry = {
   time: string;

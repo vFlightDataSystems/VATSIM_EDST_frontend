@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
 import React, { createContext, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { log } from "../utils/console";
 import { useRootDispatch, useRootSelector } from "../redux/hooks";
 import { clearSession, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
 import { refreshToken } from "../api/vNasDataApi";
@@ -15,7 +13,7 @@ import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { initThunk } from "../redux/thunks/initThunk";
 import { useSocketConnector } from "../hooks/useSocketConnector";
 
-const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
+const ATC_SERVER_URL = import.meta.env.REACT_APP_ATC_HUB_URL;
 
 const useHubContextInit = () => {
   const [hubConnected, setHubConnected] = useState(false);
@@ -32,7 +30,7 @@ const useHubContextInit = () => {
     const getValidNasToken = () => {
       // const decodedToken = decodeJwt(nasToken);
       return refreshToken(vatsimToken).then(r => {
-        log("Refreshed NAS token");
+        console.log("Refreshed NAS token");
         return r.data;
       });
     };
@@ -59,24 +57,24 @@ const useHubContextInit = () => {
       hubConnection.onclose(() => {
         dispatch(setArtccId(""));
         dispatch(setSectorId(""));
-        log("ATC hub disconnected");
+        console.log("ATC hub disconnected");
       });
 
       hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
-        log(sessionInfo);
+        console.log(sessionInfo);
         dispatch(setSession(sessionInfo));
       });
 
       hubConnection.on("HandleSessionEnded", () => {
-        log("clearing session");
+        console.log("clearing session");
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
-        log("received flightplan:", flightplan);
+        console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
-        log("received aircraft:", aircraft);
+        console.log("received aircraft:", aircraft);
         // aircraft.forEach(t => {
         //   dispatch(updateAircraftTrackThunk(t));
         // });
@@ -91,7 +89,7 @@ const useHubContextInit = () => {
           hubConnection
             .invoke<ApiSessionInfoDto>("getSessionInfo")
             .then(sessionInfo => {
-              log(sessionInfo);
+              console.log(sessionInfo);
               const primaryPosition = sessionInfo?.positions.slice(0).filter(pos => pos.isPrimary)?.[0]?.position;
               if (primaryPosition?.eramConfiguration) {
                 const artccId = sessionInfo.artccId;
@@ -104,7 +102,7 @@ const useHubContextInit = () => {
                 hubConnection
                   .invoke<void>("joinSession", { sessionId: sessionInfo.id })
                   .then(() => {
-                    log(`joined session ${sessionInfo.id}`);
+                    console.log(`joined session ${sessionInfo.id}`);
                     setHubConnected(true);
                     hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
                       ref.current?.stop().then(() => setHubConnected(false));
@@ -150,4 +148,3 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
 
   return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
 };
-/* eslint-enable no-console */

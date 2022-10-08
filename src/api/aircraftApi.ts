@@ -5,7 +5,7 @@ import { RouteFix } from "../typeDefinitions/types/routeFix";
 import { useRootSelector } from "../redux/hooks";
 import { entrySelector } from "../redux/slices/entrySlice";
 
-const baseUrl = process.env.REACT_APP_BACKEND_BASEURL!;
+const baseUrl = import.meta.env.REACT_APP_BACKEND_BASEURL!;
 
 type Params = Record<"dep" | "dest" | "route", string>;
 

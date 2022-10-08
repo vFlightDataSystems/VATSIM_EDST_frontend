@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode, useCallback, useState } from "react";
 import { receiveSharedStateAircraft } from "../redux/thunks/sharedStateThunks/receiveSharedStateAircraft";
-import { log } from "../utils/console";
 import { useRootDispatch } from "../redux/hooks";
 import { receiveUiStateThunk } from "../redux/thunks/sharedStateThunks/receiveUiStateThunk";
 import { addGIEntries, closeWindow, openWindow } from "../redux/slices/appSlice";
@@ -74,7 +73,7 @@ const useSocketContextInit = () => {
         });
         socket.on("disconnect", reason => {
           setIsConnected(false);
-          log(reason);
+          console.log(reason);
         });
       }
     },

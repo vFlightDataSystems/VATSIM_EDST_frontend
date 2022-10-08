@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useHubConnection } from "./useHubConnection";
 import { ApiLocation } from "../typeDefinitions/types/apiTypes/apiLocation";
 import { HoldAnnotations } from "../typeDefinitions/enums/hold/holdAnnotations";
@@ -56,4 +55,3 @@ export const useHubActions = () => {
     sendUplinkMessage
   };
 };
-/* eslint-enable no-console */

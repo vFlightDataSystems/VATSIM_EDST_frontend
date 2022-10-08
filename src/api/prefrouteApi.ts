@@ -9,7 +9,7 @@ import { artccIdSelector } from "../redux/slices/sectorSlice";
 import { entrySelector } from "../redux/slices/entrySlice";
 import { AircraftId } from "../typeDefinitions/types/aircraftId";
 
-const baseUrl = process.env.REACT_APP_BACKEND_BASEURL!;
+const baseUrl = import.meta.env.REACT_APP_BACKEND_BASEURL!;
 
 type GetPdrParams = Record<"artccId" | "departure" | "aircraft" | "route", string>;
 type GetPdarParams = Record<"artccId" | "departure" | "destination" | "aircraft", string>;
