@@ -17,6 +17,8 @@ import {
 } from "../../../redux/slices/gpdSlice";
 import { useArtccBoundaries } from "../../../api/gpdApi";
 
+const ZOOM_DELTA = 0.5;
+
 const MapConfigurator = () => {
   const dispatch = useRootDispatch();
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
@@ -70,6 +72,7 @@ export const GpdBody = () => {
         placeholder
         maxZoom={GPD_MAX_ZOOM}
         minZoom={GPD_MIN_ZOOM}
+        zoomDelta={ZOOM_DELTA}
       >
         <MapConfigurator />
         {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}
