@@ -19,7 +19,7 @@ import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea
 import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
-import { pushZStack, showSectorSelectorSelector, windowsSelector } from "./redux/slices/appSlice";
+import { mcaCommandStringSelector, pushZStack, setMcaCommandString, showSectorSelectorSelector, windowsSelector } from "./redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "./redux/hooks";
 import { ToolsMenu } from "./components/edst-windows/tools-components/ToolsMenu";
 import { AltimeterWindow } from "./components/edst-windows/AltimeterWindow";
@@ -63,10 +63,10 @@ const Edst = () => {
   const windows = useRootSelector(windowsSelector);
   const aselEntry = useRootSelector(aselEntrySelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
-  const mcaInputRef = useRef<HTMLTextAreaElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const hubConnection = useHubConnection();
   const hubActions = useHubActions();
+  const mcaCommandString = useRootSelector(mcaCommandStringSelector);
 
   useInterval(() => {
     fetchAllAircraft().then(aircraftList => {
@@ -76,7 +76,7 @@ const Edst = () => {
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
 
-  const handleKeyDown = () => {
+  const handleKeyDown = (event: KeyboardEvent) => {
     // console.log(document.activeElement?.localName);
     // event.preventDefault();
     if (
@@ -84,14 +84,13 @@ const Edst = () => {
       document.activeElement?.localName !== "textarea" &&
       !windows[EdstWindow.ALTITUDE_MENU].open
     ) {
-      if (!mcaInputRef?.current) {
+      if (!windows[EdstWindow.MESSAGE_COMPOSE_AREA].open) {
         dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
-        // if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
-        //   dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
-        // }
+        if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
+          dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
+        }
       } else {
         dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-        mcaInputRef.current.focus();
       }
     }
   };
@@ -133,7 +132,7 @@ const Edst = () => {
           {windows[EdstWindow.METAR].open && <MetarWindow />}
           {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
           {windows[EdstWindow.GI].open && <GIWindow />}
-          {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea ref={mcaInputRef} />}
+          {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea />}
           {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
         </EdstBodyDiv>
       </EdstDiv>

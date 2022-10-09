@@ -1,6 +1,7 @@
-import React, { forwardRef, useRef, useState } from "react";
-import styled from "styled-components";
+import React, { useRef, useState } from "react";
+import styled, { css } from "styled-components";
 import { useResizeDetector } from "react-resize-detector";
+import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
@@ -46,41 +47,48 @@ import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 import socket from "../../sharedState/socket";
 import { GI_EXPR } from "../../utils/constants";
 
+function chunkString(str: string, length: number) {
+  return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
+}
+
 type MessageComposeAreaDivProps = { brightness: number; fontSize: number };
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)<MessageComposeAreaDivProps>`
   color: rgba(173, 173, 173, ${props => props.brightness / 100});
   background-color: #000000;
   border: 1px solid #adadad;
+  line-height: 1em;
   font-family: ${props => props.theme.fontProperties.eramFontFamily};
   font-size: ${props => props.theme.fontProperties.floatingFontSizes[props.fontSize - 1]};
 `;
 
-const MessageComposeInputAreaDiv = styled.div`
-  font-size: inherit;
-  line-height: 1em;
+type McaInputAreaProps = { width: number; paLines: number };
+const MessageComposeInputAreaDiv = styled.div.attrs(({ width, paLines }: McaInputAreaProps) => ({
+  width: `${width}ch`,
+  height: `${paLines}em`
+}))<McaInputAreaProps>`
+  height: calc(${props => props.height} + 6px);
   width: auto;
-  height: auto;
+  overflow: hidden;
+  > pre {
+    width: ${props => props.width};
+    margin: 2px;
+  }
+  text-transform: uppercase;
   border-bottom: 1px solid #adadad;
 `;
 
-type McaTextAreaProps = { width: number; height: number };
-const McaTextArea = styled.textarea.attrs(({ width, height }: McaTextAreaProps) => ({
-  width: `${width}ch`,
-  height: `${height}em`
-}))<McaTextAreaProps>`
-  color: inherit;
-  height: ${props => props.height};
-  width: ${props => props.width};
-  resize: none;
-  white-space: initial;
-  overflow: hidden;
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
-  font-size: inherit;
-  outline: none;
-  border: none;
-  caret: underscore;
-  background-color: #000000;
-  text-transform: uppercase;
+type McaCursorProps = { insertMode: boolean };
+const MessageComposeCursor = styled.span<McaCursorProps>`
+  display: inline-block;
+  height: 1em;
+  width: 1ch;
+  border-bottom: 1px solid #adadad;
+  // if not in insert mode, left and right borders are white
+  ${props =>
+    !props.insertMode &&
+    css`
+      box-shadow: -1px 0 #adadad, 1px 0 #adadad;
+    `}
 `;
 
 const FeedbackContainerDiv = styled.div`
@@ -112,7 +120,8 @@ const RejectCrossSpan = styled.span`
   }
 `;
 
-export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputRef) => {
+export const MessageComposeArea = () => {
+  const [insertMode, setInsertMode] = useState(true);
   const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
@@ -127,6 +136,7 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
   const hubActions = useHubActions();
   const { connectHub, disconnectHub } = useHubConnector();
   const { width } = useResizeDetector({ targetRef: ref });
+  const [cursorPosition, setCursorPosition] = useState(mcaCommandString.length);
 
   useOnUnmount(() => dispatch(setMcaCommandString(mcaInputValue)));
 
@@ -360,39 +370,56 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
     }
   };
 
-  const handleInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = event => {
-    event.preventDefault();
-    if (event.target.value.match(/\n$/)) {
-      setMcaInputValue(event.target.value.trim());
-    } else {
-      setMcaInputValue(event.target.value);
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea") {
+      if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
+        dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+      }
+      switch (event.key) {
+        case "Enter":
+          if (mcaInputValue.length > 0) {
+            parseCommand(mcaInputValue);
+            setMcaInputValue("");
+            setCursorPosition(0);
+          } else {
+            dispatch(setMcaRejectMessage(""));
+          }
+          break;
+        case "Escape":
+          setMcaInputValue("");
+          setCursorPosition(0);
+          dispatch(setMcaResponse(""));
+          break;
+        case "ArrowLeft":
+          setCursorPosition(prevPosition => (prevPosition - 1 < 0 ? mcaInputValue.length : prevPosition - 1));
+          break;
+        case "ArrowRight":
+          setCursorPosition(prevPosition => (mcaInputValue.length > prevPosition ? prevPosition + 1 : 0));
+          break;
+        case "Backspace":
+          if (cursorPosition > 0) {
+            setMcaInputValue(prevValue => prevValue.slice(0, cursorPosition - 1) + prevValue.slice(cursorPosition));
+            setCursorPosition(prevPosition => Math.max(0, prevPosition - 1));
+          }
+          break;
+        case "Insert":
+          setInsertMode(prevMode => !prevMode);
+          break;
+        case "Delete":
+          setMcaInputValue(prevValue => prevValue.slice(0, cursorPosition) + prevValue.slice(cursorPosition + 1));
+          break;
+        default:
+          if (event.key.length === 1) {
+            setMcaInputValue(prevValue => prevValue.slice(0, cursorPosition) + event.key + prevValue.slice(cursorPosition + (insertMode ? 1 : 0)));
+            setCursorPosition(prevPosition => prevPosition + 1);
+          }
+      }
     }
   };
 
-  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = event => {
-    if (event.shiftKey) {
-      (inputRef as React.RefObject<HTMLTextAreaElement>)?.current?.blur();
-    }
-    if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
-      dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-    }
-    switch (event.key) {
-      case "Enter":
-        if (mcaInputValue.length > 0) {
-          parseCommand(mcaInputValue);
-          setMcaInputValue("");
-        } else {
-          dispatch(setMcaRejectMessage(""));
-        }
-        break;
-      case "Escape":
-        setMcaInputValue("");
-        dispatch(setMcaResponse(""));
-        break;
-      default:
-        break;
-    }
-  };
+  // TODO: create state to toggle between "insert mode" and normal mode
+
+  useEventListener("keydown", handleKeyDown);
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
 
@@ -429,15 +456,21 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
         >
           {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
           <MessageComposeInputAreaDiv {...windowOptions}>
-            <McaTextArea
-              ref={inputRef}
-              height={windowOptions.paLines}
-              width={windowOptions.width}
-              tabIndex={document.activeElement === (inputRef as React.RefObject<HTMLTextAreaElement>).current ? -1 : undefined}
-              value={mcaInputValue}
-              onChange={handleInputChange}
-              onKeyDownCapture={handleKeyDown}
-            />
+            {chunkString(`${mcaInputValue} `, windowOptions.width).map((chunk, i) => {
+              const cursorIndex = cursorPosition - windowOptions.width * i;
+              if (cursorIndex >= 0 && cursorIndex < windowOptions.width) {
+                return (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <pre key={i}>
+                    {chunk.slice(0, cursorIndex)}
+                    <MessageComposeCursor insertMode={insertMode}>{chunk[cursorIndex]}</MessageComposeCursor>
+                    {chunk.slice(cursorIndex + 1)}
+                  </pre>
+                );
+              }
+              // eslint-disable-next-line react/no-array-index-key
+              return <pre key={i}>{chunk}</pre>;
+            })}
           </MessageComposeInputAreaDiv>
           <FeedbackContainerDiv>
             <ResponseFeedbackRowDiv>
@@ -445,8 +478,13 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
               {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
               {feedbackRows[0]}
             </ResponseFeedbackRowDiv>
-            {feedbackRows.slice(1, 30).map(s => (
-              <ResponseFeedbackRowDiv key={s}>{s}</ResponseFeedbackRowDiv>
+            {feedbackRows.slice(1, 30).map((s, i) => (
+              <>
+                {chunkString(s, windowOptions.width).map((chunk, j) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <ResponseFeedbackRowDiv key={`${i}-${j}`}>{chunk}</ResponseFeedbackRowDiv>
+                ))}
+              </>
             ))}
           </FeedbackContainerDiv>
         </MessageComposeAreaDiv>
@@ -465,4 +503,4 @@ export const MessageComposeArea = forwardRef<HTMLTextAreaElement>((props, inputR
       </>
     )
   );
-});
+};
