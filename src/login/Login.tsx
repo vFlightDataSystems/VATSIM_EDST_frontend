@@ -73,7 +73,6 @@ const Login = () => {
     }
   }, [navigate, vatsimToken]);
 
-  // noinspection HtmlUnknownTarget
   return (
     <>
       <LoginBackground />
