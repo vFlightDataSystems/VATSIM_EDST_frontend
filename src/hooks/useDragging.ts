@@ -96,15 +96,15 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
         if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
           // eslint-disable-next-line no-underscore-dangle
           if (window.__TAURI__) {
-            previewPos = { x: ppos.x, y: ppos.y };
+            previewPos = { x: ppos.left, y: ppos.top };
             invoke("set_cursor_position", previewPos).then();
           } else {
             previewPos = { x: event.pageX, y: event.pageY };
           }
         } else {
           previewPos = { x: event.pageX, y: event.pageY };
-          relX = ppos.x - event.pageX;
-          relY = ppos.y - event.pageY;
+          relX = ppos.left - event.pageX;
+          relY = ppos.top - event.pageY;
         }
         const style = {
           left: previewPos.x + relX - 1,
@@ -131,8 +131,8 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
 
   const stopDrag = useCallback(() => {
     if (dragging && ref?.current && dragPreviewStyle) {
-      const { left: x, top: y } = dragPreviewStyle;
-      const newPos = { x: x + 1, y };
+      const { left, top } = dragPreviewStyle;
+      const newPos = { left: left + 1, top };
       // eslint-disable-next-line no-underscore-dangle
       if (window.__TAURI__) {
         invoke("set_cursor_grab", { value: false }).then();

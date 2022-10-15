@@ -40,15 +40,15 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
       if (!prevPosRef.current) {
-        prevPosRef.current = { x: rect.left, y: rect.top };
-      } else if (prevPosRef.current.x !== rect.left || prevPosRef.current.y !== rect.top) {
+        prevPosRef.current = { left: rect.left, top: rect.top };
+      } else if (prevPosRef.current.left !== rect.left || prevPosRef.current.top !== rect.top) {
         if (option.value !== prevOptionValueRef.current) {
           const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
           invoke("set_cursor_position", newCursorPos).then();
           prevOptionValueRef.current = option.value;
         }
       }
-      prevPosRef.current = { x: rect.left, y: rect.top };
+      prevPosRef.current = { left: rect.left, top: rect.top };
     }
   });
 

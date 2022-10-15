@@ -491,8 +491,8 @@ export const MessageComposeArea = () => {
         {showOptions && width && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + width + 2,
-              y: pos.y
+              left: pos.left + width + 2,
+              top: pos.top
             }}
             zIndex={zIndex}
             title="MCA"

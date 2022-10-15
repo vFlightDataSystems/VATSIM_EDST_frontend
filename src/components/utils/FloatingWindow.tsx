@@ -60,8 +60,8 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
         {props.showOptions && width && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + width,
-              y: pos.y
+              left: pos.left + width,
+              top: pos.top
             }}
             zIndex={zIndex}
             title={props.optionsHeaderTitle}

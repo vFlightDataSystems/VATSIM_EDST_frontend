@@ -52,12 +52,12 @@ type AppState = {
 };
 
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
-  [EdstWindow.STATUS]: { x: 400, y: 100 },
-  [EdstWindow.OUTAGE]: { x: 400, y: 100 },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: { x: 100, y: 400 },
-  [EdstWindow.GPD]: { x: 0, y: 38 },
-  [EdstWindow.ACL]: { x: 0, y: 38 },
-  [EdstWindow.DEP]: { x: 0, y: 38 }
+  [EdstWindow.STATUS]: { left: 400, top: 100 },
+  [EdstWindow.OUTAGE]: { left: 400, top: 100 },
+  [EdstWindow.MESSAGE_COMPOSE_AREA]: { left: 100, top: 400 },
+  [EdstWindow.GPD]: { left: 0, top: 38 },
+  [EdstWindow.ACL]: { left: 0, top: 38 },
+  [EdstWindow.DEP]: { left: 0, top: 38 }
 };
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
@@ -66,7 +66,7 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
     {
       open: false,
       isFullscreen: FULLSCREEN_WINDOWS.includes(value),
-      position: defaultWindowPositions[value] ?? { x: 100, y: 100 },
+      position: defaultWindowPositions[value] ?? { left: 100, top: 100 },
       dimension: { width: "auto", height: "auto" }
     } as AppWindow
   ])

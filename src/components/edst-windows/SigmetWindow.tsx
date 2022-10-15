@@ -50,8 +50,8 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
       {selected && rect && (
         <FloatingWindowOptionContainer
           pos={{
-            x: rect.left + rect.width,
-            y: rect.top
+            left: rect.left + rect.width,
+            top: rect.top
           }}
           zIndex={zIndex}
           options={{

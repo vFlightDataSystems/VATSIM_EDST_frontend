@@ -39,8 +39,8 @@ export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: 
   border: none;
   ${props =>
     props.pos && {
-      left: `${props.pos.x}px`,
-      top: `${props.pos.y}px`
+      left: `${props.pos.left}px`,
+      top: `${props.pos.top}px`
     }}
 `;
 

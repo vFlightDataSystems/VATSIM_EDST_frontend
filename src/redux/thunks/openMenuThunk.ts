@@ -18,43 +18,43 @@ export function openMenuThunk(
       switch (window) {
         case EdstWindow.ALTITUDE_MENU:
           menuPos = {
-            x: x + (plan ? 0 : width),
-            y: plan ? element.offsetTop : y - 76
+            left: x + (plan ? 0 : width),
+            top: plan ? element.offsetTop : y - 76
           };
           break;
         case EdstWindow.ROUTE_MENU:
           menuPos = !centerMenu
             ? {
-                x: x - (plan ? 0 : 569),
-                y: plan ? element.offsetTop : y - 3 * height
+                left: x - (plan ? 0 : 569),
+                top: plan ? element.offsetTop : y - 3 * height
               }
             : {
-                x: x - 1,
-                y: 200
+                left: x - 1,
+                top: 200
               };
           break;
         case EdstWindow.PREV_ROUTE_MENU:
           menuPos = {
-            x,
-            y: plan ? element.offsetTop : y - 2 * height
+            left: x,
+            top: plan ? element.offsetTop : y - 2 * height
           };
           break;
         case EdstWindow.SPEED_MENU:
           menuPos = {
-            x: x + width,
-            y: 200
+            left: x + width,
+            top: 200
           };
           break;
         case EdstWindow.HEADING_MENU:
           menuPos = {
-            x: x + width,
-            y: 200
+            left: x + width,
+            top: 200
           };
           break;
         default:
           menuPos = {
-            x,
-            y: y + element.offsetHeight
+            left: x,
+            top: y + element.offsetHeight
           };
       }
       dispatch(setWindowPosition({ window, pos: menuPos }));

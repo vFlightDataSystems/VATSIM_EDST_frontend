@@ -1,4 +1,4 @@
 export type WindowPosition = {
-  x: number;
-  y: number;
+  left: number;
+  top: number;
 };

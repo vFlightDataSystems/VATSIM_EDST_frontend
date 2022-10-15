@@ -5,6 +5,7 @@ import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/shar
 import { useSharedUiListenerWithElement } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px } from "../../styles/styles";
+import { AllOrNone } from "../../typeDefinitions/utility-types";
 
 type EdstOuterButtonProps = Partial<{ width: string; height: string; margin: string; disabled: boolean }>;
 const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
@@ -101,7 +102,7 @@ export const EdstRouteButton12x12 = (props: Omit<EdstButtonFixedSizeProps, "padd
 );
 export const EdstTemplateButton10ch = (props: EdstButtonFixedSizeProps) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
-type EdstWindowHeaderButtonProps<T> = EdstButtonProps & Partial<SharedUiEventProps<T>>;
+type EdstWindowHeaderButtonProps<T> = EdstButtonProps & AllOrNone<SharedUiEventProps<T>>;
 export function EdstWindowHeaderButton<T>({
   onMouseDown,
   id,

@@ -8,8 +8,8 @@ export function openWindowThunk(window: EdstWindow, element?: HTMLElement | null
     if (element) {
       const { x, y } = element.getBoundingClientRect();
       const windowPos = {
-        x,
-        y: y + element.offsetHeight
+        left: x,
+        top: y + element.offsetHeight
       };
       dispatch(setWindowPosition({ window, pos: windowPos }));
     }

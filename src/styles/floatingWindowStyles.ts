@@ -30,8 +30,8 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
   ${props =>
     !props.fullscreen &&
     props.pos && {
-      left: `${props.pos.x}px`,
-      top: `${props.pos.y}px`
+      left: `${props.pos.left}px`,
+      top: `${props.pos.top}px`
     }}
 `;
 

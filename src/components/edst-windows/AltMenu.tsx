@@ -21,8 +21,8 @@ import { borderHover } from "../../styles/styles";
 type AltMenuDivProps = { width?: string; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
   width: props.width ?? "100px",
-  left: `${props.pos.x}px`,
-  top: `${props.pos.y}px`
+  left: `${props.pos.left}px`,
+  top: `${props.pos.top}px`
 }))<AltMenuDivProps>`
   z-index: 11000;
   background-color: #888888;

@@ -83,8 +83,8 @@ export const MessageResponseArea = () => {
         {showOptions && width && (
           <FloatingWindowOptionContainer
             pos={{
-              x: pos.x + width + 6,
-              y: pos.y
+              left: pos.left + width + 6,
+              top: pos.top
             }}
             zIndex={zIndex}
             title="RA"

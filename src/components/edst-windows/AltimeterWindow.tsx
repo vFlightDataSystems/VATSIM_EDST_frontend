@@ -60,8 +60,8 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
         <FloatingWindowOptionContainer
           zIndex={zIndex}
           pos={{
-            x: rect.left + rect.width,
-            y: rect.top
+            left: rect.left + rect.width,
+            top: rect.top
           }}
           options={{
             delete: {
