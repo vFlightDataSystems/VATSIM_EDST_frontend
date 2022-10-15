@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import styled from "styled-components";
@@ -59,7 +59,7 @@ export const GpdBody = () => {
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
   const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
 
-  const entryList = Object.values(entries)?.filter(entry => entry.status === "Active");
+  const entryList = useMemo(() => Object.values(entries).filter(entry => entry.status === "Active"), [entries]);
 
   return (
     <GpdBodyDiv>
