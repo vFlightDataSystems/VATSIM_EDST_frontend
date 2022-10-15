@@ -278,7 +278,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
           <DepCol2 />
           <InnerRow2 highlight={entry.highlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
             <FreeTextRow marginLeft={202}>
-              <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value.toUpperCase())} />
+              <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value)} />
             </FreeTextRow>
           </InnerRow2>
         </BodyRowDiv>
