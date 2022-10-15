@@ -417,8 +417,6 @@ export const MessageComposeArea = () => {
     }
   };
 
-  // TODO: create state to toggle between "insert mode" and normal mode
-
   useEventListener("keydown", handleKeyDown);
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
