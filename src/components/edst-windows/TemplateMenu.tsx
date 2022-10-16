@@ -178,6 +178,7 @@ export const TemplateMenu = () => {
             </TemplateCol>
             <TemplateCol width="8ch">
               <EdstButton
+                margin="0 2px"
                 content="EQP..."
                 onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
                 title={Tooltips.templateMenuEqpButton}
