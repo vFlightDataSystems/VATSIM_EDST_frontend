@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useRef } from "react";
 
-import { EdstButton } from "../utils/EdstButton";
+import { EdstButton, ExitButton } from "../utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { closeWindow, zStackSelector, pushZStack, windowSelector } from "../../redux/slices/appSlice";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
@@ -54,7 +54,7 @@ export const SortMenu = ({ edstWindow, onSubmit, children }: SortMenuProps) => {
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(edstWindow))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow(edstWindow))} />
             </OptionsBodyCol>
           </OptionsBottomRow>
         </SortBody>

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import _ from "lodash";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { useEventListener } from "usehooks-ts";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
@@ -37,7 +37,7 @@ const AltMenuHeaderDiv = styled.div`
   display: flex;
   height: 20px;
 `;
-type AltMenuHeaderColProps = { flexGrow?: number; width?: string };
+type AltMenuHeaderColProps = Partial<Pick<CSSProperties, "flexGrow" | "width">>;
 const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
   width: props.width ?? "auto",
   flexGrow: props.flexGrow ?? 0
@@ -62,7 +62,7 @@ const AltMenuSelectContainer = styled.div`
 
 type AltMenuRowProps = {
   bgBlack?: boolean;
-  color?: string;
+  color?: CSSProperties["color"];
   hover?: boolean;
   selected?: boolean;
   disabled?: boolean;
@@ -102,7 +102,7 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
   }
 `;
 type AltMenuRowColProps = {
-  width?: string;
+  width?: CSSProperties["width"];
   disabled?: boolean;
 };
 const AltMenuRowCol = styled(AltMenuRow).attrs((props: AltMenuRowColProps) => ({

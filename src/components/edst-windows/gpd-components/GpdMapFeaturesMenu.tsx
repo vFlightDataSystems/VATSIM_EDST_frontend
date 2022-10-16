@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import _ from "lodash";
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
 import { EdstTooltip } from "../../utils/EdstTooltip";
-import { EdstButton } from "../../utils/EdstButton";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "../../../redux/slices/gpdSlice";
@@ -42,7 +42,7 @@ export const GpdMapFeaturesMenu = () => {
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU))} />
+          <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

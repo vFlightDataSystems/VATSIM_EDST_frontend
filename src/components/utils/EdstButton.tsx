@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { EdstTooltip } from "./EdstTooltip";
 import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
 import { useSharedUiListenerWithElement } from "../../hooks/useSharedUiListener";
@@ -7,7 +7,8 @@ import socket from "../../sharedState/socket";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px } from "../../styles/styles";
 import { AllOrNone } from "../../typeDefinitions/utility-types";
 
-type EdstOuterButtonProps = Partial<{ width: string; height: string; margin: string; disabled: boolean }>;
+type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
+type EdstOuterButtonProps = Partial<{ disabled: boolean } & EdstOuterButtonCSSProps>;
 const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
   width: props.width ?? "auto",
   height: props.height ?? "auto",
@@ -32,7 +33,8 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
   margin-bottom: 1px;
 `;
 
-type EdstInnerButtonProps = Partial<{ selected: boolean; flexGrow: number; width: string; height: string; padding: string; disabled: boolean }>;
+type EdstInnerButtonCSSProps = Pick<CSSProperties, "width" | "height" | "padding" | "flexGrow">;
+type EdstInnerButtonProps = Partial<{ selected: boolean; disabled: boolean } & EdstInnerButtonCSSProps>;
 const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
   width: props.width ?? "auto",
   height: props.height ?? "auto",
@@ -62,18 +64,17 @@ type SharedUiEventProps<T> = {
   sharedUiEventHandlerArgs: T;
 };
 
-type EdstButtonProps = Partial<{
-  disabled: boolean;
-  selected: boolean;
-  width: string;
-  height: string;
-  margin: string;
-  padding: string;
-  id: string;
-  title: string;
-  content: string;
-  onMouseDown: React.MouseEventHandler<HTMLDivElement>;
-}>;
+type EdstButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin" | "padding">;
+type EdstButtonProps = Partial<
+  {
+    disabled: boolean;
+    selected: boolean;
+    id: string;
+    title: string;
+    content: string;
+    onMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  } & EdstButtonCSSProps
+>;
 
 export const EdstButton = (props: EdstButtonProps) => {
   return (
@@ -100,6 +101,9 @@ export const EdstButton20x20 = (props: EdstButtonFixedSizeProps) => <EdstButton 
 export const EdstRouteButton12x12 = (props: Omit<EdstButtonFixedSizeProps, "padding" | "margin">) => (
   <EdstButton12x12 padding="0 4px" margin="auto 5px 0 auto" {...props} />
 );
+type ExitButtonProps = { onMouseDown: React.MouseEventHandler<HTMLDivElement>; title?: string };
+export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit" {...props} />;
+
 export const EdstTemplateButton10ch = (props: EdstButtonFixedSizeProps) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
 type EdstWindowHeaderButtonProps<T> = EdstButtonProps & AllOrNone<SharedUiEventProps<T>>;

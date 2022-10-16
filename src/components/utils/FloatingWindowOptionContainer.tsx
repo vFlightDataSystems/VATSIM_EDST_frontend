@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener, useWindowSize } from "usehooks-ts";
 import {
@@ -18,7 +18,7 @@ const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: bool
   height: auto;
 `;
 
-type FloatingWindowOptionDivProps = { backgroundColor: string };
+type FloatingWindowOptionDivProps = Pick<CSSProperties, "backgroundColor">;
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOptionDivProps>`
   height: 1em;
   background-color: ${props => props.backgroundColor};
@@ -61,7 +61,7 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
 
 type FloatingWindowOption = {
   value: string;
-  backgroundColor?: string;
+  backgroundColor?: CSSProperties["backgroundColor"];
   onMouseDown?: MouseEventHandler<HTMLDivElement>;
 };
 

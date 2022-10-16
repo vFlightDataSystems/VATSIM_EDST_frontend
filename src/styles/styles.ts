@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, CSSProperties } from "styled-components";
 
 export const borderHover = css`
   &:hover {
@@ -12,7 +12,11 @@ export const outlineHover = css`
   }
 `;
 
-export const createBorder = (width: string, topLeftColor: string, bottomRightColor: string) => css`
+export const createBorder = (
+  width: CSSProperties["width"],
+  topLeftColor: CSSProperties["borderColor"],
+  bottomRightColor: CSSProperties["borderColor"]
+) => css`
   border-bottom: ${width} solid ${bottomRightColor};
   border-right: ${width} solid ${bottomRightColor};
   border-top: ${width} solid ${topLeftColor};
@@ -59,12 +63,12 @@ export const InnerRow = styled.div<{ highlight?: boolean }>`
       "background-color": props.theme.colors.stripHighlightColor
     }}
 `;
-export const InnerRow2 = styled(InnerRow)<{ minWidth: number }>`
+export const InnerRow2 = styled(InnerRow)<Pick<CSSProperties, "minWidth">>`
   min-height: 1em;
-  min-width: ${props => props.minWidth}px;
+  min-width: ${props => props.minWidth};
 `;
-export const FreeTextRow = styled(BodyRowDiv)<{ marginLeft: number }>`
-  margin-left: ${props => props.marginLeft}px;
+export const FreeTextRow = styled(BodyRowDiv)<Pick<CSSProperties, "marginLeft">>`
+  margin-left: ${props => props.marginLeft};
   padding: 0;
   width: 100%;
   display: flex;

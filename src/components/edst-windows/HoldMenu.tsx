@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch } from "../utils/EdstButton";
+import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch, ExitButton } from "../utils/EdstButton";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
@@ -357,7 +357,7 @@ export const HoldMenu = () => {
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.HOLD_MENU))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.HOLD_MENU))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </OptionsBody>

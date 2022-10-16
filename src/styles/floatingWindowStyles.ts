@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, CSSProperties } from "styled-components";
 import { DraggableDiv, NoSelectDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { WindowDimension } from "../typeDefinitions/types/windowDimension";
@@ -6,20 +6,18 @@ import { borderHover } from "./styles";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
+type FloatingWindowDivCSSProps = Partial<Pick<CSSProperties, "minWidth" | "width" | "maxWidth">>;
 type FloatingWindowDivProps = {
   pos?: WindowPosition | null;
   zIndex: number;
   fullscreen?: boolean;
-  minWidth?: string;
-  width?: string;
-  maxWidth?: string;
-};
+} & FloatingWindowDivCSSProps;
 export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
   ${props =>
     css`
       ${props.minWidth && { "min-width": props.minWidth }};
       ${props.width && { width: props.width }};
-      ${props.maxWidth && { width: props.maxWidth }};
+      ${props.maxWidth && { "max-width": props.maxWidth }};
     `};
   font-family: ${props => props.theme.fontProperties.eramFontFamily};
   font-size: ${props => props.theme.fontProperties.fontSize};
@@ -56,7 +54,7 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFlo
   height: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};
 `;
 
-type FloatingWindowBodyContainerProps = { width: string; fontSize: number };
+type FloatingWindowBodyContainerProps = Pick<CSSProperties, "width"> & { fontSize: number };
 export const FloatingWindowBodyContainer = styled.div<FloatingWindowBodyContainerProps>`
   font-size: ${props => props.theme.fontProperties.floatingFontSizes[props.fontSize - 1]};
   width: ${props => props.width};

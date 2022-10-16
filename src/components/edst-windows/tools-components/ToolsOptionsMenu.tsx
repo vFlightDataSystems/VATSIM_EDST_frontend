@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { EdstButton } from "../../utils/EdstButton";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { closeWindow } from "../../../redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -69,7 +69,7 @@ export const ToolsOptionsMenu = () => {
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
+          <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton } from "../../utils/EdstButton";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -150,7 +150,7 @@ export const HeadingMenu = () => {
             </Row>
             <OptionsBodyRow margin="0">
               <OptionsBodyCol alignRight>
-                <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.HEADING_MENU))} />
+                <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.HEADING_MENU))} />
               </OptionsBodyCol>
             </OptionsBodyRow>
           </ScrollContainer>

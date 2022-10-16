@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { useRootSelector } from "../../redux/hooks";
 import { tooltipsEnabledSelector } from "../../redux/slices/appSlice";
 
@@ -33,7 +33,7 @@ type EdstTooltipProps = PropsWithChildren<{
   onMouseDown?: React.EventHandler<React.MouseEvent>;
   onContextMenu?: React.EventHandler<React.MouseEvent>;
   disabled?: boolean;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }>;
 
 export const EdstTooltip = ({ title, content, style, ...props }: EdstTooltipProps) => {

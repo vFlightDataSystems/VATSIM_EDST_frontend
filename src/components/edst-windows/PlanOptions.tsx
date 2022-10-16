@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import styled from "styled-components";
-import { EdstButton } from "../utils/EdstButton";
+import { ExitButton } from "../utils/EdstButton";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { Tooltips } from "../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
@@ -140,7 +140,7 @@ export const PlanOptions = () => {
           </OptionsBodyRow>
           <OptionsBodyRow margin="0">
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.PLAN_OPTIONS))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.PLAN_OPTIONS))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </PlanOptionsBody>

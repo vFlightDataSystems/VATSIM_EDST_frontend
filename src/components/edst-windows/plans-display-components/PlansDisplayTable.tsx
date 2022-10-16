@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { useInterval } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { planQueueSelector, selectedPlanIndexSelector, setSelectedPlanIndex } from "../../../redux/slices/planSlice";
@@ -16,7 +16,8 @@ const PlansDisplayBody = styled(NoSelectDiv)`
   color: ${props => props.theme.colors.grey};
 `;
 
-type ColProps = Partial<{ hover: boolean; disabled: boolean; color: string; width: number; selected: boolean }>;
+type ColCSSProps = Pick<CSSProperties, "color">;
+type ColProps = Partial<{ hover: boolean; disabled: boolean; selected: boolean } & ColCSSProps>;
 const Col = styled.div<ColProps>`
   display: flex;
   flex-shrink: 0;
@@ -29,7 +30,6 @@ const Col = styled.div<ColProps>`
     pointer-events: none;
     color: #000000;
   }
-  width: ${props => (props.width ? `${props.width}px` : "auto")};
   ${props => props.color && { color: props.color }};
   ${props =>
     props.selected && {

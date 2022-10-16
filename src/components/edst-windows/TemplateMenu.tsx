@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { EdstButton } from "../utils/EdstButton";
+import { EdstButton, ExitButton } from "../utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
@@ -278,7 +278,7 @@ export const TemplateMenu = () => {
               <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
             </TemplateCol>
             <TemplateCol bottomRow alignRight>
-              <EdstButton content="Exit" title={Tooltips.templateMenuExit} onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
+              <ExitButton title={Tooltips.templateMenuExit} onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
             </TemplateCol>
           </TemplateRowDiv>
         </TemplateBodyDiv>

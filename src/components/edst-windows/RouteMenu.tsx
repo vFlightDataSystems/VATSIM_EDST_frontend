@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
-import { EdstButton, EdstRouteButton12x12 } from "../utils/EdstButton";
+import { EdstButton, EdstRouteButton12x12, ExitButton } from "../utils/EdstButton";
 import { Tooltips } from "../../tooltips";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
@@ -423,7 +423,7 @@ export const RouteMenu = () => {
               <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.ROUTE_MENU))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.ROUTE_MENU))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </RouteMenuBody>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, EdstButton20x20 } from "../../utils/EdstButton";
+import { EdstButton, EdstButton20x20, ExitButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -154,7 +154,7 @@ export const SpeedMenu = () => {
             })}
             <OptionsBodyRow margin="0">
               <OptionsBodyCol alignRight>
-                <EdstButton content="Exit" onMouseDown={() => dispatch(closeWindow(EdstWindow.SPEED_MENU))} />
+                <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.SPEED_MENU))} />
               </OptionsBodyCol>
             </OptionsBodyRow>
           </ScrollContainer>

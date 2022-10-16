@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { Time } from "./utils/Time";
 import { Tooltips } from "../tooltips";
 import { EdstTooltip } from "./utils/EdstTooltip";
@@ -55,14 +55,12 @@ const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   }
 `;
 
-type ColButtonProps = Partial<{
-  width: string;
-  color: string;
-  open: boolean;
-  fontWeight: string;
-  backgroundColor: string;
-  borderColor: string;
-}>;
+type ColButtonCSSProps = Pick<CSSProperties, "width" | "color" | "fontWeight" | "backgroundColor" | "borderColor">;
+type ColButtonProps = Partial<
+  {
+    open: boolean;
+  } & ColButtonCSSProps
+>;
 
 const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   width: props.width ?? "8ch",
@@ -91,17 +89,16 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   }
 `;
 
-type EdstHeaderButtonProps = Partial<{
-  title: string;
-  width: string;
-  open: boolean;
-  backgroundColor: string;
-  borderColor: string;
-  color: string;
-  disabled: boolean;
-  content: string;
-  onMouseDown: () => void;
-}>;
+type EdstHeaderButtonCSSProps = Pick<CSSProperties, "width" | "color" | "backgroundColor" | "borderColor">;
+type EdstHeaderButtonProps = Partial<
+  {
+    title: string;
+    open: boolean;
+    disabled: boolean;
+    content: string;
+    onMouseDown: () => void;
+  } & EdstHeaderButtonCSSProps
+>;
 
 const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) => (
   <EdstTooltip title={title}>
