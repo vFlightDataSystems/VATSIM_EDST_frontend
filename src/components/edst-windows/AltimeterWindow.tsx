@@ -58,11 +58,9 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
       </FloatingWindowRow>
       {selected && rect && (
         <FloatingWindowOptionContainer
+          parentWidth={rect.width}
           zIndex={zIndex}
-          pos={{
-            left: rect.left + rect.width,
-            top: rect.top
-          }}
+          parentPos={rect}
           options={{
             delete: {
               value: `DELETE ${airport}`,

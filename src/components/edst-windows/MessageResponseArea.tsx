@@ -82,10 +82,8 @@ export const MessageResponseArea = () => {
         </MessageResponseAreaDiv>
         {showOptions && width && (
           <FloatingWindowOptionContainer
-            pos={{
-              left: pos.left + width + 6,
-              top: pos.top
-            }}
+            parentWidth={width + 6}
+            parentPos={pos}
             zIndex={zIndex}
             title="RA"
             onClose={() => setShowOptions(false)}

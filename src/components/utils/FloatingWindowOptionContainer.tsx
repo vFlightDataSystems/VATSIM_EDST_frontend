@@ -1,7 +1,7 @@
-import React, { MouseEventHandler, useEffect, useRef } from "react";
+import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
-import { useEventListener } from "usehooks-ts";
+import { useEventListener, useWindowSize } from "usehooks-ts";
 import {
   FloatingWindowDiv,
   FloatingWindowHeaderColDiv16ch,
@@ -68,17 +68,34 @@ type FloatingWindowOption = {
 export type FloatingWindowOptions = Record<string, FloatingWindowOption>;
 
 type FloatingWindowOptionsProps<T extends FloatingWindowOptions> = {
-  pos: WindowPosition;
+  parentPos: WindowPosition;
+  parentWidth: number;
   zIndex: number;
   onClose?: () => void;
   title?: string;
   options?: T;
 };
 
-export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({ pos, ...props }: FloatingWindowOptionsProps<T>) {
+export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({ parentPos, ...props }: FloatingWindowOptionsProps<T>) {
+  const [pos, setPos] = useState<WindowPosition>({
+    left: parentPos.left + props.parentWidth,
+    top: parentPos.top
+  });
   const ref = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
+  const windowSize = useWindowSize();
+
+  useEffect(() => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      if (parentPos.left + props.parentWidth + rect.width > windowSize.width) {
+        setPos({ left: parentPos.left - rect.width, top: parentPos.top });
+      } else {
+        setPos({ left: parentPos.left + props.parentWidth, top: parentPos.top });
+      }
+    }
+  }, [windowSize, parentPos, props.parentWidth]);
 
   useEffect(() => {
     // eslint-disable-next-line no-underscore-dangle

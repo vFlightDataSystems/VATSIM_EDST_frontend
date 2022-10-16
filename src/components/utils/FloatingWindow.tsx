@@ -59,10 +59,8 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
         </FloatingWindowBodyContainer>
         {props.showOptions && width && (
           <FloatingWindowOptionContainer
-            pos={{
-              left: pos.left + width,
-              top: pos.top
-            }}
+            parentWidth={width}
+            parentPos={pos}
             zIndex={zIndex}
             title={props.optionsHeaderTitle}
             onClose={() => props.setShowOptions(false)}

@@ -51,6 +51,12 @@ export function openMenuThunk(
             top: 200
           };
           break;
+        case EdstWindow.TEMPLATE_MENU:
+          menuPos = {
+            left: 200,
+            top: 200
+          };
+          break;
         default:
           menuPos = {
             left: x,

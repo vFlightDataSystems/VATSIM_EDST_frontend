@@ -38,10 +38,8 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
       </FloatingWindowRow>
       {selected && rect && (
         <FloatingWindowOptionContainer
-          pos={{
-            left: rect.left + rect.width,
-            top: rect.top
-          }}
+          parentWidth={rect.width}
+          parentPos={rect}
           zIndex={zIndex}
           options={{
             delete: {
