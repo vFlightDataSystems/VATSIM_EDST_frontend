@@ -60,7 +60,7 @@ export const InnerRow = styled.div<{ highlight?: boolean }>`
     }}
 `;
 export const InnerRow2 = styled(InnerRow)<{ minWidth: number }>`
-  min-height: 22px;
+  min-height: 1em;
   min-width: ${props => props.minWidth}px;
 `;
 export const FreeTextRow = styled(BodyRowDiv)<{ marginLeft: number }>`
