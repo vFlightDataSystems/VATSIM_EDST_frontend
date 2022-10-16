@@ -8,6 +8,7 @@ import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTem
 import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./EqpStyled";
 import { borderHover } from "../../../styles/styles";
+import { Nullable } from "../../../typeDefinitions/utility-types";
 
 const ContentCol = styled.div`
   justify-content: left;
@@ -62,10 +63,10 @@ enum AdsbV {
 
 export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const [transponderCategory, setTransponderCategory] = useState<TransponderCat | null>(null);
-  const [adsbBType, setAdsbBType] = useState<AdsbB | null>(null);
-  const [adsbUType, setAdsbUType] = useState<AdsbU | null>(null);
-  const [adsbVType, setAdsbVType] = useState<AdsbV | null>(null);
+  const [transponderCategory, setTransponderCategory] = useState<Nullable<TransponderCat>>(null);
+  const [adsbBType, setAdsbBType] = useState<Nullable<AdsbB>>(null);
+  const [adsbUType, setAdsbUType] = useState<Nullable<AdsbU>>(null);
+  const [adsbVType, setAdsbVType] = useState<Nullable<AdsbV>>(null);
 
   useEffect(() => {
     const field10b = entry?.equipment

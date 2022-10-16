@@ -1,5 +1,6 @@
 import { AircraftId } from "../aircraftId";
 import { ApiLocation } from "./apiLocation";
+import { Nullable } from "../../utility-types";
 
 export type ApiAircraft = {
   id: AircraftId;
@@ -11,5 +12,5 @@ export type ApiAircraft = {
   altitudePressure: number;
   groundSpeed: number;
   heading: number;
-  reportedBeaconCode: number | null;
+  reportedBeaconCode: Nullable<number>;
 };

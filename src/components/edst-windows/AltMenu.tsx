@@ -17,6 +17,7 @@ import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "../../utils/co
 import { Plan } from "../../typeDefinitions/types/plan";
 import { colors } from "../../edstTheme";
 import { borderHover } from "../../styles/styles";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 type AltMenuDivProps = { width?: CSSProperties["width"]; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
@@ -172,9 +173,9 @@ export const AltMenu = () => {
   const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTITUDE_MENU));
   const dispatch = useRootDispatch();
   const [selected, setSelected] = useState(asel.window !== EdstWindow.DEP ? "trial" : "amend");
-  const [tempAltHover, setTempAltHover] = useState<number | null>(null);
+  const [tempAltHover, setTempAltHover] = useState<Nullable<number>>(null);
   const [deltaY, setDeltaY] = useState(0);
-  const [manualInput, setManualInput] = useState<string | null>(null);
+  const [manualInput, setManualInput] = useState<Nullable<string>>(null);
   const [showInvalid, setShowInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { amendFlightplan } = useHubActions();
@@ -224,7 +225,7 @@ export const AltMenu = () => {
   return (
     pos &&
     asel && (
-      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "110px"} pos={pos} id="alt-menu">
+      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "12ch"} pos={pos} id="alt-menu">
         <AltMenuHeaderDiv>
           <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
           <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>

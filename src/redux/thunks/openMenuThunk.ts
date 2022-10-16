@@ -3,10 +3,11 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import sharedSocket from "../../sharedState/socket";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 export function openMenuThunk(
   window: EdstWindow,
-  element: HTMLElement | null,
+  element: Nullable<HTMLElement>,
   triggerSharedState = false,
   plan = false,
   centerMenu = false

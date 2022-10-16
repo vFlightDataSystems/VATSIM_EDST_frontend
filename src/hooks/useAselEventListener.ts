@@ -2,8 +2,9 @@ import { RefObject, useEffect } from "react";
 import sharedStateSocket from "../sharedState/socket";
 import { Asel } from "../typeDefinitions/types/asel";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
+import { Nullable } from "../typeDefinitions/utility-types";
 
-type Handler<F> = (element: HTMLElement, field: F, eventId: string | null, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
+type Handler<F> = (element: HTMLElement, field: F, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
 
 export function useAselEventListener<F>(
   ref: RefObject<HTMLElement>,
@@ -14,7 +15,7 @@ export function useAselEventListener<F>(
   handler: Handler<F>
 ) {
   useEffect(() => {
-    const eventHandler = (asel: Asel | null, evId: string | null) => {
+    const eventHandler = (asel: Nullable<Asel>, evId: Nullable<string>) => {
       if (ref.current && eventId === evId && asel?.aircraftId === aircraftId) {
         handler(ref.current, field, eventId, opensWindow, false);
       }

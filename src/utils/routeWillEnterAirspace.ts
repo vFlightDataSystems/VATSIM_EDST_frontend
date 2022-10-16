@@ -2,6 +2,7 @@ import { Feature, lineString, Polygon, Position } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import { RouteFix } from "../typeDefinitions/types/routeFix";
 import { getNextFix } from "./fixes";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
@@ -10,7 +11,7 @@ import { getNextFix } from "./fixes";
  * @param polygons - airspace defining boundaries
  * @param pos - lon/lat pair, current position
  */
-export function routeWillEnterAirspace(route: string, routeFixes: RouteFix[] | null, polygons: Feature<Polygon>[], pos: Position): boolean {
+export function routeWillEnterAirspace(route: string, routeFixes: Nullable<RouteFix[]>, polygons: Feature<Polygon>[], pos: Position): boolean {
   if (routeFixes === null || route.length === 0) {
     return false;
   }

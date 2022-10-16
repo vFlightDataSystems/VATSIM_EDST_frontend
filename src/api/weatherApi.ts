@@ -1,6 +1,7 @@
 /* React-specific entry point that automatically generates
    hooks corresponding to the defined endpoints */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 const baseUrl = import.meta.env.REACT_APP_BACKEND_BASEURL!;
 
@@ -14,7 +15,7 @@ export const weatherApi = createApi({
   reducerPath: "weatherApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/weather/` }),
   endpoints: builder => ({
-    getMetarEntry: builder.query<string | null, string>({
+    getMetarEntry: builder.query<Nullable<string>, string>({
       query: airport => {
         if (airport.length === 3) {
           airport = `K${airport}`;
@@ -39,7 +40,7 @@ export const weatherApi = createApi({
         return null;
       }
     }),
-    getAltimeterEntry: builder.query<AltimeterEntry | null, string>({
+    getAltimeterEntry: builder.query<Nullable<AltimeterEntry>, string>({
       query: airport => {
         if (airport.length === 3) {
           airport = `K${airport}`;

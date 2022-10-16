@@ -36,6 +36,7 @@ import socket from "../../sharedState/socket";
 import { removeStringFromStart, removeStringFromEnd } from "../../utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "../../utils/fixes";
 import { borderHover, buttonBorderInverted2px } from "../../styles/styles";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -105,7 +106,7 @@ export const RouteMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector);
   const zStack = useRootSelector(zStackSelector);
-  const [frd, setFrd] = useState<string | null>(null);
+  const [frd, setFrd] = useState<Nullable<string>>(null);
   const hubActions = useHubActions();
 
   const pdrs = usePdr(entry.aircraftId);

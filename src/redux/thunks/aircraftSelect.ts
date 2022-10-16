@@ -4,12 +4,13 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
 import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
 import { Asel } from "../../typeDefinitions/types/asel";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 function aircraftSelect(
   edstWindow: EdstWindow,
   aircraftId: string,
   field: AclRowField | DepRowField,
-  eventId: string | null,
+  eventId: Nullable<string>,
   triggerSharedState = true
 ): RootThunkAction {
   return (dispatch, getState) => {
@@ -23,19 +24,19 @@ function aircraftSelect(
   };
 }
 
-export function aclAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggerSharedState = true) {
+export function aclAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
   return aircraftSelect(EdstWindow.ACL, aircraftId, field, eventId, triggerSharedState);
 }
 
-export function depAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggerSharedState = true) {
+export function depAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
   return aircraftSelect(EdstWindow.DEP, aircraftId, field, eventId, triggerSharedState);
 }
 
-export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: string | null, triggerSharedState = true) {
+export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
   return aircraftSelect(EdstWindow.GPD, aircraftId, field, eventId, triggerSharedState);
 }
 
-export function sharedStateAircraftSelect(value: Asel | null): RootThunkAction {
+export function sharedStateAircraftSelect(value: Nullable<Asel>): RootThunkAction {
   return dispatch => {
     dispatch(setAsel(value, null, false));
   };

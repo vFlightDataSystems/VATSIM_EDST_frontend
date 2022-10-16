@@ -6,6 +6,7 @@ import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, win
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { DragPreviewStyle } from "../typeDefinitions/types/dragPreviewStyle";
 import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.STATUS,
@@ -45,8 +46,8 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
   const [dragging, setDragging] = useState(false);
   const windows = useRootSelector(windowsSelector);
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
-  const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
-  let ppos: WindowPosition | null = null;
+  const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
+  let ppos: Nullable<WindowPosition> = null;
   ppos = windows[edstWindow as EdstWindow].position;
 
   useEffect(() => {

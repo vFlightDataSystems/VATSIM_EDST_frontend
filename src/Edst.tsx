@@ -28,7 +28,7 @@ import { refreshWeatherThunk } from "./redux/thunks/weatherThunks";
 import { EquipmentTemplateMenu } from "./components/edst-windows/template-components/EquipmentTemplateMenu";
 import { SigmetWindow } from "./components/edst-windows/SigmetWindow";
 import { Gpd } from "./components/edst-windows/Gpd";
-import { EdstDiv, EdstBodyDiv } from "./styles/edstStyles";
+import { EdstBodyDiv, EdstDiv } from "./styles/edstStyles";
 import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
 import { fetchAllAircraft } from "./api/api";
 import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
@@ -59,6 +59,44 @@ const NotConnectedDiv = styled.div`
 `;
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
+
+const EdstComponentMap = {
+  [EdstWindow.ACL]: Acl,
+  [EdstWindow.DEP]: Dep,
+  [EdstWindow.GPD]: Gpd,
+  [EdstWindow.PLANS_DISPLAY]: PlansDisplay,
+  [EdstWindow.PLAN_OPTIONS]: PlanOptions,
+  [EdstWindow.ACL_SORT_MENU]: AclSortMenu,
+  [EdstWindow.DEP_SORT_MENU]: DepSortMenu,
+  [EdstWindow.TOOLS_MENU]: ToolsMenu,
+  [EdstWindow.GPD_MAP_OPTIONS_MENU]: GpdMapOptions,
+  [EdstWindow.ROUTE_MENU]: RouteMenu,
+  [EdstWindow.TEMPLATE_MENU]: TemplateMenu,
+  [EdstWindow.EQUIPMENT_TEMPLATE_MENU]: EquipmentTemplateMenu,
+  [EdstWindow.HOLD_MENU]: HoldMenu,
+  [EdstWindow.CANCEL_HOLD_MENU]: CancelHoldMenu,
+  [EdstWindow.SPEED_MENU]: SpeedMenu,
+  [EdstWindow.HEADING_MENU]: HeadingMenu,
+  [EdstWindow.ALTITUDE_MENU]: AltMenu,
+  [EdstWindow.STATUS]: Status,
+  [EdstWindow.OUTAGE]: Outage,
+  [EdstWindow.ALTIMETER]: AltimeterWindow,
+  [EdstWindow.METAR]: MetarWindow,
+  [EdstWindow.SIGMETS]: SigmetWindow,
+  [EdstWindow.GI]: GIWindow,
+  [EdstWindow.MESSAGE_COMPOSE_AREA]: MessageComposeArea,
+  [EdstWindow.MESSAGE_RESPONSE_AREA]: MessageResponseArea
+};
+
+const windowRequiresAsel: EdstWindow[] = [
+  EdstWindow.PLAN_OPTIONS,
+  EdstWindow.ROUTE_MENU,
+  EdstWindow.HOLD_MENU,
+  EdstWindow.CANCEL_HOLD_MENU,
+  EdstWindow.SPEED_MENU,
+  EdstWindow.HEADING_MENU,
+  EdstWindow.ALTITUDE_MENU
+];
 
 const Edst = () => {
   const dispatch = useRootDispatch();
@@ -111,31 +149,11 @@ const Edst = () => {
         <div id="toPrint" />
         <EdstBodyDiv>
           {showSectorSelector && <SectorSelector />}
-          {windows[EdstWindow.ACL].open && <Acl />}
-          {windows[EdstWindow.DEP].open && <Dep />}
-          {windows[EdstWindow.GPD].open && <Gpd />}
-          {windows[EdstWindow.PLANS_DISPLAY].open && <PlansDisplay />}
-          {windows[EdstWindow.PLAN_OPTIONS].open && aselEntry && <PlanOptions />}
-          {windows[EdstWindow.ACL_SORT_MENU].open && <AclSortMenu />}
-          {windows[EdstWindow.DEP_SORT_MENU].open && <DepSortMenu />}
-          {windows[EdstWindow.TOOLS_MENU].open && <ToolsMenu />}
-          {windows[EdstWindow.GPD_MAP_OPTIONS_MENU].open && <GpdMapOptions />}
-          {windows[EdstWindow.ROUTE_MENU].open && aselEntry && <RouteMenu />}
-          {windows[EdstWindow.TEMPLATE_MENU].open && <TemplateMenu />}
-          {windows[EdstWindow.EQUIPMENT_TEMPLATE_MENU].open && <EquipmentTemplateMenu />}
-          {windows[EdstWindow.HOLD_MENU].open && aselEntry && <HoldMenu />}
-          {windows[EdstWindow.CANCEL_HOLD_MENU].open && aselEntry && <CancelHoldMenu />}
-          {windows[EdstWindow.SPEED_MENU].open && aselEntry && <SpeedMenu />}
-          {windows[EdstWindow.HEADING_MENU].open && aselEntry && <HeadingMenu />}
-          {windows[EdstWindow.ALTITUDE_MENU].open && aselEntry && <AltMenu />}
-          {windows[EdstWindow.STATUS].open && <Status />}
-          {windows[EdstWindow.OUTAGE].open && <Outage />}
-          {windows[EdstWindow.ALTIMETER].open && <AltimeterWindow />}
-          {windows[EdstWindow.METAR].open && <MetarWindow />}
-          {windows[EdstWindow.SIGMETS].open && <SigmetWindow />}
-          {windows[EdstWindow.GI].open && <GIWindow />}
-          {windows[EdstWindow.MESSAGE_COMPOSE_AREA].open && <MessageComposeArea />}
-          {windows[EdstWindow.MESSAGE_RESPONSE_AREA].open && <MessageResponseArea />}
+          {Object.entries(EdstComponentMap).map(
+            ([edstWindow, Component]) =>
+              windows[edstWindow as EdstWindow].open &&
+              (windowRequiresAsel.includes(edstWindow as EdstWindow) ? aselEntry && <Component /> : <Component />)
+          )}
         </EdstBodyDiv>
       </EdstDiv>
     </ThemeProvider>

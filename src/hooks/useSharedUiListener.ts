@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import sharedStateSocket from "../sharedState/socket";
 import { SharedUiEvent } from "../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 export function useSharedUiListener<T = any>(
   eventId: SharedUiEvent,
@@ -30,7 +31,7 @@ export function useSharedUiListener<T = any>(
 
 export function useSharedUiListenerWithElement<T = any>(
   eventId?: SharedUiEvent,
-  element?: HTMLElement | null,
+  element?: Nullable<HTMLElement>,
   handler?: (element: HTMLElement, args: T) => void,
   args?: T
 ) {

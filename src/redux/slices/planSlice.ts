@@ -3,10 +3,11 @@ import _ from "lodash";
 import { RootState } from "../store";
 import { Plan } from "../../typeDefinitions/types/plan";
 import sharedSocket from "../../sharedState/socket";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 export type PlanState = {
   planQueue: Plan[];
-  selectedPlanIndex: number | null;
+  selectedPlanIndex: Nullable<number>;
 };
 
 const initialState: PlanState = {
@@ -37,7 +38,7 @@ const planSlice = createSlice({
       sharedSocket.setPlanState(initialState);
       return initialState;
     },
-    setSelectedPlanIndex(state, action: PayloadAction<number | null>) {
+    setSelectedPlanIndex(state, action: PayloadAction<Nullable<number>>) {
       if (action.payload === null || (action.payload >= 0 && action.payload < state.planQueue.length)) {
         state.selectedPlanIndex = action.payload;
       }

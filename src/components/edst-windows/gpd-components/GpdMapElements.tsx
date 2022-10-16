@@ -15,6 +15,7 @@ import { ApiLocation } from "../../../typeDefinitions/types/apiTypes/apiLocation
 import { locationToPosition } from "../../../utils/locationToPosition";
 import { getRemainingFixesFromPpos } from "../../../utils/fixes";
 import { colors } from "../../../edstTheme";
+import { Nullable } from "../../../typeDefinitions/utility-types";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): L.LatLngExpression {
   if (Array.isArray(pos)) {
@@ -67,7 +68,7 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
   const posLatLng = track?.location ? posToLatLng({ ...track.location }) : null;
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
-  const ref = useRef<L.Marker | null>(null);
+  const ref = useRef<Nullable<L.Marker>>(null);
   const routeFixes = useRouteFixes(aircraftId);
   const [datablockOffset, setDatablockOffset] = useState({ x: 24, y: -30 });
 

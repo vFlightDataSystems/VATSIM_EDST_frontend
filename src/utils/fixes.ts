@@ -4,6 +4,7 @@ import { RouteFixWithDistance } from "../typeDefinitions/types/routeFixWithDista
 import { RouteFix } from "../typeDefinitions/types/routeFix";
 import { EdstEntry } from "../typeDefinitions/types/edstEntry";
 import { removeStringFromEnd } from "./stringManipulation";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
@@ -121,8 +122,8 @@ export function getClearedToFixRouteFixes(
   entry: EdstEntry,
   routeFixes: RouteFix[],
   formattedRoute: string,
-  frd: string | null
-): { route: string; routeFixes: RouteFix[] } | null {
+  frd: Nullable<string>
+): Nullable<{ route: string; routeFixes: RouteFix[] }> {
   let newRoute = formattedRoute.slice(0);
   const { destination } = entry;
   if (newRoute && routeFixes) {

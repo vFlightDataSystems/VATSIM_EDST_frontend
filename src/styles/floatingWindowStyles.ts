@@ -3,12 +3,13 @@ import { DraggableDiv, NoSelectDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { WindowDimension } from "../typeDefinitions/types/windowDimension";
 import { borderHover } from "./styles";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
 type FloatingWindowDivCSSProps = Partial<Pick<CSSProperties, "minWidth" | "width" | "maxWidth">>;
 type FloatingWindowDivProps = {
-  pos?: WindowPosition | null;
+  pos: Nullable<WindowPosition>;
   zIndex: number;
   fullscreen?: boolean;
 } & FloatingWindowDivCSSProps;

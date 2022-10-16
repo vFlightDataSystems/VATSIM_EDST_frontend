@@ -1,11 +1,12 @@
 import { AircraftId } from "../aircraftId";
 import { HoldAnnotations } from "../../enums/hold/holdAnnotations";
+import { Nullable } from "../../utility-types";
 
 export type ApiFlightplan = {
   aircraftId: AircraftId;
   cid: string;
   status: "Proposed" | "Active" | "Tentative";
-  assignedBeaconCode: number | null;
+  assignedBeaconCode: Nullable<number>;
   equipment: string;
   aircraftType: string;
   icaoEquipmentCodes: string;
@@ -24,5 +25,5 @@ export type ApiFlightplan = {
   minutesEnroute: number;
   pilotCid: string;
   remarks: string;
-  holdAnnotations: HoldAnnotations | null;
+  holdAnnotations: Nullable<HoldAnnotations>;
 };

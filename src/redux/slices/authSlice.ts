@@ -2,10 +2,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { login as apiLogin } from "../../api/vNasDataApi";
 import { RootState } from "../store";
 import { ApiSessionInfoDto } from "../../typeDefinitions/types/apiTypes/apiSessionInfoDto";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 type AuthState = {
-  vatsimToken: string | null;
-  session: ApiSessionInfoDto | null;
+  vatsimToken: Nullable<string>;
+  session: Nullable<ApiSessionInfoDto>;
   isRefreshingSession: boolean;
 };
 

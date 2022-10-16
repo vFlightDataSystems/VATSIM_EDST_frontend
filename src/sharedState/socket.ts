@@ -9,6 +9,7 @@ import { AclState } from "../redux/slices/aclSlice";
 import { DepState } from "../redux/slices/depSlice";
 import { PlanState } from "../redux/slices/planSlice";
 import { SharedGpdState } from "../redux/slices/gpdSlice";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 const SHARED_STATE_SERVER_URL = import.meta.env.REACT_APP_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = import.meta.env.REACT_APP_SHARED_STATE_AUTH_KEY;
@@ -89,7 +90,7 @@ class SharedStateSocket {
     }
   }
 
-  public setAircraftSelect(value: Asel | null, eventId: string | null) {
+  public setAircraftSelect(value: Nullable<Asel>, eventId: Nullable<string>) {
     if (this.socket?.connected) {
       this.socket.emit("setAircraftSelect", value, eventId);
     }

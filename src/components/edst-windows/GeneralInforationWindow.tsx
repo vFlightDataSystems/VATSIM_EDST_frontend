@@ -7,6 +7,7 @@ import { FloatingWindow } from "../utils/FloatingWindow";
 import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 type GIRowProps = {
   text: string;
@@ -52,7 +53,7 @@ const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
 export const GIWindow = () => {
   const dispatch = useRootDispatch();
   const giEntryMap = useRootSelector(giEntryMapSelector);
-  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<Nullable<string>>(null);
 
   const [showOptions, setShowOptions] = useState(false);
   const extraOptions = useMemo(

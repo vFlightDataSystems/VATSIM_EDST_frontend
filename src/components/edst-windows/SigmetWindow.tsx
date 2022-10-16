@@ -17,6 +17,7 @@ import { sectorIdSelector } from "../../redux/slices/sectorSlice";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 const SigmetRowDiv = styled(FloatingWindowRow)`
   margin-top: 6px;
@@ -70,7 +71,7 @@ export const SigmetWindow = () => {
   const sectorId = useRootSelector(sectorIdSelector);
   const viewSuppressed = useRootSelector(viewSuppressedSigmetSelector);
   const sigmetList = useRootSelector(sigmetSelector);
-  const [selectedEntry, setSelectedEntry] = useState<string | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<Nullable<string>>(null);
 
   const [showOptions, setShowOptions] = useState(false);
   const extraOptions = useMemo(

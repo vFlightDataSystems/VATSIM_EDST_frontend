@@ -3,6 +3,7 @@ import L from "leaflet";
 import _ from "lodash";
 import { RootState } from "../store";
 import sharedSocket from "../../sharedState/socket";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 export const GPD_MIN_ZOOM = 4;
 export const GPD_MAX_ZOOM = 9;
@@ -41,14 +42,14 @@ export type MapFeatureOptions = Partial<Record<MapFeatureOption, boolean>>;
 export type AircraftDisplayOptions = {
   aircraftListFilter: ["Aircraft List Filter", boolean];
   altitudeFilterLimits: ["Altitude Filter Limits", boolean];
-  filterAbove: ["Filter Above", number | null];
-  filterBelow: ["Filter Below", number | null];
+  filterAbove: ["Filter Above", Nullable<number>];
+  filterBelow: ["Filter Below", Nullable<number>];
   autoDatablockOffset: ["Auto Datablock Offset", boolean];
   mspLabels: ["MSP/MEP Labels", boolean];
   routePreviewMinutes: ["Route Preview (minutes)", number];
 };
 
-type GpdConfiguration = Record<string, unknown> | null;
+type GpdConfiguration = Nullable<Record<string, unknown>>;
 
 export type GpdState = {
   gpdConfiguration: GpdConfiguration;

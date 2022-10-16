@@ -1,4 +1,5 @@
 import { AclRouteDisplayOption } from "../enums/aclRouteDisplayOption";
+import { Nullable } from "../utility-types";
 
 export class LocalVEdstEntry {
   freeTextContent = "";
@@ -12,7 +13,7 @@ export class LocalVEdstEntry {
   highlighted = false;
 
   // what data to display in ACL route column
-  aclRouteDisplay: AclRouteDisplayOption | null = null;
+  aclRouteDisplay: Nullable<AclRouteDisplayOption> = null;
 
   remarksChecked = false;
 
@@ -22,13 +23,13 @@ export class LocalVEdstEntry {
   boundaryTime = 0;
 
   // if not null, number represents timestamp when pendingRemoval status was activated
-  pendingRemoval: number | null = null;
+  pendingRemoval: Nullable<number> = null;
 
   // speed assigned in the scratchpad
-  scratchpadHeading: string | null = null;
+  scratchpadHeading: Nullable<string> = null;
 
   // heading assigned in the scratchpad
-  scratchpadSpeed: string | null = null;
+  scratchpadSpeed: Nullable<string> = null;
 
   showFreeText = false;
 
@@ -40,11 +41,11 @@ export class LocalVEdstEntry {
 
   cpdlcCapable = false;
 
-  assignedSpeed: string | null = null;
+  assignedSpeed: Nullable<string> = null;
 
-  assignedHeading: string | null = null;
+  assignedHeading: Nullable<string> = null;
 
-  interimAltitude: number | null = null;
+  interimAltitude: Nullable<number> = null;
 
-  previousRoute: string | null = null;
+  previousRoute: Nullable<string> = null;
 }

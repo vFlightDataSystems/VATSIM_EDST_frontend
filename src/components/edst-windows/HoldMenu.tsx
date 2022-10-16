@@ -24,6 +24,7 @@ import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
 import { useRouteFixes } from "../../api/aircraftApi";
 import { computeCrossingTimes } from "../../utils/computeCrossingTimes";
 import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 420px;
@@ -97,14 +98,14 @@ export const HoldMenu = () => {
   const now = new Date();
   const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
 
-  const [fix, setFix] = useState<string | null>(null);
-  const [legLength, setLegLength] = useState<number | null>(null);
+  const [fix, setFix] = useState<Nullable<string>>(null);
+  const [legLength, setLegLength] = useState<Nullable<number>>(null);
   const [direction, setDirection] = useState<CompassDirection>(CompassDirection.NORTH);
   const [turns, setTurns] = useState<TurnDirection>(TurnDirection.RIGHT);
   const [efc, setEfc] = useState(utcMinutes);
   const [holdRouteFixes, setHoldRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-  const holdRef = useRef<HoldAnnotations | null>(null);
+  const holdAnnotationRef = useRef<Nullable<HoldAnnotations>>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU, "mouseup");
@@ -112,7 +113,7 @@ export const HoldMenu = () => {
   const routeFixes = useRouteFixes(entry.aircraftId);
 
   useEffect(() => {
-    if (!_.isEqual(entry.holdAnnotations, holdRef.current)) {
+    if (!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current)) {
       const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
       const now = new Date();
       const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -123,7 +124,7 @@ export const HoldMenu = () => {
       setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
       setHoldRouteFixes(holdRouteFixes ?? null);
     }
-    holdRef.current = entry.holdAnnotations;
+    holdAnnotationRef.current = entry.holdAnnotations;
   }, [dispatch, entry, routeFixes, track]);
 
   const clearedHold = () => {

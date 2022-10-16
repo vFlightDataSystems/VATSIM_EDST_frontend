@@ -15,6 +15,7 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { DataBlockOffset } from "./GpdMapElements";
 import { LeaderLine } from "./LeaderLine";
+import { Nullable } from "../../../typeDefinitions/utility-types";
 
 const DataBlockDiv = styled.div<{ offset: DataBlockOffset }>`
   position: relative;
@@ -81,7 +82,7 @@ export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdD
   const asel = useRootSelector(aselSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
   const ref = useRef<HTMLDivElement>(null);
-  const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
+  const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
 
   const selectedField = useMemo(() => (asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? asel.field : null), [
     asel?.aircraftId,
@@ -91,7 +92,7 @@ export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdD
   ]);
 
   const handleClick = useCallback(
-    (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow) => {
+    (element: HTMLElement, field: AclRowField, eventId: Nullable<string>, opensWindow?: EdstWindow) => {
       dispatch(gpdAircraftSelect(entry.aircraftId, field, eventId));
       if (opensWindow && !(selectedField === field)) {
         dispatch(openMenuThunk(opensWindow, element));

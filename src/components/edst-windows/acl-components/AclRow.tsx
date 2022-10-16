@@ -35,6 +35,7 @@ import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
 import { formatUtcMinutes } from "../../../utils/formatUtcMinutes";
 import { colors } from "../../../edstTheme";
+import { Nullable } from "../../../typeDefinitions/utility-types";
 
 type AclRowProps = {
   entry: EdstEntry;
@@ -71,7 +72,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
   );
 
   const handleClick = useCallback(
-    (element: HTMLElement, field: AclRowField, eventId: string | null, opensWindow?: EdstWindow, triggerSharedState = true) => {
+    (element: HTMLElement, field: AclRowField, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState = true) => {
       dispatch(aclAircraftSelect(entry.aircraftId, field, eventId, triggerSharedState));
       if (opensWindow && !isSelected(field)) {
         dispatch(openMenuThunk(opensWindow, element));

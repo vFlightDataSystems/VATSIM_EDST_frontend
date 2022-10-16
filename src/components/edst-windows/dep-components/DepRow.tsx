@@ -32,6 +32,7 @@ import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { depHiddenColumnsSelector } from "../../../redux/slices/depSlice";
 import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
+import { Nullable } from "../../../typeDefinitions/utility-types";
 
 type DepRowProps = {
   entry: EdstEntry;
@@ -134,7 +135,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
   );
 
   const handleClick = useCallback(
-    (element: HTMLElement, field: DepRowField, eventId: string | null, opensWindow?: EdstWindow, triggerSharedState = true) => {
+    (element: HTMLElement, field: DepRowField, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState = true) => {
       dispatch(depAircraftSelect(entry.aircraftId, field, eventId, triggerSharedState));
       if (opensWindow && !isSelected(field)) {
         dispatch(openMenuThunk(opensWindow, element, false, false, true));

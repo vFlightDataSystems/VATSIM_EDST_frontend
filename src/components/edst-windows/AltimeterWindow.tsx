@@ -10,6 +10,7 @@ import { altimeterAirportsSelector, delAltimeter } from "../../redux/slices/weat
 import { FloatingWindow } from "../utils/FloatingWindow";
 import { mod } from "../../utils/mod";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
   margin-left: 2ch;
@@ -78,7 +79,7 @@ export const AltimeterWindow = () => {
   const dispatch = useRootDispatch();
 
   const [showOptions, setShowOptions] = useState(false);
-  const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
+  const [selectedAirport, setSelectedAirport] = useState<Nullable<string>>(null);
   const airports = useRootSelector(altimeterAirportsSelector);
   const extraOptions = useMemo(
     () => ({

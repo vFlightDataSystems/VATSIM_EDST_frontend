@@ -7,6 +7,7 @@ import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
 import sharedSocket from "../../sharedState/socket";
 import { Asel } from "../../typeDefinitions/types/asel";
 import { WindowDimension } from "../../typeDefinitions/types/windowDimension";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -46,7 +47,7 @@ type AppState = {
   giEntryMap: Record<string, GIEntry>;
   tooltipsEnabled: boolean;
   showSectorSelector: boolean;
-  asel: Asel | null;
+  asel: Nullable<Asel>;
   zStack: EdstWindow[];
   outages: OutageEntry[];
 };
@@ -138,7 +139,7 @@ const appSlice = createSlice({
     delGIEntry(state, action: PayloadAction<string>) {
       delete state.giEntryMap[action.payload];
     },
-    setAsel(state, action: PayloadAction<Asel | null>) {
+    setAsel(state, action: PayloadAction<Nullable<Asel>>) {
       state.asel = action.payload;
     },
     setAnyDragging(state, action: PayloadAction<boolean>) {
@@ -184,7 +185,7 @@ export const closeAircraftMenus = (triggerSharedState = false): RootThunkAction 
   };
 };
 
-export function setAsel(asel: Asel | null, eventId?: string | null, triggerSharedState = true): RootThunkAction {
+export function setAsel(asel: Nullable<Asel>, eventId?: Nullable<string>, triggerSharedState = true): RootThunkAction {
   return (dispatch, getState) => {
     if (asel === null || Object.keys(getState().entries).includes(asel.aircraftId)) {
       dispatch(closeAircraftMenus());

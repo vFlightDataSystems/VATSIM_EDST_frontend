@@ -8,12 +8,13 @@ import { EdstPrompt } from "./EdstPrompt";
 import { PromptProps } from "./promptProps";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const ref = useRef<HTMLDivElement>(null);
-  const [frd, setFrd] = useState<string | null>(null);
+  const [frd, setFrd] = useState<Nullable<string>>(null);
   useCenterCursor(ref);
   const { generateFrd } = useHubActions();
 
@@ -40,7 +41,7 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
       </FidRow>
       <OptionsBodyRow padding="0 8px">
         <OptionsBodyCol>
-          RTE {frd || ""}
+          RTE {frd ?? ""}
           {entry.previousRoute}
         </OptionsBodyCol>
       </OptionsBodyRow>

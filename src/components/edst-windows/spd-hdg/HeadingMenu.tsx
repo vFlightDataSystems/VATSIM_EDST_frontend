@@ -17,6 +17,7 @@ import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { mod } from "../../../utils/mod";
+import { Nullable } from "../../../typeDefinitions/utility-types";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 190px;
@@ -43,7 +44,7 @@ export const HeadingMenu = () => {
     setAmend(true);
   }, [asel]);
 
-  const handleMouseDown = (event: React.MouseEvent, value: number, direction: string | null = null) => {
+  const handleMouseDown = (event: React.MouseEvent, value: number, direction: Nullable<string> = null) => {
     const valueStr = direction === null ? `${amend ? "H" : ""}${value}` : `${value}${direction}`;
 
     switch (event.button) {

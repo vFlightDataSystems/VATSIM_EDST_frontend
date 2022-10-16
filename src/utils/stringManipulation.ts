@@ -1,3 +1,5 @@
+import { Nullable } from "../typeDefinitions/utility-types";
+
 export function removeStringFromEnd(str: string, end: string): string {
   return str.endsWith(end) ? str.slice(0, -end.length) : str;
 }
@@ -26,6 +28,6 @@ export function appendDownArrowToString(s: string): string {
  * format beacon code into 4 digit octal string
  * @param code
  */
-export function convertBeaconCodeToString(code: number | null): string {
+export function convertBeaconCodeToString(code: Nullable<number>): string {
   return String(code ?? 0).padStart(4, "0");
 }

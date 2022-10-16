@@ -8,6 +8,7 @@ import { useMetar } from "../../api/weatherApi";
 import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
+import { Nullable } from "../../typeDefinitions/utility-types";
 
 type MetarRowProps = {
   airport: string;
@@ -56,7 +57,7 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
 
 export const MetarWindow = () => {
   const dispatch = useRootDispatch();
-  const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
+  const [selectedAirport, setSelectedAirport] = useState<Nullable<string>>(null);
   const airports = useRootSelector(metarAirportsSelector);
 
   const [showOptions, setShowOptions] = useState(false);

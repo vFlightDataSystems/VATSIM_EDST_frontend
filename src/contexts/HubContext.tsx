@@ -12,6 +12,7 @@ import { setMcaRejectMessage } from "../redux/slices/appSlice";
 import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
 import { initThunk } from "../redux/thunks/initThunk";
 import { useSocketConnector } from "../hooks/useSocketConnector";
+import { Nullable } from "../typeDefinitions/utility-types";
 
 const ATC_SERVER_URL = import.meta.env.REACT_APP_ATC_HUB_URL;
 
@@ -19,7 +20,7 @@ const useHubContextInit = () => {
   const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
-  const ref = useRef<HubConnection | null>(null);
+  const ref = useRef<Nullable<HubConnection>>(null);
   const { connectSocket, disconnectSocket } = useSocketConnector();
 
   useEffect(() => {

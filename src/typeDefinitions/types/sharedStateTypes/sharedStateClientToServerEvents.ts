@@ -6,6 +6,7 @@ import { AclState } from "../../../redux/slices/aclSlice";
 import { DepState } from "../../../redux/slices/depSlice";
 import { SharedGpdState } from "../../../redux/slices/gpdSlice";
 import { PlanState } from "../../../redux/slices/planSlice";
+import { Nullable } from "../../utility-types";
 
 export type SharedStateClientToServerEvents = {
   updateAircraft: (payload: SharedAircraftDto) => void;
@@ -13,7 +14,7 @@ export type SharedStateClientToServerEvents = {
   setDepState: (value: DepState) => void;
   setGpdState: (value: SharedGpdState) => void;
   setPlanState: (value: PlanState) => void;
-  setAircraftSelect: (asel: Asel | null, eventId: string | null) => void;
+  setAircraftSelect: (asel: Nullable<Asel>, eventId: Nullable<string>) => void;
   openWindow: (window: EdstWindow) => void;
   closeWindow: (window: EdstWindow) => void;
   clearPlanQueue: () => void;
