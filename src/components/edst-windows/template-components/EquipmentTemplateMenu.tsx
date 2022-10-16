@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
@@ -50,8 +50,8 @@ enum MenuOptions {
   appServ
 }
 
-export type EquipmentTemplateRowProps = {
-  margin?: string;
+type EquipmentTemplateRowProps = {
+  margin?: CSSProperties["margin"];
   circle?: boolean;
   diamond?: boolean;
   buttonText: string;

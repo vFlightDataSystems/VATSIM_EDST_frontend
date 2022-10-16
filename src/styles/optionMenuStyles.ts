@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { DraggableDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "./styles";
@@ -68,7 +68,9 @@ export const OptionsBody = styled.div`
     color: #575757;
   }
 `;
-export const OptionsBodyRow = styled.div<{ padding?: string; margin?: string; justifyContent?: string; bottomBorder?: boolean; topBorder?: boolean }>`
+type OptionsBodyRowCSSProps = Pick<CSSProperties, "padding" | "margin" | "justifyContent">;
+type OptionsBodyRowProps = Partial<{ bottomBorder?: boolean; topBorder?: boolean } & OptionsBodyRowCSSProps>;
+export const OptionsBodyRow = styled.div<OptionsBodyRowProps>`
   display: flex;
   flex-grow: 1;
   justify-content: ${props => props.justifyContent ?? "left"};
@@ -127,16 +129,15 @@ export const FidRow = styled(OptionsBodyRow)`
   align-items: center;
   height: 40px;
 `;
-export const OptionsBodyCol = styled.div<{
-  selected?: boolean;
-  alignRight?: boolean;
-  maxWidth?: string;
-  maxHeight?: string;
-  margin?: string;
-  padding?: string;
-  hover?: boolean;
-  justifyContent?: string;
-}>`
+type OptionsBodyColCSSProps = Pick<CSSProperties, "maxWidth" | "maxHeight" | "margin" | "padding" | "justifyContent">;
+type OptionsBodyColProps = Partial<
+  {
+    selected?: boolean;
+    alignRight?: boolean;
+    hover?: boolean;
+  } & OptionsBodyColCSSProps
+>;
+export const OptionsBodyCol = styled.div<OptionsBodyColProps>`
   display: flex;
   flex-grow: 1;
   flex-flow: row;
@@ -179,7 +180,8 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
 
   ${borderHover}
 `;
-export const EdstInput = styled.input<{ width?: string }>`
+type EdstInputProps = Partial<Pick<CSSProperties, "width">>;
+export const EdstInput = styled.input<EdstInputProps>`
   width: ${props => props.width ?? "calc(100% - 7px)"};
   font-size: ${props => props.theme.fontProperties.inputFontSize};
   outline: none;
@@ -206,7 +208,8 @@ export const EdstTextArea = styled.textarea`
 
   ${outlineHover}
 `;
-export const ScrollContainer = styled.div<{ maxHeight?: string }>`
+type ScrollContainerProps = Partial<Pick<CSSProperties, "maxHeight">>;
+export const ScrollContainer = styled.div<ScrollContainerProps>`
   height: auto;
   display: block;
   overflow: scroll;

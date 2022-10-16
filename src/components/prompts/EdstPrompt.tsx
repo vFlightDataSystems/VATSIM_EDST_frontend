@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useRef } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { EdstButton } from "../utils/EdstButton";
@@ -11,7 +11,7 @@ import { useCenterCursor } from "../../hooks/useCenterCursor";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 type PromptDivProps = {
-  width?: string;
+  width?: CSSProperties["width"];
 };
 const PromptDiv = styled(OptionsMenu).attrs((props: PromptDivProps) => ({
   width: props.width ?? "auto"
@@ -21,7 +21,7 @@ const PromptDiv = styled(OptionsMenu).attrs((props: PromptDivProps) => ({
 
 type EdstPromptProps = PropsWithChildren<{
   title: string;
-  width?: string;
+  width?: CSSProperties["width"];
   windowId: EdstWindow;
   submitText: string;
   onSubmit: () => void;

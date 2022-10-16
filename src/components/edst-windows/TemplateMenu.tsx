@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { EdstButton, ExitButton } from "../utils/EdstButton";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
@@ -42,7 +42,7 @@ const TemplateRowDiv = styled.div<{ alignRight?: boolean }>`
 type TemplateColProps = {
   bottomRow?: boolean;
   alignRight?: boolean;
-  width?: string;
+  width?: CSSProperties["width"];
   textIndent?: boolean;
 };
 

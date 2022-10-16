@@ -18,7 +18,7 @@ import { Plan } from "../../typeDefinitions/types/plan";
 import { colors } from "../../edstTheme";
 import { borderHover } from "../../styles/styles";
 
-type AltMenuDivProps = { width?: string; pos: WindowPosition };
+type AltMenuDivProps = { width?: CSSProperties["width"]; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
   width: props.width ?? "100px",
   left: `${props.pos.left}px`,

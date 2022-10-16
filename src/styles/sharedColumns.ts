@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { borderHover, createBorder } from "./styles";
 
 const hotboxBorder = createBorder("1px", "#575757", "#414141");
@@ -6,7 +6,7 @@ const hotboxBorder = createBorder("1px", "#575757", "#414141");
 export type ColProps = {
   hover?: boolean;
   disabled?: boolean;
-  color?: string;
+  color?: CSSProperties["color"];
   selected?: boolean;
   hidden?: boolean;
   visibilityHidden?: boolean;
@@ -90,7 +90,7 @@ export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
   ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
   ${borderHover}
 `;
-type RouteColProps = { padding?: string };
+type RouteColProps = { padding?: CSSProperties["padding"] };
 export const RouteCol = styled(Col).attrs((props: RouteColProps) => ({
   padding: props.padding ?? "0 2px 0 0"
 }))<RouteColProps>`
@@ -101,7 +101,7 @@ export const RouteCol = styled(Col).attrs((props: RouteColProps) => ({
   margin-left: 4px;
   padding: ${props => props.padding};
 `;
-type RouteSpanProps = { padding?: string };
+type RouteSpanProps = { padding?: CSSProperties["padding"] };
 export const RouteSpan = styled(RouteCol).attrs((props: RouteSpanProps) => ({
   padding: props.padding ?? "0"
 }))<RouteSpanProps>`

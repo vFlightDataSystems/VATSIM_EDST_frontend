@@ -58,6 +58,8 @@ const NotConnectedDiv = styled.div`
   color: ${props => props.theme.colors.yellow};
 `;
 
+const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
+
 const Edst = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
@@ -105,7 +107,7 @@ const Edst = () => {
         tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
       >
         <EdstHeader />
-        {hubConnection?.state !== HubConnectionState.Connected && <NotConnectedDiv>HOST PROCESS COMMUNICATION DOWN</NotConnectedDiv>}
+        {hubConnection?.state !== HubConnectionState.Connected && <NotConnectedDiv>{NOT_CONNECTED_MSG}</NotConnectedDiv>}
         <div id="toPrint" />
         <EdstBodyDiv>
           {showSectorSelector && <SectorSelector />}

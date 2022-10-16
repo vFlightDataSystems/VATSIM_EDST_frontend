@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { createBorder } from "../../styles/styles";
 
 const buttonBorder = createBorder("1px", "#adadad", "#575757");
@@ -36,7 +36,7 @@ const WindowTitleBarCol = styled.div<{ middle?: boolean; focused?: boolean }>`
 const TitleBarText = styled.div`
   margin: 0 12px;
 `;
-const Block = styled.div<{ focused?: boolean; flexGrow?: number }>`
+const Block = styled.div<{ focused?: boolean; flexGrow?: CSSProperties["flexGrow"] }>`
   flex-grow: ${props => props.flexGrow ?? 0};
   vertical-align: center;
   background-color: #888888;
