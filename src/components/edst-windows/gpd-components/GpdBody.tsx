@@ -65,11 +65,12 @@ export const GpdBody = () => {
     <GpdBodyDiv>
       <MapContainer
         center={center}
+        placeholder
+        keyboard={false}
         doubleClickZoom={false}
         zoomControl={false}
         zoomAnimation={false}
         zoom={zoomLevel}
-        placeholder
         maxZoom={GPD_MAX_ZOOM}
         minZoom={GPD_MIN_ZOOM}
         zoomDelta={ZOOM_DELTA}

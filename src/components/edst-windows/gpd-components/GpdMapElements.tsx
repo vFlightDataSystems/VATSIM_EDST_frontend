@@ -59,7 +59,7 @@ const slicedOptions = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   rendererFactory: L.svg.tile,
-  interactive: true,
+  interactive: false,
   vectorTileLayerStyles: {
     sliced: {
       fill: false,
@@ -75,8 +75,8 @@ const slicedOptions = {
   // geojson-vt options.
   maxZoom: 10, // max zoom to preserve detail on; can't be higher than 24
   tolerance: 3, // simplification tolerance (higher means simpler)
-  extent: 8192, // tile extent (both width and height)
-  buffer: 4096, // tile buffer on each side
+  extent: 4096, // tile extent (both width and height)
+  buffer: 64, // tile buffer on each side
   debug: 0, // logging level (0 to disable, 1 or 2)
   lineMetrics: false, // whether to enable line metrics tracking for LineString/MultiLineString features
   promoteId: null, // name of a feature property to promote to feature.id. Cannot be used with `generateId`
