@@ -21,7 +21,7 @@ const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number; top: number } => {
+const computePreviewPos = (x: number, y: number, _width: number, _height: number): WindowPosition => {
   return {
     left: x - 1,
     top: y
@@ -48,7 +48,7 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
   let ppos: Nullable<WindowPosition> = null;
-  ppos = windows[edstWindow as EdstWindow].position;
+  ppos = windows[edstWindow].position;
 
   useEffect(() => {
     return () => {
