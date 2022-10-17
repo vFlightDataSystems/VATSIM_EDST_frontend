@@ -1,5 +1,5 @@
-import { GeoJSON, Marker, Polyline } from "react-leaflet";
-import React, { useEffect, useRef, useState } from "react";
+import { GeoJSON, Marker, Polyline, useMap } from "react-leaflet";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Position } from "@turf/turf";
 import L from "leaflet";
 import { useBoolean } from "usehooks-ts";
@@ -16,6 +16,7 @@ import { locationToPosition } from "../../../utils/locationToPosition";
 import { getRemainingFixesFromPpos } from "../../../utils/fixes";
 import { colors } from "../../../edstTheme";
 import { Nullable } from "../../../typeDefinitions/utility-types";
+import "leaflet.vectorgrid";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): L.LatLngExpression {
   if (Array.isArray(pos)) {
@@ -53,10 +54,55 @@ export const GpdAirwayPolyline = ({ segments }: GpdAirwayPolylineProps) => {
 
 export type DataBlockOffset = { x: number; y: number };
 
+const slicedOptions = {
+  // vector grid options
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  rendererFactory: L.svg.tile,
+  interactive: true,
+  vectorTileLayerStyles: {
+    sliced: {
+      fill: false,
+      weight: 1.6,
+      fillColor: "#000000",
+      color: "#adadad",
+      fillOpacity: 0,
+      opacity: 0.5
+    }
+  },
+  // slicer options
+  vectorTileLayerName: "sliced",
+  // geojson-vt options.
+  maxZoom: 10, // max zoom to preserve detail on; can't be higher than 24
+  tolerance: 3, // simplification tolerance (higher means simpler)
+  extent: 8192, // tile extent (both width and height)
+  buffer: 4096, // tile buffer on each side
+  debug: 0, // logging level (0 to disable, 1 or 2)
+  lineMetrics: false, // whether to enable line metrics tracking for LineString/MultiLineString features
+  promoteId: null, // name of a feature property to promote to feature.id. Cannot be used with `generateId`
+  generateId: false, // whether to generate feature ids. Cannot be used with `promoteId`
+  indexMaxZoom: 4, // max zoom in the initial tile index
+  indexMaxPoints: 1000 // max number of points per tile in the index
+};
+
 type GpdPolygonProps = { data: GeoJSON.FeatureCollection };
 
 export const GpdPolygon = ({ data }: GpdPolygonProps) => {
-  return <GeoJSON data={data} pathOptions={{ color: "#ADADAD", weight: 1, opacity: 0.3, fill: false }} />;
+  const map = useMap();
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const slicerVectorGrid = useMemo(() => L.vectorGrid.slicer(data, slicedOptions), [data]);
+
+  // add vectorGrid to map
+  useEffect(() => {
+    map.addLayer(slicerVectorGrid);
+    return () => {
+      map.removeLayer(slicerVectorGrid);
+    };
+  }, [map, slicerVectorGrid]);
+
+  return null;
 };
 
 type GpdAircraftTrackProps = { aircraftId: string };
