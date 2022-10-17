@@ -225,7 +225,7 @@ export const AltMenu = () => {
   return (
     pos &&
     asel && (
-      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "12ch"} pos={pos} id="alt-menu">
+      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "13ch"} pos={pos} id="alt-menu">
         <AltMenuHeaderDiv>
           <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
           <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
