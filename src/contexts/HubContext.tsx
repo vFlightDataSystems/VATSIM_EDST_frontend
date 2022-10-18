@@ -28,7 +28,7 @@ const useHubContextInit = () => {
       return;
     }
 
-    const getValidNasToken = () => {
+    const getValidNasToken = async () => {
       // const decodedToken = decodeJwt(nasToken);
       return refreshToken(vatsimToken).then(r => {
         console.log("Refreshed NAS token");
@@ -49,9 +49,9 @@ const useHubContextInit = () => {
   const connectHub = useCallback(async () => {
     if (!ATC_SERVER_URL || !vatsimToken || hubConnected || !ref.current) {
       if (hubConnected) {
-        return Promise.reject(new Error("ALREADY CONNECTED"));
+        throw new Error("ALREADY CONNECTED");
       }
-      return Promise.reject(new Error("SOMETHING WENT WRONG"));
+      throw new Error("SOMETHING WENT WRONG");
     }
     const hubConnection = ref.current;
     async function start() {
@@ -85,42 +85,35 @@ const useHubContextInit = () => {
         dispatch(setMcaRejectMessage(message));
       });
 
-      return new Promise((resolve, reject) => {
-        hubConnection.start().then(() => {
-          hubConnection
-            .invoke<ApiSessionInfoDto>("getSessionInfo")
-            .then(sessionInfo => {
-              console.log(sessionInfo);
-              const primaryPosition = sessionInfo?.positions.slice(0).filter(pos => pos.isPrimary)?.[0]?.position;
-              if (primaryPosition?.eramConfiguration) {
-                const artccId = sessionInfo.artccId;
-                const sectorId = primaryPosition.eramConfiguration.sectorId;
-                dispatch(setArtccId(artccId));
-                dispatch(setSectorId(sectorId));
-                connectSocket(artccId, sectorId);
-                dispatch(setSession(sessionInfo));
-                dispatch(initThunk());
-                hubConnection
-                  .invoke<void>("joinSession", { sessionId: sessionInfo.id })
-                  .then(() => {
-                    console.log(`joined session ${sessionInfo.id}`);
-                    setHubConnected(true);
-                    hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
-                      ref.current?.stop().then(() => setHubConnected(false));
-                      reject(new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS"));
-                    });
-                  });
-              } else {
-                ref.current?.stop().then(() => setHubConnected(false));
-                reject(new Error("NOT SIGNED INTO A CENTER POSITION"));
-              }
-            })
-            .catch(() => {
-              ref.current?.stop().then(() => setHubConnected(false));
-              reject(new Error("SESSION NOT FOUND"));
-            });
+      await hubConnection.start();
+      let sessionInfo: ApiSessionInfoDto;
+      try {
+        sessionInfo = await hubConnection.invoke<ApiSessionInfoDto>("getSessionInfo");
+      } catch {
+        ref.current?.stop().then(() => setHubConnected(false));
+        throw new Error("SESSION NOT FOUND");
+      }
+      console.log(sessionInfo);
+      const primaryPosition = sessionInfo?.positions.slice(0).filter(pos => pos.isPrimary)?.[0]?.position;
+      if (primaryPosition?.eramConfiguration) {
+        const artccId = sessionInfo.artccId;
+        const sectorId = primaryPosition.eramConfiguration.sectorId;
+        dispatch(setArtccId(artccId));
+        dispatch(setSectorId(sectorId));
+        connectSocket(artccId, sectorId);
+        dispatch(setSession(sessionInfo));
+        dispatch(initThunk());
+        await hubConnection.invoke<void>("joinSession", { sessionId: sessionInfo.id });
+        console.log(`joined session ${sessionInfo.id}`);
+        setHubConnected(true);
+        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
+          ref.current?.stop().then(() => setHubConnected(false));
+          throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
         });
-      });
+      } else {
+        ref.current?.stop().then(() => setHubConnected(false));
+        throw new Error("NOT SIGNED INTO A CENTER POSITION");
+      }
     }
 
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
