@@ -92,13 +92,13 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
         let relY = 0;
         // eslint-disable-next-line no-underscore-dangle
         if (window.__TAURI__) {
-          invoke("set_cursor_grab", { value: true }).then();
+          void invoke<void>("set_cursor_grab", { value: true });
         }
         if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
           // eslint-disable-next-line no-underscore-dangle
           if (window.__TAURI__) {
             previewPos = { x: ppos.left, y: ppos.top };
-            invoke("set_cursor_position", previewPos).then();
+            void invoke<void>("set_cursor_position", previewPos);
           } else {
             previewPos = { x: event.pageX, y: event.pageY };
           }
@@ -136,7 +136,7 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
       const newPos = { left: left + 1, top };
       // eslint-disable-next-line no-underscore-dangle
       if (window.__TAURI__) {
-        invoke("set_cursor_grab", { value: false }).then();
+        void invoke<void>("set_cursor_grab", { value: false });
       }
       dispatch(
         setWindowPosition({

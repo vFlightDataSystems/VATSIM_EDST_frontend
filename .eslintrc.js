@@ -64,6 +64,7 @@ module.exports = {
     "react/display-name": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "prefer-destructuring": "off",
+    "no-void": "off",
     "no-console": "off"
   }
 };

@@ -12,7 +12,7 @@ export const useCenterCursor = (ref: RefObject<HTMLElement>, deps: DependencyLis
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
       const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      invoke("set_cursor_position", newCursorPos).then();
+      void invoke<void>("set_cursor_position", newCursorPos);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, ...deps]);
