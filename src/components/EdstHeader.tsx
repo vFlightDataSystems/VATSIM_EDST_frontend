@@ -121,7 +121,6 @@ export const EdstHeader = () => {
   const depLen = Object.values(entries).filter(entry => entry.status === "Proposed" && !entry.deleted).length;
   const sigmets = useRootSelector(sigmetSelector);
   const sigLen = Object.values(sigmets).filter(sigmetEntry => !sigmetEntry.acknowledged).length;
-  const notLen = 0;
   const giLen = 0;
 
   return (
@@ -182,13 +181,6 @@ export const EdstHeader = () => {
             disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.sig)}
             // title={Tooltips.sig}
             onMouseDown={() => dispatch(toggleWindow(EdstWindow.SIGMETS))}
-          />
-          <EdstHeaderButton
-            open={windows[EdstWindow.NOTAMS].open}
-            content={`NOT ${notLen > 0 ? notLen.toString().padStart(2, "0") : ""}`}
-            disabled={DISABLED_HEADER_BUTTONS.includes(edstHeaderButton.not)}
-            // title={Tooltips.not}
-            onMouseDown={() => dispatch(toggleWindow(EdstWindow.NOTAMS))}
           />
           <EdstHeaderButton
             open={windows[EdstWindow.GI].open}

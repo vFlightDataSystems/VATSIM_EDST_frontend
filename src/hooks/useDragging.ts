@@ -16,7 +16,6 @@ const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.ALTIMETER,
   EdstWindow.METAR,
   EdstWindow.SIGMETS,
-  EdstWindow.NOTAMS,
   EdstWindow.GI
 ];
 

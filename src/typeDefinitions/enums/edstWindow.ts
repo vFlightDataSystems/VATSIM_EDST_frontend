@@ -10,7 +10,6 @@ export enum EdstWindow {
   METAR = "METAR_WINDOW",
   UA = "UA_WINDOW",
   SIGMETS = "SIGMETS_WINDOW",
-  NOTAMS = "NOTAMS_WINDOW",
   GI = "GI_WINDOW",
   ADSB = "ADSB_WINDOW",
   SAT = "SAT_WINDOW",
