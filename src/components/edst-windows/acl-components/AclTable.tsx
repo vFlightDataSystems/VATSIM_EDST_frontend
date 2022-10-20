@@ -104,7 +104,11 @@ export const AclTable = () => {
           <SpecialBox disabled />
           {/* hotbox column */}
           <SpecialBox disabled />
-          <AircraftTypeCol hidden={hiddenColumns.includes(AclRowField.TYPE)} onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.TYPE))}>
+          <AircraftTypeCol
+            hover
+            hidden={hiddenColumns.includes(AclRowField.TYPE)}
+            onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.TYPE))}
+          >
             T{!hiddenColumns.includes(AclRowField.TYPE) && "ype"}
           </AircraftTypeCol>
           <AltCol hover headerCol onMouseDown={() => setAltMouseDown(true)} onMouseUp={() => setAltMouseDown(false)}>

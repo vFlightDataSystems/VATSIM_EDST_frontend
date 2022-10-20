@@ -277,8 +277,8 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
         <BodyRowDiv>
           <RadioCol disabled />
           <DepCol2 />
-          <InnerRow2 highlight={entry.highlighted} minWidth={Math.max(1200, ref?.current?.clientWidth ?? 0)}>
-            <FreeTextRow marginLeft={202}>
+          <InnerRow2 highlight={entry.highlighted} minWidth={`${Math.max(1200, ref?.current?.clientWidth ?? 0)}px`}>
+            <FreeTextRow marginLeft="22ch">
               <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value)} />
             </FreeTextRow>
           </InnerRow2>

@@ -51,9 +51,9 @@ export const DepTable = () => {
         <RadioCol header>{COMPLETED_CHECKMARK_SYMBOL}</RadioCol>
         <DepCol2>P-Time</DepCol2>
         <DepFidCol>Flight ID</DepFidCol>
-        <SpecialBox />
-        <SpecialBox />
-        <AircraftTypeCol hidden={hiddenColumns.includes(DepRowField.TYPE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>
+        <SpecialBox disabled />
+        <SpecialBox disabled />
+        <AircraftTypeCol hover hidden={hiddenColumns.includes(DepRowField.TYPE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>
           T{!hiddenColumns.includes(DepRowField.TYPE) && "ype"}
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>
