@@ -25,7 +25,7 @@ const initialState = {
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     paLines: 2,
-    width: 45,
+    width: 35,
     fontSize: 2,
     brightness: 80
   },
