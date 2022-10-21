@@ -15,7 +15,7 @@ const AddFindContainer = styled.div`
   border: 1px solid #000000;
   display: inline-flex;
   margin: 1px 20px 1px 14px;
-  width: 100px;
+  width: 10ch;
 `;
 
 export const AddFindInput = ({ title, ...props }: InputProps) => {
@@ -31,5 +31,5 @@ export const AddFindInput = ({ title, ...props }: InputProps) => {
 export const InputContainer = styled.div`
   display: inline-flex;
   border: 1px solid transparent;
-  width: 60px;
+  width: 5ch;
 `;

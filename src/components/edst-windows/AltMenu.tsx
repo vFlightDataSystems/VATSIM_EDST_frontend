@@ -113,10 +113,10 @@ const AltMenuRowCol = styled(AltMenuRow).attrs((props: AltMenuRowColProps) => ({
 `;
 
 const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
-  width: 56px;
+  width: 4ch;
   display: flex;
   margin: 1px 6px;
-  height: 20px;
+  height: 1em;
   color: #adadad;
   /*border: none;*/
   border: 1px solid #000000;

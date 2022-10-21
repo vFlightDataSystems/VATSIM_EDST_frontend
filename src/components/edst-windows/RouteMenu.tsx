@@ -71,7 +71,7 @@ const PposDiv = styled.div`
   border: 2px solid transparent;
   border-right: none;
   padding: 0 2px;
-  width: 120px;
+  width: 11ch;
   font-size: ${props => props.theme.fontProperties.fontSize};
   color: #575757;
 `;
@@ -91,7 +91,7 @@ const DctCol = styled(OptionsBodyCol)`
   justify-content: flex-start;
   height: 20px;
   padding: 0 4px;
-  width: 100px;
+  width: 9ch;
   margin: auto 12px;
 `;
 

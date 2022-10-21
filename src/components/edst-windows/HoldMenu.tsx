@@ -27,7 +27,7 @@ import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 import { Nullable } from "../../typeDefinitions/utility-types";
 
 const HoldDiv = styled(OptionsMenu)`
-  width: 420px;
+  width: 35ch;
 `;
 const FixContainer = styled.div`
   padding: 4px 0;
@@ -48,7 +48,7 @@ const LeftCol = styled(OptionsBodyCol)`
 const Col1 = styled(OptionsBodyCol)`
   justify-content: left;
   display: inline-flex;
-  height: 18px;
+  height: 1em;
   padding: 0 4px;
   flex-grow: 0;
   width: 110px;
@@ -82,10 +82,9 @@ const Col7 = styled(OptionsBodyCol)`
   margin-right: auto;
 `;
 const EfcInputContainer = styled(InputContainer)`
-  margin-left: 20px;
+  margin-left: 1ch;
   margin-right: 0;
-  //height: 17px;
-  width: 55px;
+  width: 5ch;
 `;
 
 export const HoldMenu = () => {
