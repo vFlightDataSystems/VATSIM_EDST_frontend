@@ -60,7 +60,7 @@ const NotConnectedDiv = styled.div`
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
-const EdstComponentMap = {
+const edstComponentMap = {
   [EdstWindow.ACL]: Acl,
   [EdstWindow.DEP]: Dep,
   [EdstWindow.GPD]: Gpd,
@@ -149,10 +149,10 @@ const Edst = () => {
         <div id="toPrint" />
         <EdstBodyDiv>
           {showSectorSelector && <SectorSelector />}
-          {Object.entries(EdstComponentMap).map(
+          {Object.entries(edstComponentMap).map(
             ([edstWindow, Component]) =>
               windows[edstWindow as EdstWindow].open &&
-              (windowRequiresAsel.includes(edstWindow as EdstWindow) ? aselEntry && <Component /> : <Component />)
+              (windowRequiresAsel.includes(edstWindow as EdstWindow) ? aselEntry && <Component key={edstWindow} /> : <Component key={edstWindow} />)
           )}
         </EdstBodyDiv>
       </EdstDiv>
