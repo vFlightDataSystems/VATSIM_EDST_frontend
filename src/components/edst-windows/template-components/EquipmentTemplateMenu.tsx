@@ -27,7 +27,7 @@ import { useFocused } from "../../../hooks/useFocused";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
-  width: 900px;
+  width: 76ch;
 `;
 const EqpTemplateBody = styled(OptionsBody)`
   height: 100%;

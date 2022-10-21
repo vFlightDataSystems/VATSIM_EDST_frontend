@@ -175,7 +175,7 @@ export const OptionsBodyCol = styled.div<OptionsBodyColProps>`
 export const OptionsFlexCol = styled(OptionsBodyCol)`
   display: flex;
   justify-content: left;
-  height: 22px;
+  height: 1em;
   padding: 0 5px;
 
   ${borderHover}

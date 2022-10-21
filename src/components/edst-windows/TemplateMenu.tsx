@@ -19,7 +19,7 @@ import { formatRoute } from "../../utils/formatRoute";
 import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "../../utils/stringManipulation";
 
 const TemplateDiv = styled(OptionsMenu)`
-  width: 850px;
+  width: 82ch;
 `;
 const TemplateBodyDiv = styled(OptionsBody)`
   padding: 10px 0 2px 0;
@@ -167,24 +167,25 @@ export const TemplateMenu = () => {
             <TemplateCol width="9ch" textIndent>
               AID
             </TemplateCol>
-            <TemplateCol width="5ch" textIndent>
+            <TemplateCol width="4ch" textIndent>
               NUM
             </TemplateCol>
-            <TemplateCol width="5ch" textIndent>
+            <TemplateCol width="4ch" textIndent>
               SAI
             </TemplateCol>
-            <TemplateCol width="7ch" textIndent>
+            <TemplateCol width="6ch" textIndent>
               TYP
             </TemplateCol>
-            <TemplateCol width="8ch">
+            <TemplateCol width="7ch">
               <EdstButton
-                margin="0 2px"
+                margin="0 0 0 2px"
+                width="100%"
                 content="EQP..."
                 onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
                 title={Tooltips.templateMenuEqpButton}
               />
             </TemplateCol>
-            <TemplateCol width="7ch" textIndent>
+            <TemplateCol width="6ch" textIndent>
               BCN
             </TemplateCol>
             <TemplateCol width="6ch" textIndent>
@@ -207,27 +208,27 @@ export const TemplateMenu = () => {
                 <TemplateInput value={aidInput} onChange={event => setAidInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="5ch">
+            <TemplateCol width="4ch">
               <EdstTooltip title={Tooltips.templateMenuNum}>
                 <TemplateInput value={numInput} onChange={event => setNumInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="5ch">
+            <TemplateCol width="4ch">
               <EdstTooltip title={Tooltips.templateMenuSai}>
                 <TemplateInput value={saiInput} onChange={event => setSaiInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="7ch">
+            <TemplateCol width="6ch">
               <EdstTooltip title={Tooltips.templateMenuTyp}>
                 <TemplateInput value={typeInput} onChange={event => setTypeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="8ch">
+            <TemplateCol width="7ch">
               <EdstTooltip title={Tooltips.templateMenuEqpBox}>
                 <TemplateInput value={equipInput} onChange={event => setEquipInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="7ch">
+            <TemplateCol width="6ch">
               <EdstTooltip title={Tooltips.templateMenuBcn}>
                 <TemplateInput value={beaconInput} onChange={event => setBeaconInput(event.target.value)} />
               </EdstTooltip>

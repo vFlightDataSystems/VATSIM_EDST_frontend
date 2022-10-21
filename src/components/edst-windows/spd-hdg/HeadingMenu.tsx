@@ -20,7 +20,7 @@ import { mod } from "../../../utils/mod";
 import { Nullable } from "../../../typeDefinitions/utility-types";
 
 const HeadingDiv = styled(OptionsMenu)`
-  width: 190px;
+  width: 18ch;
 `;
 
 export const HeadingMenu = () => {
@@ -103,7 +103,7 @@ export const HeadingMenu = () => {
           </Row>
           <Row>
             <OptionsBodyCol>
-              Heading:
+              Heading &nbsp;
               <InputContainer>
                 <EdstInput value={heading} onChange={e => setHeading(Number(e.target.value))} />
               </InputContainer>
@@ -114,11 +114,14 @@ export const HeadingMenu = () => {
               <Col1>Heading</Col1>
             </EdstTooltip>
             <EdstTooltip title={Tooltips.aclHdgTurn}>
-              <Col1>Turn</Col1>
+              <Col2>Turn</Col2>
             </EdstTooltip>
           </Row2>
           <Row2 bottomBorder>
-            <Col2>L &nbsp;&nbsp; R</Col2>
+            <ScrollCol noHover />
+            <ScrollCol noHover />
+            <ScrollCol2 noHover>L</ScrollCol2>
+            <ScrollCol2 noHover>R</ScrollCol2>
           </Row2>
           <ScrollContainer onWheel={e => setDeltaY(deltaY + e.deltaY)}>
             {_.range(50, -70, -10).map(i => {

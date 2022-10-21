@@ -15,6 +15,7 @@ export const Row3 = styled(Row2)`
   justify-content: left;
 `;
 export const Col1 = styled.div`
+  margin-left: 0.5ch;
   margin-right: auto;
   display: flex;
   justify-content: left;
@@ -22,7 +23,7 @@ export const Col1 = styled.div`
 `;
 export const Col2 = styled.div`
   margin-left: auto;
-  margin-right: 14px;
+  margin-right: 0.5ch;
   display: flex;
   justify-content: right;
   align-items: center;
@@ -35,25 +36,27 @@ export const ScrollContainer = styled.div`
 export const ScrollRow = styled.div`
   display: flex;
   margin: 1px 6px;
-  height: 20px;
+  height: 1em;
   color: #adadad;
   border: 1px solid #000000;
 `;
-export const ScrollCol = styled.div`
+type ScrollColProps = { noHover?: boolean };
+export const ScrollCol = styled.div<ScrollColProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   color: #adadad;
   border: 1px solid transparent;
-  width: 42px;
+  width: 4ch;
 
   ${borderHover};
+  ${props => props.noHover && { "pointer-events": "none" }};
 `;
 export const ScrollCol2 = styled(ScrollCol)`
-  width: 30px;
-  margin-left: 15px;
+  width: 2ch;
+  margin-right: 1ch;
+  margin-left: auto;
 `;
 export const ScrollCol3 = styled(ScrollCol)`
-  width: 30px;
-  margin-left: 30px;
+  margin-left: auto;
 `;

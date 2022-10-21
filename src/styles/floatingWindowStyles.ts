@@ -48,8 +48,8 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFlo
   outline: 1px solid ${props => props.theme.colors.windowOutlineColor};
   color: ${props => props.theme.colors.grey};
   background-color: #000000;
-  min-width: 600px;
-  min-height: 200px;
+  min-width: 60ch;
+  min-height: 10em;
   resize: ${props => (!props.fullscreen ? "both" : "none")};
   width: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.width)};
   height: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};

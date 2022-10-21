@@ -97,9 +97,8 @@ export const EdstButton = (props: EdstButtonProps) => {
 
 type EdstButtonFixedSizeProps = Omit<EdstButtonProps, "width" | "height">;
 export const EdstButton12x12 = (props: EdstButtonFixedSizeProps) => <EdstButton width="12px" height="12px" {...props} />;
-export const EdstButton20x20 = (props: EdstButtonFixedSizeProps) => <EdstButton width="20px" height="20px" {...props} />;
 export const EdstRouteButton12x12 = (props: Omit<EdstButtonFixedSizeProps, "padding" | "margin">) => (
-  <EdstButton12x12 padding="0 4px" margin="auto 5px 0 auto" {...props} />
+  <EdstButton12x12 padding="0 4px" margin="auto 5px auto auto" {...props} />
 );
 type ExitButtonProps = { onMouseDown: React.MouseEventHandler<HTMLDivElement>; title?: string };
 export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit" {...props} />;

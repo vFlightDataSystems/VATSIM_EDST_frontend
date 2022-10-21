@@ -13,14 +13,14 @@ export type ColProps = {
 };
 
 export const Col = styled.div.attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "30px" : "auto",
+  width: props.visibilityHidden || props.hidden ? "2ch" : "auto",
   visibility: props.visibilityHidden ? "hidden" : "initial"
 }))<ColProps>`
   display: flex;
   flex-shrink: 0;
   justify-content: center;
   align-items: center;
-  height: 18px;
+  height: 1em;
   border: 1px solid transparent;
 
   &[disabled] {
@@ -39,7 +39,7 @@ export const Col = styled.div.attrs((props: ColProps) => ({
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
-  width: 14ch;
+  width: 12ch;
   padding: 0 2px;
 `;
 export const SpecialBox = styled(Col)`
@@ -51,9 +51,9 @@ export const HotBox = styled(SpecialBox)`
   ${hotboxBorder}
 `;
 export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "3ch" : "100px"
+  width: props.visibilityHidden || props.hidden ? "2ch" : "7ch"
 }))`
-  min-width: 30px;
+  min-width: 2ch;
   justify-content: left;
   width: ${props => props.width};
   margin-right: 0;
@@ -62,7 +62,7 @@ export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
   div {
     border: 1px solid transparent;
     align-items: center;
-    min-width: 20px;
+    min-width: 2ch;
     display: flex;
     padding: 0 2px;
 
@@ -70,7 +70,7 @@ export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
   }
 `;
 export const CodeCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "6ch"
+  width: props.visibilityHidden || props.hidden ? "2ch" : "5ch"
 }))`
   padding: 0 2px;
   justify-content: left;

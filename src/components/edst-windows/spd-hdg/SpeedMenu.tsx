@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, EdstButton20x20, ExitButton } from "../../utils/EdstButton";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 import { Tooltips } from "../../../tooltips";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -116,20 +116,22 @@ export const SpeedMenu = () => {
           </OptionsBodyRow>
           <Row3 topBorder />
           <Row3 bottomBorder>
-            <EdstTooltip content="KNOTS" title={Tooltips.aclSpdKnots} />
-            <EdstButton20x20
-              margin="0 2px 0 22px"
-              content="+"
-              selected={sign === Sign.more}
-              onMouseDown={() => setSign(sign === Sign.more ? Sign.none : Sign.more)}
-            />
-            <EdstButton20x20
-              margin="0 16px 0 2px"
-              content="-"
-              selected={sign === Sign.less}
-              onMouseDown={() => setSign(sign === Sign.less ? Sign.none : Sign.less)}
-            />
-            <EdstTooltip content="MACH" title={Tooltips.aclSpdMach} />
+            <EdstTooltip style={{ marginLeft: "0.5ch" }} content="KNOTS" title={Tooltips.aclSpdKnots} />
+            <div style={{ justifyContent: "center", margin: "auto" }}>
+              <EdstButton
+                margin="0 2px"
+                content="+"
+                selected={sign === Sign.more}
+                onMouseDown={() => setSign(sign === Sign.more ? Sign.none : Sign.more)}
+              />
+              <EdstButton
+                margin="0 2px"
+                content="-"
+                selected={sign === Sign.less}
+                onMouseDown={() => setSign(sign === Sign.less ? Sign.none : Sign.less)}
+              />
+            </div>
+            <EdstTooltip style={{ marginRight: "0.5ch" }} content="MACH" title={Tooltips.aclSpdMach} />
           </Row3>
           <ScrollContainer onWheel={handleScroll}>
             {_.range(5, -6, -1).map(i => {

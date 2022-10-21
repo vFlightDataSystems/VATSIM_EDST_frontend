@@ -48,7 +48,7 @@ const EdstHeaderRow = styled.div`
 const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
   z-index: 20001;
   display: inline-flex;
-  ${props => props.bottomRow && { "margin-left": "calc(8ch + 2px)" }};
+  ${props => props.bottomRow && { "margin-left": "calc(8ch + 11px)" }};
 
   span {
     height: 2em;
@@ -63,7 +63,7 @@ type ColButtonProps = Partial<
 >;
 
 const ColButton = styled.button.attrs((props: ColButtonProps) => ({
-  width: props.width ?? "8ch",
+  width: props.width ?? "6ch",
   backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
   fontWeight: props.fontWeight ?? "normal",
   border: `1px solid ${props.borderColor ?? "#adadad"}`
