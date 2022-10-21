@@ -476,14 +476,12 @@ export const MessageComposeArea = () => {
               {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
               {feedbackRows[0]}
             </ResponseFeedbackRowDiv>
-            {feedbackRows.slice(1, 30).map((s, i) => (
-              <>
-                {chunkString(s, windowOptions.width).map((chunk, j) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <ResponseFeedbackRowDiv key={`${i}-${j}`}>{chunk}</ResponseFeedbackRowDiv>
-                ))}
-              </>
-            ))}
+            {feedbackRows.slice(1, 30).flatMap((s, i) =>
+              chunkString(s, windowOptions.width).map((chunk, j) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <ResponseFeedbackRowDiv key={`${i}-${j}`}>{chunk}</ResponseFeedbackRowDiv>
+              ))
+            )}
           </FeedbackContainerDiv>
         </MessageComposeAreaDiv>
         {showOptions && width && (
