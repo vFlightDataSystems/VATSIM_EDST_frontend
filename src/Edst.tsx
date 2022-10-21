@@ -152,7 +152,7 @@ const Edst = () => {
           {Object.entries(EdstComponentMap).map(
             ([edstWindow, Component]) =>
               windows[edstWindow as EdstWindow].open &&
-              (windowRequiresAsel.includes(edstWindow as EdstWindow) ? aselEntry && <Component /> : <Component />)
+              (windowRequiresAsel.includes(edstWindow as EdstWindow) ? aselEntry && <Component key={edstWindow} /> : <Component key={edstWindow} />)
           )}
         </EdstBodyDiv>
       </EdstDiv>
