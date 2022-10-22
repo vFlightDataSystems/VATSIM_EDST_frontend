@@ -27,7 +27,6 @@ import { useHubActions } from "../../hooks/useHubActions";
 import { OPLUS_SYMBOL } from "../../utils/constants";
 import { DownlinkSymbol } from "../utils/DownlinkSymbol";
 import { CreateOrAmendFlightplanDto } from "../../typeDefinitions/types/apiTypes/CreateOrAmendFlightplanDto";
-import { fetchFormatRoute } from "../../api/api";
 import { usePar, usePdar, usePdr } from "../../api/prefrouteApi";
 import { useRouteFixes } from "../../api/aircraftApi";
 import { formatRoute } from "../../utils/formatRoute";
@@ -165,7 +164,7 @@ export const RouteMenu = () => {
     if (!trialPlan) {
       await hubActions.amendFlightplan(amendedFlightplan);
     } else {
-      const route = await fetchFormatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+      const route = formatRoute(amendedFlightplan.route, entry.departure, entry.destination);
       dispatch(
         addPlanThunk({
           cid: entry.cid,

@@ -35,7 +35,7 @@ import { useDragging } from "../../hooks/useDragging";
 import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { useHubActions } from "../../hooks/useHubActions";
 import { useHubConnector } from "../../hooks/useHubConnector";
-import { fetchFormatRoute, fetchRouteFixes } from "../../api/api";
+import { fetchRouteFixes } from "../../api/api";
 import { useOnUnmount } from "../../hooks/useOnUnmount";
 import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
@@ -46,6 +46,7 @@ import { getClearedToFixRouteFixes } from "../../utils/fixes";
 import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 import socket from "../../sharedState/socket";
 import { GI_EXPR } from "../../utils/constants";
+import { formatRoute } from "../../utils/formatRoute";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
@@ -190,7 +191,7 @@ export const MessageComposeArea = () => {
     const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry = getEntryByFid(fid);
     if (entry) {
-      const formattedRoute = await fetchFormatRoute(entry.route, entry.departure, entry.destination);
+      const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
       const msg =
         `${formatUtcMinutes(utcMinutes)}\n` +
         `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
@@ -211,7 +212,7 @@ export const MessageComposeArea = () => {
         if (routeFixes?.map(fix => fix.name)?.includes(args[0])) {
           const aircraftTrack = aircraftTracks[entry.aircraftId];
           const frd = await hubActions.generateFrd(aircraftTrack.location);
-          const formattedRoute = await fetchFormatRoute(entry.route, entry.departure, entry.destination);
+          const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
           const route = getClearedToFixRouteFixes(args[0], entry, routeFixes, formattedRoute, frd)?.route;
           if (route) {
             const amendedFlightplan: ApiFlightplan = {
