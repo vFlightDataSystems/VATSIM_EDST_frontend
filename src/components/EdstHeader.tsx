@@ -127,8 +127,8 @@ export const EdstHeader = () => {
     <EdstHeaderDiv>
       <EdstHeaderRow>
         <EdstHeaderCol>
-          <ColButton width="2ch" fontWeight="bolder" disabled>
-            {"\u{1F863}"}
+          <ColButton width="1.5ch" disabled>
+            #
           </ColButton>
           <ColButton
             width="6ch"
