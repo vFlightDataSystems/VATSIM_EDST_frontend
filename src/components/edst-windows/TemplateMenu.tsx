@@ -47,7 +47,7 @@ type TemplateColProps = {
 };
 
 const TemplateCol = styled.div.attrs((props: TemplateColProps) => ({ width: props.width ?? "auto" }))<TemplateColProps>`
-  font-size: ${props => props.theme.fontProperties.inputFontSize};
+  font-size: ${props => props.theme.fontProps.inputFontSize};
   align-items: center;
   vertical-align: center;
   padding: 0 2px;

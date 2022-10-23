@@ -79,7 +79,7 @@ export const FreeTextRow = styled(BodyRowDiv)<Pick<CSSProperties, "marginLeft">>
   input {
     width: 100%;
     background-color: transparent;
-    font-size: ${props => props.theme.fontProperties.fontSize};
+    font-size: ${props => props.theme.fontProps.fontSize};
     outline: none;
     border: none;
     color: ${props => props.theme.colors.grey};

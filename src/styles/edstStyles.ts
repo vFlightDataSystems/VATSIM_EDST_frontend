@@ -8,8 +8,8 @@ export const EdstDiv = styled(NoSelectDiv)`
   padding: 0;
   margin: 0;
   background-color: #000000;
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  font-size: ${props => props.theme.fontProps.fontSize};
   //caret-color: transparent;
   //scroll-behavior: auto;
   -webkit-font-smoothing: subpixel-antialiased;
@@ -17,7 +17,7 @@ export const EdstDiv = styled(NoSelectDiv)`
   button,
   input,
   textarea {
-    font-family: ${props => props.theme.fontProperties.edstFontFamily};
+    font-family: ${props => props.theme.fontProps.edstFontFamily};
     text-transform: uppercase;
     //font-weight: bold;
     cursor: default;

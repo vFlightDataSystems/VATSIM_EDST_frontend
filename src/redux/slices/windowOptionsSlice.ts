@@ -4,7 +4,7 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 
 export const windowOptionLabel = {
   brightness: "BRIGHT",
-  fontSize: "FONT",
+  fontSizeIndex: "FONT",
   columns: "COL",
   lines: "LINES",
   paLines: "PA LINES",
@@ -15,40 +15,40 @@ const initialState = {
   [EdstWindow.ALTIMETER]: {
     lines: 5,
     columns: 1,
-    fontSize: 2,
+    fontSizeIndex: 2,
     brightness: 80
   },
   [EdstWindow.METAR]: {
     lines: 5,
-    fontSize: 2,
+    fontSizeIndex: 2,
     brightness: 80
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     paLines: 2,
     width: 35,
-    fontSize: 2,
+    fontSizeIndex: 2,
     brightness: 80
   },
   [EdstWindow.MESSAGE_RESPONSE_AREA]: {
     width: 45,
-    fontSize: 2,
+    fontSizeIndex: 2,
     brightness: 80
   },
   [EdstWindow.GI]: {
     lines: 10,
-    fontSize: 2,
+    fontSizeIndex: 2,
     brightness: 80
   },
   [EdstWindow.SIGMETS]: {
     lines: 10,
-    fontSize: 2,
+    fontSizeIndex: 2,
     brightness: 80
   },
   [EdstWindow.STATUS]: {
-    fontSize: 2
+    fontSizeIndex: 2
   },
   [EdstWindow.OUTAGE]: {
-    fontSize: 2
+    fontSizeIndex: 2
   }
 };
 
@@ -58,76 +58,76 @@ export type ModifiableWindowOptions = WindowOptions;
 const maxOptionValues = {
   [EdstWindow.ALTIMETER]: {
     brightness: 100,
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.METAR]: {
     brightness: 100,
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     brightness: 100,
     paLines: 2,
     width: 50,
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.MESSAGE_RESPONSE_AREA]: {
     brightness: 100,
     width: 50,
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.GI]: {
     brightness: 100,
     lines: 21,
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.SIGMETS]: {
     brightness: 100,
     lines: 21,
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.STATUS]: {
-    fontSize: 3
+    fontSizeIndex: 3
   },
   [EdstWindow.OUTAGE]: {
-    fontSize: 3
+    fontSizeIndex: 3
   }
 };
 
 const minOptionValues = {
   [EdstWindow.ALTIMETER]: {
     brightness: 2,
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.METAR]: {
     brightness: 2,
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.MESSAGE_COMPOSE_AREA]: {
     brightness: 2,
     paLines: 2,
     width: 30,
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.MESSAGE_RESPONSE_AREA]: {
     brightness: 2,
     width: 25,
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.GI]: {
     brightness: 2,
     lines: 3,
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.SIGMETS]: {
     brightness: 2,
     lines: 3,
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.STATUS]: {
-    fontSize: 1
+    fontSizeIndex: 1
   },
   [EdstWindow.OUTAGE]: {
-    fontSize: 1
+    fontSizeIndex: 1
   }
 };
 

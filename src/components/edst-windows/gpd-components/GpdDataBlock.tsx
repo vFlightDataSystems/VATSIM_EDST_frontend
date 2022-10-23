@@ -24,7 +24,7 @@ const DataBlockDiv = styled.div<{ offset: DataBlockOffset }>`
   font-size: 16px;
   line-height: 1;
   width: 9ch;
-  font-family: ${props => props.theme.fontProperties.edstFontFamily};
+  font-family: ${props => props.theme.fontProps.edstFontFamily};
   color: #adadad;
 `;
 

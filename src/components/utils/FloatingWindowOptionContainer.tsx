@@ -12,7 +12,7 @@ import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
 import { borderHover } from "../../styles/styles";
 
 const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: boolean }>`
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-size: ${props => props.theme.fontProps.fontSize};
   display: inline-flex;
   flex-flow: column;
   height: auto;

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useResizeDetector } from "react-resize-detector";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { mraMsgSelector, pushZStack, setMraMessage, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -15,7 +15,7 @@ type MessageResponseAreaDivProps = { width: number; fontSize: number; brightness
 const MessageResponseAreaDiv = styled(FloatingWindowDiv).attrs(({ width }: MessageResponseAreaDivProps) => ({
   width: `${width}ch`
 }))<MessageResponseAreaDivProps>`
-  font-size: ${props => props.theme.fontProperties.floatingFontSizes[props.fontSize - 1]};
+  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSize - 1]};
   line-height: 1em;
   padding: 0 2px;
   min-height: 4em;
@@ -24,8 +24,11 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv).attrs(({ width }: Messa
   border: 1px solid #adadad;
   overflow-wrap: anywhere;
   white-space: pre-line;
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
-  color: rgba(173, 173, 173, ${props => (props.brightness ?? 80) / 100});
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  ${props =>
+    css`
+      color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
+    `};
 `;
 
 export const MessageResponseArea = () => {

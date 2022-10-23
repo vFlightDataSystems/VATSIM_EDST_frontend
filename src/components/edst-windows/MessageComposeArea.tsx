@@ -53,14 +53,17 @@ function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
 }
 
-type MessageComposeAreaDivProps = { brightness: number; fontSize: number };
+type MessageComposeAreaDivProps = { brightness: number; fontSizeIndex: number };
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)<MessageComposeAreaDivProps>`
-  color: rgba(173, 173, 173, ${props => props.brightness / 100});
+  ${props =>
+    css`
+      color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
+    `};
   background-color: #000000;
   border: 1px solid #adadad;
   line-height: 1em;
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
-  font-size: ${props => props.theme.fontProperties.floatingFontSizes[props.fontSize - 1]};
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSizeIndex - 1]};
 `;
 
 type McaInputAreaProps = { width: number; paLines: number };
@@ -454,7 +457,7 @@ export const MessageComposeArea = () => {
         <MessageComposeAreaDiv
           ref={ref}
           id="edst-mca"
-          fontSize={windowOptions.fontSize}
+          fontSizeIndex={windowOptions.fontSizeIndex}
           brightness={windowOptions.brightness}
           anyDragging={anyDragging}
           pos={pos}

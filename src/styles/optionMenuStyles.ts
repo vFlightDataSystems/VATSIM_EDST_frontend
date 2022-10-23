@@ -26,8 +26,8 @@ export const OptionIndicatorCircle = styled(OptionIndicator)`
   border: 2px solid #888888;
 `;
 export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
-  font-family: ${props => props.theme.fontProperties.edstFontFamily};
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-family: ${props => props.theme.fontProps.edstFontFamily};
+  font-size: ${props => props.theme.fontProps.fontSize};
   z-index: ${props => 10000 + props.zIndex};
   overflow: hidden;
   position: fixed;
@@ -45,7 +45,7 @@ const optionsMenuHeaderBorder = createBorder("1px", "#adadad", "#575757");
 const optionsMenuBodyBorder = createBorder("1px", "#575757", "#414141");
 
 export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-size: ${props => props.theme.fontProps.fontSize};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,7 +55,7 @@ export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
   ${optionsMenuHeaderBorder};
 `;
 export const OptionsBody = styled.div`
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-size: ${props => props.theme.fontProps.fontSize};
   background-color: #000000;
   padding: 2px 0;
   ${optionsMenuBodyBorder};
@@ -180,7 +180,7 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
 type EdstInputProps = Partial<Pick<CSSProperties, "width">>;
 export const EdstInput = styled.input<EdstInputProps>`
   width: ${props => props.width ?? "calc(100% - 7px)"};
-  font-size: ${props => props.theme.fontProperties.inputFontSize};
+  font-size: ${props => props.theme.fontProps.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
@@ -194,7 +194,7 @@ export const EdstInput = styled.input<EdstInputProps>`
 `;
 export const EdstTextArea = styled.textarea`
   width: calc(100% - 7px);
-  font-size: ${props => props.theme.fontProperties.inputFontSize};
+  font-size: ${props => props.theme.fontProps.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;

@@ -14,7 +14,8 @@ export const colors = {
   windowOutlineColor: "#ADADAD"
 };
 
-export const fontProperties = {
+export const fontProps = {
+  baseRGB: 216, // 0xd8
   fontSize: "17px",
   inputFontSize: "17px",
   eramFontFamily: "ERAM",
@@ -24,12 +25,12 @@ export const fontProperties = {
 
 export const edstTheme = {
   colors,
-  fontProperties
+  fontProps
 };
 
 declare module "styled-components" {
   export interface DefaultTheme {
     colors: typeof colors;
-    fontProperties: typeof fontProperties;
+    fontProps: typeof fontProps;
   }
 }

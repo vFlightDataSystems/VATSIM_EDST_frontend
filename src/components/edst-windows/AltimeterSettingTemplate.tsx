@@ -37,8 +37,8 @@ const AltimeterStationTemplateInput = styled.input`
   background-color: #000000;
   border: 1px solid #adadad;
 
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  font-size: ${props => props.theme.fontProps.fontSize};
   color: ${props => props.theme.colors.grey};
 `;
 

@@ -88,7 +88,7 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
       "background-color": "#AD6C6C"
     }};
   input {
-    font-size: ${props => props.theme.fontProperties.inputFontSize};
+    font-size: ${props => props.theme.fontProps.inputFontSize};
     outline: none;
     display: flex;
     overflow: hidden;

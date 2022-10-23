@@ -37,7 +37,7 @@ const { useGetParQuery, useGetPdarQuery, useGetPdrQuery } = prefrouteApi;
 export const usePar = (aircraftId: AircraftId) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetParQuery({ artccId, destination: entry.destination, route: entry.route.trim(), aircraft: entry.aircraftType });
+  const { data } = useGetParQuery({ artccId, destination: entry.destination, route: entry.route.trim(), aircraft: entry.aircraftType ?? "B738" });
 
   return data ?? [];
 };
@@ -45,7 +45,7 @@ export const usePar = (aircraftId: AircraftId) => {
 export const usePdar = (aircraftId: AircraftId) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetPdarQuery({ artccId, departure: entry.departure, destination: entry.destination, aircraft: entry.aircraftType });
+  const { data } = useGetPdarQuery({ artccId, departure: entry.departure, destination: entry.destination, aircraft: entry.aircraftType ?? "B738" });
 
   return data ?? [];
 };
@@ -53,7 +53,7 @@ export const usePdar = (aircraftId: AircraftId) => {
 export const usePdr = (aircraftId: AircraftId) => {
   const artccId = useRootSelector(artccIdSelector);
   const entry = useRootSelector(entrySelector(aircraftId));
-  const { data } = useGetPdrQuery({ artccId, departure: entry.departure, route: entry.route.trim(), aircraft: entry.aircraftType });
+  const { data } = useGetPdrQuery({ artccId, departure: entry.departure, route: entry.route.trim(), aircraft: entry.aircraftType ?? "B738" });
 
   return data ?? [];
 };

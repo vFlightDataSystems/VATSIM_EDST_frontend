@@ -56,7 +56,7 @@ const InputContainer = styled.div`
 `;
 const Input = styled.input`
   //cursor: default;
-  font-size: ${props => props.theme.fontProperties.inputFontSize};
+  font-size: ${props => props.theme.fontProps.inputFontSize};
   outline: none;
   flex: 1;
   width: 100%;
@@ -71,7 +71,7 @@ const PposDiv = styled.div`
   border-right: none;
   padding: 0 2px;
   width: 11ch;
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-size: ${props => props.theme.fontProps.fontSize};
   color: #575757;
 `;
 const ButtonCol = styled(OptionsBodyCol)`

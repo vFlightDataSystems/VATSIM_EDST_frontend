@@ -20,8 +20,8 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
       ${props.width && { width: props.width }};
       ${props.maxWidth && { "max-width": props.maxWidth }};
     `};
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  font-size: ${props => props.theme.fontProps.fontSize};
   z-index: ${props => 10000 + props.zIndex};
   position: ${props => (!props.fullscreen ? "fixed" : "absolute")};
   color: #adadad;
@@ -36,8 +36,8 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
 
 type ResizableFloatingWindowDivProps = { dimension: WindowDimension };
 export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFloatingWindowDivProps>`
-  font-family: ${props => props.theme.fontProperties.edstFontFamily};
-  font-size: ${props => props.theme.fontProperties.fontSize};
+  font-family: ${props => props.theme.fontProps.edstFontFamily};
+  font-size: ${props => props.theme.fontProps.fontSize};
   display: flex;
   white-space: nowrap;
   flex-flow: column;
@@ -57,7 +57,7 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFlo
 
 type FloatingWindowBodyContainerProps = Pick<CSSProperties, "width"> & { fontSize: number };
 export const FloatingWindowBodyContainer = styled.div<FloatingWindowBodyContainerProps>`
-  font-size: ${props => props.theme.fontProperties.floatingFontSizes[props.fontSize - 1]};
+  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSize - 1]};
   width: ${props => props.width};
 `;
 export const FloatingWindowBodyDiv = styled.div`
@@ -120,12 +120,20 @@ export const FloatingWindowRow = styled(NoSelectDiv)<FloatingWindowRowProps>`
   border: 1px solid transparent;
   min-height: 1em;
   flex-flow: column;
-  color: rgba(173, 173, 173, ${props => props.brightness / 100});
+  ${props =>
+    css`
+      color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
+    `};
 
   ${props =>
     props.selected &&
     css`
-      background-color: rgba(173, 173, 173, ${props.brightness / 100});
+      background-color: rgba(
+        ${props.theme.fontProps.baseRGB},
+        ${props.theme.fontProps.baseRGB},
+        ${props.theme.fontProps.baseRGB},
+        ${props.brightness}
+      );
       color: #000000;
     `};
   ${props =>

@@ -32,7 +32,7 @@ const YELLOW = "#A3A300";
 
 const EdstHeaderDiv = styled.div`
   height: auto;
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
   width: 100vw;
   position: absolute;
 `;

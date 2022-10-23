@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { NoSelectDiv } from "../../styles/NoSelectDiv";
 
 const TimeStyle = styled(NoSelectDiv)`
-  font-family: ${props => props.theme.fontProperties.eramFontFamily};
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
   color: ${props => props.theme.colors.grey};
   display: flex;
   justify-content: center;
