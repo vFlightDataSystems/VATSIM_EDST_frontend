@@ -10,7 +10,7 @@ import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 import { strIsEnum, unsafeKeys } from "../../../utility-functions";
 
 const EqpCol2 = styled(EqpCol)`
-  margin-left: 30px;
+  margin: 0 16px;
 `;
 
 enum VoiceCat {

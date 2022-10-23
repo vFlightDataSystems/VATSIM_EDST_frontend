@@ -20,7 +20,7 @@ import { mod } from "../../../utils/mod";
 import { Nullable } from "../../../typeDefinitions/utility-types";
 
 const HeadingDiv = styled(OptionsMenu)`
-  width: 18ch;
+  width: 20ch;
 `;
 
 export const HeadingMenu = () => {

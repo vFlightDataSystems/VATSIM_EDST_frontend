@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import "../../css/styles.scss";
+import "../../css/styles.css";
 import _ from "lodash";
 import styled from "styled-components";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";

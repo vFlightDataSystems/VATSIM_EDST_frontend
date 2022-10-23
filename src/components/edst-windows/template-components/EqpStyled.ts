@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { EdstInput, OptionsBodyRow } from "../../../styles/optionMenuStyles";
 import { borderHover } from "../../../styles/styles";
 
@@ -37,12 +37,13 @@ export const EqpInput = styled(EdstInput)`
   resize: none;
 `;
 
-export const EqpCol = styled.div`
+type EqpColProps = { width?: CSSProperties["width"] };
+export const EqpCol = styled.div<EqpColProps>`
   display: flex;
   flex-flow: column;
   margin: 0 4px;
-  width: auto;
-  min-width: 15%;
+  width: ${props => props.width ?? "auto"};
+  min-width: 18%;
   height: 100%;
 `;
 export const EqpColTitle = styled(EqpCol)`

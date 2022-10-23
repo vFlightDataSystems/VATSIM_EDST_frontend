@@ -23,7 +23,7 @@ enum Sign {
 }
 
 const SpeedDiv = styled(OptionsMenu)`
-  width: 16ch;
+  width: 20ch;
 `;
 
 export const SpeedMenu = () => {

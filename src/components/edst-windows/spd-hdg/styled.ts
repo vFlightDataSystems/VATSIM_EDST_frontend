@@ -48,6 +48,7 @@ export const ScrollCol = styled.div<ScrollColProps>`
   color: #adadad;
   border: 1px solid transparent;
   width: 4ch;
+  margin: 0 2px;
 
   ${borderHover};
   ${props => props.noHover && { "pointer-events": "none" }};

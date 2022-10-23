@@ -48,7 +48,7 @@ type EdstHeaderColProps = { bottomRow?: boolean };
 const EdstHeaderCol = styled.div<EdstHeaderColProps>`
   z-index: 20001;
   display: inline-flex;
-  ${props => props.bottomRow && { "margin-left": "calc(8ch + 11px)" }};
+  ${props => props.bottomRow && { "margin-left": "calc(7.6ch + 4px)" }};
 
   span {
     height: 2em;
@@ -69,13 +69,14 @@ const ColButton = styled.button<ColButtonProps>`
   height: 2em;
   justify-content: center;
   line-height: 1em;
+  font-family: ${props => props.theme.fontProps.eramFontFamily};
   font-size: inherit;
   margin: 0 1px;
-  border: ${props => css`1px solid ${props.borderColor ?? props.theme.colors.grey}`};
   ${props => css`
-    width: ${props.width ?? "6ch"};
+    width: ${props.width ?? "7ch"};
     background-color: ${props.open ? "#595959" : props.backgroundColor ?? "#000000"};
     font-weight: ${props.fontWeight ?? "normal"};
+    border: 1px solid ${props.borderColor ?? props.theme.colors.grey};
   `};
 
   ${borderHover};
@@ -123,7 +124,7 @@ export const EdstHeader = () => {
     <EdstHeaderDiv>
       <EdstHeaderRow>
         <EdstHeaderCol>
-          <ColButton width="1.5ch" disabled>
+          <ColButton width="1.6ch" disabled>
             #
           </ColButton>
           <ColButton

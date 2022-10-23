@@ -118,7 +118,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             />
           ))}
         </EqpCol>
-        <EqpCol>
+        <EqpCol width="23ch">
           <EqpColTitle>ADS-B CATEGORY</EqpColTitle>
           <EquipmentTemplateRow
             circle

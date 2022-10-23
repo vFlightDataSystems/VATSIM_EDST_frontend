@@ -30,7 +30,7 @@ import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { AtMostOne } from "../../../typeDefinitions/utility-types";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
-  width: 76ch;
+  width: 92ch;
 `;
 const EqpTemplateBody = styled(OptionsBody)`
   height: 100%;

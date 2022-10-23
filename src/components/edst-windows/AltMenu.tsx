@@ -107,7 +107,7 @@ const AltMenuRowCol = styled(AltMenuRow)<AltMenuRowColProps>`
 `;
 type AltMenuScrollRowProps = { hover?: boolean };
 const AltMenuScrollRow = styled.div<AltMenuScrollRowProps>`
-  width: 4ch;
+  max-width: 5.5ch;
   display: flex;
   margin: 1px 6px;
   height: 1em;

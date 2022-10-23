@@ -9,32 +9,9 @@
 }
 
 @font-face {
-  font-family: SPLEEN;
-  src: url('../resources/fonts/spleen-8x16.otf');
-}
-
-@font-face {
-  font-family: RETRO_GAMING;
-  src: url('../resources/fonts/Retro Gaming.ttf');
-}
-
-@font-face {
-  font-family: VCS_MONO;
-  src: url('../resources/fonts/VCR_OSD_MONO_1.001.ttf');
-}
-
-@font-face {
-  font-family: TERMINUS;
-  src: url('../resources/fonts/TerminusTTF-Bold-4.49.1.ttf');
-}
-
-@font-face {
   font-family: MyConsolas;
   src: url('../resources/fonts/CONSOLAB.TTF');
 }
-
-$eram-cursor: url("src/resources/cursors/ERAMCursor2.cur"), default;
-$eram-delete-cursor: url("src/resources/cursors/ERAMDeletionCursor.cur"), default;
 
 
 .circle-icon {
@@ -51,10 +28,6 @@ $eram-delete-cursor: url("src/resources/cursors/ERAMDeletionCursor.cur"), defaul
 
 .plus-icon {
   background-image: url("../resources/images/Plus.svg");
-}
-
-.aircraft-track-line {
-  background: transparent;
 }
 
 .vatsim-logo {

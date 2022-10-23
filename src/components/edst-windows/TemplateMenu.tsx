@@ -19,7 +19,7 @@ import { formatRoute } from "../../utils/formatRoute";
 import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "../../utils/stringManipulation";
 
 const TemplateDiv = styled(OptionsMenu)`
-  width: 82ch;
+  width: 90ch;
 `;
 const TemplateBodyDiv = styled(OptionsBody)`
   padding: 10px 0 2px 0;
@@ -167,19 +167,18 @@ export const TemplateMenu = () => {
             <TemplateCol width="9ch" textIndent>
               AID
             </TemplateCol>
-            <TemplateCol width="4ch" textIndent>
+            <TemplateCol width="5ch" textIndent>
               NUM
             </TemplateCol>
-            <TemplateCol width="4ch" textIndent>
+            <TemplateCol width="5ch" textIndent>
               SAI
             </TemplateCol>
             <TemplateCol width="6ch" textIndent>
               TYP
             </TemplateCol>
-            <TemplateCol width="7ch">
+            <TemplateCol width="8ch">
               <EdstButton
                 margin="0 0 0 2px"
-                width="100%"
                 content="EQP..."
                 onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
                 title={Tooltips.templateMenuEqpButton}
@@ -208,12 +207,12 @@ export const TemplateMenu = () => {
                 <TemplateInput value={aidInput} onChange={event => setAidInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="4ch">
+            <TemplateCol width="5ch">
               <EdstTooltip title={Tooltips.templateMenuNum}>
                 <TemplateInput value={numInput} onChange={event => setNumInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="4ch">
+            <TemplateCol width="5ch">
               <EdstTooltip title={Tooltips.templateMenuSai}>
                 <TemplateInput value={saiInput} onChange={event => setSaiInput(event.target.value)} />
               </EdstTooltip>
@@ -223,7 +222,7 @@ export const TemplateMenu = () => {
                 <TemplateInput value={typeInput} onChange={event => setTypeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
-            <TemplateCol width="7ch">
+            <TemplateCol width="8ch">
               <EdstTooltip title={Tooltips.templateMenuEqpBox}>
                 <TemplateInput value={equipInput} onChange={event => setEquipInput(event.target.value)} />
               </EdstTooltip>
