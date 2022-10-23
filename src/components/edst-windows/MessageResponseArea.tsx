@@ -11,15 +11,13 @@ import { useWindowOptions } from "../../hooks/useWindowOptions";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 
-type MessageResponseAreaDivProps = { width: number; fontSize: number; brightness: number };
-const MessageResponseAreaDiv = styled(FloatingWindowDiv).attrs(({ width }: MessageResponseAreaDivProps) => ({
-  width: `${width}ch`
-}))<MessageResponseAreaDivProps>`
-  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSize - 1]};
+type MessageResponseAreaDivProps = { width: number; fontSizeIndex: number; brightness: number };
+const MessageResponseAreaDiv = styled(FloatingWindowDiv)<MessageResponseAreaDivProps>`
+  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSizeIndex - 1]};
   line-height: 1em;
   padding: 0 2px;
   min-height: 4em;
-  width: ${props => props.width};
+  width: ${props => `${props.width}ch`};
   background-color: #000000;
   border: 1px solid #adadad;
   overflow-wrap: anywhere;

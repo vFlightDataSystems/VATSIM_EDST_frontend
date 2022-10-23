@@ -12,7 +12,8 @@ import { mod } from "../../utils/mod";
 import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
 import { Nullable } from "../../typeDefinitions/utility-types";
 
-const AltimCol = styled.span<{ underline?: boolean; isReportingStation?: boolean }>`
+type AltimColProps = { underline?: boolean; isReportingStation?: boolean };
+const AltimCol = styled.span<AltimColProps>`
   margin-left: 2ch;
   ${props => props.isReportingStation && { margin: "0 2ch 0 0" }};
   ${props => props.underline && { "text-decoration": "underline" }};

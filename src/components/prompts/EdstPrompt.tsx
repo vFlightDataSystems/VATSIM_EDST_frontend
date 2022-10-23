@@ -13,10 +13,8 @@ import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 type PromptDivProps = {
   width?: CSSProperties["width"];
 };
-const PromptDiv = styled(OptionsMenu).attrs((props: PromptDivProps) => ({
-  width: props.width ?? "auto"
-}))<PromptDivProps>`
-  width: ${props => props.width};
+const PromptDiv = styled(OptionsMenu)<PromptDivProps>`
+  width: ${props => props.width ?? "auto"};
 `;
 
 type EdstPromptProps = PropsWithChildren<{

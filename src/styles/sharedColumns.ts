@@ -1,4 +1,4 @@
-import styled, { CSSProperties } from "styled-components";
+import styled, { css, CSSProperties } from "styled-components";
 import { borderHover, createBorder } from "./styles";
 
 const hotboxBorder = createBorder("1px", "#575757", "#414141");
@@ -12,10 +12,7 @@ export type ColProps = {
   visibilityHidden?: boolean;
 };
 
-export const Col = styled.div.attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "auto",
-  visibility: props.visibilityHidden ? "hidden" : "initial"
-}))<ColProps>`
+export const Col = styled.div<ColProps>`
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -27,14 +24,15 @@ export const Col = styled.div.attrs((props: ColProps) => ({
     pointer-events: none;
   }
 
-  width: ${props => props.width};
-  visibility: ${props => props.visibility};
+  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "auto")};
+  visibility: ${props => (props.visibilityHidden ? "hidden" : "initial")};
   ${props => props.color && { color: props.color }};
   ${props =>
-    props.selected && {
-      "background-color": "#ADADAD",
-      color: "#000000"
-    }};
+    props.selected &&
+    css`
+      background-color: ${props.theme.colors.grey};
+      color: #000000;
+    `};
   ${props => props.hover && borderHover};
 `;
 export const FidCol = styled(Col)`
@@ -50,12 +48,10 @@ export const SpecialBox = styled(Col)`
 export const HotBox = styled(SpecialBox)`
   ${hotboxBorder}
 `;
-export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "7ch"
-}))`
+export const AircraftTypeCol = styled(Col)<ColProps>`
   min-width: 2ch;
   justify-content: left;
-  width: ${props => props.width};
+  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "7ch")};
   margin-right: 0;
   margin-left: 10px;
   padding-left: 4px;
@@ -69,48 +65,44 @@ export const AircraftTypeCol = styled(Col).attrs((props: ColProps) => ({
     ${borderHover}
   }
 `;
-export const CodeCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "5ch"
-}))`
+export const CodeCol = styled(Col)<ColProps>`
   padding: 0 2px;
   justify-content: left;
-  width: ${props => props.width};
+  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "5ch")};
   margin-left: 0;
   margin-right: 10px;
 `;
-export const AltCol = styled(Col)<{ headerCol?: boolean }>`
+type AltColProps = { headerCol?: boolean };
+export const AltCol = styled(Col)<AltColProps>`
   display: flex;
   justify-content: left;
   padding: 0 2px;
   width: 7ch;
   margin-right: 8px;
 `;
-export const AltColDiv = styled(Col)<{ headerMouseDown?: boolean }>`
+type AltColDivProps = { headerMouseDown?: boolean };
+export const AltColDiv = styled(Col)<AltColDivProps>`
   border: 1px solid transparent;
   ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
   ${borderHover}
 `;
 type RouteColProps = { padding?: CSSProperties["padding"] };
-export const RouteCol = styled(Col).attrs((props: RouteColProps) => ({
-  padding: props.padding ?? "0 2px 0 0"
-}))<RouteColProps>`
+export const RouteCol = styled(Col)<RouteColProps>`
   height: calc(100% - 4px);
   white-space: nowrap;
   justify-content: left;
   border: 1px solid transparent;
   margin-left: 4px;
-  padding: ${props => props.padding};
+  padding: ${props => props.padding ?? "0 2px 0 0"};
 `;
 type RouteSpanProps = { padding?: CSSProperties["padding"] };
-export const RouteSpan = styled(RouteCol).attrs((props: RouteSpanProps) => ({
-  padding: props.padding ?? "0"
-}))<RouteSpanProps>`
+export const RouteSpan = styled(RouteCol)<RouteSpanProps>`
   max-width: 50vw;
   pointer-events: none;
   border: none;
   margin: 0;
   border: transparent;
-  padding: ${props => props.padding};
+  padding: ${props => props.padding ?? 0};
   overflow: hidden;
   text-overflow: ellipsis;
 `;

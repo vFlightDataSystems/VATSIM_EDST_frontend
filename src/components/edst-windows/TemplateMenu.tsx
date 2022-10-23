@@ -24,8 +24,8 @@ const TemplateDiv = styled(OptionsMenu)`
 const TemplateBodyDiv = styled(OptionsBody)`
   padding: 10px 0 2px 0;
 `;
-
-const TemplateRowDiv = styled.div<{ alignRight?: boolean }>`
+type TemplateRowDivProps = { alignRight?: boolean };
+const TemplateRowDiv = styled.div<TemplateRowDivProps>`
   padding: 2px 12px;
   display: flex;
   flex-grow: 1;
@@ -46,7 +46,7 @@ type TemplateColProps = {
   textIndent?: boolean;
 };
 
-const TemplateCol = styled.div.attrs((props: TemplateColProps) => ({ width: props.width ?? "auto" }))<TemplateColProps>`
+const TemplateCol = styled.div<TemplateColProps>`
   font-size: ${props => props.theme.fontProps.inputFontSize};
   align-items: center;
   vertical-align: center;
@@ -54,7 +54,7 @@ const TemplateCol = styled.div.attrs((props: TemplateColProps) => ({ width: prop
   justify-content: left;
   display: flex;
   flex-shrink: 0;
-  width: ${props => props.width};
+  width: ${props => props.width ?? "auto"};
   ${props => props.textIndent && { "text-indent": "6px" }}
 
   ${props =>

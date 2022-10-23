@@ -44,7 +44,8 @@ export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: 
 const optionsMenuHeaderBorder = createBorder("1px", "#adadad", "#575757");
 const optionsMenuBodyBorder = createBorder("1px", "#575757", "#414141");
 
-export const OptionsMenuHeader = styled.div<{ focused?: boolean }>`
+type OptionsMenuHeaderProps = { focused?: boolean };
+export const OptionsMenuHeader = styled.div<OptionsMenuHeaderProps>`
   font-size: ${props => props.theme.fontProps.fontSize};
   display: flex;
   justify-content: center;

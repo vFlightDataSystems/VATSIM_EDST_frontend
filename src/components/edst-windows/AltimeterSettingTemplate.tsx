@@ -8,17 +8,16 @@ import { useRootSelector } from "../../redux/hooks";
 import { altimeterAirportsSelector } from "../../redux/slices/weatherSlice";
 
 type AltimeterStationTemplateDivProps = { pos: WindowPosition };
-const AltimeterStationTemplateDiv = styled(NoSelectDiv).attrs((props: AltimeterStationTemplateDivProps) => ({
-  left: `${props.pos.left}px`,
-  top: `${props.pos.top}px`
-}))<AltimeterStationTemplateDivProps>`
+const AltimeterStationTemplateDiv = styled(NoSelectDiv)<AltimeterStationTemplateDivProps>`
   position: absolute;
   display: flex;
   flex-flow: column;
   height: auto;
   width: auto;
-  left: ${props => props.left};
-  top: ${props => props.top};
+  ${props => ({
+    left: `${props.pos.left}px`,
+    top: `${props.pos.top}px`
+  })};
 `;
 
 const AltimeterStationTemplateRowDiv = styled.div`

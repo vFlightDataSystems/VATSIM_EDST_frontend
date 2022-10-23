@@ -20,17 +20,16 @@ import { borderHover } from "../../styles/styles";
 import { Nullable } from "../../typeDefinitions/utility-types";
 
 type AltMenuDivProps = { width: CSSProperties["width"]; pos: WindowPosition };
-const AltMenuDiv = styled(NoSelectDiv).attrs((props: AltMenuDivProps) => ({
-  left: `${props.pos.left}px`,
-  top: `${props.pos.top}px`
-}))<AltMenuDivProps>`
+const AltMenuDiv = styled(NoSelectDiv)<AltMenuDivProps>`
   z-index: 11000;
   background-color: #888888;
   position: fixed;
   width: ${props => props.width};
   color: #d6d6d6;
-  left: ${props => props.left};
-  top: ${props => props.top};
+  ${props => ({
+    left: `${props.pos.left}px`,
+    top: `${props.pos.top}px`
+  })};
 `;
 
 const AltMenuHeaderDiv = styled.div`
@@ -38,16 +37,13 @@ const AltMenuHeaderDiv = styled.div`
   height: 20px;
 `;
 type AltMenuHeaderColProps = Partial<Pick<CSSProperties, "flexGrow" | "width">>;
-const AltMenuHeaderCol = styled.div.attrs((props: AltMenuHeaderColProps) => ({
-  width: props.width ?? "auto",
-  flexGrow: props.flexGrow ?? 0
-}))<AltMenuHeaderColProps>`
+const AltMenuHeaderCol = styled.div<AltMenuHeaderColProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   border: 1px solid #adadad;
-  width: ${props => props.width};
-  flex-grow: ${props => props.flexGrow};
+  width: ${props => props.width ?? "auto"};
+  flex-grow: ${props => props.flexGrow ?? 0};
 
   ${borderHover}
 `;
@@ -105,14 +101,12 @@ type AltMenuRowColProps = {
   width?: CSSProperties["width"];
   disabled?: boolean;
 };
-const AltMenuRowCol = styled(AltMenuRow).attrs((props: AltMenuRowColProps) => ({
-  width: props.width ?? "auto"
-}))<AltMenuRowColProps>`
+const AltMenuRowCol = styled(AltMenuRow)<AltMenuRowColProps>`
   padding: 0;
-  width: ${props => props.width};
+  width: ${props => props.width ?? "auto"};
 `;
-
-const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
+type AltMenuScrollRowProps = { hover?: boolean };
+const AltMenuScrollRow = styled.div<AltMenuScrollRowProps>`
   width: 4ch;
   display: flex;
   margin: 1px 6px;
@@ -123,8 +117,8 @@ const AltMenuScrollRow = styled.div<{ hover?: boolean }>`
 
   ${props => props.hover && borderHover};
 `;
-
-const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; selected?: boolean }>`
+type AltMenuScrollColProps = { tempAlt?: boolean; borderHover?: boolean; selected?: boolean };
+const AltMenuScrollCol = styled.div<AltMenuScrollColProps>`
   padding: 0 2px;
   display: flex;
   justify-content: left;
@@ -142,7 +136,8 @@ const AltMenuScrollCol = styled.div<{ tempAlt?: boolean; borderHover?: boolean; 
       color: "#D6D6D6"
     }};
 `;
-const AltMenuScrollTempAltCol = styled.div<{ disabled?: boolean }>`
+type AltMenuScrollTempAltColProps = { disabled?: boolean };
+const AltMenuScrollTempAltCol = styled.div<AltMenuScrollTempAltColProps>`
   display: flex;
   /*margin-left: 6px;*/
   padding-left: 8px;

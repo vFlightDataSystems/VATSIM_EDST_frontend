@@ -67,15 +67,12 @@ const MessageComposeAreaDiv = styled(FloatingWindowDiv)<MessageComposeAreaDivPro
 `;
 
 type McaInputAreaProps = { width: number; paLines: number };
-const MessageComposeInputAreaDiv = styled.div.attrs(({ width, paLines }: McaInputAreaProps) => ({
-  width: `${width}ch`,
-  height: `${paLines}em`
-}))<McaInputAreaProps>`
-  height: calc(${props => props.height} + 6px);
+const MessageComposeInputAreaDiv = styled.div<McaInputAreaProps>`
+  height: calc(${props => `${props.paLines}em`} + 6px);
   width: auto;
   overflow: hidden;
   > pre {
-    width: ${props => props.width};
+    width: ${props => `${props.width}ch`};
     margin: 2px;
   }
   text-transform: uppercase;

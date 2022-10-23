@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { NoSelectDiv } from "./NoSelectDiv";
 
 export const EdstDiv = styled(NoSelectDiv)`
@@ -25,16 +25,18 @@ export const EdstDiv = styled(NoSelectDiv)`
     //caret: underscore;
   }
 `;
-export const EdstWindowHeaderRowDiv = styled.div<{ bottomRow?: boolean }>`
+type EdstWindowHeaderRowDivProps = { bottomRow?: boolean };
+export const EdstWindowHeaderRowDiv = styled.div<EdstWindowHeaderRowDivProps>`
   border-bottom: 1px solid #adadad;
 
   ${props =>
-    props.bottomRow && {
-      "align-items": "center",
-      "justify-content": "start",
-      display: "flex",
-      padding: "0 10px"
-    }}
+    props.bottomRow &&
+    css`
+      align-items: center;
+      justify-content: start;
+      display: flex;
+      padding: 0 10px;
+    `};
 `;
 export const EdstBodyDiv = styled.div`
   overflow: hidden;

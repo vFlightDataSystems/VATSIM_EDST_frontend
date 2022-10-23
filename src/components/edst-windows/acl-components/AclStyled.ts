@@ -1,6 +1,5 @@
 import styled, { css } from "styled-components";
-import { Col, ColProps, SpecialBox } from "../../../styles/sharedColumns";
-import { colors } from "../../../edstTheme";
+import { Col, SpecialBox } from "../../../styles/sharedColumns";
 
 export const AclCol1 = styled(Col)<{ border?: boolean }>`
   margin: 0 2px;
@@ -34,11 +33,12 @@ export const CoralBox = styled(SpecialBox)`
   border: 1px solid #d698a5;
   pointer-events: none;
 `;
-export const RemarksBox = styled(SpecialBox)<{ unchecked?: boolean }>(props => {
+type RemarksBoxProps = { unchecked?: boolean };
+export const RemarksBox = styled(SpecialBox)<RemarksBoxProps>(props => {
   return (
     props.unchecked && {
-      color: colors.yellow,
-      border: `1px solid ${colors.yellow}`
+      color: props.theme.colors.yellow,
+      border: `1px solid ${props.theme.colors.yellow}`
     }
   );
 });
@@ -49,15 +49,15 @@ export const PointOutCol = styled(Col)`
   width: 30px;
   justify-content: left;
 `;
-const HdgSpdCol = styled(Col).attrs((props: ColProps) => ({
-  width: props.visibilityHidden || props.hidden ? "2ch" : "4ch"
-}))<{ scratchpad?: boolean }>`
-  ${props => props.scratchpad && { color: colors.yellow }}
+type HdgSpdColProps = { scratchpad?: boolean };
+const HdgSpdCol = styled(Col)<HdgSpdColProps>`
+  ${props => props.scratchpad && { color: props.theme.colors.yellow }}
+  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "4ch")};
   ${props =>
     props.selected &&
     css`
       color: #000000;
-      background-color: ${props.scratchpad ? colors.yellow : "#ADADAD"};
+      background-color: ${props.scratchpad ? props.theme.colors.yellow : props.theme.colors.grey};
     `}};
 `;
 export const HdgCol = styled(HdgSpdCol)`

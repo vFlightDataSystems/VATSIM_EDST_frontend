@@ -13,7 +13,8 @@ const WindowTitleBarDiv = styled.div`
   justify-content: space-between;
   height: 24px;
 `;
-const WindowTitleBarCol = styled.div<{ middle?: boolean; focused?: boolean }>`
+type WindowTitleBarColProps = { middle?: boolean; focused?: boolean };
+const WindowTitleBarCol = styled.div<WindowTitleBarColProps>`
   display: inline-flex;
 
   ${props =>

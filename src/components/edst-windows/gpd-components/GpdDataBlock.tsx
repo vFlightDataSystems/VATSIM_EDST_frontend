@@ -17,7 +17,8 @@ import { DataBlockOffset } from "./GpdMapElements";
 import { LeaderLine } from "./LeaderLine";
 import { Nullable } from "../../../typeDefinitions/utility-types";
 
-const DataBlockDiv = styled.div<{ offset: DataBlockOffset }>`
+type DataBlockDivProps = { offset: DataBlockOffset };
+const DataBlockDiv = styled.div<DataBlockDivProps>`
   position: relative;
   left: ${props => props.offset.x}px;
   top: ${props => props.offset.y}px;
@@ -32,8 +33,8 @@ const DataBlockRow = styled.div`
   display: flex;
   width: 9ch;
 `;
-
-const DataBlockElement = styled.span<{ selected: boolean }>`
+type DataBlockElementProps = { selected: boolean };
+const DataBlockElement = styled.span<DataBlockElementProps>`
   height: 1em;
   color: ${props => (props.selected ? "#000000" : props.theme.colors.grey)};
   background-color: ${props => (props.selected ? props.theme.colors.grey : "transparent")};

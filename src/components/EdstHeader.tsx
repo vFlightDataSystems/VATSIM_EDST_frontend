@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { CSSProperties } from "styled-components";
+import styled, { css, CSSProperties } from "styled-components";
 import { Time } from "./utils/Time";
 import { Tooltips } from "../tooltips";
 import { EdstTooltip } from "./utils/EdstTooltip";
@@ -44,8 +44,8 @@ const EdstHeaderRow = styled.div`
   height: auto;
   display: flex;
 `;
-
-const EdstHeaderCol = styled.div<{ bottomRow?: boolean }>`
+type EdstHeaderColProps = { bottomRow?: boolean };
+const EdstHeaderCol = styled.div<EdstHeaderColProps>`
   z-index: 20001;
   display: inline-flex;
   ${props => props.bottomRow && { "margin-left": "calc(8ch + 11px)" }};
@@ -61,13 +61,7 @@ type ColButtonProps = Partial<
     open: boolean;
   } & ColButtonCSSProps
 >;
-
-const ColButton = styled.button.attrs((props: ColButtonProps) => ({
-  width: props.width ?? "6ch",
-  backgroundColor: props.open ? "#595959" : props.backgroundColor ?? "#000000",
-  fontWeight: props.fontWeight ?? "normal",
-  border: `1px solid ${props.borderColor ?? "#adadad"}`
-}))<ColButtonProps>`
+const ColButton = styled.button<ColButtonProps>`
   color: ${props => props.color ?? props.theme.colors.grey};
   padding: 0;
   border: none;
@@ -76,11 +70,13 @@ const ColButton = styled.button.attrs((props: ColButtonProps) => ({
   justify-content: center;
   line-height: 1em;
   font-size: inherit;
-  width: ${props => props.width};
   margin: 0 1px;
-  border: ${props => props.border};
-  background-color: ${props => props.backgroundColor};
-  font-weight: ${props => props.fontWeight};
+  border: ${props => css`1px solid ${props.borderColor ?? props.theme.colors.grey}`};
+  ${props => css`
+    width: ${props.width ?? "6ch"};
+    background-color: ${props.open ? "#595959" : props.backgroundColor ?? "#000000"};
+    font-weight: ${props.fontWeight ?? "normal"};
+  `};
 
   ${borderHover};
   &:disabled {

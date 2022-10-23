@@ -11,7 +11,7 @@ const LeaderLineDiv = styled.div<LeaderLineDivProps>`
   transform: ${props => `rotate(${props.angle}deg)`};
   height: 1px;
   width: ${props => `${props.length}px`};
-  background-color: #adadad;
+  background-color: ${props => props.theme.colors.grey};
 `;
 type LeaderLineProps = {
   offset: DataBlockOffset;

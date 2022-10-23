@@ -9,17 +9,13 @@ import { AllOrNone } from "../../typeDefinitions/utility-types";
 
 type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
 type EdstOuterButtonProps = Partial<{ disabled: boolean } & EdstOuterButtonCSSProps>;
-const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
-  width: props.width ?? "auto",
-  height: props.height ?? "auto",
-  margin: props.margin ?? "auto"
-}))<EdstOuterButtonProps>`
+const EdstOuterButton = styled.div<EdstOuterButtonProps>`
   display: inline-flex;
   border: 1px solid #000000;
 
-  width: ${props => props.width};
-  height: ${props => props.height};
-  margin: ${props => props.margin};
+  width: ${props => props.width ?? "auto"};
+  height: ${props => props.height ?? "auto"};
+  margin: ${props => props.margin ?? "auto"};
   ${borderHover};
   &[disabled] {
     pointer-events: none;
@@ -35,23 +31,18 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
 
 type EdstInnerButtonCSSProps = Pick<CSSProperties, "width" | "height" | "padding" | "flexGrow">;
 type EdstInnerButtonProps = Partial<{ selected: boolean; disabled: boolean } & EdstInnerButtonCSSProps>;
-const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
-  width: props.width ?? "auto",
-  height: props.height ?? "auto",
-  padding: props.padding ?? "0 4px",
-  flexGrow: props.flexGrow ?? 1
-}))<EdstInnerButtonProps>`
+const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   font-size: inherit;
   display: flex;
-  flex-grow: ${props => props.flexGrow};
+  flex-grow: ${props => props.flexGrow ?? 1};
   justify-content: center;
   align-items: center;
   color: ${props => (props.selected ? "#000000" : props.theme.colors.grey)};
   background-color: ${props => (props.selected ? props.theme.colors.grey : "#000000")};
   ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
-  padding: ${props => props.padding};
-  width: ${props => props.width};
-  height: ${props => props.height};
+  padding: ${props => props.padding ?? "0 4px"};
+  width: ${props => props.width ?? "auto"};
+  height: ${props => props.height ?? "auto"};
   &[disabled] {
     pointer-events: none;
     color: #707070;
