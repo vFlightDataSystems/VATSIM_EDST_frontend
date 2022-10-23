@@ -4,7 +4,7 @@ import { SortMenu } from "../SortMenu";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
+import { OptionsBodyRow, OptionIndicatorDiamond } from "../../../styles/optionMenuStyles";
 import { SortCol } from "../../../styles/sortStyles";
 import { depSortOptionSelector, setDepSort } from "../../../redux/slices/depSlice";
 import { DepSortOption } from "../../../typeDefinitions/enums/dep/depSortOption";
@@ -23,7 +23,7 @@ export const DepSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.ACID)} title={Tooltips.sortAcid}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === DepSortOption.ACID} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === DepSortOption.ACID} />
             ACID
           </SortCol>
         </EdstTooltip>
@@ -31,7 +31,7 @@ export const DepSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.DESTINATION)} title={Tooltips.sortDestination}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === DepSortOption.DESTINATION} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === DepSortOption.DESTINATION} />
             Destination
           </SortCol>
         </EdstTooltip>
@@ -39,7 +39,7 @@ export const DepSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.ORIGIN)} title={Tooltips.sortOrigin}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === DepSortOption.ORIGIN} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === DepSortOption.ORIGIN} />
             Origin
           </SortCol>
         </EdstTooltip>
@@ -47,7 +47,7 @@ export const DepSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.P_TIME)} disabled title={Tooltips.sortPTime}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === DepSortOption.P_TIME} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === DepSortOption.P_TIME} />
             P-Time
           </SortCol>
         </EdstTooltip>

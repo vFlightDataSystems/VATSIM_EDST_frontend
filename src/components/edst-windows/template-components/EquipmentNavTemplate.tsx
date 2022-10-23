@@ -4,8 +4,9 @@ import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
-import { EdstInput, OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
+import { EdstInput, OptionsBodyRow, OptionIndicatorCircle } from "../../../styles/optionMenuStyles";
 import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
+import { strIsEnum, unsafeKeys } from "../../../utility-functions";
 
 enum NavCat {
   F = "F",
@@ -46,20 +47,20 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
   const [rvsm, setRvsm] = useState<boolean>(false);
 
   const toggleCategory = (cat: NavCat | RnavCat) => {
-    if (Object.keys(NavCat).includes(cat)) {
+    if (strIsEnum(cat, NavCat)) {
       const navCats = [...navCategories];
-      const index = navCats.indexOf(cat as NavCat);
+      const index = navCats.indexOf(cat);
       if (index < 0) {
-        setNavCategories([...navCats, cat as NavCat]);
+        setNavCategories([...navCats, cat]);
       } else {
         navCats.splice(index, 1);
         setNavCategories(navCats);
       }
-    } else if (Object.keys(RnavCat).includes(cat)) {
+    } else if (strIsEnum(cat, RnavCat)) {
       const rnavCats = [...rnavCategories];
-      const index = rnavCats.indexOf(cat as RnavCat);
+      const index = rnavCats.indexOf(cat);
       if (index < 0) {
-        setRnavCategories([...rnavCats, cat as RnavCat]);
+        setRnavCategories([...rnavCats, cat]);
       } else {
         rnavCats.splice(index, 1);
         setRnavCategories(rnavCats);
@@ -73,8 +74,8 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
       ?.slice(1)?.[0]
       ?.split("-")?.[1]
       ?.match(/[A-Z]\d?/g);
-    const navaidCats = (field10a?.filter(s => Object.keys(NavCat).includes(s)) ?? []) as NavCat[];
-    const rnavCats = (field10a?.filter(s => Object.keys(RnavCat).includes(s)) ?? []) as RnavCat[];
+    const navaidCats = (field10a?.filter(s => strIsEnum(s, NavCat)) ?? []) as NavCat[];
+    const rnavCats = (field10a?.filter(s => strIsEnum(s, RnavCat)) ?? []) as RnavCat[];
     const initialRvsm = !!field10a?.includes("W");
 
     const reset = () => {
@@ -92,12 +93,12 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
       <OptionsBodyRow margin="10px 0 0 0" padding="4px 0 0 0">
         <EqpCol>
           <EqpColTitle>NAVAIDS</EqpColTitle>
-          {Object.keys(NavCat).map(category => (
+          {unsafeKeys(NavCat).map(category => (
             <EquipmentTemplateRow
               key={`nav-cat-row-${category}`}
               buttonText={category}
-              text={navCatText[category as NavCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category as NavCat}`]}
+              text={navCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category}`]}
               selected={navCategories.includes(category as NavCat)}
               toggleSelect={() => toggleCategory(category as NavCat)}
             />
@@ -105,12 +106,12 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
         </EqpCol>
         <EqpCol>
           <EqpColTitle>RNAV</EqpColTitle>
-          {Object.keys(RnavCat).map(category => (
+          {unsafeKeys(RnavCat).map(category => (
             <EquipmentTemplateRow
               key={`rnav-cat-row-${category}`}
               buttonText={category}
-              text={rnavCatText[category as RnavCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category as RnavCat}`]}
+              text={rnavCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category}`]}
               selected={rnavCategories.includes(category as RnavCat)}
               toggleSelect={() => toggleCategory(category as RnavCat)}
             />
@@ -120,13 +121,13 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
           <EqpContentRow>
             <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
               <EqpContentCol>
-                <OptionSelectedIndicator circle />
+                <OptionIndicatorCircle />
                 RNAV
               </EqpContentCol>
             </EdstTooltip>
             <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
               <EqpContentCol>
-                <OptionSelectedIndicator circle />
+                <OptionIndicatorCircle />
                 RNP
               </EqpContentCol>
             </EdstTooltip>

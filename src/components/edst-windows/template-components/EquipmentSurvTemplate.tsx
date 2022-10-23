@@ -5,10 +5,11 @@ import { Tooltips } from "../../../tooltips";
 import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
-import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
+import { OptionsBodyRow, OptionIndicator, OptionIndicatorCircle } from "../../../styles/optionMenuStyles";
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./EqpStyled";
 import { borderHover } from "../../../styles/styles";
 import { Nullable } from "../../../typeDefinitions/utility-types";
+import { strIsEnum, unsafeKeys } from "../../../utility-functions";
 
 const ContentCol = styled.div`
   justify-content: left;
@@ -76,7 +77,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
 
     const transponderType = field10b?.[0];
 
-    const transponderCategory = transponderType && Object.keys(TransponderCat).includes(transponderType) ? (transponderType as TransponderCat) : null;
+    const transponderCategory = transponderType && strIsEnum(transponderType, TransponderCat) ? (transponderType as TransponderCat) : null;
     const adsbBInitialType = (Object.keys(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
     const adsbUInitialType = (Object.keys(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
     const adsbVInitialType = (Object.keys(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
@@ -100,18 +101,18 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           <EqpRow>
             <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCategory(null)}>
               <ContentCol>
-                <OptionSelectedIndicator selected={transponderCategory === null} circle />
+                <OptionIndicatorCircle selected={transponderCategory === null} />
                 No Transponder
               </ContentCol>
             </EdstTooltip>
           </EqpRow>
-          {Object.keys(TransponderCat).map(category => (
+          {unsafeKeys(TransponderCat).map(category => (
             <EquipmentTemplateRow
               circle
               key={`transponder-type-row-${category}`}
               buttonText={category}
-              text={transponderCatText[category as TransponderCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuSurv_${category as TransponderCat}`]}
+              text={transponderCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuSurv_${category}`]}
               selected={transponderCategory === (category as TransponderCat)}
               toggleSelect={() => setTransponderCategory(category as TransponderCat)}
             />
@@ -208,7 +209,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           <EqpRow margin="18px 0">
             <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_260b}>
               <ContentCol>
-                <OptionSelectedIndicator />
+                <OptionIndicator />
                 260B (1090)
               </ContentCol>
             </EdstTooltip>
@@ -216,7 +217,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           <EqpRow margin="18px 0">
             <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_262b}>
               <ContentCol>
-                <OptionSelectedIndicator />
+                <OptionIndicator />
                 282B (UAT)
               </ContentCol>
             </EdstTooltip>

@@ -5,7 +5,7 @@ import { aclSortDataSelector, setAclSort } from "../../../redux/slices/aclSlice"
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { OptionsBodyRow, OptionSelectedIndicator } from "../../../styles/optionMenuStyles";
+import { OptionsBodyRow, OptionIndicator, OptionIndicatorDiamond } from "../../../styles/optionMenuStyles";
 import { SectorRow, SortCol } from "../../../styles/sortStyles";
 import { AclSortOption } from "../../../typeDefinitions/enums/acl/aclSortOption";
 
@@ -24,7 +24,7 @@ export const AclSortMenu = () => {
       <SectorRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSector(!sector)} title={Tooltips.sortAclSectorNonSector}>
           <SortCol>
-            <OptionSelectedIndicator selected={sector} />
+            <OptionIndicator selected={sector} />
             Sector/Non-Sector
           </SortCol>
         </EdstTooltip>
@@ -32,7 +32,7 @@ export const AclSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(AclSortOption.ACID)} title={Tooltips.sortAcid}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === AclSortOption.ACID} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === AclSortOption.ACID} />
             ACID
           </SortCol>
         </EdstTooltip>
@@ -40,7 +40,7 @@ export const AclSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(AclSortOption.BOUNDARY_TIME)} title={Tooltips.sortBoundaryTime}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === AclSortOption.BOUNDARY_TIME} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === AclSortOption.BOUNDARY_TIME} />
             Boundary Time
           </SortCol>
         </EdstTooltip>
@@ -53,7 +53,7 @@ export const AclSortMenu = () => {
           title={Tooltips.sortConflictStatus}
         >
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === AclSortOption.CONFLICT_STATUS} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === AclSortOption.CONFLICT_STATUS} />
             Conflict Status
           </SortCol>
         </EdstTooltip>
@@ -66,7 +66,7 @@ export const AclSortMenu = () => {
           title={Tooltips.sortConflictTime}
         >
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === AclSortOption.CONFLICT_TIME} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === AclSortOption.CONFLICT_TIME} />
             Conflict Time
           </SortCol>
         </EdstTooltip>
@@ -74,7 +74,7 @@ export const AclSortMenu = () => {
       <OptionsBodyRow>
         <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(AclSortOption.DESTINATION)} title={Tooltips.sortDestination}>
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === AclSortOption.DESTINATION} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === AclSortOption.DESTINATION} />
             Destination
           </SortCol>
         </EdstTooltip>
@@ -87,7 +87,7 @@ export const AclSortMenu = () => {
           title={Tooltips.sortSectorBySector}
         >
           <SortCol>
-            <OptionSelectedIndicator selected={selectedOption === AclSortOption.SECTOR_BY_SECTOR} diamond />
+            <OptionIndicatorDiamond selected={selectedOption === AclSortOption.SECTOR_BY_SECTOR} />
             Sector-by-Sector
           </SortCol>
         </EdstTooltip>

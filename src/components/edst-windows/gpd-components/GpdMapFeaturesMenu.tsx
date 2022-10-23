@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import _ from "lodash";
-import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionSelectedIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
+import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { EdstButton, ExitButton } from "../../utils/EdstButton";
 import { closeWindow } from "../../../redux/slices/appSlice";
@@ -23,7 +23,7 @@ export const GpdMapFeaturesMenu = () => {
               onMouseDown={() => setCurrentOptions(prev => ({ ...prev, [option as MapFeatureOption]: !currentOptions[option as MapFeatureOption] }))}
             >
               <OptionsFlexCol>
-                <OptionSelectedIndicator selected={currentOptions[option as MapFeatureOption]} />
+                <OptionIndicator selected={currentOptions[option as MapFeatureOption]} />
                 {option}
               </OptionsFlexCol>
             </EdstTooltip>

@@ -11,7 +11,7 @@ export const EqpCol2 = styled(EqpCol)`
   margin: 0 20px;
 `;
 
-enum AppCategory {
+enum ApproachCategory {
   L = "L",
   K = "K",
   A = "A",
@@ -21,9 +21,9 @@ enum AppCategory {
 
 export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const [appCategories, setAppCategories] = useState<AppCategory[]>([]);
+  const [appCategories, setAppCategories] = useState<ApproachCategory[]>([]);
 
-  const toggleCategory = (cat: AppCategory) => {
+  const toggleCategory = (cat: ApproachCategory) => {
     const appCats = [...appCategories];
     const index = appCats.indexOf(cat);
     if (index < 0) {
@@ -40,7 +40,7 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
       ?.slice(1)?.[0]
       ?.split("-")?.[1]
       ?.match(/[A-Z]\d?/g);
-    const appCats = (field10a?.[0]?.split("")?.filter(s => Object.keys(AppCategory).includes(s)) ?? []) as AppCategory[];
+    const appCats = (field10a?.[0]?.split("")?.filter(s => Object.keys(ApproachCategory).includes(s)) ?? []) as ApproachCategory[];
 
     const reset = () => {
       setAppCategories(appCats);
@@ -59,32 +59,32 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
             buttonText="L"
             text="(ILS)"
             tooltip={Tooltips.equipmentTemplateMenuAppServ_L}
-            selected={appCategories.includes(AppCategory.L)}
-            toggleSelect={() => toggleCategory(AppCategory.L)}
+            selected={appCategories.includes(ApproachCategory.L)}
+            toggleSelect={() => toggleCategory(ApproachCategory.L)}
           />
           <EquipmentTemplateRow
             key="eqp-app-serv-K"
             buttonText="K"
             text="(MLS)"
             tooltip={Tooltips.equipmentTemplateMenuAppServ_K}
-            selected={appCategories.includes(AppCategory.K)}
-            toggleSelect={() => toggleCategory(AppCategory.K)}
+            selected={appCategories.includes(ApproachCategory.K)}
+            toggleSelect={() => toggleCategory(ApproachCategory.K)}
           />
           <EquipmentTemplateRow
             key="eqp-app-serv-A"
             buttonText="A"
             text="(GBAS)"
             tooltip={Tooltips.equipmentTemplateMenuAppServ_A}
-            selected={appCategories.includes(AppCategory.A)}
-            toggleSelect={() => toggleCategory(AppCategory.A)}
+            selected={appCategories.includes(ApproachCategory.A)}
+            toggleSelect={() => toggleCategory(ApproachCategory.A)}
           />
           <EquipmentTemplateRow
             key="eqp-app-serv-B"
             buttonText="B"
             text="(LPV)"
             tooltip={Tooltips.equipmentTemplateMenuAppServ_B}
-            selected={appCategories.includes(AppCategory.B)}
-            toggleSelect={() => toggleCategory(AppCategory.B)}
+            selected={appCategories.includes(ApproachCategory.B)}
+            toggleSelect={() => toggleCategory(ApproachCategory.B)}
           />
         </EqpCol2>
         <EqpCol2>
@@ -93,8 +93,8 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
             buttonText="S"
             text="(STANDARD)"
             tooltip={Tooltips.equipmentTemplateMenuAppServ_S}
-            selected={appCategories.includes(AppCategory.S)}
-            toggleSelect={() => toggleCategory(AppCategory.S)}
+            selected={appCategories.includes(ApproachCategory.S)}
+            toggleSelect={() => toggleCategory(ApproachCategory.S)}
           />
         </EqpCol2>
       </OptionsBodyRow>

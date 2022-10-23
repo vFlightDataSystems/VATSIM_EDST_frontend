@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { useResizeDetector } from "react-resize-detector";
 import { useEventListener } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aclManualPostingSelector, setAclManualPosting } from "../../redux/slices/aclSlice";
+import { aclManualPostingSelector, setAclManualPosting, setAclSort } from "../../redux/slices/aclSlice";
 import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
 import {
   closeAllWindows,
@@ -47,6 +47,7 @@ import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 import socket from "../../sharedState/socket";
 import { GI_EXPR } from "../../utils/constants";
 import { formatRoute } from "../../utils/formatRoute";
+import { isAclSortKey, SORT_KEYS_NOT_IMPLEMENTED } from "../../typeDefinitions/types/aclSortData";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
@@ -259,7 +260,14 @@ export const MessageComposeArea = () => {
             dispatch(closeAllWindows());
             break;
           default:
-            dispatch(addAclEntryByFid(args[0]));
+            if (isAclSortKey(args[0])) {
+              if (!SORT_KEYS_NOT_IMPLEMENTED.includes(args[0])) {
+                dispatch(openWindowThunk(EdstWindow.ACL));
+                dispatch(setAclSort(args[0]));
+              }
+            } else {
+              dispatch(addAclEntryByFid(args[0]));
+            }
             break;
         }
         acceptDposKeyBD();

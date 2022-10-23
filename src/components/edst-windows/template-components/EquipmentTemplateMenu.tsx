@@ -14,10 +14,12 @@ import {
   OptionsBodyCol,
   OptionsBody,
   OptionsBodyRow,
-  OptionSelectedIndicator,
+  OptionIndicator,
   OptionsMenu,
   OptionsMenuHeader,
-  FidRow
+  FidRow,
+  OptionIndicatorDiamond,
+  OptionIndicatorCircle
 } from "../../../styles/optionMenuStyles";
 import { EqpContentCol, EqpRow } from "./EqpStyled";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
@@ -25,6 +27,7 @@ import { useDragging } from "../../../hooks/useDragging";
 import { useCenterCursor } from "../../../hooks/useCenterCursor";
 import { useFocused } from "../../../hooks/useFocused";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { AtMostOne } from "../../../typeDefinitions/utility-types";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
   width: 76ch;
@@ -52,21 +55,23 @@ enum MenuOptions {
 
 type EquipmentTemplateRowProps = {
   margin?: CSSProperties["margin"];
-  circle?: boolean;
-  diamond?: boolean;
   buttonText: string;
   selected: boolean;
   tooltip: string;
   text?: string;
   toggleSelect(): void;
-};
+} & AtMostOne<Record<"diamond" | "circle", boolean>>;
 
 export const EquipmentTemplateRow = ({ margin, tooltip, toggleSelect, selected, circle, diamond, buttonText, text }: EquipmentTemplateRowProps) => {
+  let Indicator = OptionIndicator;
+  if (circle || diamond) {
+    Indicator = circle ? OptionIndicatorCircle : OptionIndicatorDiamond;
+  }
   return (
     <EqpRow margin={margin}>
       <EdstTooltip title={tooltip} onMouseDown={toggleSelect}>
         <EqpContentCol>
-          <OptionSelectedIndicator selected={selected} circle={circle} diamond={diamond} />
+          <Indicator selected={selected} />
           {buttonText}
         </EqpContentCol>
       </EdstTooltip>

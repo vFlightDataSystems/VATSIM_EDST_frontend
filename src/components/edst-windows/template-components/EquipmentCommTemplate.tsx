@@ -7,6 +7,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
+import { strIsEnum, unsafeKeys } from "../../../utility-functions";
 
 const EqpCol2 = styled(EqpCol)`
   margin-left: 30px;
@@ -82,38 +83,38 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
   const [satelliteCategories, setSatelliteCategories] = useState<SatCat[]>([]);
 
   const toggleCategory = (cat: CpdlcCat | AcarsCat | SatCat | VoiceCat) => {
-    if (Object.keys(CpdlcCat).includes(cat)) {
+    if (strIsEnum(cat, CpdlcCat)) {
       const cpdlcCats = [...cpdlcCategories];
-      const index = cpdlcCats.indexOf(cat as CpdlcCat);
+      const index = cpdlcCats.indexOf(cat);
       if (index < 0) {
-        setCpdlcCategories([...cpdlcCats, cat as CpdlcCat]);
+        setCpdlcCategories([...cpdlcCats, cat]);
       } else {
         cpdlcCats.splice(index, 1);
         setCpdlcCategories(cpdlcCats);
       }
-    } else if (Object.keys(AcarsCat).includes(cat)) {
+    } else if (strIsEnum(cat, AcarsCat)) {
       const acarsCats = [...acarsCategories];
-      const index = acarsCats.indexOf(cat as AcarsCat);
+      const index = acarsCats.indexOf(cat);
       if (index < 0) {
-        setAcarsCategories([...acarsCats, cat as AcarsCat]);
+        setAcarsCategories([...acarsCats, cat]);
       } else {
         acarsCats.splice(index, 1);
         setAcarsCategories(acarsCats);
       }
-    } else if (Object.keys(SatCat).includes(cat)) {
+    } else if (strIsEnum(cat, SatCat)) {
       const satCats = [...satelliteCategories];
-      const index = satCats.indexOf(cat as SatCat);
+      const index = satCats.indexOf(cat);
       if (index < 0) {
-        setSatelliteCategories([...satCats, cat as SatCat]);
+        setSatelliteCategories([...satCats, cat]);
       } else {
         satCats.splice(index, 1);
         setSatelliteCategories(satCats);
       }
-    } else if (Object.keys(VoiceCat).includes(cat)) {
+    } else if (strIsEnum(cat, VoiceCat)) {
       const voiceCats = [...voiceCategories];
-      const index = voiceCats.indexOf(cat as VoiceCat);
+      const index = voiceCats.indexOf(cat);
       if (index < 0) {
-        setVoiceCategories([...voiceCats, cat as VoiceCat]);
+        setVoiceCategories([...voiceCats, cat]);
       } else {
         voiceCats.splice(index, 1);
         setVoiceCategories(voiceCats);
@@ -128,10 +129,10 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       ?.split("-")?.[1]
       ?.match(/[A-Z]\d?/g);
 
-    const voiceCats = (field10a?.[0]?.split("")?.filter(s => Object.keys(VoiceCat).includes(s)) ?? []) as VoiceCat[];
-    const cpdlcCats = (field10a?.filter(s => Object.keys(CpdlcCat).includes(s)) ?? []) as CpdlcCat[];
-    const acarsCats = (field10a?.filter(s => Object.keys(AcarsCat).includes(s)) ?? []) as AcarsCat[];
-    const satCats = (field10a?.filter(s => Object.keys(SatCat).includes(s)) ?? []) as SatCat[];
+    const voiceCats = (field10a?.[0]?.split("")?.filter(s => strIsEnum(s, VoiceCat)) ?? []) as VoiceCat[];
+    const cpdlcCats = (field10a?.filter(s => strIsEnum(s, CpdlcCat)) ?? []) as CpdlcCat[];
+    const acarsCats = (field10a?.filter(s => strIsEnum(s, AcarsCat)) ?? []) as AcarsCat[];
+    const satCats = (field10a?.filter(s => strIsEnum(s, SatCat)) ?? []) as SatCat[];
 
     const reset = () => {
       setVoiceCategories(voiceCats);
@@ -149,12 +150,12 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
         <EqpCol2>
           <EqpColTitle>VOICE CATEGORY</EqpColTitle>
-          {Object.keys(VoiceCat).map(category => (
+          {unsafeKeys(VoiceCat).map(category => (
             <EquipmentTemplateRow
               key={`voice-cat-row-${category}`}
               buttonText={category}
-              text={voiceCatText[category as VoiceCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as VoiceCat}`]}
+              text={voiceCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={voiceCategories.includes(category as VoiceCat)}
               toggleSelect={() => toggleCategory(category as VoiceCat)}
             />
@@ -162,12 +163,12 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>CPDLC CATEGORY</EqpColTitle>
-          {Object.keys(CpdlcCat).map(category => (
+          {unsafeKeys(CpdlcCat).map(category => (
             <EquipmentTemplateRow
               key={`cpdlc-cat-row-${category}`}
               buttonText={category}
-              text={cpdlcCatText[category as CpdlcCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as CpdlcCat}`]}
+              text={cpdlcCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={cpdlcCategories.includes(category as CpdlcCat)}
               toggleSelect={() => toggleCategory(category as CpdlcCat)}
             />
@@ -175,12 +176,12 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>ACARS CATEGORY</EqpColTitle>
-          {Object.keys(AcarsCat).map(category => (
+          {unsafeKeys(AcarsCat).map(category => (
             <EquipmentTemplateRow
               key={`acars-cat-row-${category}`}
               buttonText={category}
-              text={acarsCatText[category as AcarsCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as AcarsCat}`]}
+              text={acarsCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={acarsCategories.includes(category as AcarsCat)}
               toggleSelect={() => toggleCategory(category as AcarsCat)}
             />
@@ -188,12 +189,12 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>SATELLITE RTF</EqpColTitle>
-          {Object.keys(SatCat).map(category => (
+          {unsafeKeys(SatCat).map(category => (
             <EquipmentTemplateRow
               key={`satellite-cat-row-${category}`}
               buttonText={category}
-              text={satCatText[category as SatCat]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category as SatCat}`]}
+              text={satCatText[category]}
+              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={satelliteCategories.includes(category as SatCat)}
               toggleSelect={() => toggleCategory(category as SatCat)}
             />
