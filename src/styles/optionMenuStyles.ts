@@ -3,7 +3,8 @@ import { DraggableDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "./styles";
 
-export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?: boolean; diamond?: boolean }>`
+type OptionIndicatorProps = { selected?: boolean };
+export const OptionIndicator = styled.div<OptionIndicatorProps>`
   display: inline-flex;
   ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
   width: 8px;
@@ -13,20 +14,16 @@ export const OptionSelectedIndicator = styled.div<{ selected?: boolean; circle?:
   ${props =>
     props.selected && {
       "background-color": "#ADADAD"
-    }}
-
-  ${props =>
-    props.circle && {
-      "border-radius": "50%",
-      border: "2px solid #888888"
-    }}
-
-  ${props =>
-    props.diamond && {
-      width: "6px",
-      height: "6px",
-      transform: "rotate(45deg)"
-    }}
+    }};
+`;
+export const OptionIndicatorDiamond = styled(OptionIndicator)`
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+`;
+export const OptionIndicatorCircle = styled(OptionIndicator)`
+  border-radius: 50%;
+  border: 2px solid #888888;
 `;
 export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
   font-family: ${props => props.theme.fontProperties.edstFontFamily};
