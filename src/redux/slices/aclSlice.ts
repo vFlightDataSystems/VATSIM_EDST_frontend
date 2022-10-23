@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { AclSortData } from "../../typeDefinitions/types/aclSortData";
+import { ACL_SORT_MAP, AclSortData, AclSortKey } from "../../typeDefinitions/types/aclSortData";
 import { AclSortOption } from "../../typeDefinitions/enums/acl/aclSortOption";
 import sharedSocket from "../../sharedState/socket";
 import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
@@ -28,8 +28,12 @@ const aclSlice = createSlice({
     setAclState(state, action: PayloadAction<AclState>) {
       return action.payload;
     },
-    setAclSort(state, action: PayloadAction<AclSortData>) {
-      state.sortData = action.payload;
+    setAclSort(state, action: PayloadAction<AclSortKey | AclSortData>) {
+      if (typeof action.payload === "string") {
+        state.sortData = ACL_SORT_MAP[action.payload];
+      } else {
+        state.sortData = action.payload;
+      }
       sharedSocket.setAclState(state);
     },
     setAclManualPosting(state, action: PayloadAction<boolean>) {
