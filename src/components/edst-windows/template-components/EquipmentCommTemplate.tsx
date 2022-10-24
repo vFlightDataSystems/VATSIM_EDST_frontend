@@ -7,7 +7,7 @@ import { useRootSelector } from "../../../redux/hooks";
 import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
-import { strIsEnum, unsafeKeys } from "../../../utility-functions";
+import { isEnum } from "../../../utility-functions";
 
 const EqpCol2 = styled(EqpCol)`
   margin: 0 16px;
@@ -71,6 +71,11 @@ const satCatText = {
   M3: "(IRIDIUM)"
 };
 
+const isVoiceCat = isEnum(VoiceCat);
+const isCpdlcCat = isEnum(CpdlcCat);
+const isAcarsCat = isEnum(AcarsCat);
+const isSatCat = isEnum(SatCat);
+
 export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
 
@@ -83,7 +88,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
   const [satelliteCategories, setSatelliteCategories] = useState<SatCat[]>([]);
 
   const toggleCategory = (cat: CpdlcCat | AcarsCat | SatCat | VoiceCat) => {
-    if (strIsEnum(cat, CpdlcCat)) {
+    if (isCpdlcCat(cat)) {
       const cpdlcCats = [...cpdlcCategories];
       const index = cpdlcCats.indexOf(cat);
       if (index < 0) {
@@ -92,7 +97,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         cpdlcCats.splice(index, 1);
         setCpdlcCategories(cpdlcCats);
       }
-    } else if (strIsEnum(cat, AcarsCat)) {
+    } else if (isAcarsCat(cat)) {
       const acarsCats = [...acarsCategories];
       const index = acarsCats.indexOf(cat);
       if (index < 0) {
@@ -101,7 +106,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         acarsCats.splice(index, 1);
         setAcarsCategories(acarsCats);
       }
-    } else if (strIsEnum(cat, SatCat)) {
+    } else if (isSatCat(cat)) {
       const satCats = [...satelliteCategories];
       const index = satCats.indexOf(cat);
       if (index < 0) {
@@ -110,7 +115,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         satCats.splice(index, 1);
         setSatelliteCategories(satCats);
       }
-    } else if (strIsEnum(cat, VoiceCat)) {
+    } else if (isVoiceCat(cat)) {
       const voiceCats = [...voiceCategories];
       const index = voiceCats.indexOf(cat);
       if (index < 0) {
@@ -129,10 +134,10 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       ?.split("-")?.[1]
       ?.match(/[A-Z]\d?/g);
 
-    const voiceCats = (field10a?.[0]?.split("")?.filter(s => strIsEnum(s, VoiceCat)) ?? []) as VoiceCat[];
-    const cpdlcCats = (field10a?.filter(s => strIsEnum(s, CpdlcCat)) ?? []) as CpdlcCat[];
-    const acarsCats = (field10a?.filter(s => strIsEnum(s, AcarsCat)) ?? []) as AcarsCat[];
-    const satCats = (field10a?.filter(s => strIsEnum(s, SatCat)) ?? []) as SatCat[];
+    const voiceCats: VoiceCat[] = field10a?.[0]?.split("")?.filter(isVoiceCat) ?? [];
+    const cpdlcCats: CpdlcCat[] = field10a?.filter(isCpdlcCat) ?? [];
+    const acarsCats: AcarsCat[] = field10a?.filter(isAcarsCat) ?? [];
+    const satCats: SatCat[] = field10a?.filter(isSatCat) ?? [];
 
     const reset = () => {
       setVoiceCategories(voiceCats);
@@ -150,53 +155,53 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
         <EqpCol2>
           <EqpColTitle>VOICE CATEGORY</EqpColTitle>
-          {unsafeKeys(VoiceCat).map(category => (
+          {Object.values(VoiceCat).map(category => (
             <EquipmentTemplateRow
               key={`voice-cat-row-${category}`}
               buttonText={category}
               text={voiceCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
-              selected={voiceCategories.includes(category as VoiceCat)}
-              toggleSelect={() => toggleCategory(category as VoiceCat)}
+              selected={voiceCategories.includes(category)}
+              toggleSelect={() => toggleCategory(category)}
             />
           ))}
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>CPDLC CATEGORY</EqpColTitle>
-          {unsafeKeys(CpdlcCat).map(category => (
+          {Object.values(CpdlcCat).map(category => (
             <EquipmentTemplateRow
               key={`cpdlc-cat-row-${category}`}
               buttonText={category}
               text={cpdlcCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
-              selected={cpdlcCategories.includes(category as CpdlcCat)}
-              toggleSelect={() => toggleCategory(category as CpdlcCat)}
+              selected={cpdlcCategories.includes(category)}
+              toggleSelect={() => toggleCategory(category)}
             />
           ))}
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>ACARS CATEGORY</EqpColTitle>
-          {unsafeKeys(AcarsCat).map(category => (
+          {Object.values(AcarsCat).map(category => (
             <EquipmentTemplateRow
               key={`acars-cat-row-${category}`}
               buttonText={category}
               text={acarsCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
-              selected={acarsCategories.includes(category as AcarsCat)}
-              toggleSelect={() => toggleCategory(category as AcarsCat)}
+              selected={acarsCategories.includes(category)}
+              toggleSelect={() => toggleCategory(category)}
             />
           ))}
         </EqpCol2>
         <EqpCol2>
           <EqpColTitle>SATELLITE RTF</EqpColTitle>
-          {unsafeKeys(SatCat).map(category => (
+          {Object.values(SatCat).map(category => (
             <EquipmentTemplateRow
               key={`satellite-cat-row-${category}`}
               buttonText={category}
               text={satCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
-              selected={satelliteCategories.includes(category as SatCat)}
-              toggleSelect={() => toggleCategory(category as SatCat)}
+              selected={satelliteCategories.includes(category)}
+              toggleSelect={() => toggleCategory(category)}
             />
           ))}
         </EqpCol2>

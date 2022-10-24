@@ -45,6 +45,7 @@ import { aselEntrySelector } from "./redux/slices/entrySlice";
 import { useHubActions } from "./hooks/useHubActions";
 import { edstTheme } from "./edstTheme";
 import { useHubConnection } from "./hooks/useHubConnection";
+import { unsafeEntries } from "./utility-functions";
 
 const NotConnectedDiv = styled.div`
   font-family: "Consolas", monospace;
@@ -149,10 +150,10 @@ const Edst = () => {
         <div id="toPrint" />
         <EdstBodyDiv>
           {showSectorSelector && <SectorSelector />}
-          {Object.entries(edstComponentMap).map(
+          {unsafeEntries(edstComponentMap).map(
             ([edstWindow, Component]) =>
-              windows[edstWindow as EdstWindow].open &&
-              (windowRequiresAsel.includes(edstWindow as EdstWindow) ? aselEntry && <Component key={edstWindow} /> : <Component key={edstWindow} />)
+              windows[edstWindow].open &&
+              (windowRequiresAsel.includes(edstWindow) ? aselEntry && <Component key={edstWindow} /> : <Component key={edstWindow} />)
           )}
         </EdstBodyDiv>
       </EdstDiv>

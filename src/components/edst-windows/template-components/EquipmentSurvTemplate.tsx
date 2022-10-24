@@ -9,7 +9,7 @@ import { OptionsBodyRow, OptionIndicator, OptionIndicatorCircle } from "../../..
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./EqpStyled";
 import { borderHover } from "../../../styles/styles";
 import { Nullable } from "../../../typeDefinitions/utility-types";
-import { strIsEnum, unsafeKeys } from "../../../utility-functions";
+import { isEnum } from "../../../utility-functions";
 
 const ContentCol = styled.div`
   justify-content: left;
@@ -77,10 +77,10 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
 
     const transponderType = field10b?.[0];
 
-    const transponderCategory = transponderType && strIsEnum(transponderType, TransponderCat) ? (transponderType as TransponderCat) : null;
-    const adsbBInitialType = (Object.keys(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
-    const adsbUInitialType = (Object.keys(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
-    const adsbVInitialType = (Object.keys(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
+    const transponderCategory = transponderType && isEnum(TransponderCat)(transponderType) ? transponderType : null;
+    const adsbBInitialType = (Object.values(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
+    const adsbUInitialType = (Object.values(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
+    const adsbVInitialType = (Object.values(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
 
     const reset = () => {
       setTransponderCategory(transponderCategory);
@@ -106,15 +106,15 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               </ContentCol>
             </EdstTooltip>
           </EqpRow>
-          {unsafeKeys(TransponderCat).map(category => (
+          {Object.values(TransponderCat).map(category => (
             <EquipmentTemplateRow
               circle
               key={`transponder-type-row-${category}`}
               buttonText={category}
               text={transponderCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuSurv_${category}`]}
-              selected={transponderCategory === (category as TransponderCat)}
-              toggleSelect={() => setTransponderCategory(category as TransponderCat)}
+              selected={transponderCategory === category}
+              toggleSelect={() => setTransponderCategory(category)}
             />
           ))}
         </EqpCol>

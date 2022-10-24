@@ -19,7 +19,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: Nullable<Route
   const indexToSplit = route.indexOf("[XXX]");
   const routeToProcess = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, "") : route;
   const fixNames = routeFixes.map(e => e.name);
-  const lastFixIndex = fixNames.indexOf(routeToProcess.split(".").pop() as string);
+  const lastFixIndex = fixNames.indexOf(routeToProcess.split(".").pop()!);
   let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
   routeFixesToProcess.unshift({ pos, name: "ppos" });
   if (routeFixesToProcess.length > 1) {

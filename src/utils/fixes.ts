@@ -16,7 +16,7 @@ export function getRouteFixesDistance(routeFixes: RouteFix[], pos: Position): Ro
   return routeFixes.map(fix => ({
     ...fix,
     dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" })
-  })) as RouteFixWithDistance[];
+  }));
 }
 
 /**

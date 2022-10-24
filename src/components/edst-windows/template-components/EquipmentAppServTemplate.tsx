@@ -6,6 +6,7 @@ import { aselEntrySelector } from "../../../redux/slices/entrySlice";
 import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
 import { EqpCol } from "./EqpStyled";
+import { isEnum } from "../../../utility-functions";
 
 export const EqpCol2 = styled(EqpCol)`
   margin: 0 20px;
@@ -18,6 +19,8 @@ enum ApproachCategory {
   B = "B",
   S = "S"
 }
+
+const isApproachCat = isEnum(ApproachCategory);
 
 export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
@@ -40,7 +43,7 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
       ?.slice(1)?.[0]
       ?.split("-")?.[1]
       ?.match(/[A-Z]\d?/g);
-    const appCats = (field10a?.[0]?.split("")?.filter(s => Object.keys(ApproachCategory).includes(s)) ?? []) as ApproachCategory[];
+    const appCats: ApproachCategory[] = field10a?.[0]?.split("")?.filter(isApproachCat) ?? [];
 
     const reset = () => {
       setAppCategories(appCats);

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
-import { RootState, RootThunkAction } from "../store";
+import { RootThunkAction } from "../store";
 import { setEntry, updateEntry } from "../slices/entrySlice";
 import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
 import { LocalVEdstEntry } from "../../typeDefinitions/types/localVEdstEntry";
@@ -18,7 +18,7 @@ function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
 
 export function updateFlightplanThunk(flightplan: ApiFlightplan): RootThunkAction {
   return (dispatch, getState) => {
-    const { entries } = getState() as RootState;
+    const entries = getState().entries;
     const aircraftIds = Object.keys(entries);
     if (aircraftIds.includes(flightplan.aircraftId)) {
       dispatch(updateEntry({ aircraftId: flightplan.aircraftId, data: flightplan }));

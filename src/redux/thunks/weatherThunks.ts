@@ -5,10 +5,10 @@ import { fetchSigmets } from "../../api/api";
 import { addGIEntries } from "../slices/appSlice";
 import { addAirmets, addSigmets, AirmetEntry, SigmetEntry } from "../slices/weatherSlice";
 
-export const refreshAirSigmets = createAsyncThunk("refreshAirSigmets", async (_, thunkAPI) => {
+export const refreshAirSigmets = createAsyncThunk<void, void, { state: RootState }>("refreshAirSigmets", async (_, thunkAPI) => {
   const airSigmetEntries = await fetchSigmets();
   const newSigmetEntries = airSigmetEntries.reverse();
-  const { weather } = thunkAPI.getState() as RootState;
+  const weather = thunkAPI.getState().weather;
   const newSigmets = newSigmetEntries.filter(s => !Object.keys(weather.sigmetMap).includes(s.text) && s.airsigmet_type === "SIGMET");
   const newAirmets = newSigmetEntries.filter(s => !Object.keys(weather.airmetMap).includes(s.text) && s.airsigmet_type === "AIRMET");
   const newSigmetMap: Record<string, SigmetEntry> = {};

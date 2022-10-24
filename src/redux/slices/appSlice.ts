@@ -69,7 +69,7 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
       isFullscreen: FULLSCREEN_WINDOWS.includes(value),
       position: defaultWindowPositions[value] ?? { left: 100, top: 100 },
       dimension: { width: "auto", height: "auto" }
-    } as AppWindow
+    }
   ])
 ) as Record<EdstWindow, AppWindow>;
 
