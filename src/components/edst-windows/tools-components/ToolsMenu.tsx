@@ -50,7 +50,7 @@ export const ToolsMenu = () => {
         <ToolsBody>
           {optionsMenuOpen && <ToolsOptionsMenu />}
           {!optionsMenuOpen && (
-            <span>
+            <>
               <OptionsBodyRow>
                 <EdstTooltip style={{ flexGrow: 1 }} disabled>
                   <OptionsFlexCol>Airspace Status...</OptionsFlexCol>
@@ -76,7 +76,7 @@ export const ToolsMenu = () => {
                   <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
-            </span>
+            </>
           )}
         </ToolsBody>
       </OptionsMenu>

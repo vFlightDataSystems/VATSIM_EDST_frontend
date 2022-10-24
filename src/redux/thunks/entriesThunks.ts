@@ -9,7 +9,7 @@ function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
   return (dispatch, getState) => {
     const { entries } = getState();
     const aircraftId = Object.values(entries ?? {})?.find(
-      e => String(e.cid) === fid || String(e.aircraftId) === fid || convertBeaconCodeToString(e.assignedBeaconCode) === fid
+      e => e.cid === fid || e.aircraftId === fid || convertBeaconCodeToString(e.assignedBeaconCode) === fid
     )?.aircraftId;
     if (aircraftId) {
       switch (window) {

@@ -68,7 +68,7 @@ const ColButton = styled.button<ColButtonProps>`
   display: flex;
   height: 2em;
   justify-content: center;
-  line-height: 1em;
+  line-height: 0.95em;
   font-family: ${props => props.theme.fontProps.eramFontFamily};
   font-size: inherit;
   margin: 0 1px;

@@ -67,8 +67,14 @@ const useSocketContextInit = () => {
         });
         socket.on("receiveGIMessage", (sender, message) => {
           const date = new Date();
-          const formattedMsg = `GI ${sender} ${String(date.getUTCHours()).padStart(2, "0") +
-            String(date.getUTCMinutes()).padStart(2, "0")} ${message}`;
+          const formattedMsg = `GI ${sender} ${date
+            .getUTCHours()
+            .toString()
+            .padStart(2, "0") +
+            date
+              .getUTCMinutes()
+              .toString()
+              .padStart(2, "0")} ${message}`;
           dispatch(addGIEntries({ [formattedMsg]: { text: formattedMsg, acknowledged: false } }));
         });
         socket.on("disconnect", reason => {

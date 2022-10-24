@@ -160,7 +160,7 @@ export const MessageComposeArea = () => {
 
   const toggleVci = (fid: string) => {
     const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      e => String(e.cid) === fid || String(e.aircraftId) === fid || String(e.assignedBeaconCode ?? 0).padStart(4, "0") === fid
+      e => e.cid === fid || e.aircraftId === fid || (e.assignedBeaconCode ?? 0).toString().padStart(4, "0") === fid
     );
     if (entry) {
       if (entry.vciStatus < 1) {
@@ -173,7 +173,7 @@ export const MessageComposeArea = () => {
 
   const toggleHighlightEntry = (fid: string) => {
     const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      entry => String(entry?.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
+      entry => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
     if (entry) {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
@@ -182,8 +182,7 @@ export const MessageComposeArea = () => {
 
   const getEntryByFid = (fid: string): EdstEntry | undefined => {
     return Object.values(entries ?? {})?.find(
-      (entry: EdstEntry) =>
-        String(entry.cid) === fid || String(entry.aircraftId) === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
+      entry => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
   };
 

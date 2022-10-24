@@ -140,15 +140,18 @@ export const SpeedMenu = () => {
               return (
                 <ScrollRow key={i}>
                   <ScrollCol onMouseDown={e => handleMouseDown(e, centerSpd)}>
-                    {String(centerSpd).padStart(3, "0")}
+                    {centerSpd.toString().padStart(3, "0")}
                     {sign}
                   </ScrollCol>
                   <ScrollCol onMouseDown={e => handleMouseDown(e, centerSpd + 5)}>
-                    {String(centerSpd + 5).padStart(3, "0")}
+                    {(centerSpd + 5).toString().padStart(3, "0")}
                     {sign}
                   </ScrollCol>
                   <ScrollCol3 onMouseDown={e => handleMouseDown(e, centerMach, true)}>
-                    {String(centerMach.toFixed(2)).slice(1)}
+                    {centerMach
+                      .toFixed(2)
+                      .toString()
+                      .slice(1)}
                     {sign}
                   </ScrollCol3>
                 </ScrollRow>

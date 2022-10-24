@@ -29,5 +29,5 @@ export function appendDownArrowToString(s: string): string {
  * @param code
  */
 export function convertBeaconCodeToString(code: Nullable<number>): string {
-  return String(code ?? 0).padStart(4, "0");
+  return (code ?? 0).toString().padStart(4, "0");
 }

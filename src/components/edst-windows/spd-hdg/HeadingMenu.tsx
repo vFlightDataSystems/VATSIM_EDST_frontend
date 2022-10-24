@@ -129,8 +129,8 @@ export const HeadingMenu = () => {
               const centerRelHdg = 35 + i / 2;
               return (
                 <ScrollRow key={i}>
-                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg)}>{String(centerHdg).padStart(3, "0")}</ScrollCol>
-                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg + 5)}>{String(centerHdg + 5).padStart(3, "0")}</ScrollCol>
+                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg)}>{centerHdg.toString().padStart(3, "0")}</ScrollCol>
+                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg + 5)}>{(centerHdg + 5).toString().padStart(3, "0")}</ScrollCol>
                   <ScrollCol2 onMouseDown={e => handleMouseDown(e, centerRelHdg, "L")}>{centerRelHdg}</ScrollCol2>
                   <ScrollCol2 onMouseDown={e => handleMouseDown(e, centerRelHdg, "R")}>{centerRelHdg}</ScrollCol2>
                 </ScrollRow>

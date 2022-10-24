@@ -27,7 +27,7 @@ import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
 import { Nullable } from "../../typeDefinitions/utility-types";
 
 const HoldDiv = styled(OptionsMenu)`
-  width: 35ch;
+  width: 44ch;
 `;
 const FixContainer = styled.div`
   padding: 4px 0;

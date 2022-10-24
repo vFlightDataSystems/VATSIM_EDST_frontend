@@ -18,7 +18,7 @@ import socket from "../../sharedState/socket";
 import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
 
 const PlanOptionsDiv = styled(OptionsMenu)`
-  width: 20ch;
+  width: 24ch;
 `;
 const PlanOptionsBody = styled(OptionsBody)`
   text-indent: 4px;

@@ -3,13 +3,13 @@ import { DraggableDiv } from "./NoSelectDiv";
 import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "./styles";
 
-type OptionIndicatorProps = { selected?: boolean };
+type OptionIndicatorProps = { selected?: boolean; size?: number; disabled?: boolean };
 export const OptionIndicator = styled.div<OptionIndicatorProps>`
   display: inline-flex;
   ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
-  width: 8px;
-  height: 8px;
-  margin-right: 8px;
+  width: ${props => props.size ?? 8}px;
+  height: ${props => props.size ?? 8}px;
+  margin-right: ${props => props.size ?? 8}px;
 
   ${props =>
     props.selected && {
@@ -25,7 +25,8 @@ export const OptionIndicatorCircle = styled(OptionIndicator)`
   border-radius: 50%;
   border: 2px solid #888888;
 `;
-export const OptionsMenu = styled(DraggableDiv)<{ pos?: WindowPosition; zIndex: number }>`
+type OptionsMenuProps = { pos?: WindowPosition; zIndex: number };
+export const OptionsMenu = styled(DraggableDiv)<OptionsMenuProps>`
   font-family: ${props => props.theme.fontProps.edstFontFamily};
   font-size: ${props => props.theme.fontProps.fontSize};
   z-index: ${props => 10000 + props.zIndex};

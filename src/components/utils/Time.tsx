@@ -23,8 +23,18 @@ export function Time() {
   }, []);
   return (
     <TimeStyle>
-      {String(date.getUTCHours()).padStart(2, "0")}
-      {String(date.getUTCMinutes()).padStart(2, "0")} {String(date.getUTCSeconds()).padStart(2, "0")}
+      {date
+        .getUTCHours()
+        .toString()
+        .padStart(2, "0")}
+      {date
+        .getUTCMinutes()
+        .toString()
+        .padStart(2, "0")}{" "}
+      {date
+        .getUTCSeconds()
+        .toString()
+        .padStart(2, "0")}
     </TimeStyle>
   );
 }

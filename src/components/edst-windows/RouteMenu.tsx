@@ -6,13 +6,22 @@ import styled from "styled-components";
 import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
 import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
 import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
-import { EdstButton, EdstRouteButton12x12, ExitButton } from "../utils/EdstButton";
+import { EdstButton, ExitButton } from "../utils/EdstButton";
 import { Tooltips } from "../../tooltips";
 import { EdstTooltip } from "../utils/EdstTooltip";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { aselEntrySelector } from "../../redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
-import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader, UnderlineRow } from "../../styles/optionMenuStyles";
+import {
+  FidRow,
+  OptionIndicator,
+  OptionsBody,
+  OptionsBodyCol,
+  OptionsBodyRow,
+  OptionsMenu,
+  OptionsMenuHeader,
+  UnderlineRow
+} from "../../styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
 import { aselTrackSelector } from "../../redux/slices/trackSlice";
 import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
@@ -346,7 +355,7 @@ export const RouteMenu = () => {
           <RouteMenuRow topBorder>
             <EdstTooltip disabled title={Tooltips.routeMenuPar}>
               <ButtonCol hover>
-                <EdstRouteButton12x12 disabled />
+                <OptionIndicator disabled size={9} />
                 Include PAR
               </ButtonCol>
             </EdstTooltip>
@@ -360,7 +369,7 @@ export const RouteMenu = () => {
               }}
             >
               <ButtonCol hover>
-                <EdstRouteButton12x12 disabled selected={appendStar} />
+                <OptionIndicator selected={appendStar} size={9} />
                 Append *
               </ButtonCol>
             </EdstTooltip>
@@ -372,7 +381,7 @@ export const RouteMenu = () => {
               }}
             >
               <ButtonCol hover>
-                <EdstRouteButton12x12 disabled selected={appendOplus} />
+                <OptionIndicator selected={appendOplus} size={9} />
                 Append<span>&nbsp;{OPLUS_SYMBOL}</span>
               </ButtonCol>
             </EdstTooltip>

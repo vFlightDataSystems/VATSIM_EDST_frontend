@@ -216,6 +216,8 @@ export const AltMenu = () => {
 
   useEventListener("keydown", keyDownHandler);
 
+  const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
+
   return (
     pos &&
     asel && (
@@ -275,19 +277,19 @@ export const AltMenu = () => {
             <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>
               {_.range(30, -40, -10).map(i => {
-                const centerAlt = (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10 + i;
+                const alt = centerAlt + i;
                 return (
-                  <AltMenuScrollRow hover={selected === "amend" && tempAltHover === centerAlt} key={i}>
-                    <AltMenuScrollCol selected={centerAlt === +entry.altitude} onMouseDown={() => handleAltClick(centerAlt)}>
-                      {String(centerAlt).padStart(3, "0")}
+                  <AltMenuScrollRow hover={selected === "amend" && tempAltHover === alt} key={i}>
+                    <AltMenuScrollCol selected={alt === +entry.altitude} onMouseDown={() => handleAltClick(alt)}>
+                      {alt.toString().padStart(3, "0")}
                     </AltMenuScrollCol>
                     {asel.window !== EdstWindow.DEP && (
                       <EdstTooltip title={Tooltips.altMenuT}>
                         <AltMenuScrollTempAltCol
                           disabled={!(selected === "amend")}
-                          onMouseEnter={() => selected === "amend" && setTempAltHover(centerAlt)}
+                          onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
                           onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
-                          onMouseDown={() => handleTempAltClick(centerAlt)}
+                          onMouseDown={() => handleTempAltClick(alt)}
                         >
                           T
                         </AltMenuScrollTempAltCol>
