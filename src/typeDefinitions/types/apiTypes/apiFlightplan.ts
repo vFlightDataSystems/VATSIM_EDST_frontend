@@ -10,6 +10,7 @@ export type ApiFlightplan = {
   equipment: string;
   aircraftType: string;
   icaoEquipmentCodes: string;
+  icaoSurveillanceCodes: string;
   faaEquipmentSuffix: string;
   speed: number;
   altitude: string;

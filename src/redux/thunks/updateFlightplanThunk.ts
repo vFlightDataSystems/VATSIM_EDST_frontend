@@ -24,9 +24,7 @@ export function updateFlightplanThunk(flightplan: ApiFlightplan): RootThunkActio
       dispatch(updateEntry({ aircraftId: flightplan.aircraftId, data: flightplan }));
     } else {
       const entry = createEntryFromFlightplan(flightplan);
-      if (entry !== null) {
-        dispatch(setEntry(entry));
-      }
+      dispatch(setEntry(entry));
     }
   };
 }

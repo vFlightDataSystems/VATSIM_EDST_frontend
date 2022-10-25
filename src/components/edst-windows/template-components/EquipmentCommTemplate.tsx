@@ -128,16 +128,12 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
   };
 
   useEffect(() => {
-    const field10a = entry?.equipment
-      ?.split("/")
-      ?.slice(1)?.[0]
-      ?.split("-")?.[1]
-      ?.match(/[A-Z]\d?/g);
+    const field10a = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
 
-    const voiceCats: VoiceCat[] = field10a?.[0]?.split("")?.filter(isVoiceCat) ?? [];
-    const cpdlcCats: CpdlcCat[] = field10a?.filter(isCpdlcCat) ?? [];
-    const acarsCats: AcarsCat[] = field10a?.filter(isAcarsCat) ?? [];
-    const satCats: SatCat[] = field10a?.filter(isSatCat) ?? [];
+    const voiceCats = field10a.filter(isVoiceCat);
+    const cpdlcCats = field10a.filter(isCpdlcCat);
+    const acarsCats = field10a.filter(isAcarsCat);
+    const satCats = field10a.filter(isSatCat);
 
     const reset = () => {
       setVoiceCategories(voiceCats);
@@ -148,7 +144,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
 
     setReset(reset);
     reset();
-  }, [entry?.equipment, setReset]);
+  }, [entry?.icaoEquipmentCodes, setReset]);
 
   return (
     <>

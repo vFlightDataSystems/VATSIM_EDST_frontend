@@ -38,12 +38,9 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
   };
 
   useEffect(() => {
-    const field10a = entry?.equipment
-      ?.split("/")
-      ?.slice(1)?.[0]
-      ?.split("-")?.[1]
-      ?.match(/[A-Z]\d?/g);
-    const appCats: ApproachCategory[] = field10a?.[0]?.split("")?.filter(isApproachCat) ?? [];
+    const field10a = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
+
+    const appCats = field10a.filter(isApproachCat);
 
     const reset = () => {
       setAppCategories(appCats);
@@ -51,7 +48,7 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
 
     setReset(reset);
     reset();
-  }, [entry?.equipment, setReset]);
+  }, [entry?.icaoEquipmentCodes, setReset]);
 
   return (
     <div>

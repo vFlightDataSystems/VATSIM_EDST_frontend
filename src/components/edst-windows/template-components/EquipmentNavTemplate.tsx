@@ -72,14 +72,10 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
   };
 
   useEffect(() => {
-    const field10a = entry?.equipment
-      ?.split("/")
-      ?.slice(1)?.[0]
-      ?.split("-")?.[1]
-      ?.match(/[A-Z]\d?/g);
-    const navaidCats: NavCat[] = field10a?.filter(isNavCat) ?? [];
-    const rnavCats: RnavCat[] = field10a?.filter(isRnavCat) ?? [];
-    const initialRvsm = !!field10a?.includes("W");
+    const field10a = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
+    const navaidCats = field10a.filter(isNavCat);
+    const rnavCats = field10a.filter(isRnavCat);
+    const initialRvsm = field10a.includes("W");
 
     const reset = () => {
       setNavCategories(navaidCats);
@@ -89,7 +85,7 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
 
     setReset(reset);
     reset();
-  }, [entry?.equipment, setReset]);
+  }, [entry?.icaoEquipmentCodes, setReset]);
 
   return (
     <>

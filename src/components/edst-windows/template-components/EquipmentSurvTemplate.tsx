@@ -70,10 +70,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
   const [adsbVType, setAdsbVType] = useState<Nullable<AdsbV>>(null);
 
   useEffect(() => {
-    const field10b = entry?.equipment
-      ?.split("/")
-      ?.slice(2)?.[0]
-      ?.match(/[A-Z]\d?/g);
+    const field10b = entry?.icaoSurveillanceCodes?.match(/[A-Z]\d?/g);
 
     const transponderType = field10b?.[0];
 
@@ -91,7 +88,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
 
     setReset(reset);
     reset();
-  }, [entry?.equipment, setReset]);
+  }, [entry?.icaoSurveillanceCodes, setReset]);
 
   return (
     <>
