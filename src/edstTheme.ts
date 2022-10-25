@@ -15,7 +15,7 @@ export const colors = {
 };
 
 export const fontProps = {
-  baseRGB: 216, // 0xd8
+  baseRGB: 173, // 0xad
   fontSize: "17px",
   inputFontSize: "17px",
   eramFontFamily: "ERAM",
