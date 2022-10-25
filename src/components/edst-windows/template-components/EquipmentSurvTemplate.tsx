@@ -64,26 +64,26 @@ enum AdsbV {
 
 export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
   const entry = useRootSelector(aselEntrySelector);
-  const [transponderCategory, setTransponderCategory] = useState<Nullable<TransponderCat>>(null);
-  const [adsbBType, setAdsbBType] = useState<Nullable<AdsbB>>(null);
-  const [adsbUType, setAdsbUType] = useState<Nullable<AdsbU>>(null);
-  const [adsbVType, setAdsbVType] = useState<Nullable<AdsbV>>(null);
+  const [transponderCat, setTransponderCat] = useState<Nullable<TransponderCat>>(null);
+  const [adsbBCat, setAdsbBCat] = useState<Nullable<AdsbB>>(null);
+  const [adsbUCat, setAdsbUCat] = useState<Nullable<AdsbU>>(null);
+  const [adsbVCat, setAdsbVCat] = useState<Nullable<AdsbV>>(null);
 
   useEffect(() => {
     const field10b = entry?.icaoSurveillanceCodes?.match(/[A-Z]\d?/g);
 
-    const transponderType = field10b?.[0];
+    const transponderCat = field10b?.[0];
 
-    const transponderCategory = transponderType && isEnum(TransponderCat)(transponderType) ? transponderType : null;
-    const adsbBInitialType = (Object.values(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
-    const adsbUInitialType = (Object.values(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
-    const adsbVInitialType = (Object.values(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
+    const transponderCategory = transponderCat && isEnum(TransponderCat)(transponderCat) ? transponderCat : null;
+    const adsbBInitialCat = (Object.values(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
+    const adsbUInitialCat = (Object.values(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
+    const adsbVInitialCat = (Object.values(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
 
     const reset = () => {
-      setTransponderCategory(transponderCategory);
-      setAdsbBType(adsbBInitialType);
-      setAdsbUType(adsbUInitialType);
-      setAdsbVType(adsbVInitialType);
+      setTransponderCat(transponderCategory);
+      setAdsbBCat(adsbBInitialCat);
+      setAdsbUCat(adsbUInitialCat);
+      setAdsbVCat(adsbVInitialCat);
     };
 
     setReset(reset);
@@ -96,9 +96,9 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         <EqpCol>
           <EqpColTitle>TRANSPONDER CATEGORY</EqpColTitle>
           <EqpRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCategory(null)}>
+            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCat(null)}>
               <ContentCol>
-                <OptionIndicatorCircle selected={transponderCategory === null} />
+                <OptionIndicatorCircle selected={transponderCat === null} />
                 No Transponder
               </ContentCol>
             </EdstTooltip>
@@ -110,8 +110,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               buttonText={category}
               text={transponderCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuSurv_${category}`]}
-              selected={transponderCategory === category}
-              toggleSelect={() => setTransponderCategory(category)}
+              selected={transponderCat === category}
+              toggleSelect={() => setTransponderCat(category)}
             />
           ))}
         </EqpCol>
@@ -122,8 +122,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             key="adsb-b-type-row-no-b"
             buttonText="No 1090"
             tooltip={Tooltips.equipmentTemplateMenuSurv_No1090}
-            selected={adsbBType === null}
-            toggleSelect={() => setAdsbBType(null)}
+            selected={adsbBCat === null}
+            toggleSelect={() => setAdsbBCat(null)}
           />
           <EquipmentTemplateRow
             circle
@@ -131,8 +131,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             buttonText="B1"
             text="(1090 OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_B1}
-            selected={adsbBType === AdsbB.B1}
-            toggleSelect={() => setAdsbBType(AdsbB.B1)}
+            selected={adsbBCat === AdsbB.B1}
+            toggleSelect={() => setAdsbBCat(AdsbB.B1)}
           />
           <EquipmentTemplateRow
             circle
@@ -140,8 +140,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             buttonText="B2"
             text="(1090 IN/OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_B2}
-            selected={adsbBType === AdsbB.B2}
-            toggleSelect={() => setAdsbBType(AdsbB.B2)}
+            selected={adsbBCat === AdsbB.B2}
+            toggleSelect={() => setAdsbBCat(AdsbB.B2)}
           />
           <EquipmentTemplateRow
             margin="10px 0 0 0"
@@ -149,8 +149,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             key="adsb-b-type-row-no-uat"
             buttonText="No UAT"
             tooltip={Tooltips.equipmentTemplateMenuSurv_NoUat}
-            selected={adsbUType === null}
-            toggleSelect={() => setAdsbUType(null)}
+            selected={adsbUCat === null}
+            toggleSelect={() => setAdsbUCat(null)}
           />
           <EquipmentTemplateRow
             circle
@@ -158,8 +158,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             buttonText="U1"
             text="(UAT OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_U1}
-            selected={adsbUType === AdsbU.U1}
-            toggleSelect={() => setAdsbUType(AdsbU.U1)}
+            selected={adsbUCat === AdsbU.U1}
+            toggleSelect={() => setAdsbUCat(AdsbU.U1)}
           />
           <EquipmentTemplateRow
             circle
@@ -167,8 +167,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             buttonText="U2"
             text="(UAT IN/OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_U2}
-            selected={adsbUType === AdsbU.U2}
-            toggleSelect={() => setAdsbUType(AdsbU.U2)}
+            selected={adsbUCat === AdsbU.U2}
+            toggleSelect={() => setAdsbUCat(AdsbU.U2)}
           />
           <EquipmentTemplateRow
             margin="10px 0 0 0"
@@ -176,8 +176,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             key="adsb-b-type-row-no-vdl"
             buttonText="No VDL"
             tooltip={Tooltips.equipmentTemplateMenuSurv_NoVdl}
-            selected={adsbVType === null}
-            toggleSelect={() => setAdsbVType(null)}
+            selected={adsbVCat === null}
+            toggleSelect={() => setAdsbVCat(null)}
           />
           <EquipmentTemplateRow
             circle
@@ -185,8 +185,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             buttonText="V1"
             text="(VDL OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_V1}
-            selected={adsbVType === AdsbV.V1}
-            toggleSelect={() => setAdsbVType(AdsbV.V1)}
+            selected={adsbVCat === AdsbV.V1}
+            toggleSelect={() => setAdsbVCat(AdsbV.V1)}
           />
           <EquipmentTemplateRow
             circle
@@ -194,8 +194,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             buttonText="V2"
             text="(VDL IN/OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_V2}
-            selected={adsbVType === AdsbV.V2}
-            toggleSelect={() => setAdsbVType(AdsbV.V2)}
+            selected={adsbVCat === AdsbV.V2}
+            toggleSelect={() => setAdsbVCat(AdsbV.V2)}
           />
         </EqpCol>
         <EqpCol>
@@ -226,7 +226,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         <EdstTooltip style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
           <EqpInputContainer60>
             <EqpInput
-              value={`${transponderCategory ?? ""}${adsbBType ?? ""}${adsbUType ?? ""}${adsbVType ?? ""}`}
+              value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`}
               // onChange={() => {}}
             />
           </EqpInputContainer60>
