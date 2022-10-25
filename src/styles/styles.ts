@@ -27,15 +27,16 @@ export const buttonBorder2px = createBorder("2px", "#888888", "#575757");
 
 export const buttonBorderInverted2px = createBorder("2px", "#575757", "#888888");
 
-type BodyRowContainerProps = { separator?: boolean };
-export const BodyRowContainerDiv = styled.div<BodyRowContainerProps>`
+export const BodyRowContainerDiv = styled.div`
   margin: 3px 0;
   flex-flow: wrap;
   border: none;
-  ${props =>
-    props.separator && {
-      "border-bottom": "1px solid #252525"
-    }};
+`;
+
+export const RowSeparator = styled.div`
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #252525;
 `;
 
 type BodyRowDivProps = { pendingRemoval?: boolean; separator?: boolean };

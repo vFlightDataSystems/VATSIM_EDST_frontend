@@ -3,7 +3,7 @@ import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { aselSelector } from "../../../redux/slices/appSlice";
+import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
@@ -36,7 +36,6 @@ import { Nullable } from "../../../typeDefinitions/utility-types";
 
 type DepRowProps = {
   entry: EdstEntry;
-  index: number;
 };
 
 const checkParReroutePending = (pars: ApiPreferentialArrivalRoute[], currentFixNames: string[]) => {
@@ -82,11 +81,10 @@ const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) 
 /**
  * Single ACL row
  * @param entry
- * @param index row index
  */
-export const DepRow = ({ entry, index }: DepRowProps) => {
+export const DepRow = React.memo(({ entry }: DepRowProps) => {
   const dispatch = useRootDispatch();
-  const asel = useRootSelector(aselSelector);
+  const asel = useRootSelector(aircraftIsAselSelector(entry.aircraftId));
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
   const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(entry.aircraftId);
@@ -106,7 +104,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
   const now = new Date().getTime();
   const route = removeStringFromEnd(formattedRoute.slice(0), entry.destination);
 
-  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
+  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -149,7 +147,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
   useAselEventListener<DepRowField>(altRef, entry.aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
   useAselEventListener<DepRowField>(routeRef, entry.aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
-  const handleHotboxMouseDown = (event: React.MouseEvent) => {
+  const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     if (event.button === 0) {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { showFreeText: !entry.showFreeText } }));
@@ -187,7 +185,7 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
   };
 
   return (
-    <BodyRowContainerDiv separator={index % 3 === 2} onContextMenu={event => event.preventDefault()}>
+    <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
           <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
@@ -286,4 +284,4 @@ export const DepRow = ({ entry, index }: DepRowProps) => {
       )}
     </BodyRowContainerDiv>
   );
-};
+});

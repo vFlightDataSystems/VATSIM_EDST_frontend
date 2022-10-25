@@ -264,9 +264,12 @@ export const windowPositionSelector = (window: EdstWindow) => (state: RootState)
 export const windowDimensionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].dimension;
 export const windowIsFullscreenSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].isFullscreen;
 export const aselSelector = (state: RootState) => state.app.asel;
+export const aselIsNullSelector = (state: RootState) => state.app.asel === null;
 export const aclAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.ACL ? state.app.asel : null);
 export const depAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.DEP ? state.app.asel : null);
 export const gpdAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.GPD ? state.app.asel : null);
+export const aircraftIsAselSelector = (aircraftId: string) => (state: RootState) =>
+  state.app.asel?.aircraftId === aircraftId ? state.app.asel : null;
 export const anyDraggingSelector = (state: RootState) => state.app.anyDragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outages;

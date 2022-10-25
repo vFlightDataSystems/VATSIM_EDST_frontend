@@ -4,7 +4,7 @@ import { DepRow } from "./DepRow";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
-import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/styles";
+import { BodyRowDiv, BodyRowHeaderDiv, RowSeparator } from "../../../styles/styles";
 import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depHiddenColumnsSelector, depManualPostingSelector, depSortOptionSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
@@ -22,6 +22,19 @@ const DepBodyStyleDiv = styled(NoSelectDiv)`
   color: ${props => props.theme.colors.grey};
 `;
 
+const sortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: EdstEntry) => {
+  switch (selectedSortOption) {
+    case DepSortOption.ACID:
+      return u.aircraftId.localeCompare(v.aircraftId);
+    case DepSortOption.DESTINATION:
+      return u.destination.localeCompare(v.destination);
+    case DepSortOption.ORIGIN:
+      return u.departure?.localeCompare(v.departure);
+    default:
+      return u.aircraftId.localeCompare(v.aircraftId);
+  }
+};
+
 export const DepTable = () => {
   const dispatch = useRootDispatch();
   const selectedSortOption = useRootSelector(depSortOptionSelector);
@@ -29,21 +42,13 @@ export const DepTable = () => {
   const entries = useRootSelector(entriesSelector);
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
 
-  const sortFunc = (u: EdstEntry, v: EdstEntry) => {
-    switch (selectedSortOption) {
-      case DepSortOption.ACID:
-        return u.aircraftId.localeCompare(v.aircraftId);
-      case DepSortOption.DESTINATION:
-        return u.destination.localeCompare(v.destination);
-      case DepSortOption.ORIGIN:
-        return u.departure?.localeCompare(v.departure);
-      default:
-        return u.aircraftId.localeCompare(v.aircraftId);
-    }
-  };
-
-  const entryList = useMemo(() => Object.values(entries)?.filter(entry => entry.status === "Proposed" && !entry.deleted), [entries]);
-  const spaEntryList = useMemo(() => Object.entries(entryList.filter(entry => entry.spa)), [entryList]);
+  const entryList = useMemo(() => Object.values(entries).filter(entry => entry.status === "Proposed" && !entry.deleted), [entries]);
+  const spaEntryList = useMemo(() => entryList.filter(entry => entry.spa), [entryList]);
+  const ackListSorted = useMemo(
+    () => entryList.filter(entry => !entry.spa && (entry.depStatus > -1 || !manualPosting)).sort(sortFunc(selectedSortOption)),
+    [entryList, selectedSortOption, manualPosting]
+  );
+  const unAckList = useMemo(() => entryList.filter(entry => !entry.spa && entry.depStatus === -1), [entryList]);
 
   return (
     <DepBodyStyleDiv>
@@ -63,17 +68,26 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList?.map(([i, entry]) => (
-          <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
+        {spaEntryList.map((entry, i) => (
+          <>
+            <DepRow key={entry.aircraftId} entry={entry} />
+            {i % 3 === 2 && <RowSeparator />}
+          </>
         ))}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {Object.entries(entryList?.filter(entry => !entry.spa && (entry.depStatus > -1 || !manualPosting))?.sort(sortFunc))?.map(([i, entry]) => (
-          <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
+        {ackListSorted.map((entry, i) => (
+          <>
+            <DepRow key={entry.aircraftId} entry={entry} />
+            {i % 3 === 2 && <RowSeparator />}
+          </>
         ))}
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting &&
-          Object.entries(entryList?.filter(entry => !entry.spa && entry.depStatus === -1))?.map(([i, entry]) => (
-            <DepRow key={entry.aircraftId} index={Number(i)} entry={entry} />
+          unAckList.map((entry, i) => (
+            <>
+              <DepRow key={entry.aircraftId} entry={entry} />
+              {i % 3 === 2 && <RowSeparator />}
+            </>
           ))}
       </ScrollContainer>
     </DepBodyStyleDiv>

@@ -3,7 +3,7 @@ import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
-import { aselSelector } from "../../../redux/slices/appSlice";
+import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
 import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
@@ -39,7 +39,6 @@ import { Nullable } from "../../../typeDefinitions/utility-types";
 
 type AclRowProps = {
   entry: EdstEntry;
-  index: number;
   anyHolding: boolean;
   altMouseDown: boolean;
 };
@@ -48,11 +47,10 @@ type AclRowProps = {
  * Single ACL row
  * @param entry
  * @param altMouseDown boolean indicating where mouse is pressed on the ACL header Alt column
- * @param index row index
  * @param anyHolding boolean whether any aircraft is currently in a hold, an extra column will be displayed if true
  */
-export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) => {
-  const asel = useRootSelector(aselSelector);
+export const AclRow = React.memo(({ entry, altMouseDown, anyHolding }: AclRowProps) => {
+  const asel = useRootSelector(aircraftIsAselSelector(entry.aircraftId));
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
@@ -61,7 +59,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
   const [onPar, setOnPar] = useState(false);
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
-  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent ?? "");
+  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
   const ref = useRef<HTMLDivElement>(null);
 
   const isSelected = useCallback(
@@ -81,13 +79,16 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     [dispatch, entry.aircraftId, isSelected]
   );
 
-  const handleRouteClick = (element: HTMLElement, triggerSharedState = true) => {
-    if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
-      handleClick(element, AclRowField.ROUTE, "acl-route-asel-hold", EdstWindow.HOLD_MENU, triggerSharedState);
-    } else {
-      handleClick(element, AclRowField.ROUTE, "acl-route-asel", EdstWindow.ROUTE_MENU, triggerSharedState);
-    }
-  };
+  const handleRouteClick = useCallback(
+    (element: HTMLElement, triggerSharedState = true) => {
+      if (entry.aclRouteDisplay === AclRouteDisplayOption.holdAnnotations) {
+        handleClick(element, AclRowField.ROUTE, "acl-route-asel-hold", EdstWindow.HOLD_MENU, triggerSharedState);
+      } else {
+        handleClick(element, AclRowField.ROUTE, "acl-route-asel", EdstWindow.ROUTE_MENU, triggerSharedState);
+      }
+    },
+    [entry.aclRouteDisplay, handleClick]
+  );
 
   const altRef = useRef<HTMLDivElement>(null);
   const spdRef = useRef<HTMLDivElement>(null);
@@ -103,7 +104,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
   useAselEventListener<AclRowField>(holdRef, entry.aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
 
   const par = usePar(entry.aircraftId);
-  const formattedRoute = formatRoute(entry.route);
+  const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
   const currentRoute = formattedRoute;
   const routeFixes = useRouteFixes(entry.aircraftId);
   const currentRouteFixes = routeFixes;
@@ -145,7 +146,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
   // };
   // const pendingPar = checkParReroutePending();
 
-  const handleHotboxMouseDown = (event: React.MouseEvent) => {
+  const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -205,7 +206,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     }
   };
 
-  const handleRemarksClick = (event: React.MouseEvent) => {
+  const handleRemarksClick: React.MouseEventHandler<HTMLDivElement> = event => {
     if (entry.vciStatus === -1 && !manualPosting) {
       dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
     }
@@ -235,7 +236,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
     }
   };
 
-  const handleFidClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleFidClick: React.MouseEventHandler<HTMLDivElement> = event => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -299,7 +300,7 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
   };
 
   return (
-    <BodyRowContainerDiv separator={index % 3 === 2} onContextMenu={event => event.preventDefault()}>
+    <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
         <EdstTooltip title={Tooltips.aclNAndVciBtn}>
           <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
@@ -451,4 +452,4 @@ export const AclRow = ({ entry, altMouseDown, index, anyHolding }: AclRowProps) 
       )}
     </BodyRowContainerDiv>
   );
-};
+});

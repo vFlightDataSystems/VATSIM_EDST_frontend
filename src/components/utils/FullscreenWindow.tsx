@@ -1,4 +1,4 @@
-import React, { ComponentType, PropsWithChildren, useRef } from "react";
+import React, { ComponentType, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "../../redux/hooks";
 import { useFocused } from "../../hooks/useFocused";
 import { pushZStack, windowDimensionSelector, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
@@ -14,13 +14,13 @@ export type HeaderComponentProps = {
   startDrag: React.MouseEventHandler<HTMLDivElement>;
 };
 
-type FullscreenWindowProps = PropsWithChildren<{
+type FullscreenWindowProps = {
   edstWindow: EdstWindow;
   HeaderComponent: ComponentType<HeaderComponentProps>;
   BodyComponent: ComponentType<unknown>;
-}>;
+};
 
-export const FullscreenWindow = ({ edstWindow, HeaderComponent, BodyComponent, ...props }: FullscreenWindowProps) => {
+export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyComponent }: FullscreenWindowProps) => {
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
@@ -47,9 +47,8 @@ export const FullscreenWindow = ({ edstWindow, HeaderComponent, BodyComponent, .
         focused={focused}
         toggleFullscreen={toggleFullscreen}
         startDrag={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => !isFullscreen && startDrag(e)}
-        {...props}
       />
       <BodyComponent />
     </ResizableFloatingWindowDiv>
   );
-};
+});

@@ -4,7 +4,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { anyDraggingSelector, aselSelector, setAnyDragging } from "../../../redux/slices/appSlice";
+import { aircraftIsAselSelector, anyDraggingSelector, setAnyDragging } from "../../../redux/slices/appSlice";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { gpdAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
@@ -77,10 +77,10 @@ type GpdDataBlockProps = {
   toggleShowRoute: () => void;
 };
 
-export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
+export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
   const map = useMap();
   const dispatch = useRootDispatch();
-  const asel = useRootSelector(aselSelector);
+  const asel = useRootSelector(aircraftIsAselSelector(entry.aircraftId));
   const anyDragging = useRootSelector(anyDraggingSelector);
   const ref = useRef<HTMLDivElement>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
@@ -218,4 +218,4 @@ export const GpdDataBlock = ({ entry, offset, setOffset, toggleShowRoute }: GpdD
       </PersistentInvisibleTooltip>
     </>
   );
-};
+});

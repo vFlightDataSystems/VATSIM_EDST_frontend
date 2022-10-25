@@ -19,7 +19,14 @@ import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea
 import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
 import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
 import { SectorSelector } from "./components/SectorSelector";
-import { mcaCommandStringSelector, pushZStack, setMcaCommandString, showSectorSelectorSelector, windowsSelector } from "./redux/slices/appSlice";
+import {
+  aselIsNullSelector,
+  mcaCommandStringSelector,
+  pushZStack,
+  setMcaCommandString,
+  showSectorSelectorSelector,
+  windowsSelector
+} from "./redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "./redux/hooks";
 import { ToolsMenu } from "./components/edst-windows/tools-components/ToolsMenu";
 import { AltimeterWindow } from "./components/edst-windows/AltimeterWindow";
@@ -41,7 +48,6 @@ import { AclSortMenu } from "./components/edst-windows/acl-components/AclSortMen
 import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMenu";
 import { SocketContextProvider } from "./contexts/SocketContext";
 import { openWindowThunk } from "./redux/thunks/openWindowThunk";
-import { aselEntrySelector } from "./redux/slices/entrySlice";
 import { useHubActions } from "./hooks/useHubActions";
 import { edstTheme } from "./edstTheme";
 import { useHubConnection } from "./hooks/useHubConnection";
@@ -89,7 +95,7 @@ const edstComponentMap = {
   [EdstWindow.MESSAGE_RESPONSE_AREA]: MessageResponseArea
 };
 
-const windowRequiresAsel: EdstWindow[] = [
+const windowRequiresAselNotNull: EdstWindow[] = [
   EdstWindow.PLAN_OPTIONS,
   EdstWindow.ROUTE_MENU,
   EdstWindow.HOLD_MENU,
@@ -102,7 +108,7 @@ const windowRequiresAsel: EdstWindow[] = [
 const Edst = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
-  const aselEntry = useRootSelector(aselEntrySelector);
+  const aselIsNull = useRootSelector(aselIsNullSelector);
   const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const bodyRef = useRef<HTMLDivElement>(null);
   const hubConnection = useHubConnection();
@@ -153,7 +159,7 @@ const Edst = () => {
           {unsafeEntries(edstComponentMap).map(
             ([edstWindow, Component]) =>
               windows[edstWindow].open &&
-              (windowRequiresAsel.includes(edstWindow) ? aselEntry && <Component key={edstWindow} /> : <Component key={edstWindow} />)
+              (windowRequiresAselNotNull.includes(edstWindow) ? !aselIsNull && <Component key={edstWindow} /> : <Component key={edstWindow} />)
           )}
         </EdstBodyDiv>
       </EdstDiv>
