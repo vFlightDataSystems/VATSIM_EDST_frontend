@@ -5,7 +5,7 @@ import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, RowSeparator } from "../../../styles/styles";
-import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
+import { DepPTimeCol, DepFidCol, RadioCol } from "./DepStyled";
 import { entriesSelector } from "../../../redux/slices/entrySlice";
 import { depHiddenColumnsSelector, depManualPostingSelector, depSortOptionSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
@@ -14,7 +14,7 @@ import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL } from "../../../utils/constants";
 import { DepSortOption } from "../../../typeDefinitions/enums/dep/depSortOption";
 
-const DepBodyStyleDiv = styled(NoSelectDiv)`
+const DepBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
   overflow: hidden;
   flex-flow: column;
@@ -58,10 +58,10 @@ export const DepTable = () => {
   const unAckList = useMemo(() => entryList.filter(entry => !entry.spa && entry.depStatus === -1), [entryList]);
 
   return (
-    <DepBodyStyleDiv>
+    <DepBodyDiv>
       <BodyRowHeaderDiv>
         <RadioCol header>{COMPLETED_CHECKMARK_SYMBOL}</RadioCol>
-        <DepCol2>P-Time</DepCol2>
+        <DepPTimeCol>P-Time</DepPTimeCol>
         <DepFidCol>Flight ID</DepFidCol>
         <SpecialBox disabled />
         <SpecialBox disabled />
@@ -81,6 +81,6 @@ export const DepTable = () => {
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting && unAckList.map(mapRow)}
       </ScrollContainer>
-    </DepBodyStyleDiv>
+    </DepBodyDiv>
   );
 };

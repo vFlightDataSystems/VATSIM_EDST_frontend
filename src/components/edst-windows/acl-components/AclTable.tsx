@@ -25,7 +25,7 @@ import { VCI_SYMBOL } from "../../../utils/constants";
 import { AclSortOption } from "../../../typeDefinitions/enums/acl/aclSortOption";
 import { colors } from "../../../edstTheme";
 
-const AclBodyStyleDiv = styled(NoSelectDiv)`
+const AclBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
   overflow: hidden;
   flex-flow: column;
@@ -98,7 +98,7 @@ export const AclTable = () => {
   );
 
   return (
-    <AclBodyStyleDiv>
+    <AclBodyDiv>
       <BodyRowHeaderDiv>
         <RadioCol header green>
           {VCI_SYMBOL}
@@ -162,6 +162,6 @@ export const AclTable = () => {
         {manualPosting && <BodyRowDiv separator />}
         {manualPosting && unAckList.map(mapRow)}
       </ScrollContainer>
-    </AclBodyStyleDiv>
+    </AclBodyDiv>
   );
 };

@@ -1,7 +1,8 @@
 import styled, { css } from "styled-components";
 import { Col, SpecialBox } from "../../../styles/sharedColumns";
 
-export const AclCol1 = styled(Col)<{ border?: boolean }>`
+type AclCol1Props = { border?: boolean };
+export const AclCol1 = styled(Col)<AclCol1Props>`
   margin: 0 2px;
   width: 14px;
   ${props =>

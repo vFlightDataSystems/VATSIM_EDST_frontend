@@ -5,7 +5,7 @@ import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySli
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
-import { DepCol2, DepFidCol, RadioCol } from "./DepStyled";
+import { DepPTimeCol, DepFidCol, RadioCol } from "./DepStyled";
 import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
@@ -193,7 +193,7 @@ export const DepRow = React.memo(({ entry }: DepRowProps) => {
             {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
           </RadioCol>
         </EdstTooltip>
-        <DepCol2>0000</DepCol2>
+        <DepPTimeCol>0000</DepPTimeCol>
         <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.depFlightId}>
             <DepFidCol
@@ -274,7 +274,7 @@ export const DepRow = React.memo(({ entry }: DepRowProps) => {
       {entry.showFreeText && (
         <BodyRowDiv>
           <RadioCol disabled />
-          <DepCol2 />
+          <DepPTimeCol />
           <InnerRow2 highlight={entry.highlighted} minWidth={`${Math.max(1200, ref?.current?.clientWidth ?? 0)}px`}>
             <FreeTextRow marginLeft="calc(17ch + 11px)">
               <input value={freeTextContent} onChange={event => setFreeTextContent(event.target.value)} />
