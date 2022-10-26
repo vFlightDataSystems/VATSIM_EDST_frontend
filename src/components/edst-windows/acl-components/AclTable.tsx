@@ -90,6 +90,13 @@ export const AclTable = () => {
   );
   const unAckList = useMemo(() => entryList.filter(entry => !entry.spa && entry.vciStatus === -1), [entryList]);
 
+  const mapRow = (entry: EdstEntry, i: number) => (
+    <React.Fragment key={entry.aircraftId}>
+      <AclRow entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
+      {i % 3 === 2 && <RowSeparator />}
+    </React.Fragment>
+  );
+
   return (
     <AclBodyStyleDiv>
       <BodyRowHeaderDiv>
@@ -149,27 +156,11 @@ export const AclTable = () => {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList.map((entry, i) => (
-          <>
-            <AclRow key={entry.aircraftId} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
-            {i % 3 === 2 && <RowSeparator />}
-          </>
-        ))}
+        {spaEntryList.map(mapRow)}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {ackListSorted.map((entry, i) => (
-          <>
-            <AclRow key={entry.aircraftId} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
-            {i % 3 === 2 && <RowSeparator />}
-          </>
-        ))}
+        {ackListSorted.map(mapRow)}
         {manualPosting && <BodyRowDiv separator />}
-        {manualPosting &&
-          unAckList.map((entry, i) => (
-            <>
-              <AclRow key={entry.aircraftId} entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
-              {i % 3 === 2 && <RowSeparator />}
-            </>
-          ))}
+        {manualPosting && unAckList.map(mapRow)}
       </ScrollContainer>
     </AclBodyStyleDiv>
   );

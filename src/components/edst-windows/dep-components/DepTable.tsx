@@ -35,6 +35,13 @@ const sortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: EdstEn
   }
 };
 
+const mapRow = (entry: EdstEntry, i: number) => (
+  <React.Fragment key={entry.aircraftId}>
+    <DepRow entry={entry} />
+    {i % 3 === 2 && <RowSeparator />}
+  </React.Fragment>
+);
+
 export const DepTable = () => {
   const dispatch = useRootDispatch();
   const selectedSortOption = useRootSelector(depSortOptionSelector);
@@ -68,27 +75,11 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList.map((entry, i) => (
-          <>
-            <DepRow key={entry.aircraftId} entry={entry} />
-            {i % 3 === 2 && <RowSeparator />}
-          </>
-        ))}
+        {spaEntryList.map(mapRow)}
         {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {ackListSorted.map((entry, i) => (
-          <>
-            <DepRow key={entry.aircraftId} entry={entry} />
-            {i % 3 === 2 && <RowSeparator />}
-          </>
-        ))}
+        {ackListSorted.map(mapRow)}
         {manualPosting && <BodyRowDiv separator />}
-        {manualPosting &&
-          unAckList.map((entry, i) => (
-            <>
-              <DepRow key={entry.aircraftId} entry={entry} />
-              {i % 3 === 2 && <RowSeparator />}
-            </>
-          ))}
+        {manualPosting && unAckList.map(mapRow)}
       </ScrollContainer>
     </DepBodyStyleDiv>
   );
