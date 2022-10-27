@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
 import { DepRow } from "./DepRow";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
@@ -6,13 +6,12 @@ import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, RowSeparator } from "../../../styles/styles";
 import { DepPTimeCol, DepFidCol, RadioCol } from "./DepStyled";
-import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { depHiddenColumnsSelector, depManualPostingSelector, depSortOptionSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
-import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
+import { depHiddenColumnsSelector, depManualPostingSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL } from "../../../utils/constants";
-import { DepSortOption } from "../../../typeDefinitions/enums/dep/depSortOption";
+import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
+import { depAckListSelector, depSpaListSelector, depUnAckListSelector } from "../../../redux/selectors";
 
 const DepBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -22,40 +21,38 @@ const DepBodyDiv = styled(NoSelectDiv)`
   color: ${props => props.theme.colors.grey};
 `;
 
-const sortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: EdstEntry) => {
-  switch (selectedSortOption) {
-    case DepSortOption.ACID:
-      return u.aircraftId.localeCompare(v.aircraftId);
-    case DepSortOption.DESTINATION:
-      return u.destination.localeCompare(v.destination);
-    case DepSortOption.ORIGIN:
-      return u.departure?.localeCompare(v.departure);
-    default:
-      return u.aircraftId.localeCompare(v.aircraftId);
-  }
+const mapRow = (aircraftList: AircraftId[]) =>
+  aircraftList.map((aircraftId, i) => (
+    <React.Fragment key={aircraftId}>
+      <DepRow aircraftId={aircraftId} />
+      {i % 3 === 2 && <RowSeparator />}
+    </React.Fragment>
+  ));
+
+const SpaList = () => {
+  const spaList = useRootSelector(depSpaListSelector);
+  return (
+    <>
+      {mapRow(spaList)}
+      {spaList.length > 0 && <BodyRowDiv separator />}
+    </>
+  );
 };
 
-const mapRow = (entry: EdstEntry, i: number) => (
-  <React.Fragment key={entry.aircraftId}>
-    <DepRow aircraftId={entry.aircraftId} />
-    {i % 3 === 2 && <RowSeparator />}
-  </React.Fragment>
-);
+const AckList = () => {
+  const ackList = useRootSelector(depAckListSelector);
+  return <>{mapRow(ackList)}</>;
+};
+
+const UnAckList = () => {
+  const unAckList = useRootSelector(depUnAckListSelector);
+  return <>{mapRow(unAckList)}</>;
+};
 
 export const DepTable = () => {
   const dispatch = useRootDispatch();
-  const selectedSortOption = useRootSelector(depSortOptionSelector);
   const manualPosting = useRootSelector(depManualPostingSelector);
-  const entries = useRootSelector(entriesSelector);
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
-
-  const entryList = useMemo(() => Object.values(entries).filter(entry => entry.status === "Proposed" && !entry.deleted), [entries]);
-  const spaEntryList = useMemo(() => entryList.filter(entry => entry.spa), [entryList]);
-  const ackListSorted = useMemo(
-    () => entryList.filter(entry => !entry.spa && (entry.depStatus > -1 || !manualPosting)).sort(sortFunc(selectedSortOption)),
-    [entryList, selectedSortOption, manualPosting]
-  );
-  const unAckList = useMemo(() => entryList.filter(entry => !entry.spa && entry.depStatus === -1), [entryList]);
 
   return (
     <DepBodyDiv>
@@ -75,11 +72,14 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList.map(mapRow)}
-        {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {ackListSorted.map(mapRow)}
-        {manualPosting && <BodyRowDiv separator />}
-        {manualPosting && unAckList.map(mapRow)}
+        <SpaList />
+        <AckList />
+        {manualPosting && (
+          <>
+            <BodyRowDiv separator />
+            <UnAckList />
+          </>
+        )}
       </ScrollContainer>
     </DepBodyDiv>
   );

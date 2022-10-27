@@ -1,29 +1,28 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { AclRow } from "./AclRow";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "../../../redux/selectors";
+import {
+  aclAckListSelector,
+  aclSpaListSelector,
+  aclUnAckListSelector,
+  anyAssignedHdgSelector,
+  anyAssignedSpdSelector,
+  anyHoldingSelector
+} from "../../../redux/selectors";
 import { aselSelector, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, InnerRow, RowSeparator } from "../../../styles/styles";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
-import {
-  aclHiddenColumnsSelector,
-  aclManualPostingSelector,
-  aclSortDataSelector,
-  toggleAclHideColumn,
-  toolsOptionsSelector
-} from "../../../redux/slices/aclSlice";
-import { entriesSelector } from "../../../redux/slices/entrySlice";
-import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
+import { aclHiddenColumnsSelector, aclManualPostingSelector, toggleAclHideColumn, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { VCI_SYMBOL } from "../../../utils/constants";
-import { AclSortOption } from "../../../typeDefinitions/enums/acl/aclSortOption";
 import { colors } from "../../../edstTheme";
+import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
 
 const AclBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -33,21 +32,35 @@ const AclBodyDiv = styled(NoSelectDiv)`
   color: ${props => props.theme.colors.grey};
 `;
 
-const sortFunc = (selectedOption: AclSortOption) => (u: EdstEntry, v: EdstEntry) => {
-  switch (selectedOption) {
-    case AclSortOption.ACID:
-      return u.aircraftId.localeCompare(v.aircraftId);
-    case AclSortOption.DESTINATION:
-      return u.destination.localeCompare(v.destination);
-    case AclSortOption.BOUNDARY_TIME:
-      return u.boundaryTime - v.boundaryTime;
-    default:
-      return u.aircraftId.localeCompare(v.aircraftId);
-  }
+const mapRow = (aircraftList: AircraftId[]) =>
+  aircraftList.map((aircraftId, i) => (
+    <React.Fragment key={aircraftId}>
+      <AclRow aircraftId={aircraftId} />
+      {i % 3 === 2 && <RowSeparator />}
+    </React.Fragment>
+  ));
+
+const SpaList = () => {
+  const spaList = useRootSelector(aclSpaListSelector);
+  return (
+    <>
+      {mapRow(spaList)}
+      {spaList.length > 0 && <BodyRowDiv separator />}
+    </>
+  );
+};
+
+const AckList = () => {
+  const ackList = useRootSelector(aclAckListSelector);
+  return <>{mapRow(ackList)}</>;
+};
+
+const UnAckList = () => {
+  const unAckList = useRootSelector(aclUnAckListSelector);
+  return <>{mapRow(unAckList)}</>;
 };
 
 export const AclTable = () => {
-  const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
   const dispatch = useRootDispatch();
@@ -57,8 +70,7 @@ export const AclTable = () => {
   const anyAssignedHeading = useRootSelector(anyAssignedHdgSelector);
   const anyAssignedSpeed = useRootSelector(anyAssignedSpdSelector);
   const hiddenColumns = useRootSelector(aclHiddenColumnsSelector);
-  const [altMouseDown, setAltMouseDown] = useState(false);
-  const entries = useRootSelector(entriesSelector);
+  const [, setAltMouseDown] = useState(false);
 
   const handleClickSlash = useCallback(() => {
     if (hiddenColumns.includes(AclRowField.SPD) && hiddenColumns.includes(AclRowField.HDG)) {
@@ -81,21 +93,6 @@ export const AclTable = () => {
       }
     }
   }, [asel?.field, dispatch, hiddenColumns]);
-
-  const entryList = useMemo(() => Object.values(entries).filter(entry => entry.status === "Active" && !entry.deleted), [entries]);
-  const spaEntryList = useMemo(() => entryList.filter(entry => entry.spa), [entryList]);
-  const ackListSorted = useMemo(
-    () => entryList.filter(entry => !entry.spa && (entry.vciStatus > -1 || !manualPosting)).sort(sortFunc(sortData.selectedOption)),
-    [entryList, manualPosting, sortData.selectedOption]
-  );
-  const unAckList = useMemo(() => entryList.filter(entry => !entry.spa && entry.vciStatus === -1), [entryList]);
-
-  const mapRow = (entry: EdstEntry, i: number) => (
-    <React.Fragment key={entry.aircraftId}>
-      <AclRow aircraftId={entry.aircraftId} altMouseDown={altMouseDown} />
-      {i % 3 === 2 && <RowSeparator />}
-    </React.Fragment>
-  );
 
   return (
     <AclBodyDiv>
@@ -156,11 +153,14 @@ export const AclTable = () => {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        {spaEntryList.map(mapRow)}
-        {spaEntryList.length > 0 && <BodyRowDiv separator />}
-        {ackListSorted.map(mapRow)}
-        {manualPosting && <BodyRowDiv separator />}
-        {manualPosting && unAckList.map(mapRow)}
+        <SpaList />
+        <AckList />
+        {manualPosting && (
+          <>
+            <BodyRowDiv separator />
+            <UnAckList />
+          </>
+        )}
       </ScrollContainer>
     </AclBodyDiv>
   );

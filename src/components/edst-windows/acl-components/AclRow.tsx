@@ -41,7 +41,7 @@ import { anyHoldingSelector } from "../../../redux/selectors";
 
 type AclRowProps = {
   aircraftId: AircraftId;
-  altMouseDown: boolean;
+  altMouseDown?: boolean;
 };
 
 /**
