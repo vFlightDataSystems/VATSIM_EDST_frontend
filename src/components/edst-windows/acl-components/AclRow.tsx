@@ -50,7 +50,7 @@ type AclRowProps = {
  * @param anyHolding boolean whether any aircraft is currently in a hold, an extra column will be displayed if true
  */
 export const AclRow = React.memo(({ entry, altMouseDown, anyHolding }: AclRowProps) => {
-  const asel = useRootSelector(aircraftIsAselSelector(entry.aircraftId));
+  const asel = useRootSelector(state => aircraftIsAselSelector(state, entry.aircraftId));
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);

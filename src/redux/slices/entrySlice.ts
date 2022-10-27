@@ -47,5 +47,5 @@ export const { setEntry, updateEntry, delEntry, toggleSpa, updateEntries } = ent
 export default entrySlice.reducer;
 
 export const entriesSelector = (state: RootState) => state.entries;
-export const entrySelector = (aircraftId: string) => (state: RootState) => state.entries[aircraftId];
+export const entrySelector = (state: RootState, aircraftId: AircraftId) => state.entries[aircraftId];
 export const aselEntrySelector = (state: RootState) => (state.app.asel ? state.entries[state.app.asel.aircraftId] : null);

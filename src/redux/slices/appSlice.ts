@@ -8,6 +8,7 @@ import sharedSocket from "../../sharedState/socket";
 import { Asel } from "../../typeDefinitions/types/asel";
 import { WindowDimension } from "../../typeDefinitions/types/windowDimension";
 import { Nullable } from "../../typeDefinitions/utility-types";
+import { AircraftId } from "../../typeDefinitions/types/aircraftId";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -259,16 +260,16 @@ export const mcaCommandStringSelector = (state: RootState) => state.app.mcaComma
 export const mcaFeedbackSelector = (state: RootState) => state.app.mcaFeedbackString;
 export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
 export const giEntryMapSelector = (state: RootState) => state.app.giEntryMap;
-export const windowSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window];
-export const windowPositionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].position;
-export const windowDimensionSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].dimension;
-export const windowIsFullscreenSelector = (window: EdstWindow) => (state: RootState) => state.app.windows[window].isFullscreen;
+export const windowSelector = (state: RootState, window: EdstWindow) => state.app.windows[window];
+export const windowPositionSelector = (state: RootState, window: EdstWindow) => state.app.windows[window].position;
+export const windowDimensionSelector = (state: RootState, window: EdstWindow) => state.app.windows[window].dimension;
+export const windowIsFullscreenSelector = (state: RootState, window: EdstWindow) => state.app.windows[window].isFullscreen;
 export const aselSelector = (state: RootState) => state.app.asel;
 export const aselIsNullSelector = (state: RootState) => state.app.asel === null;
 export const aclAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.ACL ? state.app.asel : null);
 export const depAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.DEP ? state.app.asel : null);
 export const gpdAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.GPD ? state.app.asel : null);
-export const aircraftIsAselSelector = (aircraftId: string) => (state: RootState) =>
+export const aircraftIsAselSelector = (state: RootState, aircraftId: AircraftId) =>
   state.app.asel?.aircraftId === aircraftId ? state.app.asel : null;
 export const anyDraggingSelector = (state: RootState) => state.app.anyDragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;

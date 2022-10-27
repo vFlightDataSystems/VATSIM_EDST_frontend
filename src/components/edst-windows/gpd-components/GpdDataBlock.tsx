@@ -80,7 +80,7 @@ type GpdDataBlockProps = {
 export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
   const map = useMap();
   const dispatch = useRootDispatch();
-  const asel = useRootSelector(aircraftIsAselSelector(entry.aircraftId));
+  const asel = useRootSelector(state => aircraftIsAselSelector(state, entry.aircraftId));
   const anyDragging = useRootSelector(anyDraggingSelector);
   const ref = useRef<HTMLDivElement>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);

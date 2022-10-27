@@ -84,7 +84,7 @@ const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) 
  */
 export const DepRow = React.memo(({ entry }: DepRowProps) => {
   const dispatch = useRootDispatch();
-  const asel = useRootSelector(aircraftIsAselSelector(entry.aircraftId));
+  const asel = useRootSelector(state => aircraftIsAselSelector(state, entry.aircraftId));
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
   const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(entry.aircraftId);

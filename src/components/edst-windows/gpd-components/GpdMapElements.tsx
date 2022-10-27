@@ -108,8 +108,8 @@ export const GpdPolygon = ({ data }: GpdPolygonProps) => {
 type GpdAircraftTrackProps = { aircraftId: string };
 
 export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
-  const entry = useRootSelector(entrySelector(aircraftId));
-  const track = useRootSelector(aircraftTrackSelector(aircraftId));
+  const entry = useRootSelector(state => entrySelector(state, aircraftId));
+  const track = useRootSelector(state => aircraftTrackSelector(state, aircraftId));
   const [routeLine, setRouteLine] = useState<RouteFix[] | null>(null);
   const posLatLng = track?.location ? posToLatLng({ ...track.location }) : null;
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);

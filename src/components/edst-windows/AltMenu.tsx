@@ -164,7 +164,7 @@ export const AltMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.ALTITUDE_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.ALTITUDE_MENU));
   const dispatch = useRootDispatch();
   const [selected, setSelected] = useState(asel.window !== EdstWindow.DEP ? "trial" : "amend");
   const [tempAltHover, setTempAltHover] = useState<Nullable<number>>(null);

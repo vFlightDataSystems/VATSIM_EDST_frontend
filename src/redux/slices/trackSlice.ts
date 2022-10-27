@@ -25,5 +25,5 @@ export const { setTrack, setTracks } = trackSlice.actions;
 export default trackSlice.reducer;
 
 export const aircraftTracksSelector = (state: RootState) => state.aircraftTracks;
-export const aircraftTrackSelector = (aircraftId: AircraftId) => (state: RootState) => state.aircraftTracks[aircraftId];
+export const aircraftTrackSelector = (state: RootState, aircraftId: AircraftId) => state.aircraftTracks[aircraftId];
 export const aselTrackSelector = (state: RootState) => (state.app.asel ? state.aircraftTracks[state.app.asel.aircraftId] : null);

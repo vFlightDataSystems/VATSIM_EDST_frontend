@@ -6,8 +6,8 @@ import { setIsFullscreen, setWindowDimension, windowDimensionSelector, windowIsF
 
 export const useFullscreen = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
-  const isFullscreen = useRootSelector(windowIsFullscreenSelector(edstWindow));
-  const dimension = useRootSelector(windowDimensionSelector(edstWindow));
+  const isFullscreen = useRootSelector(state => windowIsFullscreenSelector(state, edstWindow));
+  const dimension = useRootSelector(state => windowDimensionSelector(state, edstWindow));
   const { width, height } = useResizeDetector({ targetRef: ref });
 
   const toggleFullscreen = () => {

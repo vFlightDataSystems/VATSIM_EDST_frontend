@@ -126,7 +126,7 @@ export const MessageComposeArea = () => {
   const [insertMode, setInsertMode] = useState(true);
   const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.MESSAGE_COMPOSE_AREA));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
   const aircraftTracks = useRootSelector(aircraftTracksSelector);

@@ -86,7 +86,7 @@ export type EquipmentTemplateBodyProps = {
 
 export const EquipmentTemplateMenu = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.EQUIPMENT_TEMPLATE_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.EQUIPMENT_TEMPLATE_MENU));
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<MenuOptions>(MenuOptions.nav);

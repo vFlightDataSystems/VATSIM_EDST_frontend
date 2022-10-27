@@ -23,7 +23,7 @@ export const aircraftApi = createApi({
 const { useGetRouteFixesQuery } = aircraftApi;
 
 export const useRouteFixes = (aircraftId: string) => {
-  const entry = useRootSelector(entrySelector(aircraftId));
+  const entry = useRootSelector(state => entrySelector(state, aircraftId));
   const { data } = useGetRouteFixesQuery({ dep: entry.departure, dest: entry.destination, route: entry.route.trim() });
   return data ?? [];
 };

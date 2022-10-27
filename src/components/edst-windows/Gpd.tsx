@@ -20,8 +20,8 @@ export const Gpd = () => {
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.GPD));
-  const dimension = useRootSelector(windowDimensionSelector(EdstWindow.GPD));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.GPD));
+  const dimension = useRootSelector(state => windowDimensionSelector(state, EdstWindow.GPD));
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD, "mouseup");
   const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.GPD);
   const { width, height } = useResizeDetector({ targetRef: ref });

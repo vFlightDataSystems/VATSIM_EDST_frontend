@@ -25,8 +25,8 @@ export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyC
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);
-  const pos = useRootSelector(windowPositionSelector(edstWindow));
-  const dimension = useRootSelector(windowDimensionSelector(edstWindow));
+  const pos = useRootSelector(state => windowPositionSelector(state, edstWindow));
+  const dimension = useRootSelector(state => windowDimensionSelector(state, edstWindow));
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mouseup");
   const { isFullscreen, toggleFullscreen } = useFullscreen(ref, edstWindow);
 

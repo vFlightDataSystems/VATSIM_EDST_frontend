@@ -29,7 +29,7 @@ const SpeedDiv = styled(OptionsMenu)`
 export const SpeedMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.SPEED_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.SPEED_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const [speed, setSpeed] = useState(280);

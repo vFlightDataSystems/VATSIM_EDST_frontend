@@ -109,7 +109,7 @@ const toggleAppendOplus = (prev: Append) => ({ appendStar: false, appendOplus: !
 
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.ROUTE_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.ROUTE_MENU));
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector);

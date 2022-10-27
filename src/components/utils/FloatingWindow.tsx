@@ -28,7 +28,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mousedown");
 
-  const pos = useRootSelector(windowPositionSelector(edstWindow));
+  const pos = useRootSelector(state => windowPositionSelector(state, edstWindow));
   const zStack = useRootSelector(zStackSelector);
 
   const windowOptions = useRootSelector(windowOptionsSelector(edstWindow));

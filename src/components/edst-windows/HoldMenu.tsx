@@ -90,7 +90,7 @@ const EfcInputContainer = styled(InputContainer)`
 export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const track = useRootSelector(aselTrackSelector)!;
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.HOLD_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.HOLD_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 

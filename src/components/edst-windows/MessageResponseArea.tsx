@@ -30,7 +30,7 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)<MessageResponseAreaDivP
 `;
 
 export const MessageResponseArea = () => {
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.MESSAGE_RESPONSE_AREA));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.MESSAGE_RESPONSE_AREA));
   const msg = useRootSelector(mraMsgSelector);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();

@@ -27,11 +27,11 @@ const PlanOptionsBody = styled(OptionsBody)`
 export const PlanOptions = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector)!;
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.PLAN_OPTIONS));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.PLAN_OPTIONS));
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  const entry = useRootSelector(entrySelector(asel.aircraftId));
+  const entry = useRootSelector(state => entrySelector(state, asel.aircraftId));
   const dep = asel.window === EdstWindow.DEP;
   useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");

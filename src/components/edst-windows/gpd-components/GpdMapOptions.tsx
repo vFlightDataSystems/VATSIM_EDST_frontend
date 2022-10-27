@@ -21,7 +21,7 @@ import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
 
 export const GpdMapOptions = () => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector(windowSelector(EdstWindow.GPD_MAP_OPTIONS_MENU));
+  const windowProps = useRootSelector(state => windowSelector(state, EdstWindow.GPD_MAP_OPTIONS_MENU));
   const zStack = useRootSelector(zStackSelector);
   const [mapFeaturesMenuOpen, setMapFeaturesMenuOpen] = useState(false);
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);

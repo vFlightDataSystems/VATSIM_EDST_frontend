@@ -26,7 +26,7 @@ export const ToolsBody = styled(OptionsBody)`
 
 export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector(windowSelector(EdstWindow.TOOLS_MENU));
+  const windowProps = useRootSelector(state => windowSelector(state, EdstWindow.TOOLS_MENU));
   const zStack = useRootSelector(zStackSelector);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);

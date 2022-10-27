@@ -26,7 +26,7 @@ const HeadingDiv = styled(OptionsMenu)`
 export const HeadingMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.HEADING_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.HEADING_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 

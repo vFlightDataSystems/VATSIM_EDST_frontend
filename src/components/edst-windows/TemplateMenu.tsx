@@ -106,7 +106,7 @@ export const TemplateMenu = () => {
   const asel = useRootSelector(aselSelector);
   const aircraftTrack = useRootSelector(aselTrackSelector);
   const entry = useRootSelector(aselEntrySelector);
-  const pos = useRootSelector(windowPositionSelector(EdstWindow.TEMPLATE_MENU));
+  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.TEMPLATE_MENU));
   const zStack = useRootSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
   // TODO: use normal formatted route
