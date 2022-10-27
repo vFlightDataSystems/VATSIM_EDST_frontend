@@ -92,7 +92,7 @@ export const AclTable = () => {
 
   const mapRow = (entry: EdstEntry, i: number) => (
     <React.Fragment key={entry.aircraftId}>
-      <AclRow entry={entry} anyHolding={anyHolding} altMouseDown={altMouseDown} />
+      <AclRow aircraftId={entry.aircraftId} altMouseDown={altMouseDown} />
       {i % 3 === 2 && <RowSeparator />}
     </React.Fragment>
   );

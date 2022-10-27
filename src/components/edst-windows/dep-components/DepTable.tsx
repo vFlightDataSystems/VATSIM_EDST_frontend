@@ -37,7 +37,7 @@ const sortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: EdstEn
 
 const mapRow = (entry: EdstEntry, i: number) => (
   <React.Fragment key={entry.aircraftId}>
-    <DepRow entry={entry} />
+    <DepRow aircraftId={entry.aircraftId} />
     {i % 3 === 2 && <RowSeparator />}
   </React.Fragment>
 );

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
+import { delEntry, entrySelector, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
@@ -36,25 +36,28 @@ import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/s
 import { formatUtcMinutes } from "../../../utils/formatUtcMinutes";
 import { colors } from "../../../edstTheme";
 import { Nullable } from "../../../typeDefinitions/utility-types";
+import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
+import { anyHoldingSelector } from "../../../redux/selectors";
 
 type AclRowProps = {
-  entry: EdstEntry;
-  anyHolding: boolean;
+  aircraftId: AircraftId;
   altMouseDown: boolean;
 };
 
 /**
  * Single ACL row
- * @param entry
+ * @param aircraftId
  * @param altMouseDown boolean indicating where mouse is pressed on the ACL header Alt column
- * @param anyHolding boolean whether any aircraft is currently in a hold, an extra column will be displayed if true
  */
-export const AclRow = React.memo(({ entry, altMouseDown, anyHolding }: AclRowProps) => {
-  const asel = useRootSelector(state => aircraftIsAselSelector(state, entry.aircraftId));
+export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => {
   const dispatch = useRootDispatch();
+  const entry = useRootSelector(state => entrySelector(state, aircraftId));
+  const asel = useRootSelector(state => aircraftIsAselSelector(state, aircraftId));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
   const hiddenColumns = useRootSelector(aclHiddenColumnsSelector);
+  const anyHolding = useRootSelector(anyHoldingSelector);
+
   const [parAvail, setParAvail] = useState(false);
   const [onPar, setOnPar] = useState(false);
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
@@ -261,6 +264,7 @@ export const AclRow = React.memo(({ entry, altMouseDown, anyHolding }: AclRowPro
         break;
       case 1:
         if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const promotedHdg = "LRH".includes(entry.scratchpadHeading.slice(-1)) ? entry.scratchpadHeading : `H${entry.scratchpadHeading}`;
         }
         break;
@@ -284,6 +288,7 @@ export const AclRow = React.memo(({ entry, altMouseDown, anyHolding }: AclRowPro
         break;
       case 1:
         if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const promotedSpd = entry.scratchpadSpeed.slice(0, 1) === "M" ? entry.scratchpadSpeed : `S${entry.scratchpadSpeed}`;
         }
         break;

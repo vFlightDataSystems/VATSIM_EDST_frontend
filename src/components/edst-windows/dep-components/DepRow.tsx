@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { EdstTooltip } from "../../utils/EdstTooltip";
 import { Tooltips } from "../../../tooltips";
-import { delEntry, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
+import { delEntry, entrySelector, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
 import { DepPTimeCol, DepFidCol, RadioCol } from "./DepStyled";
-import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
   AircraftTypeCol,
@@ -33,9 +32,10 @@ import { useAselEventListener } from "../../../hooks/useAselEventListener";
 import { depHiddenColumnsSelector } from "../../../redux/slices/depSlice";
 import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
 import { Nullable } from "../../../typeDefinitions/utility-types";
+import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
 
 type DepRowProps = {
-  entry: EdstEntry;
+  aircraftId: AircraftId;
 };
 
 const checkParReroutePending = (pars: ApiPreferentialArrivalRoute[], currentFixNames: string[]) => {
@@ -79,12 +79,13 @@ const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) 
 };
 
 /**
- * Single ACL row
- * @param entry
+ * Single DEP row
+ * @param aircraftId
  */
-export const DepRow = React.memo(({ entry }: DepRowProps) => {
+export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const dispatch = useRootDispatch();
-  const asel = useRootSelector(state => aircraftIsAselSelector(state, entry.aircraftId));
+  const entry = useRootSelector(state => entrySelector(state, aircraftId));
+  const asel = useRootSelector(state => aircraftIsAselSelector(state, aircraftId));
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
   const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(entry.aircraftId);
