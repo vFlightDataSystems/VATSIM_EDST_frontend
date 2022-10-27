@@ -264,8 +264,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         break;
       case 1:
         if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const promotedHdg = "LRH".includes(entry.scratchpadHeading.slice(-1)) ? entry.scratchpadHeading : `H${entry.scratchpadHeading}`;
+          // const promotedHdg = "LRH".includes(entry.scratchpadHeading.slice(-1)) ? entry.scratchpadHeading : `H${entry.scratchpadHeading}`;
         }
         break;
       case 2:
@@ -288,8 +287,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         break;
       case 1:
         if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const promotedSpd = entry.scratchpadSpeed.slice(0, 1) === "M" ? entry.scratchpadSpeed : `S${entry.scratchpadSpeed}`;
+          // const promotedSpd = entry.scratchpadSpeed.slice(0, 1) === "M" ? entry.scratchpadSpeed : `S${entry.scratchpadSpeed}`;
         }
         break;
       case 2:
