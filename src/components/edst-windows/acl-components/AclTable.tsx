@@ -15,14 +15,14 @@ import {
 import { aselSelector, setAsel } from "../../../redux/slices/appSlice";
 import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
-import { BodyRowDiv, BodyRowHeaderDiv, InnerRow, RowSeparator } from "../../../styles/styles";
+import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/styles";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toggleAclHideColumn, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
 import { VCI_SYMBOL } from "../../../utils/constants";
 import { colors } from "../../../edstTheme";
-import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
+import { ListMapper } from "../../utils/ListMapper";
 
 const AclBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -32,33 +32,11 @@ const AclBodyDiv = styled(NoSelectDiv)`
   color: ${props => props.theme.colors.grey};
 `;
 
-const mapRow = (aircraftList: AircraftId[]) =>
-  aircraftList.map((aircraftId, i) => (
-    <React.Fragment key={aircraftId}>
-      <AclRow aircraftId={aircraftId} />
-      {i % 3 === 2 && <RowSeparator />}
-    </React.Fragment>
-  ));
+const SpaList = React.memo(() => <ListMapper selector={aclSpaListSelector} Component={AclRow} showSep />);
 
-const SpaList = () => {
-  const spaList = useRootSelector(aclSpaListSelector);
-  return (
-    <>
-      {mapRow(spaList)}
-      {spaList.length > 0 && <BodyRowDiv separator />}
-    </>
-  );
-};
+const AckList = React.memo(() => <ListMapper selector={aclAckListSelector} Component={AclRow} />);
 
-const AckList = () => {
-  const ackList = useRootSelector(aclAckListSelector);
-  return <>{mapRow(ackList)}</>;
-};
-
-const UnAckList = () => {
-  const unAckList = useRootSelector(aclUnAckListSelector);
-  return <>{mapRow(unAckList)}</>;
-};
+const UnAckList = React.memo(() => <ListMapper selector={aclUnAckListSelector} Component={AclRow} />);
 
 export const AclTable = () => {
   const manualPosting = useRootSelector(aclManualPostingSelector);

@@ -4,14 +4,14 @@ import { DepRow } from "./DepRow";
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { NoSelectDiv } from "../../../styles/NoSelectDiv";
 import { ScrollContainer } from "../../../styles/optionMenuStyles";
-import { BodyRowDiv, BodyRowHeaderDiv, RowSeparator } from "../../../styles/styles";
+import { BodyRowDiv, BodyRowHeaderDiv } from "../../../styles/styles";
 import { DepPTimeCol, DepFidCol, RadioCol } from "./DepStyled";
 import { depHiddenColumnsSelector, depManualPostingSelector, toggleDepHideColumn } from "../../../redux/slices/depSlice";
 import { AircraftTypeCol, AltCol, CodeCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
 import { DepRowField } from "../../../typeDefinitions/enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL } from "../../../utils/constants";
-import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
 import { depAckListSelector, depSpaListSelector, depUnAckListSelector } from "../../../redux/selectors";
+import { ListMapper } from "../../utils/ListMapper";
 
 const DepBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -21,33 +21,11 @@ const DepBodyDiv = styled(NoSelectDiv)`
   color: ${props => props.theme.colors.grey};
 `;
 
-const mapRow = (aircraftList: AircraftId[]) =>
-  aircraftList.map((aircraftId, i) => (
-    <React.Fragment key={aircraftId}>
-      <DepRow aircraftId={aircraftId} />
-      {i % 3 === 2 && <RowSeparator />}
-    </React.Fragment>
-  ));
+const SpaList = React.memo(() => <ListMapper selector={depSpaListSelector} Component={DepRow} showSep />);
 
-const SpaList = () => {
-  const spaList = useRootSelector(depSpaListSelector);
-  return (
-    <>
-      {mapRow(spaList)}
-      {spaList.length > 0 && <BodyRowDiv separator />}
-    </>
-  );
-};
+const AckList = React.memo(() => <ListMapper selector={depAckListSelector} Component={DepRow} />);
 
-const AckList = () => {
-  const ackList = useRootSelector(depAckListSelector);
-  return <>{mapRow(ackList)}</>;
-};
-
-const UnAckList = () => {
-  const unAckList = useRootSelector(depUnAckListSelector);
-  return <>{mapRow(unAckList)}</>;
-};
+const UnAckList = React.memo(() => <ListMapper selector={depUnAckListSelector} Component={DepRow} />);
 
 export const DepTable = () => {
   const dispatch = useRootDispatch();
