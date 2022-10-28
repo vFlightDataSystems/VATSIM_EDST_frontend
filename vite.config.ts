@@ -8,6 +8,6 @@ export default defineConfig({
   server: {
     port: 3000
   },
-  envPrefix: "REACT_APP_",
+  envPrefix: ["VITE_", "TAURI_"],
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()]
 });

@@ -3,7 +3,7 @@ import { ApiAircraft } from "../typeDefinitions/types/apiTypes/apiAircraft";
 import { RouteFix } from "../typeDefinitions/types/routeFix";
 import { ApiAirportInfo } from "../typeDefinitions/types/apiTypes/apiAirportInfo";
 
-const baseUrl = import.meta.env.REACT_APP_BACKEND_BASEURL!;
+const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
 
 export async function fetchSigmets(): Promise<ApiAirSigmet[]> {
   return fetch(`${baseUrl}/weather/sigmets`).then(response => response.json());
@@ -17,7 +17,7 @@ export async function fetchAirportInfo(airport: string): Promise<ApiAirportInfo>
   return fetch(`${baseUrl}/navdata/airport/${airport}`).then(response => response.json());
 }
 
-const AIRCRAFT_URL = import.meta.env.REACT_APP_NAS_AIRCRAFT_URL ?? "";
+const AIRCRAFT_URL = import.meta.env.VITE_NAS_AIRCRAFT_URL ?? "";
 
 export async function fetchAllAircraft(): Promise<ApiAircraft[]> {
   return fetch(AIRCRAFT_URL).then(response => response.json());

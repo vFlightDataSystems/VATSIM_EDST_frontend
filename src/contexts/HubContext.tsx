@@ -14,7 +14,7 @@ import { initThunk } from "../redux/thunks/initThunk";
 import { useSocketConnector } from "../hooks/useSocketConnector";
 import { Nullable } from "../typeDefinitions/utility-types";
 
-const ATC_SERVER_URL = import.meta.env.REACT_APP_ATC_HUB_URL;
+const ATC_SERVER_URL = import.meta.env.VITE_ATC_HUB_URL;
 
 const useHubContextInit = () => {
   const [hubConnected, setHubConnected] = useState(false);

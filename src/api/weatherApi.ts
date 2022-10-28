@@ -3,7 +3,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Nullable } from "../typeDefinitions/utility-types";
 
-const baseUrl = import.meta.env.REACT_APP_BACKEND_BASEURL!;
+const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
 
 type AltimeterEntry = {
   time: string;
