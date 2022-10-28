@@ -88,15 +88,15 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const asel = useRootSelector(state => aircraftIsAselSelector(state, aircraftId));
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
   const formattedRoute = formatRoute(entry.route);
-  const routeFixes = useRouteFixes(entry.aircraftId);
+  const routeFixes = useRouteFixes(aircraftId);
   const currentFixNames = routeFixes.map(fix => fix.name);
 
   const [onPar, setOnPar] = useState(false);
   const [onPdr, setOnPdr] = useState(false);
   const [onPdar, setOnPdar] = useState(false);
-  const pdrs = usePdr(entry.aircraftId);
-  const pdars = usePdar(entry.aircraftId);
-  const pars = usePar(entry.aircraftId);
+  const pdrs = usePdr(aircraftId);
+  const pdars = usePdar(aircraftId);
+  const pars = usePar(aircraftId);
 
   const [pendingPdr, setPendingPdr] = useState(checkPdrReroutePending(pdrs));
   const [pendingPdar, setPendingPdar] = useState(checkPdarReroutePending(pdars));
@@ -128,46 +128,46 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
 
   const isSelected = useCallback(
     (field: DepRowField): boolean => {
-      return asel?.window === EdstWindow.DEP && asel?.aircraftId === entry.aircraftId && asel?.field === field;
+      return asel?.window === EdstWindow.DEP && asel?.aircraftId === aircraftId && asel?.field === field;
     },
-    [asel?.aircraftId, asel?.field, asel?.window, entry.aircraftId]
+    [aircraftId, asel?.aircraftId, asel?.field, asel?.window]
   );
 
   const handleClick = useCallback(
     (element: HTMLElement, field: DepRowField, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState = true) => {
-      dispatch(depAircraftSelect(entry.aircraftId, field, eventId, triggerSharedState));
+      dispatch(depAircraftSelect(aircraftId, field, eventId, triggerSharedState));
       if (opensWindow && !isSelected(field)) {
         dispatch(openMenuThunk(opensWindow, element, false, false, true));
       }
     },
-    [dispatch, entry.aircraftId, isSelected]
+    [dispatch, aircraftId, isSelected]
   );
   const altRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener<DepRowField>(altRef, entry.aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener<DepRowField>(routeRef, entry.aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener<DepRowField>(altRef, aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener<DepRowField>(routeRef, aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
   const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
     event.preventDefault();
     if (event.button === 0) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { showFreeText: !entry.showFreeText } }));
+      dispatch(updateEntry({ aircraftId, data: { showFreeText: !entry.showFreeText } }));
     }
     if (event.button === 1) {
-      dispatch(toggleSpa(entry.aircraftId));
+      dispatch(toggleSpa(aircraftId));
     }
     if (event.button === 2) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
+      dispatch(updateEntry({ aircraftId, data: { highlighted: !entry.highlighted } }));
     }
   };
 
   const updateStatus = () => {
     if (entry.depStatus === -1) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { depStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId, data: { depStatus: 0 } }));
     } else if (entry.depStatus < 1) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { depStatus: 1 } }));
+      dispatch(updateEntry({ aircraftId, data: { depStatus: 1 } }));
     } else {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { depStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId, data: { depStatus: 0 } }));
     }
   };
 
@@ -176,11 +176,11 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(delEntry(entry.aircraftId));
+          dispatch(delEntry(aircraftId));
         }
         break;
       default:
-        dispatch(depAircraftSelect(entry.aircraftId, DepRowField.FID, null));
+        dispatch(depAircraftSelect(aircraftId, DepRowField.FID, null));
         break;
     }
   };

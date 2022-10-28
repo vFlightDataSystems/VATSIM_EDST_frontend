@@ -39,9 +39,9 @@ const AckList = React.memo(() => <ListMapper selector={aclAckListSelector} Compo
 const UnAckList = React.memo(() => <ListMapper selector={aclUnAckListSelector} Component={AclRow} />);
 
 export const AclTable = () => {
+  const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
-  const dispatch = useRootDispatch();
 
   const asel = useRootSelector(aselSelector);
   const anyHolding = useRootSelector(anyHoldingSelector);

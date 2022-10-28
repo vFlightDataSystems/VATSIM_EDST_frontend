@@ -67,19 +67,19 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
 
   const isSelected = useCallback(
     (field: AclRowField): boolean => {
-      return asel?.window === EdstWindow.ACL && asel?.aircraftId === entry.aircraftId && asel?.field === field;
+      return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
     },
-    [asel?.aircraftId, asel?.field, asel?.window, entry.aircraftId]
+    [aircraftId, asel?.aircraftId, asel?.field, asel?.window]
   );
 
   const handleClick = useCallback(
     (element: HTMLElement, field: AclRowField, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState = true) => {
-      dispatch(aclAircraftSelect(entry.aircraftId, field, eventId, triggerSharedState));
+      dispatch(aclAircraftSelect(aircraftId, field, eventId, triggerSharedState));
       if (opensWindow && !isSelected(field)) {
         dispatch(openMenuThunk(opensWindow, element));
       }
     },
-    [dispatch, entry.aircraftId, isSelected]
+    [dispatch, aircraftId, isSelected]
   );
 
   const handleRouteClick = useCallback(
@@ -99,17 +99,17 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   const holdRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener<AclRowField>(altRef, entry.aircraftId, "acl-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener<AclRowField>(spdRef, entry.aircraftId, "acl-spd-asel", AclRowField.SPD, EdstWindow.SPEED_MENU, handleClick);
-  useAselEventListener<AclRowField>(hdgRef, entry.aircraftId, "acl-hdg-asel", AclRowField.HDG, EdstWindow.HEADING_MENU, handleClick);
-  useAselEventListener<AclRowField>(routeRef, entry.aircraftId, "acl-route-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
-  useAselEventListener<AclRowField>(routeRef, entry.aircraftId, "acl-route-asel-hold", AclRowField.ROUTE, EdstWindow.HOLD_MENU, handleClick);
-  useAselEventListener<AclRowField>(holdRef, entry.aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
+  useAselEventListener<AclRowField>(altRef, aircraftId, "acl-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener<AclRowField>(spdRef, aircraftId, "acl-spd-asel", AclRowField.SPD, EdstWindow.SPEED_MENU, handleClick);
+  useAselEventListener<AclRowField>(hdgRef, aircraftId, "acl-hdg-asel", AclRowField.HDG, EdstWindow.HEADING_MENU, handleClick);
+  useAselEventListener<AclRowField>(routeRef, aircraftId, "acl-route-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener<AclRowField>(routeRef, aircraftId, "acl-route-asel-hold", AclRowField.ROUTE, EdstWindow.HOLD_MENU, handleClick);
+  useAselEventListener<AclRowField>(holdRef, aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
 
-  const par = usePar(entry.aircraftId);
+  const par = usePar(aircraftId);
   const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
   const currentRoute = formattedRoute;
-  const routeFixes = useRouteFixes(entry.aircraftId);
+  const routeFixes = useRouteFixes(aircraftId);
   const currentRouteFixes = routeFixes;
 
   useEffect(() => {
@@ -153,13 +153,13 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { showFreeText: !entry.showFreeText } }));
+        dispatch(updateEntry({ aircraftId, data: { showFreeText: !entry.showFreeText } }));
         break;
       case 1:
-        dispatch(toggleSpa(entry.aircraftId));
+        dispatch(toggleSpa(aircraftId));
         break;
       case 2:
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
+        dispatch(updateEntry({ aircraftId, data: { highlighted: !entry.highlighted } }));
         break;
       default:
         break;
@@ -168,16 +168,16 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
 
   const updateVci = () => {
     if (entry.vciStatus === -1 && manualPosting) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
     } else if (entry.vciStatus < 1) {
       dispatch(
         updateEntry({
-          aircraftId: entry.aircraftId,
+          aircraftId,
           data: { vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"] }
         })
       );
     } else {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
     }
   };
 
@@ -190,7 +190,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         } else {
           dispatch(
             updateEntry({
-              aircraftId: entry.aircraftId,
+              aircraftId,
               data: { aclRouteDisplay: !entry.aclRouteDisplay ? AclRouteDisplayOption.holdAnnotations : null }
             })
           );
@@ -211,13 +211,13 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
 
   const handleRemarksClick: React.MouseEventHandler<HTMLDivElement> = event => {
     if (entry.vciStatus === -1 && !manualPosting) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
+      dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
     }
     switch (event.button) {
       case 0:
         dispatch(
           updateEntry({
-            aircraftId: entry.aircraftId,
+            aircraftId,
             data: {
               aclRouteDisplay:
                 !(entry.aclRouteDisplay === AclRouteDisplayOption.remarks) && entry.remarks.length > 0 ? AclRouteDisplayOption.remarks : null,
@@ -229,7 +229,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
       case 2:
         dispatch(
           updateEntry({
-            aircraftId: entry.aircraftId,
+            aircraftId,
             data: { aclRouteDisplay: !(entry.aclRouteDisplay === AclRouteDisplayOption.rawRoute) ? AclRouteDisplayOption.rawRoute : null }
           })
         );
@@ -244,12 +244,12 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {
-          dispatch(delEntry(entry.aircraftId));
+          dispatch(delEntry(aircraftId));
         }
         break;
       default:
         if (!manualPosting && event.detail === 2 && entry.vciStatus < 0) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
+          dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
         }
         handleClick(event.currentTarget, AclRowField.FID, null);
         break;
@@ -269,9 +269,9 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         break;
       case 2:
         if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: null } }));
+          dispatch(updateEntry({ aircraftId, data: { scratchpadHeading: null } }));
         } else if (entry.assignedHeading) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { assignedHeading: null } }));
+          dispatch(updateEntry({ aircraftId, data: { assignedHeading: null } }));
         }
         break;
       default:
@@ -292,9 +292,9 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         break;
       case 2:
         if (displayScratchSpd && (displayScratchSpd || entry.assignedSpeed === null)) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: null } }));
+          dispatch(updateEntry({ aircraftId, data: { scratchpadSpeed: null } }));
         } else if (entry.assignedSpeed) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { assignedSpeed: null } }));
+          dispatch(updateEntry({ aircraftId, data: { assignedSpeed: null } }));
         }
         break;
       default:
@@ -447,7 +447,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               <input
                 value={freeTextContent}
                 onChange={event => setFreeTextContent(event.target.value)}
-                onBlur={() => dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { freeTextContent } }))}
+                onBlur={() => dispatch(updateEntry({ aircraftId, data: { freeTextContent } }))}
               />
             </FreeTextRow>
           </InnerRow2>
