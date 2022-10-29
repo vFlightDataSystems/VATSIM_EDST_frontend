@@ -1,4 +1,4 @@
-import { AclSortOption } from "../enums/acl/aclSortOption";
+import { AclSortOption } from "enums/acl/aclSortOption";
 
 export type AclSortData = { selectedOption: AclSortOption; sector: boolean };
 
@@ -7,48 +7,48 @@ export const SORT_KEYS_NOT_IMPLEMENTED = ["OB", "OT", "OC", "OS", "OSB", "OST", 
 export const ACL_SORT_MAP: Record<AclSortKey, AclSortData> = {
   OB: {
     selectedOption: AclSortOption.BOUNDARY_TIME,
-    sector: false
+    sector: false,
   },
   OT: {
     selectedOption: AclSortOption.CONFLICT_TIME,
-    sector: false
+    sector: false,
   },
   OC: {
     selectedOption: AclSortOption.CONFLICT_STATUS,
-    sector: false
+    sector: false,
   },
   OS: {
     selectedOption: AclSortOption.SECTOR_BY_SECTOR,
-    sector: false
+    sector: false,
   },
   OA: {
     selectedOption: AclSortOption.ACID,
-    sector: false
+    sector: false,
   },
   OD: {
     selectedOption: AclSortOption.DESTINATION,
-    sector: false
+    sector: false,
   },
   OSB: {
     selectedOption: AclSortOption.BOUNDARY_TIME,
-    sector: true
+    sector: true,
   },
   OST: {
     selectedOption: AclSortOption.CONFLICT_TIME,
-    sector: true
+    sector: true,
   },
   OSC: {
     selectedOption: AclSortOption.CONFLICT_STATUS,
-    sector: true
+    sector: true,
   },
   OSA: {
     selectedOption: AclSortOption.ACID,
-    sector: true
+    sector: true,
   },
   OSD: {
     selectedOption: AclSortOption.DESTINATION,
-    sector: true
-  }
+    sector: true,
+  },
 };
 export const ACL_SORT_UU_ARGS = Object.keys(ACL_SORT_MAP);
 export function isAclSortKey(str: string): str is AclSortKey {

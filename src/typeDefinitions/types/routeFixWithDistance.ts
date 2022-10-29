@@ -1,4 +1,4 @@
-import { RouteFix } from "./routeFix";
+import type { RouteFix } from "./routeFix";
 
 export type RouteFixWithDistance = RouteFix & {
   // distance from present position were applicable

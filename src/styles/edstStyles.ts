@@ -8,8 +8,8 @@ export const EdstDiv = styled(NoSelectDiv)`
   padding: 0;
   margin: 0;
   background-color: #000000;
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
-  font-size: ${props => props.theme.fontProps.fontSize};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
   //caret-color: transparent;
   //scroll-behavior: auto;
   -webkit-font-smoothing: subpixel-antialiased;
@@ -18,7 +18,7 @@ type EdstWindowHeaderRowDivProps = { bottomRow?: boolean };
 export const EdstWindowHeaderRowDiv = styled.div<EdstWindowHeaderRowDivProps>`
   border-bottom: 1px solid #adadad;
 
-  ${props =>
+  ${(props) =>
     props.bottomRow &&
     css`
       align-items: center;
@@ -41,7 +41,7 @@ export const EdstBodyDiv = styled.div`
   button,
   input,
   textarea {
-    font-family: ${props => props.theme.fontProps.edstFontFamily};
+    font-family: ${(props) => props.theme.fontProps.edstFontFamily};
     text-transform: uppercase;
     //font-weight: bold;
     cursor: default;

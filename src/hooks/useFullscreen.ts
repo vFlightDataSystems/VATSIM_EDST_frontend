@@ -1,13 +1,14 @@
-import { RefObject, useEffect } from "react";
+import type { RefObject } from "react";
+import { useEffect } from "react";
 import { useResizeDetector } from "react-resize-detector";
-import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { setIsFullscreen, setWindowDimension, windowDimensionSelector, windowIsFullscreenSelector } from "../redux/slices/appSlice";
+import type { EdstWindow } from "enums/edstWindow";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { setIsFullscreen, setWindowDimension, windowDimensionSelector, windowIsFullscreenSelector } from "~redux/slices/appSlice";
 
 export const useFullscreen = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
-  const isFullscreen = useRootSelector(state => windowIsFullscreenSelector(state, edstWindow));
-  const dimension = useRootSelector(state => windowDimensionSelector(state, edstWindow));
+  const isFullscreen = useRootSelector((state) => windowIsFullscreenSelector(state, edstWindow));
+  const dimension = useRootSelector((state) => windowDimensionSelector(state, edstWindow));
   const { width, height } = useResizeDetector({ targetRef: ref });
 
   const toggleFullscreen = () => {
@@ -32,8 +33,8 @@ export const useFullscreen = (ref: RefObject<HTMLElement>, edstWindow: EdstWindo
           window: edstWindow,
           dim: {
             width: `${width}px`,
-            height: `${height}px`
-          }
+            height: `${height}px`,
+          },
         })
       );
     }

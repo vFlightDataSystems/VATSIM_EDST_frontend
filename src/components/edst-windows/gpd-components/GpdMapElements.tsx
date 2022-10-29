@@ -1,21 +1,22 @@
-import { GeoJSON, Marker, Polyline, useMap } from "react-leaflet";
+import type { GeoJSON } from "react-leaflet";
+import { Marker, Polyline, useMap } from "react-leaflet";
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Position } from "@turf/turf";
+import type { Position } from "@turf/turf";
 import L from "leaflet";
 import { useBoolean } from "usehooks-ts";
-import { useRootSelector } from "../../../redux/hooks";
-import { entrySelector } from "../../../redux/slices/entrySlice";
-import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
+import type { Nullable } from "types/utility-types";
+import { entrySelector } from "~redux/slices/entrySlice";
+import { aircraftTrackSelector } from "~redux/slices/trackSlice";
+import type { AirwayFix } from "types/airwayFix";
+import type { RouteFix } from "types/routeFix";
+import { useRouteFixes } from "~/api/aircraftApi";
+import type { ApiLocation } from "types/apiTypes/apiLocation";
+import { locationToPosition } from "~/utils/locationToPosition";
+import { getRemainingFixesFromPpos } from "~/utils/fixes";
+import { useRootSelector } from "~redux/hooks";
+import { colors } from "~/edstTheme";
 import { GpdDataBlock } from "./GpdDataBlock";
-import { aircraftTrackSelector } from "../../../redux/slices/trackSlice";
-import { AirwayFix } from "../../../typeDefinitions/types/airwayFix";
-import { RouteFix } from "../../../typeDefinitions/types/routeFix";
-import { useRouteFixes } from "../../../api/aircraftApi";
-import { ApiLocation } from "../../../typeDefinitions/types/apiTypes/apiLocation";
-import { locationToPosition } from "../../../utils/locationToPosition";
-import { getRemainingFixesFromPpos } from "../../../utils/fixes";
-import { colors } from "../../../edstTheme";
-import { Nullable } from "../../../typeDefinitions/utility-types";
+import { fixIcon, trackIcon, vorIcon } from "./LeafletIcons";
 import "leaflet.vectorgrid";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): L.LatLngExpression {
@@ -46,7 +47,9 @@ export type GpdAirwayPolylineProps = { segments: AirwayFix[] };
 export const GpdAirwayPolyline = ({ segments }: GpdAirwayPolylineProps) => {
   return (
     <Polyline
-      positions={segments.sort((u, v) => Number(u.sequence) - Number(v.sequence)).map(segment => posToLatLng({ lat: segment.lat, lon: segment.lon }))}
+      positions={segments
+        .sort((u, v) => Number(u.sequence) - Number(v.sequence))
+        .map((segment) => posToLatLng({ lat: segment.lat, lon: segment.lon }))}
       pathOptions={{ color: colors.grey, weight: 0.4 }}
     />
   );
@@ -67,8 +70,8 @@ const slicedOptions = {
       fillColor: "#000000",
       color: "#adadad",
       fillOpacity: 0,
-      opacity: 0.5
-    }
+      opacity: 0.5,
+    },
   },
   // slicer options
   vectorTileLayerName: "sliced",
@@ -82,7 +85,7 @@ const slicedOptions = {
   promoteId: null, // name of a feature property to promote to feature.id. Cannot be used with `generateId`
   generateId: false, // whether to generate feature ids. Cannot be used with `promoteId`
   indexMaxZoom: 4, // max zoom in the initial tile index
-  indexMaxPoints: 1000 // max number of points per tile in the index
+  indexMaxPoints: 1000, // max number of points per tile in the index
 };
 
 type GpdPolygonProps = { data: GeoJSON.FeatureCollection };
@@ -108,8 +111,8 @@ export const GpdPolygon = ({ data }: GpdPolygonProps) => {
 type GpdAircraftTrackProps = { aircraftId: string };
 
 export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
-  const entry = useRootSelector(state => entrySelector(state, aircraftId));
-  const track = useRootSelector(state => aircraftTrackSelector(state, aircraftId));
+  const entry = useRootSelector((state) => entrySelector(state, aircraftId));
+  const track = useRootSelector((state) => aircraftTrackSelector(state, aircraftId));
   const [routeLine, setRouteLine] = useState<RouteFix[] | null>(null);
   const posLatLng = track?.location ? posToLatLng({ ...track.location }) : null;
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
@@ -134,10 +137,10 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
         ref={ref}
         riseOnHover
         eventHandlers={{
-          mousedown: event => {
+          mousedown: (event) => {
             event.originalEvent.button === 1 && toggleShowRoute();
             event.originalEvent.button === 2 && toggleShowDataBlock();
-          }
+          },
         }}
       >
         {showDataBlock && entry && (
@@ -145,7 +148,7 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
         )}
       </Marker>
       {showRoute && routeLine && (
-        <Polyline positions={routeLine.map(fix => posToLatLng(fix.pos))} pathOptions={{ color: colors.green, weight: 1.1 }} />
+        <Polyline positions={routeLine.map((fix) => posToLatLng(fix.pos))} pathOptions={{ color: colors.green, weight: 1.1 }} />
       )}
     </>
   ) : null;

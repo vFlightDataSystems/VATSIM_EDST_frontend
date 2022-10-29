@@ -3,55 +3,55 @@ import React, { useRef } from "react";
 import { useEventListener, useInterval } from "usehooks-ts";
 import styled, { ThemeProvider } from "styled-components";
 import { HubConnectionState } from "@microsoft/signalr";
-import { EdstHeader } from "./components/EdstHeader";
-import { Acl } from "./components/edst-windows/Acl";
-import { Dep } from "./components/edst-windows/Dep";
-import { Status } from "./components/edst-windows/Status";
-import { RouteMenu } from "./components/edst-windows/RouteMenu";
-import { Outage } from "./components/edst-windows/Outage";
-import { AltMenu } from "./components/edst-windows/AltMenu";
-import { PlanOptions } from "./components/edst-windows/PlanOptions";
-import { PlansDisplay } from "./components/edst-windows/PlansDisplay";
-import { SpeedMenu } from "./components/edst-windows/spd-hdg/SpeedMenu";
-import { HeadingMenu } from "./components/edst-windows/spd-hdg/HeadingMenu";
-import { HoldMenu } from "./components/edst-windows/HoldMenu";
-import { MessageComposeArea } from "./components/edst-windows/MessageComposeArea";
-import { MessageResponseArea } from "./components/edst-windows/MessageResponseArea";
-import { TemplateMenu } from "./components/edst-windows/TemplateMenu";
-import { SectorSelector } from "./components/SectorSelector";
+import { EdstHeader } from "components/EdstHeader";
+import { Acl } from "components/edst-windows/Acl";
+import { Dep } from "components/edst-windows/Dep";
+import { Status } from "components/edst-windows/Status";
+import { RouteMenu } from "components/edst-windows/RouteMenu";
+import { Outage } from "components/edst-windows/Outage";
+import { AltMenu } from "components/edst-windows/AltMenu";
+import { PlanOptions } from "components/edst-windows/PlanOptions";
+import { PlansDisplay } from "components/edst-windows/PlansDisplay";
+import { SpeedMenu } from "components/edst-windows/spd-hdg/SpeedMenu";
+import { HeadingMenu } from "components/edst-windows/spd-hdg/HeadingMenu";
+import { HoldMenu } from "components/edst-windows/HoldMenu";
+import { MessageComposeArea } from "components/edst-windows/MessageComposeArea";
+import { MessageResponseArea } from "components/edst-windows/MessageResponseArea";
+import { TemplateMenu } from "components/edst-windows/TemplateMenu";
+import { SectorSelector } from "components/SectorSelector";
 import {
   aselIsNullSelector,
   mcaCommandStringSelector,
   pushZStack,
   setMcaCommandString,
   showSectorSelectorSelector,
-  windowsSelector
-} from "./redux/slices/appSlice";
-import { useRootDispatch, useRootSelector } from "./redux/hooks";
-import { ToolsMenu } from "./components/edst-windows/tools-components/ToolsMenu";
-import { AltimeterWindow } from "./components/edst-windows/AltimeterWindow";
-import { MetarWindow } from "./components/edst-windows/MetarWindow";
-import { refreshWeatherThunk } from "./redux/thunks/weatherThunks";
-import { EquipmentTemplateMenu } from "./components/edst-windows/template-components/EquipmentTemplateMenu";
-import { SigmetWindow } from "./components/edst-windows/SigmetWindow";
-import { Gpd } from "./components/edst-windows/Gpd";
-import { EdstBodyDiv, EdstDiv } from "./styles/edstStyles";
-import { GpdMapOptions } from "./components/edst-windows/gpd-components/GpdMapOptions";
-import { fetchAllAircraft } from "./api/api";
-import { updateSweatboxAircraftThunk } from "./redux/thunks/updateSweatboxAircraftThunk";
-import { EdstWindow } from "./typeDefinitions/enums/edstWindow";
-import { CancelHoldMenu } from "./components/prompts/CancelHoldMenu";
-import { GIWindow } from "./components/edst-windows/GeneralInforationWindow";
-import { WEATHER_REFRESH_RATE } from "./utils/constants";
-import { HubContextProvider } from "./contexts/HubContext";
-import { AclSortMenu } from "./components/edst-windows/acl-components/AclSortMenu";
-import { DepSortMenu } from "./components/edst-windows/dep-components/DepSortMenu";
-import { SocketContextProvider } from "./contexts/SocketContext";
-import { openWindowThunk } from "./redux/thunks/openWindowThunk";
-import { useHubActions } from "./hooks/useHubActions";
+  windowsSelector,
+} from "~redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { ToolsMenu } from "components/edst-windows/tools-components/ToolsMenu";
+import { AltimeterWindow } from "components/edst-windows/AltimeterWindow";
+import { MetarWindow } from "components/edst-windows/MetarWindow";
+import { refreshWeatherThunk } from "~redux/thunks/weatherThunks";
+import { EquipmentTemplateMenu } from "components/edst-windows/template-components/EquipmentTemplateMenu";
+import { SigmetWindow } from "components/edst-windows/SigmetWindow";
+import { Gpd } from "components/edst-windows/Gpd";
+import { EdstBodyDiv, EdstDiv } from "styles/edstStyles";
+import { GpdMapOptions } from "components/edst-windows/gpd-components/GpdMapOptions";
+import { updateSweatboxAircraftThunk } from "~redux/thunks/updateSweatboxAircraftThunk";
+import { EdstWindow } from "enums/edstWindow";
+import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
+import { GIWindow } from "components/edst-windows/GeneralInforationWindow";
+import { AclSortMenu } from "components/edst-windows/acl-components/AclSortMenu";
+import { DepSortMenu } from "components/edst-windows/dep-components/DepSortMenu";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import { useHubActions } from "hooks/useHubActions";
+import { useHubConnection } from "hooks/useHubConnection";
+import { fetchAllAircraft } from "api/api";
+import { unsafeEntries } from "~/utility-functions";
 import { edstTheme } from "./edstTheme";
-import { useHubConnection } from "./hooks/useHubConnection";
-import { unsafeEntries } from "./utility-functions";
+import { SocketContextProvider } from "./contexts/SocketContext";
+import { HubContextProvider } from "./contexts/HubContext";
+import { WEATHER_REFRESH_RATE } from "./utils/constants";
 
 const NotConnectedDiv = styled.div`
   font-family: "Consolas", monospace;
@@ -62,7 +62,7 @@ const NotConnectedDiv = styled.div`
   min-height: 100vh;
   z-index: 100000;
   pointer-events: none;
-  color: ${props => props.theme.colors.yellow};
+  color: ${(props) => props.theme.colors.yellow};
 `;
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
@@ -92,7 +92,7 @@ const edstComponentMap = {
   [EdstWindow.SIGMETS]: SigmetWindow,
   [EdstWindow.GI]: GIWindow,
   [EdstWindow.MESSAGE_COMPOSE_AREA]: MessageComposeArea,
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: MessageResponseArea
+  [EdstWindow.MESSAGE_RESPONSE_AREA]: MessageResponseArea,
 };
 
 const windowRequiresAselNotNull: EdstWindow[] = [
@@ -102,7 +102,7 @@ const windowRequiresAselNotNull: EdstWindow[] = [
   EdstWindow.CANCEL_HOLD_MENU,
   EdstWindow.SPEED_MENU,
   EdstWindow.HEADING_MENU,
-  EdstWindow.ALTITUDE_MENU
+  EdstWindow.ALTITUDE_MENU,
 ];
 
 const Edst = () => {
@@ -116,7 +116,7 @@ const Edst = () => {
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
 
   useInterval(() => {
-    fetchAllAircraft().then(aircraftList => {
+    fetchAllAircraft().then((aircraftList) => {
       dispatch(updateSweatboxAircraftThunk(aircraftList, hubActions.activateFlightplan));
     });
   }, 5000);
@@ -148,7 +148,7 @@ const Edst = () => {
     <ThemeProvider theme={edstTheme}>
       <EdstDiv
         ref={bodyRef}
-        onContextMenu={event => event.preventDefault()}
+        onContextMenu={(event) => event.preventDefault()}
         tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
       >
         <EdstHeader />

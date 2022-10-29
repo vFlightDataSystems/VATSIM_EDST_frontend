@@ -1,18 +1,19 @@
 import React from "react";
-import styled, { css, CSSProperties } from "styled-components";
-import { Time } from "./utils/Time";
-import { Tooltips } from "../tooltips";
+import type { CSSProperties } from "styled-components";
+import styled, { css } from "styled-components";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { toggleWindow, windowsSelector } from "~redux/slices/appSlice";
+import { planQueueSelector } from "~redux/slices/planSlice";
+import { sigmetSelector } from "~redux/slices/weatherSlice";
+import { sectorIdSelector } from "~redux/slices/sectorSlice";
+import { entriesSelector } from "~redux/slices/entrySlice";
+import { EdstWindow } from "enums/edstWindow";
+import { edstHeaderButton } from "enums/edstHeaderButton";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import { borderHover } from "styles/styles";
 import { EdstTooltip } from "./utils/EdstTooltip";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { toggleWindow, windowsSelector } from "../redux/slices/appSlice";
-import { planQueueSelector } from "../redux/slices/planSlice";
-import { sigmetSelector } from "../redux/slices/weatherSlice";
-import { sectorIdSelector } from "../redux/slices/sectorSlice";
-import { entriesSelector } from "../redux/slices/entrySlice";
-import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { edstHeaderButton } from "../typeDefinitions/enums/edstHeaderButton";
-import { openWindowThunk } from "../redux/thunks/openWindowThunk";
-import { borderHover } from "../styles/styles";
+import { Time } from "./utils/Time";
 
 const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.not,
@@ -24,7 +25,7 @@ const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.wind,
   edstHeaderButton.fel,
   edstHeaderButton.cpdlcHist,
-  edstHeaderButton.cpdlcMsgOut
+  edstHeaderButton.cpdlcMsgOut,
 ];
 
 const YELLOW = "#A3A300";
@@ -32,7 +33,7 @@ const YELLOW = "#A3A300";
 
 const EdstHeaderDiv = styled.div`
   height: auto;
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
   width: 100vw;
   position: absolute;
 `;
@@ -48,7 +49,7 @@ type EdstHeaderColProps = { bottomRow?: boolean };
 const EdstHeaderCol = styled.div<EdstHeaderColProps>`
   z-index: 20001;
   display: inline-flex;
-  ${props => props.bottomRow && { "margin-left": "calc(7.6ch + 4px)" }};
+  ${(props) => props.bottomRow && { "margin-left": "calc(7.6ch + 4px)" }};
 
   span {
     height: 2em;
@@ -62,17 +63,17 @@ type ColButtonProps = Partial<
   } & ColButtonCSSProps
 >;
 const ColButton = styled.button<ColButtonProps>`
-  color: ${props => props.color ?? props.theme.colors.grey};
+  color: ${(props) => props.color ?? props.theme.colors.grey};
   padding: 0;
   border: none;
   display: flex;
   height: 2em;
   justify-content: center;
   line-height: 0.95em;
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
   font-size: inherit;
   margin: 0 1px;
-  ${props => css`
+  ${(props) => css`
     width: ${props.width ?? "7ch"};
     background-color: ${props.open ? "#595959" : props.backgroundColor ?? "#000000"};
     font-weight: ${props.fontWeight ?? "normal"};
@@ -114,10 +115,10 @@ export const EdstHeader = () => {
 
   const sectorId = useRootSelector(sectorIdSelector);
   const entries = useRootSelector(entriesSelector);
-  const aclLen = Object.values(entries).filter(entry => entry.status === "Active" && !entry.deleted).length;
-  const depLen = Object.values(entries).filter(entry => entry.status === "Proposed" && !entry.deleted).length;
+  const aclLen = Object.values(entries).filter((entry) => entry.status === "Active" && !entry.deleted).length;
+  const depLen = Object.values(entries).filter((entry) => entry.status === "Proposed" && !entry.deleted).length;
   const sigmets = useRootSelector(sigmetSelector);
-  const sigLen = Object.values(sigmets).filter(sigmetEntry => !sigmetEntry.acknowledged).length;
+  const sigLen = Object.values(sigmets).filter((sigmetEntry) => !sigmetEntry.acknowledged).length;
   const giLen = 0;
 
   return (

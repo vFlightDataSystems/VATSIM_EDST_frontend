@@ -1,22 +1,22 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { zStackSelector } from "../../redux/slices/appSlice";
-import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useAltimeter } from "../../api/weatherApi";
-import { altimeterAirportsSelector, delAltimeter } from "../../redux/slices/weatherSlice";
-import { FloatingWindow } from "../utils/FloatingWindow";
-import { mod } from "../../utils/mod";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
+import { zStackSelector } from "~redux/slices/appSlice";
+import { FloatingWindowRow } from "styles/floatingWindowStyles";
+import { EdstWindow } from "enums/edstWindow";
+import { useAltimeter } from "~/api/weatherApi";
+import { altimeterAirportsSelector, delAltimeter } from "~redux/slices/weatherSlice";
+import { mod } from "~/utils/mod";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
+import { FloatingWindow } from "components/utils/FloatingWindow";
+import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
 
 type AltimColProps = { underline?: boolean; isReportingStation?: boolean };
 const AltimCol = styled.span<AltimColProps>`
   margin-left: 2ch;
-  ${props => props.isReportingStation && { margin: "0 2ch 0 0" }};
-  ${props => props.underline && { "text-decoration": "underline" }};
+  ${(props) => props.isReportingStation && { margin: "0 2ch 0 0" }};
+  ${(props) => props.underline && { "text-decoration": "underline" }};
 `;
 
 type AltimeterRowProps = {
@@ -67,8 +67,8 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
             delete: {
               value: `DELETE ${airport}`,
               backgroundColor: "#575757",
-              onMouseDown: onDelete
-            }
+              onMouseDown: onDelete,
+            },
           }}
         />
       )}
@@ -84,7 +84,7 @@ export const AltimeterWindow = () => {
   const airports = useRootSelector(altimeterAirportsSelector);
   const extraOptions = useMemo(
     () => ({
-      template: { value: "TEMPLATE", backgroundColor: "#000000" }
+      template: { value: "TEMPLATE", backgroundColor: "#000000" },
     }),
     []
   );
@@ -120,12 +120,12 @@ export const AltimeterWindow = () => {
     >
       {airports.length > 0 && (
         <>
-          {airports.map(airport => (
+          {airports.map((airport) => (
             <AltimeterRow
               key={airport}
               airport={airport}
               selected={selectedAirport === airport}
-              handleMouseDown={event => handleMouseDown(event, airport)}
+              handleMouseDown={(event) => handleMouseDown(event, airport)}
               onDelete={() => {
                 dispatch(delAltimeter(airport));
                 setSelectedAirport(null);

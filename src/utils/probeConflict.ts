@@ -1,7 +1,7 @@
 import { length, lineIntersect, lineSlice } from "@turf/turf";
+import type { RouteFix } from "types/routeFix";
+import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import { locationToPosition } from "./locationToPosition";
-import { RouteFix } from "../typeDefinitions/types/routeFix";
-import { ApiAircraftTrack } from "../typeDefinitions/types/apiTypes/apiAircraftTrack";
 import { getRouteLineString } from "./getRouteLineString";
 
 type ProbeConflictArgs = {
@@ -28,13 +28,13 @@ export function probeConflict(ac1: ProbeConflictArgs, ac2: ProbeConflictArgs) {
           {
             routeToIntersection: routeToIntersection1,
             intersection: intersections.features[0].geometry,
-            timeToFix: timeToFix1
+            timeToFix: timeToFix1,
           },
           {
             routeToIntersection: routeToIntersection2,
             intersection: intersections.features[0].geometry,
-            timeToFix: timeToFix2
-          }
+            timeToFix: timeToFix2,
+          },
         ];
       }
     }

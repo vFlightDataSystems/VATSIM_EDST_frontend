@@ -2,22 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, ExitButton } from "../../utils/EdstButton";
-import { Tooltips } from "../../../tooltips";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { aselEntrySelector, updateEntry } from "../../../redux/slices/entrySlice";
-import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
-import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
-import { InputContainer } from "../../utils/InputComponents";
+import type { Nullable } from "types/utility-types";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
+import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
+import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
+import { mod } from "~/utils/mod";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
-import { useDragging } from "../../../hooks/useDragging";
-import { useCenterCursor } from "../../../hooks/useCenterCursor";
-import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { mod } from "../../../utils/mod";
-import { Nullable } from "../../../typeDefinitions/utility-types";
+import { InputContainer } from "../../utils/InputComponents";
+import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "./styled";
+import { EdstTooltip } from "../../utils/EdstTooltip";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 
 const HeadingDiv = styled(OptionsMenu)`
   width: 20ch;
@@ -26,7 +26,7 @@ const HeadingDiv = styled(OptionsMenu)`
 export const HeadingMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.HEADING_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.HEADING_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -50,10 +50,20 @@ export const HeadingMenu = () => {
     switch (event.button) {
       case 0:
         if (amend) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: null } }));
+          dispatch(
+            updateEntry({
+              aircraftId: entry.aircraftId,
+              data: { scratchpadHeading: null },
+            })
+          );
           // set assigned heading
         } else {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: valueStr } }));
+          dispatch(
+            updateEntry({
+              aircraftId: entry.aircraftId,
+              data: { scratchpadHeading: valueStr },
+            })
+          );
           // delete assigned heading
         }
         break;
@@ -61,7 +71,12 @@ export const HeadingMenu = () => {
         if (amend) {
           // set assigned heading
         } else {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadHeading: valueStr } }));
+          dispatch(
+            updateEntry({
+              aircraftId: entry.aircraftId,
+              data: { scratchpadHeading: valueStr },
+            })
+          );
         }
         break;
       default:
@@ -105,7 +120,7 @@ export const HeadingMenu = () => {
             <OptionsBodyCol>
               Heading &nbsp;
               <InputContainer>
-                <EdstInput value={heading} onChange={e => setHeading(Number(e.target.value))} />
+                <EdstInput value={heading} onChange={(e) => setHeading(Number(e.target.value))} />
               </InputContainer>
             </OptionsBodyCol>
           </Row>
@@ -123,23 +138,23 @@ export const HeadingMenu = () => {
             <ScrollCol2 noHover>L</ScrollCol2>
             <ScrollCol2 noHover>R</ScrollCol2>
           </Row2>
-          <ScrollContainer onWheel={e => setDeltaY(deltaY + e.deltaY)}>
-            {_.range(50, -70, -10).map(i => {
+          <ScrollContainer onWheel={(e) => setDeltaY(deltaY + e.deltaY)}>
+            {_.range(50, -70, -10).map((i) => {
               const centerHdg = mod(heading - Math.round(deltaY / 100) * 10 + i, 360);
               const centerRelHdg = 35 + i / 2;
               return (
                 <ScrollRow key={i}>
-                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg)}>{centerHdg.toString().padStart(3, "0")}</ScrollCol>
-                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerHdg + 5)}>{(centerHdg + 5).toString().padStart(3, "0")}</ScrollCol>
-                  <ScrollCol2 onMouseDown={e => handleMouseDown(e, centerRelHdg, "L")}>{centerRelHdg}</ScrollCol2>
-                  <ScrollCol2 onMouseDown={e => handleMouseDown(e, centerRelHdg, "R")}>{centerRelHdg}</ScrollCol2>
+                  <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerHdg)}>{centerHdg.toString().padStart(3, "0")}</ScrollCol>
+                  <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerHdg + 5)}>{(centerHdg + 5).toString().padStart(3, "0")}</ScrollCol>
+                  <ScrollCol2 onMouseDown={(e) => handleMouseDown(e, centerRelHdg, "L")}>{centerRelHdg}</ScrollCol2>
+                  <ScrollCol2 onMouseDown={(e) => handleMouseDown(e, centerRelHdg, "R")}>{centerRelHdg}</ScrollCol2>
                 </ScrollRow>
               );
             })}
             <Row margin="8px 0 0 0" justifyContent="center">
               <EdstButton
                 content="Present Heading"
-                onMouseDown={event => {
+                onMouseDown={(event) => {
                   switch (event.button) {
                     case 0:
                       break;

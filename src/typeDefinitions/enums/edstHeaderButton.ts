@@ -20,5 +20,5 @@ export enum edstHeaderButton {
   mra = "mra",
   fel = "fel",
   cpdlcHist = "cpdlcHist",
-  cpdlcMsgOut = "cpdlcMsgOut"
+  cpdlcMsgOut = "cpdlcMsgOut",
 }

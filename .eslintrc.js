@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true
+    es2021: true,
   },
   extends: [
     "airbnb",
@@ -9,29 +9,30 @@ module.exports = {
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: "module"
+    sourceType: "module",
   },
   plugins: ["react", "@typescript-eslint", "react-hooks", "unused-imports", "prettier"],
   settings: {
     react: {
-      version: "detect"
+      version: "detect",
     },
     "import/resolver": {
-      typescript: {}
-    }
+      typescript: {},
+    },
   },
   rules: {
     "react/jsx-filename-extension": [2, { extensions: [".js", ".jsx", ".ts", ".tsx"] }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/consistent-type-imports": "warn",
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -39,15 +40,15 @@ module.exports = {
         js: "never",
         jsx: "never",
         ts: "never",
-        tsx: "never"
-      }
+        tsx: "never",
+      },
     ],
     "prettier/prettier": [
       "warn",
       {
         endOfLine: "auto",
-        printWidth: 150
-      }
+        printWidth: 150,
+      },
     ],
     "no-param-reassign": "off",
     "no-use-before-define": "off",
@@ -65,6 +66,6 @@ module.exports = {
     "jsx-a11y/no-static-element-interactions": "off",
     "prefer-destructuring": "off",
     "no-void": "off",
-    "no-console": "off"
-  }
+    "no-console": "off",
+  },
 };

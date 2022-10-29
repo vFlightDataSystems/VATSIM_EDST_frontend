@@ -1,9 +1,9 @@
 export enum TurnDirection {
   LEFT = "Left",
-  RIGHT = "Right"
+  RIGHT = "Right",
 }
 
 export const HoldTurnDirectionValues = {
   [TurnDirection.LEFT]: "LT",
-  [TurnDirection.RIGHT]: "RT"
+  [TurnDirection.RIGHT]: "RT",
 };

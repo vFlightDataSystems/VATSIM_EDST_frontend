@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { Tooltips } from "../../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { delEntry, entrySelector, toggleSpa, updateEntry } from "../../../redux/slices/entrySlice";
-import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
-import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
-import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
-import { EdstEntry } from "../../../typeDefinitions/types/edstEntry";
-import { aclAircraftSelect } from "../../../redux/thunks/aircraftSelect";
+import type { Nullable } from "types/utility-types";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
+import { aircraftIsAselSelector } from "~redux/slices/appSlice";
+import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "~redux/slices/aclSlice";
+import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
+import type { EdstEntry } from "types/edstEntry";
+import { aclAircraftSelect } from "~redux/thunks/aircraftSelect";
 import {
   AircraftTypeCol,
   AltCol,
@@ -19,25 +18,26 @@ import {
   RouteCol,
   RouteDepAirportSpan,
   RouteSpan,
-  SpecialBox
-} from "../../../styles/sharedColumns";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
-import { RouteDisplayOption } from "../../../typeDefinitions/enums/routeDisplayOption";
-import { HoldDirectionValues } from "../../../typeDefinitions/enums/hold/holdDirectionValues";
-import { HoldTurnDirectionValues } from "../../../typeDefinitions/enums/hold/turnDirection";
-import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "../../../utils/constants";
-import { usePar } from "../../../api/prefrouteApi";
-import { useRouteFixes } from "../../../api/aircraftApi";
-import { formatRoute } from "../../../utils/formatRoute";
-import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { useAselEventListener } from "../../../hooks/useAselEventListener";
-import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
-import { formatUtcMinutes } from "../../../utils/formatUtcMinutes";
-import { colors } from "../../../edstTheme";
-import { Nullable } from "../../../typeDefinitions/utility-types";
-import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
-import { anyHoldingSelector } from "../../../redux/selectors";
+  SpecialBox,
+} from "styles/sharedColumns";
+import { EdstWindow } from "enums/edstWindow";
+import { AclRowField } from "enums/acl/aclRowField";
+import { RouteDisplayOption } from "enums/routeDisplayOption";
+import { HoldDirectionValues } from "enums/hold/holdDirectionValues";
+import { HoldTurnDirectionValues } from "enums/hold/turnDirection";
+import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
+import { usePar } from "~/api/prefrouteApi";
+import { useRouteFixes } from "~/api/aircraftApi";
+import { formatRoute } from "~/utils/formatRoute";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { useAselEventListener } from "hooks/useAselEventListener";
+import { convertBeaconCodeToString, removeStringFromEnd } from "~/utils/stringManipulation";
+import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
+import { colors } from "~/edstTheme";
+import type { AircraftId } from "types/aircraftId";
+import { anyHoldingSelector } from "~redux/selectors";
+import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "./AclStyled";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 
 type AclRowProps = {
   aircraftId: AircraftId;
@@ -51,8 +51,8 @@ type AclRowProps = {
  */
 export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => {
   const dispatch = useRootDispatch();
-  const entry = useRootSelector(state => entrySelector(state, aircraftId));
-  const asel = useRootSelector(state => aircraftIsAselSelector(state, aircraftId));
+  const entry = useRootSelector((state) => entrySelector(state, aircraftId));
+  const asel = useRootSelector((state) => aircraftIsAselSelector(state, aircraftId));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
   const hiddenColumns = useRootSelector(aclHiddenColumnsSelector);
@@ -113,9 +113,9 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   const currentRouteFixes = routeFixes;
 
   useEffect(() => {
-    const currentFixNames = (currentRouteFixes ?? routeFixes).map(fix => fix.name);
-    const availPar = par.filter(par => par.eligible && currentFixNames.includes(par.triggeredFix));
-    const onPar = availPar.some(par => formattedRoute.includes(par.amendment));
+    const currentFixNames = (currentRouteFixes ?? routeFixes).map((fix) => fix.name);
+    const availPar = par.filter((par) => par.eligible && currentFixNames.includes(par.triggeredFix));
+    const onPar = availPar.some((par) => formattedRoute.includes(par.amendment));
     setParAvail(availPar.length > 0);
     setOnPar(onPar);
   }, [currentRouteFixes, formattedRoute, par, routeFixes]);
@@ -149,17 +149,27 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   // };
   // const pendingPar = checkParReroutePending();
 
-  const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
+  const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
-        dispatch(updateEntry({ aircraftId, data: { showFreeText: !entry.showFreeText } }));
+        dispatch(
+          updateEntry({
+            aircraftId,
+            data: { showFreeText: !entry.showFreeText },
+          })
+        );
         break;
       case 1:
         dispatch(toggleSpa(aircraftId));
         break;
       case 2:
-        dispatch(updateEntry({ aircraftId, data: { highlighted: !entry.highlighted } }));
+        dispatch(
+          updateEntry({
+            aircraftId,
+            data: { highlighted: !entry.highlighted },
+          })
+        );
         break;
       default:
         break;
@@ -173,7 +183,9 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
       dispatch(
         updateEntry({
           aircraftId,
-          data: { vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"] }
+          data: {
+            vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"],
+          },
         })
       );
     } else {
@@ -181,7 +193,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     }
   };
 
-  const handleHoldClick: React.MouseEventHandler<HTMLDivElement> = event => {
+  const handleHoldClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -191,7 +203,9 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           dispatch(
             updateEntry({
               aircraftId,
-              data: { routeDisplay: !entry.routeDisplay ? RouteDisplayOption.holdAnnotations : null }
+              data: {
+                routeDisplay: !entry.routeDisplay ? RouteDisplayOption.holdAnnotations : null,
+              },
             })
           );
         }
@@ -209,7 +223,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     }
   };
 
-  const handleRemarksClick: React.MouseEventHandler<HTMLDivElement> = event => {
+  const handleRemarksClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (entry.vciStatus === -1 && !manualPosting) {
       dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
     }
@@ -220,8 +234,8 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             aircraftId,
             data: {
               routeDisplay: !(entry.routeDisplay === RouteDisplayOption.remarks) && entry.remarks.length > 0 ? RouteDisplayOption.remarks : null,
-              remarksChecked: true
-            }
+              remarksChecked: true,
+            },
           })
         );
         break;
@@ -229,7 +243,9 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         dispatch(
           updateEntry({
             aircraftId,
-            data: { routeDisplay: !(entry.routeDisplay === RouteDisplayOption.rawRoute) ? RouteDisplayOption.rawRoute : null }
+            data: {
+              routeDisplay: !(entry.routeDisplay === RouteDisplayOption.rawRoute) ? RouteDisplayOption.rawRoute : null,
+            },
           })
         );
         break;
@@ -238,7 +254,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     }
   };
 
-  const handleFidClick: React.MouseEventHandler<HTMLDivElement> = event => {
+  const handleFidClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     const now = new Date().getTime();
     switch (event.button) {
       case 2:
@@ -255,7 +271,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     }
   };
 
-  const handleHeadingClick: React.MouseEventHandler<HTMLDivElement> = event => {
+  const handleHeadingClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -278,7 +294,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     }
   };
 
-  const handleSpeedClick: React.MouseEventHandler<HTMLDivElement> = event => {
+  const handleSpeedClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 0:
@@ -333,7 +349,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               visibilityHidden={hiddenColumns.includes(AclRowField.TYPE)}
               hover
               selected={isSelected(AclRowField.TYPE)}
-              onMouseDown={event => handleClick(event.currentTarget, AclRowField.TYPE, null)}
+              onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.TYPE, null)}
             >
               {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
             </AircraftTypeCol>
@@ -344,7 +360,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
                 ref={altRef}
                 headerMouseDown={altMouseDown}
                 selected={isSelected(AclRowField.ALT)}
-                onMouseDown={event => handleClick(event.currentTarget, AclRowField.ALT, "acl-alt-asel", EdstWindow.ALTITUDE_MENU)}
+                onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.ALT, "acl-alt-asel", EdstWindow.ALTITUDE_MENU)}
               >
                 {entry.altitude}
                 {entry.interimAltitude && `T${entry.interimAltitude}`}
@@ -357,7 +373,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               visibilityHidden={hiddenColumns.includes(AclRowField.CODE)}
               hover
               selected={isSelected(AclRowField.CODE)}
-              onMouseDown={event => handleClick(event.currentTarget, AclRowField.CODE, null)}
+              onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.CODE, null)}
             >
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
@@ -405,7 +421,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             </RemarksBox>
           </EdstTooltip>
           <EdstTooltip title={Tooltips.aclRoute}>
-            <RouteCol ref={routeRef} hover selected={isSelected(AclRowField.ROUTE)} onMouseDown={event => handleRouteClick(event.currentTarget)}>
+            <RouteCol ref={routeRef} hover selected={isSelected(AclRowField.ROUTE)} onMouseDown={(event) => handleRouteClick(event.currentTarget)}>
               <RouteSpan padding="0 2px">
                 {entry.routeDisplay === RouteDisplayOption.holdAnnotations &&
                   holdAnnotations &&
@@ -445,7 +461,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             <FreeTextRow marginLeft="calc(19ch + 11px)">
               <input
                 value={freeTextContent}
-                onChange={event => setFreeTextContent(event.target.value)}
+                onChange={(event) => setFreeTextContent(event.target.value)}
                 onBlur={() => dispatch(updateEntry({ aircraftId, data: { freeTextContent } }))}
               />
             </FreeTextRow>

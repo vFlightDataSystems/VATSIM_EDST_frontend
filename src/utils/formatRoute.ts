@@ -4,7 +4,7 @@ const ROUTE_FORMAT_EXPRESSIONS = {
   anyFix: /^[A-Z]{2,5}|[A,Z]{2}\d{3}$/,
   frd: /^[A-Z]{2,5}\d{6}$/,
   latLonDeg: /^\d\d[NS]\d\d\d[EW]$/,
-  latLonMin: /^\d{4}[NS]?\/\d{5}[EW]?$/
+  latLonMin: /^\d{4}[NS]?\/\d{5}[EW]?$/,
 };
 
 const cleanRoutePattern = /\+|\/(.*?)\s|(\s?)DCT(\s?)|N[0-9]{4}[FAM][0-9]{3,4}/;
@@ -25,7 +25,7 @@ export function formatRoute(route: string, dep = "", dest = "") {
     .split(" ");
   let prevIsFix = true;
   let isFix = true;
-  routeSegments.forEach(segment => {
+  routeSegments.forEach((segment) => {
     isFix = !matchesAnyRouteSegment(segment);
     if (isFix && prevIsFix) {
       formattedRoute += `..${segment}`;

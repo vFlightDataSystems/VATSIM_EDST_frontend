@@ -1,10 +1,7 @@
 import React, { useRef, useState } from "react";
 
-import { ExitButton } from "../../utils/EdstButton";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { zStackSelector, pushZStack, windowSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { zStackSelector, pushZStack, windowSelector, closeWindow } from "~redux/slices/appSlice";
 import {
   OptionsBodyCol,
   OptionsFlexCol,
@@ -12,16 +9,19 @@ import {
   OptionsBodyRow,
   OptionsBottomRow,
   OptionsMenu,
-  OptionsMenuHeader
-} from "../../../styles/optionMenuStyles";
+  OptionsMenuHeader,
+} from "styles/optionMenuStyles";
+import { useDragging } from "hooks/useDragging";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
-import { useDragging } from "../../../hooks/useDragging";
-import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { GpdMapFeaturesMenu } from "./GpdMapFeaturesMenu";
+import { EdstTooltip } from "../../utils/EdstTooltip";
+import { ExitButton } from "../../utils/EdstButton";
 
 export const GpdMapOptions = () => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector(state => windowSelector(state, EdstWindow.GPD_MAP_OPTIONS_MENU));
+  const windowProps = useRootSelector((state) => windowSelector(state, EdstWindow.GPD_MAP_OPTIONS_MENU));
   const zStack = useRootSelector(zStackSelector);
   const [mapFeaturesMenuOpen, setMapFeaturesMenuOpen] = useState(false);
   const [aircraftDisplayMenuIsOpen, setAircraftDisplayMenuIsOpen] = useState(false);

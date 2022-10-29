@@ -1,5 +1,5 @@
-import { ApiLocation } from "./apiLocation";
-import { Nullable } from "../../utility-types";
+import type { ApiLocation } from "./apiLocation";
+import type { Nullable } from "../utility-types";
 
 export type ApiAircraftTrack = {
   aircraftId: string;

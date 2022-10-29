@@ -7,5 +7,5 @@ export enum AclRowField {
   HDG = "HDG_ACL_ROW_FIELD",
   SPD = "SPD_ACL_ROW_FIELD",
   HOLD = "HOLD_ACL_ROW_FIELD",
-  ROUTE = "ROUTE_ACL_ROW_FIELD"
+  ROUTE = "ROUTE_ACL_ROW_FIELD",
 }

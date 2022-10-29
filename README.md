@@ -9,4 +9,5 @@ Project roadmap, credits, and other information may be found on the GitHub Wiki 
 https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki
 
 ## EXTERNAL RIGHTS:
-  - VATSIM Icon use permission granted by MATT BARTELLS (VATSIM VP of Marketing and Communications) on 19JAN2022 to Kyle Sanders (vEDST Project Manager)
+
+- VATSIM Icon use permission granted by MATT BARTELLS (VATSIM VP of Marketing and Communications) on 19JAN2022 to Kyle Sanders (vEDST Project Manager)

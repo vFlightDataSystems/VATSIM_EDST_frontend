@@ -1,18 +1,22 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
-import styled, { CSSProperties } from "styled-components";
+import type { MouseEventHandler } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener, useWindowSize } from "usehooks-ts";
 import {
   FloatingWindowDiv,
   FloatingWindowHeaderColDiv16ch,
   FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderDiv
-} from "../../styles/floatingWindowStyles";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { borderHover } from "../../styles/styles";
+  FloatingWindowHeaderDiv,
+} from "styles/floatingWindowStyles";
+import type { WindowPosition } from "types/windowPosition";
+import { borderHover } from "styles/styles";
 
-const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: boolean }>`
-  font-size: ${props => props.theme.fontProps.fontSize};
+const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{
+  offsetPos: boolean;
+}>`
+  font-size: ${(props) => props.theme.fontProps.fontSize};
   display: inline-flex;
   flex-flow: column;
   height: auto;
@@ -21,7 +25,7 @@ const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{ offsetPos: bool
 type FloatingWindowOptionDivProps = Pick<CSSProperties, "backgroundColor">;
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOptionDivProps>`
   height: 1em;
-  background-color: ${props => props.backgroundColor};
+  background-color: ${(props) => props.backgroundColor};
   padding-right: 16px;
   border: 1px solid #adadad;
   text-indent: 6px;
@@ -43,7 +47,10 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
         prevPosRef.current = { left: rect.left, top: rect.top };
       } else if (prevPosRef.current.left !== rect.left || prevPosRef.current.top !== rect.top) {
         if (option.value !== prevOptionValueRef.current) {
-          const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const newCursorPos = {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+          };
           invoke("set_cursor_position", newCursorPos).then();
           prevOptionValueRef.current = option.value;
         }
@@ -79,7 +86,7 @@ type FloatingWindowOptionsProps<T extends FloatingWindowOptions> = {
 export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({ parentPos, ...props }: FloatingWindowOptionsProps<T>) {
   const [pos, setPos] = useState<WindowPosition>({
     left: parentPos.left + props.parentWidth,
-    top: parentPos.top
+    top: parentPos.top,
   });
   const ref = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -92,7 +99,10 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
       if (parentPos.left + props.parentWidth + rect.width > windowSize.width) {
         setPos({ left: parentPos.left - rect.width, top: parentPos.top });
       } else {
-        setPos({ left: parentPos.left + props.parentWidth, top: parentPos.top });
+        setPos({
+          left: parentPos.left + props.parentWidth,
+          top: parentPos.top,
+        });
       }
     }
   }, [windowSize, parentPos, props.parentWidth]);
@@ -109,7 +119,10 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
         rect = ref.current.getBoundingClientRect();
       }
       if (rect) {
-        const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const newCursorPos = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
         invoke("set_cursor_position", newCursorPos).then();
       }
     }
@@ -119,7 +132,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
 
   return (
     <FloatingWindowOptionsBodyDiv
-      onMouseDown={event => event.stopPropagation()}
+      onMouseDown={(event) => event.stopPropagation()}
       pos={pos}
       ref={ref}
       zIndex={props.zIndex + 1}

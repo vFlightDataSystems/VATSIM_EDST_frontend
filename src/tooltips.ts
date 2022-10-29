@@ -1,11 +1,8 @@
 export const Tooltips = {
-  mca:
-    '"Message Composition Area"\nInput commands here such as:\nUU-calls forward the ACL\nUU D-calls forward the DEP list\nUU C-same as the ACL Clean Up button\nUU AID-selects the aircraft; if not in the EDST, will add the entry\nUU H AID-toggles highlighting for this entry',
+  mca: '"Message Composition Area"\nInput commands here such as:\nUU-calls forward the ACL\nUU D-calls forward the DEP list\nUU C-same as the ACL Clean Up button\nUU AID-selects the aircraft; if not in the EDST, will add the entry\nUU H AID-toggles highlighting for this entry',
   ra: '"Response Area"\nDisplays response to certain commands.',
-  acl:
-    '"Aircraft List", Displays active flights projected to transit your airspace (lateral and vertically).\nRW: entry is added when aircraft is 30min or less from the boundary.\nCurrently: displays when aircraft is 100nm or less form the boundary.',
-  dep:
-    '"Departure List", Displays all proposed departures\nRW: entry is added if you are the first CTR sector the aircraft will enter.\nCurrently: displays all departures for airports listed as in the jurisdiction of the selected ARTCC.',
+  acl: '"Aircraft List", Displays active flights projected to transit your airspace (lateral and vertically).\nRW: entry is added when aircraft is 30min or less from the boundary.\nCurrently: displays when aircraft is 100nm or less form the boundary.',
+  dep: '"Departure List", Displays all proposed departures\nRW: entry is added if you are the first CTR sector the aircraft will enter.\nCurrently: displays all departures for airports listed as in the jurisdiction of the selected ARTCC.',
   plans:
     "Displays the results of a submitted trial plan in text format.\nFLID=GREEN, no conflicts detected\nFLID=YELLOW, at least one conflict detected that will bring the aircraft between 6-10 miles of another aircraft\nFLID=RED, at least one conflict detected that will bring the aircraft within 5 miles of another aircraft\n\nNOTE: Conflict Detection is not yet simulated",
   statusActive: "[NOT SIMULATED, YET]\nRW: Displays the current status of various systems the EDST connects to.\nvEDST: Misc. Information.",
@@ -35,8 +32,7 @@ export const Tooltips = {
   holdDelEfc: "When this button is selected, the existing EFC time for the flight is deleted from the input box in the Hold Data Menu.",
   holdHoldBtn: "Execute/Place in hold.",
   holdHoldSpaBtn: "Execute/Place in hold and move to Special Positing Area (SPA)",
-  sort:
-    "Set sorting method.\nOrganizes this list in order per the selected sort method.\n\nTIPS:\n-ACL: RW controllers tend to leave this on Sector/NonSector with either Boundary Time or ACID\n\n-DEP list: RW controllers tend to use the Proposed Departure Time (P-Time) however with the nature of the simulated environment, it is suggested to not use this option.",
+  sort: "Set sorting method.\nOrganizes this list in order per the selected sort method.\n\nTIPS:\n-ACL: RW controllers tend to leave this on Sector/NonSector with either Boundary Time or ACID\n\n-DEP list: RW controllers tend to use the Proposed Departure Time (P-Time) however with the nature of the simulated environment, it is suggested to not use this option.",
   sortAclSectorNonSector:
     "Sorts aircraft first by what sector has track-control for the aircraft; with your sector being above all others.\nThen the system sorts per the selected sort method below.\n\nNOTE: This is not yet simulated, as the system does not know who has track-control for an aircraft. Access to the RADAR client is required for this feature to be simulated.",
   sortAcid:
@@ -214,5 +210,5 @@ export const Tooltips = {
   equipmentTemplateMenuAppServ_S: `Standard (Field 910a)`,
   equipmentTemplateMenuAppServ_Ok: `Equipment Template is removed and the Template (Flight Plan or Amendment) is updated and displayed such that the equipment qualifier text entry box cannot be edited (grayed out) and the cursor rests over the Send button.`,
   equipmentTemplateMenuAppServ_Reset: `Changes to the template are discarded and the displayed data reverts to its initial state.`,
-  equipmentTemplateMenuAppServ_Cancel: `Equipment Template is removed, the changes (if any) are not retained, and the Template (Flight Plan or Amendment) is displayed with the cursor positioned over the Exit button.`
+  equipmentTemplateMenuAppServ_Cancel: `Equipment Template is removed, the changes (if any) are not retained, and the Template (Flight Plan or Amendment) is displayed with the cursor positioned over the Exit button.`,
 };

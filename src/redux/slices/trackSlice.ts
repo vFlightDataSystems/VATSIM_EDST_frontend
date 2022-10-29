@@ -1,8 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { RootState } from "../store";
-import { AircraftId } from "../../typeDefinitions/types/aircraftId";
-import { AircraftTrack } from "../../typeDefinitions/types/aircraftTrack";
+import type { AircraftId } from "types/aircraftId";
+import type { AircraftTrack } from "types/aircraftTrack";
+import type { RootState } from "~redux/store";
 
 type TrackState = Record<AircraftId, AircraftTrack>;
 
@@ -17,8 +18,8 @@ const trackSlice = createSlice({
     },
     setTracks(state, action: PayloadAction<Record<AircraftId, AircraftTrack>>) {
       _.assign(state, action.payload);
-    }
-  }
+    },
+  },
 });
 
 export const { setTrack, setTracks } = trackSlice.actions;

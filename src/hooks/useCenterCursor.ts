@@ -1,4 +1,5 @@
-import { DependencyList, RefObject, useEffect } from "react";
+import type { DependencyList, RefObject } from "react";
+import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 
 /**
@@ -11,7 +12,10 @@ export const useCenterCursor = (ref: RefObject<HTMLElement>, deps: DependencyLis
     // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      const newCursorPos = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const newCursorPos = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
       void invoke<void>("set_cursor_position", newCursorPos);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

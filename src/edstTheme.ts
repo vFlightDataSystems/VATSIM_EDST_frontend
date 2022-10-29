@@ -11,7 +11,7 @@ export const colors = {
   stripPendingRemovalColor: "#595959",
   stripHighlightColor: "#414141",
   windowBorderColor: "#888888",
-  windowOutlineColor: "#ADADAD"
+  windowOutlineColor: "#ADADAD",
 };
 
 export const fontProps = {
@@ -20,12 +20,12 @@ export const fontProps = {
   inputFontSize: "17px",
   eramFontFamily: "ERAM",
   edstFontFamily: "EDST",
-  floatingFontSizes: ["14px", "17px", "20px"]
+  floatingFontSizes: ["14px", "17px", "20px"],
 };
 
 export const edstTheme = {
   colors,
-  fontProps
+  fontProps,
 };
 
 declare module "styled-components" {

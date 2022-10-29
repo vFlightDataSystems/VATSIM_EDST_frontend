@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import sharedStateSocket from "../sharedState/socket";
-import { SharedUiEvent } from "../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
+import sharedStateSocket from "~socket";
+import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 
 export function useSharedUiListener<T = any>(
   eventId: SharedUiEvent,

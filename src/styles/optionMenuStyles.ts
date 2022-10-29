@@ -1,19 +1,24 @@
-import styled, { CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import type { WindowPosition } from "types/windowPosition";
 import { DraggableDiv } from "./NoSelectDiv";
-import { WindowPosition } from "../typeDefinitions/types/windowPosition";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "./styles";
 
-type OptionIndicatorProps = { selected?: boolean; size?: number; disabled?: boolean };
+type OptionIndicatorProps = {
+  selected?: boolean;
+  size?: number;
+  disabled?: boolean;
+};
 export const OptionIndicator = styled.div<OptionIndicatorProps>`
   display: inline-flex;
-  ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
-  width: ${props => props.size ?? 8}px;
-  height: ${props => props.size ?? 8}px;
-  margin-right: ${props => props.size ?? 8}px;
+  ${(props) => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
+  width: ${(props) => props.size ?? 8}px;
+  height: ${(props) => props.size ?? 8}px;
+  margin-right: ${(props) => props.size ?? 8}px;
 
-  ${props =>
+  ${(props) =>
     props.selected && {
-      "background-color": "#ADADAD"
+      "background-color": "#ADADAD",
     }};
 `;
 export const OptionIndicatorDiamond = styled(OptionIndicator)`
@@ -27,18 +32,18 @@ export const OptionIndicatorCircle = styled(OptionIndicator)`
 `;
 type OptionsMenuProps = { pos?: WindowPosition; zIndex: number };
 export const OptionsMenu = styled(DraggableDiv)<OptionsMenuProps>`
-  font-family: ${props => props.theme.fontProps.edstFontFamily};
-  font-size: ${props => props.theme.fontProps.fontSize};
-  z-index: ${props => 10000 + props.zIndex};
+  font-family: ${(props) => props.theme.fontProps.edstFontFamily};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
+  z-index: ${(props) => 10000 + props.zIndex};
   overflow: hidden;
   position: fixed;
   color: #adadad;
   background-color: #000000;
   border: none;
-  ${props =>
+  ${(props) =>
     props.pos && {
       left: `${props.pos.left}px`,
-      top: `${props.pos.top}px`
+      top: `${props.pos.top}px`,
     }}
 `;
 
@@ -47,17 +52,17 @@ const optionsMenuBodyBorder = createBorder("1px", "#575757", "#414141");
 
 type OptionsMenuHeaderProps = { focused?: boolean };
 export const OptionsMenuHeader = styled.div<OptionsMenuHeaderProps>`
-  font-size: ${props => props.theme.fontProps.fontSize};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${props => (props.focused ? "#008585" : "#888888")};
+  background-color: ${(props) => (props.focused ? "#008585" : "#888888")};
   color: #000000;
   height: 17px;
   ${optionsMenuHeaderBorder};
 `;
 export const OptionsBody = styled.div`
-  font-size: ${props => props.theme.fontProps.fontSize};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
   background-color: #000000;
   padding: 2px 0;
   ${optionsMenuBodyBorder};
@@ -72,13 +77,13 @@ type OptionsBodyRowProps = Partial<{ bottomBorder?: boolean; topBorder?: boolean
 export const OptionsBodyRow = styled.div<OptionsBodyRowProps>`
   display: flex;
   flex-grow: 1;
-  justify-content: ${props => props.justifyContent ?? "left"};
-  padding: ${props => props.padding ?? "0 4px"};
+  justify-content: ${(props) => props.justifyContent ?? "left"};
+  padding: ${(props) => props.padding ?? "0 4px"};
   border: none;
   //min-height: 20px;
   overflow: hidden;
 
-  ${props => props.margin && { margin: props.margin }};
+  ${(props) => props.margin && { margin: props.margin }};
   * a {
     height: auto;
   }
@@ -89,14 +94,14 @@ export const OptionsBodyRow = styled.div<OptionsBodyRowProps>`
     //transform: scale(0.2);
   }
 
-  ${props =>
+  ${(props) =>
     props.topBorder && {
-      "border-top": "1px solid #ADADAD"
+      "border-top": "1px solid #ADADAD",
     }}
 
-  ${props =>
+  ${(props) =>
     props.bottomBorder && {
-      "border-bottom": "1px solid #ADADAD"
+      "border-bottom": "1px solid #ADADAD",
     }}
 `;
 export const OptionsBottomRow = styled(OptionsBodyRow)`
@@ -142,32 +147,32 @@ export const OptionsBodyCol = styled.div<OptionsBodyColProps>`
   flex-flow: row;
   font-size: inherit;
   min-height: 1.2em;
-  justify-content: ${props => props.justifyContent ?? "flex-start"};
+  justify-content: ${(props) => props.justifyContent ?? "flex-start"};
   align-items: center;
   vertical-align: center;
   border: 1px solid transparent;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  margin: ${props => props.margin ?? "0 4px"};
-  max-width: ${props => props.maxWidth ?? "auto"};
-  max-height: ${props => props.maxHeight ?? "auto"};
-  ${props => props.hover && borderHover};
-  ${props => props.padding && { padding: props.padding }};
-  ${props => props.margin && { margin: props.margin }};
+  margin: ${(props) => props.margin ?? "0 4px"};
+  max-width: ${(props) => props.maxWidth ?? "auto"};
+  max-height: ${(props) => props.maxHeight ?? "auto"};
+  ${(props) => props.hover && borderHover};
+  ${(props) => props.padding && { padding: props.padding }};
+  ${(props) => props.margin && { margin: props.margin }};
 
-  ${props => props.selected && { color: "#000000" }};
-  ${props => props.selected && { "background-color": "#ADADAD" }};
+  ${(props) => props.selected && { color: "#000000" }};
+  ${(props) => props.selected && { "background-color": "#ADADAD" }};
   &:disabled {
     all: inherit;
   }
 
-  ${props =>
+  ${(props) =>
     props.alignRight && {
       "justify-content": "right",
       margin: "0 2px 0 0",
       display: "flex",
-      "margin-left": "auto"
+      "margin-left": "auto",
     }}
 `;
 // export const UplinkCol = styled(OptionsBodyCol)`font-size: 30px`;
@@ -181,12 +186,12 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
 `;
 type EdstInputProps = Partial<Pick<CSSProperties, "width">>;
 export const EdstInput = styled.input<EdstInputProps>`
-  width: ${props => props.width ?? "calc(100% - 7px)"};
-  font-size: ${props => props.theme.fontProps.inputFontSize};
+  width: ${(props) => props.width ?? "calc(100% - 7px)"};
+  font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
-  color: ${props => props.theme.colors.grey};
+  color: ${(props) => props.theme.colors.grey};
   ${buttonBorder2px};
   background-color: #000000;
   resize: none;
@@ -196,11 +201,11 @@ export const EdstInput = styled.input<EdstInputProps>`
 `;
 export const EdstTextArea = styled.textarea`
   width: calc(100% - 7px);
-  font-size: ${props => props.theme.fontProps.inputFontSize};
+  font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;
   display: flex;
   overflow: hidden;
-  color: ${props => props.theme.colors.grey};
+  color: ${(props) => props.theme.colors.grey};
   ${buttonBorder2px};
   background-color: #000000;
   resize: none;
@@ -214,9 +219,27 @@ export const ScrollContainer = styled.div<ScrollContainerProps>`
   overflow: scroll;
   scrollbar-width: none;
 
-  max-height: ${props => props.maxHeight ?? "auto"};
+  max-height: ${(props) => props.maxHeight ?? "auto"};
 
   &::-webkit-scrollbar {
     display: none;
   }
+
+  //&::-webkit-scrollbar {
+  //  width: 4px;
+  //}
+
+  //&::-webkit-scrollbar-track {
+  //  border-radius: 2px;
+  //  background-color: darkgrey;
+  //}
+
+  //&::-webkit-scrollbar-thumb {
+  //  border-radius: 2px;
+  //  background-color: #adadad;
+  //}
+  //
+  //&::-webkit-scrollbar-corner {
+  //  display: none;
+  //}
 `;

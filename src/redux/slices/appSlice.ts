@@ -1,14 +1,15 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, RootThunkAction } from "../store";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { EDST_MENU_LIST, EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { openWindowThunk } from "../thunks/openWindowThunk";
-import { OutageEntry } from "../../typeDefinitions/types/outageEntry";
-import sharedSocket from "../../sharedState/socket";
-import { Asel } from "../../typeDefinitions/types/asel";
-import { WindowDimension } from "../../typeDefinitions/types/windowDimension";
-import { Nullable } from "../../typeDefinitions/utility-types";
-import { AircraftId } from "../../typeDefinitions/types/aircraftId";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { Nullable } from "types/utility-types";
+import type { WindowPosition } from "types/windowPosition";
+import { EDST_MENU_LIST, EdstWindow } from "enums/edstWindow";
+import type { OutageEntry } from "types/outageEntry";
+import type { Asel } from "types/asel";
+import type { AircraftId } from "types/aircraftId";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import sharedSocket from "~socket";
+import type { WindowDimension } from "types/windowDimension";
+import type { RootState, RootThunkAction } from "~redux/store";
 
 export const AIRCRAFT_MENUS = [
   EdstWindow.PLAN_OPTIONS,
@@ -20,7 +21,7 @@ export const AIRCRAFT_MENUS = [
   EdstWindow.HOLD_MENU,
   EdstWindow.CANCEL_HOLD_MENU,
   EdstWindow.TEMPLATE_MENU,
-  EdstWindow.EQUIPMENT_TEMPLATE_MENU
+  EdstWindow.EQUIPMENT_TEMPLATE_MENU,
 ];
 
 export const FULLSCREEN_WINDOWS = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
@@ -59,18 +60,18 @@ export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>>
   [EdstWindow.MESSAGE_COMPOSE_AREA]: { left: 100, top: 400 },
   [EdstWindow.GPD]: { left: 0, top: 38 },
   [EdstWindow.ACL]: { left: 0, top: 38 },
-  [EdstWindow.DEP]: { left: 0, top: 38 }
+  [EdstWindow.DEP]: { left: 0, top: 38 },
 };
 
 const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
-  Object.values(EdstWindow).map(value => [
+  Object.values(EdstWindow).map((value) => [
     value,
     {
       open: false,
       isFullscreen: FULLSCREEN_WINDOWS.includes(value),
       position: defaultWindowPositions[value] ?? { left: 100, top: 100 },
-      dimension: { width: "auto", height: "auto" }
-    }
+      dimension: { width: "auto", height: "auto" },
+    },
   ])
 ) as Record<EdstWindow, AppWindow>;
 
@@ -86,7 +87,7 @@ const initialState: AppState = {
   showSectorSelector: false,
   asel: null,
   zStack: [],
-  outages: []
+  outages: [],
 };
 
 const appSlice = createSlice({
@@ -95,7 +96,7 @@ const appSlice = createSlice({
   reducers: {
     closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
-        action.payload.forEach(window => {
+        action.payload.forEach((window) => {
           state.windows[window].open = false;
         });
       } else {
@@ -104,7 +105,7 @@ const appSlice = createSlice({
     },
     openWindow(state, action: PayloadAction<EdstWindow>) {
       state.windows[action.payload].open = true;
-      state.zStack = [...state.zStack.filter(window => window !== action.payload), action.payload];
+      state.zStack = [...state.zStack.filter((window) => window !== action.payload), action.payload];
     },
     setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
       state.windows[action.payload.window].isFullscreen = action.payload.value;
@@ -147,7 +148,7 @@ const appSlice = createSlice({
       state.anyDragging = action.payload;
     },
     pushZStack(state, action: PayloadAction<EdstWindow>) {
-      state.zStack = [...state.zStack.filter(window => window !== action.payload), action.payload];
+      state.zStack = [...state.zStack.filter((window) => window !== action.payload), action.payload];
     },
     addOutageMessage(state, action: PayloadAction<OutageEntry>) {
       state.outages = [...state.outages, action.payload];
@@ -157,21 +158,21 @@ const appSlice = createSlice({
       if (action.payload > -1 && action.payload < state.outages.length) {
         state.outages.splice(action.payload, 1);
       }
-    }
-  }
+    },
+  },
 });
 
 export const closeAllWindows = (triggerSharedState = false): RootThunkAction => {
-  return dispatch => {
-    Object.values(EdstWindow).forEach(window => {
+  return (dispatch) => {
+    Object.values(EdstWindow).forEach((window) => {
       dispatch(closeWindow(window, triggerSharedState));
     });
   };
 };
 
 export const closeAllMenus = (triggerSharedState = true): RootThunkAction => {
-  return dispatch => {
-    EDST_MENU_LIST.forEach(window => {
+  return (dispatch) => {
+    EDST_MENU_LIST.forEach((window) => {
       dispatch(closeWindow(window, triggerSharedState));
     });
     dispatch(setAsel(null, null, triggerSharedState));
@@ -179,8 +180,8 @@ export const closeAllMenus = (triggerSharedState = true): RootThunkAction => {
 };
 
 export const closeAircraftMenus = (triggerSharedState = false): RootThunkAction => {
-  return dispatch => {
-    AIRCRAFT_MENUS.forEach(window => {
+  return (dispatch) => {
+    AIRCRAFT_MENUS.forEach((window) => {
       dispatch(closeWindow(window, triggerSharedState));
     });
   };
@@ -199,7 +200,7 @@ export function setAsel(asel: Nullable<Asel>, eventId?: Nullable<string>, trigge
 }
 
 export const setMcaResponse = (message: string): RootThunkAction => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
     dispatch(appSlice.actions.setMcaFeedbackString(message));
   };
@@ -210,14 +211,14 @@ export const setMcaAcceptMessage = (message: string) => setMcaResponse(`ACCEPT\n
 export const setMcaRejectMessage = (message: string) => setMcaResponse(`REJECT\n${message}`);
 
 export const setMraMessage = (message: string): RootThunkAction => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(pushZStack(EdstWindow.MESSAGE_RESPONSE_AREA));
     dispatch(appSlice.actions.setMraMessage(message));
   };
 };
 
 export const closeWindow = (edstWindow: EdstWindow, triggerSharedState = true): RootThunkAction => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(appSlice.actions.closeWindow(edstWindow));
     if (triggerSharedState) {
       sharedSocket.closeSharedWindow(edstWindow);
@@ -252,7 +253,7 @@ export const {
   setGIEntryAcknowledged,
   delGIEntry,
   addOutageMessage,
-  delOutageMessage
+  delOutageMessage,
 } = appSlice.actions;
 export default appSlice.reducer;
 

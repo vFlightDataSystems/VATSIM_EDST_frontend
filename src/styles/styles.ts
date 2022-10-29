@@ -1,4 +1,5 @@
-import styled, { css, CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled, { css } from "styled-components";
 
 export const borderHover = css`
   &:hover {
@@ -45,11 +46,14 @@ export const BodyRowDiv = styled.div<BodyRowDivProps>`
   align-items: center;
   min-height: 2px;
   padding: 0 10px;
-  ${props => props.pendingRemoval && { color: props.theme.colors.stripPendingRemovalColor }};
-  ${props =>
+  ${(props) =>
+    props.pendingRemoval && {
+      color: props.theme.colors.stripPendingRemovalColor,
+    }};
+  ${(props) =>
     props.separator && {
       height: 0,
-      "border-bottom": "2px solid #AA8800"
+      "border-bottom": "2px solid #AA8800",
     }};
 `;
 type InnerRowProps = { highlight?: boolean };
@@ -58,19 +62,19 @@ export const InnerRow = styled.div<InnerRowProps>`
   align-items: center;
   min-height: 1em;
   border-bottom: 1px solid transparent;
-  ${props =>
+  ${(props) =>
     props.highlight && {
       outline: `1px solid ${props.theme.colors.stripHighlightColor}`,
       "border-bottom": `1px solid ${props.theme.colors.stripHighlightColor}`,
-      "background-color": props.theme.colors.stripHighlightColor
+      "background-color": props.theme.colors.stripHighlightColor,
     }}
 `;
 export const InnerRow2 = styled(InnerRow)<Pick<CSSProperties, "minWidth">>`
   min-height: 1em;
-  min-width: ${props => props.minWidth};
+  min-width: ${(props) => props.minWidth};
 `;
 export const FreeTextRow = styled(BodyRowDiv)<Pick<CSSProperties, "marginLeft">>`
-  margin-left: ${props => props.marginLeft};
+  margin-left: ${(props) => props.marginLeft};
   padding: 0;
   width: 100%;
   display: flex;
@@ -81,10 +85,10 @@ export const FreeTextRow = styled(BodyRowDiv)<Pick<CSSProperties, "marginLeft">>
   input {
     width: 100%;
     background-color: transparent;
-    font-size: ${props => props.theme.fontProps.fontSize};
+    font-size: ${(props) => props.theme.fontProps.fontSize};
     outline: none;
     border: none;
-    color: ${props => props.theme.colors.grey};
+    color: ${(props) => props.theme.colors.grey};
     caret: #ffffff;
     text-transform: uppercase;
   }

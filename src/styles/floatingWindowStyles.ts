@@ -1,9 +1,10 @@
-import styled, { css, CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled, { css } from "styled-components";
+import type { Nullable } from "types/utility-types";
+import type { WindowPosition } from "types/windowPosition";
+import type { WindowDimension } from "types/windowDimension";
 import { DraggableDiv, NoSelectDiv } from "./NoSelectDiv";
-import { WindowPosition } from "../typeDefinitions/types/windowPosition";
-import { WindowDimension } from "../typeDefinitions/types/windowDimension";
 import { borderHover } from "./styles";
-import { Nullable } from "../typeDefinitions/utility-types";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
@@ -14,51 +15,53 @@ type FloatingWindowDivProps = {
   fullscreen?: boolean;
 } & FloatingWindowDivCSSProps;
 export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
-  ${props =>
+  ${(props) =>
     css`
       ${props.minWidth && { "min-width": props.minWidth }};
       ${props.width && { width: props.width }};
       ${props.maxWidth && { "max-width": props.maxWidth }};
     `};
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
-  font-size: ${props => props.theme.fontProps.fontSize};
-  z-index: ${props => 10000 + props.zIndex};
-  position: ${props => (!props.fullscreen ? "fixed" : "absolute")};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
+  z-index: ${(props) => 10000 + props.zIndex};
+  position: ${(props) => (!props.fullscreen ? "fixed" : "absolute")};
   color: #adadad;
 
-  ${props =>
+  ${(props) =>
     !props.fullscreen &&
     props.pos && {
       left: `${props.pos.left}px`,
-      top: `${props.pos.top}px`
+      top: `${props.pos.top}px`,
     }}
 `;
 
 type ResizableFloatingWindowDivProps = { dimension: WindowDimension };
 export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFloatingWindowDivProps>`
-  font-family: ${props => props.theme.fontProps.edstFontFamily};
-  font-size: ${props => props.theme.fontProps.fontSize};
+  font-family: ${(props) => props.theme.fontProps.edstFontFamily};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
   display: flex;
   white-space: nowrap;
   flex-flow: column;
   overflow: hidden;
   margin: 2px;
   flex-grow: 1;
-  border: 3px solid ${props => props.theme.colors.windowBorderColor};
-  outline: 1px solid ${props => props.theme.colors.windowOutlineColor};
-  color: ${props => props.theme.colors.grey};
+  border: 3px solid ${(props) => props.theme.colors.windowBorderColor};
+  outline: 1px solid ${(props) => props.theme.colors.windowOutlineColor};
+  color: ${(props) => props.theme.colors.grey};
   background-color: #000000;
   min-width: 60ch;
   min-height: 10em;
-  resize: ${props => (!props.fullscreen ? "both" : "none")};
-  width: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.width)};
-  height: ${props => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};
+  resize: ${(props) => (!props.fullscreen ? "both" : "none")};
+  width: ${(props) => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.width)};
+  height: ${(props) => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};
 `;
 
-type FloatingWindowBodyContainerProps = Pick<CSSProperties, "width"> & { fontSize: number };
+type FloatingWindowBodyContainerProps = Pick<CSSProperties, "width"> & {
+  fontSize: number;
+};
 export const FloatingWindowBodyContainer = styled.div<FloatingWindowBodyContainerProps>`
-  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSize - 1]};
-  width: ${props => props.width};
+  font-size: ${(props) => props.theme.fontProps.floatingFontSizes[props.fontSize - 1]};
+  width: ${(props) => props.width};
 `;
 export const FloatingWindowBodyDiv = styled.div`
   background-color: #000000;
@@ -113,19 +116,23 @@ export const FloatingWindowHeaderBlock8x2 = styled(FloatingWindowHeaderBlock)`
   height: 2px;
 `;
 
-type FloatingWindowRowProps = { brightness: number; selected?: boolean; suppressed?: boolean };
+type FloatingWindowRowProps = {
+  brightness: number;
+  selected?: boolean;
+  suppressed?: boolean;
+};
 export const FloatingWindowRow = styled(NoSelectDiv)<FloatingWindowRowProps>`
   padding: 0 1.4ch;
   justify-content: center;
   border: 1px solid transparent;
   min-height: 1em;
   flex-flow: column;
-  ${props =>
+  ${(props) =>
     css`
       color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
     `};
 
-  ${props =>
+  ${(props) =>
     props.selected &&
     css`
       background-color: rgba(
@@ -136,9 +143,9 @@ export const FloatingWindowRow = styled(NoSelectDiv)<FloatingWindowRowProps>`
       );
       color: #000000;
     `};
-  ${props =>
+  ${(props) =>
     props.suppressed && {
-      color: "#575757"
+      color: "#575757",
     }};
   ${borderHover}
 `;

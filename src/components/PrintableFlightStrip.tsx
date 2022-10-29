@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { EdstEntry } from "../typeDefinitions/types/edstEntry";
-import { formatRoute } from "../utils/formatRoute";
-import { convertBeaconCodeToString } from "../utils/stringManipulation";
-import { formatUtcMinutes } from "../utils/formatUtcMinutes";
+import type { EdstEntry } from "types/edstEntry";
+import { formatRoute } from "~/utils/formatRoute";
+import { convertBeaconCodeToString } from "~/utils/stringManipulation";
+import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 
 function getRouteString(entry: EdstEntry, formattedRoute: string) {
   return (
@@ -54,7 +54,7 @@ export function printFlightStrip(entry: EdstEntry) {
           squawk: convertBeaconCodeToString(entry.assignedBeaconCode), // squawk code
           misc: "", // miscellaneous info
           trans1: "", // transfer of control info
-          trans2: "" // transfer of control info
+          trans2: "", // transfer of control info
         }}
       />,
       document.getElementById("toPrint")
@@ -103,7 +103,7 @@ function PrintableFlightStrip(props: any) {
   const { fs } = props;
   const rootTdStyle = {
     borderRight: "1px solid black",
-    padding: "0px"
+    padding: "0px",
   };
   /* TODO find good font */
   /* TODO replace with grid/better solution */
@@ -170,8 +170,24 @@ function PrintableFlightStrip(props: any) {
                     <td />
                   </tr>
                   <tr style={{ height: "42px", overflow: "hidden" }}>
-                    <td style={{ border: "1px solid black", textAlign: "center", width: "50%" }}>{fs.currTimePilot}</td>
-                    <td style={{ border: "1px solid black", textAlign: "center", width: "50%" }}>{fs.currTimeAct}</td>
+                    <td
+                      style={{
+                        border: "1px solid black",
+                        textAlign: "center",
+                        width: "50%",
+                      }}
+                    >
+                      {fs.currTimePilot}
+                    </td>
+                    <td
+                      style={{
+                        border: "1px solid black",
+                        textAlign: "center",
+                        width: "50%",
+                      }}
+                    >
+                      {fs.currTimeAct}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ paddingLeft: "10px", textAlign: "left" }}>{fs.curr}</td>
@@ -207,10 +223,23 @@ function PrintableFlightStrip(props: any) {
               </table>
             </td>
             <td style={rootTdStyle}>
-              <table style={{ width: "220px", textAlign: "left", paddingLeft: "10px" }}>
+              <table
+                style={{
+                  width: "220px",
+                  textAlign: "left",
+                  paddingLeft: "10px",
+                }}
+              >
                 <tbody>
                   <tr>
-                    <td style={{ paddingBottom: "70px", overflowWrap: "anywhere" }}>{fs.route}</td>
+                    <td
+                      style={{
+                        paddingBottom: "70px",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {fs.route}
+                    </td>
                   </tr>
                   <tr>
                     <td>{fs.remarks}</td>
@@ -222,14 +251,30 @@ function PrintableFlightStrip(props: any) {
               <table style={{ width: "50px" }}>
                 <tbody>
                   <tr>
-                    <td style={{ textAlign: "right", paddingLeft: "20px", paddingBottom: "50px" }}>{fs.squawk}</td>
+                    <td
+                      style={{
+                        textAlign: "right",
+                        paddingLeft: "20px",
+                        paddingBottom: "50px",
+                      }}
+                    >
+                      {fs.squawk}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ paddingBottom: "50px" }}>{fs.misc}</td>
                   </tr>
                   <tr>
                     <td>{fs.trans1}</td>
-                    <td style={{ textAlign: "right", paddingLeft: "0px", paddingRight: "10px" }}>{fs.trans2}</td>
+                    <td
+                      style={{
+                        textAlign: "right",
+                        paddingLeft: "0px",
+                        paddingRight: "10px",
+                      }}
+                    >
+                      {fs.trans2}
+                    </td>
                   </tr>
                 </tbody>
               </table>

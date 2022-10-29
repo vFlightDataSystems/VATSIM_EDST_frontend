@@ -1,20 +1,22 @@
-import React, { PropsWithChildren, useRef } from "react";
-import styled, { CSSProperties } from "styled-components";
-import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { EdstButton } from "../utils/EdstButton";
-import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { useFocused } from "../../hooks/useFocused";
-import { useDragging } from "../../hooks/useDragging";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import type { PropsWithChildren } from "react";
+import React, { useRef } from "react";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { useFocused } from "hooks/useFocused";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import type { EdstWindow } from "enums/edstWindow";
+import { EdstButton } from "components/utils/EdstButton";
+import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 
 type PromptDivProps = {
   width?: CSSProperties["width"];
 };
 const PromptDiv = styled(OptionsMenu)<PromptDivProps>`
-  width: ${props => props.width ?? "auto"};
+  width: ${(props) => props.width ?? "auto"};
 `;
 
 type EdstPromptProps = PropsWithChildren<{
@@ -30,7 +32,7 @@ type EdstPromptProps = PropsWithChildren<{
 }>;
 
 export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps) => {
-  const pos = useRootSelector(state => windowPositionSelector(state, props.windowId));
+  const pos = useRootSelector((state) => windowPositionSelector(state, props.windowId));
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const focused = useFocused(ref);

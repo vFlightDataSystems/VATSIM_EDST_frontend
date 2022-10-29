@@ -1,23 +1,23 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { zStackSelector } from "../../redux/slices/appSlice";
+import type { Nullable } from "types/utility-types";
+import { zStackSelector } from "~redux/slices/appSlice";
+import type { SigmetEntry } from "~redux/slices/weatherSlice";
 import {
   setSigmetAcknowledged,
   setSigmetSuppressed,
   setViewSuppressedSigmet,
-  SigmetEntry,
   sigmetSelector,
-  viewSuppressedSigmetSelector
-} from "../../redux/slices/weatherSlice";
+  viewSuppressedSigmetSelector,
+} from "~redux/slices/weatherSlice";
+import { FloatingWindowRow } from "styles/floatingWindowStyles";
+import { ScrollContainer } from "styles/optionMenuStyles";
+import { sectorIdSelector } from "~redux/slices/sectorSlice";
+import { EdstWindow } from "enums/edstWindow";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
-import { ScrollContainer } from "../../styles/optionMenuStyles";
-import { sectorIdSelector } from "../../redux/slices/sectorSlice";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { Nullable } from "../../typeDefinitions/utility-types";
 
 const SigmetRowDiv = styled(FloatingWindowRow)`
   margin-top: 6px;
@@ -57,8 +57,8 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
             toggleSuppressed: {
               value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",
               backgroundColor: "#575757",
-              onMouseDown: onSuppress
-            }
+              onMouseDown: onSuppress,
+            },
           }}
         />
       )}
@@ -79,14 +79,14 @@ export const SigmetWindow = () => {
       viewSuppressed: {
         value: "VIEW SUPPRESS",
         backgroundColor: viewSuppressed ? "#575757" : "#000000",
-        onMouseDown: () => dispatch(setViewSuppressedSigmet(true))
+        onMouseDown: () => dispatch(setViewSuppressedSigmet(true)),
       },
       hideSuppressed: {
         value: "HIDE SUPPRESS",
         backgroundColor: !viewSuppressed ? "#575757" : "#000000",
-        onMouseDown: () => dispatch(setViewSuppressedSigmet(false))
+        onMouseDown: () => dispatch(setViewSuppressedSigmet(false)),
       },
-      printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
+      printAll: { value: "PRINT ALL", backgroundColor: "#000000" },
     }),
     [dispatch, viewSuppressed]
   );
@@ -129,9 +129,14 @@ export const SigmetWindow = () => {
                   key={sigmetId}
                   sigmetEntry={sigmetEntry}
                   selected={selectedEntry === sigmetId}
-                  handleMouseDown={event => handleEntryMouseDown(event, sigmetId)}
+                  handleMouseDown={(event) => handleEntryMouseDown(event, sigmetId)}
                   onSuppress={() => {
-                    dispatch(setSigmetSuppressed({ id: sigmetId, value: !sigmetEntry.suppressed }));
+                    dispatch(
+                      setSigmetSuppressed({
+                        id: sigmetId,
+                        value: !sigmetEntry.suppressed,
+                      })
+                    );
                     setSelectedEntry(null);
                   }}
                 />

@@ -1,7 +1,9 @@
-import { Feature, polygon, Polygon } from "@turf/turf";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
-import { SectorData } from "../../typeDefinitions/types/sectorData";
+import type { Feature, Polygon } from "@turf/turf";
+import { polygon } from "@turf/turf";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { SectorData } from "types/sectorData";
+import type { RootState } from "~redux/store";
 
 type SectorProfile = { id: string; name: string; sectors: string[] };
 
@@ -18,7 +20,7 @@ const initialState: SectorDataState = {
   profiles: [],
   selectedSectorIds: [],
   sectorId: "",
-  artccId: ""
+  artccId: "",
 };
 
 const sectorSlice = createSlice({
@@ -27,7 +29,7 @@ const sectorSlice = createSlice({
   reducers: {
     setSectors(state: SectorDataState, action: PayloadAction<SectorData[]>) {
       state.sectors = Object.fromEntries(
-        action.payload.map(sector => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)])
+        action.payload.map((sector) => [sector.properties.id, polygon(sector.geometry.coordinates, sector.properties)])
       );
       state.selectedSectorIds = [Object.keys(state.sectors)[0]];
     },
@@ -51,8 +53,8 @@ const sectorSlice = createSlice({
     },
     setSectorProfiles(state, action: PayloadAction<SectorProfile[]>) {
       state.profiles = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const { setSectors, setSelectedSectors, toggleSector, setArtccId, setSectorId, setSectorProfiles } = sectorSlice.actions;

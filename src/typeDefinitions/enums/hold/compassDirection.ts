@@ -6,5 +6,5 @@ export enum CompassDirection {
   EAST = "East",
   SOUTH_WEST = "Southwest",
   SOUTH = "South",
-  SOUTH_EAST = "Southeast"
+  SOUTH_EAST = "Southeast",
 }

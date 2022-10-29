@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import L from "leaflet";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type L from "leaflet";
 import _ from "lodash";
-import { RootState } from "../store";
-import sharedSocket from "../../sharedState/socket";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
+import type { RootState } from "~redux/store";
+import sharedSocket from "~socket";
 
 export const GPD_MIN_ZOOM = 4;
 export const GPD_MAX_ZOOM = 9;
@@ -15,7 +16,7 @@ export enum SectorType {
   low = "L",
   high = "H",
   ultraHigh = "UH",
-  lowHigh = "LH"
+  lowHigh = "LH",
 }
 
 export enum MapFeatureOption {
@@ -34,7 +35,7 @@ export enum MapFeatureOption {
   navaid = "NAVAIDS",
   navaidLabels = "NAVAID Labels",
   waypoint = "Waypoints",
-  waypointLabels = "Waypoint Labels"
+  waypointLabels = "Waypoint Labels",
 }
 
 export type MapFeatureOptions = Partial<Record<MapFeatureOption, boolean>>;
@@ -65,7 +66,7 @@ export type SharedGpdState = Omit<GpdState, "center" | "zoomLevel">;
 
 const initialMapFeatureOptionsState = {
   [MapFeatureOption.lowSectors]: true,
-  [MapFeatureOption.highSectors]: true
+  [MapFeatureOption.highSectors]: true,
 };
 
 const initialState: GpdState = {
@@ -78,12 +79,12 @@ const initialState: GpdState = {
     filterBelow: ["Filter Below", null],
     autoDatablockOffset: ["Auto Datablock Offset", false],
     mspLabels: ["MSP/MEP Labels", false],
-    routePreviewMinutes: ["Route Preview (minutes)", 0]
+    routePreviewMinutes: ["Route Preview (minutes)", 0],
   },
   center: BOSCenter,
   zoomLevel: 7,
   suppressed: false,
-  planData: []
+  planData: [],
 };
 
 const gpdSlice = createSlice({
@@ -128,8 +129,8 @@ const gpdSlice = createSlice({
         state.zoomLevel = action.payload;
         sharedSocket.setGpdState(state);
       }
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -141,7 +142,7 @@ export const {
   setGpdSuppressed,
   toggleGpdSuppressed,
   setGpdCenter,
-  setGpdZoomLevel
+  setGpdZoomLevel,
 } = gpdSlice.actions;
 export default gpdSlice.reducer;
 

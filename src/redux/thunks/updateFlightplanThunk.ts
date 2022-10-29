@@ -1,16 +1,16 @@
 import _ from "lodash";
-import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
-import { RootThunkAction } from "../store";
+import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
+import type { EdstEntry } from "types/edstEntry";
+import { LocalVEdstEntry } from "types/localVEdstEntry";
+import type { RootThunkAction } from "../store";
 import { setEntry, updateEntry } from "../slices/entrySlice";
-import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
-import { LocalVEdstEntry } from "../../typeDefinitions/types/localVEdstEntry";
 import sharedSocket from "../../sharedState/socket";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
   return _.assign(
     {
       ...fp,
-      ...new LocalVEdstEntry()
+      ...new LocalVEdstEntry(),
     },
     sharedSocket.getSharedAircraftState()[fp.aircraftId]
   );

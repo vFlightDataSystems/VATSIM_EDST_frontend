@@ -1,7 +1,9 @@
-import React, { PropsWithChildren } from "react";
-import styled, { CSSProperties } from "styled-components";
-import { useRootSelector } from "../../redux/hooks";
-import { tooltipsEnabledSelector } from "../../redux/slices/appSlice";
+import type { PropsWithChildren } from "react";
+import React from "react";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import { useRootSelector } from "~redux/hooks";
+import { tooltipsEnabledSelector } from "~redux/slices/appSlice";
 
 const TooltipDiv = styled.div`
   width: auto;
@@ -44,7 +46,7 @@ export const EdstTooltip = ({ title, content, style, ...props }: EdstTooltipProp
     <TooltipBody
       style={style}
       {...props}
-      onMouseEnter={e => e.shiftKey && setTooltipEnabled(true)}
+      onMouseEnter={(e) => e.shiftKey && setTooltipEnabled(true)}
       // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
       onMouseLeave={() => setTooltipEnabled(false)}
     >

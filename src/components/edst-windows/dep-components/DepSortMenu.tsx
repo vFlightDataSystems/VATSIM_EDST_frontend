@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { SortMenu } from "../SortMenu";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { EdstWindow } from "enums/edstWindow";
+import { Tooltips } from "~/tooltips";
+import { OptionsBodyRow, OptionIndicatorDiamond } from "styles/optionMenuStyles";
+import { SortCol } from "styles/sortStyles";
+import { depSortOptionSelector, setDepSort } from "~redux/slices/depSlice";
+import { DepSortOption } from "enums/dep/depSortOption";
 import { EdstTooltip } from "../../utils/EdstTooltip";
-import { Tooltips } from "../../../tooltips";
-import { OptionsBodyRow, OptionIndicatorDiamond } from "../../../styles/optionMenuStyles";
-import { SortCol } from "../../../styles/sortStyles";
-import { depSortOptionSelector, setDepSort } from "../../../redux/slices/depSlice";
-import { DepSortOption } from "../../../typeDefinitions/enums/dep/depSortOption";
+import { SortMenu } from "../SortMenu";
 
 export const DepSortMenu = () => {
   const dispatch = useRootDispatch();

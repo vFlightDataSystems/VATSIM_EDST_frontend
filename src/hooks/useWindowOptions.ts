@@ -1,14 +1,10 @@
-import React, { useCallback, useMemo } from "react";
-import {
-  decOptionValue,
-  incOptionValue,
-  ModifiableWindowOptions,
-  windowOptionLabel,
-  windowOptionsSelector
-} from "../redux/slices/windowOptionsSlice";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { FloatingWindowOptions } from "../components/utils/FloatingWindowOptionContainer";
-import { colors } from "../edstTheme";
+import type React from "react";
+import { useCallback, useMemo } from "react";
+import type { ModifiableWindowOptions } from "~redux/slices/windowOptionsSlice";
+import { decOptionValue, incOptionValue, windowOptionLabel, windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import type { FloatingWindowOptions } from "components/utils/FloatingWindowOptionContainer";
+import { colors } from "~/edstTheme";
 
 type PickByValue<T, V> = Pick<T, { [K in keyof T]: T[K] extends V ? K : never }[keyof T]>;
 type Entries<T> = {
@@ -47,11 +43,11 @@ export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(window
           {
             value: `${windowOptionLabel[key as keyof typeof windowOptionLabel]} ${value}`,
             backgroundColor: colors.optionsBackgroundGreen,
-            onMouseDown: event => mouseDownHandler(event, key)
-          }
+            onMouseDown: (event) => mouseDownHandler(event, key),
+          },
         ])
       ),
-      ...extraOptions
+      ...extraOptions,
     }),
     [mouseDownHandler, extraOptions, windowOptions]
   );

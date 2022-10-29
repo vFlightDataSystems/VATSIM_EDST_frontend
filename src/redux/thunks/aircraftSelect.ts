@@ -1,10 +1,10 @@
-import { RootThunkAction } from "../store";
+import type { Nullable } from "types/utility-types";
+import { EdstWindow } from "enums/edstWindow";
+import type { AclRowField } from "enums/acl/aclRowField";
+import type { DepRowField } from "enums/dep/depRowField";
+import type { Asel } from "types/asel";
 import { setAsel } from "../slices/appSlice";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
-import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
-import { Asel } from "../../typeDefinitions/types/asel";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import type { RootThunkAction } from "../store";
 
 function aircraftSelect(
   edstWindow: EdstWindow,
@@ -37,7 +37,7 @@ export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRo
 }
 
 export function sharedStateAircraftSelect(value: Nullable<Asel>): RootThunkAction {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(setAsel(value, null, false));
   };
 }

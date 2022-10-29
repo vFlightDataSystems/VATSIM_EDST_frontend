@@ -1,10 +1,10 @@
+import type { ApiLocation } from "types/apiTypes/apiLocation";
+import type { HoldAnnotations } from "enums/hold/holdAnnotations";
+import { useRootDispatch } from "~redux/hooks";
+import { setMcaAcceptMessage } from "~redux/slices/appSlice";
+import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
+import type { AircraftId } from "types/aircraftId";
 import { useHubConnection } from "./useHubConnection";
-import { ApiLocation } from "../typeDefinitions/types/apiTypes/apiLocation";
-import { HoldAnnotations } from "../typeDefinitions/enums/hold/holdAnnotations";
-import { useRootDispatch } from "../redux/hooks";
-import { setMcaAcceptMessage } from "../redux/slices/appSlice";
-import { CreateOrAmendFlightplanDto } from "../typeDefinitions/types/apiTypes/CreateOrAmendFlightplanDto";
-import { AircraftId } from "../typeDefinitions/types/aircraftId";
 
 export const useHubActions = () => {
   const dispatch = useRootDispatch();
@@ -15,13 +15,13 @@ export const useHubActions = () => {
   };
 
   const generateFrd = async (location: ApiLocation) =>
-    hubConnection?.invoke<string>("generateFrd", location).catch(error => {
+    hubConnection?.invoke<string>("generateFrd", location).catch((error) => {
       console.log(error);
       return null;
     }) ?? null;
 
   const amendFlightplan = async (fp: CreateOrAmendFlightplanDto) => {
-    hubConnection?.invoke<void>("amendFlightPlan", fp).catch(e => {
+    hubConnection?.invoke<void>("amendFlightPlan", fp).catch((e) => {
       console.log("error amending flightplan:", e);
     });
   };
@@ -31,18 +31,18 @@ export const useHubActions = () => {
     return hubConnection
       ?.invoke<void>("setHoldAnnotations", aircraftId, annotations)
       .then(() => dispatch(setMcaAcceptMessage(`HOLD\n${aircraftId}`)))
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
   const cancelHold = async (aircraftId: string) =>
-    hubConnection?.invoke<void>("deleteHoldAnnotations", aircraftId).catch(error => {
+    hubConnection?.invoke<void>("deleteHoldAnnotations", aircraftId).catch((error) => {
       console.log(error);
     });
 
   const sendUplinkMessage = async (aircraftId: AircraftId, message: string) =>
-    hubConnection?.invoke<void>("sendPrivateMessage", aircraftId, message).catch(error => {
+    hubConnection?.invoke<void>("sendPrivateMessage", aircraftId, message).catch((error) => {
       console.log(error);
     });
 
@@ -52,6 +52,6 @@ export const useHubActions = () => {
     amendFlightplan,
     setHoldAnnotations,
     cancelHold,
-    sendUplinkMessage
+    sendUplinkMessage,
   };
 };

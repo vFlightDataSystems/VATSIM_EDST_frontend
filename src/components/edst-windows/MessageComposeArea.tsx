@@ -2,9 +2,9 @@ import React, { useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { useResizeDetector } from "react-resize-detector";
 import { useEventListener } from "usehooks-ts";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aclManualPostingSelector, setAclManualPosting, setAclSort } from "../../redux/slices/aclSlice";
-import { entriesSelector, updateEntry } from "../../redux/slices/entrySlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aclManualPostingSelector, setAclManualPosting, setAclSort } from "~redux/slices/aclSlice";
+import { entriesSelector, updateEntry } from "~redux/slices/entrySlice";
 import {
   closeAllWindows,
   defaultWindowPositions,
@@ -20,34 +20,34 @@ import {
   setMraMessage,
   setWindowPosition,
   windowPositionSelector,
-  zStackSelector
-} from "../../redux/slices/appSlice";
-import { addAclEntryByFid } from "../../redux/thunks/entriesThunks";
-import { printFlightStrip } from "../PrintableFlightStrip";
-import { FloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { aircraftTracksSelector } from "../../redux/slices/trackSlice";
-import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
-import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
-import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
-import { aclCleanup } from "../../redux/thunks/aclCleanup";
-import { useDragging } from "../../hooks/useDragging";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { useHubConnector } from "../../hooks/useHubConnector";
-import { fetchRouteFixes } from "../../api/api";
-import { useOnUnmount } from "../../hooks/useOnUnmount";
-import { toggleAltimeter, toggleMetar } from "../../redux/slices/weatherSlice";
-import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { useWindowOptions } from "../../hooks/useWindowOptions";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { convertBeaconCodeToString } from "../../utils/stringManipulation";
-import { getClearedToFixRouteFixes } from "../../utils/fixes";
-import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
+  zStackSelector,
+} from "~redux/slices/appSlice";
+import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
+import { FloatingWindowDiv } from "styles/floatingWindowStyles";
+import { aircraftTracksSelector } from "~redux/slices/trackSlice";
+import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
+import type { EdstEntry } from "types/edstEntry";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import { aclCleanup } from "~redux/thunks/aclCleanup";
+import { useDragging } from "hooks/useDragging";
+import { EdstWindow } from "enums/edstWindow";
+import { useHubActions } from "hooks/useHubActions";
+import { useHubConnector } from "hooks/useHubConnector";
+import { fetchRouteFixes } from "~/api/api";
+import { useOnUnmount } from "hooks/useOnUnmount";
+import { toggleAltimeter, toggleMetar } from "~redux/slices/weatherSlice";
+import { useWindowOptions } from "hooks/useWindowOptions";
+import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
+import { convertBeaconCodeToString } from "~/utils/stringManipulation";
+import { getClearedToFixRouteFixes } from "~/utils/fixes";
+import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
+import { GI_EXPR } from "~/utils/constants";
+import { formatRoute } from "~/utils/formatRoute";
+import { isAclSortKey, SORT_KEYS_NOT_IMPLEMENTED } from "types/aclSortData";
 import socket from "../../sharedState/socket";
-import { GI_EXPR } from "../../utils/constants";
-import { formatRoute } from "../../utils/formatRoute";
-import { isAclSortKey, SORT_KEYS_NOT_IMPLEMENTED } from "../../typeDefinitions/types/aclSortData";
+import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
+import { printFlightStrip } from "../PrintableFlightStrip";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
@@ -55,24 +55,24 @@ function chunkString(str: string, length: number) {
 
 type MessageComposeAreaDivProps = { brightness: number; fontSizeIndex: number };
 const MessageComposeAreaDiv = styled(FloatingWindowDiv)<MessageComposeAreaDivProps>`
-  ${props =>
+  ${(props) =>
     css`
       color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
     `};
   background-color: #000000;
   border: 1px solid #adadad;
   line-height: 1em;
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
-  font-size: ${props => props.theme.fontProps.floatingFontSizes[props.fontSizeIndex - 1]};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
+  font-size: ${(props) => props.theme.fontProps.floatingFontSizes[props.fontSizeIndex - 1]};
 `;
 
 type McaInputAreaProps = { width: number; paLines: number };
 const MessageComposeInputAreaDiv = styled.div<McaInputAreaProps>`
-  height: calc(${props => `${props.paLines}em`} + 6px);
+  height: calc(${(props) => `${props.paLines}em`} + 6px);
   width: auto;
   overflow: hidden;
   > pre {
-    width: ${props => `${props.width}ch`};
+    width: ${(props) => `${props.width}ch`};
     margin: 2px;
   }
   text-transform: uppercase;
@@ -86,7 +86,7 @@ const MessageComposeCursor = styled.span<McaCursorProps>`
   width: 1ch;
   border-bottom: 1px solid #adadad;
   // if not in insert mode, left and right borders are white
-  ${props =>
+  ${(props) =>
     !props.insertMode &&
     css`
       box-shadow: -1px 0 #adadad, 1px 0 #adadad;
@@ -126,7 +126,7 @@ export const MessageComposeArea = () => {
   const [insertMode, setInsertMode] = useState(true);
   const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.MESSAGE_COMPOSE_AREA));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.MESSAGE_COMPOSE_AREA));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
   const aircraftTracks = useRootSelector(aircraftTracksSelector);
@@ -160,7 +160,7 @@ export const MessageComposeArea = () => {
 
   const toggleVci = (fid: string) => {
     const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      e => e.cid === fid || e.aircraftId === fid || (e.assignedBeaconCode ?? 0).toString().padStart(4, "0") === fid
+      (e) => e.cid === fid || e.aircraftId === fid || (e.assignedBeaconCode ?? 0).toString().padStart(4, "0") === fid
     );
     if (entry) {
       if (entry.vciStatus < 1) {
@@ -173,16 +173,21 @@ export const MessageComposeArea = () => {
 
   const toggleHighlightEntry = (fid: string) => {
     const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      entry => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
+      (entry) => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
     if (entry) {
-      dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { highlighted: !entry.highlighted } }));
+      dispatch(
+        updateEntry({
+          aircraftId: entry.aircraftId,
+          data: { highlighted: !entry.highlighted },
+        })
+      );
     }
   };
 
   const getEntryByFid = (fid: string): EdstEntry | undefined => {
     return Object.values(entries ?? {})?.find(
-      entry => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
+      (entry) => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
   };
 
@@ -209,7 +214,7 @@ export const MessageComposeArea = () => {
       const entry = getEntryByFid(args[1]);
       if (entry && entry.status === "Active") {
         const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
-        if (routeFixes?.map(fix => fix.name)?.includes(args[0])) {
+        if (routeFixes?.map((fix) => fix.name)?.includes(args[0])) {
           const aircraftTrack = aircraftTracks[entry.aircraftId];
           const frd = await hubActions.generateFrd(aircraftTrack.location);
           const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
@@ -217,10 +222,7 @@ export const MessageComposeArea = () => {
           if (route) {
             const amendedFlightplan: ApiFlightplan = {
               ...entry,
-              route: route
-                .split(/\.+/g)
-                .join(" ")
-                .trim()
+              route: route.split(/\.+/g).join(" ").trim(),
             };
             hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
           }
@@ -252,8 +254,13 @@ export const MessageComposeArea = () => {
             dispatch(openWindowThunk(EdstWindow.GPD));
             break;
           case "R":
-            FULLSCREEN_WINDOWS.forEach(window => dispatch(setIsFullscreen({ window, value: true })));
-            dispatch(setWindowPosition({ window: EdstWindow.MESSAGE_COMPOSE_AREA, pos: defaultWindowPositions[EdstWindow.MESSAGE_COMPOSE_AREA]! }));
+            FULLSCREEN_WINDOWS.forEach((window) => dispatch(setIsFullscreen({ window, value: true })));
+            dispatch(
+              setWindowPosition({
+                window: EdstWindow.MESSAGE_COMPOSE_AREA,
+                pos: defaultWindowPositions[EdstWindow.MESSAGE_COMPOSE_AREA]!,
+              })
+            );
             break;
           case "X":
             dispatch(closeAllWindows());
@@ -301,7 +308,7 @@ export const MessageComposeArea = () => {
     const [command, ...args] = input
       .trim()
       .split(/\s+/)
-      .map(s => s.toUpperCase());
+      .map((s) => s.toUpperCase());
     // console.log(command, args)
     let match;
     if (command.match(/\/\/\w+/)) {
@@ -317,7 +324,7 @@ export const MessageComposeArea = () => {
         case "SI":
           connectHub()
             .then(() => accept("SIGN IN"))
-            .catch(reason => reject(`SIGN IN\n${reason?.message ?? "UNKNOWN ERROR"}`));
+            .catch((reason) => reject(`SIGN IN\n${reason?.message ?? "UNKNOWN ERROR"}`));
           break;
         case "SO":
           disconnectHub()
@@ -399,27 +406,27 @@ export const MessageComposeArea = () => {
           dispatch(setMcaResponse(""));
           break;
         case "ArrowLeft":
-          setCursorPosition(prevPosition => (prevPosition - 1 < 0 ? mcaInputValue.length : prevPosition - 1));
+          setCursorPosition((prevPosition) => (prevPosition - 1 < 0 ? mcaInputValue.length : prevPosition - 1));
           break;
         case "ArrowRight":
-          setCursorPosition(prevPosition => (mcaInputValue.length > prevPosition ? prevPosition + 1 : 0));
+          setCursorPosition((prevPosition) => (mcaInputValue.length > prevPosition ? prevPosition + 1 : 0));
           break;
         case "Backspace":
           if (cursorPosition > 0) {
-            setMcaInputValue(prevValue => prevValue.slice(0, cursorPosition - 1) + prevValue.slice(cursorPosition));
-            setCursorPosition(prevPosition => Math.max(0, prevPosition - 1));
+            setMcaInputValue((prevValue) => prevValue.slice(0, cursorPosition - 1) + prevValue.slice(cursorPosition));
+            setCursorPosition((prevPosition) => Math.max(0, prevPosition - 1));
           }
           break;
         case "Insert":
-          setInsertMode(prevMode => !prevMode);
+          setInsertMode((prevMode) => !prevMode);
           break;
         case "Delete":
-          setMcaInputValue(prevValue => prevValue.slice(0, cursorPosition) + prevValue.slice(cursorPosition + 1));
+          setMcaInputValue((prevValue) => prevValue.slice(0, cursorPosition) + prevValue.slice(cursorPosition + 1));
           break;
         default:
           if (event.key.length === 1) {
-            setMcaInputValue(prevValue => prevValue.slice(0, cursorPosition) + event.key + prevValue.slice(cursorPosition + (insertMode ? 1 : 0)));
-            setCursorPosition(prevPosition => prevPosition + 1);
+            setMcaInputValue((prevValue) => prevValue.slice(0, cursorPosition) + event.key + prevValue.slice(cursorPosition + (insertMode ? 1 : 0)));
+            setCursorPosition((prevPosition) => prevPosition + 1);
           }
       }
     }
@@ -429,7 +436,7 @@ export const MessageComposeArea = () => {
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
 
-  const onMcaMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
+  const onMcaMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     switch (event.button) {
       case 1:

@@ -1,13 +1,13 @@
 import React, { useMemo, useRef, useState } from "react";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
-import { ScrollContainer } from "../../styles/optionMenuStyles";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import type { Nullable } from "types/utility-types";
+import { FloatingWindowRow } from "styles/floatingWindowStyles";
+import { ScrollContainer } from "styles/optionMenuStyles";
+import { EdstWindow } from "enums/edstWindow";
+import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "~redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
-import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "../../redux/slices/appSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { Nullable } from "../../typeDefinitions/utility-types";
 
 type GIRowProps = {
   text: string;
@@ -37,12 +37,12 @@ const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
             delete: {
               value: "DELETE",
               backgroundColor: "#575757",
-              onMouseDown: onDelete
+              onMouseDown: onDelete,
             },
             print: {
               value: "PRINT",
-              backgroundColor: "#575757"
-            }
+              backgroundColor: "#575757",
+            },
           }}
         />
       )}
@@ -58,7 +58,7 @@ export const GIWindow = () => {
   const [showOptions, setShowOptions] = useState(false);
   const extraOptions = useMemo(
     () => ({
-      printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
+      printAll: { value: "PRINT ALL", backgroundColor: "#000000" },
     }),
     []
   );
@@ -99,7 +99,7 @@ export const GIWindow = () => {
               key={id}
               text={entry.text}
               selected={selectedMessageId === id}
-              handleMouseDown={event => handleEntryMouseDown(event, id)}
+              handleMouseDown={(event) => handleEntryMouseDown(event, id)}
               onDelete={() => {
                 dispatch(delGIEntry(id));
                 setSelectedMessageId(null);

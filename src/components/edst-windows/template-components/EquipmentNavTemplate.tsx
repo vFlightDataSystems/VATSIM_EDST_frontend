@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { Tooltips } from "../../../tooltips";
-import { useRootSelector } from "../../../redux/hooks";
-import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
-import { EdstInput, OptionsBodyRow, OptionIndicatorCircle } from "../../../styles/optionMenuStyles";
+import { Tooltips } from "~/tooltips";
+import { useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { EdstInput, OptionsBodyRow, OptionIndicatorCircle } from "styles/optionMenuStyles";
+import { isEnum } from "~/utility-functions";
+import type { EquipmentTemplateBodyProps } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EqpCol, EqpColTitle, EqpContentCol, EqpContentRow, EqpInput, EqpInputContainer, EqpInputContainer60, EqpInputRow } from "./EqpStyled";
-import { isEnum } from "../../../utility-functions";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 
 enum NavCat {
   F = "F",
   O = "O",
   D = "D",
-  T = "T"
+  T = "T",
 }
 
 const navCatText = {
   F: "(ADF)",
   O: "(VOR)",
   D: "(DME)",
-  T: "(TACAN)"
+  T: "(TACAN)",
 };
 
 enum RnavCat {
@@ -27,7 +28,7 @@ enum RnavCat {
   I = "I",
   C = "C",
   R = "R",
-  X = "X"
+  X = "X",
 }
 
 const rnavCatText = {
@@ -35,7 +36,7 @@ const rnavCatText = {
   I: "(INS)",
   C: "(LORAN C)",
   R: "(PBN APPROVED)",
-  X: "(MNPS APPROVED)"
+  X: "(MNPS APPROVED)",
 };
 
 const isNavCat = isEnum(NavCat);
@@ -92,7 +93,7 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
       <OptionsBodyRow margin="10px 0 0 0" padding="4px 0 0 0">
         <EqpCol>
           <EqpColTitle>NAVAIDS</EqpColTitle>
-          {Object.values(NavCat).map(category => (
+          {Object.values(NavCat).map((category) => (
             <EquipmentTemplateRow
               key={`nav-cat-row-${category}`}
               buttonText={category}
@@ -105,7 +106,7 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
         </EqpCol>
         <EqpCol>
           <EqpColTitle>RNAV</EqpColTitle>
-          {Object.values(RnavCat).map(category => (
+          {Object.values(RnavCat).map((category) => (
             <EquipmentTemplateRow
               key={`rnav-cat-row-${category}`}
               buttonText={category}

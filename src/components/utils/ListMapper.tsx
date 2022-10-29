@@ -1,9 +1,14 @@
-import React, { ComponentType } from "react";
-import { RootState } from "../../redux/store";
-import { useRootSelector } from "../../redux/hooks";
-import { BodyRowDiv, RowSeparator } from "../../styles/styles";
+import type { ComponentType } from "react";
+import React from "react";
+import type { RootState } from "~redux/store";
+import { useRootSelector } from "~redux/hooks";
+import { BodyRowDiv, RowSeparator } from "styles/styles";
 
-type MapRowProps = { selector: (state: RootState) => string[]; Component: ComponentType<{ aircraftId: string }>; showSep?: boolean };
+type MapRowProps = {
+  selector: (state: RootState) => string[];
+  Component: ComponentType<{ aircraftId: string }>;
+  showSep?: boolean;
+};
 export const ListMapper = ({ selector, Component, showSep }: MapRowProps) => {
   const list = useRootSelector(selector);
   return (

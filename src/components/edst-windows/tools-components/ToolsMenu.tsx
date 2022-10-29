@@ -1,11 +1,8 @@
 import React, { useRef, useState } from "react";
 
 import styled from "styled-components";
-import { ExitButton } from "../../utils/EdstButton";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { closeWindow, pushZStack, windowSelector, zStackSelector } from "../../../redux/slices/appSlice";
-import { ToolsOptionsMenu } from "./ToolsOptionsMenu";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { closeWindow, pushZStack, windowSelector, zStackSelector } from "~redux/slices/appSlice";
 import {
   OptionsBody,
   OptionsBodyCol,
@@ -13,12 +10,15 @@ import {
   OptionsBottomRow,
   OptionsFlexCol,
   OptionsMenu,
-  OptionsMenuHeader
-} from "../../../styles/optionMenuStyles";
+  OptionsMenuHeader,
+} from "styles/optionMenuStyles";
+import { useDragging } from "hooks/useDragging";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
-import { useDragging } from "../../../hooks/useDragging";
-import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { ToolsOptionsMenu } from "./ToolsOptionsMenu";
+import { EdstTooltip } from "../../utils/EdstTooltip";
+import { ExitButton } from "../../utils/EdstButton";
 
 export const ToolsBody = styled(OptionsBody)`
   padding: 20px 0 4px 0;
@@ -26,7 +26,7 @@ export const ToolsBody = styled(OptionsBody)`
 
 export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector(state => windowSelector(state, EdstWindow.TOOLS_MENU));
+  const windowProps = useRootSelector((state) => windowSelector(state, EdstWindow.TOOLS_MENU));
   const zStack = useRootSelector(zStackSelector);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);

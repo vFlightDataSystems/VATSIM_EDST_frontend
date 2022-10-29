@@ -1,4 +1,4 @@
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
 
 export function removeStringFromEnd(str: string, end: string): string {
   return str.endsWith(end) ? str.slice(0, -end.length) : str;

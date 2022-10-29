@@ -1,5 +1,5 @@
-import { ApiEramConfiguration } from "./apiEramConfiguration";
-import { Nullable } from "../../utility-types";
+import type { ApiEramConfiguration } from "./apiEramConfiguration";
+import type { Nullable } from "../utility-types";
 
 export type ApiControllerPosition = {
   callsign: string;

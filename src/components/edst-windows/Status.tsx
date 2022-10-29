@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useRootSelector } from "../../redux/hooks";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useSocketConnector } from "../../hooks/useSocketConnector";
-import { useHubConnection } from "../../hooks/useHubConnection";
+import { useRootSelector } from "~redux/hooks";
+import { EdstWindow } from "enums/edstWindow";
+import { useSocketConnector } from "hooks/useSocketConnector";
+import { useHubConnection } from "hooks/useHubConnection";
+import { artccIdSelector, sectorIdSelector } from "~redux/slices/sectorSlice";
 import { EdstButton } from "../utils/EdstButton";
-import { artccIdSelector, sectorIdSelector } from "../../redux/slices/sectorSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
 
 export const Status = () => {

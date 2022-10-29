@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { zStackSelector } from "../../redux/slices/appSlice";
+import type { Nullable } from "types/utility-types";
+import { zStackSelector } from "~redux/slices/appSlice";
+import { FloatingWindowRow } from "styles/floatingWindowStyles";
+import { EdstWindow } from "enums/edstWindow";
+import { useMetar } from "~/api/weatherApi";
+import { delMetar, metarAirportsSelector } from "~redux/slices/weatherSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "../utils/FloatingWindowOptionContainer";
-import { FloatingWindowRow } from "../../styles/floatingWindowStyles";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useMetar } from "../../api/weatherApi";
-import { delMetar, metarAirportsSelector } from "../../redux/slices/weatherSlice";
 import { FloatingWindow } from "../utils/FloatingWindow";
-import { windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { Nullable } from "../../typeDefinitions/utility-types";
 
 type MetarRowProps = {
   airport: string;
@@ -46,8 +46,8 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
             delete: {
               value: `DELETE ${airport}`,
               backgroundColor: "#575757",
-              onMouseDown: onDelete
-            }
+              onMouseDown: onDelete,
+            },
           }}
         />
       )}
@@ -63,7 +63,7 @@ export const MetarWindow = () => {
   const [showOptions, setShowOptions] = useState(false);
   const extraOptions = useMemo(
     () => ({
-      printAll: { value: "PRINT ALL", backgroundColor: "#000000" }
+      printAll: { value: "PRINT ALL", backgroundColor: "#000000" },
     }),
     []
   );
@@ -99,12 +99,12 @@ export const MetarWindow = () => {
     >
       {airports.length > 0 && (
         <>
-          {airports.map(airport => (
+          {airports.map((airport) => (
             <MetarRow
               key={airport}
               airport={airport}
               selected={selectedAirport === airport}
-              handleMouseDown={event => handleMouseDown(event, airport)}
+              handleMouseDown={(event) => handleMouseDown(event, airport)}
               onDelete={() => {
                 dispatch(delMetar(airport));
                 setSelectedAirport(null);

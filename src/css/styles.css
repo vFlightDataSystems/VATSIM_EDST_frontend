@@ -1,18 +1,17 @@
 @font-face {
   font-family: EDST;
-  src: url('../resources/fonts/EDSTv200.ttf');
+  src: url("../resources/fonts/EDSTv200.ttf");
 }
 
 @font-face {
   font-family: ERAM;
-  src: url('../resources/fonts/ERAMv200.ttf');
+  src: url("../resources/fonts/ERAMv200.ttf");
 }
 
 @font-face {
   font-family: MyConsolas;
-  src: url('../resources/fonts/CONSOLAB.TTF');
+  src: url("../resources/fonts/CONSOLAB.TTF");
 }
-
 
 .circle-icon {
   background-image: url("../resources/images/Circle.svg");
@@ -31,13 +30,13 @@
 }
 
 .vatsim-logo {
-  background-image: url('../resources/images/VATSIM-social_icon.svg');
+  background-image: url("../resources/images/VATSIM-social_icon.svg");
 }
 
 .skyvector-logo {
-  background-image: url('../resources/images/glob_bright.png');
+  background-image: url("../resources/images/glob_bright.png");
 }
 
 .flightaware-logo {
-  background-image: url('../resources/images/FA_1.png');
+  background-image: url("../resources/images/FA_1.png");
 }

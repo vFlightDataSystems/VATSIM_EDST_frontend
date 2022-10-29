@@ -1,6 +1,7 @@
-import styled, { CSSProperties } from "styled-components";
-import { EdstInput, OptionsBodyRow } from "../../../styles/optionMenuStyles";
-import { borderHover } from "../../../styles/styles";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import { EdstInput, OptionsBodyRow } from "styles/optionMenuStyles";
+import { borderHover } from "styles/styles";
 
 export const EqpRow = styled(OptionsBodyRow)`
   display: flex;
@@ -29,7 +30,7 @@ export const EqpInput = styled(EdstInput)`
   font-size: 16px;
   outline: none;
   flex: 1;
-  color: ${props => props.theme.colors.grey};
+  color: ${(props) => props.theme.colors.grey};
   background-color: #000000;
   width: calc(100% - 7px);
   display: flex;
@@ -42,7 +43,7 @@ export const EqpCol = styled.div<EqpColProps>`
   display: flex;
   flex-flow: column;
   margin: 0 4px;
-  width: ${props => props.width ?? "auto"};
+  width: ${(props) => props.width ?? "auto"};
   min-width: 18%;
   height: 100%;
 `;

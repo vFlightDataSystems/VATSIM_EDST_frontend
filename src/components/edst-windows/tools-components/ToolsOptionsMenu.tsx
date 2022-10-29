@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-import { EdstButton, ExitButton } from "../../utils/EdstButton";
+import { closeWindow } from "~redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { toolsOptionsSelector, updateToolsOptions } from "~redux/slices/aclSlice";
+import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionIndicator, OptionsFlexCol } from "styles/optionMenuStyles";
+import { EdstWindow } from "enums/edstWindow";
 import { EdstTooltip } from "../../utils/EdstTooltip";
-import { closeWindow } from "../../../redux/slices/appSlice";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { toolsOptionsSelector, updateToolsOptions } from "../../../redux/slices/aclSlice";
-import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 
 export const ToolsOptionsMenu = () => {
   const dispatch = useRootDispatch();
@@ -61,7 +61,7 @@ export const ToolsOptionsMenu = () => {
                   displayCoordinationColumn,
                   dropTrackDelete,
                   iafDofManual,
-                  nonRvsmIndicator
+                  nonRvsmIndicator,
                 })
               );
               dispatch(closeWindow(EdstWindow.TOOLS_MENU));

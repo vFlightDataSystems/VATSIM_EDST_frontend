@@ -1,25 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, ExitButton } from "../../utils/EdstButton";
-import { Tooltips } from "../../../tooltips";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "../../../redux/slices/appSlice";
-import { aselEntrySelector, updateEntry } from "../../../redux/slices/entrySlice";
-import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../../styles/optionMenuStyles";
-import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
-import { InputContainer } from "../../utils/InputComponents";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "~redux/slices/appSlice";
+import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
+import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
-import { useDragging } from "../../../hooks/useDragging";
-import { useCenterCursor } from "../../../hooks/useCenterCursor";
-import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { InputContainer } from "../../utils/InputComponents";
+import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "./styled";
+import { EdstTooltip } from "../../utils/EdstTooltip";
+import { EdstButton, ExitButton } from "../../utils/EdstButton";
 
 enum Sign {
   more = "+",
   less = "-",
-  none = ""
+  none = "",
 }
 
 const SpeedDiv = styled(OptionsMenu)`
@@ -29,7 +29,7 @@ const SpeedDiv = styled(OptionsMenu)`
 export const SpeedMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.SPEED_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.SPEED_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const [speed, setSpeed] = useState(280);
@@ -59,10 +59,20 @@ export const SpeedMenu = () => {
     switch (event.button) {
       case 0:
         if (amend) {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: null } }));
+          dispatch(
+            updateEntry({
+              aircraftId: entry.aircraftId,
+              data: { scratchpadSpeed: null },
+            })
+          );
           // set assigned speed
         } else {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: valueStr } }));
+          dispatch(
+            updateEntry({
+              aircraftId: entry.aircraftId,
+              data: { scratchpadSpeed: valueStr },
+            })
+          );
           // delete assigned speed
         }
         break;
@@ -70,7 +80,12 @@ export const SpeedMenu = () => {
         if (amend) {
           // set assigned speed
         } else {
-          dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { scratchpadSpeed: valueStr } }));
+          dispatch(
+            updateEntry({
+              aircraftId: entry.aircraftId,
+              data: { scratchpadSpeed: valueStr },
+            })
+          );
         }
         break;
       default:
@@ -110,7 +125,7 @@ export const SpeedMenu = () => {
             <OptionsBodyCol>
               Speed:
               <InputContainer>
-                <EdstInput value={speed} onChange={e => setSpeed(Number(e.target.value))} />
+                <EdstInput value={speed} onChange={(e) => setSpeed(Number(e.target.value))} />
               </InputContainer>
             </OptionsBodyCol>
           </OptionsBodyRow>
@@ -134,24 +149,21 @@ export const SpeedMenu = () => {
             <EdstTooltip style={{ marginRight: "0.5ch" }} content="MACH" title={Tooltips.aclSpdMach} />
           </Row3>
           <ScrollContainer onWheel={handleScroll}>
-            {_.range(5, -6, -1).map(i => {
+            {_.range(5, -6, -1).map((i) => {
               const centerSpd = speed - Math.round(deltaY / 100) * 10 + i * 10;
               const centerMach = 0.79 - Math.round(deltaY / 100) / 100 + i / 100;
               return (
                 <ScrollRow key={i}>
-                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerSpd)}>
+                  <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerSpd)}>
                     {centerSpd.toString().padStart(3, "0")}
                     {sign}
                   </ScrollCol>
-                  <ScrollCol onMouseDown={e => handleMouseDown(e, centerSpd + 5)}>
+                  <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerSpd + 5)}>
                     {(centerSpd + 5).toString().padStart(3, "0")}
                     {sign}
                   </ScrollCol>
-                  <ScrollCol3 onMouseDown={e => handleMouseDown(e, centerMach, true)}>
-                    {centerMach
-                      .toFixed(2)
-                      .toString()
-                      .slice(1)}
+                  <ScrollCol3 onMouseDown={(e) => handleMouseDown(e, centerMach, true)}>
+                    {centerMach.toFixed(2).toString().slice(1)}
                     {sign}
                   </ScrollCol3>
                 </ScrollRow>

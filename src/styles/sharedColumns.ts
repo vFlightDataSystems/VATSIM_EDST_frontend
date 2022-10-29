@@ -1,4 +1,5 @@
-import styled, { css, CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled, { css } from "styled-components";
 import { borderHover, createBorder } from "./styles";
 
 const hotboxBorder = createBorder("1px", "#575757", "#414141");
@@ -24,16 +25,16 @@ export const Col = styled.div<ColProps>`
     pointer-events: none;
   }
 
-  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "auto")};
-  visibility: ${props => (props.visibilityHidden ? "hidden" : "initial")};
-  ${props => props.color && { color: props.color }};
-  ${props =>
+  width: ${(props) => (props.visibilityHidden || props.hidden ? "2ch" : "auto")};
+  visibility: ${(props) => (props.visibilityHidden ? "hidden" : "initial")};
+  ${(props) => props.color && { color: props.color }};
+  ${(props) =>
     props.selected &&
     css`
       background-color: ${props.theme.colors.grey};
       color: #000000;
     `};
-  ${props => props.hover && borderHover};
+  ${(props) => props.hover && borderHover};
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
@@ -51,7 +52,7 @@ export const HotBox = styled(SpecialBox)`
 export const AircraftTypeCol = styled(Col)<ColProps>`
   min-width: 2ch;
   justify-content: left;
-  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "7ch")};
+  width: ${(props) => (props.visibilityHidden || props.hidden ? "2ch" : "7ch")};
   margin-right: 0;
   padding-left: 4px;
   div {
@@ -67,7 +68,7 @@ export const AircraftTypeCol = styled(Col)<ColProps>`
 export const CodeCol = styled(Col)<ColProps>`
   padding: 0 2px;
   justify-content: left;
-  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "5ch")};
+  width: ${(props) => (props.visibilityHidden || props.hidden ? "2ch" : "5ch")};
 `;
 type AltColProps = { headerCol?: boolean };
 export const AltCol = styled(Col)<AltColProps>`
@@ -80,7 +81,7 @@ export const AltCol = styled(Col)<AltColProps>`
 type AltColDivProps = { headerMouseDown?: boolean };
 export const AltColDiv = styled(Col)<AltColDivProps>`
   border: 1px solid transparent;
-  ${props => props.headerMouseDown && { border: "1px solid #AD3636" }};
+  ${(props) => props.headerMouseDown && { border: "1px solid #AD3636" }};
   ${borderHover}
 `;
 type RouteColProps = { padding?: CSSProperties["padding"] };
@@ -90,7 +91,7 @@ export const RouteCol = styled(Col)<RouteColProps>`
   justify-content: left;
   border: 1px solid transparent;
   margin-left: 4px;
-  padding: ${props => props.padding ?? "0 2px 0 0"};
+  padding: ${(props) => props.padding ?? "0 2px 0 0"};
 `;
 type RouteSpanProps = { padding?: CSSProperties["padding"] };
 export const RouteSpan = styled(RouteCol)<RouteSpanProps>`
@@ -99,23 +100,25 @@ export const RouteSpan = styled(RouteCol)<RouteSpanProps>`
   border: none;
   margin: 0;
   border: transparent;
-  padding: ${props => props.padding ?? 0};
+  padding: ${(props) => props.padding ?? 0};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 export const EmbeddedRouteTextSpan = styled(RouteSpan)`
-  color: ${props => props.theme.colors.blue};
-  ${props =>
+  color: ${(props) => props.theme.colors.blue};
+  ${(props) =>
     props.selected && {
       "background-color": props.theme.colors.blue,
-      color: "#000000"
+      color: "#000000",
     }}
 `;
-export const RouteDepAirportSpan = styled(RouteSpan)<{ amendmentPending?: boolean }>`
-  ${props =>
+export const RouteDepAirportSpan = styled(RouteSpan)<{
+  amendmentPending?: boolean;
+}>`
+  ${(props) =>
     props.amendmentPending && {
       color: props.selected ? "#000000" : props.theme.colors.blue,
-      "background-color": props.selected ? props.theme.colors.blue : "#transparent"
+      "background-color": props.selected ? props.theme.colors.blue : "#transparent",
     }}
   }
 `;

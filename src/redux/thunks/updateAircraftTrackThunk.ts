@@ -1,6 +1,6 @@
-import { ApiAircraftTrack } from "../../typeDefinitions/types/apiTypes/apiAircraftTrack";
-import { RootThunkAction } from "../store";
-import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
+import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
+import type { EdstEntry } from "types/edstEntry";
+import type { RootThunkAction } from "../store";
 import { setTrack } from "../slices/trackSlice";
 import { updateEntries } from "../slices/entrySlice";
 

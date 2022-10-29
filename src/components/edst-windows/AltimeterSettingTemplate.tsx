@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import _ from "lodash";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { NoSelectDiv } from "../../styles/NoSelectDiv";
-import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "../../styles/floatingWindowStyles";
-import { useRootSelector } from "../../redux/hooks";
-import { altimeterAirportsSelector } from "../../redux/slices/weatherSlice";
+import type { WindowPosition } from "types/windowPosition";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { FloatingWindowHeaderColDiv16ch, FloatingWindowHeaderColDivFlex, FloatingWindowHeaderDiv } from "styles/floatingWindowStyles";
+import { useRootSelector } from "~redux/hooks";
+import { altimeterAirportsSelector } from "~redux/slices/weatherSlice";
 
 type AltimeterStationTemplateDivProps = { pos: WindowPosition };
 const AltimeterStationTemplateDiv = styled(NoSelectDiv)<AltimeterStationTemplateDivProps>`
@@ -14,9 +14,9 @@ const AltimeterStationTemplateDiv = styled(NoSelectDiv)<AltimeterStationTemplate
   flex-flow: column;
   height: auto;
   width: auto;
-  ${props => ({
+  ${(props) => ({
     left: `${props.pos.left}px`,
-    top: `${props.pos.top}px`
+    top: `${props.pos.top}px`,
   })};
 `;
 
@@ -36,9 +36,9 @@ const AltimeterStationTemplateInput = styled.input`
   background-color: #000000;
   border: 1px solid #adadad;
 
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
-  font-size: ${props => props.theme.fontProps.fontSize};
-  color: ${props => props.theme.colors.grey};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
+  color: ${(props) => props.theme.colors.grey};
 `;
 
 type AltimeterStationTemplateProps = {
@@ -52,7 +52,7 @@ export const AltimeterSettingTemplate = ({ pos, ...props }: AltimeterStationTemp
   const xRef = useRef<HTMLDivElement>(null);
   const rows = 30;
   const columns = 1;
-  const [inputValues, setInputValues] = useState<string[]>(_.range(rows * columns).map(i => airports[i] ?? ""));
+  const [inputValues, setInputValues] = useState<string[]>(_.range(rows * columns).map((i) => airports[i] ?? ""));
 
   const updateInput = (index: number, value: string) => {
     const newInputValues = [...inputValues];
@@ -68,13 +68,13 @@ export const AltimeterSettingTemplate = ({ pos, ...props }: AltimeterStationTemp
           X
         </FloatingWindowHeaderColDiv16ch>
       </FloatingWindowHeaderDiv>
-      {_.range(0, rows, 1).map(i => (
+      {_.range(0, rows, 1).map((i) => (
         <AltimeterStationTemplateRowDiv key={i}>
-          {_.range(0, columns, 1).map(j => (
+          {_.range(0, columns, 1).map((j) => (
             <AltimeterStationTemplateInput
               key={j}
               value={inputValues[i * columns + j]}
-              onChange={event => updateInput(i * columns + j, event.target.value)}
+              onChange={(event) => updateInput(i * columns + j, event.target.value)}
             />
           ))}
         </AltimeterStationTemplateRowDiv>

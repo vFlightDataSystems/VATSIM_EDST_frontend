@@ -1,29 +1,35 @@
 import { lineString, lineToPolygon } from "@turf/turf";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState, RootThunkAction } from "../store";
-import { fetchSigmets } from "../../api/api";
-import { addGIEntries } from "../slices/appSlice";
-import { addAirmets, addSigmets, AirmetEntry, SigmetEntry } from "../slices/weatherSlice";
+import { fetchSigmets } from "~/api/api";
+import type { RootState, RootThunkAction } from "~redux/store";
+import { addGIEntries } from "~redux/slices/appSlice";
+import type { AirmetEntry, SigmetEntry } from "~redux/slices/weatherSlice";
+import { addAirmets, addSigmets } from "~redux/slices/weatherSlice";
 
 export const refreshAirSigmets = createAsyncThunk<void, void, { state: RootState }>("refreshAirSigmets", async (_, thunkAPI) => {
   const airSigmetEntries = await fetchSigmets();
   const newSigmetEntries = airSigmetEntries.reverse();
   const weather = thunkAPI.getState().weather;
-  const newSigmets = newSigmetEntries.filter(s => !Object.keys(weather.sigmetMap).includes(s.text) && s.airsigmet_type === "SIGMET");
-  const newAirmets = newSigmetEntries.filter(s => !Object.keys(weather.airmetMap).includes(s.text) && s.airsigmet_type === "AIRMET");
+  const newSigmets = newSigmetEntries.filter((s) => !Object.keys(weather.sigmetMap).includes(s.text) && s.airsigmet_type === "SIGMET");
+  const newAirmets = newSigmetEntries.filter((s) => !Object.keys(weather.airmetMap).includes(s.text) && s.airsigmet_type === "AIRMET");
   const newSigmetMap: Record<string, SigmetEntry> = {};
   const newAirmetMap: Record<string, AirmetEntry> = {};
 
-  newSigmets.forEach(s => {
+  newSigmets.forEach((s) => {
     const key = s.text.slice(0);
     const polygons = lineToPolygon(lineString(s.area));
     const observationTime = s.text.match(/\d{6}/)?.[0];
     if (observationTime) {
       s.text = s.text.slice(s.text.lastIndexOf(observationTime) + 2).split(/\n\s*\n/)[0];
-      newSigmetMap[key] = { suppressed: false, acknowledged: false, polygons, ...s };
+      newSigmetMap[key] = {
+        suppressed: false,
+        acknowledged: false,
+        polygons,
+        ...s,
+      };
     }
   });
-  newAirmets.forEach(s => {
+  newAirmets.forEach((s) => {
     const key = s.text.slice(0);
     const polygons = lineToPolygon(lineString(s.area));
     const observationTime = s.text.match(/\d{6}/)?.[0];
@@ -44,6 +50,6 @@ export const refreshAirSigmets = createAsyncThunk<void, void, { state: RootState
   thunkAPI.dispatch(addSigmets(newSigmetMap));
 });
 
-export const refreshWeatherThunk: RootThunkAction = dispatch => {
+export const refreshWeatherThunk: RootThunkAction = (dispatch) => {
   dispatch(refreshAirSigmets());
 };

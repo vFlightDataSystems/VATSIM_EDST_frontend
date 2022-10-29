@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { Tooltips } from "~/tooltips";
+import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "styles/optionMenuStyles";
+import type { ApiPreferentialArrivalRoute } from "types/apiTypes/apiPreferentialArrivalRoute";
+import type { ApiPreferentialDepartureRoute } from "types/apiTypes/apiPreferentialDepartureRoute";
+import type { ApiPreferentialDepartureArrivalRoute } from "types/apiTypes/apiPreferentialDepartureArrivalRoute";
+import type { EdstPreferentialRoute } from "types/edstPreferentialRoute";
+import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { EdstButton } from "../utils/EdstButton";
-import { Tooltips } from "../../tooltips";
-import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "../../styles/optionMenuStyles";
-import { ApiPreferentialArrivalRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialArrivalRoute";
-import { ApiPreferentialDepartureRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "../../typeDefinitions/types/apiTypes/apiPreferentialDepartureArrivalRoute";
-import { EdstPreferentialRoute } from "../../typeDefinitions/types/edstPreferentialRoute";
-import { useSharedUiListener } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
 
 const PrefrouteContainer = styled(ScrollContainer)`
@@ -47,16 +47,16 @@ function computeRouteList(
   pdar: ApiPreferentialDepartureArrivalRoute[]
 ): EdstPreferentialRoute[] {
   return pdar
-    .map(r => {
+    .map((r) => {
       return { ...r, routeType: "pdar" } as EdstPreferentialRoute;
     })
     .concat(
-      pdr.map(r => {
+      pdr.map((r) => {
         return { ...r, routeType: "pdr" } as EdstPreferentialRoute;
       })
     )
     .concat(
-      par.map(r => {
+      par.map((r) => {
         return { ...r, routeType: "par" } as EdstPreferentialRoute;
       })
     );
@@ -65,7 +65,7 @@ function computeRouteList(
 export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: PreferredRouteDisplayProps) => {
   const [eligibleOnly, setEligibleOnly] = useState(false);
   const routes = computeRouteList(par, pdr, pdar);
-  const eligibleRoutes = routes.filter(r => r.eligible);
+  const eligibleRoutes = routes.filter((r) => r.eligible);
 
   useSharedUiListener("routeMenuSetEligibleOnly", setEligibleOnly);
 

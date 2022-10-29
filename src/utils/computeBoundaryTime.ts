@@ -1,6 +1,7 @@
-import { Feature, point, Polygon } from "@turf/turf";
-import { EdstEntry } from "../typeDefinitions/types/edstEntry";
-import { ApiAircraftTrack } from "../typeDefinitions/types/apiTypes/apiAircraftTrack";
+import type { Feature, Polygon } from "@turf/turf";
+import { point } from "@turf/turf";
+import type { EdstEntry } from "types/edstEntry";
+import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import { getSignedStratumDistancePointToPolygons } from "./polygonDistance";
 import { locationToPosition } from "./locationToPosition";
 

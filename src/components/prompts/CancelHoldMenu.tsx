@@ -1,11 +1,11 @@
 import React from "react";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { FidRow } from "styles/optionMenuStyles";
+import { EdstWindow } from "enums/edstWindow";
+import { useHubActions } from "hooks/useHubActions";
+import { closeWindow, setAsel } from "~redux/slices/appSlice";
 import { EdstPrompt } from "./EdstPrompt";
-import { FidRow } from "../../styles/optionMenuStyles";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { closeWindow, setAsel } from "../../redux/slices/appSlice";
 
 export const CancelHoldMenu = () => {
   const dispatch = useRootDispatch();

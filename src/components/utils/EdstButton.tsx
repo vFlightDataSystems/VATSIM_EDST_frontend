@@ -1,11 +1,12 @@
 import React, { useRef } from "react";
-import styled, { CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import type { AllOrNone } from "types/utility-types";
+import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
+import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
+import { buttonBorder2px, buttonBorderInverted2px, outlineHover } from "styles/styles";
 import { EdstTooltip } from "./EdstTooltip";
-import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
-import { useSharedUiListenerWithElement } from "../../hooks/useSharedUiListener";
 import socket from "../../sharedState/socket";
-import { buttonBorder2px, buttonBorderInverted2px, outlineHover } from "../../styles/styles";
-import { AllOrNone } from "../../typeDefinitions/utility-types";
 
 type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
 type EdstOuterButtonProps = Partial<{ disabled: boolean } & EdstOuterButtonCSSProps>;
@@ -14,9 +15,9 @@ const EdstOuterButton = styled.div<EdstOuterButtonProps>`
   border: 1px solid transparent;
 
   padding: 0;
-  width: ${props => props.width ?? "auto"};
-  height: ${props => props.height ?? "auto"};
-  margin: ${props => props.margin ?? "auto"};
+  width: ${(props) => props.width ?? "auto"};
+  height: ${(props) => props.height ?? "auto"};
+  margin: ${(props) => props.margin ?? "auto"};
   &[disabled] {
     pointer-events: none;
   }
@@ -34,16 +35,16 @@ type EdstInnerButtonProps = Partial<{ selected: boolean; disabled: boolean } & E
 const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   font-size: inherit;
   display: flex;
-  flex-grow: ${props => props.flexGrow ?? 1};
+  flex-grow: ${(props) => props.flexGrow ?? 1};
   justify-content: center;
   align-items: center;
-  color: ${props => (props.selected ? "#000000" : props.theme.colors.grey)};
-  background-color: ${props => (props.selected ? props.theme.colors.grey : "#000000")};
-  ${props => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
+  color: ${(props) => (props.selected ? "#000000" : props.theme.colors.grey)};
+  background-color: ${(props) => (props.selected ? props.theme.colors.grey : "#000000")};
+  ${(props) => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
   margin: 0;
-  padding: ${props => props.padding ?? "0 4px"};
-  width: ${props => props.width ?? "auto"};
-  height: ${props => props.height ?? "auto"};
+  padding: ${(props) => props.padding ?? "0 4px"};
+  width: ${(props) => props.width ?? "auto"};
+  height: ${(props) => props.height ?? "auto"};
   ${outlineHover};
   &[disabled] {
     pointer-events: none;
@@ -89,7 +90,10 @@ export const EdstButton = (props: EdstButtonProps) => {
 };
 
 type EdstButtonFixedSizeProps = Omit<EdstButtonProps, "width" | "height">;
-type ExitButtonProps = { onMouseDown: React.MouseEventHandler<HTMLDivElement>; title?: string };
+type ExitButtonProps = {
+  onMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  title?: string;
+};
 export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit" {...props} />;
 
 export const EdstTemplateButton10ch = (props: EdstButtonFixedSizeProps) => <EdstButton width="10ch" margin="0 4px" {...props} />;
@@ -112,7 +116,7 @@ export function EdstWindowHeaderButton<T>({
         ref={ref}
         disabled={props.disabled}
         id={id}
-        onMouseDownCapture={event => {
+        onMouseDownCapture={(event) => {
           if (onMouseDown) {
             onMouseDown(event);
             if (sharedUiEventId) {

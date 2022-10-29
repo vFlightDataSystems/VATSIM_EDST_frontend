@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { WindowTitleBar } from "../WindowTitleBar";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { closeAllMenus, closeWindow, gpdAselSelector } from "~redux/slices/appSlice";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "~redux/slices/gpdSlice";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { EdstWindow } from "enums/edstWindow";
+import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import { EdstWindowHeaderButton } from "../../utils/EdstButton";
-import { Tooltips } from "../../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { closeAllMenus, closeWindow, gpdAselSelector } from "../../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../../styles/NoSelectDiv";
-import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "../../../redux/slices/gpdSlice";
-import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { EdstWindowHeaderRowDiv } from "../../../styles/edstStyles";
+import { WindowTitleBar } from "../WindowTitleBar";
 
 type GpdHeaderProps = {
   focused: boolean;
@@ -69,7 +69,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
@@ -78,7 +78,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.HOLD_MENU}
           disabled={asel === null}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -89,7 +89,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           sharedUiEventId="openGpdTemplateMenu"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
           content="Template..."
           title={Tooltips.template}
         />
@@ -107,7 +107,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           sharedUiEventId="openGpdMapOptions"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.GPD_MAP_OPTIONS_MENU}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             handleClick(e.currentTarget, EdstWindow.GPD_MAP_OPTIONS_MENU);
           }}
           content="Map Options..."
@@ -116,7 +116,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           sharedUiEventId="openGpdToolsMenu"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
           }}
           content="Tools..."

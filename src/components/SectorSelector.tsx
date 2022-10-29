@@ -1,15 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { sectorPolygonSelector, sectorProfilesSelector, selectedSectorsSelector, setSelectedSectors, toggleSector } from "~redux/slices/sectorSlice";
+import { setShowSectorSelector } from "~redux/slices/appSlice";
 import { EdstButton } from "./utils/EdstButton";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import {
-  sectorPolygonSelector,
-  sectorProfilesSelector,
-  selectedSectorsSelector,
-  setSelectedSectors,
-  toggleSector
-} from "../redux/slices/sectorSlice";
-import { setShowSectorSelector } from "../redux/slices/appSlice";
 import { EdstTooltip } from "./utils/EdstTooltip";
 
 const SectorSelectorDiv = styled.div`
@@ -118,13 +112,13 @@ export const SectorSelector = () => {
   const profiles = useRootSelector(sectorProfilesSelector);
   const selectedSectors = useRootSelector(selectedSectorsSelector);
 
-  const onProfileChange: React.ChangeEventHandler<HTMLSelectElement> = event => {
+  const onProfileChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
     if (!event.target.value) {
       dispatch(setSelectedSectors([]));
     } else if (event.target.value === "All") {
       dispatch(setSelectedSectors([Object.keys(sectors)[0]]));
     } else {
-      const profile = profiles.find(profile => profile.id === event.target.value);
+      const profile = profiles.find((profile) => profile.id === event.target.value);
       if (profile) {
         dispatch(setSelectedSectors(profile.sectors));
       }
@@ -143,7 +137,7 @@ export const SectorSelector = () => {
               Select a profile (optional)
             </option>
             <option value="All">All</option>
-            {profiles.map(profile => (
+            {profiles.map((profile) => (
               <option key={profile.id} value={profile.id}>
                 {profile.id}
               </option>
@@ -164,7 +158,7 @@ export const SectorSelector = () => {
                   />,
                   <SectorSelectorLabel key={`${id}-label`} htmlFor={id}>
                     {id}
-                  </SectorSelectorLabel>
+                  </SectorSelectorLabel>,
                 ]}
               </EdstTooltip>
             ))}

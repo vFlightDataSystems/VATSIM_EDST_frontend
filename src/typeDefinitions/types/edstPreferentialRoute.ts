@@ -1,6 +1,6 @@
-import { ApiPreferentialDepartureRoute } from "./apiTypes/apiPreferentialDepartureRoute";
-import { ApiPreferentialArrivalRoute } from "./apiTypes/apiPreferentialArrivalRoute";
-import { ApiPreferentialDepartureArrivalRoute } from "./apiTypes/apiPreferentialDepartureArrivalRoute";
+import type { ApiPreferentialDepartureRoute } from "./apiTypes/apiPreferentialDepartureRoute";
+import type { ApiPreferentialArrivalRoute } from "./apiTypes/apiPreferentialArrivalRoute";
+import type { ApiPreferentialDepartureArrivalRoute } from "./apiTypes/apiPreferentialDepartureArrivalRoute";
 
 export type EdstPreferentialRoute =
   | (ApiPreferentialDepartureRoute & { routeType: "pdr" })

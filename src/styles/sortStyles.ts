@@ -3,7 +3,7 @@ import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHe
 import { borderHover } from "./styles";
 
 export const SortDiv = styled(OptionsMenu)<{ width: number }>`
-  width: ${props => props.width}px;
+  width: ${(props) => props.width}px;
 `;
 export const SortHeader = styled(OptionsMenuHeader)``;
 export const SortBody = styled(OptionsBody)`

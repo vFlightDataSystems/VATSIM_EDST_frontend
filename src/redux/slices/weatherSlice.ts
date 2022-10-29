@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Feature, MultiPolygon, Polygon, Position } from "@turf/turf";
-import { RootState, RootThunkAction } from "../store";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { Feature, MultiPolygon, Polygon, Position } from "@turf/turf";
+import type { RootState, RootThunkAction } from "~redux/store";
 
 type WeatherState = {
   sigmetMap: Record<string, SigmetEntry>;
@@ -25,14 +26,17 @@ export type SigmetEntry = ApiAirSigmet & {
   polygons: Feature<Polygon | MultiPolygon>;
 };
 
-export type AirmetEntry = ApiAirSigmet & { acknowledged: boolean; polygons: Feature<Polygon | MultiPolygon> };
+export type AirmetEntry = ApiAirSigmet & {
+  acknowledged: boolean;
+  polygons: Feature<Polygon | MultiPolygon>;
+};
 
 const initialState: WeatherState = {
   sigmetMap: {},
   airmetMap: {},
   altimeterAirports: [],
   metarAirports: [],
-  viewSuppressedSigmet: true
+  viewSuppressedSigmet: true,
 };
 
 const weatherSlice = createSlice({
@@ -84,14 +88,14 @@ const weatherSlice = createSlice({
       if (index > -1) {
         state.metarAirports.splice(index, 1);
       }
-    }
-  }
+    },
+  },
 });
 
 export function toggleAltimeter(airports: string[]): RootThunkAction {
   return (dispatch, getState) => {
     const currentAirports = getState().weather.altimeterAirports;
-    airports.forEach(airport => {
+    airports.forEach((airport) => {
       if (airport.length === 4 && airport.startsWith("K")) {
         airport = airport.slice(1);
       }
@@ -107,7 +111,7 @@ export function toggleAltimeter(airports: string[]): RootThunkAction {
 export function toggleMetar(airports: string[]): RootThunkAction {
   return (dispatch, getState) => {
     const currentAirports = getState().weather.metarAirports;
-    airports.forEach(airport => {
+    airports.forEach((airport) => {
       if (airport.length === 4 && airport.startsWith("K")) {
         airport = airport.slice(1);
       }
@@ -130,7 +134,7 @@ export const {
   addAltimeter,
   delAltimeter,
   addMetar,
-  delMetar
+  delMetar,
 } = weatherSlice.actions;
 export default weatherSlice.reducer;
 

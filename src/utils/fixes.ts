@@ -1,10 +1,11 @@
 import _ from "lodash";
-import { booleanPointInPolygon, distance, Feature, lineString, point, pointToLineDistance, Polygon, Position } from "@turf/turf";
-import { RouteFixWithDistance } from "../typeDefinitions/types/routeFixWithDistance";
-import { RouteFix } from "../typeDefinitions/types/routeFix";
-import { EdstEntry } from "../typeDefinitions/types/edstEntry";
+import type { Feature, Polygon, Position } from "@turf/turf";
+import { booleanPointInPolygon, distance, lineString, point, pointToLineDistance } from "@turf/turf";
+import type { Nullable } from "types/utility-types";
+import type { RouteFix } from "types/routeFix";
+import type { EdstEntry } from "types/edstEntry";
+import type { RouteFixWithDistance } from "types/routeFixWithDistance";
 import { removeStringFromEnd } from "./stringManipulation";
-import { Nullable } from "../typeDefinitions/utility-types";
 
 /**
  * Compute the distance to each fix on the route and save it in the route data
@@ -13,9 +14,9 @@ import { Nullable } from "../typeDefinitions/utility-types";
  * @returns original routeFixes, but each item will have a `distance` attribute
  */
 export function getRouteFixesDistance(routeFixes: RouteFix[], pos: Position): RouteFixWithDistance[] {
-  return routeFixes.map(fix => ({
+  return routeFixes.map((fix) => ({
     ...fix,
-    dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" })
+    dist: distance(point(fix.pos), point(pos), { units: "nauticalmiles" }),
   }));
 }
 
@@ -37,7 +38,7 @@ export function getEnteringRouteFixes(
 ): { currentRoute: string; currentRouteFixes: RouteFixWithDistance[] } {
   route = route.slice(0);
   if (routeFixes.length > 1) {
-    const fixNames = routeFixes.map(e => e.name);
+    const fixNames = routeFixes.map((e) => e.name);
     if (fixNames.slice(-1)[0] === dest) {
       fixNames.pop();
     }
@@ -45,7 +46,7 @@ export function getEnteringRouteFixes(
     if (polygons) {
       for (let i = 0; i < routeFixes.length; i++) {
         const fix = routeFixes[i];
-        if (polygons.filter(polygon => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
+        if (polygons.filter((polygon) => booleanPointInPolygon(fix.pos, polygon)).length > 0) {
           break;
         }
         firstFixToShow = fix;
@@ -78,7 +79,7 @@ export function getEnteringRouteFixes(
 export function getNextFix(routeFixes: RouteFix[], pos: Position) {
   const routeFixesWithDistance = getRouteFixesDistance(_.cloneDeep(routeFixes), pos);
   if (routeFixesWithDistance.length > 1) {
-    const fixNames = routeFixes.map(e => e.name);
+    const fixNames = routeFixes.map((e) => e.name);
     const sortedRouteFixes = _.cloneDeep(routeFixesWithDistance).sort((u, v) => u.dist - v.dist);
     const closestFix = sortedRouteFixes[0];
     const index = fixNames.indexOf(closestFix.name);
@@ -87,14 +88,16 @@ export function getNextFix(routeFixes: RouteFix[], pos: Position) {
     }
     const followingFix = routeFixesWithDistance[index + 1];
     const line = lineString([closestFix.pos, followingFix.pos]);
-    const lineDistance = pointToLineDistance(pos, line, { units: "nauticalmiles" });
+    const lineDistance = pointToLineDistance(pos, line, {
+      units: "nauticalmiles",
+    });
     return lineDistance >= closestFix.dist ? closestFix : followingFix;
   }
   return routeFixesWithDistance[0] ?? null;
 }
 
 export function getRemainingFixesFromPpos(routeFixes: RouteFix[], pos: Position) {
-  const fixNames = routeFixes.map(e => e.name);
+  const fixNames = routeFixes.map((e) => e.name);
   if (fixNames.length === 0) {
     return null;
   }
@@ -127,7 +130,7 @@ export function getClearedToFixRouteFixes(
   let newRoute = formattedRoute.slice(0);
   const { destination } = entry;
   if (newRoute && routeFixes) {
-    const fixNames = routeFixes.map(e => e.name);
+    const fixNames = routeFixes.map((e) => e.name);
 
     const index = fixNames.indexOf(clearedFixName);
     const relevantFixNames = fixNames.slice(0, index + 1).reverse();
@@ -148,7 +151,7 @@ export function getClearedToFixRouteFixes(
     newRoute = removeStringFromEnd(newRoute.slice(0), destination);
     return {
       route: newRoute,
-      routeFixes: routeFixes.slice(index)
+      routeFixes: routeFixes.slice(index),
     };
   }
   return null;

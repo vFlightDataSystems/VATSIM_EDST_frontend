@@ -1,7 +1,7 @@
 /* React-specific entry point that automatically generates
    hooks corresponding to the defined endpoints */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
 
@@ -14,9 +14,9 @@ type AltimeterEntry = {
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/weather/` }),
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getMetarEntry: builder.query<Nullable<string>, string>({
-      query: airport => {
+      query: (airport) => {
         if (airport.length === 3) {
           airport = `K${airport}`;
         }
@@ -38,10 +38,10 @@ export const weatherApi = createApi({
           return metar;
         }
         return null;
-      }
+      },
     }),
     getAltimeterEntry: builder.query<Nullable<AltimeterEntry>, string>({
-      query: airport => {
+      query: (airport) => {
         if (airport.length === 3) {
           airport = `K${airport}`;
         }
@@ -56,13 +56,17 @@ export const weatherApi = createApi({
           const time = metarString.match(/\d\d(\d{4})Z/)?.[1];
           const altimeter = metarString.match(/A(\d{4})/)?.[1];
           if (time && altimeter) {
-            return { airport: airport.slice(airport[0] === "K" ? 1 : 0), time, altimeter };
+            return {
+              airport: airport.slice(airport[0] === "K" ? 1 : 0),
+              time,
+              altimeter,
+            };
           }
         }
         return null;
-      }
-    })
-  })
+      },
+    }),
+  }),
 });
 
 const { useGetMetarEntryQuery, useGetAltimeterEntryQuery } = weatherApi;

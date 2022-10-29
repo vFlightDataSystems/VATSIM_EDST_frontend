@@ -1,5 +1,5 @@
-import { RouteDisplayOption } from "../enums/routeDisplayOption";
-import { Nullable } from "../utility-types";
+import type { RouteDisplayOption } from "enums/routeDisplayOption";
+import type { Nullable } from "./utility-types";
 
 export class LocalVEdstEntry {
   freeTextContent = "";

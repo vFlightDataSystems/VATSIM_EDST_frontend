@@ -1,21 +1,21 @@
 import React, { useCallback, useRef } from "react";
 import styled from "styled-components";
-import { ExitButton } from "../utils/EdstButton";
-import { EdstTooltip } from "../utils/EdstTooltip";
-import { Tooltips } from "../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselSelector, closeAllMenus, closeWindow, pushZStack, setAsel, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { delEntry, entrySelector, updateEntry } from "../../redux/slices/entrySlice";
-import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
-import { useDragging } from "../../hooks/useDragging";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { useFocused } from "../../hooks/useFocused";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useSharedUiListener } from "../../hooks/useSharedUiListener";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselSelector, closeAllMenus, closeWindow, pushZStack, setAsel, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
+import { delEntry, entrySelector, updateEntry } from "~redux/slices/entrySlice";
+import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
+import { useSharedUiListener } from "hooks/useSharedUiListener";
+import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import socket from "../../sharedState/socket";
-import { SharedUiEvent } from "../../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
+import { EdstTooltip } from "../utils/EdstTooltip";
+import { ExitButton } from "../utils/EdstButton";
 
 const PlanOptionsDiv = styled(OptionsMenu)`
   width: 24ch;
@@ -27,11 +27,11 @@ const PlanOptionsBody = styled(OptionsBody)`
 export const PlanOptions = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector)!;
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.PLAN_OPTIONS));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.PLAN_OPTIONS));
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
-  const entry = useRootSelector(state => entrySelector(state, asel.aircraftId));
+  const entry = useRootSelector((state) => entrySelector(state, asel.aircraftId));
   const dep = asel.window === EdstWindow.DEP;
   useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");

@@ -1,8 +1,8 @@
 import { refreshAirSigmets } from "./weatherThunks";
-import { RootThunkAction } from "../store";
+import type { RootThunkAction } from "../store";
 
 export function initThunk(): RootThunkAction {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch(refreshAirSigmets());
   };
 }

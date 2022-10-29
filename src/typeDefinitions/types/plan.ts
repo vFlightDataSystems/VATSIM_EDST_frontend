@@ -1,5 +1,5 @@
-import { CreateOrAmendFlightplanDto } from "./apiTypes/CreateOrAmendFlightplanDto";
-import { UnixTime } from "./unixTime";
+import type { CreateOrAmendFlightplanDto } from "./apiTypes/CreateOrAmendFlightplanDto";
+import type { UnixTime } from "./unixTime";
 
 export type Plan = {
   cid: string;

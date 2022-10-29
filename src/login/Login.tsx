@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { login, vatsimTokenSelector } from "../redux/slices/authSlice";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
+import { login, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
 
 const LoginPanel = styled.div`
   height: 100vh;
@@ -63,7 +63,12 @@ const Login = () => {
 
   useEffect(() => {
     if (code) {
-      dispatch(login({ code, redirectUrl: encodeURIComponent(`${import.meta.env.VITE_DOMAIN}/login`) }));
+      dispatch(
+        login({
+          code,
+          redirectUrl: encodeURIComponent(`${import.meta.env.VITE_DOMAIN}/login`),
+        })
+      );
     }
   }, [code, dispatch]);
 

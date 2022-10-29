@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { EdstWindow } from "enums/edstWindow";
 import { FloatingWindow } from "../utils/FloatingWindow";
 
 export const Outage = () => {

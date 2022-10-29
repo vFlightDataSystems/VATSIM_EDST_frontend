@@ -1,10 +1,10 @@
 import React from "react";
-import { PromptProps } from "./promptProps";
-import { useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
+import { useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { FidRow, OptionsBodyCol, OptionsBodyRow } from "styles/optionMenuStyles";
+import { EdstWindow } from "enums/edstWindow";
 import { EdstPrompt } from "./EdstPrompt";
-import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import type { PromptProps } from "./promptProps";
 
 export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;

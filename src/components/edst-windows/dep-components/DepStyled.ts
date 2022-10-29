@@ -1,11 +1,16 @@
 import styled, { css } from "styled-components";
-import { Col } from "../../../styles/sharedColumns";
-import { borderHover, createBorder } from "../../../styles/styles";
+import { Col } from "styles/sharedColumns";
+import { borderHover, createBorder } from "styles/styles";
 
 export const DepPTimeCol = styled(Col)`
   width: 6ch;
 `;
-type RadioColProps = { border?: boolean; checked?: boolean; header?: boolean; keep?: boolean };
+type RadioColProps = {
+  border?: boolean;
+  checked?: boolean;
+  header?: boolean;
+  keep?: boolean;
+};
 export const RadioCol = styled(Col)<RadioColProps>`
   ${createBorder("1px", "#575757", "#414141")}
 
@@ -13,13 +18,13 @@ export const RadioCol = styled(Col)<RadioColProps>`
 
   margin: 0 2px;
   width: 1ch;
-  ${props =>
+  ${(props) =>
     props.border && {
-      outline: "1px solid #ADADAD"
+      outline: "1px solid #ADADAD",
     }};
 
-  ${props => props.disabled && { "border-color": "transparent" }};
-  ${props =>
+  ${(props) => props.disabled && { "border-color": "transparent" }};
+  ${(props) =>
     props.header &&
     css`
       margin: 0 2px;
@@ -27,10 +32,10 @@ export const RadioCol = styled(Col)<RadioColProps>`
       pointer-events: none;
     `};
 
-  ${props =>
+  ${(props) =>
     props.checked &&
     css`
       color: #adadad;
     `};
-  ${props => props.keep && { "background-color": "#414141" }};
+  ${(props) => props.keep && { "background-color": "#414141" }};
 `;

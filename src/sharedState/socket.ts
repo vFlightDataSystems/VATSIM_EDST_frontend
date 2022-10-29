@@ -1,15 +1,16 @@
-import io, { Socket } from "socket.io-client";
-import { SharedStateServerToClientEvents } from "../typeDefinitions/types/sharedStateTypes/sharedStateServerToClientEvents";
-import { SharedStateClientToServerEvents } from "../typeDefinitions/types/sharedStateTypes/sharedStateClientToServerEvents";
-import { SharedAircraftDto } from "../typeDefinitions/types/sharedStateTypes/sharedAircraftDto";
-import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { Asel } from "../typeDefinitions/types/asel";
-import { SharedUiEvent } from "../typeDefinitions/types/sharedStateTypes/sharedUiEvent";
-import { AclState } from "../redux/slices/aclSlice";
-import { DepState } from "../redux/slices/depSlice";
-import { PlanState } from "../redux/slices/planSlice";
-import { SharedGpdState } from "../redux/slices/gpdSlice";
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { Socket } from "socket.io-client";
+import io from "socket.io-client";
+import type { Nullable } from "types/utility-types";
+import type { SharedStateClientToServerEvents } from "types/sharedStateTypes/sharedStateClientToServerEvents";
+import type { SharedAircraftDto } from "types/sharedStateTypes/sharedAircraftDto";
+import type { EdstWindow } from "enums/edstWindow";
+import type { Asel } from "types/asel";
+import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
+import type { AclState } from "~redux/slices/aclSlice";
+import type { DepState } from "~redux/slices/depSlice";
+import type { PlanState } from "~redux/slices/planSlice";
+import type { SharedStateServerToClientEvents } from "types/sharedStateTypes/sharedStateServerToClientEvents";
+import type { SharedGpdState } from "~redux/slices/gpdSlice";
 
 const SHARED_STATE_SERVER_URL = import.meta.env.VITE_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = import.meta.env.VITE_SHARED_STATE_AUTH_KEY;
@@ -33,15 +34,15 @@ class SharedStateSocket {
     if (SHARED_STATE_SERVER_URL && SHARED_STATE_AUTH_TOKEN) {
       this.socket = io(SHARED_STATE_SERVER_URL, {
         auth: {
-          token: SHARED_STATE_AUTH_TOKEN
+          token: SHARED_STATE_AUTH_TOKEN,
         },
         query: {
           artccId,
-          sectorId
-        }
+          sectorId,
+        },
       });
       this.socket.connect();
-      this.socket?.on("receiveAircraft", aircraft => {
+      this.socket?.on("receiveAircraft", (aircraft) => {
         this.sharedAircraftState[aircraft.aircraftId] = aircraft;
       });
     }

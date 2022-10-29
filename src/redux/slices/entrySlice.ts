@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { RootState } from "../store";
-import { EdstEntry } from "../../typeDefinitions/types/edstEntry";
-import { AircraftId } from "../../typeDefinitions/types/aircraftId";
-import sharedSocket from "../../sharedState/socket";
+import type { EdstEntry } from "types/edstEntry";
+import type { AircraftId } from "types/aircraftId";
+import type { RootState } from "~redux/store";
+import sharedSocket from "~socket";
 
 type EntryState = Record<AircraftId, EdstEntry>;
 
@@ -20,7 +21,13 @@ const entrySlice = createSlice({
   name: "entry",
   initialState,
   reducers: {
-    updateEntry(state, action: PayloadAction<{ aircraftId: AircraftId; data: Partial<EdstEntry> }>) {
+    updateEntry(
+      state,
+      action: PayloadAction<{
+        aircraftId: AircraftId;
+        data: Partial<EdstEntry>;
+      }>
+    ) {
       entryUpdater(state, action.payload.aircraftId, action.payload.data);
     },
     updateEntries(state, action: PayloadAction<Record<AircraftId, Partial<EdstEntry>>>) {
@@ -39,8 +46,8 @@ const entrySlice = createSlice({
     },
     delEntry(state, action: PayloadAction<AircraftId>) {
       entryUpdater(state, action.payload, { deleted: true });
-    }
-  }
+    },
+  },
 });
 
 export const { setEntry, updateEntry, delEntry, toggleSpa, updateEntries } = entrySlice.actions;

@@ -1,16 +1,16 @@
-import { RootThunkAction } from "../store";
+import type { Nullable } from "types/utility-types";
+import type { EdstWindow } from "enums/edstWindow";
+import type { RootThunkAction } from "../store";
 import { openWindow, setWindowPosition } from "../slices/appSlice";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
 import sharedSocket from "../../sharedState/socket";
-import { Nullable } from "../../typeDefinitions/utility-types";
 
 export function openWindowThunk(window: EdstWindow, element?: Nullable<HTMLElement>, triggerSharedState = true): RootThunkAction {
-  return dispatch => {
+  return (dispatch) => {
     if (element) {
       const { x, y } = element.getBoundingClientRect();
       const windowPos = {
         left: x,
-        top: y + element.offsetHeight
+        top: y + element.offsetHeight,
       };
       dispatch(setWindowPosition({ window, pos: windowPos }));
     }

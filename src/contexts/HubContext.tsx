@@ -1,18 +1,20 @@
-import React, { createContext, ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { clearSession, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
-import { refreshToken } from "../api/vNasDataApi";
-import { ApiSessionInfoDto } from "../typeDefinitions/types/apiTypes/apiSessionInfoDto";
-import { ApiTopic } from "../typeDefinitions/types/apiTypes/apiTopic";
-import { ApiFlightplan } from "../typeDefinitions/types/apiTypes/apiFlightplan";
-import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
-import { ApiAircraftTrack } from "../typeDefinitions/types/apiTypes/apiAircraftTrack";
-import { setMcaRejectMessage } from "../redux/slices/appSlice";
-import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
-import { initThunk } from "../redux/thunks/initThunk";
-import { useSocketConnector } from "../hooks/useSocketConnector";
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { ReactNode } from "react";
+import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import type { HubConnection } from "@microsoft/signalr";
+import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
+import type { Nullable } from "types/utility-types";
+import { clearSession, setSession, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { refreshToken } from "~/api/vNasDataApi";
+import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
+import { ApiTopic } from "types/apiTypes/apiTopic";
+import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
+import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
+import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
+import { setMcaRejectMessage } from "~redux/slices/appSlice";
+import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
+import { initThunk } from "~redux/thunks/initThunk";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { useSocketConnector } from "hooks/useSocketConnector";
 
 const ATC_SERVER_URL = import.meta.env.VITE_ATC_HUB_URL;
 
@@ -30,7 +32,7 @@ const useHubContextInit = () => {
 
     const getValidNasToken = async () => {
       // const decodedToken = decodeJwt(nasToken);
-      return refreshToken(vatsimToken).then(r => {
+      return refreshToken(vatsimToken).then((r) => {
         console.log("Refreshed NAS token");
         return r.data;
       });
@@ -40,7 +42,7 @@ const useHubContextInit = () => {
       .withUrl(ATC_SERVER_URL, {
         accessTokenFactory: getValidNasToken,
         transport: HttpTransportType.WebSockets,
-        skipNegotiation: true
+        skipNegotiation: true,
       })
       .withAutomaticReconnect()
       .build();
@@ -94,7 +96,7 @@ const useHubContextInit = () => {
         throw new Error("SESSION NOT FOUND");
       }
       console.log(sessionInfo);
-      const primaryPosition = sessionInfo?.positions.slice(0).filter(pos => pos.isPrimary)?.[0]?.position;
+      const primaryPosition = sessionInfo?.positions.slice(0).filter((pos) => pos.isPrimary)?.[0]?.position;
       if (primaryPosition?.eramConfiguration) {
         const artccId = sessionInfo.artccId;
         const sectorId = primaryPosition.eramConfiguration.sectorId;
@@ -103,7 +105,9 @@ const useHubContextInit = () => {
         connectSocket(artccId, sectorId);
         dispatch(setSession(sessionInfo));
         dispatch(initThunk());
-        await hubConnection.invoke<void>("joinSession", { sessionId: sessionInfo.id });
+        await hubConnection.invoke<void>("joinSession", {
+          sessionId: sessionInfo.id,
+        });
         console.log(`joined session ${sessionInfo.id}`);
         setHubConnected(true);
         hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
@@ -129,13 +133,17 @@ const useHubContextInit = () => {
   return {
     hubConnection: ref.current,
     connectHub,
-    disconnectHub
+    disconnectHub,
   };
 };
 
 type HubContextValue = ReturnType<typeof useHubContextInit>;
 
-export const HubContext = createContext<HubContextValue>({ connectHub: Promise.reject, disconnectHub: Promise.reject, hubConnection: null });
+export const HubContext = createContext<HubContextValue>({
+  connectHub: Promise.reject,
+  disconnectHub: Promise.reject,
+  hubConnection: null,
+});
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const hubConnection = useHubContextInit();

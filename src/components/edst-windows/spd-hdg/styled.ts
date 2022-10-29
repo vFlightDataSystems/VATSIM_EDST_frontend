@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
-import { borderHover } from "../../../styles/styles";
+import { OptionsBodyRow } from "styles/optionMenuStyles";
+import { borderHover } from "styles/styles";
 
 export const Row = styled(OptionsBodyRow)`
   padding: 4px 0;
@@ -51,7 +51,7 @@ export const ScrollCol = styled.div<ScrollColProps>`
   margin: 0 2px;
 
   ${borderHover};
-  ${props => props.noHover && { "pointer-events": "none" }};
+  ${(props) => props.noHover && { "pointer-events": "none" }};
 `;
 export const ScrollCol2 = styled(ScrollCol)`
   width: 2ch;

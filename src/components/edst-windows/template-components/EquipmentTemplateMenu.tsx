@@ -1,15 +1,10 @@
 import React, { useCallback, useRef, useState } from "react";
-import styled, { CSSProperties } from "styled-components";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "../../../redux/slices/appSlice";
-import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EdstButton, EdstTemplateButton10ch } from "../../utils/EdstButton";
-import { EquipmentNavTemplate } from "./EquipmentNavTemplate";
-import { EquipmentSurvTemplate } from "./EquipmentSurvTemplate";
-import { EquipmentCommTemplate } from "./EquipmentCommTemplate";
-import { EquipmentAppServTemplate } from "./EquipmentAppServTemplate";
-import { Tooltips } from "../../../tooltips";
-import { EdstTooltip } from "../../utils/EdstTooltip";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import type { AtMostOne } from "types/utility-types";
+import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { Tooltips } from "~/tooltips";
 import {
   OptionsBodyCol,
   OptionsBody,
@@ -19,15 +14,21 @@ import {
   OptionsMenuHeader,
   FidRow,
   OptionIndicatorDiamond,
-  OptionIndicatorCircle
-} from "../../../styles/optionMenuStyles";
+  OptionIndicatorCircle,
+} from "styles/optionMenuStyles";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { EdstWindow } from "enums/edstWindow";
+import { EdstButton, EdstTemplateButton10ch } from "../../utils/EdstButton";
+import { EquipmentNavTemplate } from "./EquipmentNavTemplate";
+import { EquipmentSurvTemplate } from "./EquipmentSurvTemplate";
+import { EquipmentCommTemplate } from "./EquipmentCommTemplate";
+import { EquipmentAppServTemplate } from "./EquipmentAppServTemplate";
+import { EdstTooltip } from "../../utils/EdstTooltip";
 import { EqpContentCol, EqpRow } from "./EqpStyled";
 import { EdstDraggingOutline } from "../../utils/EdstDraggingOutline";
-import { useDragging } from "../../../hooks/useDragging";
-import { useCenterCursor } from "../../../hooks/useCenterCursor";
-import { useFocused } from "../../../hooks/useFocused";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { AtMostOne } from "../../../typeDefinitions/utility-types";
 
 const EqpTemplateDiv = styled(OptionsMenu)`
   width: 92ch;
@@ -50,7 +51,7 @@ enum MenuOptions {
   surv,
   nav,
   comm,
-  appServ
+  appServ,
 }
 
 type EquipmentTemplateRowProps = {
@@ -86,7 +87,7 @@ export type EquipmentTemplateBodyProps = {
 
 export const EquipmentTemplateMenu = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.EQUIPMENT_TEMPLATE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.EQUIPMENT_TEMPLATE_MENU));
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<MenuOptions>(MenuOptions.nav);

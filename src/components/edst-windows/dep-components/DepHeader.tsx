@@ -1,18 +1,18 @@
 import React, { useCallback, useState } from "react";
-import { WindowTitleBar } from "../WindowTitleBar";
-import { EdstWindowHeaderButton } from "../../utils/EdstButton";
-import { Tooltips } from "../../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "../../../redux/slices/depSlice";
-import { closeAllMenus, closeWindow, depAselSelector } from "../../../redux/slices/appSlice";
-import { addDepEntryByFid } from "../../../redux/thunks/entriesThunks";
-import { NoSelectDiv } from "../../../styles/NoSelectDiv";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "~redux/slices/depSlice";
+import { closeAllMenus, closeWindow, depAselSelector } from "~redux/slices/appSlice";
+import { addDepEntryByFid } from "~redux/thunks/entriesThunks";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { EdstWindow } from "enums/edstWindow";
+import { DepSortOptionValues } from "enums/dep/depSortOption";
+import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
+import type { HeaderComponentProps } from "../../utils/FullscreenWindow";
 import { AddFindInput } from "../../utils/InputComponents";
-import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { DepSortOptionValues } from "../../../typeDefinitions/enums/dep/depSortOption";
-import { HeaderComponentProps } from "../../utils/FullscreenWindow";
-import { EdstWindowHeaderRowDiv } from "../../../styles/edstStyles";
+import { EdstWindowHeaderButton } from "../../utils/EdstButton";
+import { WindowTitleBar } from "../WindowTitleBar";
 
 /**
  * DEP title bar and header row with add/find input field
@@ -61,7 +61,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
@@ -70,7 +70,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.DEP_SORT_MENU}
           id="dep-sort-button"
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.DEP_SORT_MENU)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.DEP_SORT_MENU)}
           content="Sort..."
           title={Tooltips.sort}
         />
@@ -83,14 +83,14 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventId="openDepTemplateMenu"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
           content="Template..."
           title={Tooltips.template}
         />
       </EdstWindowHeaderRowDiv>
       <EdstWindowHeaderRowDiv bottomRow>
         Add/Find
-        <AddFindInput value={searchStr} onChange={e => setSearchString(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} />
+        <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} />
       </EdstWindowHeaderRowDiv>
     </NoSelectDiv>
   );

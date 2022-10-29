@@ -1,5 +1,5 @@
 import React from "react";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import { EdstWindow } from "enums/edstWindow";
 import { FullscreenWindow } from "../utils/FullscreenWindow";
 import { DepTable } from "./dep-components/DepTable";
 import { DepHeader } from "./dep-components/DepHeader";

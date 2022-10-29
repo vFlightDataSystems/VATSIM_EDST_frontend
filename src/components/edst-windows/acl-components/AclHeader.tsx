@@ -1,20 +1,20 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import { WindowTitleBar } from "../WindowTitleBar";
-import { EdstWindowHeaderButton } from "../../utils/EdstButton";
-import { Tooltips } from "../../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "../../../redux/slices/aclSlice";
-import { aclAselSelector, closeAllMenus, closeWindow } from "../../../redux/slices/appSlice";
-import { addAclEntryByFid } from "../../../redux/thunks/entriesThunks";
-import { NoSelectDiv } from "../../../styles/NoSelectDiv";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aclAselSelector, closeAllMenus, closeWindow } from "~redux/slices/appSlice";
+import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { aclCleanup } from "~redux/thunks/aclCleanup";
+import { EdstWindow } from "enums/edstWindow";
+import { AclSortOptionValues } from "enums/acl/aclSortOption";
+import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
+import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "~redux/slices/aclSlice";
+import type { HeaderComponentProps } from "../../utils/FullscreenWindow";
 import { AddFindInput } from "../../utils/InputComponents";
-import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
-import { aclCleanup } from "../../../redux/thunks/aclCleanup";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
-import { AclSortOptionValues } from "../../../typeDefinitions/enums/acl/aclSortOption";
-import { HeaderComponentProps } from "../../utils/FullscreenWindow";
-import { EdstWindowHeaderRowDiv } from "../../../styles/edstStyles";
+import { EdstWindowHeaderButton } from "../../utils/EdstButton";
+import { WindowTitleBar } from "../WindowTitleBar";
 
 const AclHeaderDiv = styled(NoSelectDiv)``;
 
@@ -60,7 +60,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         text={[
           "Aircraft List",
           `${sortData.sector ? "Sector/" : ""}${AclSortOptionValues[sortData.selectedOption]}`,
-          `${manualPosting ? "Manual" : "Automatic"}`
+          `${manualPosting ? "Manual" : "Automatic"}`,
         ]}
       />
       <EdstWindowHeaderRowDiv>
@@ -69,7 +69,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
@@ -78,7 +78,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.HOLD_MENU}
           disabled={asel === null}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
           content="Hold..."
           title={Tooltips.hold}
         />
@@ -89,7 +89,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.ACL_SORT_MENU}
           id="acl-sort-button"
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             handleClick(e.currentTarget, EdstWindow.ACL_SORT_MENU);
           }}
           content="Sort..."
@@ -99,7 +99,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventId="openAclToolsMenu"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             dispatch(closeWindow(EdstWindow.TOOLS_MENU));
             handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
           }}
@@ -114,7 +114,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           sharedUiEventId="openAclTemplateMenu"
           sharedUiEventHandler={handleClick}
           sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={e => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
           content="Template..."
           title={Tooltips.template}
         />
@@ -122,7 +122,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
       </EdstWindowHeaderRowDiv>
       <EdstWindowHeaderRowDiv bottomRow>
         Add/Find
-        <AddFindInput value={searchStr} onChange={e => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
+        <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
         Facilities:
       </EdstWindowHeaderRowDiv>
     </AclHeaderDiv>

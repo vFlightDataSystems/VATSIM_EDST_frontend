@@ -1,27 +1,27 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import { AclRow } from "./AclRow";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { Tooltips } from "../../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import {
   aclAckListSelector,
   aclSpaListSelector,
   aclUnAckListSelector,
   anyAssignedHdgSelector,
   anyAssignedSpdSelector,
-  anyHoldingSelector
-} from "../../../redux/selectors";
-import { aselSelector, setAsel } from "../../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../../styles/NoSelectDiv";
-import { ScrollContainer } from "../../../styles/optionMenuStyles";
-import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "../../../styles/styles";
+  anyHoldingSelector,
+} from "~redux/selectors";
+import { aselSelector, setAsel } from "~redux/slices/appSlice";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { ScrollContainer } from "styles/optionMenuStyles";
+import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "styles/styles";
+import { aclHiddenColumnsSelector, aclManualPostingSelector, toggleAclHideColumn, toolsOptionsSelector } from "~redux/slices/aclSlice";
+import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "styles/sharedColumns";
+import { AclRowField } from "enums/acl/aclRowField";
+import { VCI_SYMBOL } from "~/utils/constants";
+import { colors } from "~/edstTheme";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "./AclStyled";
-import { aclHiddenColumnsSelector, aclManualPostingSelector, toggleAclHideColumn, toolsOptionsSelector } from "../../../redux/slices/aclSlice";
-import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "../../../styles/sharedColumns";
-import { AclRowField } from "../../../typeDefinitions/enums/acl/aclRowField";
-import { VCI_SYMBOL } from "../../../utils/constants";
-import { colors } from "../../../edstTheme";
+import { EdstTooltip } from "../../utils/EdstTooltip";
+import { AclRow } from "./AclRow";
 import { ListMapper } from "../../utils/ListMapper";
 
 const AclBodyDiv = styled(NoSelectDiv)`
@@ -29,7 +29,7 @@ const AclBodyDiv = styled(NoSelectDiv)`
   overflow: hidden;
   flex-flow: column;
   display: flex;
-  color: ${props => props.theme.colors.grey};
+  color: ${(props) => props.theme.colors.grey};
 `;
 
 const SpaList = React.memo(() => <ListMapper selector={aclSpaListSelector} Component={AclRow} showSep />);

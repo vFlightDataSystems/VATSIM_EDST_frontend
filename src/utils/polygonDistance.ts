@@ -1,9 +1,12 @@
-import { booleanPointInPolygon, Feature, Point, pointToLineDistance, Polygon, polygonToLineString } from "@turf/turf";
+import type { Feature, Point, Polygon } from "@turf/turf";
+import { booleanPointInPolygon, pointToLineDistance, polygonToLineString } from "@turf/turf";
 
 function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  let dist = pointToLineDistance(point, polygonToLineString(polygon), { units: "nauticalmiles" });
+  let dist = pointToLineDistance(point, polygonToLineString(polygon), {
+    units: "nauticalmiles",
+  });
   if (booleanPointInPolygon(point, polygon)) {
     dist *= -1;
   }
@@ -20,7 +23,7 @@ function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
  */
 export function getSignedStratumDistancePointToPolygons(point: Point, polygons: Feature<Polygon>[], altitude: number, interim?: number): number {
   let minDistance = Infinity;
-  polygons.forEach(poly => {
+  polygons.forEach((poly) => {
     const dist = signedDistancePointToPolygon(point, poly);
     const stratumLow = poly.properties?.alt_low;
     const stratumHigh = poly.properties?.alt_high;

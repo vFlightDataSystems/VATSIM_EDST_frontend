@@ -1,30 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch, ExitButton } from "../utils/EdstButton";
-import { EdstTooltip } from "../utils/EdstTooltip";
-import { Tooltips } from "../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector, toggleSpa, updateEntry } from "../../redux/slices/entrySlice";
-import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
-import { InputContainer } from "../utils/InputComponents";
+import type { Nullable } from "types/utility-types";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselEntrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
+import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
+import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { aselTrackSelector } from "~redux/slices/trackSlice";
+import type { RouteFix } from "types/routeFix";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
+import { CompassDirection } from "enums/hold/compassDirection";
+import { TurnDirection } from "enums/hold/turnDirection";
+import type { HoldAnnotations } from "enums/hold/holdAnnotations";
+import { useHubActions } from "hooks/useHubActions";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import { useRouteFixes } from "~/api/aircraftApi";
+import { computeCrossingTimes } from "~/utils/computeCrossingTimes";
+import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { RouteFix } from "../../typeDefinitions/types/routeFix";
-import { useDragging } from "../../hooks/useDragging";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { useFocused } from "../../hooks/useFocused";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { CompassDirection } from "../../typeDefinitions/enums/hold/compassDirection";
-import { TurnDirection } from "../../typeDefinitions/enums/hold/turnDirection";
-import { HoldAnnotations } from "../../typeDefinitions/enums/hold/holdAnnotations";
-import { useHubActions } from "../../hooks/useHubActions";
-import { openWindowThunk } from "../../redux/thunks/openWindowThunk";
-import { useRouteFixes } from "../../api/aircraftApi";
-import { computeCrossingTimes } from "../../utils/computeCrossingTimes";
-import { formatUtcMinutes } from "../../utils/formatUtcMinutes";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import { InputContainer } from "../utils/InputComponents";
+import { EdstTooltip } from "../utils/EdstTooltip";
+import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch, ExitButton } from "../utils/EdstButton";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 44ch;
@@ -90,7 +90,7 @@ const EfcInputContainer = styled(InputContainer)`
 export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const track = useRootSelector(aselTrackSelector)!;
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.HOLD_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.HOLD_MENU));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -134,7 +134,7 @@ export const HoldMenu = () => {
         legLengthInNm: true,
         direction,
         turns,
-        efc
+        efc,
       };
       hubActions.setHoldAnnotations(entry.aircraftId, holdAnnotations).then();
     }
@@ -181,9 +181,9 @@ export const HoldMenu = () => {
           </OptionsBodyRow>
           <FixContainer>
             {holdRouteFixes &&
-              _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map(i => (
+              _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map((i) => (
                 <OptionsBodyRow key={i}>
-                  {_.range(0, Math.round((holdRouteFixes.length || 0) / 10) + 1).map(j => {
+                  {_.range(0, Math.round((holdRouteFixes.length || 0) / 10) + 1).map((j) => {
                     const fixName = holdRouteFixes?.[Number(i) + Number(j) * 10]?.name;
                     const minutesAtFix = holdRouteFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
                     return (
@@ -294,7 +294,12 @@ export const HoldMenu = () => {
                 content="Delete Hold Instructions"
                 padding="0 20px"
                 onMouseDown={() => {
-                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { routeDisplay: null } }));
+                  dispatch(
+                    updateEntry({
+                      aircraftId: entry.aircraftId,
+                      data: { routeDisplay: null },
+                    })
+                  );
                   dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}
                 title={Tooltips.holdDeleteHoldInstr}
@@ -350,7 +355,12 @@ export const HoldMenu = () => {
                 content="Cancel Hold"
                 disabled={!entry?.holdAnnotations}
                 onMouseDown={() => {
-                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { routeDisplay: null } }));
+                  dispatch(
+                    updateEntry({
+                      aircraftId: entry.aircraftId,
+                      data: { routeDisplay: null },
+                    })
+                  );
                   dispatch(openWindowThunk(EdstWindow.CANCEL_HOLD_MENU));
                   dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}

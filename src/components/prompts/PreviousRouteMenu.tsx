@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
-import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
+import type { Nullable } from "types/utility-types";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { FidRow, OptionsBodyCol, OptionsBodyRow } from "styles/optionMenuStyles";
+import { aselTrackSelector } from "~redux/slices/trackSlice";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { EdstWindow } from "enums/edstWindow";
+import { useRootSelector } from "~redux/hooks";
+import { useHubActions } from "hooks/useHubActions";
 import { EdstPrompt } from "./EdstPrompt";
-import { PromptProps } from "./promptProps";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import type { PromptProps } from "./promptProps";
 
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;

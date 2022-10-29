@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { NoSelectDiv } from "../../styles/NoSelectDiv";
+import { NoSelectDiv } from "styles/NoSelectDiv";
 
 const TimeStyle = styled(NoSelectDiv)`
-  font-family: ${props => props.theme.fontProps.eramFontFamily};
-  color: ${props => props.theme.colors.grey};
+  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
+  color: ${(props) => props.theme.colors.grey};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,18 +23,8 @@ export function Time() {
   }, []);
   return (
     <TimeStyle>
-      {date
-        .getUTCHours()
-        .toString()
-        .padStart(2, "0")}
-      {date
-        .getUTCMinutes()
-        .toString()
-        .padStart(2, "0")}{" "}
-      {date
-        .getUTCSeconds()
-        .toString()
-        .padStart(2, "0")}
+      {date.getUTCHours().toString().padStart(2, "0")}
+      {date.getUTCMinutes().toString().padStart(2, "0")} {date.getUTCSeconds().toString().padStart(2, "0")}
     </TimeStyle>
   );
 }

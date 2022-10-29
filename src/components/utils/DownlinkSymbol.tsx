@@ -1,6 +1,6 @@
 import React from "react";
+import { DOWNLINK_SYMBOL } from "~/utils/constants";
 import { EdstButton } from "./EdstButton";
-import { DOWNLINK_SYMBOL } from "../../utils/constants";
 
 type DownlinkSymbolProps = {
   disabled?: boolean;

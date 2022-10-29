@@ -1,34 +1,35 @@
 import React, { useRef, useState } from "react";
 import _ from "lodash";
-import styled, { CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
 import { useEventListener } from "usehooks-ts";
-import { EdstTooltip } from "../utils/EdstTooltip";
-import { Tooltips } from "../../tooltips";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { aselSelector, closeWindow, windowPositionSelector } from "../../redux/slices/appSlice";
-import { NoSelectDiv } from "../../styles/NoSelectDiv";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "../../utils/constants";
-import { Plan } from "../../typeDefinitions/types/plan";
-import { colors } from "../../edstTheme";
-import { borderHover } from "../../styles/styles";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import { Tooltips } from "~/tooltips";
+import type { WindowPosition } from "types/windowPosition";
+import { EdstTooltip } from "components/utils/EdstTooltip";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import type { Nullable } from "types/utility-types";
+import { colors } from "~/edstTheme";
+import { borderHover } from "styles/styles";
+import { aselSelector, closeWindow, windowPositionSelector } from "~redux/slices/appSlice";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { addPlanThunk } from "~redux/thunks/addPlanThunk";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { EdstWindow } from "~/typeDefinitions/enums/edstWindow";
+import { useHubActions } from "hooks/useHubActions";
+import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "~/utils/constants";
+import type { Plan } from "types/plan";
 
 type AltMenuDivProps = { width: CSSProperties["width"]; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv)<AltMenuDivProps>`
   z-index: 11000;
   background-color: #888888;
   position: fixed;
-  width: ${props => props.width};
+  width: ${(props) => props.width};
   color: #d6d6d6;
-  ${props => ({
+  ${(props) => ({
     left: `${props.pos.left}px`,
-    top: `${props.pos.top}px`
+    top: `${props.pos.top}px`,
   })};
 `;
 
@@ -42,8 +43,8 @@ const AltMenuHeaderCol = styled.div<AltMenuHeaderColProps>`
   justify-content: center;
   align-items: center;
   border: 1px solid #adadad;
-  width: ${props => props.width ?? "auto"};
-  flex-grow: ${props => props.flexGrow ?? 0};
+  width: ${(props) => props.width ?? "auto"};
+  flex-grow: ${(props) => props.flexGrow ?? 0};
 
   ${borderHover}
 `;
@@ -71,24 +72,24 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
   justify-content: center;
   align-items: center;
   border: 1px solid #adadad;
-  ${props => props.bgBlack && { "background-color": "#000000" }};
-  ${props => props.color && { color: props.color }};
+  ${(props) => props.bgBlack && { "background-color": "#000000" }};
+  ${(props) => props.color && { color: props.color }};
   &[disabled] {
     pointer-events: none;
     color: #adadad;
   }
-  ${props => props.hover && borderHover};
-  ${props =>
+  ${(props) => props.hover && borderHover};
+  ${(props) =>
     props.selected && {
       border: "1px solid #FFFFFF",
-      "background-color": "#AD6C6C"
+      "background-color": "#AD6C6C",
     }};
   input {
-    font-size: ${props => props.theme.fontProps.inputFontSize};
+    font-size: ${(props) => props.theme.fontProps.inputFontSize};
     outline: none;
     display: flex;
     overflow: hidden;
-    color: ${props => props.theme.colors.grey};
+    color: ${(props) => props.theme.colors.grey};
     resize: none;
     text-transform: uppercase;
     background-color: #000000;
@@ -103,7 +104,7 @@ type AltMenuRowColProps = {
 };
 const AltMenuRowCol = styled(AltMenuRow)<AltMenuRowColProps>`
   padding: 0;
-  width: ${props => props.width ?? "auto"};
+  width: ${(props) => props.width ?? "auto"};
 `;
 type AltMenuScrollRowProps = { hover?: boolean };
 const AltMenuScrollRow = styled.div<AltMenuScrollRowProps>`
@@ -115,9 +116,13 @@ const AltMenuScrollRow = styled.div<AltMenuScrollRowProps>`
   /*border: none;*/
   border: 1px solid #000000;
 
-  ${props => props.hover && borderHover};
+  ${(props) => props.hover && borderHover};
 `;
-type AltMenuScrollColProps = { tempAlt?: boolean; borderHover?: boolean; selected?: boolean };
+type AltMenuScrollColProps = {
+  tempAlt?: boolean;
+  borderHover?: boolean;
+  selected?: boolean;
+};
 const AltMenuScrollCol = styled.div<AltMenuScrollColProps>`
   padding: 0 2px;
   display: flex;
@@ -129,11 +134,11 @@ const AltMenuScrollCol = styled.div<AltMenuScrollColProps>`
     outline: 1px solid #f0f0f0;
   }
 
-  ${props => props.borderHover && borderHover};
-  ${props =>
+  ${(props) => props.borderHover && borderHover};
+  ${(props) =>
     props.selected && {
       "background-color": "#AD6C6C",
-      color: "#D6D6D6"
+      color: "#D6D6D6",
     }};
 `;
 type AltMenuScrollTempAltColProps = { disabled?: boolean };
@@ -157,14 +162,14 @@ function validateAltitudeInput(input: string) {
   // check if input is a number and length matches valid input
   // +"string" will convert the string to a number or NaN
   // it is called the unary plus operator
-  return Object.values(ALTITUDE_VALIDATION_EXPRESSIONS).some(regex => regex.test(input));
+  return Object.values(ALTITUDE_VALIDATION_EXPRESSIONS).some((regex) => regex.test(input));
 }
 
 export const AltMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.ALTITUDE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.ALTITUDE_MENU));
   const dispatch = useRootDispatch();
   const [selected, setSelected] = useState(asel.window !== EdstWindow.DEP ? "trial" : "amend");
   const [tempAltHover, setTempAltHover] = useState<Nullable<number>>(null);
@@ -179,7 +184,10 @@ export const AltMenu = () => {
   useCenterCursor(ref, [asel.aircraftId]);
 
   const handleAltClick = (alt: string | number) => {
-    const amendedFlightplan = { ...entry, altitude: alt.toString().toUpperCase() };
+    const amendedFlightplan = {
+      ...entry,
+      altitude: alt.toString().toUpperCase(),
+    };
     if (selected === "amend") {
       amendFlightplan(amendedFlightplan).then();
     } else {
@@ -188,7 +196,7 @@ export const AltMenu = () => {
         aircraftId: entry.aircraftId,
         amendedFlightplan,
         commandString: `AM ${entry.aircraftId} ALT ${alt}`,
-        expirationTime: new Date().getTime() / 1000 + 120
+        expirationTime: new Date().getTime() / 1000 + 120,
       };
       dispatch(addPlanThunk(trialPlanData));
     }
@@ -200,7 +208,7 @@ export const AltMenu = () => {
     dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
   };
 
-  const handleScroll: React.WheelEventHandler<HTMLDivElement> = e => {
+  const handleScroll: React.WheelEventHandler<HTMLDivElement> = (e) => {
     const newDeltaY = Math.min(Math.max((assignedAltitude - 560) * 10, deltaY + e.deltaY), (assignedAltitude - 40) * 10);
     setDeltaY(newDeltaY);
   };
@@ -236,8 +244,8 @@ export const AltMenu = () => {
                 tabIndex={0}
                 ref={inputRef}
                 value={manualInput}
-                onChange={event => setManualInput(event.target.value)}
-                onKeyDown={event => {
+                onChange={(event) => setManualInput(event.target.value)}
+                onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     if (validateAltitudeInput(manualInput)) {
                       handleAltClick(manualInput);
@@ -276,7 +284,7 @@ export const AltMenu = () => {
             </AltMenuRow>
             <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
             <AltMenuSelectContainer onWheel={handleScroll}>
-              {_.range(30, -40, -10).map(i => {
+              {_.range(30, -40, -10).map((i) => {
                 const alt = centerAlt + i;
                 return (
                   <AltMenuScrollRow hover={selected === "amend" && tempAltHover === alt} key={i}>

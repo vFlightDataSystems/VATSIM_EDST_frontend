@@ -1,13 +1,16 @@
-import React, { PropsWithChildren, useRef } from "react";
+import type { PropsWithChildren } from "react";
+import React, { useRef } from "react";
 import { useResizeDetector } from "react-resize-detector";
-import { CSSProperties } from "styled-components";
-import { ModifiableWindowOptions, windowOptionsSelector } from "../../redux/slices/windowOptionsSlice";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv } from "../../styles/floatingWindowStyles";
-import { FloatingWindowOptionContainer, FloatingWindowOptions } from "./FloatingWindowOptionContainer";
-import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { useDragging } from "../../hooks/useDragging";
-import { useWindowOptions } from "../../hooks/useWindowOptions";
+import type { CSSProperties } from "styled-components";
+import type { ModifiableWindowOptions } from "~redux/slices/windowOptionsSlice";
+import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv } from "styles/floatingWindowStyles";
+import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
+import { useDragging } from "hooks/useDragging";
+import { useWindowOptions } from "hooks/useWindowOptions";
+import { FloatingWindowOptionContainer } from "./FloatingWindowOptionContainer";
+import type { FloatingWindowOptions } from "./FloatingWindowOptionContainer";
 import { EdstDraggingOutline } from "./EdstDraggingOutline";
 import { FloatingWindowHeader } from "./FloatingWindowHeader";
 
@@ -28,7 +31,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
   const ref = useRef<HTMLDivElement>(null);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mousedown");
 
-  const pos = useRootSelector(state => windowPositionSelector(state, edstWindow));
+  const pos = useRootSelector((state) => windowPositionSelector(state, edstWindow));
   const zStack = useRootSelector(zStackSelector);
 
   const windowOptions = useRootSelector(windowOptionsSelector(edstWindow));

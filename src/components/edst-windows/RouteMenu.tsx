@@ -3,15 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import "../../css/styles.css";
 import _ from "lodash";
 import styled from "styled-components";
-import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
-import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
-import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
-import { EdstButton, ExitButton } from "../utils/EdstButton";
-import { Tooltips } from "../../tooltips";
-import { EdstTooltip } from "../utils/EdstTooltip";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
+import type { Nullable } from "types/utility-types";
+import { Tooltips } from "~/tooltips";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "~redux/slices/appSlice";
 import {
   FidRow,
   OptionIndicator,
@@ -20,31 +16,35 @@ import {
   OptionsBodyRow,
   OptionsMenu,
   OptionsMenuHeader,
-  UnderlineRow
-} from "../../styles/optionMenuStyles";
-import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { ApiFlightplan } from "../../typeDefinitions/types/apiTypes/apiFlightplan";
-import { EdstPreferentialRoute } from "../../typeDefinitions/types/edstPreferentialRoute";
-import { addPlanThunk } from "../../redux/thunks/addPlanThunk";
-import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
-import { useDragging } from "../../hooks/useDragging";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { useFocused } from "../../hooks/useFocused";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { OPLUS_SYMBOL } from "../../utils/constants";
-import { DownlinkSymbol } from "../utils/DownlinkSymbol";
-import { CreateOrAmendFlightplanDto } from "../../typeDefinitions/types/apiTypes/CreateOrAmendFlightplanDto";
-import { usePar, usePdar, usePdr } from "../../api/prefrouteApi";
-import { useRouteFixes } from "../../api/aircraftApi";
-import { formatRoute } from "../../utils/formatRoute";
-import { useSharedUiListener } from "../../hooks/useSharedUiListener";
+  UnderlineRow,
+} from "styles/optionMenuStyles";
+import { aselTrackSelector } from "~redux/slices/trackSlice";
+import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
+import type { EdstPreferentialRoute } from "types/edstPreferentialRoute";
+import { addPlanThunk } from "~redux/thunks/addPlanThunk";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
+import { useHubActions } from "hooks/useHubActions";
+import { OPLUS_SYMBOL } from "~/utils/constants";
+import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
+import { usePar, usePdar, usePdr } from "~/api/prefrouteApi";
+import { useRouteFixes } from "~/api/aircraftApi";
+import { formatRoute } from "~/utils/formatRoute";
+import { useSharedUiListener } from "hooks/useSharedUiListener";
+import { removeStringFromStart, removeStringFromEnd } from "~/utils/stringManipulation";
+import { getClearedToFixRouteFixes } from "~/utils/fixes";
+import { borderHover, buttonBorderInverted2px } from "styles/styles";
 import socket from "../../sharedState/socket";
-import { removeStringFromStart, removeStringFromEnd } from "../../utils/stringManipulation";
-import { getClearedToFixRouteFixes } from "../../utils/fixes";
-import { borderHover, buttonBorderInverted2px } from "../../styles/styles";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import { DownlinkSymbol } from "../utils/DownlinkSymbol";
+import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
+import { EdstTooltip } from "../utils/EdstTooltip";
+import { EdstButton, ExitButton } from "../utils/EdstButton";
+import FLIGHTAWARE_LOGO from "../../resources/images/FA_1.png";
+import SKYVECTOR_LOGO from "../../resources/images/glob_bright.png";
+import { PreferredRouteDisplay } from "./PreferredRouteDisplay";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -65,11 +65,11 @@ const InputContainer = styled.div`
 `;
 const Input = styled.input`
   //cursor: default;
-  font-size: ${props => props.theme.fontProps.inputFontSize};
+  font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;
   flex: 1;
   width: 100%;
-  color: ${props => props.theme.colors.grey};
+  color: ${(props) => props.theme.colors.grey};
   background-color: #000000;
   border: 1px solid transparent;
 
@@ -80,7 +80,7 @@ const PposDiv = styled.div`
   border-right: none;
   padding: 0 2px;
   width: 11ch;
-  font-size: ${props => props.theme.fontProps.fontSize};
+  font-size: ${(props) => props.theme.fontProps.fontSize};
   color: #575757;
 `;
 const ButtonCol = styled(OptionsBodyCol)`
@@ -104,12 +104,18 @@ const DctCol = styled(OptionsBodyCol)`
 `;
 
 type Append = { appendOplus: boolean; appendStar: boolean };
-const toggleAppendStar = (prev: Append) => ({ appendStar: !prev.appendStar, appendOplus: false });
-const toggleAppendOplus = (prev: Append) => ({ appendStar: false, appendOplus: !prev.appendOplus });
+const toggleAppendStar = (prev: Append) => ({
+  appendStar: !prev.appendStar,
+  appendOplus: false,
+});
+const toggleAppendOplus = (prev: Append) => ({
+  appendStar: false,
+  appendOplus: !prev.appendOplus,
+});
 
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.ROUTE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.ROUTE_MENU));
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector);
@@ -130,7 +136,10 @@ export const RouteMenu = () => {
     asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : route + entry.destination
   );
   const [trialPlan, setTrialPlan] = useState(!(asel.window === EdstWindow.DEP));
-  const [append, setAppend] = useState({ appendOplus: false, appendStar: false });
+  const [append, setAppend] = useState({
+    appendOplus: false,
+    appendStar: false,
+  });
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel.aircraftId]);
@@ -138,7 +147,7 @@ export const RouteMenu = () => {
 
   useEffect(() => {
     if (aircraftTrack) {
-      hubActions.generateFrd(aircraftTrack.location).then(frd => setFrd(frd));
+      hubActions.generateFrd(aircraftTrack.location).then((frd) => setFrd(frd));
     }
   }, [aircraftTrack, entry.aircraftId, hubActions]);
 
@@ -155,7 +164,7 @@ export const RouteMenu = () => {
     setRouteInput(dep ? entry.departure + route + entry.destination : route + entry.destination);
   }, [asel.window, formattedRoute, entry.departure, entry.destination, entry.route]);
 
-  const currentRouteFixNames: string[] = currentRouteFixes.map(fix => fix.name) ?? [];
+  const currentRouteFixNames: string[] = currentRouteFixes.map((fix) => fix.name) ?? [];
   let routeFixes = currentRouteFixes;
   if (routeFixes.length > 1) {
     // if first fix is FRD
@@ -180,7 +189,7 @@ export const RouteMenu = () => {
           aircraftId: entry.aircraftId,
           amendedFlightplan,
           commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-          expirationTime: new Date().getTime() / 1000 + 120
+          expirationTime: new Date().getTime() / 1000 + 120,
         })
       );
     }
@@ -192,10 +201,16 @@ export const RouteMenu = () => {
       amendedFlightplan = { ...entry, route: prefRoute.route };
       await amendPrefroute(amendedFlightplan);
     } else if (prefRoute.routeType === "pdr") {
-      amendedFlightplan = { ...entry, route: prefRoute.amendment.split(".").join(" ") + prefRoute.truncatedRoute };
+      amendedFlightplan = {
+        ...entry,
+        route: prefRoute.amendment.split(".").join(" ") + prefRoute.truncatedRoute,
+      };
       await amendPrefroute(amendedFlightplan);
     } else if (prefRoute.routeType === "par") {
-      amendedFlightplan = { ...entry, route: prefRoute.truncatedRoute + prefRoute.amendment.split(".").join(" ") };
+      amendedFlightplan = {
+        ...entry,
+        route: prefRoute.truncatedRoute + prefRoute.amendment.split(".").join(" "),
+      };
       await amendPrefroute(amendedFlightplan);
     }
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
@@ -207,10 +222,7 @@ export const RouteMenu = () => {
     if (route) {
       const amendedFlightplan: ApiFlightplan = {
         ...entry,
-        route: route
-          .split(/\.+/g)
-          .join(" ")
-          .trim()
+        route: route.split(/\.+/g).join(" ").trim(),
       };
       if (!trialPlan) {
         await hubActions.amendFlightplan(amendedFlightplan);
@@ -221,7 +233,7 @@ export const RouteMenu = () => {
             aircraftId: entry.aircraftId,
             amendedFlightplan,
             commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-            expirationTime: new Date().getTime() / 1000 + 120
+            expirationTime: new Date().getTime() / 1000 + 120,
           })
         );
       }
@@ -229,7 +241,7 @@ export const RouteMenu = () => {
     dispatch(closeWindow(EdstWindow.ROUTE_MENU));
   };
 
-  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = async event => {
+  const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = async (event) => {
     if (event.key === "Enter") {
       const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
       let newRoute = removeStringFromEnd(routeInput, entry.destination);
@@ -240,10 +252,7 @@ export const RouteMenu = () => {
       }
       const amendedFlightplan = {
         ...entry,
-        route: newRoute
-          .toUpperCase()
-          .replace(/^\.+/gi, "")
-          .trim()
+        route: newRoute.toUpperCase().replace(/^\.+/gi, "").trim(),
       };
       if (trialPlan) {
         dispatch(
@@ -252,7 +261,7 @@ export const RouteMenu = () => {
             aircraftId: entry.aircraftId,
             amendedFlightplan,
             commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${newRoute}${amendedFlightplan.destination}`,
-            expirationTime: new Date().getTime() / 1000 + 120
+            expirationTime: new Date().getTime() / 1000 + 120,
           })
         );
       } else {
@@ -339,15 +348,26 @@ export const RouteMenu = () => {
                 {!(asel.window === EdstWindow.DEP) && (
                   <EdstTooltip
                     title={Tooltips.routeMenuFrd}
-                    onContextMenu={event => {
+                    onContextMenu={(event) => {
                       event.preventDefault();
                     }}
                   >
                     <PposDiv>{frd}..</PposDiv>
                   </EdstTooltip>
                 )}
-                <EdstTooltip title={Tooltips.routeMenuRouteInput} style={{ display: "flex", justifyContent: "left", flexGrow: "1" }}>
-                  <Input value={routeInput} onChange={event => setRouteInput(event.target.value)} onKeyDown={event => handleInputKeyDown(event)} />
+                <EdstTooltip
+                  title={Tooltips.routeMenuRouteInput}
+                  style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    flexGrow: "1",
+                  }}
+                >
+                  <Input
+                    value={routeInput}
+                    onChange={(event) => setRouteInput(event.target.value)}
+                    onKeyDown={(event) => handleInputKeyDown(event)}
+                  />
                 </EdstTooltip>
               </InputContainer>
             </OptionsBodyCol>
@@ -394,9 +414,9 @@ export const RouteMenu = () => {
               {asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
             </DisplayRouteDiv>
           </OptionsBodyRow>
-          {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map(i => (
+          {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
             <OptionsBodyRow key={i}>
-              {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map(j => {
+              {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map((j) => {
                 const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
                 return (
                   fixName && (
@@ -410,7 +430,7 @@ export const RouteMenu = () => {
           ))}
           {routesAvailable && (
             <PreferredRouteDisplay
-              par={pars.filter(parData => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+              par={pars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
               pdr={asel.window === EdstWindow.DEP ? pdrs : []}
               pdar={asel.window === EdstWindow.DEP ? pdars : []}
               clearedPrefroute={clearedPrefroute}

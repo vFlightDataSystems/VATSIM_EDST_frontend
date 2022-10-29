@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import type { Nullable } from "types/utility-types";
+import { Tooltips } from "~/tooltips";
+import { useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { OptionsBodyRow, OptionIndicator, OptionIndicatorCircle } from "styles/optionMenuStyles";
+import { isEnum } from "~/utility-functions";
+import { borderHover } from "styles/styles";
 import { EdstTooltip } from "../../utils/EdstTooltip";
-import { Tooltips } from "../../../tooltips";
-import { useRootSelector } from "../../../redux/hooks";
-import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
-import { OptionsBodyRow, OptionIndicator, OptionIndicatorCircle } from "../../../styles/optionMenuStyles";
+import type { EquipmentTemplateBodyProps } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "./EqpStyled";
-import { borderHover } from "../../../styles/styles";
-import { Nullable } from "../../../typeDefinitions/utility-types";
-import { isEnum } from "../../../utility-functions";
 
 const ContentCol = styled.div`
   justify-content: left;
@@ -32,7 +33,7 @@ enum TransponderCat {
   S = "S",
   H = "H",
   L = "L",
-  E = "E"
+  E = "E",
 }
 
 const transponderCatText = {
@@ -44,22 +45,22 @@ const transponderCatText = {
   S: "(MODE S & ACID & PRESSURE ALTITUDE)",
   H: "(MODE S & ACID TRANSMISSION & ENHANCED)",
   L: "(MODE S & ACID & PRESSURE ALTITUDE & ENHANCED)",
-  E: "(MODE S & ACID & PRESSURE ALTITUDE & EXTENDED SQUITTER)"
+  E: "(MODE S & ACID & PRESSURE ALTITUDE & EXTENDED SQUITTER)",
 };
 
 enum AdsbB {
   B1 = "B1",
-  B2 = "B2"
+  B2 = "B2",
 }
 
 enum AdsbU {
   U1 = "U1",
-  U2 = "U2"
+  U2 = "U2",
 }
 
 enum AdsbV {
   V1 = "V1",
-  V2 = "V2"
+  V2 = "V2",
 }
 
 export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) => {
@@ -75,9 +76,9 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
     const transponderCat = field10b?.[0];
 
     const transponderCategory = transponderCat && isEnum(TransponderCat)(transponderCat) ? transponderCat : null;
-    const adsbBInitialCat = (Object.values(AdsbB).filter(t => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
-    const adsbUInitialCat = (Object.values(AdsbU).filter(t => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
-    const adsbVInitialCat = (Object.values(AdsbV).filter(t => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
+    const adsbBInitialCat = (Object.values(AdsbB).filter((t) => field10b?.includes(t))?.[0] as AdsbB | undefined) ?? null;
+    const adsbUInitialCat = (Object.values(AdsbU).filter((t) => field10b?.includes(t))?.[0] as AdsbU | undefined) ?? null;
+    const adsbVInitialCat = (Object.values(AdsbV).filter((t) => field10b?.includes(t))?.[0] as AdsbV | undefined) ?? null;
 
     const reset = () => {
       setTransponderCat(transponderCategory);
@@ -103,7 +104,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               </ContentCol>
             </EdstTooltip>
           </EqpRow>
-          {Object.values(TransponderCat).map(category => (
+          {Object.values(TransponderCat).map((category) => (
             <EquipmentTemplateRow
               circle
               key={`transponder-type-row-${category}`}

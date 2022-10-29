@@ -8,5 +8,5 @@ export const HoldDirectionValues = {
   [CompassDirection.EAST]: "E",
   [CompassDirection.SOUTH_WEST]: "SW",
   [CompassDirection.SOUTH]: "S",
-  [CompassDirection.SOUTH_EAST]: "SE"
+  [CompassDirection.SOUTH_EAST]: "SE",
 };

@@ -1,4 +1,9 @@
-import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
+import type { Action, ThunkAction } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import { prefrouteApi } from "~/api/prefrouteApi";
+import { aircraftApi } from "~/api/aircraftApi";
+import { weatherApi } from "~/api/weatherApi";
+import { gpdApi } from "~/api/gpdApi";
 import aclReducer from "./slices/aclSlice";
 import depReducer from "./slices/depSlice";
 import gpdReducer from "./slices/gpdSlice";
@@ -10,10 +15,6 @@ import aircraftTrackReducer from "./slices/trackSlice";
 import weatherReducer from "./slices/weatherSlice";
 import windowOptionsReducer from "./slices/windowOptionsSlice";
 import authReducer from "./slices/authSlice";
-import { prefrouteApi } from "../api/prefrouteApi";
-import { aircraftApi } from "../api/aircraftApi";
-import { weatherApi } from "../api/weatherApi";
-import { gpdApi } from "../api/gpdApi";
 
 const store = configureStore({
   reducer: {
@@ -31,10 +32,10 @@ const store = configureStore({
     [prefrouteApi.reducerPath]: prefrouteApi.reducer,
     [aircraftApi.reducerPath]: aircraftApi.reducer,
     [weatherApi.reducerPath]: weatherApi.reducer,
-    [gpdApi.reducerPath]: gpdApi.reducer
+    [gpdApi.reducerPath]: gpdApi.reducer,
   },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({ serializableCheck: false }).concat([prefrouteApi.middleware, aircraftApi.middleware, weatherApi.middleware])
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }).concat([prefrouteApi.middleware, aircraftApi.middleware, weatherApi.middleware]),
 });
 export default store;
 

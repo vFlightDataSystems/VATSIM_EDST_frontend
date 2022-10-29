@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Tooltips } from "../../../tooltips";
-import { useRootSelector } from "../../../redux/hooks";
-import { aselEntrySelector } from "../../../redux/slices/entrySlice";
-import { EquipmentTemplateBodyProps, EquipmentTemplateRow } from "./EquipmentTemplateMenu";
-import { OptionsBodyRow } from "../../../styles/optionMenuStyles";
+import { Tooltips } from "~/tooltips";
+import { useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { OptionsBodyRow } from "styles/optionMenuStyles";
+import { isEnum } from "~/utility-functions";
+import type { EquipmentTemplateBodyProps } from "./EquipmentTemplateMenu";
+import { EquipmentTemplateRow } from "./EquipmentTemplateMenu";
 import { EqpCol } from "./EqpStyled";
-import { isEnum } from "../../../utility-functions";
 
 export const EqpCol2 = styled(EqpCol)`
   margin: 0 20px;
@@ -17,7 +18,7 @@ enum ApproachCategory {
   K = "K",
   A = "A",
   B = "B",
-  S = "S"
+  S = "S",
 }
 
 const isApproachCat = isEnum(ApproachCategory);

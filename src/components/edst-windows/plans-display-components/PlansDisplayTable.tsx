@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import styled, { CSSProperties } from "styled-components";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
 import { useInterval } from "usehooks-ts";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { planQueueSelector, selectedPlanIndexSelector, setSelectedPlanIndex } from "../../../redux/slices/planSlice";
-import { BodyRowDiv, borderHover } from "../../../styles/styles";
-import { NoSelectDiv } from "../../../styles/NoSelectDiv";
-import { removePlanThunk } from "../../../redux/thunks/removePlanThunk";
-import { colors } from "../../../edstTheme";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { planQueueSelector, selectedPlanIndexSelector, setSelectedPlanIndex } from "~redux/slices/planSlice";
+import { BodyRowDiv, borderHover } from "styles/styles";
+import { NoSelectDiv } from "styles/NoSelectDiv";
+import { removePlanThunk } from "~redux/thunks/removePlanThunk";
+import { colors } from "~/edstTheme";
 
 const PlansDisplayBody = styled(NoSelectDiv)`
   overflow: hidden;
   display: block;
   flex-flow: column;
   border-top: 1px solid #adadad;
-  color: ${props => props.theme.colors.grey};
+  color: ${(props) => props.theme.colors.grey};
 `;
 
 type ColCSSProps = Pick<CSSProperties, "color">;
@@ -30,13 +31,13 @@ const Col = styled.div<ColProps>`
     pointer-events: none;
     color: #000000;
   }
-  ${props => props.color && { color: props.color }};
-  ${props =>
+  ${(props) => props.color && { color: props.color }};
+  ${(props) =>
     props.selected && {
       "background-color": props.color ?? "#ADADAD",
-      color: "#000000"
+      color: "#000000",
     }};
-  ${props => props.hover && borderHover};
+  ${(props) => props.hover && borderHover};
 `;
 const Col1 = styled(Col)`
   width: 20ch;

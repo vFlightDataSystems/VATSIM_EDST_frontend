@@ -1,8 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { login as apiLogin } from "../../api/vNasDataApi";
-import { RootState } from "../store";
-import { ApiSessionInfoDto } from "../../typeDefinitions/types/apiTypes/apiSessionInfoDto";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { Nullable } from "types/utility-types";
+import type { RootState } from "~redux/store";
+import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
+import { login as apiLogin } from "api/vNasDataApi";
 
 type AuthState = {
   vatsimToken: Nullable<string>;
@@ -13,7 +14,7 @@ type AuthState = {
 const initialState: AuthState = {
   vatsimToken: null,
   session: null,
-  isRefreshingSession: false
+  isRefreshingSession: false,
 };
 
 type CodeExchangeProps = {
@@ -28,7 +29,7 @@ export const login = createAsyncThunk("auth/login", async (data: CodeExchangePro
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
       if (action.payload.ok) {
         state.vatsimToken = action.payload.vatsimToken;
@@ -44,8 +45,8 @@ export const authSlice = createSlice({
     },
     clearSession(state) {
       state.session = null;
-    }
-  }
+    },
+  },
 });
 
 export const { setSession, clearSession } = authSlice.actions;

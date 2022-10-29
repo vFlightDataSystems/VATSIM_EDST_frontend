@@ -1,23 +1,23 @@
 import styled, { css } from "styled-components";
-import { Col, SpecialBox } from "../../../styles/sharedColumns";
+import { Col, SpecialBox } from "styles/sharedColumns";
 
 type AclCol1Props = { border?: boolean };
 export const AclCol1 = styled(Col)<AclCol1Props>`
   margin: 0 2px;
   width: 14px;
-  ${props =>
+  ${(props) =>
     props.border && {
-      border: "1px solid #ADADAD"
+      border: "1px solid #ADADAD",
     }};
 `;
 type RadioColProps = { green?: boolean; header?: boolean; keep?: boolean };
 export const RadioCol = styled(AclCol1)<RadioColProps>`
-  color: ${props => (props.green ? props.theme.colors.green : props.theme.colors.grey)};
+  color: ${(props) => (props.green ? props.theme.colors.green : props.theme.colors.grey)};
   width: 10px;
   &:hover {
-    border: 1px solid ${props => (props.green ? props.theme.colors.green : "#F0F0F0")};
+    border: 1px solid ${(props) => (props.green ? props.theme.colors.green : "#F0F0F0")};
   }
-  ${props =>
+  ${(props) =>
     props.header &&
     css`
       font-size: 14px;
@@ -25,7 +25,7 @@ export const RadioCol = styled(AclCol1)<RadioColProps>`
       width: 10px;
       pointer-events: none;
     `};
-  ${props => props.keep && { "background-color": "#414141" }};
+  ${(props) => props.keep && { "background-color": "#414141" }};
 `;
 export const CoralBox = styled(SpecialBox)`
   margin: 0 2px;
@@ -35,11 +35,11 @@ export const CoralBox = styled(SpecialBox)`
   pointer-events: none;
 `;
 type RemarksBoxProps = { unchecked?: boolean };
-export const RemarksBox = styled(SpecialBox)<RemarksBoxProps>(props => {
+export const RemarksBox = styled(SpecialBox)<RemarksBoxProps>((props) => {
   return (
     props.unchecked && {
       color: props.theme.colors.yellow,
-      border: `1px solid ${props.theme.colors.yellow}`
+      border: `1px solid ${props.theme.colors.yellow}`,
     }
   );
 });
@@ -52,9 +52,9 @@ export const PointOutCol = styled(Col)`
 `;
 type HdgSpdColProps = { scratchpad?: boolean };
 const HdgSpdCol = styled(Col)<HdgSpdColProps>`
-  ${props => props.scratchpad && { color: props.theme.colors.yellow }}
-  width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "4ch")};
-  ${props =>
+  ${(props) => props.scratchpad && { color: props.theme.colors.yellow }}
+  width: ${(props) => (props.visibilityHidden || props.hidden ? "2ch" : "4ch")};
+  ${(props) =>
     props.selected &&
     css`
       color: #000000;

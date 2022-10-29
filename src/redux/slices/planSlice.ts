@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { RootState } from "../store";
-import { Plan } from "../../typeDefinitions/types/plan";
-import sharedSocket from "../../sharedState/socket";
-import { Nullable } from "../../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
+import type { Plan } from "types/plan";
+import type { RootState } from "~redux/store";
+import sharedSocket from "~socket";
 
 export type PlanState = {
   planQueue: Plan[];
@@ -12,7 +13,7 @@ export type PlanState = {
 
 const initialState: PlanState = {
   planQueue: [],
-  selectedPlanIndex: null
+  selectedPlanIndex: null,
 };
 
 const planSlice = createSlice({
@@ -43,8 +44,8 @@ const planSlice = createSlice({
         state.selectedPlanIndex = action.payload;
       }
       sharedSocket.setPlanState(state);
-    }
-  }
+    },
+  },
 });
 
 export const { setPlanState, addPlan, removePlan, setSelectedPlanIndex, planCleanup } = planSlice.actions;

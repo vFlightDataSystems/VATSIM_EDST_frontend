@@ -3,7 +3,7 @@ name = "app"
 version = "0.1.0"
 description = "vEDST"
 authors = ["Milan Kroemer"]
-license = ""
+license = "MIT"
 repository = ""
 default-run = "app"
 edition = "2021"
@@ -19,8 +19,8 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { git = "https://github.com/tauri-apps/tauri", features = ["api-all"] }
 
-[patch.crates-io]
-tao = { git = "https://github.com/tauri-apps/tao" }
+#[patch.crates-io]
+#tao = { git = "https://github.com/tauri-apps/tao" }
 
 [features]
 # by default Tauri runs in production mode

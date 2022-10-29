@@ -1,11 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
-import { ACL_SORT_MAP, AclSortData, AclSortKey } from "../../typeDefinitions/types/aclSortData";
-import { AclSortOption } from "../../typeDefinitions/enums/acl/aclSortOption";
-import sharedSocket from "../../sharedState/socket";
-import { AclRowField } from "../../typeDefinitions/enums/acl/aclRowField";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { AclSortData, AclSortKey } from "types/aclSortData";
+import { ACL_SORT_MAP } from "types/aclSortData";
+import { AclSortOption } from "enums/acl/aclSortOption";
+import type { AclRowField } from "enums/acl/aclRowField";
+import sharedSocket from "~socket";
+import type { RootState } from "../store";
 
-type ToolsOptions = { displayCoordinationColumn: boolean; dropTrackDelete: boolean; iafDofManual: boolean; nonRvsmIndicator: boolean };
+type ToolsOptions = {
+  displayCoordinationColumn: boolean;
+  dropTrackDelete: boolean;
+  iafDofManual: boolean;
+  nonRvsmIndicator: boolean;
+};
 
 export type AclState = {
   sortData: AclSortData;
@@ -17,8 +24,13 @@ export type AclState = {
 const initialState: AclState = {
   sortData: { selectedOption: AclSortOption.ACID, sector: false },
   manualPosting: true,
-  toolsOptions: { displayCoordinationColumn: false, dropTrackDelete: false, iafDofManual: false, nonRvsmIndicator: false },
-  hiddenColumns: []
+  toolsOptions: {
+    displayCoordinationColumn: false,
+    dropTrackDelete: false,
+    iafDofManual: false,
+    nonRvsmIndicator: false,
+  },
+  hiddenColumns: [],
 };
 
 const aclSlice = createSlice({
@@ -46,7 +58,7 @@ const aclSlice = createSlice({
     },
     toggleAclHideColumn(state, action: PayloadAction<AclRowField | AclRowField[]>) {
       if (Array.isArray(action.payload)) {
-        action.payload.forEach(column => {
+        action.payload.forEach((column) => {
           const index = state.hiddenColumns.indexOf(column);
           if (index > -1) {
             state.hiddenColumns.splice(index, 1);
@@ -63,8 +75,8 @@ const aclSlice = createSlice({
         }
       }
       sharedSocket.setAclState(state);
-    }
-  }
+    },
+  },
 });
 
 export const { setAclState, setAclSort, setAclManualPosting, updateToolsOptions, toggleAclHideColumn } = aclSlice.actions;

@@ -1,10 +1,10 @@
-import { EdstWindow } from "../../enums/edstWindow";
-import { Asel } from "../asel";
-import { AclState } from "../../../redux/slices/aclSlice";
-import { DepState } from "../../../redux/slices/depSlice";
-import { GpdState } from "../../../redux/slices/gpdSlice";
-import { PlanState } from "../../../redux/slices/planSlice";
-import { Nullable } from "../../utility-types";
+import type { EdstWindow } from "enums/edstWindow";
+import type { AclState } from "~redux/slices/aclSlice";
+import type { DepState } from "~redux/slices/depSlice";
+import type { GpdState } from "~redux/slices/gpdSlice";
+import type { PlanState } from "~redux/slices/planSlice";
+import type { Asel } from "../asel";
+import type { Nullable } from "../utility-types";
 
 export type SharedUiState = {
   acl: AclState;

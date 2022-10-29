@@ -1,13 +1,13 @@
-import { SharedAircraftDto } from "./sharedAircraftDto";
-import { SharedUiState } from "./sharedUiState";
-import { EdstWindow } from "../../enums/edstWindow";
-import { Asel } from "../asel";
-import { SharedUiEvent } from "./sharedUiEvent";
-import { AclState } from "../../../redux/slices/aclSlice";
-import { DepState } from "../../../redux/slices/depSlice";
-import { SharedGpdState } from "../../../redux/slices/gpdSlice";
-import { PlanState } from "../../../redux/slices/planSlice";
-import { Nullable } from "../../utility-types";
+import type { EdstWindow } from "enums/edstWindow";
+import type { AclState } from "~redux/slices/aclSlice";
+import type { DepState } from "~redux/slices/depSlice";
+import type { SharedGpdState } from "~redux/slices/gpdSlice";
+import type { PlanState } from "~redux/slices/planSlice";
+import type { SharedUiEvent } from "./sharedUiEvent";
+import type { Asel } from "../asel";
+import type { SharedUiState } from "./sharedUiState";
+import type { SharedAircraftDto } from "./sharedAircraftDto";
+import type { Nullable } from "../utility-types";
 
 export type SharedStateServerToClientEvents = {
   receiveAircraft: (aircraft: SharedAircraftDto) => void;

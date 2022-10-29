@@ -1,12 +1,13 @@
-import React, { ComponentType, useRef } from "react";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { useFocused } from "../../hooks/useFocused";
-import { pushZStack, windowDimensionSelector, windowPositionSelector, zStackSelector } from "../../redux/slices/appSlice";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useDragging } from "../../hooks/useDragging";
-import { useFullscreen } from "../../hooks/useFullscreen";
+import type { ComponentType } from "react";
+import React, { useRef } from "react";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { useFocused } from "hooks/useFocused";
+import { pushZStack, windowDimensionSelector, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
+import type { EdstWindow } from "enums/edstWindow";
+import { useDragging } from "hooks/useDragging";
+import { useFullscreen } from "hooks/useFullscreen";
+import { ResizableFloatingWindowDiv } from "styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "./EdstDraggingOutline";
-import { ResizableFloatingWindowDiv } from "../../styles/floatingWindowStyles";
 
 export type HeaderComponentProps = {
   focused: boolean;
@@ -25,8 +26,8 @@ export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyC
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);
-  const pos = useRootSelector(state => windowPositionSelector(state, edstWindow));
-  const dimension = useRootSelector(state => windowDimensionSelector(state, edstWindow));
+  const pos = useRootSelector((state) => windowPositionSelector(state, edstWindow));
+  const dimension = useRootSelector((state) => windowDimensionSelector(state, edstWindow));
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mouseup");
   const { isFullscreen, toggleFullscreen } = useFullscreen(ref, edstWindow);
 

@@ -1,8 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
-import { DepSortOption } from "../../typeDefinitions/enums/dep/depSortOption";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { DepSortOption } from "enums/dep/depSortOption";
+import type { DepRowField } from "enums/dep/depRowField";
+import type { RootState } from "~redux/store";
 import sharedSocket from "../../sharedState/socket";
-import { DepRowField } from "../../typeDefinitions/enums/dep/depRowField";
 
 export type DepState = {
   selectedSortOption: DepSortOption;
@@ -13,7 +14,7 @@ export type DepState = {
 const initialState: DepState = {
   selectedSortOption: DepSortOption.ACID,
   manualPosting: true,
-  hiddenColumns: []
+  hiddenColumns: [],
 };
 
 const depSlice = createSlice({
@@ -33,7 +34,7 @@ const depSlice = createSlice({
     },
     toggleDepHideColumn(state, action: PayloadAction<DepRowField | DepRowField[]>) {
       if (Array.isArray(action.payload)) {
-        action.payload.forEach(column => {
+        action.payload.forEach((column) => {
           const index = state.hiddenColumns.indexOf(column);
           if (index > -1) {
             state.hiddenColumns.splice(index, 1);
@@ -50,8 +51,8 @@ const depSlice = createSlice({
         }
       }
       sharedSocket.setDepState(state);
-    }
-  }
+    },
+  },
 });
 
 export const { toggleDepHideColumn, setDepState, setDepSort, setDepManualPosting } = depSlice.actions;

@@ -6,8 +6,8 @@ import svgrPlugin from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    port: 3000
+    port: 3000,
   },
   envPrefix: ["VITE_", "TAURI_"],
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()]
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
 });

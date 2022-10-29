@@ -1,8 +1,9 @@
-import { Feature, lineString, Polygon, Position } from "@turf/turf";
+import type { Feature, Polygon, Position } from "@turf/turf";
+import { lineString } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
-import { RouteFix } from "../typeDefinitions/types/routeFix";
+import type { Nullable } from "types/utility-types";
+import type { RouteFix } from "types/routeFix";
 import { getNextFix } from "./fixes";
-import { Nullable } from "../typeDefinitions/utility-types";
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary
@@ -18,7 +19,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: Nullable<Route
   route = route.replace(/^\.*\[XXX]\.*/g, "");
   const indexToSplit = route.indexOf("[XXX]");
   const routeToProcess = indexToSplit > 0 ? route.slice(0, indexToSplit).replace(/'\.+$/g, "") : route;
-  const fixNames = routeFixes.map(e => e.name);
+  const fixNames = routeFixes.map((e) => e.name);
   const lastFixIndex = fixNames.indexOf(routeToProcess.split(".").pop()!);
   let routeFixesToProcess = routeFixes.slice(0, lastFixIndex);
   routeFixesToProcess.unshift({ pos, name: "ppos" });
@@ -27,7 +28,7 @@ export function routeWillEnterAirspace(route: string, routeFixes: Nullable<Route
     const index = fixNames.indexOf(nextFix.name);
     routeFixesToProcess = routeFixesToProcess.slice(index);
     routeFixesToProcess.unshift({ name: "ppos", pos });
-    const lines = lineString(routeFixesToProcess.map(e => e.pos));
+    const lines = lineString(routeFixesToProcess.map((e) => e.pos));
     for (let i = 0; i < polygons.length; i++) {
       const poly = polygons[i];
       if (booleanIntersects(lines, poly)) {

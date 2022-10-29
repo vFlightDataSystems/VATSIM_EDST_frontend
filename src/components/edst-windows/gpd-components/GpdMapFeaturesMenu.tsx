@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import _ from "lodash";
-import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionIndicator, OptionsFlexCol } from "../../../styles/optionMenuStyles";
-import { EdstTooltip } from "../../utils/EdstTooltip";
-import { EdstButton, ExitButton } from "../../utils/EdstButton";
-import { closeWindow } from "../../../redux/slices/appSlice";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "../../../redux/slices/gpdSlice";
-import { EdstWindow } from "../../../typeDefinitions/enums/edstWindow";
+import { OptionIndicator, OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionsFlexCol } from "styles/optionMenuStyles";
+import { closeWindow } from "~redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "~redux/slices/gpdSlice";
+import { EdstWindow } from "enums/edstWindow";
+import { EdstTooltip } from "components/utils/EdstTooltip";
+import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 export const GpdMapFeaturesMenu = () => {
   const dispatch = useRootDispatch();
@@ -15,10 +15,18 @@ export const GpdMapFeaturesMenu = () => {
 
   return (
     <>
-      {Object.values(MapFeatureOption).map(option => {
+      {Object.values(MapFeatureOption).map((option) => {
         return (
           <OptionsBodyRow key={option}>
-            <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setCurrentOptions(prev => ({ ...prev, [option]: !currentOptions[option] }))}>
+            <EdstTooltip
+              style={{ flexGrow: 1 }}
+              onMouseDown={() =>
+                setCurrentOptions((prev) => ({
+                  ...prev,
+                  [option]: !currentOptions[option],
+                }))
+              }
+            >
               <OptionsFlexCol>
                 <OptionIndicator selected={currentOptions[option]} />
                 {option}

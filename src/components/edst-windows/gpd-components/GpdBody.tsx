@@ -2,9 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import styled from "styled-components";
-import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
-import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "./GpdMapElements";
-import { entriesSelector } from "../../../redux/slices/entrySlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { entriesSelector } from "~redux/slices/entrySlice";
 import {
   GPD_MAX_ZOOM,
   GPD_MIN_ZOOM,
@@ -13,9 +12,10 @@ import {
   gpdSuppressedSelector,
   gpdZoomLevelSelector,
   setGpdCenter,
-  setGpdZoomLevel
-} from "../../../redux/slices/gpdSlice";
-import { useArtccBoundaries } from "../../../api/gpdApi";
+  setGpdZoomLevel,
+} from "~redux/slices/gpdSlice";
+import { useArtccBoundaries } from "~/api/gpdApi";
+import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "./GpdMapElements";
 
 const ZOOM_DELTA = 0.5;
 
@@ -59,7 +59,7 @@ export const GpdBody = () => {
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
   const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
 
-  const entryList = useMemo(() => Object.values(entries).filter(entry => entry.status === "Active"), [entries]);
+  const entryList = useMemo(() => Object.values(entries).filter((entry) => entry.status === "Active"), [entries]);
 
   return (
     <GpdBodyDiv>
@@ -77,7 +77,7 @@ export const GpdBody = () => {
       >
         <MapConfigurator />
         {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}
-        {!suppressed && entryList.map(entry => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
+        {!suppressed && entryList.map((entry) => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
         {displayData && <GpdPlanDisplay displayData={displayData} />}
       </MapContainer>
     </GpdBodyDiv>

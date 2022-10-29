@@ -1,22 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import styled, { CSSProperties } from "styled-components";
-import { EdstButton, ExitButton } from "../utils/EdstButton";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "../../redux/slices/appSlice";
-import { EdstTooltip } from "../utils/EdstTooltip";
-import { Tooltips } from "../../tooltips";
-import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "../../styles/optionMenuStyles";
+import type { CSSProperties } from "styled-components";
+import styled from "styled-components";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "~redux/slices/appSlice";
+import { Tooltips } from "~/tooltips";
+import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { aselTrackSelector } from "~redux/slices/trackSlice";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
+import { useHubActions } from "hooks/useHubActions";
+import { formatRoute } from "~/utils/formatRoute";
+import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "~/utils/stringManipulation";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { openMenuThunk } from "../../redux/thunks/openMenuThunk";
-import { useDragging } from "../../hooks/useDragging";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { useFocused } from "../../hooks/useFocused";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { formatRoute } from "../../utils/formatRoute";
-import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "../../utils/stringManipulation";
+import { EdstTooltip } from "../utils/EdstTooltip";
+import { EdstButton, ExitButton } from "../utils/EdstButton";
 
 const TemplateDiv = styled(OptionsMenu)`
   width: 90ch;
@@ -32,7 +33,7 @@ const TemplateRowDiv = styled.div<TemplateRowDivProps>`
   border: none;
   overflow: hidden;
 
-  ${props => props.alignRight && { width: "auto" }};
+  ${(props) => props.alignRight && { width: "auto" }};
 
   &.left {
     flex-grow: 1;
@@ -47,25 +48,25 @@ type TemplateColProps = {
 };
 
 const TemplateCol = styled.div<TemplateColProps>`
-  font-size: ${props => props.theme.fontProps.inputFontSize};
+  font-size: ${(props) => props.theme.fontProps.inputFontSize};
   align-items: center;
   vertical-align: center;
   padding: 0 2px;
   justify-content: left;
   display: flex;
   flex-shrink: 0;
-  width: ${props => props.width ?? "auto"};
-  ${props => props.textIndent && { "text-indent": "6px" }}
+  width: ${(props) => props.width ?? "auto"};
+  ${(props) => props.textIndent && { "text-indent": "6px" }}
 
-  ${props =>
+  ${(props) =>
     props.bottomRow && {
-      padding: "2px"
+      padding: "2px",
     }}
 
-  ${props =>
+  ${(props) =>
     props.alignRight && {
       width: "auto",
-      "margin-left": "auto"
+      "margin-left": "auto",
     }}
 `;
 
@@ -106,7 +107,7 @@ export const TemplateMenu = () => {
   const asel = useRootSelector(aselSelector);
   const aircraftTrack = useRootSelector(aselTrackSelector);
   const entry = useRootSelector(aselEntrySelector);
-  const pos = useRootSelector(state => windowPositionSelector(state, EdstWindow.TEMPLATE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.TEMPLATE_MENU));
   const zStack = useRootSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
   // TODO: use normal formatted route
@@ -204,52 +205,52 @@ export const TemplateMenu = () => {
           <TemplateRowDiv>
             <TemplateCol width="9ch">
               <EdstTooltip title={Tooltips.templateMenuAid}>
-                <TemplateInput value={aidInput} onChange={event => setAidInput(event.target.value)} />
+                <TemplateInput value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="5ch">
               <EdstTooltip title={Tooltips.templateMenuNum}>
-                <TemplateInput value={numInput} onChange={event => setNumInput(event.target.value)} />
+                <TemplateInput value={numInput} onChange={(event) => setNumInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="5ch">
               <EdstTooltip title={Tooltips.templateMenuSai}>
-                <TemplateInput value={saiInput} onChange={event => setSaiInput(event.target.value)} />
+                <TemplateInput value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="6ch">
               <EdstTooltip title={Tooltips.templateMenuTyp}>
-                <TemplateInput value={typeInput} onChange={event => setTypeInput(event.target.value)} />
+                <TemplateInput value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="8ch">
               <EdstTooltip title={Tooltips.templateMenuEqpBox}>
-                <TemplateInput value={equipInput} onChange={event => setEquipInput(event.target.value)} />
+                <TemplateInput value={equipInput} onChange={(event) => setEquipInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="6ch">
               <EdstTooltip title={Tooltips.templateMenuBcn}>
-                <TemplateInput value={beaconInput} onChange={event => setBeaconInput(event.target.value)} />
+                <TemplateInput value={beaconInput} onChange={(event) => setBeaconInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="6ch">
               <EdstTooltip title={Tooltips.templateMenuSpd}>
-                <TemplateInput value={speedInput} onChange={event => setSpeedInput(event.target.value)} />
+                <TemplateInput value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="14ch">
               <EdstTooltip title={Tooltips.templateMenuFix}>
-                <TemplateInput value={frdInput} onChange={event => setFrdInput(event.target.value)} />
+                <TemplateInput value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <TemplateCol width="8ch">
               <EdstTooltip title={Tooltips.templateMenuTim}>
-                <TemplateInput value={timeInput} onChange={event => setTimeInput(event.target.value)} />
+                <TemplateInput value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
               </EdstTooltip>
             </TemplateCol>
             <FlexCol>
               <EdstTooltip title={Tooltips.templateMenuAlt}>
-                <TemplateInput value={altInput} onChange={event => setAltInput(event.target.value)} />
+                <TemplateInput value={altInput} onChange={(event) => setAltInput(event.target.value)} />
               </EdstTooltip>
             </FlexCol>
           </TemplateRowDiv>
@@ -259,7 +260,7 @@ export const TemplateMenu = () => {
             </TemplateCol>
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={event => setRouteInput(event.target.value)} rows={3} />
+            <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={(event) => setRouteInput(event.target.value)} rows={3} />
           </TemplateRowDiv>
           <TemplateRowDiv>
             <TemplateCol width="5ch" textIndent>
@@ -271,7 +272,7 @@ export const TemplateMenu = () => {
             </TemplateCol>
           </TemplateRowDiv>
           <TemplateRowDiv>
-            <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={event => setRmkInput(event.target.value)} rows={3} />
+            <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={(event) => setRmkInput(event.target.value)} rows={3} />
           </TemplateRowDiv>
           <TemplateRowDiv>
             <TemplateCol bottomRow>

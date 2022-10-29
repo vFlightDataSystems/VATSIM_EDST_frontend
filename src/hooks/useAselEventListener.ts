@@ -1,8 +1,9 @@
-import { RefObject, useEffect } from "react";
-import sharedStateSocket from "../sharedState/socket";
-import { Asel } from "../typeDefinitions/types/asel";
-import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { RefObject } from "react";
+import { useEffect } from "react";
+import type { Nullable } from "types/utility-types";
+import type { Asel } from "types/asel";
+import sharedStateSocket from "~socket";
+import type { EdstWindow } from "enums/edstWindow";
 
 type Handler<F> = (element: HTMLElement, field: F, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
 

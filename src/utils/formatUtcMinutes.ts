@@ -9,9 +9,6 @@ export function formatUtcMinutes(minutes: number): string {
   return (
     Math.trunc(mod(minutes / 60, 24))
       .toString()
-      .padStart(2, "0") +
-    Math.trunc(mod(minutes, 60))
-      .toString()
-      .padStart(2, "0")
+      .padStart(2, "0") + Math.trunc(mod(minutes, 60)).toString().padStart(2, "0")
   );
 }

@@ -1,15 +1,16 @@
-import React, { PropsWithChildren, useRef } from "react";
+import type { PropsWithChildren } from "react";
+import React, { useRef } from "react";
 
-import { EdstButton, ExitButton } from "../utils/EdstButton";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { closeWindow, zStackSelector, pushZStack, windowSelector } from "../../redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { closeWindow, zStackSelector, pushZStack, windowSelector } from "~redux/slices/appSlice";
+import { useDragging } from "hooks/useDragging";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useFocused } from "hooks/useFocused";
+import { EdstWindow } from "enums/edstWindow";
+import { SortBody, SortDiv, SortHeader } from "styles/sortStyles";
+import { OptionsBodyCol, OptionsBottomRow } from "styles/optionMenuStyles";
 import { EdstDraggingOutline } from "../utils/EdstDraggingOutline";
-import { useDragging } from "../../hooks/useDragging";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { useFocused } from "../../hooks/useFocused";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { SortBody, SortDiv, SortHeader } from "../../styles/sortStyles";
-import { OptionsBodyCol, OptionsBottomRow } from "../../styles/optionMenuStyles";
+import { EdstButton, ExitButton } from "../utils/EdstButton";
 
 type SortMenuProps = PropsWithChildren<{
   edstWindow: EdstWindow.ACL_SORT_MENU | EdstWindow.DEP_SORT_MENU;
@@ -18,7 +19,7 @@ type SortMenuProps = PropsWithChildren<{
 
 export const SortMenu = ({ edstWindow, onSubmit, children }: SortMenuProps) => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector(state => windowSelector(state, edstWindow));
+  const windowProps = useRootSelector((state) => windowSelector(state, edstWindow));
   const zStack = useRootSelector(zStackSelector);
 
   const ref = useRef<HTMLDivElement>(null);

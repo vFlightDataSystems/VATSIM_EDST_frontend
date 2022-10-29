@@ -1,12 +1,13 @@
-import React, { RefObject, useCallback, useEffect, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "../redux/slices/appSlice";
-import { WindowPosition } from "../typeDefinitions/types/windowPosition";
-import { DragPreviewStyle } from "../typeDefinitions/types/dragPreviewStyle";
-import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
-import { Nullable } from "../typeDefinitions/utility-types";
+import type { Nullable } from "types/utility-types";
+import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "~redux/slices/appSlice";
+import type { WindowPosition } from "types/windowPosition";
+import type { DragPreviewStyle } from "types/dragPreviewStyle";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { EdstWindow } from "enums/edstWindow";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.STATUS,
@@ -16,14 +17,14 @@ const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   EdstWindow.ALTIMETER,
   EdstWindow.METAR,
   EdstWindow.SIGMETS,
-  EdstWindow.GI
+  EdstWindow.GI,
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const computePreviewPos = (x: number, y: number, _width: number, _height: number): WindowPosition => {
   return {
     left: x - 1,
-    top: y
+    top: y,
   };
 };
 
@@ -36,7 +37,7 @@ type StopDragOn = "mousedown" | "mouseup";
  * @param stopDragOn whether to listen for stopDrag onMouseDown or onMouseUp
  * @returns
  */
-export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
+export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
   const dispatch = useRootDispatch();
   // on middleClick I always want to stop drag onmouseup
   const [currentStopDragOn, setCurrentStopDragOn] = useState(stopDragOn);
@@ -59,16 +60,16 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
     (event: MouseEvent) => {
       if (event && ref.current) {
         if (repositionCursor) {
-          setDragPreviewStyle(prevStyle => ({
+          setDragPreviewStyle((prevStyle) => ({
             ...prevStyle!,
             left: event.clientX,
-            top: event.clientY
+            top: event.clientY,
           }));
         } else {
           const { clientWidth: width, clientHeight: height } = ref.current;
-          setDragPreviewStyle(prevStyle => ({
+          setDragPreviewStyle((prevStyle) => ({
             ...prevStyle!,
-            ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height)
+            ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height),
           }));
         }
       }
@@ -77,7 +78,7 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
   );
 
   const startDrag: React.MouseEventHandler<HTMLDivElement> = useCallback(
-    event => {
+    (event) => {
       if (ref.current && ppos && !anyDragging && (event.button === 0 || event.button === 1)) {
         event.stopPropagation();
         if (event.button === 1) {
@@ -118,7 +119,7 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
           width:
             ref.current.clientWidth +
             parseFloat(getComputedStyle(ref.current).getPropertyValue("border")) +
-            parseFloat(getComputedStyle(ref.current).getPropertyValue("margin")) * 2
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("margin")) * 2,
         };
         setDragPreviewStyle(style);
         setDragging(true);
@@ -140,7 +141,7 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
       dispatch(
         setWindowPosition({
           window: edstWindow,
-          pos: newPos
+          pos: newPos,
         })
       );
       dispatch(setAnyDragging(false));
@@ -150,7 +151,7 @@ export const useDragging = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow,
     }
   }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, ref]);
 
-  useEventListener(currentStopDragOn, event => {
+  useEventListener(currentStopDragOn, (event) => {
     if (dragPreviewStyle && event.button === 0) {
       setCurrentStopDragOn(stopDragOn);
       stopDrag();
