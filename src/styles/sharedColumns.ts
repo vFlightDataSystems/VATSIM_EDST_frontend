@@ -37,7 +37,7 @@ export const Col = styled.div<ColProps>`
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
-  width: 12ch;
+  width: 14ch;
   padding: 0 2px;
 `;
 export const SpecialBox = styled(Col)`
@@ -53,7 +53,6 @@ export const AircraftTypeCol = styled(Col)<ColProps>`
   justify-content: left;
   width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "7ch")};
   margin-right: 0;
-  margin-left: 10px;
   padding-left: 4px;
   div {
     border: 1px solid transparent;
@@ -69,8 +68,6 @@ export const CodeCol = styled(Col)<ColProps>`
   padding: 0 2px;
   justify-content: left;
   width: ${props => (props.visibilityHidden || props.hidden ? "2ch" : "5ch")};
-  margin-left: 0;
-  margin-right: 10px;
 `;
 type AltColProps = { headerCol?: boolean };
 export const AltCol = styled(Col)<AltColProps>`

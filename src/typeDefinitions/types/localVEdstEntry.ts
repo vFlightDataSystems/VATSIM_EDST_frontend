@@ -1,4 +1,4 @@
-import { AclRouteDisplayOption } from "../enums/aclRouteDisplayOption";
+import { RouteDisplayOption } from "../enums/routeDisplayOption";
 import { Nullable } from "../utility-types";
 
 export class LocalVEdstEntry {
@@ -13,7 +13,7 @@ export class LocalVEdstEntry {
   highlighted = false;
 
   // what data to display in ACL route column
-  aclRouteDisplay: Nullable<AclRouteDisplayOption> = null;
+  routeDisplay: Nullable<RouteDisplayOption> = null;
 
   remarksChecked = false;
 

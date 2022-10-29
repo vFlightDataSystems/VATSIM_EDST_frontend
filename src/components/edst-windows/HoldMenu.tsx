@@ -294,7 +294,7 @@ export const HoldMenu = () => {
                 content="Delete Hold Instructions"
                 padding="0 20px"
                 onMouseDown={() => {
-                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclRouteDisplay: null } }));
+                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { routeDisplay: null } }));
                   dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}
                 title={Tooltips.holdDeleteHoldInstr}
@@ -350,7 +350,7 @@ export const HoldMenu = () => {
                 content="Cancel Hold"
                 disabled={!entry?.holdAnnotations}
                 onMouseDown={() => {
-                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { aclRouteDisplay: null } }));
+                  dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { routeDisplay: null } }));
                   dispatch(openWindowThunk(EdstWindow.CANCEL_HOLD_MENU));
                   dispatch(closeWindow(EdstWindow.HOLD_MENU));
                 }}

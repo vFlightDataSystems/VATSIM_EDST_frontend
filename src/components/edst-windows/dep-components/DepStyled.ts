@@ -1,11 +1,7 @@
 import styled, { css } from "styled-components";
-import { Col, FidCol } from "../../../styles/sharedColumns";
+import { Col } from "../../../styles/sharedColumns";
 import { borderHover, createBorder } from "../../../styles/styles";
 
-export const DepFidCol = styled(FidCol)`
-  justify-content: left;
-  margin-right: 2ch;
-`;
 export const DepPTimeCol = styled(Col)`
   width: 6ch;
 `;

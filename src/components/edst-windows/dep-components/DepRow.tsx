@@ -5,7 +5,7 @@ import { delEntry, entrySelector, toggleSpa, updateEntry } from "../../../redux/
 import { useRootDispatch, useRootSelector } from "../../../redux/hooks";
 import { aircraftIsAselSelector } from "../../../redux/slices/appSlice";
 import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "../../../styles/styles";
-import { DepPTimeCol, DepFidCol, RadioCol } from "./DepStyled";
+import { DepPTimeCol, RadioCol } from "./DepStyled";
 import { depAircraftSelect } from "../../../redux/thunks/aircraftSelect";
 import {
   AircraftTypeCol,
@@ -13,6 +13,7 @@ import {
   AltColDiv,
   CodeCol,
   EmbeddedRouteTextSpan,
+  FidCol,
   HotBox,
   RouteCol,
   RouteSpan,
@@ -29,10 +30,12 @@ import { ApiPreferentialArrivalRoute } from "../../../typeDefinitions/types/apiT
 import { formatRoute } from "../../../utils/formatRoute";
 import { openMenuThunk } from "../../../redux/thunks/openMenuThunk";
 import { useAselEventListener } from "../../../hooks/useAselEventListener";
-import { depHiddenColumnsSelector } from "../../../redux/slices/depSlice";
+import { depHiddenColumnsSelector, depManualPostingSelector } from "../../../redux/slices/depSlice";
 import { convertBeaconCodeToString, removeStringFromEnd } from "../../../utils/stringManipulation";
 import { Nullable } from "../../../typeDefinitions/utility-types";
 import { AircraftId } from "../../../typeDefinitions/types/aircraftId";
+import { RemarksBox } from "../acl-components/AclStyled";
+import { RouteDisplayOption } from "../../../typeDefinitions/enums/routeDisplayOption";
 
 type DepRowProps = {
   aircraftId: AircraftId;
@@ -86,6 +89,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const dispatch = useRootDispatch();
   const entry = useRootSelector(state => entrySelector(state, aircraftId));
   const asel = useRootSelector(state => aircraftIsAselSelector(state, aircraftId));
+  const manualPosting = useRootSelector(depManualPostingSelector);
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
   const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(aircraftId);
@@ -185,6 +189,35 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
     }
   };
 
+  const handleRemarksClick: React.MouseEventHandler<HTMLDivElement> = event => {
+    if (entry.depStatus === -1 && !manualPosting) {
+      dispatch(updateEntry({ aircraftId, data: { depStatus: 0 } }));
+    }
+    switch (event.button) {
+      case 0:
+        dispatch(
+          updateEntry({
+            aircraftId,
+            data: {
+              routeDisplay: !(entry.routeDisplay === RouteDisplayOption.remarks) && entry.remarks.length > 0 ? RouteDisplayOption.remarks : null,
+              remarksChecked: true
+            }
+          })
+        );
+        break;
+      case 2:
+        dispatch(
+          updateEntry({
+            aircraftId,
+            data: { routeDisplay: !(entry.routeDisplay === RouteDisplayOption.rawRoute) ? RouteDisplayOption.rawRoute : null }
+          })
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
@@ -197,7 +230,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
         <DepPTimeCol>0000</DepPTimeCol>
         <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <EdstTooltip title={Tooltips.depFlightId}>
-            <DepFidCol
+            <FidCol
               hover
               selected={isSelected(DepRowField.FID)}
               onMouseDown={handleFidClick}
@@ -206,12 +239,13 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
               {entry.cid} {entry.aircraftId}
               {/* eslint-disable-next-line no-nested-ternary */}
               {entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}
-            </DepFidCol>
+            </FidCol>
           </EdstTooltip>
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
           <EdstTooltip title={Tooltips.depHotbox}>
             <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
           </EdstTooltip>
+          <SpecialBox disabled />
           <EdstTooltip title={Tooltips.depType}>
             <AircraftTypeCol
               visibilityHidden={hiddenColumns.includes(DepRowField.TYPE)}
@@ -243,6 +277,11 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
               {convertBeaconCodeToString(entry.assignedBeaconCode)}
             </CodeCol>
           </EdstTooltip>
+          <EdstTooltip title={Tooltips.aclRemarksBtn}>
+            <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+              {entry.remarks.length > 0 && "*"}
+            </RemarksBox>
+          </EdstTooltip>
           <EdstTooltip title={Tooltips.depRoute}>
             <RouteCol
               ref={routeRef}
@@ -251,22 +290,25 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
               onMouseDown={e => handleClick(e.currentTarget, DepRowField.ROUTE, "dep-route-asel", EdstWindow.ROUTE_MENU)}
             >
               <RouteSpan padding="0 2px">
-                <RouteSpan>
-                  {/* className={`${((parAvail && !onPar) || (pdrAvail && !onPdr)) ? 'amendment-1' : ''} ${isSelected(entry.aircraftId, depRowFieldEnum.route) ? 'selected' : ''}`}> */}
-                  {entry.departure}
-                </RouteSpan>
-                {pendingPdar && !onPdar && (
-                  <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteTextSpan>
+                {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
+                {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
+                {!entry.routeDisplay && (
+                  <>
+                    <RouteSpan>{entry.departure}</RouteSpan>
+                    {pendingPdar && !onPdar && (
+                      <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteTextSpan>
+                    )}
+                    {!pendingPdar && pendingPdr && !onPdr && (
+                      <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteTextSpan>
+                    )}
+                    {route}
+                    {!pendingPdar && pendingPar && !onPar && (
+                      <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteTextSpan>
+                    )}
+                    {route?.slice(-1) !== "." && ".."}
+                    {entry.destination}
+                  </>
                 )}
-                {!pendingPdar && pendingPdr && !onPdr && (
-                  <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteTextSpan>
-                )}
-                {route}
-                {!pendingPdar && pendingPar && !onPar && (
-                  <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteTextSpan>
-                )}
-                {route?.slice(-1) !== "." && ".."}
-                {entry.destination}
               </RouteSpan>
             </RouteCol>
           </EdstTooltip>
