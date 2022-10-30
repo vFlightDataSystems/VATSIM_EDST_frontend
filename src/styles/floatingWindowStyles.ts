@@ -3,8 +3,8 @@ import styled, { css } from "styled-components";
 import type { Nullable } from "types/utility-types";
 import type { WindowPosition } from "types/windowPosition";
 import type { WindowDimension } from "types/windowDimension";
-import { DraggableDiv, NoSelectDiv } from "./NoSelectDiv";
-import { borderHover } from "./styles";
+import { DraggableDiv, NoSelectDiv } from "styles/NoSelectDiv";
+import { borderHover } from "styles/styles";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 

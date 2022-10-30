@@ -1,4 +1,4 @@
-import { mod } from "./mod";
+import { mod } from "~/utils/mod";
 
 /**
  * given a number, representing minutes elapsed after midnight, give the corresponding UTC string HHMM format

@@ -2,9 +2,9 @@ import type { Feature, Polygon } from "@turf/turf";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import type { EdstEntry } from "types/edstEntry";
 import { fetchRouteFixes } from "~/api/api";
-import { formatRoute } from "./formatRoute";
-import { routeWillEnterAirspace } from "./routeWillEnterAirspace";
-import { locationToPosition } from "./locationToPosition";
+import { formatRoute } from "~/utils/formatRoute";
+import { routeWillEnterAirspace } from "~/utils/routeWillEnterAirspace";
+import { locationToPosition } from "~/utils/locationToPosition";
 
 const BOUNDARY_TIME_FILTER = 30; // minutes
 

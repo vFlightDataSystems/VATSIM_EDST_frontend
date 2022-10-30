@@ -3,8 +3,8 @@ import { EdstWindow } from "enums/edstWindow";
 import type { AclRowField } from "enums/acl/aclRowField";
 import type { DepRowField } from "enums/dep/depRowField";
 import type { Asel } from "types/asel";
-import { setAsel } from "../slices/appSlice";
-import type { RootThunkAction } from "../store";
+import { setAsel } from "~redux/slices/appSlice";
+import type { RootThunkAction } from "~redux/store";
 
 function aircraftSelect(
   edstWindow: EdstWindow,

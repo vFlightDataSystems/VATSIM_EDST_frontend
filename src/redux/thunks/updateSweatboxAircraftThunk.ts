@@ -1,8 +1,8 @@
 import type { ApiAircraft } from "types/apiTypes/apiAircraft";
 import type { AircraftId } from "types/aircraftId";
 import type { AircraftTrack } from "types/aircraftTrack";
-import type { RootThunkAction } from "../store";
-import { setTracks } from "../slices/trackSlice";
+import type { RootThunkAction } from "~redux/store";
+import { setTracks } from "~redux/slices/trackSlice";
 
 export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activateFlightplan: (aircraftId: string) => void): RootThunkAction {
   return (dispatch, getState) => {

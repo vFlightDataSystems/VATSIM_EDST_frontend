@@ -7,7 +7,7 @@ import type { EdstWindow } from "enums/edstWindow";
 import { useDragging } from "hooks/useDragging";
 import { useFullscreen } from "hooks/useFullscreen";
 import { ResizableFloatingWindowDiv } from "styles/floatingWindowStyles";
-import { EdstDraggingOutline } from "./EdstDraggingOutline";
+import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 
 export type HeaderComponentProps = {
   focused: boolean;

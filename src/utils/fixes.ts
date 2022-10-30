@@ -5,7 +5,7 @@ import type { Nullable } from "types/utility-types";
 import type { RouteFix } from "types/routeFix";
 import type { EdstEntry } from "types/edstEntry";
 import type { RouteFixWithDistance } from "types/routeFixWithDistance";
-import { removeStringFromEnd } from "./stringManipulation";
+import { removeStringFromEnd } from "~/utils/stringManipulation";
 
 /**
  * Compute the distance to each fix on the route and save it in the route data

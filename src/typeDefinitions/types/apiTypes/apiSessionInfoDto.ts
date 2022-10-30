@@ -1,4 +1,4 @@
-import type { ApiControllerPosition } from "./apiControllerPosition";
+import type { ApiControllerPosition } from "types/apiTypes/apiControllerPosition";
 
 type ApiPositionSpecDto = {
   facilityId: string;

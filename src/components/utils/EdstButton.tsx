@@ -5,8 +5,8 @@ import type { AllOrNone } from "types/utility-types";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
 import { buttonBorder2px, buttonBorderInverted2px, outlineHover } from "styles/styles";
-import { EdstTooltip } from "./EdstTooltip";
-import socket from "../../sharedState/socket";
+import { EdstTooltip } from "components/utils/EdstTooltip";
+import socket from "~socket";
 
 type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
 type EdstOuterButtonProps = Partial<{ disabled: boolean } & EdstOuterButtonCSSProps>;

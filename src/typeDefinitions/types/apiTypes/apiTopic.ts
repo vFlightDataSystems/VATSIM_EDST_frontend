@@ -1,4 +1,4 @@
-import type { ApiTopicCategory } from "./apiTopicCategory";
+import type { ApiTopicCategory } from "types/apiTypes/apiTopicCategory";
 
 export class ApiTopic {
   constructor(category: ApiTopicCategory, facilityId: string) {

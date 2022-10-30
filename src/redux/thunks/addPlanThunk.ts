@@ -1,8 +1,8 @@
 import { EdstWindow } from "enums/edstWindow";
 import type { Plan } from "types/plan";
-import { addPlan } from "../slices/planSlice";
-import { openWindowThunk } from "./openWindowThunk";
-import type { RootThunkAction } from "../store";
+import { addPlan } from "~redux/slices/planSlice";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import type { RootThunkAction } from "~redux/store";
 
 export const addPlanThunk = (plan: Plan): RootThunkAction => {
   return (dispatch) => {

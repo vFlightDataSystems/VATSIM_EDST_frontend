@@ -7,8 +7,8 @@ import { useCenterCursor } from "hooks/useCenterCursor";
 import { EdstWindow } from "enums/edstWindow";
 import { useRootSelector } from "~redux/hooks";
 import { useHubActions } from "hooks/useHubActions";
-import { EdstPrompt } from "./EdstPrompt";
-import type { PromptProps } from "./promptProps";
+import { EdstPrompt } from "components/prompts/EdstPrompt";
+import type { PromptProps } from "components/prompts/promptProps";
 
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;

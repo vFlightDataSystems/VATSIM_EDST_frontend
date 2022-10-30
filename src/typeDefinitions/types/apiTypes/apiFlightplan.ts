@@ -1,6 +1,6 @@
 import type { HoldAnnotations } from "enums/hold/holdAnnotations";
-import type { AircraftId } from "../aircraftId";
-import type { Nullable } from "../utility-types";
+import type { AircraftId } from "types/aircraftId";
+import type { Nullable } from "types/utility-types";
 
 export type ApiFlightplan = {
   aircraftId: AircraftId;

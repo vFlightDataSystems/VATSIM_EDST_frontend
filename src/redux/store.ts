@@ -4,17 +4,17 @@ import { prefrouteApi } from "~/api/prefrouteApi";
 import { aircraftApi } from "~/api/aircraftApi";
 import { weatherApi } from "~/api/weatherApi";
 import { gpdApi } from "~/api/gpdApi";
-import aclReducer from "./slices/aclSlice";
-import depReducer from "./slices/depSlice";
-import gpdReducer from "./slices/gpdSlice";
-import sectorReducer from "./slices/sectorSlice";
-import entryReducer from "./slices/entrySlice";
-import planReducer from "./slices/planSlice";
-import appReducer from "./slices/appSlice";
-import aircraftTrackReducer from "./slices/trackSlice";
-import weatherReducer from "./slices/weatherSlice";
-import windowOptionsReducer from "./slices/windowOptionsSlice";
-import authReducer from "./slices/authSlice";
+import aclReducer from "~redux/slices/aclSlice";
+import depReducer from "~redux/slices/depSlice";
+import gpdReducer from "~redux/slices/gpdSlice";
+import sectorReducer from "~redux/slices/sectorSlice";
+import entryReducer from "~redux/slices/entrySlice";
+import planReducer from "~redux/slices/planSlice";
+import appReducer from "~redux/slices/appSlice";
+import aircraftTrackReducer from "~redux/slices/trackSlice";
+import weatherReducer from "~redux/slices/weatherSlice";
+import windowOptionsReducer from "~redux/slices/windowOptionsSlice";
+import authReducer from "~redux/slices/authSlice";
 
 const store = configureStore({
   reducer: {

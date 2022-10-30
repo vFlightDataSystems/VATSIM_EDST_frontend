@@ -1,8 +1,8 @@
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import type { EdstEntry } from "types/edstEntry";
-import type { RootThunkAction } from "../store";
-import { setTrack } from "../slices/trackSlice";
-import { updateEntries } from "../slices/entrySlice";
+import type { RootThunkAction } from "~redux/store";
+import { setTrack } from "~redux/slices/trackSlice";
+import { updateEntries } from "~redux/slices/entrySlice";
 
 export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): RootThunkAction {
   return (dispatch, getState) => {

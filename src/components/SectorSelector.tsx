@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { sectorPolygonSelector, sectorProfilesSelector, selectedSectorsSelector, setSelectedSectors, toggleSector } from "~redux/slices/sectorSlice";
 import { setShowSectorSelector } from "~redux/slices/appSlice";
-import { EdstButton } from "./utils/EdstButton";
-import { EdstTooltip } from "./utils/EdstTooltip";
+import { EdstButton } from "components/utils/EdstButton";
+import { EdstTooltip } from "components/utils/EdstTooltip";
 
 const SectorSelectorDiv = styled.div`
   color: #ffffff;

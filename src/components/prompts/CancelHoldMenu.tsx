@@ -5,7 +5,7 @@ import { FidRow } from "styles/optionMenuStyles";
 import { EdstWindow } from "enums/edstWindow";
 import { useHubActions } from "hooks/useHubActions";
 import { closeWindow, setAsel } from "~redux/slices/appSlice";
-import { EdstPrompt } from "./EdstPrompt";
+import { EdstPrompt } from "components/prompts/EdstPrompt";
 
 export const CancelHoldMenu = () => {
   const dispatch = useRootDispatch();

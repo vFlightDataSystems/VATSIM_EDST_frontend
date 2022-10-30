@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { EdstInput } from "styles/optionMenuStyles";
-import { EdstTooltip } from "./EdstTooltip";
+import { EdstTooltip } from "components/utils/EdstTooltip";
 
 type InputProps = {
   title?: string;

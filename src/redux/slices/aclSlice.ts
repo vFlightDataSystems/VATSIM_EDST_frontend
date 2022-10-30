@@ -5,7 +5,7 @@ import { ACL_SORT_MAP } from "types/aclSortData";
 import { AclSortOption } from "enums/acl/aclSortOption";
 import type { AclRowField } from "enums/acl/aclRowField";
 import sharedSocket from "~socket";
-import type { RootState } from "../store";
+import type { RootState } from "~redux/store";
 
 type ToolsOptions = {
   displayCoordinationColumn: boolean;

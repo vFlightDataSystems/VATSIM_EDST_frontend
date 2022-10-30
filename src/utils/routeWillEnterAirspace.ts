@@ -3,7 +3,7 @@ import { lineString } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import type { Nullable } from "types/utility-types";
 import type { RouteFix } from "types/routeFix";
-import { getNextFix } from "./fixes";
+import { getNextFix } from "~/utils/fixes";
 
 /**
  * Check whether a given route will enter a controller's airspace based on sector boundary

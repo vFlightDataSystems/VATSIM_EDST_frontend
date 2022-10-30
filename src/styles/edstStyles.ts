@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { NoSelectDiv } from "./NoSelectDiv";
+import { NoSelectDiv } from "styles/NoSelectDiv";
 
 export const EdstDiv = styled(NoSelectDiv)`
   display: flex;

@@ -12,8 +12,8 @@ import { EdstWindow } from "enums/edstWindow";
 import { edstHeaderButton } from "enums/edstHeaderButton";
 import { openWindowThunk } from "~redux/thunks/openWindowThunk";
 import { borderHover } from "styles/styles";
-import { EdstTooltip } from "./utils/EdstTooltip";
-import { Time } from "./utils/Time";
+import { EdstTooltip } from "components/utils/EdstTooltip";
+import { Time } from "components/utils/Time";
 
 const DISABLED_HEADER_BUTTONS = [
   edstHeaderButton.not,

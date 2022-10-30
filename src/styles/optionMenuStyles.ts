@@ -1,8 +1,8 @@
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import type { WindowPosition } from "types/windowPosition";
-import { DraggableDiv } from "./NoSelectDiv";
-import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "./styles";
+import { DraggableDiv } from "styles/NoSelectDiv";
+import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "styles/styles";
 
 type OptionIndicatorProps = {
   selected?: boolean;

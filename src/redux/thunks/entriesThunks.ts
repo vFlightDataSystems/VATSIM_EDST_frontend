@@ -2,8 +2,8 @@ import { EdstWindow } from "enums/edstWindow";
 import { AclRowField } from "enums/acl/aclRowField";
 import { DepRowField } from "enums/dep/depRowField";
 import { convertBeaconCodeToString } from "~/utils/stringManipulation";
-import { setAsel } from "../slices/appSlice";
-import type { RootThunkAction } from "../store";
+import { setAsel } from "~redux/slices/appSlice";
+import type { RootThunkAction } from "~redux/store";
 
 function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
   return (dispatch, getState) => {

@@ -2,8 +2,8 @@ import type { Feature, Polygon } from "@turf/turf";
 import { point } from "@turf/turf";
 import type { EdstEntry } from "types/edstEntry";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { getSignedStratumDistancePointToPolygons } from "./polygonDistance";
-import { locationToPosition } from "./locationToPosition";
+import { getSignedStratumDistancePointToPolygons } from "~/utils/polygonDistance";
+import { locationToPosition } from "~/utils/locationToPosition";
 
 /**
  * computes how long it will take until an aircraft will enter a controller's airspace

@@ -9,10 +9,10 @@ import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv }
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
 import { useDragging } from "hooks/useDragging";
 import { useWindowOptions } from "hooks/useWindowOptions";
-import { FloatingWindowOptionContainer } from "./FloatingWindowOptionContainer";
-import type { FloatingWindowOptions } from "./FloatingWindowOptionContainer";
-import { EdstDraggingOutline } from "./EdstDraggingOutline";
-import { FloatingWindowHeader } from "./FloatingWindowHeader";
+import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
+import type { FloatingWindowOptions } from "components/utils/FloatingWindowOptionContainer";
+import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
+import { FloatingWindowHeader } from "components/utils/FloatingWindowHeader";
 
 type FloatingWindowBodyCSSProps = Pick<CSSProperties, "width">;
 type FloatingWindowBodyProps = PropsWithChildren<

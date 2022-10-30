@@ -1,8 +1,8 @@
 import type { Nullable } from "types/utility-types";
 import type { EdstWindow } from "enums/edstWindow";
-import type { RootThunkAction } from "../store";
-import { openWindow, setWindowPosition } from "../slices/appSlice";
-import sharedSocket from "../../sharedState/socket";
+import type { RootThunkAction } from "~redux/store";
+import { openWindow, setWindowPosition } from "~redux/slices/appSlice";
+import sharedSocket from "~socket";
 
 export function openWindowThunk(window: EdstWindow, element?: Nullable<HTMLElement>, triggerSharedState = true): RootThunkAction {
   return (dispatch) => {

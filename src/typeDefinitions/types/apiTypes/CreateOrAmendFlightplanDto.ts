@@ -1,4 +1,4 @@
-import type { ApiFlightplan } from "./apiFlightplan";
+import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 
 type CreateOrAmendFlightplanDtoKeys =
   | "aircraftId"

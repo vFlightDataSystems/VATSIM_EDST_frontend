@@ -2,9 +2,9 @@ import _ from "lodash";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import type { EdstEntry } from "types/edstEntry";
 import { LocalVEdstEntry } from "types/localVEdstEntry";
-import type { RootThunkAction } from "../store";
-import { setEntry, updateEntry } from "../slices/entrySlice";
-import sharedSocket from "../../sharedState/socket";
+import type { RootThunkAction } from "~redux/store";
+import { setEntry, updateEntry } from "~redux/slices/entrySlice";
+import sharedSocket from "~socket";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
   return _.assign(

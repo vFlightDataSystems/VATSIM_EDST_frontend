@@ -3,10 +3,10 @@ import type { AclState } from "~redux/slices/aclSlice";
 import type { DepState } from "~redux/slices/depSlice";
 import type { SharedGpdState } from "~redux/slices/gpdSlice";
 import type { PlanState } from "~redux/slices/planSlice";
-import type { SharedUiEvent } from "./sharedUiEvent";
-import type { Asel } from "../asel";
-import type { SharedAircraftDto } from "./sharedAircraftDto";
-import type { Nullable } from "../utility-types";
+import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
+import type { Asel } from "types/asel";
+import type { SharedAircraftDto } from "types/sharedStateTypes/sharedAircraftDto";
+import type { Nullable } from "types/utility-types";
 
 export type SharedStateClientToServerEvents = {
   updateAircraft: (payload: SharedAircraftDto) => void;

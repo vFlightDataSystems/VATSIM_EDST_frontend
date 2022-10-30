@@ -1,8 +1,8 @@
 import { length, lineIntersect, lineSlice } from "@turf/turf";
 import type { RouteFix } from "types/routeFix";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { locationToPosition } from "./locationToPosition";
-import { getRouteLineString } from "./getRouteLineString";
+import { locationToPosition } from "~/utils/locationToPosition";
+import { getRouteLineString } from "~/utils/getRouteLineString";
 
 type ProbeConflictArgs = {
   fixes: RouteFix[];

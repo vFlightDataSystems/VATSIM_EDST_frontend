@@ -4,7 +4,7 @@ import { useRootDispatch } from "~redux/hooks";
 import { setMcaAcceptMessage } from "~redux/slices/appSlice";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
 import type { AircraftId } from "types/aircraftId";
-import { useHubConnection } from "./useHubConnection";
+import { useHubConnection } from "hooks/useHubConnection";
 
 export const useHubActions = () => {
   const dispatch = useRootDispatch();

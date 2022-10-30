@@ -9,7 +9,7 @@ import { setAclState } from "~redux/slices/aclSlice";
 import { setDepState } from "~redux/slices/depSlice";
 import { setGpdState } from "~redux/slices/gpdSlice";
 import { setPlanState } from "~redux/slices/planSlice";
-import sharedSocket from "../sharedState/socket";
+import sharedSocket from "~socket";
 
 class SocketContextValue {
   connectSocket: (artccId: string, sectorId: string) => void = sharedSocket.connect;

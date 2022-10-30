@@ -35,17 +35,20 @@
      "rootDir": "./",                                  /* Specify the root folder within your source files. */
     "moduleResolution": "node",
     /* Specify how TypeScript looks up a file from a given module specifier. */
-    "baseUrl": ".",                                  /* Specify the base directory to resolve non-relative module names. */
+    "baseUrl": "src",                                  /* Specify the base directory to resolve non-relative module names. */
     "paths": {
-      "~/*": ["src/*"],
-      "components/*": ["src/components/*"],
-      "hooks/*": ["src/hooks/*"],
-      "~redux/*": ["src/redux/*"],
-      "types/*": ["src/typeDefinitions/types/*"],
-      "enums/*": ["src/typeDefinitions/enums/*"],
-      "styles/*": ["src/styles/*"],
-      "api/*": ["src/api/*"],
-      "~socket": ["src/sharedState/socket"],
+      "~/*": ["*"],
+      "~redux/*": ["redux/*"],
+      "~socket": ["sharedState/socket"],
+      "api/*": ["api/*"],
+      "components/*": ["components/*", "components/acl-components/*", "components/dep-components/*", "components/gpd-components/*", "components/plans-display-components/*", "components/template-components/*", "components/tools-components/*"],
+      "contexts/*": ["contexts/*"],
+      "css/*": ["css/*"],
+      "enums/*": ["typeDefinitions/enums/*"],
+      "hooks/*": ["hooks/*"],
+      "resources/*": ["resources/*"],
+      "types/*": ["typeDefinitions/types/*"],
+      "styles/*": ["styles/*"],
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like `./node_modules/@types`. */

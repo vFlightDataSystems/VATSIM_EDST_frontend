@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { DepSortOption } from "enums/dep/depSortOption";
 import type { DepRowField } from "enums/dep/depRowField";
 import type { RootState } from "~redux/store";
-import sharedSocket from "../../sharedState/socket";
+import sharedSocket from "~socket";
 
 export type DepState = {
   selectedSortOption: DepSortOption;

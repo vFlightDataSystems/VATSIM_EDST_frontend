@@ -1,6 +1,6 @@
 import type { CSSProperties } from "styled-components";
 import styled, { css } from "styled-components";
-import { borderHover, createBorder } from "./styles";
+import { borderHover, createBorder } from "styles/styles";
 
 const hotboxBorder = createBorder("1px", "#575757", "#414141");
 

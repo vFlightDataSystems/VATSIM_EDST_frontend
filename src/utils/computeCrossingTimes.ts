@@ -2,7 +2,7 @@ import { length, lineString } from "@turf/turf";
 import type { EdstEntry } from "types/edstEntry";
 import type { RouteFix } from "types/routeFix";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { locationToPosition } from "./locationToPosition";
+import { locationToPosition } from "~/utils/locationToPosition";
 
 /**
  *

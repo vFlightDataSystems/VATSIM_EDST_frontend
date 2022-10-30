@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import React from "react";
-import EdstProvider from "./Edst";
-import Login from "./login/Login";
-import PrivateRoute from "./routes/PrivateRoute";
+import EdstProvider from "~/Edst";
+import Login from "~/login/Login";
+import PrivateRoute from "~/routes/PrivateRoute";
 
 const App = () => {
   return (

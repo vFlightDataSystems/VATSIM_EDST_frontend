@@ -1,9 +1,9 @@
 import type { Nullable } from "types/utility-types";
 import type { WindowPosition } from "types/windowPosition";
 import { EdstWindow } from "enums/edstWindow";
-import type { RootThunkAction } from "../store";
-import { openWindow, setWindowPosition } from "../slices/appSlice";
-import sharedSocket from "../../sharedState/socket";
+import type { RootThunkAction } from "~redux/store";
+import { openWindow, setWindowPosition } from "~redux/slices/appSlice";
+import sharedSocket from "~socket";
 
 export function openMenuThunk(
   window: EdstWindow,

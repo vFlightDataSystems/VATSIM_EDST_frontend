@@ -1,6 +1,6 @@
-import type { AircraftId } from "../aircraftId";
-import type { ApiLocation } from "./apiLocation";
-import type { Nullable } from "../utility-types";
+import type { AircraftId } from "types/aircraftId";
+import type { ApiLocation } from "types/apiTypes/apiLocation";
+import type { Nullable } from "types/utility-types";
 
 export type ApiAircraft = {
   id: AircraftId;

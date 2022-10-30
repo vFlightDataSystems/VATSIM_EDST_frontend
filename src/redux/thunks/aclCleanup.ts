@@ -1,6 +1,6 @@
 import { REMOVAL_TIMEOUT } from "~/utils/constants";
 import { delEntry } from "~redux/slices/entrySlice";
-import type { RootThunkAction } from "../store";
+import type { RootThunkAction } from "~redux/store";
 
 export const aclCleanup: RootThunkAction = (dispatch, getState) => {
   const state = getState();

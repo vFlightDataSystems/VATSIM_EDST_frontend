@@ -1,10 +1,10 @@
 import type { SharedUiState } from "types/sharedStateTypes/sharedUiState";
-import type { RootThunkAction } from "../../store";
-import { closeAllWindows, openWindow, setAsel } from "../../slices/appSlice";
-import { setAclState } from "../../slices/aclSlice";
-import { setDepState } from "../../slices/depSlice";
-import { setGpdState } from "../../slices/gpdSlice";
-import { setPlanState } from "../../slices/planSlice";
+import type { RootThunkAction } from "~redux/store";
+import { closeAllWindows, openWindow, setAsel } from "~redux/slices/appSlice";
+import { setAclState } from "~redux/slices/aclSlice";
+import { setDepState } from "~redux/slices/depSlice";
+import { setGpdState } from "~redux/slices/gpdSlice";
+import { setPlanState } from "~redux/slices/planSlice";
 
 export function receiveUiStateThunk(uiState: SharedUiState): RootThunkAction {
   return (dispatch) => {

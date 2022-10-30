@@ -1,10 +1,7 @@
 import styled from "styled-components";
-import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "./optionMenuStyles";
-import { borderHover } from "./styles";
+import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenuHeader } from "styles/optionMenuStyles";
+import { borderHover } from "styles/styles";
 
-export const SortDiv = styled(OptionsMenu)<{ width: number }>`
-  width: ${(props) => props.width}px;
-`;
 export const SortHeader = styled(OptionsMenuHeader)``;
 export const SortBody = styled(OptionsBody)`
   padding: 4px 0;

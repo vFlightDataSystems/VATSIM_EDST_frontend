@@ -1,4 +1,4 @@
-import type { RouteFix } from "./routeFix";
+import type { RouteFix } from "types/routeFix";
 
 export type DerivedFlightplanData = {
   formattedRoute: string;

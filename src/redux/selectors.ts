@@ -2,9 +2,9 @@ import { createSelector } from "@reduxjs/toolkit";
 import { AclSortOption } from "enums/acl/aclSortOption";
 import type { EdstEntry } from "types/edstEntry";
 import { DepSortOption } from "enums/dep/depSortOption";
-import { entriesSelector } from "./slices/entrySlice";
-import { depManualPostingSelector, depSortOptionSelector } from "./slices/depSlice";
-import { aclManualPostingSelector, aclSortDataSelector } from "./slices/aclSlice";
+import { entriesSelector } from "~redux/slices/entrySlice";
+import { depManualPostingSelector, depSortOptionSelector } from "~redux/slices/depSlice";
+import { aclManualPostingSelector, aclSortDataSelector } from "~redux/slices/aclSlice";
 
 export const anyHoldingSelector = createSelector([entriesSelector], (entries) => {
   for (const entry of Object.values(entries)) {
