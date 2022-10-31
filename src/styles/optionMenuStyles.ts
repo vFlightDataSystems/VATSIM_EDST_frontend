@@ -222,24 +222,19 @@ export const ScrollContainer = styled.div<ScrollContainerProps>`
   max-height: ${(props) => props.maxHeight ?? "auto"};
 
   &::-webkit-scrollbar {
+    //display: none;
+    padding-right: 4px;
+  }
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
     display: none;
   }
 
-  //&::-webkit-scrollbar {
-  //  width: 4px;
-  //}
-
-  //&::-webkit-scrollbar-track {
-  //  border-radius: 2px;
-  //  background-color: darkgrey;
-  //}
-
-  //&::-webkit-scrollbar-thumb {
-  //  border-radius: 2px;
-  //  background-color: #adadad;
-  //}
-  //
-  //&::-webkit-scrollbar-corner {
-  //  display: none;
-  //}
+  &::-webkit-scrollbar-thumb {
+    //border-radius: 2px;
+    display: unset;
+    width: 4px;
+    background-color: #adadad;
+  }
 `;
