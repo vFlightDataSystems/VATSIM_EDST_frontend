@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { login, vatsimTokenSelector } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { VATSIM_CLIENT_ID } from "api/vNasDataApi";
 
 const LoginPanel = styled.div`
   height: 100vh;
@@ -88,9 +89,9 @@ const Login = () => {
             type="button"
             disabled={code !== null}
             onClick={() => {
-              window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${
-                import.meta.env.VITE_VATSIM_CLIENT_ID
-              }&redirect_uri=${encodeURIComponent(`${import.meta.env.VITE_DOMAIN}/login`)}&response_type=code&scope=vatsim_details`;
+              window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+                `${import.meta.env.VITE_DOMAIN}/login`
+              )}&response_type=code&scope=vatsim_details`;
             }}
           >
             {code ? (

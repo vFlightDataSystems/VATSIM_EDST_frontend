@@ -3,13 +3,12 @@ type LoginDto = {
   vatsimToken: string;
 };
 
+export const VATSIM_CLIENT_ID = import.meta.env.PROD ? import.meta.env.VITE_PROD_VATSIM_CLIENT_ID : import.meta.env.VITE_VATSIM_CLIENT_ID;
+
 export const login = async (code: string, redirectUrl: string) => {
-  return fetch(
-    `${import.meta.env.VITE_NAS_SERVER_URL}/api/auth/login?code=${code}&redirectUrl=${redirectUrl}&clientId=${import.meta.env.VITE_VATSIM_CLIENT_ID}`,
-    {
-      credentials: "include",
-    }
-  ).then((response) => {
+  return fetch(`${import.meta.env.VITE_NAS_SERVER_URL}/api/auth/login?code=${code}&redirectUrl=${redirectUrl}&clientId=${VATSIM_CLIENT_ID}`, {
+    credentials: "include",
+  }).then((response) => {
     return response.json().then((data: LoginDto) => ({
       ...data,
       statusText: response.statusText,
