@@ -153,7 +153,7 @@ export const EdstHeader = () => {
           <EdstHeaderButton
             open={windows[EdstWindow.GPD].open}
             content="GPD"
-            disabled={import.meta.env.PROD}
+            // disabled={import.meta.env.PROD}
             // title={Tooltips.gpd}
             onMouseDown={() => dispatch(openWindowThunk(EdstWindow.GPD))}
           />
