@@ -66,7 +66,7 @@ type AltMenuRowProps = {
 };
 
 const AltMenuRow = styled.div<AltMenuRowProps>`
-  min-height: 1.1em;
+  min-height: 1em;
   display: flex;
   flex-grow: 1;
   justify-content: center;
@@ -84,25 +84,36 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
       border: "1px solid #FFFFFF",
       "background-color": "#AD6C6C",
     }};
-  input {
-    font-size: ${(props) => props.theme.fontProps.inputFontSize};
-    outline: none;
-    display: flex;
-    overflow: hidden;
-    color: ${(props) => props.theme.colors.grey};
-    resize: none;
-    text-transform: uppercase;
-    background-color: #000000;
-    //height: 16px;
-    width: 100%;
-    border: none;
-  }
+`;
+const AltMenuManualInput = styled.input`
+  font-size: ${(props) => props.theme.fontProps.inputFontSize};
+  outline: none;
+  display: flex;
+  overflow: hidden;
+  color: ${(props) => props.theme.colors.grey};
+  resize: none;
+  text-transform: uppercase;
+  background-color: #000000;
+  //height: 16px;
+  width: 100%;
+  border: none;
 `;
 type AltMenuRowColProps = {
   width?: CSSProperties["width"];
   disabled?: boolean;
 };
-const AltMenuRowCol = styled(AltMenuRow)<AltMenuRowColProps>`
+const AltMenuRowCol = styled.div<AltMenuRowColProps>`
+  height: 100%;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  border-left: 1px solid #adadad;
+  border-right: 1px solid #adadad;
+  &[disabled] {
+    pointer-events: none;
+    color: #adadad;
+  }
   padding: 0;
   width: ${(props) => props.width ?? "auto"};
 `;
@@ -213,9 +224,9 @@ export const AltMenu = () => {
     setDeltaY(newDeltaY);
   };
 
-  const keyDownHandler = () => {
-    if (manualInput === null) {
-      setManualInput("");
+  const keyDownHandler = (event: KeyboardEvent) => {
+    if (manualInput === null && event.key.length === 1) {
+      setManualInput(event.key);
     }
     if (!(document.activeElement === inputRef.current) && inputRef.current) {
       inputRef.current.focus();
@@ -240,7 +251,7 @@ export const AltMenu = () => {
           <span>
             <AltMenuRow>FP{entry.altitude}</AltMenuRow>
             <AltMenuRow bgBlack>
-              <input
+              <AltMenuManualInput
                 tabIndex={0}
                 ref={inputRef}
                 value={manualInput}
