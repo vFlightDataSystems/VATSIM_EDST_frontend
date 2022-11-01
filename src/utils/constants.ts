@@ -16,3 +16,5 @@ export const ALTITUDE_VALIDATION_EXPRESSIONS = {
 export const GI_EXPR = /GI (C|\d{2}|[A-Z]{4}) `(.*)/gm;
 
 export const REMOVAL_TIMEOUT = 120000;
+
+export const DOMAIN = import.meta.env.PROD ? import.meta.env.VITE_PROD_DOMAIN : import.meta.env.VITE_DOMAIN;

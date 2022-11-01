@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { login, vatsimTokenSelector } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { VATSIM_CLIENT_ID } from "api/vNasDataApi";
+import { DOMAIN } from "~/utils/constants";
 
 const LoginPanel = styled.div`
   height: 100vh;
@@ -47,12 +48,29 @@ const Button = styled.button`
   background-color: #1dbe77;
   color: white;
 
+  transition: color 0.05s ease-in-out, background-color 0.05s ease-in-out, border-color 0.05s ease-in-out, box-shadow 0.05s ease-in-out;
+
   font-size: 1em;
   margin: 1em;
   padding: 0.25em 1em;
   border: 2px solid #1dbe77;
   border-radius: 3px;
   width: 150px;
+
+  :not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus {
+    background-color: #009670;
+    border-color: #008966;
+    box-shadow: 0 0 0 0 rgb(38 198 157 / 50%);
+  }
+
+  :hover:not(:disabled) {
+    background-color: #009670;
+    border-color: #008966;
+  }
 `;
 
 const Login = () => {
@@ -67,7 +85,7 @@ const Login = () => {
       dispatch(
         login({
           code,
-          redirectUrl: encodeURIComponent(`${import.meta.env.VITE_DOMAIN}/login`),
+          redirectUrl: encodeURIComponent(`${DOMAIN}/login`),
         })
       );
     }
@@ -90,7 +108,7 @@ const Login = () => {
             disabled={code !== null}
             onClick={() => {
               window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-                `${import.meta.env.VITE_DOMAIN}/login`
+                `${DOMAIN}/login`
               )}&response_type=code&scope=vatsim_details`;
             }}
           >
