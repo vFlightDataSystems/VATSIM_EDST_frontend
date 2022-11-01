@@ -5,7 +5,7 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { aircraftIsAselSelector } from "~redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "~redux/slices/aclSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
+import { BodyRowContainerDiv, BodyRowDiv, FreeTextInput, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
 import type { EdstEntry } from "types/edstEntry";
 import { aclAircraftSelect } from "~redux/thunks/aircraftSelect";
 import {
@@ -459,7 +459,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <SpecialBox disabled />
           <InnerRow2 highlight={entry.highlighted} minWidth={`${Math.max(1200, ref?.current?.clientWidth ?? 0)}px`}>
             <FreeTextRow marginLeft="calc(19ch + 11px)">
-              <input
+              <FreeTextInput
                 value={freeTextContent}
                 onChange={(event) => setFreeTextContent(event.target.value)}
                 onBlur={() => dispatch(updateEntry({ aircraftId, data: { freeTextContent } }))}

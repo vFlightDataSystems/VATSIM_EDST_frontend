@@ -4,7 +4,7 @@ import { Tooltips } from "~/tooltips";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aircraftIsAselSelector } from "~redux/slices/appSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
+import { BodyRowContainerDiv, BodyRowDiv, FreeTextInput, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
 import { depAircraftSelect } from "~redux/thunks/aircraftSelect";
 import {
   AircraftTypeCol,
@@ -322,7 +322,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           <DepPTimeCol />
           <InnerRow2 highlight={entry.highlighted} minWidth={`${Math.max(1200, ref?.current?.clientWidth ?? 0)}px`}>
             <FreeTextRow marginLeft="calc(17ch + 11px)">
-              <input value={freeTextContent} onChange={(event) => setFreeTextContent(event.target.value)} />
+              <FreeTextInput value={freeTextContent} onChange={(event) => setFreeTextContent(event.target.value)} />
             </FreeTextRow>
           </InnerRow2>
         </BodyRowDiv>

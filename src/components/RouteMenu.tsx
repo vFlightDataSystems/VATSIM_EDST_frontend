@@ -63,7 +63,7 @@ const InputContainer = styled.div`
   overflow: hidden;
   ${buttonBorderInverted2px};
 `;
-const Input = styled.input`
+const Input = styled.input.attrs(() => ({ spellCheck: false }))`
   //cursor: default;
   font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;

@@ -81,18 +81,17 @@ export const FreeTextRow = styled(BodyRowDiv)<Pick<CSSProperties, "marginLeft">>
   align-items: center;
   height: 1em;
   border: 1px solid transparent;
-
-  input {
-    width: 100%;
-    background-color: transparent;
-    font-size: ${(props) => props.theme.fontProps.fontSize};
-    outline: none;
-    border: none;
-    color: ${(props) => props.theme.colors.grey};
-    caret: #ffffff;
-    text-transform: uppercase;
-  }
   ${borderHover}
+`;
+export const FreeTextInput = styled.input.attrs(() => ({ spellCheck: false }))`
+  width: 100%;
+  background-color: transparent;
+  font-size: ${(props) => props.theme.fontProps.fontSize};
+  outline: none;
+  border: none;
+  color: ${(props) => props.theme.colors.grey};
+  caret: #ffffff;
+  text-transform: uppercase;
 `;
 
 export const BodyRowHeaderDiv = styled(BodyRowDiv)`

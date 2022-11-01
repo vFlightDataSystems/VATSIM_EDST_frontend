@@ -85,7 +85,7 @@ const AltMenuRow = styled.div<AltMenuRowProps>`
       "background-color": "#AD6C6C",
     }};
 `;
-const AltMenuManualInput = styled.input`
+const AltMenuManualInput = styled.input.attrs(() => ({ spellCheck: false }))`
   font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;
   display: flex;
@@ -248,7 +248,7 @@ export const AltMenu = () => {
           </AltMenuHeaderCol>
         </AltMenuHeaderDiv>
         {manualInput !== null && (
-          <span>
+          <>
             <AltMenuRow>FP{entry.altitude}</AltMenuRow>
             <AltMenuRow bgBlack>
               <AltMenuManualInput
@@ -272,10 +272,10 @@ export const AltMenu = () => {
                 INVALID
               </AltMenuRow>
             )}
-          </span>
+          </>
         )}
         {manualInput === null && (
-          <span>
+          <>
             <EdstTooltip title={Tooltips.altMenuPlanData}>
               <AltMenuRow hover selected={selected === "trial"} onMouseDown={() => setSelected("trial")} disabled={asel.window === EdstWindow.DEP}>
                 TRIAL PLAN
@@ -318,7 +318,7 @@ export const AltMenu = () => {
                 );
               })}
             </AltMenuSelectContainer>
-          </span>
+          </>
         )}
       </AltMenuDiv>
     )

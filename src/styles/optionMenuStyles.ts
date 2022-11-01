@@ -185,7 +185,7 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
   ${borderHover}
 `;
 type EdstInputProps = Partial<Pick<CSSProperties, "width">>;
-export const EdstInput = styled.input<EdstInputProps>`
+export const EdstInput = styled.input.attrs(() => ({ spellCheck: false }))<EdstInputProps>`
   width: ${(props) => props.width ?? "calc(100% - 7px)"};
   font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;
@@ -199,7 +199,7 @@ export const EdstInput = styled.input<EdstInputProps>`
 
   ${outlineHover}
 `;
-export const EdstTextArea = styled.textarea`
+export const EdstTextArea = styled.textarea.attrs(() => ({ spellCheck: false }))`
   width: calc(100% - 7px);
   font-size: ${(props) => props.theme.fontProps.inputFontSize};
   outline: none;
