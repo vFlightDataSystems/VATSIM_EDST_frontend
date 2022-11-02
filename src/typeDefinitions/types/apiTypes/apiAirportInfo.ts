@@ -1,7 +1,10 @@
+import type { ApiLocation } from "types/apiTypes/apiLocation";
+
 export type ApiAirportInfo = {
-  artcc: string;
-  code: string;
-  icao: string;
-  lat: number;
-  lon: number;
+  faaId: string;
+  icaoId: string;
+  artccId: string;
+  name: string;
+  elevation: number;
+  location: ApiLocation
 };
