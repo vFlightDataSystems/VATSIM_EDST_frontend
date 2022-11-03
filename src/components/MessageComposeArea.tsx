@@ -20,6 +20,7 @@ import {
   setMraMessage,
   setWindowPosition,
   windowPositionSelector,
+  windowsSelector,
   zStackSelector,
 } from "~redux/slices/appSlice";
 import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
@@ -124,6 +125,7 @@ const RejectCrossSpan = styled.span`
 
 export const MessageComposeArea = () => {
   const [insertMode, setInsertMode] = useState(true);
+  const windows = useRootSelector(windowsSelector);
   const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
   const mcaCommandString = useRootSelector(mcaCommandStringSelector);
   const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.MESSAGE_COMPOSE_AREA));
@@ -315,7 +317,6 @@ export const MessageComposeArea = () => {
       toggleVci(command.slice(2));
       acceptDposKeyBD();
     } else {
-      // TODO: break down switch cases into functions (parseUU, parseFR, ...)
       switch (command) {
         case "//": // should turn vci on/off for a CID
           toggleVci(args[0]);
@@ -338,7 +339,7 @@ export const MessageComposeArea = () => {
           } else {
             reject(`FORMAT\n${input}`);
           }
-          break;
+          break; // end case GI
         case "UU":
           parseUU(args);
           break; // end case UU
@@ -377,7 +378,7 @@ export const MessageComposeArea = () => {
           } else {
             reject(input);
           }
-          break;
+          break; // end case SR
         default:
           // TODO: give better error msg
           reject(input);
@@ -386,7 +387,11 @@ export const MessageComposeArea = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea") {
+    if (
+      document.activeElement?.localName !== "input" &&
+      document.activeElement?.localName !== "textarea" &&
+      !windows[EdstWindow.ALTITUDE_MENU].open
+    ) {
       if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
         dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
       }
