@@ -46,7 +46,7 @@ import { DepSortMenu } from "components/dep-components/DepSortMenu";
 import { openWindowThunk } from "~redux/thunks/openWindowThunk";
 import { useHubActions } from "hooks/useHubActions";
 import { useHubConnection } from "hooks/useHubConnection";
-import { fetchAllAircraft } from "api/api";
+import { fetchAllAircraft } from "api/vNasDataApi";
 import { unsafeEntries } from "~/utility-functions";
 import { edstTheme } from "~/edstTheme";
 import { SocketContextProvider } from "contexts/SocketContext";
