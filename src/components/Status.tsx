@@ -32,18 +32,14 @@ export const Status = () => {
       showOptions={showOptions}
       setShowOptions={setShowOptions}
     >
-      <div>
+      <EdstButton onMouseDown={onClickToggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
+      <span>
         Submit Feedback{" "}
         <a href="https://forms.gle/LpzgyNMNMwa8CY8e8" target="_blank" rel="noreferrer">
           here
-        </a>
-      </div>
-      <div>
-        <a href="https://github.com/vFlightDataSystems/VATSIM_EDST_frontend/wiki" target="_blank" rel="noreferrer">
-          Roadmap
-        </a>
-      </div>
-      <EdstButton onMouseDown={onClickToggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
+        </a>{" "}
+        or on the Discord server.
+      </span>
     </FloatingWindow>
   );
 };
