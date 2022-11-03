@@ -23,7 +23,7 @@ const useHubContextInit = () => {
   const dispatch = useRootDispatch();
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
   const ref = useRef<Nullable<HubConnection>>(null);
-  const { connectSocket, disconnectSocket } = useSocketConnector();
+  const { disconnectSocket } = useSocketConnector();
 
   useEffect(() => {
     if (!ATC_SERVER_URL || !vatsimToken) {
@@ -102,7 +102,6 @@ const useHubContextInit = () => {
         const sectorId = primaryPosition.eramConfiguration.sectorId;
         dispatch(setArtccId(artccId));
         dispatch(setSectorId(sectorId));
-        connectSocket(artccId, sectorId);
         dispatch(setSession(sessionInfo));
         dispatch(initThunk());
         await hubConnection.invoke<void>("joinSession", {
@@ -123,7 +122,7 @@ const useHubContextInit = () => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, [connectSocket, dispatch, hubConnected, vatsimToken]);
+  }, [dispatch, hubConnected, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
     ref.current?.stop().then(() => setHubConnected(false));
