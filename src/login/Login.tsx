@@ -6,8 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { login, vatsimTokenSelector } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { VATSIM_CLIENT_ID } from "api/vNasDataApi";
-import { DOMAIN } from "~/utils/constants";
+import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 
 const LoginPanel = styled.div`
   height: 100vh;
