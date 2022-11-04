@@ -1,7 +1,8 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { Feature, MultiPolygon, Polygon, Position } from "@turf/turf";
-import type { RootState, RootThunkAction } from "~redux/store";
+import type { RootState } from "~redux/store";
+import { fetchAirportInfo } from "api/vNasDataApi";
 
 type WeatherState = {
   sigmetMap: Record<string, SigmetEntry>;
@@ -9,6 +10,7 @@ type WeatherState = {
   altimeterAirports: string[];
   metarAirports: string[];
   viewSuppressedSigmet: boolean;
+  airportIdMap: Record<string, string>;
 };
 
 export type ApiAirSigmet = {
@@ -37,6 +39,7 @@ const initialState: WeatherState = {
   altimeterAirports: [],
   metarAirports: [],
   viewSuppressedSigmet: true,
+  airportIdMap: {},
 };
 
 const weatherSlice = createSlice({
@@ -89,40 +92,56 @@ const weatherSlice = createSlice({
         state.metarAirports.splice(index, 1);
       }
     },
+    setAirportIdMap(state, action: PayloadAction<Record<string, string>>) {
+      Object.assign(state.airportIdMap, action.payload);
+    },
   },
 });
 
-export function toggleAltimeter(airports: string[]): RootThunkAction {
-  return (dispatch, getState) => {
-    const currentAirports = getState().weather.altimeterAirports;
-    airports.forEach((airport) => {
-      if (airport.length === 4 && airport.startsWith("K")) {
-        airport = airport.slice(1);
-      }
-      if (currentAirports.includes(airport)) {
-        dispatch(delAltimeter(airport));
-      } else {
-        dispatch(addAltimeter(airport));
-      }
-    });
-  };
+async function getAirportInfoList(airports: string[]) {
+  return Promise.all(
+    airports.map(async (airport) => {
+      const airportInfo = await fetchAirportInfo(airport);
+      const icaoId = airportInfo?.icaoId ? airportInfo.icaoId : airport;
+      const airportId = icaoId.length === 4 ? icaoId : `K${icaoId}`;
+      return [airportId, airportInfo?.faaId ?? airportId] as const;
+    })
+  );
 }
 
-export function toggleMetar(airports: string[]): RootThunkAction {
-  return (dispatch, getState) => {
-    const currentAirports = getState().weather.metarAirports;
-    airports.forEach((airport) => {
-      if (airport.length === 4 && airport.startsWith("K")) {
-        airport = airport.slice(1);
-      }
-      if (currentAirports.includes(airport)) {
-        dispatch(delMetar(airport));
+export const toggleAltimeter = createAsyncThunk<void, string[], { state: RootState }>(
+  "weather/toggleAsyncAltimeter",
+  async (airports, { dispatch, getState }) => {
+    const airportList = await getAirportInfoList(airports);
+
+    const currentAirports = getState().weather.altimeterAirports;
+    airportList.forEach(([airportId]) => {
+      if (currentAirports.includes(airportId)) {
+        dispatch(delAltimeter(airportId));
       } else {
-        dispatch(addMetar(airport));
+        dispatch(addAltimeter(airportId));
       }
     });
-  };
-}
+    dispatch(weatherSlice.actions.setAirportIdMap(Object.fromEntries(airportList)));
+  }
+);
+
+export const toggleMetar = createAsyncThunk<void, string[], { state: RootState }>(
+  "weather/toggleAsyncMetar",
+  async (airports, { dispatch, getState }) => {
+    const airportList = await getAirportInfoList(airports);
+
+    const currentAirports = getState().weather.metarAirports;
+    airportList.forEach(([airportId]) => {
+      if (currentAirports.includes(airportId)) {
+        dispatch(delMetar(airportId));
+      } else {
+        dispatch(addMetar(airportId));
+      }
+    });
+    dispatch(weatherSlice.actions.setAirportIdMap(Object.fromEntries(airportList)));
+  }
+);
 
 export const {
   addAirmets,
@@ -143,3 +162,4 @@ export const airmetSelector = (state: RootState) => state.weather.airmetMap;
 export const altimeterAirportsSelector = (state: RootState) => state.weather.altimeterAirports;
 export const metarAirportsSelector = (state: RootState) => state.weather.metarAirports;
 export const viewSuppressedSigmetSelector = (state: RootState) => state.weather.viewSuppressedSigmet;
+export const airportIdSelector = (state: RootState, airport: string) => state.weather.airportIdMap[airport];

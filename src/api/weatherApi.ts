@@ -16,20 +16,11 @@ export const weatherApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/weather/` }),
   endpoints: (builder) => ({
     getMetarEntry: builder.query<Nullable<string>, string>({
-      query: (airport) => {
-        if (airport.length === 3) {
-          airport = `K${airport}`;
-        }
-        return { url: `metar/airport/${airport}` };
-      },
-      transformResponse: (response: string[], meta, airport) => {
+      query: (airport) => `metar/airport/${airport}`,
+      transformResponse: (response: string[]) => {
         if (response?.[0]) {
-          if (airport.length === 3) {
-            airport = `K${airport}`;
-          }
-          // remove remarks and leading "K" for US airports
-          let metar: string = response[0].split("RMK")[0].trim();
-          metar = metar.replace(airport, airport.slice(1));
+          // remove remarks
+          let metar = response[0].split("RMK")[0].trim();
           // substitute time to display HHMM only
           const time = metar.match(/\d\d(\d{4})Z/)?.[1];
           if (time) {
@@ -41,23 +32,15 @@ export const weatherApi = createApi({
       },
     }),
     getAltimeterEntry: builder.query<Nullable<AltimeterEntry>, string>({
-      query: (airport) => {
-        if (airport.length === 3) {
-          airport = `K${airport}`;
-        }
-        return { url: `metar/airport/${airport}` };
-      },
+      query: (airport) => `metar/airport/${airport}`,
       transformResponse: (response: string[], meta, airport) => {
         if (response?.[0]) {
-          if (airport.length === 3) {
-            airport = `K${airport}`;
-          }
-          const metarString: string = response[0];
+          const metarString = response[0];
           const time = metarString.match(/\d\d(\d{4})Z/)?.[1];
           const altimeter = metarString.match(/A(\d{4})/)?.[1];
           if (time && altimeter) {
             return {
-              airport: airport.slice(airport[0] === "K" ? 1 : 0),
+              airport,
               time,
               altimeter,
             };

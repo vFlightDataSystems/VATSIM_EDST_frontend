@@ -5,7 +5,7 @@ import { zStackSelector } from "~redux/slices/appSlice";
 import { FloatingWindowRow } from "styles/floatingWindowStyles";
 import { EdstWindow } from "enums/edstWindow";
 import { useAltimeter } from "api/weatherApi";
-import { altimeterAirportsSelector, delAltimeter } from "~redux/slices/weatherSlice";
+import { airportIdSelector, altimeterAirportsSelector, delAltimeter } from "~redux/slices/weatherSlice";
 import { mod } from "~/utils/mod";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
@@ -31,6 +31,7 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
   const zStack = useRootSelector(zStackSelector);
   const { data: airportAltimeterEntry } = useAltimeter(airport);
   const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.ALTIMETER));
+  const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
   const now = new Date();
   const utcMinutesNow = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -44,9 +45,9 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
   return (
     <>
       <FloatingWindowRow brightness={windowOptions.brightness} ref={ref} selected={selected} onMouseDown={handleMouseDown}>
-        {airport && (
+        {airportId && (
           <>
-            <AltimCol isReportingStation>{airport}</AltimCol>
+            <AltimCol isReportingStation>{airportId}</AltimCol>
             <AltimCol underline={observationTime ? mod(Number(utcMinutesNow) - observationTime, 1440) > 60 : false}>
               {airportAltimeterEntry?.time ?? ""}
             </AltimCol>

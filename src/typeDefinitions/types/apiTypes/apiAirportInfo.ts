@@ -6,5 +6,5 @@ export type ApiAirportInfo = {
   artccId: string;
   name: string;
   elevation: number;
-  location: ApiLocation
+  location: ApiLocation;
 };
