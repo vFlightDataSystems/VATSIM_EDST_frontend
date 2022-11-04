@@ -25,10 +25,10 @@ export const refreshToken = async (vatsimToken: string) => {
   );
 };
 
-const AIRPORT_BASE_URL = `${import.meta.env.VITE_NAS_API_URL}/airports`;
+const baseUrl = import.meta.env.VITE_NAS_API_URL;
 
 export async function fetchAirportInfo(airport: string): Promise<ApiAirportInfo | null> {
-  return fetch(`${AIRPORT_BASE_URL}/${airport}`).then((response) => {
+  return fetch(`${baseUrl}/airports/${airport}`).then((response) => {
     if (response.status === 404) {
       return null;
     }
