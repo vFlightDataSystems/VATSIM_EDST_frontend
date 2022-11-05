@@ -4,8 +4,8 @@
   "private": true,
   "homepage": "/",
   "engines": {
-    "node": "17.9.0",
-    "npm": "8.7.0"
+    "node": "^18.0.0",
+    "npm": "^8.7.0"
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.18.6",
