@@ -55,15 +55,6 @@ export const AircraftTypeCol = styled(Col)<ColProps>`
   width: ${(props) => (props.visibilityHidden || props.hidden ? "2ch" : "7ch")};
   margin-right: 0;
   padding-left: 4px;
-  div {
-    border: 1px solid transparent;
-    align-items: center;
-    min-width: 2ch;
-    display: flex;
-    padding: 0 2px;
-
-    ${borderHover}
-  }
 `;
 export const CodeCol = styled(Col)<ColProps>`
   padding: 0 2px;
