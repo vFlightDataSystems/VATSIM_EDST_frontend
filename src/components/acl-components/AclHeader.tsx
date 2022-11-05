@@ -75,7 +75,6 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclSortMenu"
           edstWindow={EdstWindow.ACL_SORT_MENU}
-          id="acl-sort-button"
           content="Sort..."
           title={Tooltips.sort}
         />

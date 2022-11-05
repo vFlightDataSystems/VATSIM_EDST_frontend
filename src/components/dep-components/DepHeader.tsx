@@ -58,7 +58,6 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepSortMenu"
           edstWindow={EdstWindow.DEP_SORT_MENU}
-          id="dep-sort-button"
           content="Sort..."
           title={Tooltips.sort}
         />

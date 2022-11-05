@@ -32,7 +32,7 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
   margin-bottom: 1px;
 `;
 
-type EdstInnerButtonCSSProps = Pick<CSSProperties, "width" | "height" | "padding" | "flexGrow">;
+type EdstInnerButtonCSSProps = Pick<CSSProperties, "padding" | "flexGrow">;
 type EdstInnerButtonProps = Partial<{ selected: boolean; disabled: boolean } & EdstInnerButtonCSSProps>;
 const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   font-size: inherit;
@@ -45,8 +45,6 @@ const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   ${(props) => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
   margin: 0;
   padding: ${(props) => props.padding ?? "0 4px"};
-  width: ${(props) => props.width ?? "auto"};
-  height: ${(props) => props.height ?? "auto"};
   ${outlineHover};
   &[disabled] {
     pointer-events: none;
@@ -59,7 +57,6 @@ type EdstButtonProps = Partial<
   {
     disabled: boolean;
     selected: boolean;
-    id: string;
     title: string;
     content: string;
     onMouseDown: React.MouseEventHandler<HTMLDivElement>;
@@ -74,7 +71,6 @@ export const EdstButton = (props: EdstButtonProps) => {
         width={props.width}
         height={props.height}
         margin={props.margin}
-        id={props.id}
         onMouseDownCapture={props.onMouseDown}
       >
         <EdstInnerButton selected={props.selected} disabled={props.disabled} padding={props.padding}>
@@ -92,37 +88,48 @@ type ExitButtonProps = {
 };
 export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit" {...props} />;
 
-export const EdstTemplateButton10ch = (props: EdstButtonFixedSizeProps) => <EdstButton width="10ch" margin="0 4px" {...props} />;
+export const EdstTemplateButton10ch = (props: Omit<EdstButtonFixedSizeProps, "margin">) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
-export function EdstWindowHeaderButton({ onMouseDown, id, ...props }: EdstButtonProps) {
+type EdstWindowHeaderButtonProps = {
+  title?: string;
+  onMouseDown?: React.MouseEventHandler<HTMLElement>;
+  disabled?: boolean;
+  content: string;
+  width?: CSSProperties["width"];
+};
+export function EdstWindowHeaderButton({ onMouseDown, title, disabled, content, width }: EdstWindowHeaderButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <EdstTooltip title={props.title}>
+    <EdstTooltip title={title}>
       <EdstOuterHeaderButton
         ref={ref}
-        disabled={props.disabled}
-        id={id}
+        disabled={disabled}
         onMouseDownCapture={(event) => {
           if (onMouseDown) {
             onMouseDown(event);
             event.stopPropagation();
           }
         }}
+        width={width}
       >
-        <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} height={props.height}>
-          {props.content}
-        </EdstInnerButton>
+        <EdstInnerButton disabled={disabled}>{content}</EdstInnerButton>
       </EdstOuterHeaderButton>
     </EdstTooltip>
   );
 }
 
-type EdstWindowHeaderButtonWithSharedEventProps = Omit<EdstButtonProps, "onMouseDown"> & {
+type EdstWindowHeaderButtonWithSharedEventProps = Omit<EdstWindowHeaderButtonProps, "onMouseDown"> & {
   sharedUiEventId: SharedUiEvent;
   edstWindow: EdstWindow;
 };
-export function EdstWindowHeaderButtonWithSharedEvent({ sharedUiEventId, edstWindow, id, ...props }: EdstWindowHeaderButtonWithSharedEventProps) {
+export function EdstWindowHeaderButtonWithSharedEvent({
+  sharedUiEventId,
+  edstWindow,
+  title,
+  disabled,
+  content,
+}: EdstWindowHeaderButtonWithSharedEventProps) {
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const sharedUiEventHandler = useCallback(
@@ -134,11 +141,10 @@ export function EdstWindowHeaderButtonWithSharedEvent({ sharedUiEventId, edstWin
   useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler);
 
   return (
-    <EdstTooltip title={props.title}>
+    <EdstTooltip title={title}>
       <EdstOuterHeaderButton
         ref={ref}
-        disabled={props.disabled}
-        id={id}
+        disabled={disabled}
         onMouseDownCapture={(event) => {
           dispatch(openMenuThunk(edstWindow, event.currentTarget));
           if (sharedUiEventId) {
@@ -147,9 +153,7 @@ export function EdstWindowHeaderButtonWithSharedEvent({ sharedUiEventId, edstWin
           event.stopPropagation();
         }}
       >
-        <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} height={props.height}>
-          {props.content}
-        </EdstInnerButton>
+        <EdstInnerButton disabled={disabled}>{content}</EdstInnerButton>
       </EdstOuterHeaderButton>
     </EdstTooltip>
   );
@@ -157,8 +161,8 @@ export function EdstWindowHeaderButtonWithSharedEvent({ sharedUiEventId, edstWin
 
 const HoldDirButton = (props: Omit<EdstButtonProps, "margin">) => (
   <EdstTooltip title={props.title}>
-    <EdstOuterButton disabled={props.disabled} margin="0 2px" id={props.id} onMouseDownCapture={props.onMouseDown}>
-      <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} flexGrow={0}>
+    <EdstOuterButton disabled={props.disabled} margin="0 2px" onMouseDownCapture={props.onMouseDown} width={props.width}>
+      <EdstInnerButton selected={props.selected} disabled={props.disabled} flexGrow={0}>
         {props.content}
       </EdstInnerButton>
     </EdstOuterButton>
