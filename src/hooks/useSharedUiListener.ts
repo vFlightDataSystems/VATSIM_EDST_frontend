@@ -29,16 +29,11 @@ export function useSharedUiListener<T = any>(
   }, [eventId, handler, arg]);
 }
 
-export function useSharedUiListenerWithElement<T = any>(
-  eventId?: SharedUiEvent,
-  element?: Nullable<HTMLElement>,
-  handler?: (element: HTMLElement, args: T) => void,
-  args?: T
-) {
+export function useSharedUiListenerWithElement(eventId?: SharedUiEvent, element?: Nullable<HTMLElement>, handler?: (element: HTMLElement) => void) {
   useEffect(() => {
     const eventHandler = (evId: SharedUiEvent) => {
-      if (evId === eventId && element && handler && args !== undefined) {
-        handler(element, args);
+      if (evId === eventId && element && handler) {
+        handler(element);
       }
     };
     if (eventId) {
@@ -49,5 +44,5 @@ export function useSharedUiListenerWithElement<T = any>(
         sharedStateSocket.socket?.off("receiveUiEvent", eventHandler);
       }
     };
-  }, [handler, eventId, element, args]);
+  }, [handler, eventId, element]);
 }

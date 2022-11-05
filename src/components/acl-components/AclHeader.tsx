@@ -1,11 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aclAselSelector, closeAllMenus, closeWindow } from "~redux/slices/appSlice";
 import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
 import { NoSelectDiv } from "styles/NoSelectDiv";
-import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { aclCleanup } from "~redux/thunks/aclCleanup";
 import { EdstWindow } from "enums/edstWindow";
 import { AclSortOptionValues } from "enums/acl/aclSortOption";
@@ -13,7 +12,7 @@ import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "~redux/slices/aclSlice";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
 import { AddFindInput } from "components/utils/InputComponents";
-import { EdstWindowHeaderButton } from "components/utils/EdstButton";
+import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 
 const AclHeaderDiv = styled(NoSelectDiv)``;
@@ -38,13 +37,6 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
     }
   };
 
-  const handleClick = useCallback(
-    (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element));
-    },
-    [dispatch]
-  );
-
   return (
     <AclHeaderDiv>
       <WindowTitleBar
@@ -64,57 +56,38 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         ]}
       />
       <EdstWindowHeaderRowDiv>
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclPlanOptions"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
+          edstWindow={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclHoldMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.HOLD_MENU}
+          edstWindow={EdstWindow.HOLD_MENU}
           disabled={asel === null}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
           content="Hold..."
           title={Tooltips.hold}
         />
         <EdstWindowHeaderButton disabled content="Show" />
         <EdstWindowHeaderButton disabled content="Show ALL" />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclSortMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.ACL_SORT_MENU}
+          edstWindow={EdstWindow.ACL_SORT_MENU}
           id="acl-sort-button"
-          onMouseDown={(e) => {
-            handleClick(e.currentTarget, EdstWindow.ACL_SORT_MENU);
-          }}
           content="Sort..."
           title={Tooltips.sort}
         />
-        <EdstWindowHeaderButton
-          sharedUiEventId="openAclToolsMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
-          onMouseDown={(e) => {
-            dispatch(closeWindow(EdstWindow.TOOLS_MENU));
-            handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
-          }}
-          content="Tools..."
-        />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclToolsMenu" edstWindow={EdstWindow.TOOLS_MENU} content="Tools..." />
         <EdstWindowHeaderButton
           onMouseDown={() => dispatch(setAclManualPosting(!manualPosting))}
           content="Posting Mode"
           title={Tooltips.postingMode}
         />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclTemplateMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          edstWindow={EdstWindow.TEMPLATE_MENU}
           content="Template..."
           title={Tooltips.template}
         />

@@ -1,14 +1,13 @@
-import React, { useCallback } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { closeAllMenus, closeWindow, gpdAselSelector } from "~redux/slices/appSlice";
 import { NoSelectDiv } from "styles/NoSelectDiv";
 import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "~redux/slices/gpdSlice";
-import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { EdstWindow } from "enums/edstWindow";
 import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
-import { EdstWindowHeaderButton } from "components/utils/EdstButton";
+import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 
 type GpdHeaderProps = {
@@ -42,13 +41,6 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
     dispatch(toggleGpdSuppressed());
   };
 
-  const handleClick = useCallback(
-    (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element));
-    },
-    [dispatch]
-  );
-
   return (
     <GpdDiv>
       <WindowTitleBar
@@ -64,32 +56,26 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
         text={["Graphic Plan Display - Current Time"]}
       />
       <div>
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdPlanOptions"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
+          edstWindow={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdHoldMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.HOLD_MENU}
+          edstWindow={EdstWindow.HOLD_MENU}
           disabled={asel === null}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.HOLD_MENU)}
           content="Hold..."
           title={Tooltips.hold}
         />
         <EdstWindowHeaderButton disabled content="Show" />
         <EdstWindowHeaderButton disabled content="Show ALL" />
         <EdstWindowHeaderButton disabled content="Graphic..." />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdTemplateMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          edstWindow={EdstWindow.TEMPLATE_MENU}
           content="Template..."
           title={Tooltips.template}
         />
@@ -103,24 +89,12 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
         <EdstWindowHeaderButton onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdMapOptions"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.GPD_MAP_OPTIONS_MENU}
-          onMouseDown={(e) => {
-            handleClick(e.currentTarget, EdstWindow.GPD_MAP_OPTIONS_MENU);
-          }}
+          edstWindow={EdstWindow.GPD_MAP_OPTIONS_MENU}
           content="Map Options..."
         />
-        <EdstWindowHeaderButton
-          sharedUiEventId="openGpdToolsMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.TOOLS_MENU}
-          onMouseDown={(e) => {
-            handleClick(e.currentTarget, EdstWindow.TOOLS_MENU);
-          }}
-          content="Tools..."
-        />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdToolsMenu" edstWindow={EdstWindow.TOOLS_MENU} content="Tools..." />
         <EdstWindowHeaderButton disabled content="Saved Map" />
       </EdstWindowHeaderRowDiv>
     </GpdDiv>

@@ -1,17 +1,16 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "~redux/slices/depSlice";
 import { closeAllMenus, closeWindow, depAselSelector } from "~redux/slices/appSlice";
 import { addDepEntryByFid } from "~redux/thunks/entriesThunks";
 import { NoSelectDiv } from "styles/NoSelectDiv";
-import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { EdstWindow } from "enums/edstWindow";
 import { DepSortOptionValues } from "enums/dep/depSortOption";
 import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
 import { AddFindInput } from "components/utils/InputComponents";
-import { EdstWindowHeaderButton } from "components/utils/EdstButton";
+import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 
 /**
@@ -34,13 +33,6 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
     }
   };
 
-  const handleClick = useCallback(
-    (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element));
-    },
-    [dispatch]
-  );
-
   return (
     <NoSelectDiv>
       <WindowTitleBar
@@ -56,21 +48,17 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         text={["Departure List", `${DepSortOptionValues[selectedSortOption]}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
       <EdstWindowHeaderRowDiv>
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepPlanOptions"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
+          edstWindow={EdstWindow.PLAN_OPTIONS}
           disabled={asel === null}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepSortMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.DEP_SORT_MENU}
+          edstWindow={EdstWindow.DEP_SORT_MENU}
           id="dep-sort-button"
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.DEP_SORT_MENU)}
           content="Sort..."
           title={Tooltips.sort}
         />
@@ -79,11 +67,9 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           content="Posting Mode"
           title={Tooltips.postingMode}
         />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepTemplateMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          edstWindow={EdstWindow.TEMPLATE_MENU}
           content="Template..."
           title={Tooltips.template}
         />

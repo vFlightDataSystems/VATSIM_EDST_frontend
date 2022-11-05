@@ -1,12 +1,14 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
-import type { AllOrNone } from "types/utility-types";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
 import { buttonBorder2px, buttonBorderInverted2px, outlineHover } from "styles/styles";
 import { EdstTooltip } from "components/utils/EdstTooltip";
 import socket from "~socket";
+import type { EdstWindow } from "enums/edstWindow";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { useRootDispatch } from "~redux/hooks";
 
 type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
 type EdstOuterButtonProps = Partial<{ disabled: boolean } & EdstOuterButtonCSSProps>;
@@ -52,12 +54,6 @@ const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   }
 `;
 
-type SharedUiEventProps<T> = {
-  sharedUiEventId: SharedUiEvent;
-  sharedUiEventHandler: (element: HTMLElement, args: T) => void;
-  sharedUiEventHandlerArgs: T;
-};
-
 type EdstButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin" | "padding">;
 type EdstButtonProps = Partial<
   {
@@ -98,18 +94,9 @@ export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit"
 
 export const EdstTemplateButton10ch = (props: EdstButtonFixedSizeProps) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
-type EdstWindowHeaderButtonProps<T> = EdstButtonProps & AllOrNone<SharedUiEventProps<T>>;
-export function EdstWindowHeaderButton<T>({
-  onMouseDown,
-  id,
-  sharedUiEventId,
-  sharedUiEventHandler,
-  sharedUiEventHandlerArgs,
-  ...props
-}: EdstWindowHeaderButtonProps<T>) {
+export function EdstWindowHeaderButton({ onMouseDown, id, ...props }: EdstButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler, sharedUiEventHandlerArgs);
   return (
     <EdstTooltip title={props.title}>
       <EdstOuterHeaderButton
@@ -119,11 +106,45 @@ export function EdstWindowHeaderButton<T>({
         onMouseDownCapture={(event) => {
           if (onMouseDown) {
             onMouseDown(event);
-            if (sharedUiEventId) {
-              socket.dispatchUiEvent(sharedUiEventId);
-            }
             event.stopPropagation();
           }
+        }}
+      >
+        <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} height={props.height}>
+          {props.content}
+        </EdstInnerButton>
+      </EdstOuterHeaderButton>
+    </EdstTooltip>
+  );
+}
+
+type EdstWindowHeaderButtonWithSharedEventProps = Omit<EdstButtonProps, "onMouseDown"> & {
+  sharedUiEventId: SharedUiEvent;
+  edstWindow: EdstWindow;
+};
+export function EdstWindowHeaderButtonWithSharedEvent({ sharedUiEventId, edstWindow, id, ...props }: EdstWindowHeaderButtonWithSharedEventProps) {
+  const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
+  const sharedUiEventHandler = useCallback(
+    (element: HTMLElement) => {
+      dispatch(openMenuThunk(edstWindow, element));
+    },
+    [dispatch, edstWindow]
+  );
+  useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler);
+
+  return (
+    <EdstTooltip title={props.title}>
+      <EdstOuterHeaderButton
+        ref={ref}
+        disabled={props.disabled}
+        id={id}
+        onMouseDownCapture={(event) => {
+          dispatch(openMenuThunk(edstWindow, event.currentTarget));
+          if (sharedUiEventId) {
+            socket.dispatchUiEvent(sharedUiEventId);
+          }
+          event.stopPropagation();
         }}
       >
         <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} height={props.height}>

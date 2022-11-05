@@ -1,14 +1,13 @@
-import React, { useCallback } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "~redux/slices/planSlice";
 import { closeWindow } from "~redux/slices/appSlice";
 import { NoSelectDiv } from "styles/NoSelectDiv";
-import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { EdstWindow } from "enums/edstWindow";
 import { useHubActions } from "hooks/useHubActions";
-import { EdstWindowHeaderButton } from "components/utils/EdstButton";
+import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
@@ -27,13 +26,6 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
   const interimDisabled = true;
   const { amendFlightplan } = useHubActions();
-
-  const handleClick = useCallback(
-    (element: HTMLElement, edstWindow: EdstWindow) => {
-      dispatch(openMenuThunk(edstWindow, element));
-    },
-    [dispatch]
-  );
 
   const handleAmendClick = () => {
     if (selectedPlanIndex !== null) {
@@ -54,12 +46,10 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
         text={["Plans Display"]}
       />
       <NoSelectDiv>
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openPlansDisplayPlanOptions"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.PLAN_OPTIONS}
+          edstWindow={EdstWindow.PLAN_OPTIONS}
           disabled={selectedPlanIndex === null}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.PLAN_OPTIONS)}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
@@ -79,11 +69,9 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
           // title={Tooltips.plans_interim}
         />
         <EdstWindowHeaderButton disabled content="Tools..." />
-        <EdstWindowHeaderButton
+        <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openPlansDisplayTemplateMenu"
-          sharedUiEventHandler={handleClick}
-          sharedUiEventHandlerArgs={EdstWindow.TEMPLATE_MENU}
-          onMouseDown={(e) => handleClick(e.currentTarget, EdstWindow.TEMPLATE_MENU)}
+          edstWindow={EdstWindow.TEMPLATE_MENU}
           content="Template..."
           title={Tooltips.template}
         />
