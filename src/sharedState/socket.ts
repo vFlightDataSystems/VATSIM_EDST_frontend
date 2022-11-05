@@ -11,6 +11,7 @@ import type { DepState } from "~redux/slices/depSlice";
 import type { PlanState } from "~redux/slices/planSlice";
 import type { SharedStateServerToClientEvents } from "types/sharedStateTypes/sharedStateServerToClientEvents";
 import type { SharedGpdState } from "~redux/slices/gpdSlice";
+import type { AircraftId } from "types/aircraftId";
 
 const SHARED_STATE_SERVER_URL = import.meta.env.VITE_SHARED_STATE_URL;
 const SHARED_STATE_AUTH_TOKEN = import.meta.env.VITE_SHARED_STATE_AUTH_KEY;
@@ -22,7 +23,7 @@ class SharedStateSocket {
 
   sectorId = "";
 
-  private sharedAircraftState: Record<string, SharedAircraftDto> = {};
+  private sharedAircraftState: Record<AircraftId, SharedAircraftDto> = {};
 
   public getSharedAircraftState() {
     return this.sharedAircraftState;
