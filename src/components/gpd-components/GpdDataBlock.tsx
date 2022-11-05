@@ -102,8 +102,8 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
 
   const altRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
-  useAselEventListener<AclRowField>(altRef, entry.aircraftId, "gpd-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener<AclRowField>(altRef, entry.aircraftId, "gpd-dest-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener(altRef, entry.aircraftId, "gpd-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener(altRef, entry.aircraftId, "gpd-dest-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
   const onCallsignClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (!anyDragging) {

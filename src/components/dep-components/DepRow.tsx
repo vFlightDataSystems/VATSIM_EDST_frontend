@@ -113,9 +113,9 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onPar = !!pars.filter((par) => par.eligible && formattedRoute.includes(par.amendment))?.length;
-    const onPdar = !!pdars.filter((pdar) => pdar.eligible && formattedRoute === pdar.route).length;
-    const onPdr = (pdrs.filter((pdr) => route.startsWith(pdr.amendment))?.length ?? 0) > 0;
+    const onPar = pars.filter((par) => par.eligible && formattedRoute.includes(par.amendment)).length > 0;
+    const onPdar = pdars.filter((pdar) => pdar.eligible && formattedRoute === pdar.route).length > 0;
+    const onPdr = pdrs.filter((pdr) => route.startsWith(pdr.amendment)).length > 0;
     setOnPar(onPar);
     setOnPdar(onPdar);
     setOnPdr(onPdr);
@@ -149,8 +149,8 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const altRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener<DepRowField>(altRef, aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener<DepRowField>(routeRef, aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener(altRef, aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener(routeRef, aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
 
   const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();

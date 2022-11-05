@@ -99,12 +99,12 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   const holdRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener<AclRowField>(altRef, aircraftId, "acl-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener<AclRowField>(spdRef, aircraftId, "acl-spd-asel", AclRowField.SPD, EdstWindow.SPEED_MENU, handleClick);
-  useAselEventListener<AclRowField>(hdgRef, aircraftId, "acl-hdg-asel", AclRowField.HDG, EdstWindow.HEADING_MENU, handleClick);
-  useAselEventListener<AclRowField>(routeRef, aircraftId, "acl-route-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
-  useAselEventListener<AclRowField>(routeRef, aircraftId, "acl-route-asel-hold", AclRowField.ROUTE, EdstWindow.HOLD_MENU, handleClick);
-  useAselEventListener<AclRowField>(holdRef, aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
+  useAselEventListener(altRef, aircraftId, "acl-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
+  useAselEventListener(spdRef, aircraftId, "acl-spd-asel", AclRowField.SPD, EdstWindow.SPEED_MENU, handleClick);
+  useAselEventListener(hdgRef, aircraftId, "acl-hdg-asel", AclRowField.HDG, EdstWindow.HEADING_MENU, handleClick);
+  useAselEventListener(routeRef, aircraftId, "acl-route-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener(routeRef, aircraftId, "acl-route-asel-hold", AclRowField.ROUTE, EdstWindow.HOLD_MENU, handleClick);
+  useAselEventListener(holdRef, aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
 
   const par = usePar(aircraftId);
   const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
