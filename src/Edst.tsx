@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 
-import { useEventListener, useInterval } from "usehooks-ts";
+import { useInterval } from "usehooks-ts";
 import styled, { ThemeProvider } from "styled-components";
 import { HubConnectionState } from "@microsoft/signalr";
 import { EdstHeader } from "components/EdstHeader";
@@ -19,14 +19,7 @@ import { MessageComposeArea } from "components/MessageComposeArea";
 import { MessageResponseArea } from "components/MessageResponseArea";
 import { TemplateMenu } from "components/TemplateMenu";
 import { SectorSelector } from "components/SectorSelector";
-import {
-  aselIsNullSelector,
-  mcaCommandStringSelector,
-  pushZStack,
-  setMcaCommandString,
-  showSectorSelectorSelector,
-  windowsSelector,
-} from "~redux/slices/appSlice";
+import { aselIsNullSelector, showSectorSelectorSelector, windowsSelector } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { ToolsMenu } from "components/tools-components/ToolsMenu";
 import { AltimeterWindow } from "components/AltimeterWindow";
@@ -43,7 +36,6 @@ import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
 import { GIWindow } from "components/GeneralInforationWindow";
 import { AclSortMenu } from "components/acl-components/AclSortMenu";
 import { DepSortMenu } from "components/dep-components/DepSortMenu";
-import { openWindowThunk } from "~redux/thunks/openWindowThunk";
 import { useHubActions } from "hooks/useHubActions";
 import { useHubConnection } from "hooks/useHubConnection";
 import { fetchAllAircraft } from "api/vNasDataApi";
@@ -52,6 +44,7 @@ import { edstTheme } from "~/edstTheme";
 import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
+import { McaContextProvider } from "contexts/McaContext";
 
 const NotConnectedDiv = styled.div`
   font-family: "Consolas", monospace;
@@ -113,7 +106,6 @@ const Edst = () => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const hubConnection = useHubConnection();
   const hubActions = useHubActions();
-  const mcaCommandString = useRootSelector(mcaCommandStringSelector);
 
   useInterval(() => {
     fetchAllAircraft().then((aircraftList) => {
@@ -122,27 +114,6 @@ const Edst = () => {
   }, 5000);
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    // console.log(document.activeElement?.localName);
-    // event.preventDefault();
-    if (
-      document.activeElement?.localName !== "input" &&
-      document.activeElement?.localName !== "textarea" &&
-      !windows[EdstWindow.ALTITUDE_MENU].open
-    ) {
-      if (!windows[EdstWindow.MESSAGE_COMPOSE_AREA].open) {
-        dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
-        if (event.key.match(/(\w|\s|\d|\/)/gi) && event.key.length === 1) {
-          dispatch(setMcaCommandString(mcaCommandString + event.key.toUpperCase()));
-        }
-      } else {
-        dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-      }
-    }
-  };
-
-  useEventListener("keydown", handleKeyDown);
 
   return (
     <ThemeProvider theme={edstTheme}>
@@ -171,7 +142,9 @@ const EdstProvider = () => (
   <SocketContextProvider>
     <HubContextProvider>
       <React.StrictMode>
-        <Edst />
+        <McaContextProvider>
+          <Edst />
+        </McaContextProvider>
       </React.StrictMode>
     </HubContextProvider>
   </SocketContextProvider>

@@ -42,9 +42,7 @@ type AppWindow = {
 type AppState = {
   windows: Record<EdstWindow, AppWindow>;
   anyDragging: boolean;
-  commandHistory: string[];
   mraMsg: string;
-  mcaCommandString: string;
   mcaFeedbackString: string;
   giEntryMap: Record<string, GIEntry>;
   tooltipsEnabled: boolean;
@@ -78,9 +76,7 @@ const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
 const initialState: AppState = {
   windows: initialWindowState,
   anyDragging: false,
-  commandHistory: [],
   mraMsg: "",
-  mcaCommandString: "",
   mcaFeedbackString: "",
   giEntryMap: {},
   tooltipsEnabled: true,
@@ -124,10 +120,6 @@ const appSlice = createSlice({
     },
     setMraMessage(state, action: PayloadAction<string>) {
       state.mraMsg = action.payload;
-    },
-    setMcaCommandString(state, action: PayloadAction<string>) {
-      state.commandHistory = [action.payload, ...state.commandHistory.slice(0, 30)];
-      state.mcaCommandString = action.payload;
     },
     setMcaFeedbackString(state, action: PayloadAction<string>) {
       state.mcaFeedbackString = action.payload;
@@ -245,7 +237,6 @@ export const {
   setShowSectorSelector,
   setWindowPosition,
   setWindowDimension,
-  setMcaCommandString,
   openWindow,
   setAnyDragging,
   pushZStack,
@@ -257,7 +248,6 @@ export const {
 } = appSlice.actions;
 export default appSlice.reducer;
 
-export const mcaCommandStringSelector = (state: RootState) => state.app.mcaCommandString;
 export const mcaFeedbackSelector = (state: RootState) => state.app.mcaFeedbackString;
 export const mraMsgSelector = (state: RootState) => state.app.mraMsg;
 export const giEntryMapSelector = (state: RootState) => state.app.giEntryMap;
