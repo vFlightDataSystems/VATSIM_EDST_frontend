@@ -307,22 +307,18 @@ export const RouteMenu = () => {
               />
             </OptionsBodyCol>
             <OptionsBodyCol maxWidth="24px" maxHeight="24px">
-              <EdstTooltip>
-                <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
-                  <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
-                </a>
-              </EdstTooltip>
+              <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
+                <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
+              </a>
             </OptionsBodyCol>
             <OptionsBodyCol maxWidth="24px" maxHeight="24px">
-              <EdstTooltip>
-                <a
-                  href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
-                </a>
-              </EdstTooltip>
+              <a
+                href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
+              </a>
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
               {entry.cpdlcCapable && (
@@ -373,38 +369,34 @@ export const RouteMenu = () => {
             </OptionsBodyCol>
           </RouteMenuRow>
           <RouteMenuRow topBorder>
-            <EdstTooltip disabled title={Tooltips.routeMenuPar}>
-              <ButtonCol hover>
-                <OptionIndicator disabled size={9} />
-                Include PAR
-              </ButtonCol>
-            </EdstTooltip>
+            <ButtonCol hover disabled title={Tooltips.routeMenuPar}>
+              <OptionIndicator disabled size={9} />
+              Include PAR
+            </ButtonCol>
           </RouteMenuRow>
           <RouteMenuRow bottomBorder>
-            <EdstTooltip
+            <ButtonCol
+              hover
               title={Tooltips.routeMenuAppendStar}
               onMouseDown={() => {
                 socket.dispatchUiEvent("routeMenuClickAppendStar");
                 setAppend(toggleAppendStar);
               }}
             >
-              <ButtonCol hover>
-                <OptionIndicator selected={appendStar} size={9} />
-                Append *
-              </ButtonCol>
-            </EdstTooltip>
-            <EdstTooltip
+              <OptionIndicator selected={appendStar} size={9} />
+              Append *
+            </ButtonCol>
+            <ButtonCol
+              hover
               title={Tooltips.routeMenuAppendOplus}
               onMouseDown={() => {
                 socket.dispatchUiEvent("routeMenuClickAppendOplus");
                 setAppend(toggleAppendOplus);
               }}
             >
-              <ButtonCol hover>
-                <OptionIndicator selected={appendOplus} size={9} />
-                Append<span>&nbsp;{OPLUS_SYMBOL}</span>
-              </ButtonCol>
-            </EdstTooltip>
+              <OptionIndicator selected={appendOplus} size={9} />
+              Append<span>&nbsp;{OPLUS_SYMBOL}</span>
+            </ButtonCol>
           </RouteMenuRow>
           <EdstTooltip title={Tooltips.routeMenuDirectFix}>
             <UnderlineRow as={RouteMenuRow}>Direct-To-Fix</UnderlineRow>
@@ -417,12 +409,12 @@ export const RouteMenu = () => {
           {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
             <OptionsBodyRow key={i}>
               {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map((j) => {
-                const fixName = routeFixes?.[Number(i) + Number(j) * 10]?.name;
+                const fixName = routeFixes?.[i + j * 10]?.name;
                 return (
                   fixName && (
-                    <EdstTooltip key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
-                      <DctCol hover>{fixName}</DctCol>
-                    </EdstTooltip>
+                    <DctCol hover key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
+                      {fixName}
+                    </DctCol>
                   )
                 );
               })}

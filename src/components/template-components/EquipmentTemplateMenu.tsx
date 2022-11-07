@@ -25,7 +25,6 @@ import { EquipmentNavTemplate } from "components/EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "components/EquipmentSurvTemplate";
 import { EquipmentCommTemplate } from "components/EquipmentCommTemplate";
 import { EquipmentAppServTemplate } from "components/EquipmentAppServTemplate";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EqpContentCol, EqpRow } from "components/EqpStyled";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { EdstButton, EdstTemplateButton10ch } from "components/utils/EdstButton";
@@ -70,12 +69,10 @@ export const EquipmentTemplateRow = ({ margin, tooltip, toggleSelect, selected, 
   }
   return (
     <EqpRow margin={margin}>
-      <EdstTooltip title={tooltip} onMouseDown={toggleSelect}>
-        <EqpContentCol>
-          <Indicator selected={selected} />
-          {buttonText}
-        </EqpContentCol>
-      </EdstTooltip>
+      <EqpContentCol title={tooltip} onMouseDown={toggleSelect}>
+        <Indicator selected={selected} />
+        {buttonText}
+      </EqpContentCol>
       {text ?? ""}
     </EqpRow>
   );

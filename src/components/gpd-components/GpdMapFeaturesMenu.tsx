@@ -5,7 +5,6 @@ import { closeWindow } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "~redux/slices/gpdSlice";
 import { EdstWindow } from "enums/edstWindow";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 export const GpdMapFeaturesMenu = () => {
@@ -18,8 +17,7 @@ export const GpdMapFeaturesMenu = () => {
       {Object.values(MapFeatureOption).map((option) => {
         return (
           <OptionsBodyRow key={option}>
-            <EdstTooltip
-              style={{ flexGrow: 1 }}
+            <OptionsFlexCol
               onMouseDown={() =>
                 setCurrentOptions((prev) => ({
                   ...prev,
@@ -27,11 +25,9 @@ export const GpdMapFeaturesMenu = () => {
                 }))
               }
             >
-              <OptionsFlexCol>
-                <OptionIndicator selected={currentOptions[option]} />
-                {option}
-              </OptionsFlexCol>
-            </EdstTooltip>
+              <OptionIndicator selected={currentOptions[option]} />
+              {option}
+            </OptionsFlexCol>
           </OptionsBodyRow>
         );
       })}

@@ -35,7 +35,6 @@ import { RouteDisplayOption } from "enums/routeDisplayOption";
 import { convertBeaconCodeToString, removeStringFromEnd } from "~/utils/stringManipulation";
 import { RemarksBox } from "components/AclStyled";
 import { DepPTimeCol, RadioCol } from "components/DepStyled";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 
 type DepRowProps = {
   aircraftId: AircraftId;
@@ -223,97 +222,89 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   return (
     <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
-        <EdstTooltip title={Tooltips.depCheckmarkNBtn}>
-          <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
-            {entry.depStatus === -1 && "N"}
-            {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
-          </RadioCol>
-        </EdstTooltip>
+        <RadioCol title={Tooltips.depCheckmarkNBtn} checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
+          {entry.depStatus === -1 && "N"}
+          {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
+        </RadioCol>
         <DepPTimeCol>0000</DepPTimeCol>
         <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
-          <EdstTooltip title={Tooltips.depFlightId}>
-            <FidCol
-              hover
-              selected={isSelected(DepRowField.FID)}
-              onMouseDown={handleFidClick}
-              onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
-            >
-              {entry.cid} {entry.aircraftId}
-              {/* eslint-disable-next-line no-nested-ternary */}
-              {entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}
-            </FidCol>
-          </EdstTooltip>
+          <FidCol
+            title={Tooltips.depFlightId}
+            hover
+            selected={isSelected(DepRowField.FID)}
+            onMouseDown={handleFidClick}
+            onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
+          >
+            {entry.cid} {entry.aircraftId}
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}
+          </FidCol>
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
-          <EdstTooltip title={Tooltips.depHotbox}>
-            <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
-          </EdstTooltip>
+          <HotBox title={Tooltips.depHotbox} onMouseDown={handleHotboxMouseDown}>
+            {freeTextContent && "*"}
+          </HotBox>
           <SpecialBox disabled />
-          <EdstTooltip title={Tooltips.depType}>
-            <AircraftTypeCol
-              visibilityHidden={hiddenColumns.includes(DepRowField.TYPE)}
-              hover
-              selected={isSelected(DepRowField.TYPE)}
-              onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.TYPE, null)}
+          <AircraftTypeCol
+            title={Tooltips.depType}
+            visibilityHidden={hiddenColumns.includes(DepRowField.TYPE)}
+            hover
+            selected={isSelected(DepRowField.TYPE)}
+            onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.TYPE, null)}
+          >
+            {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+          </AircraftTypeCol>
+          <AltCol title={Tooltips.depAlt}>
+            <AltColDiv
+              as="div"
+              ref={altRef}
+              selected={isSelected(DepRowField.ALT)}
+              onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ALT, "dep-alt-asel", EdstWindow.ALTITUDE_MENU)}
             >
-              {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-            </AircraftTypeCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.depAlt}>
-            <AltCol>
-              <AltColDiv
-                ref={altRef}
-                selected={isSelected(DepRowField.ALT)}
-                onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ALT, "dep-alt-asel", EdstWindow.ALTITUDE_MENU)}
-              >
-                {entry.altitude}
-              </AltColDiv>
-            </AltCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.depCode}>
-            <CodeCol
-              visibilityHidden={hiddenColumns.includes(DepRowField.CODE)}
-              hover
-              selected={isSelected(DepRowField.CODE)}
-              onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.CODE, null)}
-            >
-              {convertBeaconCodeToString(entry.assignedBeaconCode)}
-            </CodeCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclRemarksBtn}>
-            <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
-              {entry.remarks.length > 0 && "*"}
-            </RemarksBox>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.depRoute}>
-            <RouteCol
-              ref={routeRef}
-              hover
-              selected={isSelected(DepRowField.ROUTE)}
-              onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ROUTE, "dep-route-asel", EdstWindow.ROUTE_MENU)}
-            >
-              <RouteSpan padding="0 2px">
-                {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
-                {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
-                {!entry.routeDisplay && (
-                  <>
-                    <RouteSpan>{entry.departure}</RouteSpan>
-                    {pendingPdar && !onPdar && (
-                      <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteTextSpan>
-                    )}
-                    {!pendingPdar && pendingPdr && !onPdr && (
-                      <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteTextSpan>
-                    )}
-                    {route}
-                    {!pendingPdar && pendingPar && !onPar && (
-                      <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteTextSpan>
-                    )}
-                    {route?.slice(-1) !== "." && ".."}
-                    {entry.destination}
-                  </>
-                )}
-              </RouteSpan>
-            </RouteCol>
-          </EdstTooltip>
+              {entry.altitude}
+            </AltColDiv>
+          </AltCol>
+          <CodeCol
+            title={Tooltips.depCode}
+            visibilityHidden={hiddenColumns.includes(DepRowField.CODE)}
+            hover
+            selected={isSelected(DepRowField.CODE)}
+            onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.CODE, null)}
+          >
+            {convertBeaconCodeToString(entry.assignedBeaconCode)}
+          </CodeCol>
+          <RemarksBox title={Tooltips.aclRemarksBtn} unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+            {entry.remarks.length > 0 && "*"}
+          </RemarksBox>
+          <RouteCol
+            as="div"
+            ref={routeRef}
+            title={Tooltips.depRoute}
+            hover
+            selected={isSelected(DepRowField.ROUTE)}
+            onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ROUTE, "dep-route-asel", EdstWindow.ROUTE_MENU)}
+          >
+            <RouteSpan padding="0 2px">
+              {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
+              {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
+              {!entry.routeDisplay && (
+                <>
+                  <RouteSpan>{entry.departure}</RouteSpan>
+                  {pendingPdar && !onPdar && (
+                    <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteTextSpan>
+                  )}
+                  {!pendingPdar && pendingPdr && !onPdr && (
+                    <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteTextSpan>
+                  )}
+                  {route}
+                  {!pendingPdar && pendingPar && !onPar && (
+                    <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteTextSpan>
+                  )}
+                  {route?.slice(-1) !== "." && ".."}
+                  {entry.destination}
+                </>
+              )}
+            </RouteSpan>
+          </RouteCol>
         </InnerRow>
       </BodyRowDiv>
       {entry.showFreeText && (

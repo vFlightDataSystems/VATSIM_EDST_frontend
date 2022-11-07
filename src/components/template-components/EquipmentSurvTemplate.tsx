@@ -12,7 +12,7 @@ import type { EquipmentTemplateBodyProps } from "components/EquipmentTemplateMen
 import { EquipmentTemplateRow } from "components/EquipmentTemplateMenu";
 import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "components/EqpStyled";
 
-const ContentCol = styled.div`
+const ContentCol = styled(EdstTooltip)`
   justify-content: left;
   align-items: center;
   display: inline-flex;
@@ -97,12 +97,10 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         <EqpCol>
           <EqpColTitle>TRANSPONDER CATEGORY</EqpColTitle>
           <EqpRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCat(null)}>
-              <ContentCol>
-                <OptionIndicatorCircle selected={transponderCat === null} />
-                No Transponder
-              </ContentCol>
-            </EdstTooltip>
+            <ContentCol title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCat(null)}>
+              <OptionIndicatorCircle selected={transponderCat === null} />
+              No Transponder
+            </ContentCol>
           </EqpRow>
           {Object.values(TransponderCat).map((category) => (
             <EquipmentTemplateRow
@@ -205,33 +203,27 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             <br /> CERTIFICATION
           </EqpColTitle>
           <EqpRow margin="18px 0">
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_260b}>
-              <ContentCol>
-                <OptionIndicator />
-                260B (1090)
-              </ContentCol>
-            </EdstTooltip>
+            <ContentCol title={Tooltips.equipmentTemplateMenuSurv_260b}>
+              <OptionIndicator />
+              260B (1090)
+            </ContentCol>
           </EqpRow>
           <EqpRow margin="18px 0">
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuSurv_262b}>
-              <ContentCol>
-                <OptionIndicator />
-                282B (UAT)
-              </ContentCol>
-            </EdstTooltip>
+            <ContentCol title={Tooltips.equipmentTemplateMenuSurv_262b}>
+              <OptionIndicator />
+              282B (UAT)
+            </ContentCol>
           </EqpRow>
         </EqpCol>
       </OptionsBodyRow>
       <EqpInputRow>
         SUR/
-        <EdstTooltip style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
-          <EqpInputContainer60>
-            <EqpInput
-              value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`}
-              // onChange={() => {}}
-            />
-          </EqpInputContainer60>
-        </EdstTooltip>
+        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
+          <EqpInput
+            value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`}
+            // onChange={() => {}}
+          />
+        </EqpInputContainer60>
       </EqpInputRow>
     </>
   );

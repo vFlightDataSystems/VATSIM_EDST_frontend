@@ -1,6 +1,7 @@
 import type { CSSProperties } from "styled-components";
 import styled, { css } from "styled-components";
 import { borderHover, createBorder } from "styles/styles";
+import { EdstTooltip } from "components/utils/EdstTooltip";
 
 const hotboxBorder = createBorder("1px", "#575757", "#414141");
 
@@ -13,7 +14,7 @@ export type ColProps = {
   visibilityHidden?: boolean;
 };
 
-export const Col = styled.div<ColProps>`
+export const Col = styled(EdstTooltip)<ColProps>`
   display: flex;
   flex-shrink: 0;
   justify-content: center;

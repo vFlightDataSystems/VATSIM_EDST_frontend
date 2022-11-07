@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { OptionsBodyRow } from "styles/optionMenuStyles";
 import { borderHover } from "styles/styles";
+import { EdstTooltip } from "components/utils/EdstTooltip";
 
 export const Row = styled(OptionsBodyRow)`
   padding: 4px 0;
@@ -14,7 +15,7 @@ export const Row2 = styled(OptionsBodyRow)`
 export const Row3 = styled(Row2)`
   justify-content: left;
 `;
-export const Col1 = styled.div`
+export const Col1 = styled(EdstTooltip)`
   margin-left: 0.5ch;
   margin-right: auto;
   display: flex;

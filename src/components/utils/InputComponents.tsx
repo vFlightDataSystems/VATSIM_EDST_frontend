@@ -11,7 +11,7 @@ type InputProps = {
   rows?: number;
 };
 
-const AddFindContainer = styled.div`
+const AddFindContainer = styled(EdstTooltip)`
   border: 1px solid #000000;
   display: inline-flex;
   margin: 1px 20px 1px 14px;
@@ -20,11 +20,9 @@ const AddFindContainer = styled.div`
 
 export const AddFindInput = ({ title, ...props }: InputProps) => {
   return (
-    <EdstTooltip title={title}>
-      <AddFindContainer>
-        <EdstInput {...props} />
-      </AddFindContainer>
-    </EdstTooltip>
+    <AddFindContainer title={title}>
+      <EdstInput {...props} />
+    </AddFindContainer>
   );
 };
 

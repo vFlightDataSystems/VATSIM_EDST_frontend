@@ -37,7 +37,6 @@ import { colors } from "~/edstTheme";
 import type { AircraftId } from "types/aircraftId";
 import { anyHoldingSelector } from "~redux/selectors";
 import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "components/AclStyled";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 
 type AclRowProps = {
   aircraftId: AircraftId;
@@ -320,134 +319,130 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   return (
     <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
-        <EdstTooltip title={Tooltips.aclNAndVciBtn}>
-          <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
-            {entry.vciStatus === -1 && "N"}
-            {entry.vciStatus === 1 && VCI_SYMBOL}
-          </RadioCol>
-        </EdstTooltip>
+        <RadioCol title={Tooltips.aclNAndVciBtn} green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
+          {entry.vciStatus === -1 && "N"}
+          {entry.vciStatus === 1 && VCI_SYMBOL}
+        </RadioCol>
         <AclCol1 border />
         <AclCol1 border />
         <AclCol1 border />
         <SpecialBox disabled />
         <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
-          <EdstTooltip title={Tooltips.aclFlightId} onMouseDown={handleFidClick}>
-            <FidCol hover selected={isSelected(AclRowField.FID)}>
-              {entry.cid} {entry.aircraftId}
-              {/* eslint-disable-next-line no-nested-ternary */}
-              <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
-            </FidCol>
-          </EdstTooltip>
+          <FidCol hover title={Tooltips.aclFlightId} onMouseDown={handleFidClick} selected={isSelected(AclRowField.FID)}>
+            {entry.cid} {entry.aircraftId}
+            {/* eslint-disable-next-line no-nested-ternary */}
+            <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
+          </FidCol>
           <PointOutCol />
           {toolOptions.displayCoordinationColumn && <SpecialBox disabled />}
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
-          <EdstTooltip title={Tooltips.aclHotbox}>
-            <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclType}>
-            <AircraftTypeCol
-              visibilityHidden={hiddenColumns.includes(AclRowField.TYPE)}
-              hover
-              selected={isSelected(AclRowField.TYPE)}
-              onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.TYPE, null)}
+          <HotBox title={Tooltips.aclHotbox} onMouseDown={handleHotboxMouseDown}>
+            {freeTextContent && "*"}
+          </HotBox>
+          <AircraftTypeCol
+            title={Tooltips.aclType}
+            visibilityHidden={hiddenColumns.includes(AclRowField.TYPE)}
+            hover
+            selected={isSelected(AclRowField.TYPE)}
+            onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.TYPE, null)}
+          >
+            {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+          </AircraftTypeCol>
+          <AltCol title={Tooltips.aclAlt}>
+            <AltColDiv
+              as="div"
+              ref={altRef}
+              headerMouseDown={altMouseDown}
+              selected={isSelected(AclRowField.ALT)}
+              onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.ALT, "acl-alt-asel", EdstWindow.ALTITUDE_MENU)}
             >
-              {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-            </AircraftTypeCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclAlt}>
-            <AltCol>
-              <AltColDiv
-                ref={altRef}
-                headerMouseDown={altMouseDown}
-                selected={isSelected(AclRowField.ALT)}
-                onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.ALT, "acl-alt-asel", EdstWindow.ALTITUDE_MENU)}
-              >
-                {entry.altitude}
-                {entry.interimAltitude && `T${entry.interimAltitude}`}
-              </AltColDiv>
-              {showCoralBox && <CoralBox />}
-            </AltCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclCode}>
-            <CodeCol
-              visibilityHidden={hiddenColumns.includes(AclRowField.CODE)}
-              hover
-              selected={isSelected(AclRowField.CODE)}
-              onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.CODE, null)}
-            >
-              {convertBeaconCodeToString(entry.assignedBeaconCode)}
-            </CodeCol>
-          </EdstTooltip>
+              {entry.altitude}
+              {entry.interimAltitude && `T${entry.interimAltitude}`}
+            </AltColDiv>
+            {showCoralBox && <CoralBox />}
+          </AltCol>
+          <CodeCol
+            title={Tooltips.aclCode}
+            visibilityHidden={hiddenColumns.includes(AclRowField.CODE)}
+            hover
+            selected={isSelected(AclRowField.CODE)}
+            onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.CODE, null)}
+          >
+            {convertBeaconCodeToString(entry.assignedBeaconCode)}
+          </CodeCol>
           <SpecialBox onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchpadHeading)}>
             {entry.assignedHeading && entry.scratchpadHeading && "*"}
           </SpecialBox>
-          <EdstTooltip title={Tooltips.aclHdg}>
-            <HdgCol
-              ref={hdgRef}
-              hover
-              visibilityHidden={hiddenColumns.includes(AclRowField.HDG)}
-              selected={isSelected(AclRowField.HDG)}
-              onMouseDown={handleHeadingClick}
-              scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
-            >
-              {entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchpadHeading : entry.assignedHeading}
-            </HdgCol>
-          </EdstTooltip>
+          <HdgCol
+            as="div"
+            ref={hdgRef}
+            title={Tooltips.aclHdg}
+            hover
+            visibilityHidden={hiddenColumns.includes(AclRowField.HDG)}
+            selected={isSelected(AclRowField.HDG)}
+            onMouseDown={handleHeadingClick}
+            scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
+          >
+            {entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchpadHeading : entry.assignedHeading}
+          </HdgCol>
           <HdgSpdSlashCol>/</HdgSpdSlashCol>
-          <EdstTooltip title={Tooltips.aclSpd}>
-            <SpdCol
-              ref={spdRef}
-              hover
-              visibilityHidden={hiddenColumns.includes(AclRowField.SPD)}
-              selected={isSelected(AclRowField.SPD)}
-              onMouseDown={handleSpeedClick}
-              scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}
-            >
-              {entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchpadSpeed : entry.assignedSpeed}
-            </SpdCol>
-          </EdstTooltip>
+          <SpdCol
+            as="div"
+            ref={spdRef}
+            title={Tooltips.aclSpd}
+            hover
+            visibilityHidden={hiddenColumns.includes(AclRowField.SPD)}
+            selected={isSelected(AclRowField.SPD)}
+            onMouseDown={handleSpeedClick}
+            scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}
+          >
+            {entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchpadSpeed : entry.assignedSpeed}
+          </SpdCol>
           <SpecialBox onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchpadSpeed)}>
             {entry.assignedSpeed && entry.scratchpadSpeed && "*"}
           </SpecialBox>
           <SpecialBox disabled />
           {anyHolding && (
-            <SpecialBox ref={holdRef} color={colors.brown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
+            <SpecialBox as="div" ref={holdRef} color={colors.brown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}
-          <EdstTooltip title={Tooltips.aclRemarksBtn}>
-            <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
-              {entry.remarks.length > 0 && "*"}
-            </RemarksBox>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclRoute}>
-            <RouteCol ref={routeRef} hover selected={isSelected(AclRowField.ROUTE)} onMouseDown={(event) => handleRouteClick(event.currentTarget)}>
-              <RouteSpan padding="0 2px">
-                {entry.routeDisplay === RouteDisplayOption.holdAnnotations &&
-                  holdAnnotations &&
-                  `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
-                    `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
-                    `${holdAnnotations.legLength ?? "STD"}` +
-                    // eslint-disable-next-line no-nested-ternary
-                    `${holdAnnotations.legLength ? (holdAnnotations.legLengthInNm ? "NM" : "Minutes") : ""} EFC ${formatUtcMinutes(
-                      holdAnnotations.efc
-                    )}`}
-                {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
-                {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
-                {!entry.routeDisplay && (
-                  <>
-                    <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(AclRowField.ROUTE)}>
-                      {entry.departure}
-                    </RouteDepAirportSpan>
-                    ./.
-                    {route}
-                    {!route.endsWith(".") && route.length > 0 && `.`}
-                    {entry.destination}
-                  </>
-                )}
-              </RouteSpan>
-            </RouteCol>
-          </EdstTooltip>
+          <RemarksBox title={Tooltips.aclRemarksBtn} unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+            {entry.remarks.length > 0 && "*"}
+          </RemarksBox>
+          <RouteCol
+            as="div"
+            ref={routeRef}
+            title={Tooltips.aclRoute}
+            hover
+            selected={isSelected(AclRowField.ROUTE)}
+            onMouseDown={(event) => handleRouteClick(event.currentTarget)}
+          >
+            <RouteSpan padding="0 2px">
+              {entry.routeDisplay === RouteDisplayOption.holdAnnotations &&
+                holdAnnotations &&
+                `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
+                  `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
+                  `${holdAnnotations.legLength ?? "STD"}` +
+                  // eslint-disable-next-line no-nested-ternary
+                  `${holdAnnotations.legLength ? (holdAnnotations.legLengthInNm ? "NM" : "Minutes") : ""} EFC ${formatUtcMinutes(
+                    holdAnnotations.efc
+                  )}`}
+              {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
+              {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
+              {!entry.routeDisplay && (
+                <>
+                  <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(AclRowField.ROUTE)}>
+                    {entry.departure}
+                  </RouteDepAirportSpan>
+                  ./.
+                  {route}
+                  {!route.endsWith(".") && route.length > 0 && `.`}
+                  {entry.destination}
+                </>
+              )}
+            </RouteSpan>
+          </RouteCol>
         </InnerRow>
       </BodyRowDiv>
       {entry.showFreeText && (

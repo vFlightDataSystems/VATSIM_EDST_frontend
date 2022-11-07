@@ -3,6 +3,7 @@ import styled from "styled-components";
 import type { WindowPosition } from "types/windowPosition";
 import { DraggableDiv } from "styles/NoSelectDiv";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "styles/styles";
+import { EdstTooltip } from "components/utils/EdstTooltip";
 
 type OptionIndicatorProps = {
   selected?: boolean;
@@ -141,7 +142,7 @@ type OptionsBodyColProps = Partial<
     hover?: boolean;
   } & OptionsBodyColCSSProps
 >;
-export const OptionsBodyCol = styled.div<OptionsBodyColProps>`
+export const OptionsBodyCol = styled(EdstTooltip)<OptionsBodyColProps>`
   display: flex;
   flex-grow: 1;
   flex-flow: row;

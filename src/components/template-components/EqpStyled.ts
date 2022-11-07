@@ -2,6 +2,7 @@ import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { EdstInput, OptionsBodyRow } from "styles/optionMenuStyles";
 import { borderHover } from "styles/styles";
+import { EdstTooltip } from "components/utils/EdstTooltip";
 
 export const EqpRow = styled(OptionsBodyRow)`
   display: flex;
@@ -16,7 +17,7 @@ export const EqpContentRow = styled(EqpRow)`
   text-indent: 6px;
 `;
 
-export const EqpInputContainer = styled.div`
+export const EqpInputContainer = styled(EdstTooltip)`
   display: flex;
   flex-grow: 1;
   border: 1px solid transparent;
@@ -54,7 +55,7 @@ export const EqpColTitle = styled(EqpCol)`
   text-align: center;
 `;
 
-export const EqpContentCol = styled.div`
+export const EqpContentCol = styled(EdstTooltip)`
   justify-content: left;
   align-items: center;
   display: inline-flex;

@@ -16,7 +16,6 @@ import {
   EqpInputContainer60,
   EqpInputRow,
 } from "components/EqpStyled";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 
 enum NavCat {
   F = "F",
@@ -128,65 +127,49 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
         </EqpCol>
         <EqpCol>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
-              <EqpContentCol>
-                <OptionIndicatorCircle />
-                RNAV
-              </EqpContentCol>
-            </EdstTooltip>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
-              <EqpContentCol>
-                <OptionIndicatorCircle />
-                RNP
-              </EqpContentCol>
-            </EdstTooltip>
+            <EqpContentCol title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
+              <OptionIndicatorCircle />
+              RNAV
+            </EqpContentCol>
+            <EqpContentCol title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
+              <OptionIndicatorCircle />
+              RNP
+            </EqpContentCol>
           </EqpContentRow>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-              <EqpInputContainer>
-                <EdstInput />
-              </EqpInputContainer>
-            </EdstTooltip>
+            <EqpInputContainer title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+              <EdstInput />
+            </EqpInputContainer>
             D (DEPARTURE)
           </EqpContentRow>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-              <EqpInputContainer>
-                <EdstInput />
-              </EqpInputContainer>
-            </EdstTooltip>
+            <EqpInputContainer title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+              <EdstInput />
+            </EqpInputContainer>
             E (EN ROUTE)
           </EqpContentRow>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-              <EqpInputContainer>
-                <EdstInput />
-              </EqpInputContainer>
-            </EdstTooltip>
+            <EqpInputContainer title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+              <EdstInput />
+            </EqpInputContainer>
             A (ARRIVAL)
           </EqpContentRow>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-              <EqpInputContainer>
-                <EdstInput />
-              </EqpInputContainer>
-            </EdstTooltip>
+            <EqpInputContainer title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+              <EdstInput />
+            </EqpInputContainer>
             G (GLOBAL/OCEAN)
           </EqpContentRow>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-              <EqpInputContainer>
-                <EdstInput />
-              </EqpInputContainer>
-            </EdstTooltip>
+            <EqpInputContainer title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+              <EdstInput />
+            </EqpInputContainer>
             L (LANDING)
           </EqpContentRow>
           <EqpContentRow>
-            <EdstTooltip title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
-              <EqpInputContainer>
-                <EdstInput />
-              </EqpInputContainer>
-            </EdstTooltip>
+            <EqpInputContainer title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+              <EdstInput />
+            </EqpInputContainer>
             S (SPECIAL)
           </EqpContentRow>
         </EqpCol>
@@ -204,19 +187,17 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
       </OptionsBodyRow>
       <EqpInputRow>
         NAV/
-        <EdstTooltip style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
-          <EqpInputContainer60>
-            <EqpInput
-              value={
-                [...(navCategories as string[])]
-                  .concat([...(rnavCategories as string[])])
-                  .sort((u, v) => u.localeCompare(v))
-                  .join("") + (rvsm ? "W" : "")
-              }
-              // onChange={() => {}}
-            />
-          </EqpInputContainer60>
-        </EdstTooltip>
+        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
+          <EqpInput
+            value={
+              [...(navCategories as string[])]
+                .concat([...(rnavCategories as string[])])
+                .sort((u, v) => u.localeCompare(v))
+                .join("") + (rvsm ? "W" : "")
+            }
+            // onChange={() => {}}
+          />
+        </EqpInputContainer60>
       </EqpInputRow>
     </>
   );

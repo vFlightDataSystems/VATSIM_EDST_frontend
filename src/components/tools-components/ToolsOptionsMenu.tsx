@@ -5,7 +5,6 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { toolsOptionsSelector, updateToolsOptions } from "~redux/slices/aclSlice";
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionIndicator, OptionsFlexCol } from "styles/optionMenuStyles";
 import { EdstWindow } from "enums/edstWindow";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 export const ToolsOptionsMenu = () => {
@@ -19,36 +18,28 @@ export const ToolsOptionsMenu = () => {
   return (
     <>
       <OptionsBodyRow>
-        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}>
-          <OptionsFlexCol>
-            <OptionIndicator selected={displayCoordinationColumn} />
-            Display Coordination Column
-          </OptionsFlexCol>
-        </EdstTooltip>
+        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}>
+          <OptionIndicator selected={displayCoordinationColumn} />
+          Display Coordination Column
+        </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}>
-          <OptionsFlexCol>
-            <OptionIndicator selected={dropTrackDelete} />
-            Drop Track Delete
-          </OptionsFlexCol>
-        </EdstTooltip>
+        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}>
+          <OptionIndicator selected={dropTrackDelete} />
+          Drop Track Delete
+        </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setIafDofManual(!iafDofManual)}>
-          <OptionsFlexCol>
-            <OptionIndicator selected={iafDofManual} />
-            IAFDOF Manual
-          </OptionsFlexCol>
-        </EdstTooltip>
+        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setIafDofManual(!iafDofManual)}>
+          <OptionIndicator selected={iafDofManual} />
+          IAFDOF Manual
+        </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}>
-          <OptionsFlexCol>
-            <OptionIndicator selected={nonRvsmIndicator} />
-            Non-RVSM Indicator
-          </OptionsFlexCol>
-        </EdstTooltip>
+        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}>
+          <OptionIndicator selected={nonRvsmIndicator} />
+          Non-RVSM Indicator
+        </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBottomRow>
         <OptionsBodyCol>

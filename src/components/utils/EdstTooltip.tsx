@@ -1,9 +1,9 @@
-import type { PropsWithChildren } from "react";
-import React from "react";
+import React, { useRef } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { useRootSelector } from "~redux/hooks";
 import { tooltipsEnabledSelector } from "~redux/slices/appSlice";
+import { useEventListener } from "usehooks-ts";
 
 const TooltipDiv = styled.div`
   width: auto;
@@ -19,9 +19,9 @@ const TooltipDiv = styled.div`
   white-space: pre-line;
 `;
 
-const TooltipContent = ({ content }: { content: string }) => {
+const TooltipContent = ({ title }: { title: string }) => {
   // eslint-disable-next-line jsx-a11y/tabindex-no-positive
-  return <TooltipDiv tabIndex={30000}>{content}</TooltipDiv>;
+  return <TooltipDiv tabIndex={30000}>{title}</TooltipDiv>;
 };
 
 const TooltipBody = styled.div`
@@ -29,28 +29,25 @@ const TooltipBody = styled.div`
   font-size: inherit;
 `;
 
-type EdstTooltipProps = PropsWithChildren<{
+type EdstTooltipProps = {
   title?: string;
   content?: string;
-  onMouseDown?: React.EventHandler<React.MouseEvent>;
-  onContextMenu?: React.EventHandler<React.MouseEvent>;
-  disabled?: boolean;
   style?: CSSProperties;
-}>;
+  disabled?: boolean;
+  children?: React.ReactNode;
+} & React.HTMLAttributes<HTMLDivElement>;
 
-export const EdstTooltip = ({ title, content, style, ...props }: EdstTooltipProps) => {
+export const EdstTooltip = ({ title, content, ...props }: EdstTooltipProps) => {
+  const ref = useRef<HTMLDivElement>(null);
   const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
+  useEventListener("mouseenter", (e) => e.shiftKey && setTooltipEnabled(true), ref);
+  useEventListener("mouseleave", () => setTooltipEnabled(false), ref);
+
   return (
-    <TooltipBody
-      style={style}
-      {...props}
-      onMouseEnter={(e) => e.shiftKey && setTooltipEnabled(true)}
-      // onKeyDownCapture={(e) => e.shiftKey && setTooltipEnabled(!tooltip_enabled)}
-      onMouseLeave={() => setTooltipEnabled(false)}
-    >
-      {globalTooltipsEnabled && tooltipEnabled && title && <TooltipContent content={title} />}
+    <TooltipBody ref={ref} {...props}>
+      {globalTooltipsEnabled && tooltipEnabled && title && <TooltipContent title={title} />}
       {content ?? props.children}
     </TooltipBody>
   );

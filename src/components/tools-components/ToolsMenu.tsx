@@ -17,7 +17,6 @@ import { useFocused } from "hooks/useFocused";
 import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { ToolsOptionsMenu } from "components/ToolsOptionsMenu";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { ExitButton } from "components/utils/EdstButton";
 
 export const ToolsBody = styled(OptionsBody)`
@@ -52,24 +51,24 @@ export const ToolsMenu = () => {
           {!optionsMenuOpen && (
             <>
               <OptionsBodyRow>
-                <EdstTooltip style={{ flexGrow: 1 }} disabled>
-                  <OptionsFlexCol>Airspace Status...</OptionsFlexCol>
-                </EdstTooltip>
+                <OptionsFlexCol style={{ flexGrow: 1 }} disabled>
+                  Airspace Status...
+                </OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <EdstTooltip style={{ flexGrow: 1 }} disabled>
-                  <OptionsFlexCol>Airport Stream Filter Status...</OptionsFlexCol>
-                </EdstTooltip>
+                <OptionsFlexCol style={{ flexGrow: 1 }} disabled>
+                  Airport Stream Filter Status...
+                </OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <EdstTooltip style={{ flexGrow: 1 }} onMouseDown={() => setOptionsMenuOpen(true)}>
-                  <OptionsFlexCol>Options...</OptionsFlexCol>
-                </EdstTooltip>
+                <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setOptionsMenuOpen(true)}>
+                  Options...
+                </OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <EdstTooltip style={{ flexGrow: 1 }} disabled>
-                  <OptionsFlexCol>Restrictions...</OptionsFlexCol>
-                </EdstTooltip>
+                <OptionsFlexCol style={{ flexGrow: 1 }} disabled>
+                  Restrictions...
+                </OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>

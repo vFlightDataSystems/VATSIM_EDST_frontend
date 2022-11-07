@@ -16,7 +16,6 @@ import { mod } from "~/utils/mod";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { InputContainer } from "components/utils/InputComponents";
 import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "components/spd-hdg/styled";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 const HeadingDiv = styled(OptionsMenu)`
@@ -125,12 +124,8 @@ export const HeadingMenu = () => {
             </OptionsBodyCol>
           </Row>
           <Row2 topBorder justifyContent="space-between">
-            <EdstTooltip title={Tooltips.aclHdgHdg}>
-              <Col1>Heading</Col1>
-            </EdstTooltip>
-            <EdstTooltip title={Tooltips.aclHdgTurn}>
-              <Col2>Turn</Col2>
-            </EdstTooltip>
+            <Col1 title={Tooltips.aclHdgHdg}>Heading</Col1>
+            <Col2 title={Tooltips.aclHdgTurn}>Turn</Col2>
           </Row2>
           <Row2 bottomBorder>
             <ScrollCol noHover />

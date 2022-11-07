@@ -5,6 +5,8 @@ import { DepSortOption } from "enums/dep/depSortOption";
 import { entriesSelector } from "~redux/slices/entrySlice";
 import { depManualPostingSelector, depSortOptionSelector } from "~redux/slices/depSlice";
 import { aclManualPostingSelector, aclSortDataSelector } from "~redux/slices/aclSlice";
+import type { RootState } from "~redux/store";
+import { sigmetSelector } from "~redux/slices/weatherSlice";
 
 export const anyHoldingSelector = createSelector([entriesSelector], (entries) => {
   for (const entry of Object.values(entries)) {
@@ -40,6 +42,8 @@ export const anyAssignedSpdSelector = createSelector([entriesSelector], (entries
 const depEntriesSelector = createSelector([entriesSelector], (entries) => {
   return Object.values(entries).filter((entry) => entry.status === "Proposed" && !entry.deleted);
 });
+
+export const depLenSelector = (state: RootState) => depEntriesSelector(state).length;
 
 export const depSpaListSelector = createSelector([depEntriesSelector], (entries) => {
   return Object.values(entries)
@@ -82,6 +86,8 @@ const aclEntriesSelector = createSelector([entriesSelector], (entries) => {
   return Object.values(entries).filter((entry) => entry.status === "Active" && !entry.deleted);
 });
 
+export const aclLenSelector = (state: RootState) => aclEntriesSelector(state).length;
+
 export const aclSpaListSelector = createSelector([aclEntriesSelector], (entries) => {
   return Object.values(entries)
     .filter((entry) => entry.spa)
@@ -117,4 +123,8 @@ export const aclAckListSelector = createSelector(
 
 export const aclUnAckListSelector = createSelector([aclNotSpaListSelector], (entries) => {
   return entries.filter((entry) => entry.vciStatus === -1).map((entry) => entry.aircraftId);
+});
+
+export const sigmetLenSelector = createSelector([sigmetSelector], (sigmets) => {
+  return Object.values(sigmets).filter((sigmetEntry) => !sigmetEntry.acknowledged).length;
 });

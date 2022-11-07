@@ -65,7 +65,7 @@ type AltMenuRowProps = {
   disabled?: boolean;
 };
 
-const AltMenuRow = styled.div<AltMenuRowProps>`
+const AltMenuRow = styled(EdstTooltip)<AltMenuRowProps>`
   min-height: 1em;
   display: flex;
   flex-grow: 1;
@@ -153,7 +153,7 @@ const AltMenuScrollCol = styled.div<AltMenuScrollColProps>`
     }};
 `;
 type AltMenuScrollTempAltColProps = { disabled?: boolean };
-const AltMenuScrollTempAltCol = styled.div<AltMenuScrollTempAltColProps>`
+const AltMenuScrollTempAltCol = styled(EdstTooltip)<AltMenuScrollTempAltColProps>`
   display: flex;
   /*margin-left: 6px;*/
   padding-left: 8px;
@@ -276,16 +276,18 @@ export const AltMenu = () => {
         )}
         {manualInput === null && (
           <>
-            <EdstTooltip title={Tooltips.altMenuPlanData}>
-              <AltMenuRow hover selected={selected === "trial"} onMouseDown={() => setSelected("trial")} disabled={asel.window === EdstWindow.DEP}>
-                TRIAL PLAN
-              </AltMenuRow>
-            </EdstTooltip>
-            <EdstTooltip title={Tooltips.altMenuAmend}>
-              <AltMenuRow hover selected={selected === "amend"} onMouseDown={() => setSelected("amend")}>
-                AMEND
-              </AltMenuRow>
-            </EdstTooltip>
+            <AltMenuRow
+              title={Tooltips.altMenuPlanData}
+              hover
+              selected={selected === "trial"}
+              onMouseDown={() => setSelected("trial")}
+              disabled={asel.window === EdstWindow.DEP}
+            >
+              TRIAL PLAN
+            </AltMenuRow>
+            <AltMenuRow title={Tooltips.altMenuAmend} hover selected={selected === "amend"} onMouseDown={() => setSelected("amend")}>
+              AMEND
+            </AltMenuRow>
             <AltMenuRow>FP{entry.altitude}</AltMenuRow>
             <AltMenuRow disabled>UPLINK</AltMenuRow>
             <AltMenuRow disabled>
@@ -303,16 +305,15 @@ export const AltMenu = () => {
                       {alt.toString().padStart(3, "0")}
                     </AltMenuScrollCol>
                     {asel.window !== EdstWindow.DEP && (
-                      <EdstTooltip title={Tooltips.altMenuT}>
-                        <AltMenuScrollTempAltCol
-                          disabled={!(selected === "amend")}
-                          onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
-                          onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
-                          onMouseDown={() => handleTempAltClick(alt)}
-                        >
-                          T
-                        </AltMenuScrollTempAltCol>
-                      </EdstTooltip>
+                      <AltMenuScrollTempAltCol
+                        title={Tooltips.altMenuT}
+                        disabled={!(selected === "amend")}
+                        onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
+                        onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
+                        onMouseDown={() => handleTempAltClick(alt)}
+                      >
+                        T
+                      </AltMenuScrollTempAltCol>
                     )}
                   </AltMenuScrollRow>
                 );

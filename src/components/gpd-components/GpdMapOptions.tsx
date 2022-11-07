@@ -16,7 +16,6 @@ import { useFocused } from "hooks/useFocused";
 import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { GpdMapFeaturesMenu } from "components/GpdMapFeaturesMenu";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { ExitButton } from "components/utils/EdstButton";
 
 export const GpdMapOptions = () => {
@@ -50,23 +49,19 @@ export const GpdMapOptions = () => {
         <OptionsBody>
           {mapFeaturesMenuOpen && <GpdMapFeaturesMenu />}
           {!(mapFeaturesMenuOpen || aircraftDisplayMenuIsOpen) && (
-            <span>
+            <>
               <OptionsBodyRow>
-                <EdstTooltip style={{ flexGrow: 1 }}>
-                  <OptionsFlexCol onMouseDown={() => setMapFeaturesMenuOpen(true)}>Map Features...</OptionsFlexCol>
-                </EdstTooltip>
+                <OptionsFlexCol onMouseDown={() => setMapFeaturesMenuOpen(true)}>Map Features...</OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <EdstTooltip style={{ flexGrow: 1 }}>
-                  <OptionsFlexCol>AC Display Menu...</OptionsFlexCol>
-                </EdstTooltip>
+                <OptionsFlexCol>AC Display Menu...</OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>
                   <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
-            </span>
+            </>
           )}
         </OptionsBody>
       </OptionsMenu>

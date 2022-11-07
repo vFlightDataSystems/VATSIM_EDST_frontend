@@ -23,7 +23,6 @@ import { computeCrossingTimes } from "~/utils/computeCrossingTimes";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { InputContainer } from "components/utils/InputComponents";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch, ExitButton } from "components/utils/EdstButton";
 
 const HoldDiv = styled(OptionsMenu)`
@@ -161,9 +160,7 @@ export const HoldMenu = () => {
             {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </FidRow>
           <OptionsBodyRow>
-            <EdstTooltip title={Tooltips.holdDirection}>
-              <LeftCol>Location</LeftCol>
-            </EdstTooltip>
+            <LeftCol title={Tooltips.holdDirection}>Location</LeftCol>
           </OptionsBodyRow>
           <OptionsBodyRow>
             <OptionsBodyCol>
@@ -209,15 +206,9 @@ export const HoldMenu = () => {
               ))}
           </FixContainer>
           <Row1>
-            <EdstTooltip title={Tooltips.holdDirection}>
-              <Col2>Direction</Col2>
-            </EdstTooltip>
-            <EdstTooltip title={Tooltips.holdTurns}>
-              <Col2>Turns</Col2>
-            </EdstTooltip>
-            <EdstTooltip title={Tooltips.holdLegLength}>
-              <Col2>Leg Lengths</Col2>
-            </EdstTooltip>
+            <Col2 title={Tooltips.holdDirection}>Direction</Col2>
+            <Col2 title={Tooltips.holdTurns}>Turns</Col2>
+            <Col2 title={Tooltips.holdLegLength}>Leg Lengths</Col2>
           </Row1>
           <Row1>
             <Col3>
@@ -307,9 +298,7 @@ export const HoldMenu = () => {
             </Col5>
           </Row2>
           <Row1>
-            <EdstTooltip title={Tooltips.holdEfc}>
-              <Col2>EFC</Col2>
-            </EdstTooltip>
+            <Col2 title={Tooltips.holdEfc}>EFC</Col2>
           </Row1>
           <OptionsBodyRow>
             <Col7>

@@ -20,7 +20,6 @@ import { AclRowField } from "enums/acl/aclRowField";
 import { VCI_SYMBOL } from "~/utils/constants";
 import { colors } from "~/edstTheme";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "components/AclStyled";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { AclRow } from "components/AclRow";
 import { ListMapper } from "components/utils/ListMapper";
 
@@ -84,9 +83,7 @@ export const AclTable = () => {
         <InnerRow>
           <SpecialBox disabled />
           <FidCol>Flight ID</FidCol>
-          <EdstTooltip title={Tooltips.aclHeaderPa}>
-            <PointOutCol>PA</PointOutCol>
-          </EdstTooltip>
+          <PointOutCol title={Tooltips.aclHeaderPa}>PA</PointOutCol>
           {toolOptions.displayCoordinationColumn && <SpecialBox disabled />}
           {/* spa indicator column */}
           <SpecialBox disabled />
@@ -106,22 +103,26 @@ export const AclTable = () => {
             C{!hiddenColumns.includes(AclRowField.CODE) && "ode"}
           </CodeCol>
           <SpecialBox disabled />
-          <EdstTooltip title={Tooltips.aclHeaderHdg}>
-            <HdgCol hover hidden={hiddenColumns.includes(AclRowField.HDG)} onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.HDG))}>
-              {hiddenColumns.includes(AclRowField.HDG) && anyAssignedHeading && "*"}H{!hiddenColumns.includes(AclRowField.HDG) && "dg"}
-            </HdgCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclHeaderSlash}>
-            <HdgSpdSlashCol hover onMouseDown={handleClickSlash}>
-              /
-            </HdgSpdSlashCol>
-          </EdstTooltip>
-          <EdstTooltip title={Tooltips.aclHeaderSpd}>
-            <SpdCol hover hidden={hiddenColumns.includes(AclRowField.SPD)} onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.SPD))}>
-              S{!hiddenColumns.includes(AclRowField.SPD) && "pd"}
-              {hiddenColumns.includes(AclRowField.SPD) && anyAssignedSpeed && "*"}
-            </SpdCol>
-          </EdstTooltip>
+          <HdgCol
+            title={Tooltips.aclHeaderHdg}
+            hover
+            hidden={hiddenColumns.includes(AclRowField.HDG)}
+            onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.HDG))}
+          >
+            {hiddenColumns.includes(AclRowField.HDG) && anyAssignedHeading && "*"}H{!hiddenColumns.includes(AclRowField.HDG) && "dg"}
+          </HdgCol>
+          <HdgSpdSlashCol title={Tooltips.aclHeaderSlash} hover onMouseDown={handleClickSlash}>
+            /
+          </HdgSpdSlashCol>
+          <SpdCol
+            title={Tooltips.aclHeaderSpd}
+            hover
+            hidden={hiddenColumns.includes(AclRowField.SPD)}
+            onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.SPD))}
+          >
+            S{!hiddenColumns.includes(AclRowField.SPD) && "pd"}
+            {hiddenColumns.includes(AclRowField.SPD) && anyAssignedSpeed && "*"}
+          </SpdCol>
           <SpecialBox disabled />
           <SpecialBox disabled />
           {anyHolding && <SpecialBox disabled>H</SpecialBox>}

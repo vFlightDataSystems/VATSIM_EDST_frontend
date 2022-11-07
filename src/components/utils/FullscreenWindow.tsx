@@ -44,11 +44,7 @@ export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyC
       onMouseDownCapture={onMouseDownHandler}
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <HeaderComponent
-        focused={focused}
-        toggleFullscreen={toggleFullscreen}
-        startDrag={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => !isFullscreen && startDrag(e)}
-      />
+      <HeaderComponent focused={focused} toggleFullscreen={toggleFullscreen} startDrag={(e) => !isFullscreen && startDrag(e)} />
       <BodyComponent />
     </ResizableFloatingWindowDiv>
   );

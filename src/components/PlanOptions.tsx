@@ -14,7 +14,6 @@ import { useSharedUiListener } from "hooks/useSharedUiListener";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import socket from "~socket";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { ExitButton } from "components/utils/EdstButton";
 
 const PlanOptionsDiv = styled(OptionsMenu)`
@@ -23,6 +22,20 @@ const PlanOptionsDiv = styled(OptionsMenu)`
 const PlanOptionsBody = styled(OptionsBody)`
   text-indent: 4px;
 `;
+
+type PlanOptionsRowProps = {
+  title?: string;
+  content: string;
+  onMouseDown?: React.MouseEventHandler;
+  disabled?: boolean;
+};
+const PlanOptionsRow = ({ content, ...props }: PlanOptionsRowProps) => (
+  <OptionsBodyRow>
+    <OptionsBodyCol style={{ flexGrow: 1 }} {...props} hover>
+      {content}
+    </OptionsBodyCol>
+  </OptionsBodyRow>
+);
 
 export const PlanOptions = () => {
   const dispatch = useRootDispatch();
@@ -71,73 +84,29 @@ export const PlanOptions = () => {
           <FidRow>
             {entry.cid} {entry.aircraftId}
           </FidRow>
-          <OptionsBodyRow>
-            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsAlt} onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)}>
-              <OptionsBodyCol hover>Altitude...</OptionsBodyCol>
-            </EdstTooltip>
-          </OptionsBodyRow>
-          {!dep && (
-            <OptionsBodyRow>
-              <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsSpeed} disabled>
-                <OptionsBodyCol hover>Speed...</OptionsBodyCol>
-              </EdstTooltip>
-            </OptionsBodyRow>
-          )}
-          <OptionsBodyRow>
-            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsRoute} onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU)}>
-              <OptionsBodyCol hover>Route...</OptionsBodyCol>
-            </EdstTooltip>
-          </OptionsBodyRow>
-          <OptionsBodyRow>
-            <EdstTooltip
-              style={{ flexGrow: 1 }}
-              title={Tooltips.planOptionsPrevRoute}
-              disabled={!!entry?.previousRoute}
-              onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU)}
-            >
-              <OptionsBodyCol hover>Previous Route</OptionsBodyCol>
-            </EdstTooltip>
-          </OptionsBodyRow>
-          {!dep && (
-            <OptionsBodyRow>
-              <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsStopProbe} disabled>
-                <OptionsBodyCol hover>Stop Probe...</OptionsBodyCol>
-              </EdstTooltip>
-            </OptionsBodyRow>
-          )}
-          <OptionsBodyRow>
-            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsTrialRestr} disabled>
-              <OptionsBodyCol hover>{`Trial ${dep ? "Departure" : "Restrictions"}...`}</OptionsBodyCol>
-            </EdstTooltip>
-          </OptionsBodyRow>
-          {!dep && (
-            <OptionsBodyRow>
-              <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsPlans}>
-                <OptionsBodyCol hover>Plans</OptionsBodyCol>
-              </EdstTooltip>
-            </OptionsBodyRow>
-          )}
-          <OptionsBodyRow>
-            <EdstTooltip style={{ flexGrow: 1 }} title={Tooltips.planOptionsKeep}>
-              <OptionsBodyCol hover onMouseDown={onKeepClick}>
-                Keep
-              </OptionsBodyCol>
-            </EdstTooltip>
-          </OptionsBodyRow>
-          <OptionsBodyRow>
-            <EdstTooltip
-              style={{ flexGrow: 1 }}
-              title={Tooltips.planOptionsDelete}
-              onMouseDown={() => {
-                dispatch(setAsel(null));
-                dispatch(closeAllMenus());
-                dispatch(delEntry(entry.aircraftId));
-                dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
-              }}
-            >
-              <OptionsBodyCol hover>Delete</OptionsBodyCol>
-            </EdstTooltip>
-          </OptionsBodyRow>
+          <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)} />
+          {!dep && <PlanOptionsRow title={Tooltips.planOptionsSpeed} content="Speed..." disabled />}
+          <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU)} />
+          <PlanOptionsRow
+            title={Tooltips.planOptionsPrevRoute}
+            content="Previous Route"
+            onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU)}
+            disabled={!!entry?.previousRoute}
+          />
+          {!dep && <PlanOptionsRow title={Tooltips.planOptionsStopProbe} content="Stop Probe..." disabled />}
+          <PlanOptionsRow title={Tooltips.planOptionsTrialRestr} content={`Trial ${dep ? "Departure" : "Restrictions"}...`} disabled />
+          {!dep && <PlanOptionsRow title={Tooltips.planOptionsPlans} content="Plans" disabled />}
+          <PlanOptionsRow title={Tooltips.planOptionsKeep} content="Keep" onMouseDown={onKeepClick} />
+          <PlanOptionsRow
+            title={Tooltips.planOptionsDelete}
+            content="Delete"
+            onMouseDown={() => {
+              dispatch(setAsel(null));
+              dispatch(closeAllMenus());
+              dispatch(delEntry(entry.aircraftId));
+              dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
+            }}
+          />
           <OptionsBodyRow margin="0">
             <OptionsBodyCol alignRight>
               <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.PLAN_OPTIONS))} />

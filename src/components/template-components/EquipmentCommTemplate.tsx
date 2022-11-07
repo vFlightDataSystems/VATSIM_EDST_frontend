@@ -8,7 +8,6 @@ import { isEnum } from "~/utility-functions";
 import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "components/EqpStyled";
 import { EquipmentTemplateRow } from "components/EquipmentTemplateMenu";
 import type { EquipmentTemplateBodyProps } from "components/EquipmentTemplateMenu";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 
 const EqpCol2 = styled(EqpCol)`
   margin: 0 16px;
@@ -205,31 +204,27 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       </OptionsBodyRow>
       <EqpInputRow>
         DAT/
-        <EdstTooltip style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuComm_Dat}>
-          <EqpInputContainer60>
-            <EqpInput
-              value={[...(acarsCategories as string[])]
-                .concat([...(satelliteCategories as string[])])
-                .sort((u, v) => u.localeCompare(v))
-                .join("")}
-              // onChange={() => {}}
-            />
-          </EqpInputContainer60>
-        </EdstTooltip>
+        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuComm_Dat}>
+          <EqpInput
+            value={[...(acarsCategories as string[])]
+              .concat([...(satelliteCategories as string[])])
+              .sort((u, v) => u.localeCompare(v))
+              .join("")}
+            // onChange={() => {}}
+          />
+        </EqpInputContainer60>
       </EqpInputRow>
       <EqpInputRow>
         COM/
-        <EdstTooltip style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuComm_Com}>
-          <EqpInputContainer60>
-            <EqpInput
-              value={[...(voiceCategories as string[])]
-                .concat([...(cpdlcCategories as string[])])
-                .sort((u, v) => u.localeCompare(v))
-                .join("")}
-              // onChange={() => {}}
-            />
-          </EqpInputContainer60>
-        </EdstTooltip>
+        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuComm_Com}>
+          <EqpInput
+            value={[...(voiceCategories as string[])]
+              .concat([...(cpdlcCategories as string[])])
+              .sort((u, v) => u.localeCompare(v))
+              .join("")}
+            // onChange={() => {}}
+          />
+        </EqpInputContainer60>
       </EqpInputRow>
     </>
   );

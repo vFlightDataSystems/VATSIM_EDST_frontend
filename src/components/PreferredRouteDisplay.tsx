@@ -100,15 +100,16 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
       </Row>
       <PrefrouteContainer maxHeight="6em">
         {eligibleOnly && eligibleRoutes.length === 0 && <PrefrouteRow>No Eligible APRs: Select ALL to display Ineligible APRs</PrefrouteRow>}
-        {Object.entries(routes).map(([i, r]: [string, EdstPreferentialRoute]) => {
+        {routes.map((route, i) => {
           return (
-            r &&
-            (!eligibleOnly || r.eligible) && (
+            route &&
+            (!eligibleOnly || route.eligible) && (
+              // eslint-disable-next-line react/no-array-index-key
               <PrefrouteRow key={i}>
-                <Col hover onMouseDown={() => clearedPrefroute(r)}>
-                  {r.routeType === "pdr" || r.routeType === "pdar" ? r.departure : ""}
-                  {r.routeType === "pdar" ? r.route : r.amendment}
-                  {r.routeType === "par" || r.routeType === "pdar" ? r.destination : ""}
+                <Col hover onMouseDown={() => clearedPrefroute(route)}>
+                  {route.routeType === "pdr" || route.routeType === "pdar" ? route.departure : ""}
+                  {route.routeType === "pdar" ? route.route : route.amendment}
+                  {route.routeType === "par" || route.routeType === "pdar" ? route.destination : ""}
                 </Col>
               </PrefrouteRow>
             )
