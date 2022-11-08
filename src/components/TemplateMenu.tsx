@@ -229,7 +229,7 @@ export const TemplateMenu = () => {
               <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
             </TemplateCol>
             <TemplateCol bottomRow alignRight>
-              <ExitButton title={Tooltips.templateMenuExit} onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
             </TemplateCol>
           </TemplateRowDiv>
         </TemplateBodyDiv>

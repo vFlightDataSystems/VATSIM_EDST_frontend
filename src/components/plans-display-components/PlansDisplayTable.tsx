@@ -18,7 +18,7 @@ const PlansDisplayBody = styled(NoSelectDiv)`
 `;
 
 type ColCSSProps = Pick<CSSProperties, "color">;
-type ColProps = Partial<{ hover: boolean; disabled: boolean; selected: boolean } & ColCSSProps>;
+type ColProps = { hover?: boolean; disabled?: boolean; selected?: boolean } & ColCSSProps;
 const Col = styled.div<ColProps>`
   display: flex;
   flex-shrink: 0;

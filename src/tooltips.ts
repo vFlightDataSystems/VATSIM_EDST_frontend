@@ -78,9 +78,6 @@ export const Tooltips = {
   aclSpdMach: "Mach number.",
   aclRemarksBtn: "LMB: toggle flight plan remarks | RMB: toggle route as displayed on VATSIM",
   aclRoute: "Open route menu",
-  depHeaderType: "",
-  depHeaderAlt: "",
-  depHeaderCode: "",
   depCheckmarkNBtn: "Acknowledge flight plan\n\nTIP: Toggle the N to off once you have reviewed the flight plan and made any required changes.",
   depFlightId: "Callsign",
   depHotbox:
@@ -134,7 +131,6 @@ export const Tooltips = {
   templateMenuCreateFp: `Create new flight plan`,
   templateMenuRmk: `Flight Plan remarks`,
   templateMenuSend: `Finalize the flight plan`,
-  templateMenuExit: `Exit template`,
   equipmentTemplateMenuSurv: `Surveillance Equipment Template`,
   equipmentTemplateMenuSurv_NoXpdr: `No transponder (default selection)`,
   equipmentTemplateMenuSurv_A: `Mode A with no Mode C (Field 910b 1st character)`,

@@ -8,7 +8,7 @@ import { borderHover } from "styles/styles";
 
 const floatingWindowTitleBackgroundColor = "#575757";
 
-type FloatingWindowDivCSSProps = Partial<Pick<CSSProperties, "minWidth" | "width" | "maxWidth">>;
+type FloatingWindowDivCSSProps = Pick<CSSProperties, "minWidth" | "width" | "maxWidth">;
 type FloatingWindowDivProps = {
   pos: Nullable<WindowPosition>;
   zIndex: number;

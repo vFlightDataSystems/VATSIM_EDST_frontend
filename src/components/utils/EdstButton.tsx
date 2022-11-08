@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from "react";
 import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
 import { buttonBorder2px, buttonBorderInverted2px, outlineHover } from "styles/styles";
@@ -11,7 +11,7 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useRootDispatch } from "~redux/hooks";
 
 type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
-type EdstOuterButtonProps = Partial<{ disabled: boolean } & EdstOuterButtonCSSProps>;
+type EdstOuterButtonProps = { disabled?: boolean } & EdstOuterButtonCSSProps;
 const EdstOuterButton = styled.div<EdstOuterButtonProps>`
   display: inline-flex;
   border: 1px solid transparent;
@@ -33,16 +33,25 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
 `;
 
 type EdstInnerButtonCSSProps = Pick<CSSProperties, "padding" | "flexGrow">;
-type EdstInnerButtonProps = Partial<{ selected: boolean; disabled: boolean } & EdstInnerButtonCSSProps>;
+type EdstInnerButtonProps = { selected?: boolean; disabled?: boolean } & EdstInnerButtonCSSProps;
 const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   font-size: inherit;
   display: flex;
   flex-grow: ${(props) => props.flexGrow ?? 1};
   justify-content: center;
   align-items: center;
-  color: ${(props) => (props.selected ? "#000000" : props.theme.colors.grey)};
-  background-color: ${(props) => (props.selected ? props.theme.colors.grey : "#000000")};
-  ${(props) => (props.selected ? buttonBorderInverted2px : buttonBorder2px)};
+  ${(props) =>
+    props.selected
+      ? css`
+          color: #000000;
+          background-color: ${props.theme.colors.grey};
+          ${buttonBorderInverted2px};
+        `
+      : css`
+          color: ${props.theme.colors.grey};
+          background-color: #000000;
+          ${buttonBorder2px};
+        `};
   margin: 0;
   padding: ${(props) => props.padding ?? "0 4px"};
   ${outlineHover};
@@ -53,16 +62,13 @@ const EdstInnerButton = styled.div<EdstInnerButtonProps>`
 `;
 
 type EdstButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin" | "padding">;
-type EdstButtonProps = Partial<
-  {
-    disabled: boolean;
-    selected: boolean;
-    title: string;
-    content: string;
-    onMouseDown: React.MouseEventHandler<HTMLDivElement>;
-  } & EdstButtonCSSProps
->;
-
+type EdstButtonProps = {
+  disabled?: boolean;
+  selected?: boolean;
+  title?: string;
+  content?: string;
+  onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
+} & EdstButtonCSSProps;
 export const EdstButton = (props: EdstButtonProps) => {
   return (
     <EdstTooltip title={props.title}>

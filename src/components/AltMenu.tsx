@@ -37,7 +37,7 @@ const AltMenuHeaderDiv = styled.div`
   display: flex;
   height: 20px;
 `;
-type AltMenuHeaderColProps = Partial<Pick<CSSProperties, "flexGrow" | "width">>;
+type AltMenuHeaderColProps = Pick<CSSProperties, "flexGrow" | "width">;
 const AltMenuHeaderCol = styled.div<AltMenuHeaderColProps>`
   display: flex;
   justify-content: center;

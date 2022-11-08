@@ -62,8 +62,8 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
           disabled={interimDisabled}
           content="Interim"
           onMouseDown={() => {
-            // eslint-disable-next-line no-empty
             if (selectedPlanIndex !== null) {
+              /* TODO: implement */
             }
           }}
           // title={Tooltips.plans_interim}

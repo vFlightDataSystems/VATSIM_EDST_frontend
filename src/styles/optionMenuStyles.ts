@@ -74,7 +74,7 @@ export const OptionsBody = styled.div`
   }
 `;
 type OptionsBodyRowCSSProps = Pick<CSSProperties, "padding" | "margin" | "justifyContent">;
-type OptionsBodyRowProps = Partial<{ bottomBorder?: boolean; topBorder?: boolean } & OptionsBodyRowCSSProps>;
+type OptionsBodyRowProps = { bottomBorder?: boolean; topBorder?: boolean } & OptionsBodyRowCSSProps;
 export const OptionsBodyRow = styled.div<OptionsBodyRowProps>`
   display: flex;
   flex-grow: 1;
@@ -135,13 +135,11 @@ export const FidRow = styled(OptionsBodyRow)`
   height: 40px;
 `;
 type OptionsBodyColCSSProps = Pick<CSSProperties, "maxWidth" | "maxHeight" | "margin" | "padding" | "justifyContent">;
-type OptionsBodyColProps = Partial<
-  {
-    selected?: boolean;
-    alignRight?: boolean;
-    hover?: boolean;
-  } & OptionsBodyColCSSProps
->;
+type OptionsBodyColProps = {
+  selected?: boolean;
+  alignRight?: boolean;
+  hover?: boolean;
+} & OptionsBodyColCSSProps;
 export const OptionsBodyCol = styled(EdstTooltip)<OptionsBodyColProps>`
   display: flex;
   flex-grow: 1;
@@ -185,7 +183,7 @@ export const OptionsFlexCol = styled(OptionsBodyCol)`
 
   ${borderHover}
 `;
-type EdstInputProps = Partial<Pick<CSSProperties, "width">>;
+type EdstInputProps = Pick<CSSProperties, "width">;
 export const EdstInput = styled.input.attrs(() => ({ spellCheck: false }))<EdstInputProps>`
   width: ${(props) => props.width ?? "calc(100% - 7px)"};
   font-size: ${(props) => props.theme.fontProps.inputFontSize};
@@ -213,7 +211,7 @@ export const EdstTextArea = styled.textarea.attrs(() => ({ spellCheck: false }))
 
   ${outlineHover}
 `;
-type ScrollContainerProps = Partial<Pick<CSSProperties, "maxHeight">>;
+type ScrollContainerProps = Pick<CSSProperties, "maxHeight">;
 export const ScrollContainer = styled.div<ScrollContainerProps>`
   height: auto;
   display: block;

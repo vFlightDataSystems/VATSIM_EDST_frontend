@@ -13,44 +13,6 @@ import { EdstTooltip } from "components/utils/EdstTooltip";
 import { Time } from "components/utils/Time";
 import { aclLenSelector, depLenSelector, sigmetLenSelector } from "~redux/selectors";
 
-enum EdstHeaderButtonName {
-  more = "more",
-  acl = "acl",
-  dep = "dep",
-  gpd = "gpd",
-  wx = "wx",
-  sig = "sig",
-  not = "not",
-  gi = "gi",
-  ua = "ua",
-  keep = "keep",
-  status = "status",
-  outage = "outage",
-  adsb = "adsb",
-  sat = "sat",
-  msg = "msg",
-  wind = "wind",
-  altim = "altim",
-  mca = "mca",
-  mra = "mra",
-  fel = "fel",
-  cpdlcHist = "cpdlcHist",
-  cpdlcMsgOut = "cpdlcMsgOut",
-}
-
-const DISABLED_HEADER_BUTTONS = [
-  EdstHeaderButtonName.not,
-  EdstHeaderButtonName.ua,
-  EdstHeaderButtonName.keep,
-  EdstHeaderButtonName.adsb,
-  EdstHeaderButtonName.sat,
-  EdstHeaderButtonName.msg,
-  EdstHeaderButtonName.wind,
-  EdstHeaderButtonName.fel,
-  EdstHeaderButtonName.cpdlcHist,
-  EdstHeaderButtonName.cpdlcMsgOut,
-];
-
 const YELLOW = "#A3A300";
 // const RED = "#590000";
 
@@ -73,31 +35,23 @@ const EdstHeaderCol = styled.div<EdstHeaderColProps>`
   z-index: 20001;
   display: inline-flex;
   ${(props) => props.bottomRow && { "margin-left": "calc(7.6ch + 4px)" }};
-
-  span {
-    height: 2em;
-  }
 `;
 
 type ColButtonCSSProps = Pick<CSSProperties, "width" | "color" | "fontWeight" | "backgroundColor" | "borderColor">;
-type ColButtonProps = Partial<
-  {
-    highlight: boolean;
-  } & ColButtonCSSProps
->;
+type ColButtonProps = { highlight?: boolean } & ColButtonCSSProps;
 const ColButton = styled.button<ColButtonProps>`
-  color: ${(props) => props.color ?? props.theme.colors.grey};
   padding: 0;
   border: none;
   display: flex;
   height: 2em;
   justify-content: center;
   line-height: 0.95em;
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
   font-size: inherit;
   margin: 0 1px;
   ${(props) => css`
+    font-family: ${props.theme.fontProps.eramFontFamily};
     width: ${props.width ?? "7ch"};
+    color: ${props.color ?? props.theme.colors.grey};
     background-color: ${props.highlight ? "#595959" : props.backgroundColor ?? "#000000"};
     font-weight: ${props.fontWeight ?? "normal"};
     border: 1px solid ${props.borderColor ?? props.theme.colors.grey};
@@ -192,37 +146,27 @@ export const EdstHeader = () => {
           <EdstHeaderButton
             window={EdstWindow.UA}
             content="UA"
-            disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.ua)}
+            disabled
             // title={Tooltips.ua}
           />
-          <ColButton highlight={false} disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.keep)}>
+          <ColButton highlight={false} disabled>
             KEEP ALL
           </ColButton>
         </EdstHeaderCol>
         <EdstHeaderCol>
-          <EdstHeaderButton
-            window={EdstWindow.STATUS}
-            content="STATUS ACTIVE"
-            disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.status)}
-            title={Tooltips.statusActive}
-          />
-          <EdstHeaderButton
-            window={EdstWindow.OUTAGE}
-            content={`OUTAGE ${sectorId}`}
-            disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.outage)}
-            title={Tooltips.statusOutage}
-          />
+          <EdstHeaderButton window={EdstWindow.STATUS} content="STATUS ACTIVE" title={Tooltips.statusActive} />
+          <EdstHeaderButton window={EdstWindow.OUTAGE} content={`OUTAGE ${sectorId}`} title={Tooltips.statusOutage} />
           <Time />
           <EdstHeaderButton6
             window={EdstWindow.ADSB}
             content="NON-ADSB"
-            disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.adsb)}
+            disabled
             // title={Tooltips.adsb}
           />
           <EdstHeaderButton6
             window={EdstWindow.SAT}
             content="SAT COMM"
-            disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.sat)}
+            disabled
             // title={Tooltips.sat}
           />
           <EdstHeaderButton6
@@ -230,7 +174,7 @@ export const EdstHeader = () => {
             // backgroundColor={YELLOW}
             // borderColor={YELLOW}
             content="MSG WAIT"
-            disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.msg)}
+            disabled
             // title={Tooltips.msg}
           />
         </EdstHeaderCol>
@@ -241,7 +185,7 @@ export const EdstHeader = () => {
             <EdstHeaderButton
               window={EdstWindow.WIND}
               content="WIND"
-              disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.wind)}
+              disabled
               // title={Tooltips.wind}
             />
             <EdstHeaderButton
@@ -254,19 +198,19 @@ export const EdstHeader = () => {
             <EdstHeaderButton
               window={EdstWindow.FEL}
               content="FEL"
-              disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.fel)}
+              disabled
               // title={Tooltips.fel}
             />
             <EdstHeaderButton
               window={EdstWindow.CPDLC_HIST}
               content="CPDLC HIST"
-              disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.cpdlcHist)}
+              disabled
               // title={Tooltips.cpdlc_hist}
             />
             <EdstHeaderButton
               window={EdstWindow.CPDLC_MSG}
               content="CPDLC MSGOUT"
-              disabled={DISABLED_HEADER_BUTTONS.includes(EdstHeaderButtonName.cpdlcMsgOut)}
+              disabled
               // title={Tooltips.cpdlc_msg_out}
             />
           </EdstHeaderCol>
