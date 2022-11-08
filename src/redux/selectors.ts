@@ -62,7 +62,7 @@ const depSortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: Eds
     case DepSortOption.DESTINATION:
       return u.destination.localeCompare(v.destination);
     case DepSortOption.ORIGIN:
-      return u.departure?.localeCompare(v.departure);
+      return u.departure.localeCompare(v.departure);
     default:
       return u.aircraftId.localeCompare(v.aircraftId);
   }
