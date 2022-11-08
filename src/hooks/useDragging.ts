@@ -58,7 +58,7 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
 
   const draggingHandler = useCallback(
     (event: MouseEvent) => {
-      if (event && ref.current) {
+      if (ref.current) {
         if (repositionCursor) {
           setDragPreviewStyle((prevStyle) => ({
             ...prevStyle!,
