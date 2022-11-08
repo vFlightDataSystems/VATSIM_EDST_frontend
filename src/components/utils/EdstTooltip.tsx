@@ -1,9 +1,8 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { useRootSelector } from "~redux/hooks";
 import { tooltipsEnabledSelector } from "~redux/slices/appSlice";
-import { useEventListener } from "usehooks-ts";
 
 const TooltipDiv = styled.div`
   width: auto;
@@ -42,8 +41,23 @@ export const EdstTooltip = ({ title, content, ...props }: EdstTooltipProps) => {
   const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
-  useEventListener("mouseenter", (e) => e.shiftKey && setTooltipEnabled(true), ref);
-  useEventListener("mouseleave", () => setTooltipEnabled(false), ref);
+  useEffect(() => {
+    if (title && ref.current) {
+      const element = ref.current;
+      const onMouseEnter = (e: MouseEvent) => e.shiftKey && setTooltipEnabled(true);
+      const onMouseLeave = () => setTooltipEnabled(false);
+      ref.current.addEventListener("mouseenter", onMouseEnter);
+      ref.current.addEventListener("mouseleave", onMouseLeave);
+
+      return () => {
+        if (element) {
+          element.removeEventListener("mouseenter", onMouseEnter);
+          element.removeEventListener("mouseleave", onMouseLeave);
+        }
+      };
+    }
+    return void 0;
+  }, [title]);
 
   return (
     <TooltipBody ref={ref} {...props}>

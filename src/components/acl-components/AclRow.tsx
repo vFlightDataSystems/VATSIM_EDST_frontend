@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { aircraftIsAselSelector } from "~redux/slices/appSlice";
@@ -319,7 +318,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   return (
     <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
-        <RadioCol title={Tooltips.aclNAndVciBtn} green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
+        <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
           {entry.vciStatus === -1 && "N"}
           {entry.vciStatus === 1 && VCI_SYMBOL}
         </RadioCol>
@@ -328,7 +327,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         <AclCol1 border />
         <SpecialBox disabled />
         <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
-          <FidCol hover title={Tooltips.aclFlightId} onMouseDown={handleFidClick} selected={isSelected(AclRowField.FID)}>
+          <FidCol hover onMouseDown={handleFidClick} selected={isSelected(AclRowField.FID)}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
             <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
@@ -336,11 +335,8 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <PointOutCol />
           {toolOptions.displayCoordinationColumn && <SpecialBox disabled />}
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
-          <HotBox title={Tooltips.aclHotbox} onMouseDown={handleHotboxMouseDown}>
-            {freeTextContent && "*"}
-          </HotBox>
+          <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
           <AircraftTypeCol
-            title={Tooltips.aclType}
             visibilityHidden={hiddenColumns.includes(AclRowField.TYPE)}
             hover
             selected={isSelected(AclRowField.TYPE)}
@@ -348,7 +344,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           >
             {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </AircraftTypeCol>
-          <AltCol title={Tooltips.aclAlt}>
+          <AltCol>
             <AltColDiv
               as="div"
               ref={altRef}
@@ -362,7 +358,6 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             {showCoralBox && <CoralBox />}
           </AltCol>
           <CodeCol
-            title={Tooltips.aclCode}
             visibilityHidden={hiddenColumns.includes(AclRowField.CODE)}
             hover
             selected={isSelected(AclRowField.CODE)}
@@ -376,7 +371,6 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <HdgCol
             as="div"
             ref={hdgRef}
-            title={Tooltips.aclHdg}
             hover
             visibilityHidden={hiddenColumns.includes(AclRowField.HDG)}
             selected={isSelected(AclRowField.HDG)}
@@ -389,7 +383,6 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <SpdCol
             as="div"
             ref={spdRef}
-            title={Tooltips.aclSpd}
             hover
             visibilityHidden={hiddenColumns.includes(AclRowField.SPD)}
             selected={isSelected(AclRowField.SPD)}
@@ -407,13 +400,12 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}
-          <RemarksBox title={Tooltips.aclRemarksBtn} unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+          <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
             {entry.remarks.length > 0 && "*"}
           </RemarksBox>
           <RouteCol
             as="div"
             ref={routeRef}
-            title={Tooltips.aclRoute}
             hover
             selected={isSelected(AclRowField.ROUTE)}
             onMouseDown={(event) => handleRouteClick(event.currentTarget)}

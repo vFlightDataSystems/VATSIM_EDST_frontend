@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
-import { Tooltips } from "~/tooltips";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aircraftIsAselSelector } from "~redux/slices/appSlice";
@@ -222,14 +221,13 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   return (
     <BodyRowContainerDiv>
       <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
-        <RadioCol title={Tooltips.depCheckmarkNBtn} checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
+        <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
           {entry.depStatus === -1 && "N"}
           {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
         </RadioCol>
         <DepPTimeCol>0000</DepPTimeCol>
         <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
           <FidCol
-            title={Tooltips.depFlightId}
             hover
             selected={isSelected(DepRowField.FID)}
             onMouseDown={handleFidClick}
@@ -240,12 +238,9 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
             {entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}
           </FidCol>
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
-          <HotBox title={Tooltips.depHotbox} onMouseDown={handleHotboxMouseDown}>
-            {freeTextContent && "*"}
-          </HotBox>
+          <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
           <SpecialBox disabled />
           <AircraftTypeCol
-            title={Tooltips.depType}
             visibilityHidden={hiddenColumns.includes(DepRowField.TYPE)}
             hover
             selected={isSelected(DepRowField.TYPE)}
@@ -253,7 +248,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           >
             {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </AircraftTypeCol>
-          <AltCol title={Tooltips.depAlt}>
+          <AltCol>
             <AltColDiv
               as="div"
               ref={altRef}
@@ -264,7 +259,6 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
             </AltColDiv>
           </AltCol>
           <CodeCol
-            title={Tooltips.depCode}
             visibilityHidden={hiddenColumns.includes(DepRowField.CODE)}
             hover
             selected={isSelected(DepRowField.CODE)}
@@ -272,13 +266,12 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           >
             {convertBeaconCodeToString(entry.assignedBeaconCode)}
           </CodeCol>
-          <RemarksBox title={Tooltips.aclRemarksBtn} unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+          <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
             {entry.remarks.length > 0 && "*"}
           </RemarksBox>
           <RouteCol
             as="div"
             ref={routeRef}
-            title={Tooltips.depRoute}
             hover
             selected={isSelected(DepRowField.ROUTE)}
             onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ROUTE, "dep-route-asel", EdstWindow.ROUTE_MENU)}
