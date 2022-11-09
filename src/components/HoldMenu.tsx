@@ -132,7 +132,7 @@ export const HoldMenu = () => {
         turns,
         efc,
       };
-      hubActions.setHoldAnnotations(entry.aircraftId, holdAnnotations).then();
+      void hubActions.setHoldAnnotations(entry.aircraftId, holdAnnotations);
     }
     dispatch(closeWindow(EdstWindow.HOLD_MENU));
   };

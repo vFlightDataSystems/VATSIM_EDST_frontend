@@ -31,7 +31,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
     if (selectedPlanIndex !== null) {
       const amendedFlightplan = planQueue[selectedPlanIndex]?.amendedFlightplan;
       if (amendedFlightplan) {
-        amendFlightplan(amendedFlightplan).then();
+        void amendFlightplan(amendedFlightplan);
       }
     }
   };

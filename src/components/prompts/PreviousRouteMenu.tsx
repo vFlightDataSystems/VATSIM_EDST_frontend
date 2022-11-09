@@ -22,7 +22,7 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
     async function updateFrd() {
       setFrd(await generateFrd(aircraftTrack.location));
     }
-    updateFrd().then();
+    void updateFrd();
   }, [aircraftTrack.location, generateFrd]);
 
   return (

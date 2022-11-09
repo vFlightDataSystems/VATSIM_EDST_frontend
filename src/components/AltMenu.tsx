@@ -200,14 +200,14 @@ export const AltMenu = () => {
       altitude: alt.toString().toUpperCase(),
     };
     if (selected === "amend") {
-      amendFlightplan(amendedFlightplan).then();
+      void amendFlightplan(amendedFlightplan);
     } else {
       const trialPlanData: Plan = {
         cid: entry.cid,
         aircraftId: entry.aircraftId,
         amendedFlightplan,
         commandString: `AM ${entry.aircraftId} ALT ${alt}`,
-        expirationTime: new Date().getTime() / 1000 + 120,
+        expirationTime: Date.now() / 1000 + 120,
       };
       dispatch(addPlanThunk(trialPlanData));
     }

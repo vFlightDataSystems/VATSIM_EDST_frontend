@@ -145,7 +145,7 @@ export const TemplateMenu = () => {
         setFrdInput((await generateFrd(aircraftTrack.location)) ?? "");
       }
     }
-    updateFrd().then();
+    void updateFrd();
   }, [aircraftTrack, entry?.aircraftId, generateFrd]);
 
   return (

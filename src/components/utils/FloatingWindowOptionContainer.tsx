@@ -50,7 +50,7 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2,
           };
-          invoke("set_cursor_position", newCursorPos).then();
+          void invoke("set_cursor_position", newCursorPos);
           prevOptionValueRef.current = option.value;
         }
       }
@@ -121,7 +121,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2,
         };
-        invoke("set_cursor_position", newCursorPos).then();
+        void invoke("set_cursor_position", newCursorPos);
       }
     }
   }, []);

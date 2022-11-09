@@ -12,7 +12,7 @@ export const colors = {
   stripHighlightColor: "#414141",
   windowBorderColor: "#888888",
   windowOutlineColor: "#ADADAD",
-};
+} as const;
 
 export const fontProps = {
   baseRGB: 173, // 0xad
@@ -21,7 +21,7 @@ export const fontProps = {
   eramFontFamily: "ERAM",
   edstFontFamily: "EDST",
   floatingFontSizes: ["14px", "17px", "20px"],
-};
+} as const;
 
 export const edstTheme = {
   colors,

@@ -12,8 +12,8 @@ export const CancelHoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const hubActions = useHubActions();
 
-  const onSubmit = () => {
-    hubActions.cancelHold(entry.aircraftId).then();
+  const onSubmit = async () => {
+    await hubActions.cancelHold(entry.aircraftId);
     dispatch(setAsel(null));
     dispatch(closeWindow(EdstWindow.CANCEL_HOLD_MENU));
   };

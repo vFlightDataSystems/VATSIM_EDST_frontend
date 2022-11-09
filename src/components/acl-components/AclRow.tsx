@@ -253,7 +253,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   };
 
   const handleFidClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    const now = new Date().getTime();
+    const now = Date.now();
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {

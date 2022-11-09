@@ -136,7 +136,7 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
       const ppos = pos ? { x: pos.left, y: pos.top } : null;
       if (event.buttons && ref.current && ppos) {
         if (window.__TAURI__) {
-          invoke("set_cursor_grab", { value: true }).then();
+          void invoke("set_cursor_grab", { value: true });
         }
         const relX = ppos.x - event.pageX;
         const relY = ppos.y - event.pageY;
@@ -167,7 +167,7 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
         y: offset.y - ppos.y + dragPreviewStyle.top,
       };
       if (window.__TAURI__) {
-        invoke("set_cursor_grab", { value: false }).then();
+        void invoke("set_cursor_grab", { value: false });
       }
       setOffset(newOffset);
       dispatch(setAnyDragging(false));

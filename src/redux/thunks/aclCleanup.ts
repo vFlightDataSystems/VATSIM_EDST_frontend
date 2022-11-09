@@ -5,7 +5,7 @@ import type { RootThunkAction } from "~redux/store";
 export const aclCleanup: RootThunkAction = (dispatch, getState) => {
   const state = getState();
   const { entries } = state;
-  const now = new Date().getTime();
+  const now = Date.now();
   const pendingRemovalEntryList = Object.values(entries).filter(
     (entry) => entry.status === "Active" && now - (entry?.pendingRemoval ?? now) > REMOVAL_TIMEOUT
   );
