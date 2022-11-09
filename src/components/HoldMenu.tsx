@@ -24,6 +24,7 @@ import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { InputContainer } from "components/utils/InputComponents";
 import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch, ExitButton } from "components/utils/EdstButton";
+import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
 
 const HoldDiv = styled(OptionsMenu)`
   width: 44ch;
@@ -93,14 +94,11 @@ export const HoldMenu = () => {
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
-  const now = new Date();
-  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-
   const [fix, setFix] = useState<Nullable<string>>(null);
   const [legLength, setLegLength] = useState<Nullable<number>>(null);
   const [direction, setDirection] = useState<CompassDirection>(CompassDirection.NORTH);
   const [turns, setTurns] = useState<TurnDirection>(TurnDirection.RIGHT);
-  const [efc, setEfc] = useState(utcMinutes);
+  const [efc, setEfc] = useState(getUtcMinutesAfterMidnight());
   const [holdRouteFixes, setHoldRouteFixes] = useState<(RouteFix & { minutesAtFix: number })[] | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const holdAnnotationRef = useRef<Nullable<HoldAnnotations>>(null);
@@ -113,8 +111,7 @@ export const HoldMenu = () => {
   useEffect(() => {
     if (!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current)) {
       const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
-      const now = new Date();
-      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const utcMinutes = getUtcMinutesAfterMidnight();
       setFix(entry.holdAnnotations?.fix ?? null);
       setLegLength(entry.holdAnnotations?.legLength ?? null);
       setDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
@@ -168,8 +165,7 @@ export const HoldMenu = () => {
                 content="Present Position"
                 selected={fix === null}
                 onMouseDown={() => {
-                  const now = new Date();
-                  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+                  const utcMinutes = getUtcMinutesAfterMidnight();
                   setFix(null);
                   setEfc(utcMinutes + 30);
                 }}

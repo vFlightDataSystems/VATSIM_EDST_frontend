@@ -104,7 +104,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const [pendingPdar, setPendingPdar] = useState(checkPdarReroutePending(pdars));
   const [pendingPar, setPendingPar] = useState(checkParReroutePending(pars, currentFixNames));
 
-  const now = new Date().getTime();
+  const now = Date.now();
   const route = removeStringFromEnd(formattedRoute.slice(0), entry.destination);
 
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
@@ -174,7 +174,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   };
 
   const handleFidClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    const now = new Date().getTime();
+    const now = Date.now();
     switch (event.button) {
       case 2:
         if (now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT) {

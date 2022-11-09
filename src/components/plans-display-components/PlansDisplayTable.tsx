@@ -65,8 +65,8 @@ export const PlansDisplayTable = () => {
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
 
-  const [time, setTime] = useState(new Date().getTime() / 1000);
-  useInterval(() => setTime(new Date().getTime() / 1000), 1000);
+  const [time, setTime] = useState(Date.now() / 1000);
+  useInterval(() => setTime(Date.now() / 1000), 1000);
 
   const handleMouseDown = (event: React.MouseEvent, index: number) => {
     event.preventDefault();

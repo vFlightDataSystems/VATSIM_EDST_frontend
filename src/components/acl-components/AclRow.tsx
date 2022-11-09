@@ -128,7 +128,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     return removeStringFromEnd(route.slice(0), entry.destination);
   }, [currentRoute, entry.destination, formattedRoute]);
 
-  const now = new Date().getTime();
+  const now = Date.now();
 
   // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
   const showCoralBox = !entry.faaEquipmentSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;

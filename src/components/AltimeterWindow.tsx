@@ -11,6 +11,7 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
+import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
 
 type AltimColProps = { underline?: boolean; isReportingStation?: boolean };
 const AltimCol = styled.span<AltimColProps>`
@@ -33,8 +34,7 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
   const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.ALTIMETER));
   const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
-  const now = new Date();
-  const utcMinutesNow = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const utcMinutes = getUtcMinutesAfterMidnight();
   const observationTime = airportAltimeterEntry
     ? Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2))
     : null;
@@ -48,10 +48,10 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
         {airportId && (
           <>
             <AltimCol isReportingStation>{airportId}</AltimCol>
-            <AltimCol underline={observationTime ? mod(Number(utcMinutesNow) - observationTime, 1440) > 60 : false}>
+            <AltimCol underline={observationTime ? mod(utcMinutes - observationTime, 1440) > 60 : false}>
               {airportAltimeterEntry?.time ?? ""}
             </AltimCol>
-            {!airportAltimeterEntry || (observationTime && mod(Number(utcMinutesNow) - observationTime, 1440) > 120) ? (
+            {!airportAltimeterEntry || (observationTime && mod(utcMinutes - observationTime, 1440) > 120) ? (
               "-M-"
             ) : (
               <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>{airportAltimeterEntry.altimeter.slice(1)}</AltimCol>

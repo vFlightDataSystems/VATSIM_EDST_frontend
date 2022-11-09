@@ -189,7 +189,7 @@ export const RouteMenu = () => {
           aircraftId: entry.aircraftId,
           amendedFlightplan,
           commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
-          expirationTime: new Date().getTime() / 1000 + 120,
+          expirationTime: Date.now() / 1000 + 120,
         })
       );
     }
@@ -261,7 +261,7 @@ export const RouteMenu = () => {
             aircraftId: entry.aircraftId,
             amendedFlightplan,
             commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${newRoute}${amendedFlightplan.destination}`,
-            expirationTime: new Date().getTime() / 1000 + 120,
+            expirationTime: Date.now() / 1000 + 120,
           })
         );
       } else {

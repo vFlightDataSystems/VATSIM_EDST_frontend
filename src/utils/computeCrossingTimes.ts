@@ -3,6 +3,7 @@ import type { EdstEntry } from "types/edstEntry";
 import type { RouteFix } from "types/routeFix";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import { locationToPosition } from "~/utils/locationToPosition";
+import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
 
 /**
  *
@@ -14,8 +15,7 @@ import { locationToPosition } from "~/utils/locationToPosition";
 export function computeCrossingTimes(entry: EdstEntry, routeFixes: RouteFix[], track: ApiAircraftTrack): (RouteFix & { minutesAtFix: number })[] {
   const newRouteFixes: (RouteFix & { minutesAtFix: number })[] = [];
   if (routeFixes) {
-    const now = new Date();
-    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const utcMinutes = getUtcMinutesAfterMidnight();
     if (routeFixes.length > 0 && track.groundSpeed > 0) {
       const lineData = [locationToPosition(track.location)];
       routeFixes.forEach((fix) => {

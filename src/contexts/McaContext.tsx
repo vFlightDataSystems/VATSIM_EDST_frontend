@@ -97,13 +97,11 @@ const useMcaContextInit = () => {
   };
 
   const flightplanReadout = async (fid: string) => {
-    const now = new Date();
-    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
     const entry = getEntryByFid(fid);
     if (entry) {
       const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
       const msg =
-        `${formatUtcMinutes(utcMinutes)}\n` +
+        `${formatUtcMinutes()}\n` +
         `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
           entry.assignedBeaconCode
         )} ${entry.speed} EXX00` +

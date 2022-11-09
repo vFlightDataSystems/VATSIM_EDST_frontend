@@ -10,6 +10,7 @@ import { setDepState } from "~redux/slices/depSlice";
 import { setGpdState } from "~redux/slices/gpdSlice";
 import { setPlanState } from "~redux/slices/planSlice";
 import sharedSocket from "~socket";
+import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 
 class SocketContextValue {
   connectSocket: (artccId: string, sectorId: string) => void = sharedSocket.connect;
@@ -67,10 +68,7 @@ const useSocketContextInit = () => {
           }
         });
         socket.on("receiveGIMessage", (sender, message) => {
-          const date = new Date();
-          const formattedMsg = `GI ${sender} ${
-            date.getUTCHours().toString().padStart(2, "0") + date.getUTCMinutes().toString().padStart(2, "0")
-          } ${message}`;
+          const formattedMsg = `GI ${sender} ${formatUtcMinutes()} ${message}`;
           dispatch(
             addGIEntries({
               [formattedMsg]: { text: formattedMsg, acknowledged: false },

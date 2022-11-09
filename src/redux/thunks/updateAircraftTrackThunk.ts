@@ -6,7 +6,7 @@ import { updateEntries } from "~redux/slices/entrySlice";
 
 export function updateAircraftTrackThunk(newAircraftTrack: ApiAircraftTrack): RootThunkAction {
   return (dispatch, getState) => {
-    const updateTime = new Date().getTime();
+    const updateTime = Date.now();
     const { aircraftTracks, entries } = getState();
     const oldTrack = aircraftTracks[newAircraftTrack.aircraftId];
     const updateData: Record<string, Partial<EdstEntry>> = {};
