@@ -12,17 +12,19 @@ import { setPlanState } from "~redux/slices/planSlice";
 import sharedSocket from "~socket";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 
-class SocketContextValue {
-  connectSocket: (artccId: string, sectorId: string) => void = sharedSocket.connect;
+type SocketContextValue = {
+  connectSocket: (artccId: string, sectorId: string) => void;
+  disconnectSocket: () => void;
+  isConnected: boolean;
+};
 
-  disconnectSocket = sharedSocket.disconnect;
+export const SocketContext = createContext<SocketContextValue>({
+  connectSocket: sharedSocket.connect,
+  disconnectSocket: sharedSocket.disconnect,
+  isConnected: false,
+});
 
-  isConnected = false;
-}
-
-export const SocketContext = createContext<SocketContextValue>(new SocketContextValue());
-
-const useSocketContextInit = () => {
+export const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useRootDispatch();
 
   const [isConnected, setIsConnected] = useState(false);
@@ -89,11 +91,8 @@ const useSocketContextInit = () => {
     setIsConnected(false);
   }, []);
 
-  return { connectSocket, disconnectSocket, isConnected };
-};
-
-export const SocketContextProvider = ({ children }: { children: ReactNode }) => {
-  const contextValue = useSocketContextInit();
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
+  const contextValue = { connectSocket, disconnectSocket, isConnected };
 
   return <SocketContext.Provider value={contextValue}>{children}</SocketContext.Provider>;
 };

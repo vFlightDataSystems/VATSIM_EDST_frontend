@@ -44,7 +44,6 @@ import { edstTheme } from "~/edstTheme";
 import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
-import { McaContextProvider } from "contexts/McaContext";
 
 const NotConnectedDiv = styled.div`
   font-family: "Consolas", monospace;
@@ -84,7 +83,6 @@ const edstComponentMap = {
   [EdstWindow.METAR]: MetarWindow,
   [EdstWindow.SIGMETS]: SigmetWindow,
   [EdstWindow.GI]: GIWindow,
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: MessageComposeArea,
   [EdstWindow.MESSAGE_RESPONSE_AREA]: MessageResponseArea,
 };
 
@@ -132,6 +130,7 @@ const Edst = () => {
               windows[edstWindow].open &&
               (windowRequiresAselNotNull.includes(edstWindow) ? !aselIsNull && <Component key={edstWindow} /> : <Component key={edstWindow} />)
           )}
+          <MessageComposeArea />
         </EdstBodyDiv>
       </EdstDiv>
     </ThemeProvider>
@@ -142,9 +141,7 @@ const EdstProvider = () => (
   <SocketContextProvider>
     <HubContextProvider>
       <React.StrictMode>
-        <McaContextProvider>
-          <Edst />
-        </McaContextProvider>
+        <Edst />
       </React.StrictMode>
     </HubContextProvider>
   </SocketContextProvider>

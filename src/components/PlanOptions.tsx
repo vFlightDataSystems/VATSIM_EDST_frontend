@@ -67,53 +67,51 @@ export const PlanOptions = () => {
   };
 
   return (
-    pos && (
-      <PlanOptionsDiv
-        ref={ref}
-        pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.PLAN_OPTIONS)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.PLAN_OPTIONS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.PLAN_OPTIONS))}
-        anyDragging={anyDragging}
-        id="plan-menu"
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
-          Plan Options Menu
-        </OptionsMenuHeader>
-        <PlanOptionsBody>
-          <FidRow>
-            {entry.cid} {entry.aircraftId}
-          </FidRow>
-          <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)} />
-          {!dep && <PlanOptionsRow title={Tooltips.planOptionsSpeed} content="Speed..." disabled />}
-          <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU)} />
-          <PlanOptionsRow
-            title={Tooltips.planOptionsPrevRoute}
-            content="Previous Route"
-            onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU)}
-            disabled={!!entry?.previousRoute}
-          />
-          {!dep && <PlanOptionsRow title={Tooltips.planOptionsStopProbe} content="Stop Probe..." disabled />}
-          <PlanOptionsRow title={Tooltips.planOptionsTrialRestr} content={`Trial ${dep ? "Departure" : "Restrictions"}...`} disabled />
-          {!dep && <PlanOptionsRow title={Tooltips.planOptionsPlans} content="Plans" disabled />}
-          <PlanOptionsRow title={Tooltips.planOptionsKeep} content="Keep" onMouseDown={onKeepClick} />
-          <PlanOptionsRow
-            title={Tooltips.planOptionsDelete}
-            content="Delete"
-            onMouseDown={() => {
-              dispatch(setAsel(null));
-              dispatch(closeAllMenus());
-              dispatch(delEntry(entry.aircraftId));
-              dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
-            }}
-          />
-          <OptionsBodyRow margin="0">
-            <OptionsBodyCol alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.PLAN_OPTIONS))} />
-            </OptionsBodyCol>
-          </OptionsBodyRow>
-        </PlanOptionsBody>
-      </PlanOptionsDiv>
-    )
+    <PlanOptionsDiv
+      ref={ref}
+      pos={pos}
+      zIndex={zStack.indexOf(EdstWindow.PLAN_OPTIONS)}
+      onMouseDown={() => zStack.indexOf(EdstWindow.PLAN_OPTIONS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.PLAN_OPTIONS))}
+      anyDragging={anyDragging}
+      id="plan-menu"
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+        Plan Options Menu
+      </OptionsMenuHeader>
+      <PlanOptionsBody>
+        <FidRow>
+          {entry.cid} {entry.aircraftId}
+        </FidRow>
+        <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)} />
+        {!dep && <PlanOptionsRow title={Tooltips.planOptionsSpeed} content="Speed..." disabled />}
+        <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU)} />
+        <PlanOptionsRow
+          title={Tooltips.planOptionsPrevRoute}
+          content="Previous Route"
+          onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU)}
+          disabled={!!entry?.previousRoute}
+        />
+        {!dep && <PlanOptionsRow title={Tooltips.planOptionsStopProbe} content="Stop Probe..." disabled />}
+        <PlanOptionsRow title={Tooltips.planOptionsTrialRestr} content={`Trial ${dep ? "Departure" : "Restrictions"}...`} disabled />
+        {!dep && <PlanOptionsRow title={Tooltips.planOptionsPlans} content="Plans" disabled />}
+        <PlanOptionsRow title={Tooltips.planOptionsKeep} content="Keep" onMouseDown={onKeepClick} />
+        <PlanOptionsRow
+          title={Tooltips.planOptionsDelete}
+          content="Delete"
+          onMouseDown={() => {
+            dispatch(setAsel(null));
+            dispatch(closeAllMenus());
+            dispatch(delEntry(entry.aircraftId));
+            dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
+          }}
+        />
+        <OptionsBodyRow margin="0">
+          <OptionsBodyCol alignRight>
+            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.PLAN_OPTIONS))} />
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </PlanOptionsBody>
+    </PlanOptionsDiv>
   );
 };

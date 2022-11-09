@@ -23,7 +23,7 @@ import { computeCrossingTimes } from "~/utils/computeCrossingTimes";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { InputContainer } from "components/utils/InputComponents";
-import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton6ch, ExitButton } from "components/utils/EdstButton";
+import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton5ch, ExitButton } from "components/utils/EdstButton";
 import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
 
 const HoldDiv = styled(OptionsMenu)`
@@ -51,17 +51,17 @@ const Col1 = styled(OptionsBodyCol)`
   height: 1em;
   padding: 0 4px;
   flex-grow: 0;
-  width: 110px;
+  width: 11ch;
   margin: 0 12px;
 `;
 const Col2 = styled(OptionsBodyCol)`
-  justify-content: left;
-  flex-grow: 1;
-  margin: 5px 50px 5px 8px;
+  justify-content: center;
+  flex-grow: 0;
+  margin: auto;
   border-bottom: 1px solid #adadad;
 `;
 const Col3 = styled(OptionsBodyCol)`
-  justify-content: left;
+  justify-content: center;
   margin-top: 2px;
 
   *[disabled] {
@@ -138,225 +138,214 @@ export const HoldMenu = () => {
   };
 
   return (
-    pos &&
-    entry && (
-      <HoldDiv
-        ref={ref}
-        pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.HOLD_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
-        anyDragging={anyDragging}
-        id="hold-menu"
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
-          Hold Data Menu
-        </OptionsMenuHeader>
-        <OptionsBody>
-          <FidRow>
-            {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-          </FidRow>
-          <OptionsBodyRow>
-            <LeftCol title={Tooltips.holdDirection}>Location</LeftCol>
-          </OptionsBodyRow>
-          <OptionsBodyRow>
-            <OptionsBodyCol>
-              <EdstButton
-                content="Present Position"
-                selected={fix === null}
-                onMouseDown={() => {
-                  const utcMinutes = getUtcMinutesAfterMidnight();
-                  setFix(null);
-                  setEfc(utcMinutes + 30);
-                }}
-              />
-            </OptionsBodyCol>
-          </OptionsBodyRow>
-          <FixContainer>
-            {holdRouteFixes &&
-              _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map((i) => (
-                <OptionsBodyRow key={i}>
-                  {_.range(0, Math.round((holdRouteFixes.length || 0) / 10) + 1).map((j) => {
-                    const fixName = holdRouteFixes?.[Number(i) + Number(j) * 10]?.name;
-                    const minutesAtFix = holdRouteFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
-                    return (
-                      fixName && (
-                        <Col1
-                          hover
-                          selected={fix === fixName}
-                          key={`${i}-${j}`}
-                          onMouseDown={() => {
-                            setFix(fixName);
-                            setEfc(minutesAtFix + 30);
-                          }}
-                        >
-                          {fixName}
-                          <OptionsBodyCol alignRight margin="0">
-                            {`0${Math.floor(minutesAtFix / 60) % 24}`.slice(-2) + `0${Math.floor(minutesAtFix % 60)}`.slice(-2)}
-                          </OptionsBodyCol>
-                        </Col1>
-                      )
-                    );
-                  })}
-                </OptionsBodyRow>
-              ))}
-          </FixContainer>
-          <Row1>
-            <Col2 title={Tooltips.holdDirection}>Direction</Col2>
-            <Col2 title={Tooltips.holdTurns}>Turns</Col2>
-            <Col2 title={Tooltips.holdLegLength}>Leg Lengths</Col2>
-          </Row1>
-          <Row1>
-            <Col3>
-              <HoldDirButton2ch
-                content="NW"
-                selected={direction === CompassDirection.NORTH_WEST}
-                onMouseDown={() => setDirection(CompassDirection.NORTH_WEST)}
-              />
-              <HoldDirButton2ch
-                content="N"
-                selected={direction === CompassDirection.NORTH}
-                onMouseDown={() => setDirection(CompassDirection.NORTH)}
-              />
-              <HoldDirButton2ch
-                content="NE"
-                selected={direction === CompassDirection.NORTH_EAST}
-                onMouseDown={() => setDirection(CompassDirection.NORTH_EAST)}
-              />
-            </Col3>
-            <Col3>
-              <HoldDirButton22ch content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
-              <HoldDirButton22ch content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
-            </Col3>
-            <Col3>
-              <HoldDirButton6ch content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
-              <HoldDirButton6ch content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
-            </Col3>
-          </Row1>
-          <Row1>
-            <Col3>
-              <HoldDirButton2ch content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
-              <HoldDirButton2ch disabled />
-              <HoldDirButton2ch content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
-            </Col3>
-            <Col3>
-              <HoldDirButton22ch disabled />
-              <HoldDirButton22ch disabled />
-            </Col3>
-            <Col3>
-              <HoldDirButton6ch content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
-              <HoldDirButton6ch content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
-            </Col3>
-          </Row1>
-          <Row1>
-            <Col3>
-              <HoldDirButton2ch
-                content="SW"
-                selected={direction === CompassDirection.SOUTH_WEST}
-                onMouseDown={() => setDirection(CompassDirection.SOUTH_WEST)}
-              />
-              <HoldDirButton2ch
-                content="S"
-                selected={direction === CompassDirection.SOUTH}
-                onMouseDown={() => setDirection(CompassDirection.SOUTH)}
-              />
-              <HoldDirButton2ch
-                content="SE"
-                selected={direction === CompassDirection.SOUTH_EAST}
-                onMouseDown={() => setDirection(CompassDirection.SOUTH_EAST)}
-              />
-            </Col3>
-            <Col3>
-              <HoldDirButton22ch disabled />
-              <HoldDirButton22ch disabled />
-            </Col3>
-            <Col3>
-              <HoldDirButton6ch content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
-              <HoldDirButton6ch content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
-            </Col3>
-          </Row1>
-          <Row2 bottomBorder>
-            <Col5>
-              <EdstButton
-                content="Delete Hold Instructions"
-                padding="0 20px"
-                onMouseDown={() => {
-                  dispatch(
-                    updateEntry({
-                      aircraftId: entry.aircraftId,
-                      data: { routeDisplay: null },
-                    })
+    <HoldDiv
+      ref={ref}
+      pos={pos}
+      zIndex={zStack.indexOf(EdstWindow.HOLD_MENU)}
+      onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
+      anyDragging={anyDragging}
+      id="hold-menu"
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+        Hold Data Menu
+      </OptionsMenuHeader>
+      <OptionsBody>
+        <FidRow>
+          {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+        </FidRow>
+        <OptionsBodyRow>
+          <LeftCol title={Tooltips.holdDirection}>Location</LeftCol>
+        </OptionsBodyRow>
+        <OptionsBodyRow>
+          <OptionsBodyCol>
+            <EdstButton
+              content="Present Position"
+              selected={fix === null}
+              onMouseDown={() => {
+                const utcMinutes = getUtcMinutesAfterMidnight();
+                setFix(null);
+                setEfc(utcMinutes + 30);
+              }}
+            />
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+        <FixContainer>
+          {holdRouteFixes &&
+            _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map((i) => (
+              <OptionsBodyRow key={i}>
+                {_.range(0, Math.round((holdRouteFixes.length || 0) / 10) + 1).map((j) => {
+                  const fixName = holdRouteFixes?.[Number(i) + Number(j) * 10]?.name;
+                  const minutesAtFix = holdRouteFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
+                  return (
+                    fixName && (
+                      <Col1
+                        hover
+                        selected={fix === fixName}
+                        key={`${i}-${j}`}
+                        onMouseDown={() => {
+                          setFix(fixName);
+                          setEfc(minutesAtFix + 30);
+                        }}
+                      >
+                        {fixName}
+                        <OptionsBodyCol alignRight margin="0">
+                          {`0${Math.floor(minutesAtFix / 60) % 24}`.slice(-2) + `0${Math.floor(minutesAtFix % 60)}`.slice(-2)}
+                        </OptionsBodyCol>
+                      </Col1>
+                    )
                   );
-                  dispatch(closeWindow(EdstWindow.HOLD_MENU));
-                }}
-                title={Tooltips.holdDeleteHoldInstr}
+                })}
+              </OptionsBodyRow>
+            ))}
+        </FixContainer>
+        <Row1>
+          <Col2 title={Tooltips.holdDirection}>Direction</Col2>
+          <Col2 title={Tooltips.holdTurns}>Turns</Col2>
+          <Col2 title={Tooltips.holdLegLength}>Leg Lengths</Col2>
+        </Row1>
+        <Row1>
+          <Col3>
+            <HoldDirButton2ch
+              content="NW"
+              selected={direction === CompassDirection.NORTH_WEST}
+              onMouseDown={() => setDirection(CompassDirection.NORTH_WEST)}
+            />
+            <HoldDirButton2ch content="N" selected={direction === CompassDirection.NORTH} onMouseDown={() => setDirection(CompassDirection.NORTH)} />
+            <HoldDirButton2ch
+              content="NE"
+              selected={direction === CompassDirection.NORTH_EAST}
+              onMouseDown={() => setDirection(CompassDirection.NORTH_EAST)}
+            />
+          </Col3>
+          <Col3>
+            <HoldDirButton22ch content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
+            <HoldDirButton22ch content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
+          </Col3>
+          <Col3>
+            <HoldDirButton5ch content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
+            <HoldDirButton5ch content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
+          </Col3>
+        </Row1>
+        <Row1>
+          <Col3>
+            <HoldDirButton2ch content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
+            <HoldDirButton2ch disabled />
+            <HoldDirButton2ch content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
+          </Col3>
+          <Col3>
+            <HoldDirButton22ch disabled />
+            <HoldDirButton22ch disabled />
+          </Col3>
+          <Col3>
+            <HoldDirButton5ch content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
+            <HoldDirButton5ch content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
+          </Col3>
+        </Row1>
+        <Row1>
+          <Col3>
+            <HoldDirButton2ch
+              content="SW"
+              selected={direction === CompassDirection.SOUTH_WEST}
+              onMouseDown={() => setDirection(CompassDirection.SOUTH_WEST)}
+            />
+            <HoldDirButton2ch content="S" selected={direction === CompassDirection.SOUTH} onMouseDown={() => setDirection(CompassDirection.SOUTH)} />
+            <HoldDirButton2ch
+              content="SE"
+              selected={direction === CompassDirection.SOUTH_EAST}
+              onMouseDown={() => setDirection(CompassDirection.SOUTH_EAST)}
+            />
+          </Col3>
+          <Col3>
+            <HoldDirButton22ch disabled />
+            <HoldDirButton22ch disabled />
+          </Col3>
+          <Col3>
+            <HoldDirButton5ch content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
+            <HoldDirButton5ch content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
+          </Col3>
+        </Row1>
+        <Row2 bottomBorder>
+          <Col5>
+            <EdstButton
+              content="Delete Hold Instructions"
+              padding="0 20px"
+              onMouseDown={() => {
+                dispatch(
+                  updateEntry({
+                    aircraftId: entry.aircraftId,
+                    data: { routeDisplay: null },
+                  })
+                );
+                dispatch(closeWindow(EdstWindow.HOLD_MENU));
+              }}
+              title={Tooltips.holdDeleteHoldInstr}
+            />
+          </Col5>
+        </Row2>
+        <Row1>
+          <Col2 title={Tooltips.holdEfc}>EFC</Col2>
+        </Row1>
+        <OptionsBodyRow>
+          <Col7>
+            <EfcInputContainer>
+              <EdstInput
+                value={formatUtcMinutes(efc)}
+                readOnly
+                // onChange={(e) => setEfc(e.target.value)}
               />
-            </Col5>
-          </Row2>
-          <Row1>
-            <Col2 title={Tooltips.holdEfc}>EFC</Col2>
-          </Row1>
-          <OptionsBodyRow>
-            <Col7>
-              <EfcInputContainer>
-                <EdstInput
-                  value={formatUtcMinutes(efc)}
-                  readOnly
-                  // onChange={(e) => setEfc(e.target.value)}
-                />
-              </EfcInputContainer>
-              <EdstButton content="-" margin="0 0 0 10px" width="24px" onMouseDown={() => setEfc(efc - 1)} />
-              <EdstButton content="+" margin="0 0 0 4px" width="24px" onMouseDown={() => setEfc(efc + 1)} />
-            </Col7>
-          </OptionsBodyRow>
-          <Row2 bottomBorder>
-            <Col5>
-              <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
-            </Col5>
-          </Row2>
-          <OptionsBodyRow margin="6px 0 0 0">
-            <OptionsBodyCol>
-              <EdstButton
-                content="Hold/SPA"
-                margin="0 6px 0 0"
-                padding="0 6px"
-                disabled={!!entry?.holdAnnotations}
-                onMouseDown={() => {
-                  if (!entry.spa) {
-                    dispatch(toggleSpa(entry.aircraftId));
-                  }
-                  clearedHold();
-                }}
-                title={Tooltips.holdHoldSpaBtn}
-              />
-              <EdstButton
-                content="Hold"
-                margin="0 6px 0 0"
-                onMouseDown={clearedHold}
-                disabled={!!entry?.holdAnnotations}
-                title={Tooltips.holdHoldBtn}
-              />
-              <EdstButton
-                content="Cancel Hold"
-                disabled={!entry?.holdAnnotations}
-                onMouseDown={() => {
-                  dispatch(
-                    updateEntry({
-                      aircraftId: entry.aircraftId,
-                      data: { routeDisplay: null },
-                    })
-                  );
-                  dispatch(openWindowThunk(EdstWindow.CANCEL_HOLD_MENU));
-                  dispatch(closeWindow(EdstWindow.HOLD_MENU));
-                }}
-              />
-            </OptionsBodyCol>
-            <OptionsBodyCol alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.HOLD_MENU))} />
-            </OptionsBodyCol>
-          </OptionsBodyRow>
-        </OptionsBody>
-      </HoldDiv>
-    )
+            </EfcInputContainer>
+            <EdstButton content="-" margin="0 0 0 10px" width="2ch" onMouseDown={() => setEfc(efc - 1)} />
+            <EdstButton content="+" margin="0 0 0 4px" width="2ch" onMouseDown={() => setEfc(efc + 1)} />
+          </Col7>
+        </OptionsBodyRow>
+        <Row2 bottomBorder>
+          <Col5>
+            <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
+          </Col5>
+        </Row2>
+        <OptionsBodyRow margin="6px 0 0 0">
+          <OptionsBodyCol>
+            <EdstButton
+              content="Hold/SPA"
+              margin="0 6px 0 0"
+              padding="0 6px"
+              disabled={!!entry?.holdAnnotations}
+              onMouseDown={() => {
+                if (!entry.spa) {
+                  dispatch(toggleSpa(entry.aircraftId));
+                }
+                clearedHold();
+              }}
+              title={Tooltips.holdHoldSpaBtn}
+            />
+            <EdstButton
+              content="Hold"
+              margin="0 6px 0 0"
+              onMouseDown={clearedHold}
+              disabled={!!entry?.holdAnnotations}
+              title={Tooltips.holdHoldBtn}
+            />
+            <EdstButton
+              content="Cancel Hold"
+              disabled={!entry?.holdAnnotations}
+              onMouseDown={() => {
+                dispatch(
+                  updateEntry({
+                    aircraftId: entry.aircraftId,
+                    data: { routeDisplay: null },
+                  })
+                );
+                dispatch(openWindowThunk(EdstWindow.CANCEL_HOLD_MENU));
+                dispatch(closeWindow(EdstWindow.HOLD_MENU));
+              }}
+            />
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight>
+            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.HOLD_MENU))} />
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </OptionsBody>
+    </HoldDiv>
   );
 };

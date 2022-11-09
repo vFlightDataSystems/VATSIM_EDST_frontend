@@ -10,15 +10,13 @@ import type { EdstWindow } from "enums/edstWindow";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useRootDispatch } from "~redux/hooks";
 
-type EdstOuterButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin">;
+type EdstOuterButtonCSSProps = Pick<CSSProperties, "margin">;
 type EdstOuterButtonProps = { disabled?: boolean } & EdstOuterButtonCSSProps;
 const EdstOuterButton = styled.div<EdstOuterButtonProps>`
   display: inline-flex;
   border: 1px solid transparent;
 
   padding: 0;
-  width: ${(props) => props.width ?? "auto"};
-  height: ${(props) => props.height ?? "auto"};
   margin: ${(props) => props.margin ?? "auto"};
   &[disabled] {
     pointer-events: none;
@@ -32,12 +30,14 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
   margin-bottom: 1px;
 `;
 
-type EdstInnerButtonCSSProps = Pick<CSSProperties, "padding" | "flexGrow">;
+type EdstInnerButtonCSSProps = Pick<CSSProperties, "padding" | "flexGrow" | "width" | "height">;
 type EdstInnerButtonProps = { selected?: boolean; disabled?: boolean } & EdstInnerButtonCSSProps;
 const EdstInnerButton = styled.div<EdstInnerButtonProps>`
   font-size: inherit;
   display: flex;
   flex-grow: ${(props) => props.flexGrow ?? 1};
+  width: ${(props) => props.width ?? "auto"};
+  height: ${(props) => props.height ?? "auto"};
   justify-content: center;
   align-items: center;
   ${(props) =>
@@ -72,14 +72,8 @@ type EdstButtonProps = {
 export const EdstButton = (props: EdstButtonProps) => {
   return (
     <EdstTooltip title={props.title}>
-      <EdstOuterButton
-        disabled={props.disabled}
-        width={props.width}
-        height={props.height}
-        margin={props.margin}
-        onMouseDownCapture={props.onMouseDown}
-      >
-        <EdstInnerButton selected={props.selected} disabled={props.disabled} padding={props.padding}>
+      <EdstOuterButton disabled={props.disabled} margin={props.margin} onMouseDownCapture={props.onMouseDown}>
+        <EdstInnerButton selected={props.selected} disabled={props.disabled} padding={props.padding} width={props.width} height={props.height}>
           {props.content}
         </EdstInnerButton>
       </EdstOuterButton>
@@ -117,9 +111,10 @@ export function EdstWindowHeaderButton({ onMouseDown, title, disabled, content, 
             event.stopPropagation();
           }
         }}
-        width={width}
       >
-        <EdstInnerButton disabled={disabled}>{content}</EdstInnerButton>
+        <EdstInnerButton disabled={disabled} width={width}>
+          {content}
+        </EdstInnerButton>
       </EdstOuterHeaderButton>
     </EdstTooltip>
   );
@@ -167,8 +162,8 @@ export function EdstWindowHeaderButtonWithSharedEvent({
 
 const HoldDirButton = (props: Omit<EdstButtonProps, "margin">) => (
   <EdstTooltip title={props.title}>
-    <EdstOuterButton disabled={props.disabled} margin="0 2px" onMouseDownCapture={props.onMouseDown} width={props.width}>
-      <EdstInnerButton selected={props.selected} disabled={props.disabled} flexGrow={0}>
+    <EdstOuterButton disabled={props.disabled} margin="0 2px" onMouseDownCapture={props.onMouseDown}>
+      <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width}>
         {props.content}
       </EdstInnerButton>
     </EdstOuterButton>
@@ -176,4 +171,4 @@ const HoldDirButton = (props: Omit<EdstButtonProps, "margin">) => (
 );
 export const HoldDirButton2ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2ch" {...props} />;
 export const HoldDirButton22ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2.2ch" {...props} />;
-export const HoldDirButton6ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="6ch" {...props} />;
+export const HoldDirButton5ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="5ch" {...props} />;

@@ -204,25 +204,25 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       </OptionsBodyRow>
       <EqpInputRow>
         DAT/
-        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuComm_Dat}>
+        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuComm_Dat}>
           <EqpInput
+            readOnly
             value={[...(acarsCategories as string[])]
               .concat([...(satelliteCategories as string[])])
               .sort((u, v) => u.localeCompare(v))
               .join("")}
-            // onChange={() => {}}
           />
         </EqpInputContainer60>
       </EqpInputRow>
       <EqpInputRow>
         COM/
-        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuComm_Com}>
+        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuComm_Com}>
           <EqpInput
+            readOnly
             value={[...(voiceCategories as string[])]
               .concat([...(cpdlcCategories as string[])])
               .sort((u, v) => u.localeCompare(v))
               .join("")}
-            // onChange={() => {}}
           />
         </EqpInputContainer60>
       </EqpInputRow>

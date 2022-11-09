@@ -218,11 +218,8 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       </OptionsBodyRow>
       <EqpInputRow>
         SUR/
-        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
-          <EqpInput
-            value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`}
-            // onChange={() => {}}
-          />
+        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuSurv_Sur}>
+          <EqpInput readOnly value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`} />
         </EqpInputContainer60>
       </EqpInputRow>
     </>

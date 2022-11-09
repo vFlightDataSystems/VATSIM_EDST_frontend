@@ -75,31 +75,29 @@ export const MessageResponseArea = () => {
   const zIndex = zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA);
 
   return (
-    pos && (
-      <>
-        <MessageResponseAreaDiv
-          {...windowOptions}
-          pos={pos}
+    <>
+      <MessageResponseAreaDiv
+        {...windowOptions}
+        pos={pos}
+        zIndex={zIndex}
+        ref={ref}
+        anyDragging={anyDragging}
+        id="edst-mra"
+        onMouseDownCapture={onMraMouseDown}
+      >
+        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+        {msg}
+      </MessageResponseAreaDiv>
+      {showOptions && width && (
+        <FloatingWindowOptionContainer
+          parentWidth={width + 6}
+          parentPos={pos}
           zIndex={zIndex}
-          ref={ref}
-          anyDragging={anyDragging}
-          id="edst-mra"
-          onMouseDownCapture={onMraMouseDown}
-        >
-          {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-          {msg}
-        </MessageResponseAreaDiv>
-        {showOptions && width && (
-          <FloatingWindowOptionContainer
-            parentWidth={width + 6}
-            parentPos={pos}
-            zIndex={zIndex}
-            title="RA"
-            onClose={() => setShowOptions(false)}
-            options={options}
-          />
-        )}
-      </>
-    )
+          title="RA"
+          onClose={() => setShowOptions(false)}
+          options={options}
+        />
+      )}
+    </>
   );
 };

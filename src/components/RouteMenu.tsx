@@ -96,8 +96,9 @@ const DisplayRouteDiv = styled(OptionsBodyCol)`
 `;
 const DctCol = styled(OptionsBodyCol)`
   display: flex;
+  flex-grow: 0;
   justify-content: flex-start;
-  height: 20px;
+  height: 1.1em;
   padding: 0 4px;
   width: 9ch;
   margin: auto 12px;
@@ -276,179 +277,173 @@ export const RouteMenu = () => {
   useSharedUiListener("routeMenuClickAppendOplus", setAppend, toggleAppendOplus);
 
   return (
-    pos && (
-      <RouteMenuDiv
-        ref={ref}
-        pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.ROUTE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.ROUTE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ROUTE_MENU))}
-        anyDragging={anyDragging}
-        id="route-menu"
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <RouteMenuHeader focused={focused} onMouseDown={startDrag}>
-          Route Menu
-        </RouteMenuHeader>
-        <RouteMenuBody>
-          <FidRow>
-            {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-          </FidRow>
-          <RouteMenuRow>
-            <OptionsBodyCol>
-              <EdstButton
-                content="Trial Plan"
-                selected={trialPlan}
-                onMouseDown={() => {
-                  socket.dispatchUiEvent("routeMenuSetTrialPlan", true);
-                  setTrialPlan(true);
-                }}
-                title={Tooltips.routeMenuPlanData}
-                disabled={asel.window === EdstWindow.DEP}
-              />
-            </OptionsBodyCol>
-            <OptionsBodyCol maxWidth="24px" maxHeight="24px">
-              <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
-                <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
-              </a>
-            </OptionsBodyCol>
-            <OptionsBodyCol maxWidth="24px" maxHeight="24px">
-              <a
-                href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
-              </a>
-            </OptionsBodyCol>
-            <OptionsBodyCol alignRight>
-              {entry.cpdlcCapable && (
-                <>
-                  <EdstButton content="Uplink" />
-                  <DownlinkSymbol />
-                </>
-              )}
-              <EdstButton
-                content="Amend"
-                selected={!trialPlan}
-                onMouseDown={() => {
-                  socket.dispatchUiEvent("routeMenuSetTrialPlan", false);
-                  setTrialPlan(false);
-                }}
-                title={Tooltips.routeMenuAmend}
-              />
-            </OptionsBodyCol>
-          </RouteMenuRow>
-          <RouteMenuRow>
-            <OptionsBodyCol>
-              <InputContainer>
-                {!(asel.window === EdstWindow.DEP) && (
-                  <EdstTooltip
-                    title={Tooltips.routeMenuFrd}
-                    onContextMenu={(event) => {
-                      event.preventDefault();
-                    }}
-                  >
-                    <PposDiv>{frd}..</PposDiv>
-                  </EdstTooltip>
-                )}
+    <RouteMenuDiv
+      ref={ref}
+      pos={pos}
+      zIndex={zStack.indexOf(EdstWindow.ROUTE_MENU)}
+      onMouseDown={() => zStack.indexOf(EdstWindow.ROUTE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ROUTE_MENU))}
+      anyDragging={anyDragging}
+      id="route-menu"
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <RouteMenuHeader focused={focused} onMouseDown={startDrag}>
+        Route Menu
+      </RouteMenuHeader>
+      <RouteMenuBody>
+        <FidRow>
+          {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+        </FidRow>
+        <RouteMenuRow>
+          <OptionsBodyCol>
+            <EdstButton
+              content="Trial Plan"
+              selected={trialPlan}
+              onMouseDown={() => {
+                socket.dispatchUiEvent("routeMenuSetTrialPlan", true);
+                setTrialPlan(true);
+              }}
+              title={Tooltips.routeMenuPlanData}
+              disabled={asel.window === EdstWindow.DEP}
+            />
+          </OptionsBodyCol>
+          <OptionsBodyCol maxWidth="24px" maxHeight="24px">
+            <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
+              <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
+            </a>
+          </OptionsBodyCol>
+          <OptionsBodyCol maxWidth="24px" maxHeight="24px">
+            <a
+              href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
+            </a>
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight>
+            {entry.cpdlcCapable && (
+              <>
+                <EdstButton content="Uplink" />
+                <DownlinkSymbol />
+              </>
+            )}
+            <EdstButton
+              content="Amend"
+              selected={!trialPlan}
+              onMouseDown={() => {
+                socket.dispatchUiEvent("routeMenuSetTrialPlan", false);
+                setTrialPlan(false);
+              }}
+              title={Tooltips.routeMenuAmend}
+            />
+          </OptionsBodyCol>
+        </RouteMenuRow>
+        <RouteMenuRow>
+          <OptionsBodyCol>
+            <InputContainer>
+              {!(asel.window === EdstWindow.DEP) && (
                 <EdstTooltip
-                  title={Tooltips.routeMenuRouteInput}
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    flexGrow: "1",
+                  title={Tooltips.routeMenuFrd}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
                   }}
                 >
-                  <Input
-                    value={routeInput}
-                    onChange={(event) => setRouteInput(event.target.value)}
-                    onKeyDown={(event) => handleInputKeyDown(event)}
-                  />
+                  <PposDiv>{frd}..</PposDiv>
                 </EdstTooltip>
-              </InputContainer>
-            </OptionsBodyCol>
-          </RouteMenuRow>
-          <RouteMenuRow topBorder>
-            <ButtonCol hover disabled title={Tooltips.routeMenuPar}>
-              <OptionIndicator disabled size={9} />
-              Include PAR
-            </ButtonCol>
-          </RouteMenuRow>
-          <RouteMenuRow bottomBorder>
-            <ButtonCol
-              hover
-              title={Tooltips.routeMenuAppendStar}
-              onMouseDown={() => {
-                socket.dispatchUiEvent("routeMenuClickAppendStar");
-                setAppend(toggleAppendStar);
-              }}
-            >
-              <OptionIndicator selected={appendStar} size={9} />
-              Append *
-            </ButtonCol>
-            <ButtonCol
-              hover
-              title={Tooltips.routeMenuAppendOplus}
-              onMouseDown={() => {
-                socket.dispatchUiEvent("routeMenuClickAppendOplus");
-                setAppend(toggleAppendOplus);
-              }}
-            >
-              <OptionIndicator selected={appendOplus} size={9} />
-              Append<span>&nbsp;{OPLUS_SYMBOL}</span>
-            </ButtonCol>
-          </RouteMenuRow>
-          <EdstTooltip title={Tooltips.routeMenuDirectFix}>
-            <UnderlineRow as={RouteMenuRow}>Direct-To-Fix</UnderlineRow>
-          </EdstTooltip>
-          <OptionsBodyRow>
-            <DisplayRouteDiv>
-              {asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
-            </DisplayRouteDiv>
-          </OptionsBodyRow>
-          {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
-            <OptionsBodyRow key={i}>
-              {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map((j) => {
-                const fixName = routeFixes?.[i + j * 10]?.name;
-                return (
-                  fixName && (
-                    <DctCol hover key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
-                      {fixName}
-                    </DctCol>
-                  )
-                );
-              })}
-            </OptionsBodyRow>
-          ))}
-          {routesAvailable && (
-            <PreferredRouteDisplay
-              par={pars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
-              pdr={asel.window === EdstWindow.DEP ? pdrs : []}
-              pdar={asel.window === EdstWindow.DEP ? pdars : []}
-              clearedPrefroute={clearedPrefroute}
-            />
-          )}
-          <OptionsBodyRow margin="14px 0 0 0" padding="">
-            <OptionsBodyCol>
-              <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
-              <EdstButton
-                disabled={entry.previousRoute === null}
-                margin="0 4px 0 0"
-                content="Previous Route"
-                onMouseDown={() => {
-                  dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, false, true));
-                  dispatch(closeWindow(EdstWindow.ROUTE_MENU));
+              )}
+              <EdstTooltip
+                title={Tooltips.routeMenuRouteInput}
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  flexGrow: "1",
                 }}
-                title={Tooltips.routeMenuPrevRoute}
-              />
-              <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
-            </OptionsBodyCol>
-            <OptionsBodyCol alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.ROUTE_MENU))} />
-            </OptionsBodyCol>
+              >
+                <Input value={routeInput} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={(event) => handleInputKeyDown(event)} />
+              </EdstTooltip>
+            </InputContainer>
+          </OptionsBodyCol>
+        </RouteMenuRow>
+        <RouteMenuRow topBorder>
+          <ButtonCol hover disabled title={Tooltips.routeMenuPar}>
+            <OptionIndicator disabled size={9} />
+            Include PAR
+          </ButtonCol>
+        </RouteMenuRow>
+        <RouteMenuRow bottomBorder>
+          <ButtonCol
+            hover
+            title={Tooltips.routeMenuAppendStar}
+            onMouseDown={() => {
+              socket.dispatchUiEvent("routeMenuClickAppendStar");
+              setAppend(toggleAppendStar);
+            }}
+          >
+            <OptionIndicator selected={appendStar} size={9} />
+            Append *
+          </ButtonCol>
+          <ButtonCol
+            hover
+            title={Tooltips.routeMenuAppendOplus}
+            onMouseDown={() => {
+              socket.dispatchUiEvent("routeMenuClickAppendOplus");
+              setAppend(toggleAppendOplus);
+            }}
+          >
+            <OptionIndicator selected={appendOplus} size={9} />
+            Append<span>&nbsp;{OPLUS_SYMBOL}</span>
+          </ButtonCol>
+        </RouteMenuRow>
+        <EdstTooltip title={Tooltips.routeMenuDirectFix}>
+          <UnderlineRow as={RouteMenuRow}>Direct-To-Fix</UnderlineRow>
+        </EdstTooltip>
+        <OptionsBodyRow>
+          <DisplayRouteDiv>
+            {asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
+          </DisplayRouteDiv>
+        </OptionsBodyRow>
+        {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
+          <OptionsBodyRow key={i}>
+            {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map((j) => {
+              const fixName = routeFixes?.[i + j * 10]?.name;
+              return (
+                fixName && (
+                  <DctCol hover key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
+                    {fixName}
+                  </DctCol>
+                )
+              );
+            })}
           </OptionsBodyRow>
-        </RouteMenuBody>
-      </RouteMenuDiv>
-    )
+        ))}
+        {routesAvailable && (
+          <PreferredRouteDisplay
+            par={pars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+            pdr={asel.window === EdstWindow.DEP ? pdrs : []}
+            pdar={asel.window === EdstWindow.DEP ? pdars : []}
+            clearedPrefroute={clearedPrefroute}
+          />
+        )}
+        <OptionsBodyRow margin="14px 0 0 0" padding="">
+          <OptionsBodyCol>
+            <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
+            <EdstButton
+              disabled={entry.previousRoute === null}
+              margin="0 4px 0 0"
+              content="Previous Route"
+              onMouseDown={() => {
+                dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, false, true));
+                dispatch(closeWindow(EdstWindow.ROUTE_MENU));
+              }}
+              title={Tooltips.routeMenuPrevRoute}
+            />
+            <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight>
+            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.ROUTE_MENU))} />
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </RouteMenuBody>
+    </RouteMenuDiv>
   );
 };

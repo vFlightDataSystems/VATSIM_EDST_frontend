@@ -20,6 +20,7 @@ export const EqpContentRow = styled(EqpRow)`
 export const EqpInputContainer = styled(EdstTooltip)`
   display: flex;
   flex-grow: 1;
+  justify-content: left;
   border: 1px solid transparent;
   max-width: 50px;
 `;
@@ -39,7 +40,7 @@ export const EqpInput = styled(EdstInput)`
   resize: none;
 `;
 
-type EqpColProps = { width?: CSSProperties["width"] };
+type EqpColProps = Pick<CSSProperties, "width">;
 export const EqpCol = styled.div<EqpColProps>`
   display: flex;
   flex-flow: column;

@@ -238,90 +238,87 @@ export const AltMenu = () => {
   const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
 
   return (
-    pos &&
-    asel && (
-      <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "11ch"} pos={pos} id="alt-menu">
-        <AltMenuHeaderDiv>
-          <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
-          <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
-            X
-          </AltMenuHeaderCol>
-        </AltMenuHeaderDiv>
-        {manualInput !== null && (
-          <>
-            <AltMenuRow>FP{entry.altitude}</AltMenuRow>
-            <AltMenuRow bgBlack>
-              <AltMenuManualInput
-                tabIndex={0}
-                ref={inputRef}
-                value={manualInput}
-                onChange={(event) => setManualInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    if (validateAltitudeInput(manualInput)) {
-                      handleAltClick(manualInput);
-                    } else {
-                      setShowInvalid(true);
-                    }
+    <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "11ch"} pos={pos} id="alt-menu">
+      <AltMenuHeaderDiv>
+        <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
+        <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
+          X
+        </AltMenuHeaderCol>
+      </AltMenuHeaderDiv>
+      {manualInput !== null && (
+        <>
+          <AltMenuRow>FP{entry.altitude}</AltMenuRow>
+          <AltMenuRow bgBlack>
+            <AltMenuManualInput
+              tabIndex={0}
+              ref={inputRef}
+              value={manualInput}
+              onChange={(event) => setManualInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  if (validateAltitudeInput(manualInput)) {
+                    handleAltClick(manualInput);
+                  } else {
+                    setShowInvalid(true);
                   }
-                }}
-              />
+                }
+              }}
+            />
+          </AltMenuRow>
+          {showInvalid && (
+            <AltMenuRow bgBlack color={colors.yellow}>
+              INVALID
             </AltMenuRow>
-            {showInvalid && (
-              <AltMenuRow bgBlack color={colors.yellow}>
-                INVALID
-              </AltMenuRow>
-            )}
-          </>
-        )}
-        {manualInput === null && (
-          <>
-            <AltMenuRow
-              title={Tooltips.altMenuPlanData}
-              hover
-              selected={selected === "trial"}
-              onMouseDown={() => setSelected("trial")}
-              disabled={asel.window === EdstWindow.DEP}
-            >
-              TRIAL PLAN
-            </AltMenuRow>
-            <AltMenuRow title={Tooltips.altMenuAmend} hover selected={selected === "amend"} onMouseDown={() => setSelected("amend")}>
-              AMEND
-            </AltMenuRow>
-            <AltMenuRow>FP{entry.altitude}</AltMenuRow>
-            <AltMenuRow disabled>UPLINK</AltMenuRow>
-            <AltMenuRow disabled>
-              <AltMenuRowCol>PD</AltMenuRowCol>
-              <AltMenuRowCol>TFC</AltMenuRowCol>
-              <AltMenuRowCol width="0.4ch">{DOWNLINK_SYMBOL}</AltMenuRowCol>
-            </AltMenuRow>
-            <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
-            <AltMenuSelectContainer onWheel={handleScroll}>
-              {_.range(30, -40, -10).map((i) => {
-                const alt = centerAlt + i;
-                return (
-                  <AltMenuScrollRow hover={selected === "amend" && tempAltHover === alt} key={i}>
-                    <AltMenuScrollCol selected={alt === +entry.altitude} onMouseDown={() => handleAltClick(alt)}>
-                      {alt.toString().padStart(3, "0")}
-                    </AltMenuScrollCol>
-                    {asel.window !== EdstWindow.DEP && (
-                      <AltMenuScrollTempAltCol
-                        title={Tooltips.altMenuT}
-                        disabled={!(selected === "amend")}
-                        onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
-                        onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
-                        onMouseDown={() => handleTempAltClick(alt)}
-                      >
-                        T
-                      </AltMenuScrollTempAltCol>
-                    )}
-                  </AltMenuScrollRow>
-                );
-              })}
-            </AltMenuSelectContainer>
-          </>
-        )}
-      </AltMenuDiv>
-    )
+          )}
+        </>
+      )}
+      {manualInput === null && (
+        <>
+          <AltMenuRow
+            title={Tooltips.altMenuPlanData}
+            hover
+            selected={selected === "trial"}
+            onMouseDown={() => setSelected("trial")}
+            disabled={asel.window === EdstWindow.DEP}
+          >
+            TRIAL PLAN
+          </AltMenuRow>
+          <AltMenuRow title={Tooltips.altMenuAmend} hover selected={selected === "amend"} onMouseDown={() => setSelected("amend")}>
+            AMEND
+          </AltMenuRow>
+          <AltMenuRow>FP{entry.altitude}</AltMenuRow>
+          <AltMenuRow disabled>UPLINK</AltMenuRow>
+          <AltMenuRow disabled>
+            <AltMenuRowCol>PD</AltMenuRowCol>
+            <AltMenuRowCol>TFC</AltMenuRowCol>
+            <AltMenuRowCol width="0.4ch">{DOWNLINK_SYMBOL}</AltMenuRowCol>
+          </AltMenuRow>
+          <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
+          <AltMenuSelectContainer onWheel={handleScroll}>
+            {_.range(30, -40, -10).map((i) => {
+              const alt = centerAlt + i;
+              return (
+                <AltMenuScrollRow hover={selected === "amend" && tempAltHover === alt} key={i}>
+                  <AltMenuScrollCol selected={alt === +entry.altitude} onMouseDown={() => handleAltClick(alt)}>
+                    {alt.toString().padStart(3, "0")}
+                  </AltMenuScrollCol>
+                  {asel.window !== EdstWindow.DEP && (
+                    <AltMenuScrollTempAltCol
+                      title={Tooltips.altMenuT}
+                      disabled={!(selected === "amend")}
+                      onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
+                      onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
+                      onMouseDown={() => handleTempAltClick(alt)}
+                    >
+                      T
+                    </AltMenuScrollTempAltCol>
+                  )}
+                </AltMenuScrollRow>
+              );
+            })}
+          </AltMenuSelectContainer>
+        </>
+      )}
+    </AltMenuDiv>
   );
 };

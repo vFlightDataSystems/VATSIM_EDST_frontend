@@ -45,35 +45,33 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
   };
 
   return (
-    pos && (
-      <FloatingWindowDiv
-        pos={pos}
-        zIndex={zIndex}
-        onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
-        ref={ref}
-        anyDragging={anyDragging}
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <FloatingWindowHeader
-          title={props.title}
-          handleOptionsMouseDown={handleOptionsMouseDown}
-          onClose={() => dispatch(closeWindow(edstWindow))}
-          startDrag={startDrag}
+    <FloatingWindowDiv
+      pos={pos}
+      zIndex={zIndex}
+      onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
+      ref={ref}
+      anyDragging={anyDragging}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <FloatingWindowHeader
+        title={props.title}
+        handleOptionsMouseDown={handleOptionsMouseDown}
+        onClose={() => dispatch(closeWindow(edstWindow))}
+        startDrag={startDrag}
+      />
+      <FloatingWindowBodyContainer width={props.width} fontSize={windowOptions.fontSizeIndex}>
+        {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
+      </FloatingWindowBodyContainer>
+      {props.showOptions && width && (
+        <FloatingWindowOptionContainer
+          parentWidth={width}
+          parentPos={pos}
+          zIndex={zIndex}
+          title={props.optionsHeaderTitle}
+          onClose={() => props.setShowOptions(false)}
+          options={options}
         />
-        <FloatingWindowBodyContainer width={props.width} fontSize={windowOptions.fontSizeIndex}>
-          {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
-        </FloatingWindowBodyContainer>
-        {props.showOptions && width && (
-          <FloatingWindowOptionContainer
-            parentWidth={width}
-            parentPos={pos}
-            zIndex={zIndex}
-            title={props.optionsHeaderTitle}
-            onClose={() => props.setShowOptions(false)}
-            options={options}
-          />
-        )}
-      </FloatingWindowDiv>
-    )
+      )}
+    </FloatingWindowDiv>
   );
 };

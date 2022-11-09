@@ -187,15 +187,15 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
       </OptionsBodyRow>
       <EqpInputRow>
         NAV/
-        <EqpInputContainer60 style={{ display: "flex", justifyContent: "left", flexGrow: "1" }} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
+        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuNAV_Nav}>
           <EqpInput
+            readOnly
             value={
               [...(navCategories as string[])]
                 .concat([...(rnavCategories as string[])])
                 .sort((u, v) => u.localeCompare(v))
                 .join("") + (rvsm ? "W" : "")
             }
-            // onChange={() => {}}
           />
         </EqpInputContainer60>
       </EqpInputRow>

@@ -41,38 +41,36 @@ export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps
   useCenterCursor(ref);
 
   return (
-    pos && (
-      <PromptDiv
-        ref={ref}
-        width={props.width}
-        pos={pos}
-        zIndex={zStack.indexOf(props.windowId)}
-        anyDragging={anyDragging}
-        onMouseDown={() => zStack.indexOf(props.windowId) < zStack.length - 1 && dispatch(pushZStack(props.windowId))}
-        id={props.id}
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
-          {props.title}
-        </OptionsMenuHeader>
-        <OptionsBody>
-          {props.children}
-          <OptionsBodyRow margin="0">
-            <OptionsBodyCol>
-              <EdstButton content={props.submitText} onMouseDown={props.onSubmit} />
-            </OptionsBodyCol>
-            <OptionsBodyCol alignRight>
-              <EdstButton
-                content={props.cancelText}
-                onMouseDown={() => {
-                  dispatch(closeWindow(props.windowId));
-                  props.onCancel?.();
-                }}
-              />
-            </OptionsBodyCol>
-          </OptionsBodyRow>
-        </OptionsBody>
-      </PromptDiv>
-    )
+    <PromptDiv
+      ref={ref}
+      width={props.width}
+      pos={pos}
+      zIndex={zStack.indexOf(props.windowId)}
+      anyDragging={anyDragging}
+      onMouseDown={() => zStack.indexOf(props.windowId) < zStack.length - 1 && dispatch(pushZStack(props.windowId))}
+      id={props.id}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+        {props.title}
+      </OptionsMenuHeader>
+      <OptionsBody>
+        {props.children}
+        <OptionsBodyRow margin="0">
+          <OptionsBodyCol>
+            <EdstButton content={props.submitText} onMouseDown={props.onSubmit} />
+          </OptionsBodyCol>
+          <OptionsBodyCol alignRight>
+            <EdstButton
+              content={props.cancelText}
+              onMouseDown={() => {
+                dispatch(closeWindow(props.windowId));
+                props.onCancel?.();
+              }}
+            />
+          </OptionsBodyCol>
+        </OptionsBodyRow>
+      </OptionsBody>
+    </PromptDiv>
   );
 };

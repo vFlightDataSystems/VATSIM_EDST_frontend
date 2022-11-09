@@ -149,91 +149,79 @@ export const TemplateMenu = () => {
   }, [aircraftTrack, entry?.aircraftId, generateFrd]);
 
   return (
-    pos && (
-      <TemplateDiv
-        ref={ref}
-        pos={pos}
-        zIndex={zStack.indexOf(EdstWindow.TEMPLATE_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TEMPLATE_MENU))}
-        anyDragging={anyDragging}
-        id="template-menu"
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
-          {asel ? "Amendment" : "Flight Plan"} Menu
-        </OptionsMenuHeader>
-        <TemplateBodyDiv>
-          <TemplateRowDiv>
-            <TemplateCol width="9ch" textIndent content="AID" />
-            <TemplateCol width="5ch" textIndent content="NUM" />
-            <TemplateCol width="5ch" textIndent content="SAI" />
-            <TemplateCol width="6ch" textIndent content="TYP" />
-            <TemplateCol width="8ch">
-              <EdstButton
-                content="EQP..."
-                onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
-                title={Tooltips.templateMenuEqpButton}
-              />
-            </TemplateCol>
-            <TemplateCol width="6ch" textIndent content="BCN" />
-            <TemplateCol width="6ch" textIndent content="SPD" />
-            <TemplateCol width="14ch" textIndent content="FIX" />
-            <TemplateCol width="8ch" textIndent content="TIM" />
-            <FlexCol textIndent>ALT</FlexCol>
-            <TemplateCol>
-              <EdstButton margin="0 2px 0 0" disabled content="More..." title={Tooltips.templateMenuMore} />
-            </TemplateCol>
-          </TemplateRowDiv>
-          <TemplateRowDiv>
-            <TemplateInput width="9ch" title={Tooltips.templateMenuAid} value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
-            <TemplateInput width="5ch" title={Tooltips.templateMenuNum} value={numInput} onChange={(event) => setNumInput(event.target.value)} />
-            <TemplateInput width="5ch" title={Tooltips.templateMenuSai} value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
-            <TemplateInput width="6ch" title={Tooltips.templateMenuTyp} value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
-            <TemplateInput
-              width="8ch"
-              title={Tooltips.templateMenuEqpBox}
-              value={equipInput}
-              onChange={(event) => setEquipInput(event.target.value)}
+    <TemplateDiv
+      ref={ref}
+      pos={pos}
+      zIndex={zStack.indexOf(EdstWindow.TEMPLATE_MENU)}
+      onMouseDown={() => zStack.indexOf(EdstWindow.TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TEMPLATE_MENU))}
+      anyDragging={anyDragging}
+      id="template-menu"
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+        {asel ? "Amendment" : "Flight Plan"} Menu
+      </OptionsMenuHeader>
+      <TemplateBodyDiv>
+        <TemplateRowDiv>
+          <TemplateCol width="9ch" textIndent content="AID" />
+          <TemplateCol width="5ch" textIndent content="NUM" />
+          <TemplateCol width="5ch" textIndent content="SAI" />
+          <TemplateCol width="6ch" textIndent content="TYP" />
+          <TemplateCol width="8ch">
+            <EdstButton
+              content="EQP..."
+              onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
+              title={Tooltips.templateMenuEqpButton}
             />
-            <TemplateInput
-              width="6ch"
-              title={Tooltips.templateMenuBcn}
-              value={beaconInput}
-              onChange={(event) => setBeaconInput(event.target.value)}
-            />
-            <TemplateInput width="6ch" title={Tooltips.templateMenuSpd} value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
-            <TemplateInput width="14ch" title={Tooltips.templateMenuFix} value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
-            <TemplateInput width="8ch" title={Tooltips.templateMenuTim} value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
-            <FlexCol title={Tooltips.templateMenuAlt}>
-              <TemplateInput flexShrink={1} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
-            </FlexCol>
-          </TemplateRowDiv>
-          <TemplateRowDiv>
-            <TemplateCol width="5ch" textIndent content="RTE" />
-          </TemplateRowDiv>
-          <TemplateRowDiv>
-            <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={(event) => setRouteInput(event.target.value)} rows={3} />
-          </TemplateRowDiv>
-          <TemplateRowDiv>
-            <TemplateCol width="5ch" textIndent content="RMK" />
-            <TemplateRowDiv alignRight />
-            <TemplateCol>
-              <EdstButton disabled content="Create FP..." title={Tooltips.templateMenuCreateFp} />
-            </TemplateCol>
-          </TemplateRowDiv>
-          <TemplateRowDiv>
-            <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={(event) => setRmkInput(event.target.value)} rows={3} />
-          </TemplateRowDiv>
-          <TemplateRowDiv>
-            <TemplateCol bottomRow>
-              <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
-            </TemplateCol>
-            <TemplateCol bottomRow alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
-            </TemplateCol>
-          </TemplateRowDiv>
-        </TemplateBodyDiv>
-      </TemplateDiv>
-    )
+          </TemplateCol>
+          <TemplateCol width="6ch" textIndent content="BCN" />
+          <TemplateCol width="6ch" textIndent content="SPD" />
+          <TemplateCol width="14ch" textIndent content="FIX" />
+          <TemplateCol width="8ch" textIndent content="TIM" />
+          <FlexCol textIndent>ALT</FlexCol>
+          <TemplateCol>
+            <EdstButton margin="0 2px 0 0" disabled content="More..." title={Tooltips.templateMenuMore} />
+          </TemplateCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateInput width="9ch" title={Tooltips.templateMenuAid} value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
+          <TemplateInput width="5ch" title={Tooltips.templateMenuNum} value={numInput} onChange={(event) => setNumInput(event.target.value)} />
+          <TemplateInput width="5ch" title={Tooltips.templateMenuSai} value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
+          <TemplateInput width="6ch" title={Tooltips.templateMenuTyp} value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
+          <TemplateInput width="8ch" title={Tooltips.templateMenuEqpBox} value={equipInput} onChange={(event) => setEquipInput(event.target.value)} />
+          <TemplateInput width="6ch" title={Tooltips.templateMenuBcn} value={beaconInput} onChange={(event) => setBeaconInput(event.target.value)} />
+          <TemplateInput width="6ch" title={Tooltips.templateMenuSpd} value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
+          <TemplateInput width="14ch" title={Tooltips.templateMenuFix} value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
+          <TemplateInput width="8ch" title={Tooltips.templateMenuTim} value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
+          <FlexCol title={Tooltips.templateMenuAlt}>
+            <TemplateInput flexShrink={1} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
+          </FlexCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol width="5ch" textIndent content="RTE" />
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={(event) => setRouteInput(event.target.value)} rows={3} />
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol width="5ch" textIndent content="RMK" />
+          <TemplateRowDiv alignRight />
+          <TemplateCol>
+            <EdstButton disabled content="Create FP..." title={Tooltips.templateMenuCreateFp} />
+          </TemplateCol>
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={(event) => setRmkInput(event.target.value)} rows={3} />
+        </TemplateRowDiv>
+        <TemplateRowDiv>
+          <TemplateCol bottomRow>
+            <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
+          </TemplateCol>
+          <TemplateCol bottomRow alignRight>
+            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
+          </TemplateCol>
+        </TemplateRowDiv>
+      </TemplateBodyDiv>
+    </TemplateDiv>
   );
 };

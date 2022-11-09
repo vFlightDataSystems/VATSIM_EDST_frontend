@@ -18,7 +18,19 @@ import { useSocketConnector } from "hooks/useSocketConnector";
 
 const ATC_SERVER_URL = import.meta.env.VITE_ATC_HUB_URL;
 
-const useHubContextInit = () => {
+type HubContextValue = {
+  connectHub: () => Promise<void>;
+  disconnectHub: () => Promise<void>;
+  hubConnection: HubConnection | null;
+};
+
+export const HubContext = createContext<HubContextValue>({
+  connectHub: Promise.reject,
+  disconnectHub: Promise.reject,
+  hubConnection: null,
+});
+
+export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
@@ -125,27 +137,16 @@ const useHubContextInit = () => {
   }, [dispatch, hubConnected, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
-    ref.current?.stop().then(() => setHubConnected(false));
+    ref.current?.stop()?.then(() => setHubConnected(false));
     disconnectSocket();
   }, [disconnectSocket]);
 
-  return {
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
+  const contextValue = {
     hubConnection: ref.current,
     connectHub,
     disconnectHub,
   };
-};
 
-type HubContextValue = ReturnType<typeof useHubContextInit>;
-
-export const HubContext = createContext<HubContextValue>({
-  connectHub: Promise.reject,
-  disconnectHub: Promise.reject,
-  hubConnection: null,
-});
-
-export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const hubConnection = useHubContextInit();
-
-  return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
+  return <HubContext.Provider value={contextValue}>{children}</HubContext.Provider>;
 };
