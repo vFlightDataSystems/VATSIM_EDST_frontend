@@ -9,7 +9,6 @@ import { invoke } from "@tauri-apps/api/tauri";
  */
 export const useCenterCursor = (ref: RefObject<HTMLElement>, deps: DependencyList = []) => {
   useEffect(() => {
-    // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
       const newCursorPos = {

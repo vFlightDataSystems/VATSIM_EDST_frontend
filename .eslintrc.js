@@ -67,5 +67,6 @@ module.exports = {
     "prefer-destructuring": "off",
     "no-void": "off",
     "no-console": "off",
+    "no-underscore-dangle": "off",
   },
 };

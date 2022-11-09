@@ -40,7 +40,6 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
   const prevPosRef = useRef<WindowPosition>();
 
   useEffect(() => {
-    // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
       if (!prevPosRef.current) {
@@ -108,7 +107,6 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
   }, [windowSize, parentPos, props.parentWidth]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-underscore-dangle
     if (window.__TAURI__) {
       let rect = null;
       if (xRef.current) {

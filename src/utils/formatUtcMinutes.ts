@@ -7,10 +7,10 @@ import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
  * @returns {string} - UTC time string in HHMM format
  */
 export function formatUtcMinutes(minutes?: number): string {
-  const mins = minutes ?? getUtcMinutesAfterMidnight();
+  const _minutes = minutes ?? getUtcMinutesAfterMidnight();
   return (
-    Math.trunc(mod(mins / 60, 24))
+    Math.trunc(mod(_minutes / 60, 24))
       .toString()
-      .padStart(2, "0") + Math.trunc(mod(mins, 60)).toString().padStart(2, "0")
+      .padStart(2, "0") + Math.trunc(mod(_minutes, 60)).toString().padStart(2, "0")
   );
 }

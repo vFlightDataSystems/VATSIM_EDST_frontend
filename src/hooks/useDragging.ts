@@ -90,12 +90,10 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
         let previewPos;
         let relX = 0;
         let relY = 0;
-        // eslint-disable-next-line no-underscore-dangle
         if (window.__TAURI__) {
           void invoke<void>("set_cursor_grab", { value: true });
         }
         if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
-          // eslint-disable-next-line no-underscore-dangle
           if (window.__TAURI__) {
             previewPos = { x: ppos.left, y: ppos.top };
             void invoke<void>("set_cursor_position", previewPos);
@@ -134,7 +132,6 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
     if (dragging && ref?.current && dragPreviewStyle) {
       const { left, top } = dragPreviewStyle;
       const newPos = { left: left + 1, top };
-      // eslint-disable-next-line no-underscore-dangle
       if (window.__TAURI__) {
         void invoke<void>("set_cursor_grab", { value: false });
       }

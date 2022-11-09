@@ -135,7 +135,6 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
       const pos = ref.current?.getBoundingClientRect();
       const ppos = pos ? { x: pos.left, y: pos.top } : null;
       if (event.buttons && ref.current && ppos) {
-        // eslint-disable-next-line no-underscore-dangle
         if (window.__TAURI__) {
           invoke("set_cursor_grab", { value: true }).then();
         }
@@ -167,7 +166,6 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
         x: offset.x - ppos.x + dragPreviewStyle.left,
         y: offset.y - ppos.y + dragPreviewStyle.top,
       };
-      // eslint-disable-next-line no-underscore-dangle
       if (window.__TAURI__) {
         invoke("set_cursor_grab", { value: false }).then();
       }
