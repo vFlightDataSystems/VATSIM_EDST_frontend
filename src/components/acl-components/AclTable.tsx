@@ -31,12 +31,6 @@ const AclBodyDiv = styled(NoSelectDiv)`
   color: ${(props) => props.theme.colors.grey};
 `;
 
-const SpaList = React.memo(() => <ListMapper selector={aclSpaListSelector} Component={AclRow} showSep />);
-
-const AckList = React.memo(() => <ListMapper selector={aclAckListSelector} Component={AclRow} />);
-
-const UnAckList = React.memo(() => <ListMapper selector={aclUnAckListSelector} Component={AclRow} />);
-
 export const AclTable = () => {
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(aclManualPostingSelector);
@@ -132,12 +126,12 @@ export const AclTable = () => {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        <SpaList />
-        <AckList />
+        <ListMapper selector={aclSpaListSelector} Component={AclRow} showSep />
+        <ListMapper selector={aclAckListSelector} Component={AclRow} />
         {manualPosting && (
           <>
             <BodyRowDiv separator />
-            <UnAckList />
+            <ListMapper selector={aclUnAckListSelector} Component={AclRow} />
           </>
         )}
       </ScrollContainer>

@@ -1,5 +1,5 @@
 import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import type { WindowPosition } from "types/windowPosition";
 import { DraggableDiv } from "styles/NoSelectDiv";
 import { borderHover, buttonBorder2px, buttonBorderInverted2px, createBorder, outlineHover } from "styles/styles";
@@ -160,8 +160,12 @@ export const OptionsBodyCol = styled(EdstTooltip)<OptionsBodyColProps>`
   ${(props) => props.padding && { padding: props.padding }};
   ${(props) => props.margin && { margin: props.margin }};
 
-  ${(props) => props.selected && { color: "#000000" }};
-  ${(props) => props.selected && { "background-color": "#ADADAD" }};
+  ${(props) =>
+    props.selected &&
+    css`
+      color: #000000;
+      background-color: #adadad;
+    `};
   &:disabled {
     all: inherit;
   }

@@ -44,8 +44,6 @@ type AclRowProps = {
 
 /**
  * Single ACL row
- * @param aircraftId
- * @param altMouseDown boolean indicating where mouse is pressed on the ACL header Alt column
  */
 export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => {
   const dispatch = useRootDispatch();

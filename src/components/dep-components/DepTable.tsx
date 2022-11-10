@@ -21,12 +21,6 @@ const DepBodyDiv = styled(NoSelectDiv)`
   color: ${(props) => props.theme.colors.grey};
 `;
 
-const SpaList = React.memo(() => <ListMapper selector={depSpaListSelector} Component={DepRow} showSep />);
-
-const AckList = React.memo(() => <ListMapper selector={depAckListSelector} Component={DepRow} />);
-
-const UnAckList = React.memo(() => <ListMapper selector={depUnAckListSelector} Component={DepRow} />);
-
 export const DepTable = () => {
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(depManualPostingSelector);
@@ -57,12 +51,12 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        <SpaList />
-        <AckList />
+        <ListMapper selector={depSpaListSelector} Component={DepRow} showSep />
+        <ListMapper selector={depAckListSelector} Component={DepRow} />
         {manualPosting && (
           <>
             <BodyRowDiv separator />
-            <UnAckList />
+            <ListMapper selector={depUnAckListSelector} Component={DepRow} />
           </>
         )}
       </ScrollContainer>

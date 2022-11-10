@@ -11,9 +11,10 @@ export const AclCol1 = styled(Col)<AclCol1Props>`
     }};
 `;
 type RadioColProps = { green?: boolean; header?: boolean; keep?: boolean };
-export const RadioCol = styled(AclCol1)<RadioColProps>`
+export const RadioCol = styled(Col)<RadioColProps>`
   color: ${(props) => (props.green ? props.theme.colors.green : props.theme.colors.grey)};
   width: 10px;
+  margin: 0 2px;
   &:hover {
     border: 1px solid ${(props) => (props.green ? props.theme.colors.green : "#F0F0F0")};
   }
@@ -21,8 +22,6 @@ export const RadioCol = styled(AclCol1)<RadioColProps>`
     props.header &&
     css`
       font-size: 14px;
-      margin: 0 2px;
-      width: 10px;
       pointer-events: none;
     `};
   ${(props) => props.keep && { "background-color": "#414141" }};

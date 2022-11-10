@@ -16,9 +16,6 @@ const PlansDisplayHeaderDiv = styled(NoSelectDiv)``;
 
 /**
  * Plans Display title bar and header row with add/find input field
- * @param focused focused state of Plans Display window
- * @param toggleFullscreen eventHandler to toggle maximized mode of Plans Display window
- * @param startDrag startDrag event handler
  */
 export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: HeaderComponentProps) => {
   const dispatch = useRootDispatch();

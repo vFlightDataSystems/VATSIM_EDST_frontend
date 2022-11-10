@@ -9,7 +9,7 @@ type MapRowProps = {
   Component: ComponentType<{ aircraftId: string }>;
   showSep?: boolean;
 };
-export const ListMapper = ({ selector, Component, showSep }: MapRowProps) => {
+export const ListMapper = React.memo(({ selector, Component, showSep }: MapRowProps) => {
   const list = useRootSelector(selector);
   return (
     <>
@@ -22,4 +22,4 @@ export const ListMapper = ({ selector, Component, showSep }: MapRowProps) => {
       {showSep && list.length > 0 && <BodyRowDiv separator />}
     </>
   );
-};
+});

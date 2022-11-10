@@ -19,9 +19,6 @@ const AclHeaderDiv = styled(NoSelectDiv)``;
 
 /**
  * ACL title bar and header row with add/find input field
- * @param focused focused state of ACL window
- * @param toggleFullscreen event handler to toggle maximized mode of ACL window
- * @param startDrag startDrag event handler
  */
 export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderComponentProps) => {
   const asel = useRootSelector(aclAselSelector);

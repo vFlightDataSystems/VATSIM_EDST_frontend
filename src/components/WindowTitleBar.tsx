@@ -90,11 +90,6 @@ type WindowTitleBarProps = {
 
 /**
  * Window title bar for various components
- * @param focused focused state of window, title bar background becomes cyan if true
- * @param text text to display in the title bar
- * @param closeWindow eventHandler for close button
- * @param toggleFullscreen eventHandler for minimize/maximize button
- * @param startDrag startDrag event handler
  */
 export const WindowTitleBar = ({ focused, text, closeWindow, toggleFullscreen, startDrag }: WindowTitleBarProps) => {
   return (

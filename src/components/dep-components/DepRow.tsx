@@ -81,7 +81,6 @@ const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) 
 
 /**
  * Single DEP row
- * @param aircraftId
  */
 export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const dispatch = useRootDispatch();
