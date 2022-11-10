@@ -18,25 +18,25 @@ export const ToolsOptionsMenu = () => {
   return (
     <>
       <OptionsBodyRow>
-        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}>
+        <OptionsFlexCol onMouseDown={() => setDisplayCoordinationColumn(!displayCoordinationColumn)}>
           <OptionIndicator selected={displayCoordinationColumn} />
           Display Coordination Column
         </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}>
+        <OptionsFlexCol onMouseDown={() => setDropTrackDelete(!dropTrackDelete)}>
           <OptionIndicator selected={dropTrackDelete} />
           Drop Track Delete
         </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setIafDofManual(!iafDofManual)}>
+        <OptionsFlexCol onMouseDown={() => setIafDofManual(!iafDofManual)}>
           <OptionIndicator selected={iafDofManual} />
           IAFDOF Manual
         </OptionsFlexCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}>
+        <OptionsFlexCol onMouseDown={() => setNonRvsmIndicator(!nonRvsmIndicator)}>
           <OptionIndicator selected={nonRvsmIndicator} />
           Non-RVSM Indicator
         </OptionsFlexCol>

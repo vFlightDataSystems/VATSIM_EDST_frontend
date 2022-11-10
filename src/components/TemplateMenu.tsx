@@ -40,12 +40,12 @@ const TemplateRowDiv = styled.div<TemplateRowDivProps>`
   }
 `;
 
+type TemplateColCSSProps = Pick<CSSProperties, "width" | "flexGrow" | "flexShrink">;
 type TemplateColProps = {
   bottomRow?: boolean;
   alignRight?: boolean;
-  width?: CSSProperties["width"];
   textIndent?: boolean;
-};
+} & TemplateColCSSProps;
 
 const TemplateCol = styled(EdstTooltip)<TemplateColProps>`
   font-size: ${(props) => props.theme.fontProps.inputFontSize};
@@ -54,7 +54,8 @@ const TemplateCol = styled(EdstTooltip)<TemplateColProps>`
   padding: 0 2px;
   justify-content: left;
   display: flex;
-  flex-shrink: 0;
+  flex-grow: ${(props) => props.flexGrow ?? 0};
+  flex-shrink: ${(props) => props.flexShrink ?? 0};
   width: ${(props) => props.width ?? "auto"};
   ${(props) => props.textIndent && { "text-indent": "6px" }}
   border: 1px solid transparent;
@@ -88,14 +89,14 @@ type TemplateInputProps = {
 
 const TemplateInput = ({ title, width, flexShrink, ...props }: TemplateInputProps) => {
   return (
-    <TemplateCol title={title} style={{ flexGrow: 1, flexShrink: flexShrink ?? 0, width }}>
+    <TemplateCol title={title} width={width} flexShrink={flexShrink}>
       <EdstInput {...props} />
     </TemplateCol>
   );
 };
 const TemplateTextArea = ({ title, ...props }: TemplateInputProps) => {
   return (
-    <TemplateCol title={title} style={{ flexGrow: 1, width: "auto" }}>
+    <TemplateCol title={title} flexGrow={1}>
       <EdstTextArea {...props} />
     </TemplateCol>
   );

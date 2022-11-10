@@ -324,7 +324,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         <AclCol1 border />
         <AclCol1 border />
         <SpecialBox disabled />
-        <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
+        <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
           <FidCol hover onMouseDown={handleFidClick} selected={isSelected(AclRowField.FID)}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}

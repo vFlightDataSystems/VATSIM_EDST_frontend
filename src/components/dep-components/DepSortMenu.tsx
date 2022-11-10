@@ -20,25 +20,25 @@ export const DepSortMenu = () => {
   return (
     <SortMenu edstWindow={EdstWindow.DEP_SORT_MENU} onSubmit={onSubmit}>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.ACID)} title={Tooltips.sortAcid}>
+        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.ACID)} title={Tooltips.sortAcid}>
           <OptionIndicatorDiamond selected={selectedOption === DepSortOption.ACID} />
           ACID
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.DESTINATION)} title={Tooltips.sortDestination}>
+        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.DESTINATION)} title={Tooltips.sortDestination}>
           <OptionIndicatorDiamond selected={selectedOption === DepSortOption.DESTINATION} />
           Destination
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.ORIGIN)} title={Tooltips.sortOrigin}>
+        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.ORIGIN)} title={Tooltips.sortOrigin}>
           <OptionIndicatorDiamond selected={selectedOption === DepSortOption.ORIGIN} />
           Origin
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(DepSortOption.P_TIME)} disabled title={Tooltips.sortPTime}>
+        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.P_TIME)} disabled title={Tooltips.sortPTime}>
           <OptionIndicatorDiamond selected={selectedOption === DepSortOption.P_TIME} />
           P-Time
         </SortCol>

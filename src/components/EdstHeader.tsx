@@ -58,7 +58,8 @@ const ColButton = styled.button<ColButtonProps>`
   `};
 
   ${borderHover};
-  &:disabled {
+  &[disabled] {
+    pointer-events: none;
     border: 1px solid #707070;
     color: #707070;
   }

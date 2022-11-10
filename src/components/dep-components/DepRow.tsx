@@ -225,7 +225,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
         </RadioCol>
         <DepPTimeCol>0000</DepPTimeCol>
-        <InnerRow highlight={entry.highlighted} ref={ref} style={{ minWidth: entry.showFreeText ? "1200px" : 0 }}>
+        <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
           <FidCol
             hover
             selected={isSelected(DepRowField.FID)}

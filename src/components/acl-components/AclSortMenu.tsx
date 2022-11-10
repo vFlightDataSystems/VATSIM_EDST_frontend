@@ -21,58 +21,43 @@ export const AclSortMenu = () => {
   return (
     <SortMenu edstWindow={EdstWindow.ACL_SORT_MENU} onSubmit={onSubmit}>
       <SectorRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSector(!sector)} title={Tooltips.sortAclSectorNonSector}>
+        <SortCol onMouseDown={() => setSector(!sector)} title={Tooltips.sortAclSectorNonSector}>
           <OptionIndicator selected={sector} />
           Sector/Non-Sector
         </SortCol>
       </SectorRow>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(AclSortOption.ACID)} title={Tooltips.sortAcid}>
+        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.ACID)} title={Tooltips.sortAcid}>
           <OptionIndicatorDiamond selected={selectedOption === AclSortOption.ACID} />
           ACID
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(AclSortOption.BOUNDARY_TIME)} title={Tooltips.sortBoundaryTime}>
+        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.BOUNDARY_TIME)} title={Tooltips.sortBoundaryTime}>
           <OptionIndicatorDiamond selected={selectedOption === AclSortOption.BOUNDARY_TIME} />
           Boundary Time
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol
-          style={{ flexGrow: 1 }}
-          onMouseDown={() => setSelectedOption(AclSortOption.CONFLICT_STATUS)}
-          disabled
-          title={Tooltips.sortConflictStatus}
-        >
+        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.CONFLICT_STATUS)} disabled title={Tooltips.sortConflictStatus}>
           <OptionIndicatorDiamond selected={selectedOption === AclSortOption.CONFLICT_STATUS} />
           Conflict Status
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol
-          style={{ flexGrow: 1 }}
-          onMouseDown={() => setSelectedOption(AclSortOption.CONFLICT_TIME)}
-          disabled
-          title={Tooltips.sortConflictTime}
-        >
+        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.CONFLICT_TIME)} disabled title={Tooltips.sortConflictTime}>
           <OptionIndicatorDiamond selected={selectedOption === AclSortOption.CONFLICT_TIME} />
           Conflict Time
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol style={{ flexGrow: 1 }} onMouseDown={() => setSelectedOption(AclSortOption.DESTINATION)} title={Tooltips.sortDestination}>
+        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.DESTINATION)} title={Tooltips.sortDestination}>
           <OptionIndicatorDiamond selected={selectedOption === AclSortOption.DESTINATION} />
           Destination
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol
-          style={{ flexGrow: 1 }}
-          onMouseDown={() => setSelectedOption(AclSortOption.SECTOR_BY_SECTOR)}
-          disabled
-          title={Tooltips.sortSectorBySector}
-        >
+        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.SECTOR_BY_SECTOR)} disabled title={Tooltips.sortSectorBySector}>
           <OptionIndicatorDiamond selected={selectedOption === AclSortOption.SECTOR_BY_SECTOR} />
           Sector-by-Sector
         </SortCol>

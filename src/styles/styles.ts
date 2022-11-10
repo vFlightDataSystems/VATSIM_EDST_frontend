@@ -56,7 +56,8 @@ export const BodyRowDiv = styled.div<BodyRowDivProps>`
       "border-bottom": "2px solid #AA8800",
     }};
 `;
-type InnerRowProps = { highlight?: boolean };
+type InnerRowCSSProps = Pick<CSSProperties, "minWidth">;
+type InnerRowProps = { highlight?: boolean } & InnerRowCSSProps;
 export const InnerRow = styled.div<InnerRowProps>`
   display: flex;
   align-items: center;

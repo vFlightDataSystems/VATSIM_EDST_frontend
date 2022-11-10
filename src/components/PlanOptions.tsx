@@ -31,7 +31,7 @@ type PlanOptionsRowProps = {
 };
 const PlanOptionsRow = ({ content, ...props }: PlanOptionsRowProps) => (
   <OptionsBodyRow>
-    <OptionsBodyCol style={{ flexGrow: 1 }} {...props} hover>
+    <OptionsBodyCol {...props} hover>
       {content}
     </OptionsBodyCol>
   </OptionsBodyRow>

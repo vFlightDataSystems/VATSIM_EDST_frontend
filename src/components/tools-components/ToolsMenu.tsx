@@ -51,24 +51,16 @@ export const ToolsMenu = () => {
           {!optionsMenuOpen && (
             <>
               <OptionsBodyRow>
-                <OptionsFlexCol style={{ flexGrow: 1 }} disabled>
-                  Airspace Status...
-                </OptionsFlexCol>
+                <OptionsFlexCol disabled>Airspace Status...</OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <OptionsFlexCol style={{ flexGrow: 1 }} disabled>
-                  Airport Stream Filter Status...
-                </OptionsFlexCol>
+                <OptionsFlexCol disabled>Airport Stream Filter Status...</OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <OptionsFlexCol style={{ flexGrow: 1 }} onMouseDown={() => setOptionsMenuOpen(true)}>
-                  Options...
-                </OptionsFlexCol>
+                <OptionsFlexCol onMouseDown={() => setOptionsMenuOpen(true)}>Options...</OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBodyRow>
-                <OptionsFlexCol style={{ flexGrow: 1 }} disabled>
-                  Restrictions...
-                </OptionsFlexCol>
+                <OptionsFlexCol disabled>Restrictions...</OptionsFlexCol>
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>

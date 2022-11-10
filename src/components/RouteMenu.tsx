@@ -351,16 +351,7 @@ export const RouteMenu = () => {
                   <PposDiv>{frd}..</PposDiv>
                 </EdstTooltip>
               )}
-              <EdstTooltip
-                title={Tooltips.routeMenuRouteInput}
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  flexGrow: "1",
-                }}
-              >
-                <Input value={routeInput} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={(event) => handleInputKeyDown(event)} />
-              </EdstTooltip>
+              <Input value={routeInput} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={(event) => handleInputKeyDown(event)} />
             </InputContainer>
           </OptionsBodyCol>
         </RouteMenuRow>
