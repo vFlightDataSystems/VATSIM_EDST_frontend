@@ -10,11 +10,11 @@ import {
   AltCol,
   AltColDiv,
   CodeCol,
-  EmbeddedRouteTextSpan,
+  EmbeddedRouteText,
   FidCol,
   HotBox,
   RouteCol,
-  RouteSpan,
+  RouteContent,
   SpecialBox,
 } from "styles/sharedColumns";
 import { EdstWindow } from "enums/edstWindow";
@@ -250,7 +250,6 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           </AircraftTypeCol>
           <AltCol>
             <AltColDiv
-              as="div"
               ref={altRef}
               selected={isSelected(DepRowField.ALT)}
               onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ALT, "dep-alt-asel", EdstWindow.ALTITUDE_MENU)}
@@ -270,33 +269,30 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
             {entry.remarks.length > 0 && "*"}
           </RemarksBox>
           <RouteCol
-            as="div"
             ref={routeRef}
             hover
             selected={isSelected(DepRowField.ROUTE)}
             onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ROUTE, "dep-route-asel", EdstWindow.ROUTE_MENU)}
           >
-            <RouteSpan padding="0 2px">
+            <RouteContent padding="0 2px">
               {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
               {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
-                  <RouteSpan>{entry.departure}</RouteSpan>
-                  {pendingPdar && !onPdar && (
-                    <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteTextSpan>
-                  )}
+                  <RouteContent>{entry.departure}</RouteContent>
+                  {pendingPdar && !onPdar && <EmbeddedRouteText selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteText>}
                   {!pendingPdar && pendingPdr && !onPdr && (
-                    <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteTextSpan>
+                    <EmbeddedRouteText selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteText>
                   )}
                   {route}
                   {!pendingPdar && pendingPar && !onPar && (
-                    <EmbeddedRouteTextSpan selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteTextSpan>
+                    <EmbeddedRouteText selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteText>
                   )}
                   {route?.slice(-1) !== "." && ".."}
                   {entry.destination}
                 </>
               )}
-            </RouteSpan>
+            </RouteContent>
           </RouteCol>
         </InnerRow>
       </BodyRowDiv>

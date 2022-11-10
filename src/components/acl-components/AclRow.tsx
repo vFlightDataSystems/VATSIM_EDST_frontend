@@ -15,8 +15,8 @@ import {
   FidCol,
   HotBox,
   RouteCol,
-  RouteDepAirportSpan,
-  RouteSpan,
+  RouteDepAirport,
+  RouteContent,
   SpecialBox,
 } from "styles/sharedColumns";
 import { EdstWindow } from "enums/edstWindow";
@@ -346,7 +346,6 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           </AircraftTypeCol>
           <AltCol>
             <AltColDiv
-              as="div"
               ref={altRef}
               headerMouseDown={altMouseDown}
               selected={isSelected(AclRowField.ALT)}
@@ -369,7 +368,6 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             {entry.assignedHeading && entry.scratchpadHeading && "*"}
           </SpecialBox>
           <HdgCol
-            as="div"
             ref={hdgRef}
             hover
             visibilityHidden={hiddenColumns.includes(AclRowField.HDG)}
@@ -381,7 +379,6 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           </HdgCol>
           <HdgSpdSlashCol>/</HdgSpdSlashCol>
           <SpdCol
-            as="div"
             ref={spdRef}
             hover
             visibilityHidden={hiddenColumns.includes(AclRowField.SPD)}
@@ -396,21 +393,15 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           </SpecialBox>
           <SpecialBox disabled />
           {anyHolding && (
-            <SpecialBox as="div" ref={holdRef} color={colors.brown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
+            <SpecialBox ref={holdRef} color={colors.brown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}
           <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
             {entry.remarks.length > 0 && "*"}
           </RemarksBox>
-          <RouteCol
-            as="div"
-            ref={routeRef}
-            hover
-            selected={isSelected(AclRowField.ROUTE)}
-            onMouseDown={(event) => handleRouteClick(event.currentTarget)}
-          >
-            <RouteSpan padding="0 2px">
+          <RouteCol ref={routeRef} hover selected={isSelected(AclRowField.ROUTE)} onMouseDown={(event) => handleRouteClick(event.currentTarget)}>
+            <RouteContent padding="0 2px">
               {entry.routeDisplay === RouteDisplayOption.holdAnnotations &&
                 holdAnnotations &&
                 `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
@@ -424,16 +415,16 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
-                  <RouteDepAirportSpan amendmentPending={parAvail && !onPar} selected={isSelected(AclRowField.ROUTE)}>
+                  <RouteDepAirport amendmentPending={parAvail && !onPar} selected={isSelected(AclRowField.ROUTE)}>
                     {entry.departure}
-                  </RouteDepAirportSpan>
+                  </RouteDepAirport>
                   ./.
                   {route}
                   {!route.endsWith(".") && route.length > 0 && `.`}
                   {entry.destination}
                 </>
               )}
-            </RouteSpan>
+            </RouteContent>
           </RouteCol>
         </InnerRow>
       </BodyRowDiv>

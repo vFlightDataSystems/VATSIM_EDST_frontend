@@ -85,18 +85,20 @@ export const RouteCol = styled(Col)<RouteColProps>`
   margin-left: 4px;
   padding: ${(props) => props.padding ?? "0 2px 0 0"};
 `;
-type RouteSpanProps = { padding?: CSSProperties["padding"] };
-export const RouteSpan = styled(RouteCol)<RouteSpanProps>`
+type RouteContentProps = { padding?: CSSProperties["padding"] };
+export const RouteContent = styled(Col)<RouteContentProps>`
+  justify-content: left;
   max-width: 50vw;
   pointer-events: none;
+  white-space: nowrap;
   border: none;
   margin: 0;
   border: transparent;
-  padding: ${(props) => props.padding ?? 0};
+  padding: ${(props) => props.padding ?? "0"};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
-export const EmbeddedRouteTextSpan = styled(RouteSpan)`
+export const EmbeddedRouteText = styled(RouteContent)`
   color: ${(props) => props.theme.colors.blue};
   ${(props) =>
     props.selected && {
@@ -104,13 +106,11 @@ export const EmbeddedRouteTextSpan = styled(RouteSpan)`
       color: "#000000",
     }}
 `;
-export const RouteDepAirportSpan = styled(RouteSpan)<{
-  amendmentPending?: boolean;
-}>`
+export const RouteDepAirport = styled(RouteContent)<{ amendmentPending?: boolean }>`
   ${(props) =>
     props.amendmentPending && {
       color: props.selected ? "#000000" : props.theme.colors.blue,
-      "background-color": props.selected ? props.theme.colors.blue : "#transparent",
+      "background-color": props.selected ? props.theme.colors.blue : "transparent",
     }}
   }
 `;

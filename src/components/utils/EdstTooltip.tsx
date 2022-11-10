@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { useRootSelector } from "~redux/hooks";
@@ -36,18 +36,18 @@ type EdstTooltipProps = {
   children?: React.ReactNode;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export const EdstTooltip = ({ title, content, ...props }: EdstTooltipProps) => {
-  const ref = useRef<HTMLDivElement>(null);
+export const EdstTooltip = forwardRef<HTMLDivElement, EdstTooltipProps>(({ title, content, ...props }, ref) => {
+  const localRef = useRef<HTMLDivElement | null>(null);
   const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
 
   useEffect(() => {
-    if (title && ref.current) {
-      const element = ref.current;
+    if (title && localRef.current) {
+      const element = localRef.current;
       const onMouseEnter = (e: MouseEvent) => e.shiftKey && setTooltipEnabled(true);
       const onMouseLeave = () => setTooltipEnabled(false);
-      ref.current.addEventListener("mouseenter", onMouseEnter);
-      ref.current.addEventListener("mouseleave", onMouseLeave);
+      localRef.current.addEventListener("mouseenter", onMouseEnter);
+      localRef.current.addEventListener("mouseleave", onMouseLeave);
 
       return () => {
         if (element) {
@@ -60,9 +60,19 @@ export const EdstTooltip = ({ title, content, ...props }: EdstTooltipProps) => {
   }, [title]);
 
   return (
-    <TooltipBody ref={ref} {...props}>
+    <TooltipBody
+      ref={(node) => {
+        localRef.current = node;
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
+      {...props}
+    >
       {globalTooltipsEnabled && tooltipEnabled && title && <TooltipContent title={title} />}
       {content ?? props.children}
     </TooltipBody>
   );
-};
+});
