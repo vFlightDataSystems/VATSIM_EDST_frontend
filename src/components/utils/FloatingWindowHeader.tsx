@@ -17,9 +17,9 @@ export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, s
   return (
     <FloatingWindowHeaderDiv>
       <FloatingWindowHeaderColDivRect
-        onMouseDownCapture={(event) => {
+        onMouseDown={(event) => {
           // TODO: a click event will not close any option menus this way, needs fixing
-          event.stopPropagation();
+          event.preventDefault();
           handleOptionsMouseDown?.();
         }}
       >

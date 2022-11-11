@@ -145,17 +145,16 @@ export const MessageComposeArea = () => {
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
 
   const onMcaMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault();
+    if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
+      dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+    }
     switch (event.button) {
       case 1:
+        event.preventDefault();
         setShowOptions(true);
-        event.stopPropagation();
         break;
       default:
         startDrag(event);
-        if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
-          dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
-        }
         break;
     }
   };
@@ -463,7 +462,7 @@ export const MessageComposeArea = () => {
         anyDragging={anyDragging}
         pos={pos}
         zIndex={zIndex}
-        onMouseDownCapture={onMcaMouseDown}
+        onMouseDown={onMcaMouseDown}
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <MessageComposeInputAreaDiv {...windowOptions}>

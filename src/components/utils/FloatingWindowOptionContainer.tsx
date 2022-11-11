@@ -3,7 +3,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
-import { useEventListener, useWindowSize } from "usehooks-ts";
+import { useOnClickOutside, useWindowSize } from "usehooks-ts";
 import {
   FloatingWindowDiv,
   FloatingWindowHeaderColDiv16ch,
@@ -22,7 +22,7 @@ const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{
   height: auto;
 `;
 
-type FloatingWindowOptionDivProps = Pick<CSSProperties, "backgroundColor">;
+type FloatingWindowOptionDivProps = { backgroundColor: CSSProperties["backgroundColor"] };
 const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOptionDivProps>`
   height: 1em;
   background-color: ${(props) => props.backgroundColor};
@@ -126,16 +126,14 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
     }
   }, []);
 
-  useEventListener("mousedown", () => props.onClose?.());
+  useOnClickOutside(ref, (event) => {
+    if (!event.defaultPrevented) {
+      props.onClose?.();
+    }
+  });
 
   return (
-    <FloatingWindowOptionsBodyDiv
-      onMouseDown={(event) => event.stopPropagation()}
-      pos={pos}
-      ref={ref}
-      zIndex={props.zIndex + 1}
-      offsetPos={!props.title}
-    >
+    <FloatingWindowOptionsBodyDiv pos={pos} ref={ref} zIndex={props.zIndex + 1} offsetPos={!props.title}>
       {props.title && (
         <FloatingWindowHeaderDiv ref={headerRef}>
           <FloatingWindowHeaderColDivFlex>{props.title}</FloatingWindowHeaderColDivFlex>

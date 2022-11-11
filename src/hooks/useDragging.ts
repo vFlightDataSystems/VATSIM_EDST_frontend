@@ -80,7 +80,6 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
   const startDrag: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
       if (ref.current && ppos && !anyDragging && (event.button === 0 || event.button === 1)) {
-        event.stopPropagation();
         if (event.button === 1) {
           setCurrentStopDragOn("mousedown");
         }
@@ -148,12 +147,17 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
     }
   }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, ref]);
 
-  useEventListener(currentStopDragOn, (event) => {
-    if (dragPreviewStyle && event.button === 0) {
-      setCurrentStopDragOn(stopDragOn);
-      stopDrag();
-    }
-  });
+  useEventListener(
+    currentStopDragOn,
+    (event) => {
+      if (dragPreviewStyle && event.button === 0) {
+        setCurrentStopDragOn(stopDragOn);
+        stopDrag();
+      }
+    },
+    undefined,
+    true
+  );
 
   return { startDrag, dragPreviewStyle, anyDragging };
 };
