@@ -1,5 +1,5 @@
 import type { MouseEventHandler } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
@@ -92,7 +92,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
   const xRef = useRef<HTMLDivElement>(null);
   const windowSize = useWindowSize();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (ref.current) {
       const rect = ref.current.getBoundingClientRect();
       if (parentPos.left + props.parentWidth + rect.width > windowSize.width) {
