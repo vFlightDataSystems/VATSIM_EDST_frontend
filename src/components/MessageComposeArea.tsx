@@ -399,7 +399,7 @@ export const MessageComposeArea = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    event.preventDefault();
+    // event.preventDefault();
     if (
       document.activeElement?.localName !== "input" &&
       document.activeElement?.localName !== "textarea" &&
