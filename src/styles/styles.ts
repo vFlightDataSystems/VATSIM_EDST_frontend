@@ -62,6 +62,7 @@ export const InnerRow = styled.div<InnerRowProps>`
   display: flex;
   align-items: center;
   min-height: 1em;
+  min-width: ${(props) => props.minWidth};
   border-bottom: 1px solid transparent;
   ${(props) =>
     props.highlight && {
