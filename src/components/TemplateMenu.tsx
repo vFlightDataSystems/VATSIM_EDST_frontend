@@ -156,7 +156,6 @@ export const TemplateMenu = () => {
       zIndex={zStack.indexOf(EdstWindow.TEMPLATE_MENU)}
       onMouseDown={() => zStack.indexOf(EdstWindow.TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TEMPLATE_MENU))}
       anyDragging={anyDragging}
-      id="template-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

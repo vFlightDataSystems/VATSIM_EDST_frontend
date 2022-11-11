@@ -144,7 +144,6 @@ export const HoldMenu = () => {
       zIndex={zStack.indexOf(EdstWindow.HOLD_MENU)}
       onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
       anyDragging={anyDragging}
-      id="hold-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

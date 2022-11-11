@@ -41,7 +41,6 @@ export const SortMenu = ({ edstWindow, onSubmit, children }: SortMenuProps) => {
         zIndex={zStack.indexOf(edstWindow)}
         onMouseDown={() => zStack.indexOf(edstWindow) < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
         anyDragging={anyDragging}
-        id="sort-menu"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <SortHeader focused={focused} onMouseDown={startDrag}>

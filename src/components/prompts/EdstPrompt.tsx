@@ -27,7 +27,6 @@ type EdstPromptProps = PropsWithChildren<{
   onSubmit: () => void;
   cancelText: string;
   onCancel?: () => void;
-  id: string;
   stopDragOn?: "mousedown" | "mouseup";
 }>;
 
@@ -48,7 +47,6 @@ export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps
       zIndex={zStack.indexOf(props.windowId)}
       anyDragging={anyDragging}
       onMouseDown={() => zStack.indexOf(props.windowId) < zStack.length - 1 && dispatch(pushZStack(props.windowId))}
-      id={props.id}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

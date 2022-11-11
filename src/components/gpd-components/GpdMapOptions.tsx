@@ -38,7 +38,6 @@ export const GpdMapOptions = () => {
           zStack.indexOf(EdstWindow.GPD_MAP_OPTIONS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.GPD_MAP_OPTIONS_MENU))
         }
         anyDragging={anyDragging}
-        id="gpd-map-options-menu"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

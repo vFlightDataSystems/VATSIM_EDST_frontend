@@ -91,7 +91,6 @@ export const HeadingMenu = () => {
       zIndex={zStack.indexOf(EdstWindow.HEADING_MENU)}
       onMouseDown={() => zStack.indexOf(EdstWindow.HEADING_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HEADING_MENU))}
       anyDragging={anyDragging}
-      id="heading-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

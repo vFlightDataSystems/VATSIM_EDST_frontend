@@ -399,6 +399,7 @@ export const MessageComposeArea = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
+    event.preventDefault();
     if (
       document.activeElement?.localName !== "input" &&
       document.activeElement?.localName !== "textarea" &&
@@ -457,7 +458,6 @@ export const MessageComposeArea = () => {
     <>
       <MessageComposeAreaDiv
         ref={ref}
-        id="edst-mca"
         fontSizeIndex={windowOptions.fontSizeIndex}
         brightness={windowOptions.brightness}
         anyDragging={anyDragging}

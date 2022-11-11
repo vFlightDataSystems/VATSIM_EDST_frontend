@@ -76,15 +76,7 @@ export const MessageResponseArea = () => {
 
   return (
     <>
-      <MessageResponseAreaDiv
-        {...windowOptions}
-        pos={pos}
-        zIndex={zIndex}
-        ref={ref}
-        anyDragging={anyDragging}
-        id="edst-mra"
-        onMouseDownCapture={onMraMouseDown}
-      >
+      <MessageResponseAreaDiv {...windowOptions} pos={pos} zIndex={zIndex} ref={ref} anyDragging={anyDragging} onMouseDownCapture={onMraMouseDown}>
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         {msg}
       </MessageResponseAreaDiv>

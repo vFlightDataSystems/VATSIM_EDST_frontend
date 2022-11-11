@@ -34,7 +34,6 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
       onSubmit={onSubmit}
       cancelText="Exit"
       onCancel={onCancel}
-      id="previous-route-menu"
     >
       <FidRow>
         {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}

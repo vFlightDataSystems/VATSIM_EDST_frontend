@@ -73,7 +73,6 @@ export const PlanOptions = () => {
       zIndex={zStack.indexOf(EdstWindow.PLAN_OPTIONS)}
       onMouseDown={() => zStack.indexOf(EdstWindow.PLAN_OPTIONS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.PLAN_OPTIONS))}
       anyDragging={anyDragging}
-      id="plan-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

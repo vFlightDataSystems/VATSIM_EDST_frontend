@@ -101,7 +101,6 @@ export const SpeedMenu = () => {
       zIndex={zStack.indexOf(EdstWindow.SPEED_MENU)}
       onMouseDown={() => zStack.indexOf(EdstWindow.SPEED_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SPEED_MENU))}
       anyDragging={anyDragging}
-      id="speed-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

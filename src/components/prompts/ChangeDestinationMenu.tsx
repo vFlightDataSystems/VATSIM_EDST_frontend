@@ -18,7 +18,6 @@ export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
       onSubmit={onSubmit}
       cancelText="NO"
       onCancel={onCancel}
-      id="change-destination-menu"
     >
       <FidRow>
         {entry.cid} {entry.aircraftId}

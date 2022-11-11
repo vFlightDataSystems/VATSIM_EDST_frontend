@@ -40,7 +40,6 @@ export const ToolsMenu = () => {
         zIndex={zStack.indexOf(EdstWindow.TOOLS_MENU)}
         onMouseDown={() => zStack.indexOf(EdstWindow.TOOLS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TOOLS_MENU))}
         anyDragging={anyDragging}
-        id="tools-menu"
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>

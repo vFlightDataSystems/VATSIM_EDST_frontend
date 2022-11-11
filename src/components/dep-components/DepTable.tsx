@@ -35,12 +35,7 @@ export const DepTable = () => {
         <SpecialBox disabled />
         <SpecialBox disabled />
         <SpecialBox disabled />
-        <AircraftTypeCol
-          id="dep-table-aircraft-type-header"
-          hover
-          hidden={hiddenColumns.includes(DepRowField.TYPE)}
-          onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}
-        >
+        <AircraftTypeCol hover hidden={hiddenColumns.includes(DepRowField.TYPE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>
           T{!hiddenColumns.includes(DepRowField.TYPE) && "ype"}
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>

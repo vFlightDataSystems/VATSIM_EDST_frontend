@@ -283,7 +283,6 @@ export const RouteMenu = () => {
       zIndex={zStack.indexOf(EdstWindow.ROUTE_MENU)}
       onMouseDown={() => zStack.indexOf(EdstWindow.ROUTE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ROUTE_MENU))}
       anyDragging={anyDragging}
-      id="route-menu"
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <RouteMenuHeader focused={focused} onMouseDown={startDrag}>

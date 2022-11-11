@@ -31,7 +31,6 @@ export const CancelHoldMenu = () => {
       onSubmit={onSubmit}
       cancelText="Exit"
       onCancel={onCancel}
-      id="cancel-hold-menu"
     >
       <FidRow>
         {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}

@@ -238,7 +238,7 @@ export const AltMenu = () => {
   const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
 
   return (
-    <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "11ch"} pos={pos} id="alt-menu">
+    <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "11ch"} pos={pos}>
       <AltMenuHeaderDiv>
         <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
         <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
