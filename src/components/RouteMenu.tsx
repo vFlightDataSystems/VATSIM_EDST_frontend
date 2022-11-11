@@ -243,6 +243,7 @@ export const RouteMenu = () => {
   };
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = async (event) => {
+    event.persist();
     if (event.key === "Enter") {
       const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
       let newRoute = removeStringFromEnd(routeInput, entry.destination);
