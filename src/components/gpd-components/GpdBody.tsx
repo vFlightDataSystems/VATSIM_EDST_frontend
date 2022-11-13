@@ -74,6 +74,7 @@ export const GpdBody = () => {
         maxZoom={GPD_MAX_ZOOM}
         minZoom={GPD_MIN_ZOOM}
         zoomDelta={ZOOM_DELTA}
+        inertia={false}
       >
         <MapConfigurator />
         {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}
