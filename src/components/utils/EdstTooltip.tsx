@@ -3,6 +3,7 @@ import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
 import { useRootSelector } from "~redux/hooks";
 import { tooltipsEnabledSelector } from "~redux/slices/appSlice";
+import type { AtMostOne } from "types/utility-types";
 
 const TooltipDiv = styled.div`
   width: auto;
@@ -30,11 +31,10 @@ const TooltipBody = styled.div`
 
 type EdstTooltipProps = {
   title?: string;
-  content?: string;
   style?: CSSProperties;
   disabled?: boolean;
-  children?: React.ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
+} & AtMostOne<{ content: string; children: React.ReactNode }> &
+  React.HTMLAttributes<HTMLDivElement>;
 
 export const EdstTooltip = forwardRef<HTMLDivElement, EdstTooltipProps>(({ title, content, ...props }, ref) => {
   const localRef = useRef<HTMLDivElement | null>(null);
