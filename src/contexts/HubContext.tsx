@@ -88,6 +88,12 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
+      hubConnection.on("receiveFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
+        flightplans.forEach((flightplan) => {
+          console.log("received flightplan:", flightplan);
+          dispatch(updateFlightplanThunk(flightplan));
+        });
+      });
       hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
         console.log("received aircraft:", aircraft);
         // aircraft.forEach(t => {
