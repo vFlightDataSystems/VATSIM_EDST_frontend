@@ -1,4 +1,4 @@
-import type { RouteDisplayOption } from "enums/routeDisplayOption";
+import type { RouteDisplayOption } from "types/routeDisplayOption";
 import type { Nullable } from "types/utility-types";
 
 export class LocalVEdstEntry {

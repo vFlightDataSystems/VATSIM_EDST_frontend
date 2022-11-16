@@ -6,7 +6,7 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
 import { planQueueSelector } from "~redux/slices/planSlice";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
-import { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import { openWindowThunk } from "~redux/thunks/openWindowThunk";
 import { borderHover } from "styles/styles";
 import { EdstTooltip } from "components/utils/EdstTooltip";
@@ -73,7 +73,7 @@ type EdstHeaderButtonProps = {
   window: EdstWindow;
 } & EdstHeaderButtonCSSProps;
 
-const noToggleWindows = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
+const noToggleWindows = ["ACL", "DEP", "GPD", "PLANS_DISPLAY"];
 
 const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) => {
   const dispatch = useRootDispatch();
@@ -116,36 +116,36 @@ export const EdstHeader = () => {
           <ColButton width="1.6ch" disabled>
             #
           </ColButton>
-          <ColButton width="6ch" highlight={windows[EdstWindow.MORE].open} onMouseDown={() => dispatch(toggleWindow(EdstWindow.MORE))}>
+          <ColButton width="6ch" highlight={windows.MORE.open} onMouseDown={() => dispatch(toggleWindow("MORE"))}>
             MORE
           </ColButton>
-          <EdstHeaderButton window={EdstWindow.ACL} content={`ACL ${aclLen.toString().padStart(2, "0")}`} title={Tooltips.acl} />
-          <EdstHeaderButton window={EdstWindow.DEP} content={`DEP ${depLen.toString().padStart(2, "0")}`} title={Tooltips.dep} />
+          <EdstHeaderButton window="ACL" content={`ACL ${aclLen.toString().padStart(2, "0")}`} title={Tooltips.acl} />
+          <EdstHeaderButton window="DEP" content={`DEP ${depLen.toString().padStart(2, "0")}`} title={Tooltips.dep} />
           <EdstHeaderButton
-            window={EdstWindow.GPD}
+            window="GPD"
             content="GPD"
             // title={Tooltips.gpd}
           />
-          <EdstHeaderButton window={EdstWindow.PLANS_DISPLAY} content="PLANS" disabled={planQueue.length === 0} title={Tooltips.plans} />
+          <EdstHeaderButton window="PLANS_DISPLAY" content="PLANS" disabled={planQueue.length === 0} title={Tooltips.plans} />
           <EdstHeaderButton
-            window={EdstWindow.METAR}
+            window="METAR"
             content="WX REPORT"
             // title={Tooltips.wx}
           />
           <EdstHeaderButton
-            window={EdstWindow.SIGMETS}
+            window="SIGMETS"
             borderColor={sigLen > 0 ? YELLOW : undefined}
             color={sigLen > 0 ? YELLOW : undefined}
             content={`SIG ${sigLen > 0 ? sigLen.toString().padStart(2, "0") : "✓"}`}
             // title={Tooltips.sig}
           />
           <EdstHeaderButton
-            window={EdstWindow.GI}
+            window="GI"
             content={`GI ${giLen > 0 ? giLen.toString().padStart(2, "0") : ""}`}
             // title={Tooltips.gi}
           />
           <EdstHeaderButton
-            window={EdstWindow.UA}
+            window="UA"
             content="UA"
             disabled
             // title={Tooltips.ua}
@@ -155,23 +155,23 @@ export const EdstHeader = () => {
           </ColButton>
         </EdstHeaderCol>
         <EdstHeaderCol>
-          <EdstHeaderButton window={EdstWindow.STATUS} content="STATUS ACTIVE" title={Tooltips.statusActive} />
-          <EdstHeaderButton window={EdstWindow.OUTAGE} content={`OUTAGE ${sectorId}`} title={Tooltips.statusOutage} />
+          <EdstHeaderButton window="STATUS" content="STATUS ACTIVE" title={Tooltips.statusActive} />
+          <EdstHeaderButton window="OUTAGE" content={`OUTAGE ${sectorId}`} title={Tooltips.statusOutage} />
           <Time />
           <EdstHeaderButton6
-            window={EdstWindow.ADSB}
+            window="ADSB"
             content="NON-ADSB"
             disabled
             // title={Tooltips.adsb}
           />
           <EdstHeaderButton6
-            window={EdstWindow.SAT}
+            window="SAT"
             content="SAT COMM"
             disabled
             // title={Tooltips.sat}
           />
           <EdstHeaderButton6
-            window={EdstWindow.MSG}
+            window="MSG"
             // backgroundColor={YELLOW}
             // borderColor={YELLOW}
             content="MSG WAIT"
@@ -180,36 +180,36 @@ export const EdstHeader = () => {
           />
         </EdstHeaderCol>
       </EdstHeaderRow>
-      {windows[EdstWindow.MORE].open && (
+      {windows.MORE.open && (
         <EdstHeaderRow>
           <EdstHeaderCol bottomRow>
             <EdstHeaderButton
-              window={EdstWindow.WIND}
+              window="WIND"
               content="WIND"
               disabled
               // title={Tooltips.wind}
             />
             <EdstHeaderButton
-              window={EdstWindow.ALTIMETER}
+              window="ALTIMETER"
               content="ALTIM SET"
               // title={Tooltips.alt}
             />
-            <EdstHeaderButton window={EdstWindow.MESSAGE_COMPOSE_AREA} content="MCA" title={Tooltips.mca} />
-            <EdstHeaderButton window={EdstWindow.MESSAGE_RESPONSE_AREA} content="RA" title={Tooltips.ra} />
+            <EdstHeaderButton window="MESSAGE_COMPOSE_AREA" content="MCA" title={Tooltips.mca} />
+            <EdstHeaderButton window="MESSAGE_RESPONSE_AREA" content="RA" title={Tooltips.ra} />
             <EdstHeaderButton
-              window={EdstWindow.FEL}
+              window="FEL"
               content="FEL"
               disabled
               // title={Tooltips.fel}
             />
             <EdstHeaderButton
-              window={EdstWindow.CPDLC_HIST}
+              window="CPDLC_HIST"
               content="CPDLC HIST"
               disabled
               // title={Tooltips.cpdlc_hist}
             />
             <EdstHeaderButton
-              window={EdstWindow.CPDLC_MSG}
+              window="CPDLC_MSG"
               content="CPDLC MSGOUT"
               disabled
               // title={Tooltips.cpdlc_msg_out}

@@ -1,4 +1,4 @@
-import type { HoldAnnotations } from "enums/hold/holdAnnotations";
+import type { HoldAnnotations } from "types/hold/holdAnnotations";
 import type { AircraftId } from "types/aircraftId";
 import type { Nullable } from "types/utility-types";
 

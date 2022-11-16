@@ -5,7 +5,6 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "~redux/slices/planSlice";
 import { closeWindow } from "~redux/slices/appSlice";
 import { NoSelectDiv } from "styles/NoSelectDiv";
-import { EdstWindow } from "enums/edstWindow";
 import { useHubActions } from "hooks/useHubActions";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
@@ -39,13 +38,13 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
         focused={focused}
         toggleFullscreen={toggleFullscreen}
         startDrag={startDrag}
-        closeWindow={() => dispatch(closeWindow(EdstWindow.PLANS_DISPLAY))}
+        closeWindow={() => dispatch(closeWindow("PLANS_DISPLAY"))}
         text={["Plans Display"]}
       />
       <NoSelectDiv>
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openPlansDisplayPlanOptions"
-          edstWindow={EdstWindow.PLAN_OPTIONS}
+          edstWindow="PLAN_OPTIONS"
           disabled={selectedPlanIndex === null}
           content="Plan Options..."
           title={Tooltips.planOptions}
@@ -68,7 +67,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
         <EdstWindowHeaderButton disabled content="Tools..." />
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openPlansDisplayTemplateMenu"
-          edstWindow={EdstWindow.TEMPLATE_MENU}
+          edstWindow="TEMPLATE_MENU"
           content="Template..."
           title={Tooltips.template}
         />
@@ -76,7 +75,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
         <EdstWindowHeaderButton
           onMouseDown={() => {
             dispatch(planCleanup());
-            dispatch(closeWindow(EdstWindow.PLANS_DISPLAY));
+            dispatch(closeWindow("PLANS_DISPLAY"));
           }}
           content="Clean Up"
           title={Tooltips.plansCleanUp}

@@ -9,7 +9,6 @@ import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, Options
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { InputContainer } from "components/utils/InputComponents";
 import { Row, Row3, ScrollContainer, ScrollRow, ScrollCol, ScrollCol3 } from "components/spd-hdg/styled";
@@ -29,7 +28,7 @@ const SpeedDiv = styled(OptionsMenu)`
 export const SpeedMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.SPEED_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "SPEED_MENU"));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const [speed, setSpeed] = useState(280);
@@ -39,7 +38,7 @@ export const SpeedMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel.aircraftId]);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.SPEED_MENU, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "SPEED_MENU", "mouseup");
 
   useEffect(() => {
     setSpeed(280);
@@ -91,15 +90,15 @@ export const SpeedMenu = () => {
       default:
         break;
     }
-    dispatch(closeWindow(EdstWindow.SPEED_MENU));
+    dispatch(closeWindow("SPEED_MENU"));
   };
 
   return (
     <SpeedDiv
       ref={ref}
       pos={pos}
-      zIndex={zStack.indexOf(EdstWindow.SPEED_MENU)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.SPEED_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.SPEED_MENU))}
+      zIndex={zStack.indexOf("SPEED_MENU")}
+      onMouseDown={() => zStack.indexOf("SPEED_MENU") < zStack.length - 1 && dispatch(pushZStack("SPEED_MENU"))}
       anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -168,7 +167,7 @@ export const SpeedMenu = () => {
           })}
           <OptionsBodyRow margin="0">
             <OptionsBodyCol alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.SPEED_MENU))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow("SPEED_MENU"))} />
             </OptionsBodyCol>
           </OptionsBodyRow>
         </ScrollContainer>

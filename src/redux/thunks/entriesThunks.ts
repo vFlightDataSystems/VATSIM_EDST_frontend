@@ -1,6 +1,4 @@
-import { EdstWindow } from "enums/edstWindow";
-import { AclRowField } from "enums/acl/aclRowField";
-import { DepRowField } from "enums/dep/depRowField";
+import type { EdstWindow } from "types/edstWindow";
 import { convertBeaconCodeToString } from "~/utils/stringManipulation";
 import { setAsel } from "~redux/slices/appSlice";
 import type { RootThunkAction } from "~redux/store";
@@ -13,21 +11,21 @@ function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
     )?.aircraftId;
     if (aircraftId) {
       switch (window) {
-        case EdstWindow.ACL:
+        case "ACL":
           dispatch(
             setAsel({
               aircraftId,
-              field: AclRowField.FID,
-              window: EdstWindow.ACL,
+              field: "FID_ACL_ROW_FIELD",
+              window: "ACL",
             })
           );
           break;
-        case EdstWindow.DEP:
+        case "DEP":
           dispatch(
             setAsel({
               aircraftId,
-              field: DepRowField.FID,
-              window: EdstWindow.DEP,
+              field: "FID_DEP_ROW_FIELD",
+              window: "DEP",
             })
           );
           break;
@@ -39,9 +37,9 @@ function addEntryThunk(fid: string, window: EdstWindow): RootThunkAction {
 }
 
 export function addAclEntryByFid(fid: string) {
-  return addEntryThunk(fid, EdstWindow.ACL);
+  return addEntryThunk(fid, "ACL");
 }
 
 export function addDepEntryByFid(fid: string) {
-  return addEntryThunk(fid, EdstWindow.DEP);
+  return addEntryThunk(fid, "DEP");
 }

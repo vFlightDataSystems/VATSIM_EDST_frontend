@@ -7,17 +7,17 @@ import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, win
 import type { WindowPosition } from "types/windowPosition";
 import type { DragPreviewStyle } from "types/dragPreviewStyle";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
-  EdstWindow.STATUS,
-  EdstWindow.OUTAGE,
-  EdstWindow.MESSAGE_COMPOSE_AREA,
-  EdstWindow.MESSAGE_RESPONSE_AREA,
-  EdstWindow.ALTIMETER,
-  EdstWindow.METAR,
-  EdstWindow.SIGMETS,
-  EdstWindow.GI,
+  "STATUS",
+  "OUTAGE",
+  "MESSAGE_COMPOSE_AREA",
+  "MESSAGE_RESPONSE_AREA",
+  "ALTIMETER",
+  "METAR",
+  "SIGMETS",
+  "GI",
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import type { Nullable } from "types/utility-types";
 import type { Asel } from "types/asel";
 import sharedStateSocket from "~socket";
-import type { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 
 type Handler<F> = (element: HTMLElement, field: F, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
 

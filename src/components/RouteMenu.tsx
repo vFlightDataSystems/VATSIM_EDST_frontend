@@ -26,7 +26,6 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
 import { useHubActions } from "hooks/useHubActions";
 import { OPLUS_SYMBOL } from "~/utils/constants";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
@@ -116,7 +115,7 @@ const toggleAppendOplus = (prev: Append) => ({
 
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.ROUTE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "ROUTE_MENU"));
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector);
@@ -131,12 +130,12 @@ export const RouteMenu = () => {
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
   const [route, setRoute] = useState<string>(
-    removeStringFromEnd(asel.window === EdstWindow.DEP ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
+    removeStringFromEnd(asel.window === "DEP" ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
   );
   const [routeInput, setRouteInput] = useState<string>(
-    asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : route + entry.destination
+    asel.window === "DEP" ? entry.departure + route + entry.destination : route + entry.destination
   );
-  const [trialPlan, setTrialPlan] = useState(!(asel.window === EdstWindow.DEP));
+  const [trialPlan, setTrialPlan] = useState(!(asel.window === "DEP"));
   const [append, setAppend] = useState({
     appendOplus: false,
     appendStar: false,
@@ -144,7 +143,7 @@ export const RouteMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel.aircraftId]);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.ROUTE_MENU, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "ROUTE_MENU", "mouseup");
 
   useEffect(() => {
     if (aircraftTrack) {
@@ -155,7 +154,7 @@ export const RouteMenu = () => {
   const { appendOplus, appendStar } = append;
 
   useEffect(() => {
-    const dep = asel.window === EdstWindow.DEP;
+    const dep = asel.window === "DEP";
     let route = dep ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "";
     route = removeStringFromEnd(route ?? "", entry.destination);
     if (dep) {
@@ -175,7 +174,7 @@ export const RouteMenu = () => {
   }
 
   let routesAvailable = pars.length > 0;
-  if (asel.window === EdstWindow.DEP) {
+  if (asel.window === "DEP") {
     routesAvailable = routesAvailable || pdrs.length > 0 || pdars.length > 0;
   }
 
@@ -214,7 +213,7 @@ export const RouteMenu = () => {
       };
       await amendPrefroute(amendedFlightplan);
     }
-    dispatch(closeWindow(EdstWindow.ROUTE_MENU));
+    dispatch(closeWindow("ROUTE_MENU"));
   };
 
   const clearedToFix = async (clearedFixName: string) => {
@@ -239,7 +238,7 @@ export const RouteMenu = () => {
         );
       }
     }
-    dispatch(closeWindow(EdstWindow.ROUTE_MENU));
+    dispatch(closeWindow("ROUTE_MENU"));
   };
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = async (event) => {
@@ -247,7 +246,7 @@ export const RouteMenu = () => {
     if (event.key === "Enter") {
       const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
       let newRoute = removeStringFromEnd(routeInput, entry.destination);
-      if (asel.window === EdstWindow.DEP) {
+      if (asel.window === "DEP") {
         newRoute = removeStringFromStart(newRoute, entry.departure);
       } else {
         newRoute = `${frd}..${newRoute.replace(/^\.+/g, "")}`;
@@ -269,7 +268,7 @@ export const RouteMenu = () => {
       } else {
         await hubActions.amendFlightplan(amendedFlightplan);
       }
-      dispatch(closeWindow(EdstWindow.ROUTE_MENU));
+      dispatch(closeWindow("ROUTE_MENU"));
     }
   };
 
@@ -281,8 +280,8 @@ export const RouteMenu = () => {
     <RouteMenuDiv
       ref={ref}
       pos={pos}
-      zIndex={zStack.indexOf(EdstWindow.ROUTE_MENU)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.ROUTE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.ROUTE_MENU))}
+      zIndex={zStack.indexOf("ROUTE_MENU")}
+      onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
       anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -303,7 +302,7 @@ export const RouteMenu = () => {
                 setTrialPlan(true);
               }}
               title={Tooltips.routeMenuPlanData}
-              disabled={asel.window === EdstWindow.DEP}
+              disabled={asel.window === "DEP"}
             />
           </OptionsBodyCol>
           <OptionsBodyCol maxWidth="24px" maxHeight="24px">
@@ -341,7 +340,7 @@ export const RouteMenu = () => {
         <RouteMenuRow>
           <OptionsBodyCol>
             <InputContainer>
-              {!(asel.window === EdstWindow.DEP) && (
+              {!(asel.window === "DEP") && (
                 <EdstTooltip
                   title={Tooltips.routeMenuFrd}
                   onContextMenu={(event) => {
@@ -389,9 +388,7 @@ export const RouteMenu = () => {
           <UnderlineRow as={RouteMenuRow}>Direct-To-Fix</UnderlineRow>
         </EdstTooltip>
         <OptionsBodyRow>
-          <DisplayRouteDiv>
-            {asel.window === EdstWindow.DEP ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
-          </DisplayRouteDiv>
+          <DisplayRouteDiv>{asel.window === "DEP" ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}</DisplayRouteDiv>
         </OptionsBodyRow>
         {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
           <OptionsBodyRow key={i}>
@@ -410,8 +407,8 @@ export const RouteMenu = () => {
         {routesAvailable && (
           <PreferredRouteDisplay
             par={pars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
-            pdr={asel.window === EdstWindow.DEP ? pdrs : []}
-            pdar={asel.window === EdstWindow.DEP ? pdars : []}
+            pdr={asel.window === "DEP" ? pdrs : []}
+            pdar={asel.window === "DEP" ? pdars : []}
             clearedPrefroute={clearedPrefroute}
           />
         )}
@@ -423,15 +420,15 @@ export const RouteMenu = () => {
               margin="0 4px 0 0"
               content="Previous Route"
               onMouseDown={() => {
-                dispatch(openMenuThunk(EdstWindow.PREV_ROUTE_MENU, ref.current, false, true));
-                dispatch(closeWindow(EdstWindow.ROUTE_MENU));
+                dispatch(openMenuThunk("PREV_ROUTE_MENU", ref.current, false, true));
+                dispatch(closeWindow("ROUTE_MENU"));
               }}
               title={Tooltips.routeMenuPrevRoute}
             />
             <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
           </OptionsBodyCol>
           <OptionsBodyCol alignRight>
-            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.ROUTE_MENU))} />
+            <ExitButton onMouseDown={() => dispatch(closeWindow("ROUTE_MENU"))} />
           </OptionsBodyCol>
         </OptionsBodyRow>
       </RouteMenuBody>

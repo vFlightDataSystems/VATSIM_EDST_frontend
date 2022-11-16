@@ -31,7 +31,7 @@ import { Gpd } from "components/Gpd";
 import { EdstBodyDiv, EdstDiv } from "styles/edstStyles";
 import { GpdMapOptions } from "components/gpd-components/GpdMapOptions";
 import { updateSweatboxAircraftThunk } from "~redux/thunks/updateSweatboxAircraftThunk";
-import { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
 import { GIWindow } from "components/GeneralInforationWindow";
 import { AclSortMenu } from "components/acl-components/AclSortMenu";
@@ -60,40 +60,40 @@ const NotConnectedDiv = styled.div`
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
 const edstComponentMap = {
-  [EdstWindow.ACL]: Acl,
-  [EdstWindow.DEP]: Dep,
-  [EdstWindow.GPD]: Gpd,
-  [EdstWindow.PLANS_DISPLAY]: PlansDisplay,
-  [EdstWindow.PLAN_OPTIONS]: PlanOptions,
-  [EdstWindow.ACL_SORT_MENU]: AclSortMenu,
-  [EdstWindow.DEP_SORT_MENU]: DepSortMenu,
-  [EdstWindow.TOOLS_MENU]: ToolsMenu,
-  [EdstWindow.GPD_MAP_OPTIONS_MENU]: GpdMapOptions,
-  [EdstWindow.ROUTE_MENU]: RouteMenu,
-  [EdstWindow.TEMPLATE_MENU]: TemplateMenu,
-  [EdstWindow.EQUIPMENT_TEMPLATE_MENU]: EquipmentTemplateMenu,
-  [EdstWindow.HOLD_MENU]: HoldMenu,
-  [EdstWindow.CANCEL_HOLD_MENU]: CancelHoldMenu,
-  [EdstWindow.SPEED_MENU]: SpeedMenu,
-  [EdstWindow.HEADING_MENU]: HeadingMenu,
-  [EdstWindow.ALTITUDE_MENU]: AltMenu,
-  [EdstWindow.STATUS]: Status,
-  [EdstWindow.OUTAGE]: Outage,
-  [EdstWindow.ALTIMETER]: AltimeterWindow,
-  [EdstWindow.METAR]: MetarWindow,
-  [EdstWindow.SIGMETS]: SigmetWindow,
-  [EdstWindow.GI]: GIWindow,
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: MessageResponseArea,
-};
+  ACL: Acl,
+  DEP: Dep,
+  GPD: Gpd,
+  PLANS_DISPLAY: PlansDisplay,
+  PLAN_OPTIONS: PlanOptions,
+  ACL_SORT_MENU: AclSortMenu,
+  DEP_SORT_MENU: DepSortMenu,
+  TOOLS_MENU: ToolsMenu,
+  GPD_MAP_OPTIONS_MENU: GpdMapOptions,
+  ROUTE_MENU: RouteMenu,
+  TEMPLATE_MENU: TemplateMenu,
+  EQUIPMENT_TEMPLATE_MENU: EquipmentTemplateMenu,
+  HOLD_MENU: HoldMenu,
+  CANCEL_HOLD_MENU: CancelHoldMenu,
+  SPEED_MENU: SpeedMenu,
+  HEADING_MENU: HeadingMenu,
+  ALTITUDE_MENU: AltMenu,
+  STATUS: Status,
+  OUTAGE: Outage,
+  ALTIMETER: AltimeterWindow,
+  METAR: MetarWindow,
+  SIGMETS: SigmetWindow,
+  GI: GIWindow,
+  MESSAGE_RESPONSE_AREA: MessageResponseArea,
+} as const;
 
 const windowRequiresAselNotNull: EdstWindow[] = [
-  EdstWindow.PLAN_OPTIONS,
-  EdstWindow.ROUTE_MENU,
-  EdstWindow.HOLD_MENU,
-  EdstWindow.CANCEL_HOLD_MENU,
-  EdstWindow.SPEED_MENU,
-  EdstWindow.HEADING_MENU,
-  EdstWindow.ALTITUDE_MENU,
+  "PLAN_OPTIONS",
+  "ROUTE_MENU",
+  "HOLD_MENU",
+  "CANCEL_HOLD_MENU",
+  "SPEED_MENU",
+  "HEADING_MENU",
+  "ALTITUDE_MENU",
 ];
 
 const Edst = () => {

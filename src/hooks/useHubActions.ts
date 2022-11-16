@@ -1,5 +1,5 @@
 import type { ApiLocation } from "types/apiTypes/apiLocation";
-import type { HoldAnnotations } from "enums/hold/holdAnnotations";
+import type { HoldAnnotations } from "types/hold/holdAnnotations";
 import { useRootDispatch } from "~redux/hooks";
 import { setMcaAcceptMessage } from "~redux/slices/appSlice";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";

@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
 import { FloatingWindowRow } from "styles/floatingWindowStyles";
-import { EdstWindow } from "enums/edstWindow";
 import { useMetar } from "api/weatherApi";
 import { airportIdSelector, delMetar, metarAirportsSelector } from "~redux/slices/weatherSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
@@ -20,7 +19,7 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.METAR));
+  const windowOptions = useRootSelector(windowOptionsSelector("METAR"));
   const { data: airportMetar, isFetching } = useMetar(airport);
   const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
@@ -30,7 +29,7 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
     }
   }, [isFetching, airportMetar, dispatch, airport]);
 
-  const zIndex = zStack.indexOf(EdstWindow.METAR);
+  const zIndex = zStack.indexOf("METAR");
   const rect = ref.current?.getBoundingClientRect();
 
   return !airportMetar ? null : (
@@ -93,7 +92,7 @@ export const MetarWindow = () => {
       title="WX"
       optionsHeaderTitle="WX"
       width="40ch"
-      window={EdstWindow.METAR}
+      window="METAR"
       extraOptions={extraOptions}
       showOptions={showOptions}
       setShowOptions={setShowOptionsHandler}

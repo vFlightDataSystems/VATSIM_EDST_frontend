@@ -5,8 +5,7 @@ import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } 
 import { closeAllMenus, closeWindow, depAselSelector } from "~redux/slices/appSlice";
 import { addDepEntryByFid } from "~redux/thunks/entriesThunks";
 import { NoSelectDiv } from "styles/NoSelectDiv";
-import { EdstWindow } from "enums/edstWindow";
-import { DepSortOptionValues } from "enums/dep/depSortOption";
+import { DepSortOptionValues } from "types/dep/depSortOption";
 import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
 import { AddFindInput } from "components/utils/InputComponents";
@@ -37,27 +36,22 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         toggleFullscreen={toggleFullscreen}
         startDrag={startDrag}
         closeWindow={() => {
-          if (asel?.window === EdstWindow.DEP) {
+          if (asel?.window === "DEP") {
             dispatch(closeAllMenus());
           }
-          dispatch(closeWindow(EdstWindow.DEP));
+          dispatch(closeWindow("DEP"));
         }}
         text={["Departure List", `${DepSortOptionValues[selectedSortOption]}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
       <EdstWindowHeaderRowDiv>
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepPlanOptions"
-          edstWindow={EdstWindow.PLAN_OPTIONS}
+          edstWindow="PLAN_OPTIONS"
           disabled={asel === null}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
-        <EdstWindowHeaderButtonWithSharedEvent
-          sharedUiEventId="openDepSortMenu"
-          edstWindow={EdstWindow.DEP_SORT_MENU}
-          content="Sort..."
-          title={Tooltips.sort}
-        />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openDepSortMenu" edstWindow="DEP_SORT_MENU" content="Sort..." title={Tooltips.sort} />
         <EdstWindowHeaderButton
           onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))}
           content="Posting Mode"
@@ -65,7 +59,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         />
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepTemplateMenu"
-          edstWindow={EdstWindow.TEMPLATE_MENU}
+          edstWindow="TEMPLATE_MENU"
           content="Template..."
           title={Tooltips.template}
         />

@@ -12,10 +12,9 @@ import type { RouteFix } from "types/routeFix";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
-import { CompassDirection } from "enums/hold/compassDirection";
-import { TurnDirection } from "enums/hold/turnDirection";
-import type { HoldAnnotations } from "enums/hold/holdAnnotations";
+import { CompassDirection } from "types/hold/compassDirection";
+import { TurnDirection } from "types/hold/turnDirection";
+import type { HoldAnnotations } from "types/hold/holdAnnotations";
 import { useHubActions } from "hooks/useHubActions";
 import { openWindowThunk } from "~redux/thunks/openWindowThunk";
 import { useRouteFixes } from "api/aircraftApi";
@@ -90,7 +89,7 @@ const EfcInputContainer = styled(InputContainer)`
 export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
   const track = useRootSelector(aselTrackSelector)!;
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.HOLD_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "HOLD_MENU"));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
 
@@ -104,7 +103,7 @@ export const HoldMenu = () => {
   const holdAnnotationRef = useRef<Nullable<HoldAnnotations>>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.HOLD_MENU, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "HOLD_MENU", "mouseup");
   const hubActions = useHubActions();
   const routeFixes = useRouteFixes(entry.aircraftId);
 
@@ -134,15 +133,15 @@ export const HoldMenu = () => {
       };
       void hubActions.setHoldAnnotations(entry.aircraftId, holdAnnotations);
     }
-    dispatch(closeWindow(EdstWindow.HOLD_MENU));
+    dispatch(closeWindow("HOLD_MENU"));
   };
 
   return (
     <HoldDiv
       ref={ref}
       pos={pos}
-      zIndex={zStack.indexOf(EdstWindow.HOLD_MENU)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.HOLD_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.HOLD_MENU))}
+      zIndex={zStack.indexOf("HOLD_MENU")}
+      onMouseDown={() => zStack.indexOf("HOLD_MENU") < zStack.length - 1 && dispatch(pushZStack("HOLD_MENU"))}
       anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -276,7 +275,7 @@ export const HoldMenu = () => {
                     data: { routeDisplay: null },
                   })
                 );
-                dispatch(closeWindow(EdstWindow.HOLD_MENU));
+                dispatch(closeWindow("HOLD_MENU"));
               }}
               title={Tooltips.holdDeleteHoldInstr}
             />
@@ -335,13 +334,13 @@ export const HoldMenu = () => {
                     data: { routeDisplay: null },
                   })
                 );
-                dispatch(openWindowThunk(EdstWindow.CANCEL_HOLD_MENU));
-                dispatch(closeWindow(EdstWindow.HOLD_MENU));
+                dispatch(openWindowThunk("CANCEL_HOLD_MENU"));
+                dispatch(closeWindow("HOLD_MENU"));
               }}
             />
           </OptionsBodyCol>
           <OptionsBodyCol alignRight>
-            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.HOLD_MENU))} />
+            <ExitButton onMouseDown={() => dispatch(closeWindow("HOLD_MENU"))} />
           </OptionsBodyCol>
         </OptionsBodyRow>
       </OptionsBody>

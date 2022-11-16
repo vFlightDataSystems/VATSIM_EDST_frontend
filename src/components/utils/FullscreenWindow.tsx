@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useFocused } from "hooks/useFocused";
 import { pushZStack, windowDimensionSelector, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
-import type { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import { useDragging } from "hooks/useDragging";
 import { useFullscreen } from "hooks/useFullscreen";
 import { ResizableFloatingWindowDiv } from "styles/floatingWindowStyles";

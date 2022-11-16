@@ -1,6 +1,6 @@
 import type { Nullable } from "types/utility-types";
-import type { TurnDirection } from "enums/hold/turnDirection";
-import type { CompassDirection } from "enums/hold/compassDirection";
+import type { TurnDirection } from "types/hold/turnDirection";
+import type { CompassDirection } from "types/hold/compassDirection";
 
 export type HoldAnnotations = {
   fix: Nullable<string>;

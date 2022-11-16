@@ -5,7 +5,6 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { closeAllMenus, closeWindow, gpdAselSelector } from "~redux/slices/appSlice";
 import { NoSelectDiv } from "styles/NoSelectDiv";
 import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "~redux/slices/gpdSlice";
-import { EdstWindow } from "enums/edstWindow";
 import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
@@ -48,24 +47,24 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
         toggleFullscreen={toggleFullscreen}
         startDrag={startDrag}
         closeWindow={() => {
-          if (asel?.window === EdstWindow.GPD) {
+          if (asel?.window === "GPD") {
             dispatch(closeAllMenus());
           }
-          dispatch(closeWindow(EdstWindow.GPD));
+          dispatch(closeWindow("GPD"));
         }}
         text={["Graphic Plan Display - Current Time"]}
       />
       <div>
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdPlanOptions"
-          edstWindow={EdstWindow.PLAN_OPTIONS}
+          edstWindow="PLAN_OPTIONS"
           disabled={asel === null}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdHoldMenu"
-          edstWindow={EdstWindow.HOLD_MENU}
+          edstWindow="HOLD_MENU"
           disabled={asel === null}
           content="Hold..."
           title={Tooltips.hold}
@@ -75,7 +74,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
         <EdstWindowHeaderButton disabled content="Graphic..." />
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openGpdTemplateMenu"
-          edstWindow={EdstWindow.TEMPLATE_MENU}
+          edstWindow="TEMPLATE_MENU"
           content="Template..."
           title={Tooltips.template}
         />
@@ -89,12 +88,8 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
         <EdstWindowHeaderButton onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
-        <EdstWindowHeaderButtonWithSharedEvent
-          sharedUiEventId="openGpdMapOptions"
-          edstWindow={EdstWindow.GPD_MAP_OPTIONS_MENU}
-          content="Map Options..."
-        />
-        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdToolsMenu" edstWindow={EdstWindow.TOOLS_MENU} content="Tools..." />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdMapOptions" edstWindow="GPD_MAP_OPTIONS_MENU" content="Map Options..." />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdToolsMenu" edstWindow="TOOLS_MENU" content="Tools..." />
         <EdstWindowHeaderButton disabled content="Saved Map" />
       </EdstWindowHeaderRowDiv>
     </GpdDiv>

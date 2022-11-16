@@ -11,7 +11,6 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
 import { useHubActions } from "hooks/useHubActions";
 import { formatRoute } from "~/utils/formatRoute";
 import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "~/utils/stringManipulation";
@@ -107,14 +106,14 @@ export const TemplateMenu = () => {
   const asel = useRootSelector(aselSelector);
   const aircraftTrack = useRootSelector(aselTrackSelector);
   const entry = useRootSelector(aselEntrySelector);
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.TEMPLATE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "TEMPLATE_MENU"));
   const zStack = useRootSelector(zStackSelector);
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
   // TODO: use normal formatted route
   const formattedRoute = entry ? formatRoute(entry.route) : "";
 
   const route =
-    (asel?.window === EdstWindow.DEP
+    (asel?.window === "DEP"
       ? formattedRoute?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")
       : formattedRoute?.replace(/^\.*/, "")?.concat(entry?.destination ? appendDownArrowToString(entry.destination) : "")) ?? "";
 
@@ -129,7 +128,7 @@ export const TemplateMenu = () => {
   const [timeInput, setTimeInput] = useState("EXX00");
   const [altInput, setAltInput] = useState(entry?.altitude ?? "");
   const [routeInput, setRouteInput] = useState(
-    (asel?.window === EdstWindow.DEP ? (entry?.departure ? appendUpArrowToString(entry?.departure) : "") + route : route) ?? ""
+    (asel?.window === "DEP" ? (entry?.departure ? appendUpArrowToString(entry?.departure) : "") + route : route) ?? ""
   );
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? "");
   const { generateFrd } = useHubActions();
@@ -138,7 +137,7 @@ export const TemplateMenu = () => {
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel?.aircraftId]);
 
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TEMPLATE_MENU, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TEMPLATE_MENU", "mouseup");
 
   useEffect(() => {
     async function updateFrd() {
@@ -153,8 +152,8 @@ export const TemplateMenu = () => {
     <TemplateDiv
       ref={ref}
       pos={pos}
-      zIndex={zStack.indexOf(EdstWindow.TEMPLATE_MENU)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TEMPLATE_MENU))}
+      zIndex={zStack.indexOf("TEMPLATE_MENU")}
+      onMouseDown={() => zStack.indexOf("TEMPLATE_MENU") < zStack.length - 1 && dispatch(pushZStack("TEMPLATE_MENU"))}
       anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -170,7 +169,7 @@ export const TemplateMenu = () => {
           <TemplateCol width="8ch">
             <EdstButton
               content="EQP..."
-              onMouseDown={() => dispatch(openMenuThunk(EdstWindow.EQUIPMENT_TEMPLATE_MENU, ref.current))}
+              onMouseDown={() => dispatch(openMenuThunk("EQUIPMENT_TEMPLATE_MENU", ref.current))}
               title={Tooltips.templateMenuEqpButton}
             />
           </TemplateCol>
@@ -218,7 +217,7 @@ export const TemplateMenu = () => {
             <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
           </TemplateCol>
           <TemplateCol bottomRow alignRight>
-            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TEMPLATE_MENU))} />
+            <ExitButton onMouseDown={() => dispatch(closeWindow("TEMPLATE_MENU"))} />
           </TemplateCol>
         </TemplateRowDiv>
       </TemplateBodyDiv>

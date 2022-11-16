@@ -2,7 +2,8 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import type { Nullable } from "types/utility-types";
 import type { WindowPosition } from "types/windowPosition";
-import { EDST_MENU_LIST, EdstWindow } from "enums/edstWindow";
+import { edstMenus, edstWindows } from "types/edstWindow";
+import type { EdstMenu, EdstWindow } from "types/edstWindow";
 import type { OutageEntry } from "types/outageEntry";
 import type { Asel } from "types/asel";
 import type { AircraftId } from "types/aircraftId";
@@ -11,20 +12,20 @@ import sharedSocket from "~socket";
 import type { WindowDimension } from "types/windowDimension";
 import type { RootState, RootThunkAction } from "~redux/store";
 
-export const AIRCRAFT_MENUS = [
-  EdstWindow.PLAN_OPTIONS,
-  EdstWindow.ALTITUDE_MENU,
-  EdstWindow.ROUTE_MENU,
-  EdstWindow.PREV_ROUTE_MENU,
-  EdstWindow.SPEED_MENU,
-  EdstWindow.HEADING_MENU,
-  EdstWindow.HOLD_MENU,
-  EdstWindow.CANCEL_HOLD_MENU,
-  EdstWindow.TEMPLATE_MENU,
-  EdstWindow.EQUIPMENT_TEMPLATE_MENU,
+export const AIRCRAFT_MENUS: EdstMenu[] = [
+  "PLAN_OPTIONS",
+  "ALTITUDE_MENU",
+  "ROUTE_MENU",
+  "PREV_ROUTE_MENU",
+  "SPEED_MENU",
+  "HEADING_MENU",
+  "HOLD_MENU",
+  "CANCEL_HOLD_MENU",
+  "TEMPLATE_MENU",
+  "EQUIPMENT_TEMPLATE_MENU",
 ];
 
-export const FULLSCREEN_WINDOWS = [EdstWindow.ACL, EdstWindow.DEP, EdstWindow.GPD, EdstWindow.PLANS_DISPLAY];
+export const FULLSCREEN_WINDOWS: EdstWindow[] = ["ACL", "DEP", "GPD", "PLANS_DISPLAY"];
 
 type GIEntry = {
   text: string;
@@ -53,16 +54,16 @@ type AppState = {
 };
 
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
-  [EdstWindow.STATUS]: { left: 400, top: 100 },
-  [EdstWindow.OUTAGE]: { left: 400, top: 100 },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: { left: 100, top: 400 },
-  [EdstWindow.GPD]: { left: 0, top: 38 },
-  [EdstWindow.ACL]: { left: 0, top: 38 },
-  [EdstWindow.DEP]: { left: 0, top: 38 },
+  STATUS: { left: 400, top: 100 },
+  OUTAGE: { left: 400, top: 100 },
+  MESSAGE_COMPOSE_AREA: { left: 100, top: 400 },
+  GPD: { left: 0, top: 38 },
+  ACL: { left: 0, top: 38 },
+  DEP: { left: 0, top: 38 },
 };
 
-const initialWindowState: Record<EdstWindow, AppWindow> = Object.fromEntries(
-  Object.values(EdstWindow).map((value) => [
+const initialWindowState = Object.fromEntries(
+  edstWindows.map((value) => [
     value,
     {
       open: false,
@@ -156,7 +157,7 @@ const appSlice = createSlice({
 
 export const closeAllWindows = (triggerSharedState = false): RootThunkAction => {
   return (dispatch) => {
-    Object.values(EdstWindow).forEach((window) => {
+    edstWindows.forEach((window) => {
       dispatch(closeWindow(window, triggerSharedState));
     });
   };
@@ -164,7 +165,7 @@ export const closeAllWindows = (triggerSharedState = false): RootThunkAction => 
 
 export const closeAllMenus = (triggerSharedState = true): RootThunkAction => {
   return (dispatch) => {
-    EDST_MENU_LIST.forEach((window) => {
+    edstMenus.forEach((window) => {
       dispatch(closeWindow(window, triggerSharedState));
     });
     dispatch(setAsel(null, null, triggerSharedState));
@@ -193,7 +194,7 @@ export function setAsel(asel: Nullable<Asel>, eventId?: Nullable<string>, trigge
 
 export const setMcaResponse = (message: string): RootThunkAction => {
   return (dispatch) => {
-    dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
+    dispatch(openWindowThunk("MESSAGE_COMPOSE_AREA"));
     dispatch(appSlice.actions.setMcaFeedbackString(message));
   };
 };
@@ -204,7 +205,7 @@ export const setMcaRejectMessage = (message: string) => setMcaResponse(`REJECT\n
 
 export const setMraMessage = (message: string): RootThunkAction => {
   return (dispatch) => {
-    dispatch(pushZStack(EdstWindow.MESSAGE_RESPONSE_AREA));
+    dispatch(pushZStack("MESSAGE_RESPONSE_AREA"));
     dispatch(appSlice.actions.setMraMessage(message));
   };
 };
@@ -257,9 +258,9 @@ export const windowDimensionSelector = (state: RootState, window: EdstWindow) =>
 export const windowIsFullscreenSelector = (state: RootState, window: EdstWindow) => state.app.windows[window].isFullscreen;
 export const aselSelector = (state: RootState) => state.app.asel;
 export const aselIsNullSelector = (state: RootState) => state.app.asel === null;
-export const aclAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.ACL ? state.app.asel : null);
-export const depAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.DEP ? state.app.asel : null);
-export const gpdAselSelector = (state: RootState) => (state.app.asel?.window === EdstWindow.GPD ? state.app.asel : null);
+export const aclAselSelector = (state: RootState) => (state.app.asel?.window === "ACL" ? state.app.asel : null);
+export const depAselSelector = (state: RootState) => (state.app.asel?.window === "DEP" ? state.app.asel : null);
+export const gpdAselSelector = (state: RootState) => (state.app.asel?.window === "GPD" ? state.app.asel : null);
 export const aircraftIsAselSelector = (state: RootState, aircraftId: AircraftId) =>
   state.app.asel?.aircraftId === aircraftId ? state.app.asel : null;
 export const anyDraggingSelector = (state: RootState) => state.app.anyDragging;

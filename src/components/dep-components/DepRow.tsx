@@ -17,8 +17,8 @@ import {
   RouteContent,
   SpecialBox,
 } from "styles/sharedColumns";
-import { EdstWindow } from "enums/edstWindow";
-import { DepRowField } from "enums/dep/depRowField";
+import type { EdstWindow } from "types/edstWindow";
+import type { DepRowField } from "types/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL, REMOVAL_TIMEOUT, SPA_INDICATOR } from "~/utils/constants";
 import { usePar, usePdar, usePdr } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
@@ -30,7 +30,6 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useAselEventListener } from "hooks/useAselEventListener";
 import { depHiddenColumnsSelector, depManualPostingSelector } from "~redux/slices/depSlice";
 import type { AircraftId } from "types/aircraftId";
-import { RouteDisplayOption } from "enums/routeDisplayOption";
 import { convertBeaconCodeToString, removeStringFromEnd } from "~/utils/stringManipulation";
 import { RemarksBox } from "components/AclStyled";
 import { DepPTimeCol, RadioCol } from "components/DepStyled";
@@ -129,7 +128,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
 
   const isSelected = useCallback(
     (field: DepRowField): boolean => {
-      return asel?.window === EdstWindow.DEP && asel?.aircraftId === aircraftId && asel?.field === field;
+      return asel?.window === "DEP" && asel?.aircraftId === aircraftId && asel?.field === field;
     },
     [aircraftId, asel?.aircraftId, asel?.field, asel?.window]
   );
@@ -146,8 +145,8 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const altRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener(altRef, aircraftId, "dep-alt-asel", DepRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener(routeRef, aircraftId, "dep-route-asel", DepRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener(altRef, aircraftId, "dep-alt-asel", "ALT_DEP_ROW_FIELD", "ALTITUDE_MENU", handleClick);
+  useAselEventListener(routeRef, aircraftId, "dep-route-asel", "ROUTE_DEP_ROW_FIELD", "ROUTE_MENU", handleClick);
 
   const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -181,7 +180,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
         }
         break;
       default:
-        dispatch(depAircraftSelect(aircraftId, DepRowField.FID, null));
+        dispatch(depAircraftSelect(aircraftId, "FID_DEP_ROW_FIELD", null));
         break;
     }
   };
@@ -196,7 +195,8 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           updateEntry({
             aircraftId,
             data: {
-              routeDisplay: !(entry.routeDisplay === RouteDisplayOption.remarks) && entry.remarks.length > 0 ? RouteDisplayOption.remarks : null,
+              routeDisplay:
+                !(entry.routeDisplay === "REMARKS_ROUTE_DISPLAY_OPTION") && entry.remarks.length > 0 ? "REMARKS_ROUTE_DISPLAY_OPTION" : null,
               remarksChecked: true,
             },
           })
@@ -207,7 +207,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           updateEntry({
             aircraftId,
             data: {
-              routeDisplay: !(entry.routeDisplay === RouteDisplayOption.rawRoute) ? RouteDisplayOption.rawRoute : null,
+              routeDisplay: !(entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION") ? "RAW_ROUTE_DISPLAY_OPTION" : null,
             },
           })
         );
@@ -228,7 +228,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
         <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
           <FidCol
             hover
-            selected={isSelected(DepRowField.FID)}
+            selected={isSelected("FID_DEP_ROW_FIELD")}
             onMouseDown={handleFidClick}
             onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
           >
@@ -240,27 +240,27 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
           <SpecialBox disabled />
           <AircraftTypeCol
-            visibilityHidden={hiddenColumns.includes(DepRowField.TYPE)}
+            visibilityHidden={hiddenColumns.includes("TYPE_DEP_ROW_FIELD")}
             hover
-            selected={isSelected(DepRowField.TYPE)}
-            onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.TYPE, null)}
+            selected={isSelected("TYPE_DEP_ROW_FIELD")}
+            onMouseDown={(e) => handleClick(e.currentTarget, "TYPE_DEP_ROW_FIELD", null)}
           >
             {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </AircraftTypeCol>
           <AltCol>
             <AltColDiv
               ref={altRef}
-              selected={isSelected(DepRowField.ALT)}
-              onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ALT, "dep-alt-asel", EdstWindow.ALTITUDE_MENU)}
+              selected={isSelected("ALT_DEP_ROW_FIELD")}
+              onMouseDown={(e) => handleClick(e.currentTarget, "ALT_DEP_ROW_FIELD", "dep-alt-asel", "ALTITUDE_MENU")}
             >
               {entry.altitude}
             </AltColDiv>
           </AltCol>
           <CodeCol
-            visibilityHidden={hiddenColumns.includes(DepRowField.CODE)}
+            visibilityHidden={hiddenColumns.includes("CODE_DEP_ROW_FIELD")}
             hover
-            selected={isSelected(DepRowField.CODE)}
-            onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.CODE, null)}
+            selected={isSelected("CODE_DEP_ROW_FIELD")}
+            onMouseDown={(e) => handleClick(e.currentTarget, "CODE_DEP_ROW_FIELD", null)}
           >
             {convertBeaconCodeToString(entry.assignedBeaconCode)}
           </CodeCol>
@@ -270,22 +270,22 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           <RouteCol
             ref={routeRef}
             hover
-            selected={isSelected(DepRowField.ROUTE)}
-            onMouseDown={(e) => handleClick(e.currentTarget, DepRowField.ROUTE, "dep-route-asel", EdstWindow.ROUTE_MENU)}
+            selected={isSelected("ROUTE_DEP_ROW_FIELD")}
+            onMouseDown={(e) => handleClick(e.currentTarget, "ROUTE_DEP_ROW_FIELD", "dep-route-asel", "ROUTE_MENU")}
           >
             <RouteContent padding="0 2px">
-              {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
-              {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
+              {entry.routeDisplay === "REMARKS_ROUTE_DISPLAY_OPTION" && <span>{entry.remarks}</span>}
+              {entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION" && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
                   <RouteContent>{entry.departure}</RouteContent>
-                  {pendingPdar && !onPdar && <EmbeddedRouteText selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdar}]`}</EmbeddedRouteText>}
+                  {pendingPdar && !onPdar && <EmbeddedRouteText selected={isSelected("ROUTE_DEP_ROW_FIELD")}>{`[${pendingPdar}]`}</EmbeddedRouteText>}
                   {!pendingPdar && pendingPdr && !onPdr && (
-                    <EmbeddedRouteText selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPdr}]`}</EmbeddedRouteText>
+                    <EmbeddedRouteText selected={isSelected("ROUTE_DEP_ROW_FIELD")}>{`[${pendingPdr}]`}</EmbeddedRouteText>
                   )}
                   {route}
                   {!pendingPdar && pendingPar && !onPar && (
-                    <EmbeddedRouteText selected={isSelected(DepRowField.ROUTE)}>{`[${pendingPar}]`}</EmbeddedRouteText>
+                    <EmbeddedRouteText selected={isSelected("ROUTE_DEP_ROW_FIELD")}>{`[${pendingPar}]`}</EmbeddedRouteText>
                   )}
                   {route?.slice(-1) !== "." && ".."}
                   {entry.destination}

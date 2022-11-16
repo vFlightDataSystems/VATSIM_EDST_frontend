@@ -8,7 +8,6 @@ import { useFocused } from "hooks/useFocused";
 import { useDragging } from "hooks/useDragging";
 import { ResizableFloatingWindowDiv } from "styles/floatingWindowStyles";
 import { useFullscreen } from "hooks/useFullscreen";
-import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { GpdBody } from "components/GpdBody";
 import { GpdHeader } from "components/GpdHeader";
@@ -20,17 +19,17 @@ export const Gpd = () => {
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.GPD));
-  const dimension = useRootSelector((state) => windowDimensionSelector(state, EdstWindow.GPD));
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.GPD, "mouseup");
-  const { isFullscreen, toggleFullscreen } = useFullscreen(ref, EdstWindow.GPD);
+  const pos = useRootSelector((state) => windowPositionSelector(state, "GPD"));
+  const dimension = useRootSelector((state) => windowDimensionSelector(state, "GPD"));
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "GPD", "mouseup");
+  const { isFullscreen, toggleFullscreen } = useFullscreen(ref, "GPD");
   const { width, height } = useResizeDetector({ targetRef: ref });
 
   useEffect(() => {
     if (!isFullscreen && width && height) {
       dispatch(
         setWindowDimension({
-          window: EdstWindow.GPD,
+          window: "GPD",
           dim: {
             width: `${width}px`,
             height: `${height}px`,
@@ -40,7 +39,7 @@ export const Gpd = () => {
     }
   }, [dispatch, isFullscreen, height, width]);
 
-  const onMouseDownHandler = () => zStack.indexOf(EdstWindow.GPD) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(EdstWindow.GPD));
+  const onMouseDownHandler = () => zStack.indexOf("GPD") < zStack.length - 1 && !isFullscreen && dispatch(pushZStack("GPD"));
 
   return (
     <GpdDiv
@@ -49,7 +48,7 @@ export const Gpd = () => {
       dimension={dimension}
       anyDragging={anyDragging}
       fullscreen={isFullscreen}
-      zIndex={zStack.indexOf(EdstWindow.GPD)}
+      zIndex={zStack.indexOf("GPD")}
       onMouseDown={onMouseDownHandler}
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}

@@ -1,4 +1,4 @@
-import { CompassDirection } from "enums/hold/compassDirection";
+import { CompassDirection } from "types/hold/compassDirection";
 
 export const HoldDirectionValues = {
   [CompassDirection.NORTH_WEST]: "NW",

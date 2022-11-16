@@ -8,7 +8,7 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useFocused } from "hooks/useFocused";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
-import type { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import { EdstButton } from "components/utils/EdstButton";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 

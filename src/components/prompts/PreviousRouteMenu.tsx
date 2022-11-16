@@ -4,7 +4,6 @@ import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { FidRow, OptionsBodyCol, OptionsBodyRow } from "styles/optionMenuStyles";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import { useCenterCursor } from "hooks/useCenterCursor";
-import { EdstWindow } from "enums/edstWindow";
 import { useRootSelector } from "~redux/hooks";
 import { useHubActions } from "hooks/useHubActions";
 import { EdstPrompt } from "components/prompts/EdstPrompt";
@@ -28,7 +27,7 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   return (
     <EdstPrompt
       title="Previous Route Menu"
-      windowId={EdstWindow.PREV_ROUTE_MENU}
+      windowId="PREV_ROUTE_MENU"
       width="380px"
       submitText="Apply Previous Route"
       onSubmit={onSubmit}

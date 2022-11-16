@@ -20,7 +20,6 @@ import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { EdstWindow } from "enums/edstWindow";
 import { EquipmentNavTemplate } from "components/EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "components/EquipmentSurvTemplate";
 import { EquipmentCommTemplate } from "components/EquipmentCommTemplate";
@@ -84,14 +83,14 @@ export type EquipmentTemplateBodyProps = {
 
 export const EquipmentTemplateMenu = () => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.EQUIPMENT_TEMPLATE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "EQUIPMENT_TEMPLATE_MENU"));
   const entry = useRootSelector(aselEntrySelector);
   const zStack = useRootSelector(zStackSelector);
   const [selectedMenu, setSelectedMenu] = useState<MenuOptions>(MenuOptions.nav);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.EQUIPMENT_TEMPLATE_MENU, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "EQUIPMENT_TEMPLATE_MENU", "mouseup");
   const resetRef = useRef<() => void>();
 
   const setReset = useCallback((callback: () => void) => {
@@ -102,10 +101,8 @@ export const EquipmentTemplateMenu = () => {
     <EqpTemplateDiv
       ref={ref}
       pos={pos}
-      zIndex={zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU)}
-      onMouseDown={() =>
-        zStack.indexOf(EdstWindow.EQUIPMENT_TEMPLATE_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.EQUIPMENT_TEMPLATE_MENU))
-      }
+      zIndex={zStack.indexOf("EQUIPMENT_TEMPLATE_MENU")}
+      onMouseDown={() => zStack.indexOf("EQUIPMENT_TEMPLATE_MENU") < zStack.length - 1 && dispatch(pushZStack("EQUIPMENT_TEMPLATE_MENU"))}
       anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -152,7 +149,7 @@ export const EquipmentTemplateMenu = () => {
             <EdstButton disabled content="OK" />
           </OptionsBodyCol>
           <OptionsBodyCol alignRight>
-            <EdstButton content="Cancel" onMouseDown={() => dispatch(closeWindow(EdstWindow.EQUIPMENT_TEMPLATE_MENU))} />
+            <EdstButton content="Cancel" onMouseDown={() => dispatch(closeWindow("EQUIPMENT_TEMPLATE_MENU"))} />
           </OptionsBodyCol>
         </EqpTemplateBottomRow>
       </EqpTemplateBody>

@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { FloatingWindowRow } from "styles/floatingWindowStyles";
 import { ScrollContainer } from "styles/optionMenuStyles";
-import { EdstWindow } from "enums/edstWindow";
 import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
@@ -18,9 +17,9 @@ type GIRowProps = {
 const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.GI));
+  const windowOptions = useRootSelector(windowOptionsSelector("GI"));
 
-  const zIndex = zStack.indexOf(EdstWindow.GI);
+  const zIndex = zStack.indexOf("GI");
   const rect = ref.current?.getBoundingClientRect();
 
   return (
@@ -87,7 +86,7 @@ export const GIWindow = () => {
       width="120ch"
       title="General Information"
       optionsHeaderTitle="GI"
-      window={EdstWindow.GI}
+      window="GI"
       extraOptions={extraOptions}
       showOptions={showOptions}
       setShowOptions={setShowOptionsHandler}

@@ -1,6 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { EdstWindow } from "enums/edstWindow";
 import type { RootState } from "~redux/store";
 
 export const windowOptionLabel = {
@@ -13,42 +12,42 @@ export const windowOptionLabel = {
 };
 
 const initialState = {
-  [EdstWindow.ALTIMETER]: {
+  ALTIMETER: {
     lines: 5,
     columns: 1,
     fontSizeIndex: 2,
     brightness: 80,
   },
-  [EdstWindow.METAR]: {
+  METAR: {
     lines: 5,
     fontSizeIndex: 2,
     brightness: 80,
   },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: {
+  MESSAGE_COMPOSE_AREA: {
     paLines: 2,
     width: 35,
     fontSizeIndex: 2,
     brightness: 80,
   },
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: {
+  MESSAGE_RESPONSE_AREA: {
     width: 45,
     fontSizeIndex: 2,
     brightness: 80,
   },
-  [EdstWindow.GI]: {
+  GI: {
     lines: 10,
     fontSizeIndex: 2,
     brightness: 80,
   },
-  [EdstWindow.SIGMETS]: {
+  SIGMETS: {
     lines: 10,
     fontSizeIndex: 2,
     brightness: 80,
   },
-  [EdstWindow.STATUS]: {
+  STATUS: {
     fontSizeIndex: 2,
   },
-  [EdstWindow.OUTAGE]: {
+  OUTAGE: {
     fontSizeIndex: 2,
   },
 };
@@ -57,77 +56,77 @@ export type WindowOptions = typeof initialState;
 export type ModifiableWindowOptions = WindowOptions;
 
 const maxOptionValues = {
-  [EdstWindow.ALTIMETER]: {
+  ALTIMETER: {
     brightness: 100,
     fontSizeIndex: 3,
   },
-  [EdstWindow.METAR]: {
+  METAR: {
     brightness: 100,
     fontSizeIndex: 3,
   },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: {
+  MESSAGE_COMPOSE_AREA: {
     brightness: 100,
     paLines: 2,
     width: 50,
     fontSizeIndex: 3,
   },
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: {
+  MESSAGE_RESPONSE_AREA: {
     brightness: 100,
     width: 50,
     fontSizeIndex: 3,
   },
-  [EdstWindow.GI]: {
+  GI: {
     brightness: 100,
     lines: 21,
     fontSizeIndex: 3,
   },
-  [EdstWindow.SIGMETS]: {
+  SIGMETS: {
     brightness: 100,
     lines: 21,
     fontSizeIndex: 3,
   },
-  [EdstWindow.STATUS]: {
+  STATUS: {
     fontSizeIndex: 3,
   },
-  [EdstWindow.OUTAGE]: {
+  OUTAGE: {
     fontSizeIndex: 3,
   },
 };
 
 const minOptionValues = {
-  [EdstWindow.ALTIMETER]: {
+  ALTIMETER: {
     brightness: 2,
     fontSizeIndex: 1,
   },
-  [EdstWindow.METAR]: {
+  METAR: {
     brightness: 2,
     fontSizeIndex: 1,
   },
-  [EdstWindow.MESSAGE_COMPOSE_AREA]: {
+  MESSAGE_COMPOSE_AREA: {
     brightness: 2,
     paLines: 2,
     width: 30,
     fontSizeIndex: 1,
   },
-  [EdstWindow.MESSAGE_RESPONSE_AREA]: {
+  MESSAGE_RESPONSE_AREA: {
     brightness: 2,
     width: 25,
     fontSizeIndex: 1,
   },
-  [EdstWindow.GI]: {
+  GI: {
     brightness: 2,
     lines: 3,
     fontSizeIndex: 1,
   },
-  [EdstWindow.SIGMETS]: {
+  SIGMETS: {
     brightness: 2,
     lines: 3,
     fontSizeIndex: 1,
   },
-  [EdstWindow.STATUS]: {
+  STATUS: {
     fontSizeIndex: 1,
   },
-  [EdstWindow.OUTAGE]: {
+  OUTAGE: {
     fontSizeIndex: 1,
   },
 };

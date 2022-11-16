@@ -14,7 +14,6 @@ import {
 } from "styles/optionMenuStyles";
 import { useDragging } from "hooks/useDragging";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { ToolsOptionsMenu } from "components/ToolsOptionsMenu";
 import { ExitButton } from "components/utils/EdstButton";
@@ -25,20 +24,20 @@ export const ToolsBody = styled(OptionsBody)`
 
 export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector((state) => windowSelector(state, EdstWindow.TOOLS_MENU));
+  const windowProps = useRootSelector((state) => windowSelector(state, "TOOLS_MENU"));
   const zStack = useRootSelector(zStackSelector);
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.TOOLS_MENU, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TOOLS_MENU", "mouseup");
 
   return (
     windowProps?.position && (
       <OptionsMenu
         ref={ref}
         pos={windowProps.position}
-        zIndex={zStack.indexOf(EdstWindow.TOOLS_MENU)}
-        onMouseDown={() => zStack.indexOf(EdstWindow.TOOLS_MENU) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.TOOLS_MENU))}
+        zIndex={zStack.indexOf("TOOLS_MENU")}
+        onMouseDown={() => zStack.indexOf("TOOLS_MENU") < zStack.length - 1 && dispatch(pushZStack("TOOLS_MENU"))}
         anyDragging={anyDragging}
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -63,7 +62,7 @@ export const ToolsMenu = () => {
               </OptionsBodyRow>
               <OptionsBottomRow>
                 <OptionsBodyCol alignRight>
-                  <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
+                  <ExitButton onMouseDown={() => dispatch(closeWindow("TOOLS_MENU"))} />
                 </OptionsBodyCol>
               </OptionsBottomRow>
             </>

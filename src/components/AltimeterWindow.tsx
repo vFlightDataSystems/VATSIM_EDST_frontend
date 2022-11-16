@@ -3,7 +3,6 @@ import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
 import { FloatingWindowRow } from "styles/floatingWindowStyles";
-import { EdstWindow } from "enums/edstWindow";
 import { useAltimeter } from "api/weatherApi";
 import { airportIdSelector, altimeterAirportsSelector, delAltimeter } from "~redux/slices/weatherSlice";
 import { mod } from "~/utils/mod";
@@ -31,7 +30,7 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const { data: airportAltimeterEntry } = useAltimeter(airport);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.ALTIMETER));
+  const windowOptions = useRootSelector(windowOptionsSelector("ALTIMETER"));
   const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
   const utcMinutes = getUtcMinutesAfterMidnight();
@@ -39,7 +38,7 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
     ? Number(airportAltimeterEntry.time.slice(0, 2)) * 60 + Number(airportAltimeterEntry.time.slice(2))
     : null;
 
-  const zIndex = zStack.indexOf(EdstWindow.ALTIMETER);
+  const zIndex = zStack.indexOf("ALTIMETER");
   const rect = ref.current?.getBoundingClientRect();
 
   return (
@@ -114,7 +113,7 @@ export const AltimeterWindow = () => {
       title="ALTIM SET"
       optionsHeaderTitle="AS"
       width="24ch"
-      window={EdstWindow.ALTIMETER}
+      window="ALTIMETER"
       extraOptions={extraOptions}
       showOptions={showOptions}
       setShowOptions={setShowOptionsHandler}

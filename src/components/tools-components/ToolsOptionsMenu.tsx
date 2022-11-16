@@ -4,7 +4,6 @@ import { closeWindow } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { toolsOptionsSelector, updateToolsOptions } from "~redux/slices/aclSlice";
 import { OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionIndicator, OptionsFlexCol } from "styles/optionMenuStyles";
-import { EdstWindow } from "enums/edstWindow";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 export const ToolsOptionsMenu = () => {
@@ -55,12 +54,12 @@ export const ToolsOptionsMenu = () => {
                   nonRvsmIndicator,
                 })
               );
-              dispatch(closeWindow(EdstWindow.TOOLS_MENU));
+              dispatch(closeWindow("TOOLS_MENU"));
             }}
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.TOOLS_MENU))} />
+          <ExitButton onMouseDown={() => dispatch(closeWindow("TOOLS_MENU"))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

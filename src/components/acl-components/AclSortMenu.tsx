@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aclSortDataSelector, setAclSort } from "~redux/slices/aclSlice";
-import { EdstWindow } from "enums/edstWindow";
 import { Tooltips } from "~/tooltips";
 import { OptionsBodyRow, OptionIndicator, OptionIndicatorDiamond } from "styles/optionMenuStyles";
 import { SectorRow, SortCol } from "styles/sortStyles";
-import { AclSortOption } from "enums/acl/aclSortOption";
 import { SortMenu } from "components/SortMenu";
 
 export const AclSortMenu = () => {
@@ -19,7 +17,7 @@ export const AclSortMenu = () => {
   };
 
   return (
-    <SortMenu edstWindow={EdstWindow.ACL_SORT_MENU} onSubmit={onSubmit}>
+    <SortMenu menu="ACL_SORT_MENU" onSubmit={onSubmit}>
       <SectorRow>
         <SortCol onMouseDown={() => setSector(!sector)} title={Tooltips.sortAclSectorNonSector}>
           <OptionIndicator selected={sector} />
@@ -27,38 +25,38 @@ export const AclSortMenu = () => {
         </SortCol>
       </SectorRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.ACID)} title={Tooltips.sortAcid}>
-          <OptionIndicatorDiamond selected={selectedOption === AclSortOption.ACID} />
+        <SortCol onMouseDown={() => setSelectedOption("ACL_ACID_SORT_OPTION")} title={Tooltips.sortAcid}>
+          <OptionIndicatorDiamond selected={selectedOption === "ACL_ACID_SORT_OPTION"} />
           ACID
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.BOUNDARY_TIME)} title={Tooltips.sortBoundaryTime}>
-          <OptionIndicatorDiamond selected={selectedOption === AclSortOption.BOUNDARY_TIME} />
+        <SortCol onMouseDown={() => setSelectedOption("ACL_BOUNDARY_TIME_SORT_OPTION")} title={Tooltips.sortBoundaryTime}>
+          <OptionIndicatorDiamond selected={selectedOption === "ACL_BOUNDARY_TIME_SORT_OPTION"} />
           Boundary Time
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.CONFLICT_STATUS)} disabled title={Tooltips.sortConflictStatus}>
-          <OptionIndicatorDiamond selected={selectedOption === AclSortOption.CONFLICT_STATUS} />
+        <SortCol onMouseDown={() => setSelectedOption("ACL_CONFLICT_STATUS_SORT_OPTION")} disabled title={Tooltips.sortConflictStatus}>
+          <OptionIndicatorDiamond selected={selectedOption === "ACL_CONFLICT_STATUS_SORT_OPTION"} />
           Conflict Status
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.CONFLICT_TIME)} disabled title={Tooltips.sortConflictTime}>
-          <OptionIndicatorDiamond selected={selectedOption === AclSortOption.CONFLICT_TIME} />
+        <SortCol onMouseDown={() => setSelectedOption("ACL_CONFLICT_TIME_SORT_OPTION")} disabled title={Tooltips.sortConflictTime}>
+          <OptionIndicatorDiamond selected={selectedOption === "ACL_CONFLICT_TIME_SORT_OPTION"} />
           Conflict Time
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.DESTINATION)} title={Tooltips.sortDestination}>
-          <OptionIndicatorDiamond selected={selectedOption === AclSortOption.DESTINATION} />
+        <SortCol onMouseDown={() => setSelectedOption("ACL_DESTINATION_SORT_OPTION")} title={Tooltips.sortDestination}>
+          <OptionIndicatorDiamond selected={selectedOption === "ACL_DESTINATION_SORT_OPTION"} />
           Destination
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(AclSortOption.SECTOR_BY_SECTOR)} disabled title={Tooltips.sortSectorBySector}>
-          <OptionIndicatorDiamond selected={selectedOption === AclSortOption.SECTOR_BY_SECTOR} />
+        <SortCol onMouseDown={() => setSelectedOption("ACL_SECTOR_BY_SECTOR_SORT_OPTION")} disabled title={Tooltips.sortSectorBySector}>
+          <OptionIndicatorDiamond selected={selectedOption === "ACL_SECTOR_BY_SECTOR_SORT_OPTION"} />
           Sector-by-Sector
         </SortCol>
       </OptionsBodyRow>

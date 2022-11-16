@@ -9,7 +9,7 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import socket from "~socket";
@@ -40,19 +40,19 @@ const PlanOptionsRow = ({ content, ...props }: PlanOptionsRowProps) => (
 export const PlanOptions = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector)!;
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.PLAN_OPTIONS));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "PLAN_OPTIONS"));
   const zStack = useRootSelector(zStackSelector);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   const entry = useRootSelector((state) => entrySelector(state, asel.aircraftId));
-  const dep = asel.window === EdstWindow.DEP;
+  const dep = asel.window === "DEP";
   useCenterCursor(ref, [asel.aircraftId]);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.PLAN_OPTIONS, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "PLAN_OPTIONS", "mouseup");
 
   const openMenu = useCallback(
     (menu: EdstWindow, eventId?: SharedUiEvent, triggerSharedState = true) => {
       dispatch(openMenuThunk(menu, ref.current, false, true));
-      dispatch(closeWindow(EdstWindow.PLAN_OPTIONS, false));
+      dispatch(closeWindow("PLAN_OPTIONS", false));
       if (triggerSharedState) {
         socket.dispatchUiEvent("planOptionsOpenMenu", menu);
       }
@@ -70,8 +70,8 @@ export const PlanOptions = () => {
     <PlanOptionsDiv
       ref={ref}
       pos={pos}
-      zIndex={zStack.indexOf(EdstWindow.PLAN_OPTIONS)}
-      onMouseDown={() => zStack.indexOf(EdstWindow.PLAN_OPTIONS) < zStack.length - 1 && dispatch(pushZStack(EdstWindow.PLAN_OPTIONS))}
+      zIndex={zStack.indexOf("PLAN_OPTIONS")}
+      onMouseDown={() => zStack.indexOf("PLAN_OPTIONS") < zStack.length - 1 && dispatch(pushZStack("PLAN_OPTIONS"))}
       anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -82,13 +82,13 @@ export const PlanOptions = () => {
         <FidRow>
           {entry.cid} {entry.aircraftId}
         </FidRow>
-        <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu(EdstWindow.ALTITUDE_MENU)} />
+        <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu("ALTITUDE_MENU")} />
         {!dep && <PlanOptionsRow title={Tooltips.planOptionsSpeed} content="Speed..." disabled />}
-        <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu(EdstWindow.ROUTE_MENU)} />
+        <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu("ROUTE_MENU")} />
         <PlanOptionsRow
           title={Tooltips.planOptionsPrevRoute}
           content="Previous Route"
-          onMouseDown={() => openMenu(EdstWindow.PREV_ROUTE_MENU)}
+          onMouseDown={() => openMenu("PREV_ROUTE_MENU")}
           disabled={!!entry?.previousRoute}
         />
         {!dep && <PlanOptionsRow title={Tooltips.planOptionsStopProbe} content="Stop Probe..." disabled />}
@@ -102,12 +102,12 @@ export const PlanOptions = () => {
             dispatch(setAsel(null));
             dispatch(closeAllMenus());
             dispatch(delEntry(entry.aircraftId));
-            dispatch(closeWindow(EdstWindow.PLAN_OPTIONS));
+            dispatch(closeWindow("PLAN_OPTIONS"));
           }}
         />
         <OptionsBodyRow margin="0">
           <OptionsBodyCol alignRight>
-            <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.PLAN_OPTIONS))} />
+            <ExitButton onMouseDown={() => dispatch(closeWindow("PLAN_OPTIONS"))} />
           </OptionsBodyCol>
         </OptionsBodyRow>
       </PlanOptionsBody>

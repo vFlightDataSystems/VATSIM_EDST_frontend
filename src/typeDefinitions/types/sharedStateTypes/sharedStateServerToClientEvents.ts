@@ -1,4 +1,4 @@
-import type { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 
 import type { AclState } from "~redux/slices/aclSlice";
 import type { DepState } from "~redux/slices/depSlice";

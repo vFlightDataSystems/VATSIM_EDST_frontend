@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import type { Nullable } from "types/utility-types";
 import type { SharedStateClientToServerEvents } from "types/sharedStateTypes/sharedStateClientToServerEvents";
 import type { SharedAircraftDto } from "types/sharedStateTypes/sharedAircraftDto";
-import type { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import type { Asel } from "types/asel";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import type { AclState } from "~redux/slices/aclSlice";

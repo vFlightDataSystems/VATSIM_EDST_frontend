@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { AclSortOption } from "enums/acl/aclSortOption";
+import type { AclSortOption } from "types/acl/aclSortOption";
 import type { EdstEntry } from "types/edstEntry";
-import { DepSortOption } from "enums/dep/depSortOption";
+import type { DepSortOption } from "types/dep/depSortOption";
 import { entriesSelector } from "~redux/slices/entrySlice";
 import { depManualPostingSelector, depSortOptionSelector } from "~redux/slices/depSlice";
 import { aclManualPostingSelector, aclSortDataSelector } from "~redux/slices/aclSlice";
@@ -57,11 +57,11 @@ const depNotSpaListSelector = createSelector([depEntriesSelector], (entries) => 
 
 const depSortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: EdstEntry) => {
   switch (selectedSortOption) {
-    case DepSortOption.ACID:
+    case "DEP_ACID_SORT_OPTION":
       return u.aircraftId.localeCompare(v.aircraftId);
-    case DepSortOption.DESTINATION:
+    case "DEP_DESTINATION_SORT_OPTION":
       return u.destination.localeCompare(v.destination);
-    case DepSortOption.ORIGIN:
+    case "DEP_ORIGIN_SORT_OPTION":
       return u.departure.localeCompare(v.departure);
     default:
       return u.aircraftId.localeCompare(v.aircraftId);
@@ -100,11 +100,11 @@ const aclNotSpaListSelector = createSelector([aclEntriesSelector], (entries) => 
 
 const aclSortFunc = (selectedOption: AclSortOption) => (u: EdstEntry, v: EdstEntry) => {
   switch (selectedOption) {
-    case AclSortOption.ACID:
+    case "ACL_ACID_SORT_OPTION":
       return u.aircraftId.localeCompare(v.aircraftId);
-    case AclSortOption.DESTINATION:
+    case "ACL_DESTINATION_SORT_OPTION":
       return u.destination.localeCompare(v.destination);
-    case AclSortOption.BOUNDARY_TIME:
+    case "ACL_BOUNDARY_TIME_SORT_OPTION":
       return u.boundaryTime - v.boundaryTime;
     default:
       return u.aircraftId.localeCompare(v.aircraftId);

@@ -16,7 +16,6 @@ import { ScrollContainer } from "styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv, InnerRow } from "styles/styles";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toggleAclHideColumn, toolsOptionsSelector } from "~redux/slices/aclSlice";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "styles/sharedColumns";
-import { AclRowField } from "enums/acl/aclRowField";
 import { VCI_SYMBOL } from "~/utils/constants";
 import { colors } from "~/edstTheme";
 import { AclCol1, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, SpdCol } from "components/AclStyled";
@@ -44,21 +43,21 @@ export const AclTable = () => {
   const [, setAltMouseDown] = useState(false);
 
   const handleClickSlash = useCallback(() => {
-    if (hiddenColumns.includes(AclRowField.SPD) && hiddenColumns.includes(AclRowField.HDG)) {
-      dispatch(toggleAclHideColumn([AclRowField.SPD, AclRowField.HDG]));
-      if (asel?.field === AclRowField.SPD || asel?.field === AclRowField.HDG) {
+    if (hiddenColumns.includes("SPD_ACL_ROW_FIELD") && hiddenColumns.includes("HDG_ACL_ROW_FIELD")) {
+      dispatch(toggleAclHideColumn(["SPD_ACL_ROW_FIELD", "HDG_ACL_ROW_FIELD"]));
+      if (asel?.field === "SPD_ACL_ROW_FIELD" || asel?.field === "HDG_ACL_ROW_FIELD") {
         dispatch(setAsel(null));
       }
     } else {
-      if (!hiddenColumns.includes(AclRowField.HDG)) {
-        dispatch(toggleAclHideColumn(AclRowField.HDG));
-        if (asel?.field === AclRowField.HDG) {
+      if (!hiddenColumns.includes("HDG_ACL_ROW_FIELD")) {
+        dispatch(toggleAclHideColumn("HDG_ACL_ROW_FIELD"));
+        if (asel?.field === "HDG_ACL_ROW_FIELD") {
           dispatch(setAsel(null));
         }
       }
-      if (!hiddenColumns.includes(AclRowField.SPD)) {
-        dispatch(toggleAclHideColumn(AclRowField.SPD));
-        if (asel?.field === AclRowField.SPD) {
+      if (!hiddenColumns.includes("SPD_ACL_ROW_FIELD")) {
+        dispatch(toggleAclHideColumn("SPD_ACL_ROW_FIELD"));
+        if (asel?.field === "SPD_ACL_ROW_FIELD") {
           dispatch(setAsel(null));
         }
       }
@@ -85,25 +84,29 @@ export const AclTable = () => {
           <SpecialBox disabled />
           <AircraftTypeCol
             hover
-            hidden={hiddenColumns.includes(AclRowField.TYPE)}
-            onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.TYPE))}
+            hidden={hiddenColumns.includes("TYPE_ACL_ROW_FIELD")}
+            onMouseDown={() => dispatch(toggleAclHideColumn("TYPE_ACL_ROW_FIELD"))}
           >
-            T{!hiddenColumns.includes(AclRowField.TYPE) && "ype"}
+            T{!hiddenColumns.includes("TYPE_ACL_ROW_FIELD") && "ype"}
           </AircraftTypeCol>
           <AltCol hover headerCol onMouseDown={() => setAltMouseDown(true)} onMouseUp={() => setAltMouseDown(false)}>
             Alt.
           </AltCol>
-          <CodeCol hover hidden={hiddenColumns.includes(AclRowField.CODE)} onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.CODE))}>
-            C{!hiddenColumns.includes(AclRowField.CODE) && "ode"}
+          <CodeCol
+            hover
+            hidden={hiddenColumns.includes("CODE_ACL_ROW_FIELD")}
+            onMouseDown={() => dispatch(toggleAclHideColumn("CODE_ACL_ROW_FIELD"))}
+          >
+            C{!hiddenColumns.includes("CODE_ACL_ROW_FIELD") && "ode"}
           </CodeCol>
           <SpecialBox disabled />
           <HdgCol
             title={Tooltips.aclHeaderHdg}
             hover
-            hidden={hiddenColumns.includes(AclRowField.HDG)}
-            onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.HDG))}
+            hidden={hiddenColumns.includes("HDG_ACL_ROW_FIELD")}
+            onMouseDown={() => dispatch(toggleAclHideColumn("HDG_ACL_ROW_FIELD"))}
           >
-            {hiddenColumns.includes(AclRowField.HDG) && anyAssignedHeading && "*"}H{!hiddenColumns.includes(AclRowField.HDG) && "dg"}
+            {hiddenColumns.includes("HDG_ACL_ROW_FIELD") && anyAssignedHeading && "*"}H{!hiddenColumns.includes("HDG_ACL_ROW_FIELD") && "dg"}
           </HdgCol>
           <HdgSpdSlashCol title={Tooltips.aclHeaderSlash} hover onMouseDown={handleClickSlash}>
             /
@@ -111,11 +114,11 @@ export const AclTable = () => {
           <SpdCol
             title={Tooltips.aclHeaderSpd}
             hover
-            hidden={hiddenColumns.includes(AclRowField.SPD)}
-            onMouseDown={() => dispatch(toggleAclHideColumn(AclRowField.SPD))}
+            hidden={hiddenColumns.includes("SPD_ACL_ROW_FIELD")}
+            onMouseDown={() => dispatch(toggleAclHideColumn("SPD_ACL_ROW_FIELD"))}
           >
-            S{!hiddenColumns.includes(AclRowField.SPD) && "pd"}
-            {hiddenColumns.includes(AclRowField.SPD) && anyAssignedSpeed && "*"}
+            S{!hiddenColumns.includes("SPD_ACL_ROW_FIELD") && "pd"}
+            {hiddenColumns.includes("SPD_ACL_ROW_FIELD") && anyAssignedSpeed && "*"}
           </SpdCol>
           <SpecialBox disabled />
           <SpecialBox disabled />

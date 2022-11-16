@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useRootSelector } from "~redux/hooks";
-import { EdstWindow } from "enums/edstWindow";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { useHubConnection } from "hooks/useHubConnection";
 import { artccIdSelector, sectorIdSelector } from "~redux/slices/sectorSlice";
@@ -24,14 +23,7 @@ export const Status = () => {
   };
 
   return (
-    <FloatingWindow
-      title="STATUS"
-      optionsHeaderTitle="STATUS"
-      width="40ch"
-      window={EdstWindow.STATUS}
-      showOptions={showOptions}
-      setShowOptions={setShowOptions}
-    >
+    <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>
       <EdstButton onMouseDown={onClickToggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
       <span>
         Submit Feedback{" "}

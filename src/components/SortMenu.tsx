@@ -6,7 +6,6 @@ import { closeWindow, zStackSelector, pushZStack, windowSelector } from "~redux/
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { EdstWindow } from "enums/edstWindow";
 import { SortBody, SortHeader } from "styles/sortStyles";
 import { OptionsBodyCol, OptionsBottomRow, OptionsMenu } from "styles/optionMenuStyles";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
@@ -18,28 +17,28 @@ type SortDivProps = Pick<CSSProperties, "width">;
 export const SortDiv = styled(OptionsMenu)<SortDivProps>((props) => ({ width: props.width }));
 
 type SortMenuProps = PropsWithChildren<{
-  edstWindow: EdstWindow.ACL_SORT_MENU | EdstWindow.DEP_SORT_MENU;
+  menu: "ACL_SORT_MENU" | "DEP_SORT_MENU";
   onSubmit: () => void;
 }>;
 
-export const SortMenu = ({ edstWindow, onSubmit, children }: SortMenuProps) => {
+export const SortMenu = ({ menu, onSubmit, children }: SortMenuProps) => {
   const dispatch = useRootDispatch();
-  const windowProps = useRootSelector((state) => windowSelector(state, edstWindow));
+  const windowProps = useRootSelector((state) => windowSelector(state, menu));
   const zStack = useRootSelector(zStackSelector);
 
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mouseup");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menu, "mouseup");
 
   return (
     windowProps.position && (
       <SortDiv
         ref={ref}
-        width={edstWindow === EdstWindow.ACL_SORT_MENU ? 220 : 190}
+        width={menu === "ACL_SORT_MENU" ? "220px" : "190px"}
         pos={windowProps.position}
-        zIndex={zStack.indexOf(edstWindow)}
-        onMouseDown={() => zStack.indexOf(edstWindow) < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
+        zIndex={zStack.indexOf(menu)}
+        onMouseDown={() => zStack.indexOf(menu) < zStack.length - 1 && dispatch(pushZStack(menu))}
         anyDragging={anyDragging}
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -54,12 +53,12 @@ export const SortMenu = ({ edstWindow, onSubmit, children }: SortMenuProps) => {
                 content="OK"
                 onMouseDown={() => {
                   onSubmit();
-                  dispatch(closeWindow(edstWindow));
+                  dispatch(closeWindow(menu));
                 }}
               />
             </OptionsBodyCol>
             <OptionsBodyCol alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(edstWindow))} />
+              <ExitButton onMouseDown={() => dispatch(closeWindow(menu))} />
             </OptionsBodyCol>
           </OptionsBottomRow>
         </SortBody>

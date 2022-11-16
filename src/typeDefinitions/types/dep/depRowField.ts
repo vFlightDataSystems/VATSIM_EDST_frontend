@@ -1,0 +1,7 @@
+export type DepRowField =
+  | "FID_DEP_ROW_FIELD"
+  | "P_TIME_DEP_ROW_FIELD"
+  | "TYPE_DEP_ROW_FIELD"
+  | "ALT_DEP_ROW_FIELD"
+  | "CODE_DEP_ROW_FIELD"
+  | "ROUTE_DEP_ROW_FIELD";

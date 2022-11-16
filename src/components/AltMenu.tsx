@@ -15,7 +15,6 @@ import { aselSelector, closeWindow, windowPositionSelector } from "~redux/slices
 import { NoSelectDiv } from "styles/NoSelectDiv";
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { useCenterCursor } from "hooks/useCenterCursor";
-import { EdstWindow } from "enums/edstWindow";
 import { useHubActions } from "hooks/useHubActions";
 import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "~/utils/constants";
 import type { Plan } from "types/plan";
@@ -180,9 +179,9 @@ export const AltMenu = () => {
   const ref = useRef<HTMLDivElement>(null);
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.ALTITUDE_MENU));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "ALTITUDE_MENU"));
   const dispatch = useRootDispatch();
-  const [selected, setSelected] = useState(asel.window !== EdstWindow.DEP ? "trial" : "amend");
+  const [selected, setSelected] = useState(asel.window !== "DEP" ? "trial" : "amend");
   const [tempAltHover, setTempAltHover] = useState<Nullable<number>>(null);
   const [deltaY, setDeltaY] = useState(0);
   const [manualInput, setManualInput] = useState<Nullable<string>>(null);
@@ -211,12 +210,12 @@ export const AltMenu = () => {
       };
       dispatch(addPlanThunk(trialPlanData));
     }
-    dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
+    dispatch(closeWindow("ALTITUDE_MENU"));
   };
 
   const handleTempAltClick = (alt: number) => {
     // dispatch(addTrialPlanThunk(trialPlanData));
-    dispatch(closeWindow(EdstWindow.ALTITUDE_MENU));
+    dispatch(closeWindow("ALTITUDE_MENU"));
   };
 
   const handleScroll: React.WheelEventHandler<HTMLDivElement> = (e) => {
@@ -241,7 +240,7 @@ export const AltMenu = () => {
     <AltMenuDiv ref={ref} width={manualInput !== null ? "auto" : "11ch"} pos={pos}>
       <AltMenuHeaderDiv>
         <AltMenuHeaderCol flexGrow={1}>{entry?.aircraftId}</AltMenuHeaderCol>
-        <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow(EdstWindow.ALTITUDE_MENU))}>
+        <AltMenuHeaderCol width="1.6ch" onMouseDown={() => dispatch(closeWindow("ALTITUDE_MENU"))}>
           X
         </AltMenuHeaderCol>
       </AltMenuHeaderDiv>
@@ -279,7 +278,7 @@ export const AltMenu = () => {
             hover
             selected={selected === "trial"}
             onMouseDown={() => setSelected("trial")}
-            disabled={asel.window === EdstWindow.DEP}
+            disabled={asel.window === "DEP"}
           >
             TRIAL PLAN
           </AltMenuRow>
@@ -293,7 +292,7 @@ export const AltMenu = () => {
             <AltMenuRowCol>TFC</AltMenuRowCol>
             <AltMenuRowCol width="0.4ch">{DOWNLINK_SYMBOL}</AltMenuRowCol>
           </AltMenuRow>
-          <AltMenuRow disabled>{asel.window !== EdstWindow.DEP ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
+          <AltMenuRow disabled>{asel.window !== "DEP" ? "PROCEDURE" : "NO ALT"}</AltMenuRow>
           <AltMenuSelectContainer onWheel={handleScroll}>
             {_.range(30, -40, -10).map((i) => {
               const alt = centerAlt + i;
@@ -302,7 +301,7 @@ export const AltMenu = () => {
                   <AltMenuScrollCol selected={alt === +entry.altitude} onMouseDown={() => handleAltClick(alt)}>
                     {alt.toString().padStart(3, "0")}
                   </AltMenuScrollCol>
-                  {asel.window !== EdstWindow.DEP && (
+                  {asel.window !== "DEP" && (
                     <AltMenuScrollTempAltCol
                       title={Tooltips.altMenuT}
                       disabled={!(selected === "amend")}

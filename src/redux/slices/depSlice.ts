@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { DepSortOption } from "enums/dep/depSortOption";
-import type { DepRowField } from "enums/dep/depRowField";
+import type { DepSortOption } from "types/dep/depSortOption";
+import type { DepRowField } from "types/dep/depRowField";
 import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
 
@@ -12,7 +12,7 @@ export type DepState = {
 };
 
 const initialState: DepState = {
-  selectedSortOption: DepSortOption.ACID,
+  selectedSortOption: "DEP_ACID_SORT_OPTION",
   manualPosting: true,
   hiddenColumns: [],
 };

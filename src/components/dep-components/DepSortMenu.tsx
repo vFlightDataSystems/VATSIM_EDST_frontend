@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { EdstWindow } from "enums/edstWindow";
 import { Tooltips } from "~/tooltips";
 import { OptionsBodyRow, OptionIndicatorDiamond } from "styles/optionMenuStyles";
 import { SortCol } from "styles/sortStyles";
 import { depSortOptionSelector, setDepSort } from "~redux/slices/depSlice";
-import { DepSortOption } from "enums/dep/depSortOption";
 import { SortMenu } from "components/SortMenu";
 
 export const DepSortMenu = () => {
@@ -18,28 +16,28 @@ export const DepSortMenu = () => {
   };
 
   return (
-    <SortMenu edstWindow={EdstWindow.DEP_SORT_MENU} onSubmit={onSubmit}>
+    <SortMenu menu="DEP_SORT_MENU" onSubmit={onSubmit}>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.ACID)} title={Tooltips.sortAcid}>
-          <OptionIndicatorDiamond selected={selectedOption === DepSortOption.ACID} />
+        <SortCol onMouseDown={() => setSelectedOption("DEP_ACID_SORT_OPTION")} title={Tooltips.sortAcid}>
+          <OptionIndicatorDiamond selected={selectedOption === "DEP_ACID_SORT_OPTION"} />
           ACID
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.DESTINATION)} title={Tooltips.sortDestination}>
-          <OptionIndicatorDiamond selected={selectedOption === DepSortOption.DESTINATION} />
+        <SortCol onMouseDown={() => setSelectedOption("DEP_DESTINATION_SORT_OPTION")} title={Tooltips.sortDestination}>
+          <OptionIndicatorDiamond selected={selectedOption === "DEP_DESTINATION_SORT_OPTION"} />
           Destination
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.ORIGIN)} title={Tooltips.sortOrigin}>
-          <OptionIndicatorDiamond selected={selectedOption === DepSortOption.ORIGIN} />
+        <SortCol onMouseDown={() => setSelectedOption("DEP_ORIGIN_SORT_OPTION")} title={Tooltips.sortOrigin}>
+          <OptionIndicatorDiamond selected={selectedOption === "DEP_ORIGIN_SORT_OPTION"} />
           Origin
         </SortCol>
       </OptionsBodyRow>
       <OptionsBodyRow>
-        <SortCol onMouseDown={() => setSelectedOption(DepSortOption.P_TIME)} disabled title={Tooltips.sortPTime}>
-          <OptionIndicatorDiamond selected={selectedOption === DepSortOption.P_TIME} />
+        <SortCol onMouseDown={() => setSelectedOption("DEP_P_TIME_SORT_OPTION")} disabled title={Tooltips.sortPTime}>
+          <OptionIndicatorDiamond selected={selectedOption === "DEP_P_TIME_SORT_OPTION"} />
           P-Time
         </SortCol>
       </OptionsBodyRow>

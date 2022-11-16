@@ -6,8 +6,7 @@ import { aclAselSelector, closeAllMenus, closeWindow } from "~redux/slices/appSl
 import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
 import { NoSelectDiv } from "styles/NoSelectDiv";
 import { aclCleanup } from "~redux/thunks/aclCleanup";
-import { EdstWindow } from "enums/edstWindow";
-import { AclSortOptionValues } from "enums/acl/aclSortOption";
+import { AclSortOptionValues } from "types/acl/aclSortOption";
 import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "~redux/slices/aclSlice";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
@@ -41,10 +40,10 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         toggleFullscreen={toggleFullscreen}
         startDrag={startDrag}
         closeWindow={() => {
-          if (asel?.window === EdstWindow.ACL) {
+          if (asel?.window === "ACL") {
             dispatch(closeAllMenus());
           }
-          dispatch(closeWindow(EdstWindow.ACL));
+          dispatch(closeWindow("ACL"));
         }}
         text={[
           "Aircraft List",
@@ -55,27 +54,22 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
       <EdstWindowHeaderRowDiv>
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclPlanOptions"
-          edstWindow={EdstWindow.PLAN_OPTIONS}
+          edstWindow="PLAN_OPTIONS"
           disabled={asel === null}
           content="Plan Options..."
           title={Tooltips.planOptions}
         />
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclHoldMenu"
-          edstWindow={EdstWindow.HOLD_MENU}
+          edstWindow="HOLD_MENU"
           disabled={asel === null}
           content="Hold..."
           title={Tooltips.hold}
         />
         <EdstWindowHeaderButton disabled content="Show" />
         <EdstWindowHeaderButton disabled content="Show ALL" />
-        <EdstWindowHeaderButtonWithSharedEvent
-          sharedUiEventId="openAclSortMenu"
-          edstWindow={EdstWindow.ACL_SORT_MENU}
-          content="Sort..."
-          title={Tooltips.sort}
-        />
-        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclToolsMenu" edstWindow={EdstWindow.TOOLS_MENU} content="Tools..." />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclSortMenu" edstWindow="ACL_SORT_MENU" content="Sort..." title={Tooltips.sort} />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclToolsMenu" edstWindow="TOOLS_MENU" content="Tools..." />
         <EdstWindowHeaderButton
           onMouseDown={() => dispatch(setAclManualPosting(!manualPosting))}
           content="Posting Mode"
@@ -83,7 +77,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         />
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclTemplateMenu"
-          edstWindow={EdstWindow.TEMPLATE_MENU}
+          edstWindow="TEMPLATE_MENU"
           content="Template..."
           title={Tooltips.template}
         />

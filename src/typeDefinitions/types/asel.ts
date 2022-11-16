@@ -1,7 +1,7 @@
-import type { EdstWindow } from "enums/edstWindow";
-import type { AclRowField } from "enums/acl/aclRowField";
-import type { DepRowField } from "enums/dep/depRowField";
-import type { PlanRowField } from "enums/planRowField";
+import type { EdstWindow } from "types/edstWindow";
+import type { AclRowField } from "types/acl/aclRowField";
+import type { DepRowField } from "types/dep/depRowField";
+import type { PlanRowField } from "types/planRowField";
 import type { AircraftId } from "types/aircraftId";
 
 export type Asel = {

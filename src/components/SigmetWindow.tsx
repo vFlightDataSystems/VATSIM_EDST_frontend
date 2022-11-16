@@ -13,7 +13,6 @@ import {
 import { FloatingWindowRow } from "styles/floatingWindowStyles";
 import { ScrollContainer } from "styles/optionMenuStyles";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
-import { EdstWindow } from "enums/edstWindow";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
@@ -32,9 +31,9 @@ type SigmetRowProps = {
 const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: SigmetRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.SIGMETS));
+  const windowOptions = useRootSelector(windowOptionsSelector("SIGMETS"));
 
-  const zIndex = zStack.indexOf(EdstWindow.SIGMETS);
+  const zIndex = zStack.indexOf("SIGMETS");
   const rect = ref.current?.getBoundingClientRect();
 
   return (
@@ -115,7 +114,7 @@ export const SigmetWindow = () => {
       title={`SIGMETS SECTOR ${sectorId}`}
       optionsHeaderTitle="SIGMETS"
       width="130ch"
-      window={EdstWindow.SIGMETS}
+      window="SIGMETS"
       extraOptions={extraOptions}
       showOptions={showOptions}
       setShowOptions={setShowOptionsHandler}

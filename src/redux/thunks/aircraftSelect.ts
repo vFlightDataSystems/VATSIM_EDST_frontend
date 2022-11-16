@@ -1,7 +1,7 @@
 import type { Nullable } from "types/utility-types";
-import { EdstWindow } from "enums/edstWindow";
-import type { AclRowField } from "enums/acl/aclRowField";
-import type { DepRowField } from "enums/dep/depRowField";
+import type { EdstWindow } from "types/edstWindow";
+import type { AclRowField } from "types/acl/aclRowField";
+import type { DepRowField } from "types/dep/depRowField";
 import type { Asel } from "types/asel";
 import { setAsel } from "~redux/slices/appSlice";
 import type { RootThunkAction } from "~redux/store";
@@ -25,15 +25,15 @@ function aircraftSelect(
 }
 
 export function aclAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
-  return aircraftSelect(EdstWindow.ACL, aircraftId, field, eventId, triggerSharedState);
+  return aircraftSelect("ACL", aircraftId, field, eventId, triggerSharedState);
 }
 
 export function depAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
-  return aircraftSelect(EdstWindow.DEP, aircraftId, field, eventId, triggerSharedState);
+  return aircraftSelect("DEP", aircraftId, field, eventId, triggerSharedState);
 }
 
 export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
-  return aircraftSelect(EdstWindow.GPD, aircraftId, field, eventId, triggerSharedState);
+  return aircraftSelect("GPD", aircraftId, field, eventId, triggerSharedState);
 }
 
 export function sharedStateAircraftSelect(value: Nullable<Asel>): RootThunkAction {

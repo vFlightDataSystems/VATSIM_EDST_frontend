@@ -6,7 +6,6 @@ import { ScrollContainer } from "styles/optionMenuStyles";
 import { BodyRowDiv, BodyRowHeaderDiv } from "styles/styles";
 import { depHiddenColumnsSelector, depManualPostingSelector, toggleDepHideColumn } from "~redux/slices/depSlice";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "styles/sharedColumns";
-import { DepRowField } from "enums/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL } from "~/utils/constants";
 import { depAckListSelector, depSpaListSelector, depUnAckListSelector } from "~redux/selectors";
 import { DepPTimeCol, RadioCol } from "components/DepStyled";
@@ -35,12 +34,16 @@ export const DepTable = () => {
         <SpecialBox disabled />
         <SpecialBox disabled />
         <SpecialBox disabled />
-        <AircraftTypeCol hover hidden={hiddenColumns.includes(DepRowField.TYPE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.TYPE))}>
-          T{!hiddenColumns.includes(DepRowField.TYPE) && "ype"}
+        <AircraftTypeCol
+          hover
+          hidden={hiddenColumns.includes("TYPE_DEP_ROW_FIELD")}
+          onMouseDown={() => dispatch(toggleDepHideColumn("TYPE_DEP_ROW_FIELD"))}
+        >
+          T{!hiddenColumns.includes("TYPE_DEP_ROW_FIELD") && "ype"}
         </AircraftTypeCol>
         <AltCol headerCol>Alt.</AltCol>
-        <CodeCol hover hidden={hiddenColumns.includes(DepRowField.CODE)} onMouseDown={() => dispatch(toggleDepHideColumn(DepRowField.CODE))}>
-          C{!hiddenColumns.includes(DepRowField.CODE) && "ode"}
+        <CodeCol hover hidden={hiddenColumns.includes("CODE_DEP_ROW_FIELD")} onMouseDown={() => dispatch(toggleDepHideColumn("CODE_DEP_ROW_FIELD"))}>
+          C{!hiddenColumns.includes("CODE_DEP_ROW_FIELD") && "ode"}
         </CodeCol>
         <SpecialBox disabled />
         <RouteCol>Route</RouteCol>

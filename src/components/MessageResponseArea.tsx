@@ -5,7 +5,6 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { mraMsgSelector, pushZStack, setMraMessage, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
 import { FloatingWindowDiv } from "styles/floatingWindowStyles";
 import { useDragging } from "hooks/useDragging";
-import { EdstWindow } from "enums/edstWindow";
 import { useWindowOptions } from "hooks/useWindowOptions";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
@@ -34,16 +33,16 @@ const MessageResponseAreaDiv = styled(FloatingWindowDiv)<MessageResponseAreaDivP
 `;
 
 export const MessageResponseArea = () => {
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.MESSAGE_RESPONSE_AREA));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "MESSAGE_RESPONSE_AREA"));
   const msg = useRootSelector(mraMsgSelector);
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_RESPONSE_AREA, "mousedown");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "MESSAGE_RESPONSE_AREA", "mousedown");
   const { width } = useResizeDetector({ targetRef: ref });
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.MESSAGE_RESPONSE_AREA));
+  const windowOptions = useRootSelector(windowOptionsSelector("MESSAGE_RESPONSE_AREA"));
   const extraOptions = useMemo(
     () => ({
       clear: {
@@ -54,7 +53,7 @@ export const MessageResponseArea = () => {
     }),
     [dispatch]
   );
-  const options = useWindowOptions(EdstWindow.MESSAGE_RESPONSE_AREA, extraOptions);
+  const options = useWindowOptions("MESSAGE_RESPONSE_AREA", extraOptions);
 
   const onMraMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -65,14 +64,14 @@ export const MessageResponseArea = () => {
         break;
       default:
         startDrag(event);
-        if (zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA) < zStack.length - 1) {
-          dispatch(pushZStack(EdstWindow.MESSAGE_RESPONSE_AREA));
+        if (zStack.indexOf("MESSAGE_RESPONSE_AREA") < zStack.length - 1) {
+          dispatch(pushZStack("MESSAGE_RESPONSE_AREA"));
         }
         break;
     }
   };
 
-  const zIndex = zStack.indexOf(EdstWindow.MESSAGE_RESPONSE_AREA);
+  const zIndex = zStack.indexOf("MESSAGE_RESPONSE_AREA");
 
   return (
     <>

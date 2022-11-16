@@ -2,8 +2,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import type { AclSortData, AclSortKey } from "types/aclSortData";
 import { ACL_SORT_MAP } from "types/aclSortData";
-import { AclSortOption } from "enums/acl/aclSortOption";
-import type { AclRowField } from "enums/acl/aclRowField";
+import type { AclRowField } from "types/acl/aclRowField";
 import sharedSocket from "~socket";
 import type { RootState } from "~redux/store";
 
@@ -22,7 +21,7 @@ export type AclState = {
 };
 
 const initialState: AclState = {
-  sortData: { selectedOption: AclSortOption.ACID, sector: false },
+  sortData: { selectedOption: "ACL_ACID_SORT_OPTION", sector: false },
   manualPosting: true,
   toolsOptions: {
     displayCoordinationColumn: false,

@@ -7,8 +7,8 @@ import type { Nullable } from "types/utility-types";
 import { aircraftIsAselSelector, anyDraggingSelector, setAnyDragging } from "~redux/slices/appSlice";
 import type { EdstEntry } from "types/edstEntry";
 import { gpdAircraftSelect } from "~redux/thunks/aircraftSelect";
-import { EdstWindow } from "enums/edstWindow";
-import { AclRowField } from "enums/acl/aclRowField";
+import type { EdstWindow } from "types/edstWindow";
+import type { AclRowField } from "types/acl/aclRowField";
 import type { DragPreviewStyle } from "types/dragPreviewStyle";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useAselEventListener } from "hooks/useAselEventListener";
@@ -86,7 +86,7 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
   const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
 
   const selectedField = useMemo(
-    () => (asel?.aircraftId === entry.aircraftId && asel?.window === EdstWindow.GPD ? asel.field : null),
+    () => (asel?.aircraftId === entry.aircraftId && asel?.window === "GPD" ? asel.field : null),
     [asel?.aircraftId, asel?.field, asel?.window, entry.aircraftId]
   );
 
@@ -102,14 +102,14 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
 
   const altRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
-  useAselEventListener(altRef, entry.aircraftId, "gpd-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener(altRef, entry.aircraftId, "gpd-dest-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
+  useAselEventListener(altRef, entry.aircraftId, "gpd-alt-asel", "ALT_ACL_ROW_FIELD", "ALTITUDE_MENU", handleClick);
+  useAselEventListener(altRef, entry.aircraftId, "gpd-dest-asel", "ROUTE_ACL_ROW_FIELD", "ROUTE_MENU", handleClick);
 
   const onCallsignClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (!anyDragging) {
       switch (event.button) {
         case 0:
-          dispatch(gpdAircraftSelect(entry.aircraftId, AclRowField.FID, null));
+          dispatch(gpdAircraftSelect(entry.aircraftId, "FID_ACL_ROW_FIELD", null));
           break;
         case 1:
           toggleShowRoute();
@@ -185,15 +185,15 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
         <LeaderLine offset={offset} toggleShowRoute={toggleShowRoute} />
         <DataBlockDiv ref={ref} offset={offset} onMouseMoveCapture={(event) => !dragPreviewStyle && startDrag(event)}>
           <DataBlockRow>
-            <DataBlockElement selected={selectedField === AclRowField.FID} onMouseUp={onCallsignClick}>
+            <DataBlockElement selected={selectedField === "FID_ACL_ROW_FIELD"} onMouseUp={onCallsignClick}>
               {entry.aircraftId}
             </DataBlockElement>
           </DataBlockRow>
           <DataBlockRow>
             <DataBlockElement
               ref={altRef}
-              selected={selectedField === AclRowField.ALT}
-              onMouseUp={(event) => handleClick(event.currentTarget, AclRowField.ALT, "gpd-alt-asel", EdstWindow.ALTITUDE_MENU)}
+              selected={selectedField === "ALT_ACL_ROW_FIELD"}
+              onMouseUp={(event) => handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "gpd-alt-asel", "ALTITUDE_MENU")}
             >
               {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`}
             </DataBlockElement>
@@ -201,14 +201,14 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
           <DataBlockRow>
             <DataBlockElement
               ref={destRef}
-              selected={selectedField === AclRowField.ROUTE}
-              onMouseUp={(event) => handleClick(event.currentTarget, AclRowField.ROUTE, "gpd-dest-asel", EdstWindow.ROUTE_MENU)}
+              selected={selectedField === "ROUTE_ACL_ROW_FIELD"}
+              onMouseUp={(event) => handleClick(event.currentTarget, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
             >
               {entry.destination}
             </DataBlockElement>
             <DataBlockElement
-              selected={selectedField === AclRowField.SPD}
-              onMouseUp={(event) => handleClick(event.currentTarget, AclRowField.SPD, "gpd-spd-asel")}
+              selected={selectedField === "SPD_ACL_ROW_FIELD"}
+              onMouseUp={(event) => handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
             >
               {entry.speed}
             </DataBlockElement>

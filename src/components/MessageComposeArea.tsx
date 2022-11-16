@@ -20,7 +20,6 @@ import {
 } from "~redux/slices/appSlice";
 import { FloatingWindowDiv } from "styles/floatingWindowStyles";
 import { useDragging } from "hooks/useDragging";
-import { EdstWindow } from "enums/edstWindow";
 import { useWindowOptions } from "hooks/useWindowOptions";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
@@ -123,7 +122,7 @@ const RejectCrossSpan = styled.span`
 export const MessageComposeArea = () => {
   const dispatch = useRootDispatch();
   const mcaFeedbackString = useRootSelector(mcaFeedbackSelector);
-  const pos = useRootSelector((state) => windowPositionSelector(state, EdstWindow.MESSAGE_COMPOSE_AREA));
+  const pos = useRootSelector((state) => windowPositionSelector(state, "MESSAGE_COMPOSE_AREA"));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const entries = useRootSelector(entriesSelector);
   const aircraftTracks = useRootSelector(aircraftTracksSelector);
@@ -135,18 +134,18 @@ export const MessageComposeArea = () => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, EdstWindow.MESSAGE_COMPOSE_AREA, "mousedown");
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "MESSAGE_COMPOSE_AREA", "mousedown");
   const { width } = useResizeDetector({ targetRef: ref });
 
   const [showOptions, setShowOptions] = useState(false);
-  const windowOptions = useRootSelector(windowOptionsSelector(EdstWindow.MESSAGE_COMPOSE_AREA));
-  const options = useWindowOptions(EdstWindow.MESSAGE_COMPOSE_AREA);
+  const windowOptions = useRootSelector(windowOptionsSelector("MESSAGE_COMPOSE_AREA"));
+  const options = useWindowOptions("MESSAGE_COMPOSE_AREA");
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
 
   const onMcaMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
-      dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+    if (zStack.indexOf("MESSAGE_COMPOSE_AREA") < zStack.length - 1) {
+      dispatch(pushZStack("MESSAGE_COMPOSE_AREA"));
     }
     switch (event.button) {
       case 1:
@@ -159,7 +158,7 @@ export const MessageComposeArea = () => {
     }
   };
 
-  const zIndex = zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA);
+  const zIndex = zStack.indexOf("MESSAGE_COMPOSE_AREA");
 
   const accept = (message: string) => {
     dispatch(setMcaAcceptMessage(message));
@@ -248,7 +247,7 @@ export const MessageComposeArea = () => {
   const parseUU = (args: string[]) => {
     switch (args.length) {
       case 0:
-        dispatch(openWindowThunk(EdstWindow.ACL));
+        dispatch(openWindowThunk("ACL"));
         acceptDposKeyBD();
         break;
       case 1:
@@ -257,21 +256,21 @@ export const MessageComposeArea = () => {
             dispatch(aclCleanup);
             break;
           case "D":
-            dispatch(openWindowThunk(EdstWindow.DEP));
+            dispatch(openWindowThunk("DEP"));
             break;
           case "P":
-            dispatch(openWindowThunk(EdstWindow.ACL));
+            dispatch(openWindowThunk("ACL"));
             dispatch(setAclManualPosting(!manualPosting));
             break;
           case "G":
-            dispatch(openWindowThunk(EdstWindow.GPD));
+            dispatch(openWindowThunk("GPD"));
             break;
           case "R":
             FULLSCREEN_WINDOWS.forEach((window) => dispatch(setIsFullscreen({ window, value: true })));
             dispatch(
               setWindowPosition({
-                window: EdstWindow.MESSAGE_COMPOSE_AREA,
-                pos: defaultWindowPositions[EdstWindow.MESSAGE_COMPOSE_AREA]!,
+                window: "MESSAGE_COMPOSE_AREA",
+                pos: defaultWindowPositions.MESSAGE_COMPOSE_AREA!,
               })
             );
             break;
@@ -281,7 +280,7 @@ export const MessageComposeArea = () => {
           default:
             if (isAclSortKey(args[0])) {
               if (!SORT_KEYS_NOT_IMPLEMENTED.includes(args[0])) {
-                dispatch(openWindowThunk(EdstWindow.ACL));
+                dispatch(openWindowThunk("ACL"));
                 dispatch(setAclSort(args[0]));
               }
             } else {
@@ -359,12 +358,12 @@ export const MessageComposeArea = () => {
           break; // end case QU
         case "QD": // altimeter request: QD <station>
           dispatch(toggleAltimeter(args));
-          dispatch(openWindowThunk(EdstWindow.ALTIMETER));
+          dispatch(openWindowThunk("ALTIMETER"));
           accept("ALTIMETER REQ");
           break; // end case QD
         case "WR": // weather request: WR <station>
           dispatch(toggleMetar(args));
-          dispatch(openWindowThunk(EdstWindow.METAR));
+          dispatch(openWindowThunk("METAR"));
           accept(`WEATHER STAT REQ\n${input}`);
           break; // end case WR
         case "FR": // flightplan readout: FR <fid>
@@ -372,7 +371,7 @@ export const MessageComposeArea = () => {
             reject(`READOUT\n${input}`);
           } else if (args.length === 1) {
             flightplanReadout(args[0]).then(() => accept(`READOUT\n${input}`));
-            dispatch(openWindowThunk(EdstWindow.MESSAGE_RESPONSE_AREA));
+            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
           } else {
             dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${input}`));
           }
@@ -399,15 +398,11 @@ export const MessageComposeArea = () => {
 
   const handleKeyDown = (event: KeyboardEvent) => {
     // event.preventDefault();
-    if (
-      document.activeElement?.localName !== "input" &&
-      document.activeElement?.localName !== "textarea" &&
-      !windows[EdstWindow.ALTITUDE_MENU].open
-    ) {
-      if (!windows[EdstWindow.MESSAGE_COMPOSE_AREA].open) {
-        dispatch(openWindowThunk(EdstWindow.MESSAGE_COMPOSE_AREA));
-      } else if (zStack.indexOf(EdstWindow.MESSAGE_COMPOSE_AREA) < zStack.length - 1) {
-        dispatch(pushZStack(EdstWindow.MESSAGE_COMPOSE_AREA));
+    if (document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" && !windows.ALTITUDE_MENU.open) {
+      if (!windows.MESSAGE_COMPOSE_AREA.open) {
+        dispatch(openWindowThunk("MESSAGE_COMPOSE_AREA"));
+      } else if (zStack.indexOf("MESSAGE_COMPOSE_AREA") < zStack.length - 1) {
+        dispatch(pushZStack("MESSAGE_COMPOSE_AREA"));
       }
       switch (event.key) {
         case "Enter":
@@ -453,7 +448,7 @@ export const MessageComposeArea = () => {
 
   useEventListener("keydown", handleKeyDown);
 
-  return windows[EdstWindow.MESSAGE_COMPOSE_AREA].open ? (
+  return windows.MESSAGE_COMPOSE_AREA.open ? (
     <>
       <MessageComposeAreaDiv
         ref={ref}

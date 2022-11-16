@@ -19,11 +19,10 @@ import {
   RouteContent,
   SpecialBox,
 } from "styles/sharedColumns";
-import { EdstWindow } from "enums/edstWindow";
-import { AclRowField } from "enums/acl/aclRowField";
-import { RouteDisplayOption } from "enums/routeDisplayOption";
-import { HoldDirectionValues } from "enums/hold/holdDirectionValues";
-import { HoldTurnDirectionValues } from "enums/hold/turnDirection";
+import type { EdstWindow } from "types/edstWindow";
+import type { AclRowField } from "types/acl/aclRowField";
+import { HoldDirectionValues } from "types/hold/holdDirectionValues";
+import { HoldTurnDirectionValues } from "types/hold/turnDirection";
 import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
 import { usePar } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
@@ -63,7 +62,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
 
   const isSelected = useCallback(
     (field: AclRowField): boolean => {
-      return asel?.window === EdstWindow.ACL && asel?.aircraftId === aircraftId && asel?.field === field;
+      return asel?.window === "ACL" && asel?.aircraftId === aircraftId && asel?.field === field;
     },
     [aircraftId, asel?.aircraftId, asel?.field, asel?.window]
   );
@@ -80,10 +79,10 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
 
   const handleRouteClick = useCallback(
     (element: HTMLElement, triggerSharedState = true) => {
-      if (entry.routeDisplay === RouteDisplayOption.holdAnnotations) {
-        handleClick(element, AclRowField.ROUTE, "acl-route-asel-hold", EdstWindow.HOLD_MENU, triggerSharedState);
+      if (entry.routeDisplay === "HOLD_ANNOTATIONS_DISPLAY_OPTION") {
+        handleClick(element, "ROUTE_ACL_ROW_FIELD", "acl-route-asel-hold", "HOLD_MENU", triggerSharedState);
       } else {
-        handleClick(element, AclRowField.ROUTE, "acl-route-asel", EdstWindow.ROUTE_MENU, triggerSharedState);
+        handleClick(element, "ROUTE_ACL_ROW_FIELD", "acl-route-asel", "ROUTE_MENU", triggerSharedState);
       }
     },
     [entry.routeDisplay, handleClick]
@@ -95,12 +94,12 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   const holdRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
 
-  useAselEventListener(altRef, aircraftId, "acl-alt-asel", AclRowField.ALT, EdstWindow.ALTITUDE_MENU, handleClick);
-  useAselEventListener(spdRef, aircraftId, "acl-spd-asel", AclRowField.SPD, EdstWindow.SPEED_MENU, handleClick);
-  useAselEventListener(hdgRef, aircraftId, "acl-hdg-asel", AclRowField.HDG, EdstWindow.HEADING_MENU, handleClick);
-  useAselEventListener(routeRef, aircraftId, "acl-route-asel", AclRowField.ROUTE, EdstWindow.ROUTE_MENU, handleClick);
-  useAselEventListener(routeRef, aircraftId, "acl-route-asel-hold", AclRowField.ROUTE, EdstWindow.HOLD_MENU, handleClick);
-  useAselEventListener(holdRef, aircraftId, "acl-hold-asel-hold", AclRowField.HOLD, EdstWindow.HOLD_MENU, handleClick);
+  useAselEventListener(altRef, aircraftId, "acl-alt-asel", "ALT_ACL_ROW_FIELD", "ALTITUDE_MENU", handleClick);
+  useAselEventListener(spdRef, aircraftId, "acl-spd-asel", "SPD_ACL_ROW_FIELD", "SPEED_MENU", handleClick);
+  useAselEventListener(hdgRef, aircraftId, "acl-hdg-asel", "HDG_ACL_ROW_FIELD", "HEADING_MENU", handleClick);
+  useAselEventListener(routeRef, aircraftId, "acl-route-asel", "ROUTE_ACL_ROW_FIELD", "ROUTE_MENU", handleClick);
+  useAselEventListener(routeRef, aircraftId, "acl-route-asel-hold", "ROUTE_ACL_ROW_FIELD", "HOLD_MENU", handleClick);
+  useAselEventListener(holdRef, aircraftId, "acl-hold-asel-hold", "HOLD_ACL_ROW_FIELD", "HOLD_MENU", handleClick);
 
   const par = usePar(aircraftId);
   const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
@@ -194,24 +193,24 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     switch (event.button) {
       case 0:
         if (!entry.holdAnnotations) {
-          handleClick(event.currentTarget, AclRowField.HOLD, "acl-hold-asel-hold", EdstWindow.HOLD_MENU);
+          handleClick(event.currentTarget, "HOLD_ACL_ROW_FIELD", "acl-hold-asel-hold", "HOLD_MENU");
         } else {
           dispatch(
             updateEntry({
               aircraftId,
               data: {
-                routeDisplay: !entry.routeDisplay ? RouteDisplayOption.holdAnnotations : null,
+                routeDisplay: !entry.routeDisplay ? "HOLD_ANNOTATIONS_DISPLAY_OPTION" : null,
               },
             })
           );
         }
         break;
       case 1:
-        handleClick(event.currentTarget, AclRowField.HOLD, "acl-hold-asel-hold", EdstWindow.HOLD_MENU);
+        handleClick(event.currentTarget, "HOLD_ACL_ROW_FIELD", "acl-hold-asel-hold", "HOLD_MENU");
         break;
       case 2:
         if (entry?.holdAnnotations) {
-          handleClick(event.currentTarget, AclRowField.HOLD, "acl-hold-asel-cancel-hold", EdstWindow.CANCEL_HOLD_MENU);
+          handleClick(event.currentTarget, "HOLD_ACL_ROW_FIELD", "acl-hold-asel-cancel-hold", "CANCEL_HOLD_MENU");
         }
         break;
       default:
@@ -229,7 +228,8 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           updateEntry({
             aircraftId,
             data: {
-              routeDisplay: !(entry.routeDisplay === RouteDisplayOption.remarks) && entry.remarks.length > 0 ? RouteDisplayOption.remarks : null,
+              routeDisplay:
+                !(entry.routeDisplay === "REMARKS_ROUTE_DISPLAY_OPTION") && entry.remarks.length > 0 ? "REMARKS_ROUTE_DISPLAY_OPTION" : null,
               remarksChecked: true,
             },
           })
@@ -240,7 +240,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           updateEntry({
             aircraftId,
             data: {
-              routeDisplay: !(entry.routeDisplay === RouteDisplayOption.rawRoute) ? RouteDisplayOption.rawRoute : null,
+              routeDisplay: !(entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION") ? "RAW_ROUTE_DISPLAY_OPTION" : null,
             },
           })
         );
@@ -262,7 +262,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         if (!manualPosting && event.detail === 2 && entry.vciStatus < 0) {
           dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
         }
-        handleClick(event.currentTarget, AclRowField.FID, null);
+        handleClick(event.currentTarget, "FID_ACL_ROW_FIELD", null);
         break;
     }
   };
@@ -271,7 +271,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     event.preventDefault();
     switch (event.button) {
       case 0:
-        handleClick(event.currentTarget, AclRowField.HDG, "acl-hdg-asel", EdstWindow.HEADING_MENU);
+        handleClick(event.currentTarget, "HDG_ACL_ROW_FIELD", "acl-hdg-asel", "HEADING_MENU");
         break;
       case 1:
         if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
@@ -294,7 +294,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
     event.preventDefault();
     switch (event.button) {
       case 0:
-        handleClick(event.currentTarget, AclRowField.SPD, "acl-spd-asel", EdstWindow.SPEED_MENU);
+        handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "acl-spd-asel", "SPEED_MENU");
         break;
       case 1:
         if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
@@ -325,7 +325,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         <AclCol1 border />
         <SpecialBox disabled />
         <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
-          <FidCol hover onMouseDown={handleFidClick} selected={isSelected(AclRowField.FID)}>
+          <FidCol hover onMouseDown={handleFidClick} selected={isSelected("FID_ACL_ROW_FIELD")}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
             <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
@@ -335,10 +335,10 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
           <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
           <AircraftTypeCol
-            visibilityHidden={hiddenColumns.includes(AclRowField.TYPE)}
+            visibilityHidden={hiddenColumns.includes("TYPE_ACL_ROW_FIELD")}
             hover
-            selected={isSelected(AclRowField.TYPE)}
-            onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.TYPE, null)}
+            selected={isSelected("TYPE_ACL_ROW_FIELD")}
+            onMouseDown={(event) => handleClick(event.currentTarget, "TYPE_ACL_ROW_FIELD", null)}
           >
             {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
           </AircraftTypeCol>
@@ -346,8 +346,8 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             <AltColDiv
               ref={altRef}
               headerMouseDown={altMouseDown}
-              selected={isSelected(AclRowField.ALT)}
-              onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.ALT, "acl-alt-asel", EdstWindow.ALTITUDE_MENU)}
+              selected={isSelected("ALT_ACL_ROW_FIELD")}
+              onMouseDown={(event) => handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "acl-alt-asel", "ALTITUDE_MENU")}
             >
               {entry.altitude}
               {entry.interimAltitude && `T${entry.interimAltitude}`}
@@ -355,10 +355,10 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
             {showCoralBox && <CoralBox />}
           </AltCol>
           <CodeCol
-            visibilityHidden={hiddenColumns.includes(AclRowField.CODE)}
+            visibilityHidden={hiddenColumns.includes("CODE_ACL_ROW_FIELD")}
             hover
-            selected={isSelected(AclRowField.CODE)}
-            onMouseDown={(event) => handleClick(event.currentTarget, AclRowField.CODE, null)}
+            selected={isSelected("CODE_ACL_ROW_FIELD")}
+            onMouseDown={(event) => handleClick(event.currentTarget, "CODE_ACL_ROW_FIELD", null)}
           >
             {convertBeaconCodeToString(entry.assignedBeaconCode)}
           </CodeCol>
@@ -368,8 +368,8 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <HdgCol
             ref={hdgRef}
             hover
-            visibilityHidden={hiddenColumns.includes(AclRowField.HDG)}
-            selected={isSelected(AclRowField.HDG)}
+            visibilityHidden={hiddenColumns.includes("HDG_ACL_ROW_FIELD")}
+            selected={isSelected("HDG_ACL_ROW_FIELD")}
             onMouseDown={handleHeadingClick}
             scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
           >
@@ -379,8 +379,8 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           <SpdCol
             ref={spdRef}
             hover
-            visibilityHidden={hiddenColumns.includes(AclRowField.SPD)}
-            selected={isSelected(AclRowField.SPD)}
+            visibilityHidden={hiddenColumns.includes("SPD_ACL_ROW_FIELD")}
+            selected={isSelected("SPD_ACL_ROW_FIELD")}
             onMouseDown={handleSpeedClick}
             scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}
           >
@@ -391,16 +391,16 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
           </SpecialBox>
           <SpecialBox disabled />
           {anyHolding && (
-            <SpecialBox ref={holdRef} color={colors.brown} selected={isSelected(AclRowField.HOLD)} onMouseDown={handleHoldClick}>
+            <SpecialBox ref={holdRef} color={colors.brown} selected={isSelected("HOLD_ACL_ROW_FIELD")} onMouseDown={handleHoldClick}>
               {entry.holdAnnotations ? "H" : ""}
             </SpecialBox>
           )}
           <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
             {entry.remarks.length > 0 && "*"}
           </RemarksBox>
-          <RouteCol ref={routeRef} hover selected={isSelected(AclRowField.ROUTE)} onMouseDown={(event) => handleRouteClick(event.currentTarget)}>
+          <RouteCol ref={routeRef} hover selected={isSelected("ROUTE_ACL_ROW_FIELD")} onMouseDown={(event) => handleRouteClick(event.currentTarget)}>
             <RouteContent padding="0 2px">
-              {entry.routeDisplay === RouteDisplayOption.holdAnnotations &&
+              {entry.routeDisplay === "HOLD_ANNOTATIONS_DISPLAY_OPTION" &&
                 holdAnnotations &&
                 `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
                   `${HoldTurnDirectionValues[holdAnnotations.turns]} ` +
@@ -409,11 +409,11 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
                   `${holdAnnotations.legLength ? (holdAnnotations.legLengthInNm ? "NM" : "Minutes") : ""} EFC ${formatUtcMinutes(
                     holdAnnotations.efc
                   )}`}
-              {entry.routeDisplay === RouteDisplayOption.remarks && <span>{entry.remarks}</span>}
-              {entry.routeDisplay === RouteDisplayOption.rawRoute && <span>{entry.route}</span>}
+              {entry.routeDisplay === "REMARKS_ROUTE_DISPLAY_OPTION" && <span>{entry.remarks}</span>}
+              {entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION" && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
-                  <RouteDepAirport amendmentPending={parAvail && !onPar} selected={isSelected(AclRowField.ROUTE)}>
+                  <RouteDepAirport amendmentPending={parAvail && !onPar} selected={isSelected("ROUTE_ACL_ROW_FIELD")}>
                     {entry.departure}
                   </RouteDepAirport>
                   ./.

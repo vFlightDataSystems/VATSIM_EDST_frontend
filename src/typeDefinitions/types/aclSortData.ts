@@ -1,4 +1,4 @@
-import { AclSortOption } from "enums/acl/aclSortOption";
+import type { AclSortOption } from "types/acl/aclSortOption";
 
 export type AclSortData = { selectedOption: AclSortOption; sector: boolean };
 
@@ -6,47 +6,47 @@ export type AclSortKey = "OB" | "OT" | "OC" | "OS" | "OA" | "OD" | "OSB" | "OST"
 export const SORT_KEYS_NOT_IMPLEMENTED = ["OB", "OT", "OC", "OS", "OSB", "OST", "OSC"];
 export const ACL_SORT_MAP: Record<AclSortKey, AclSortData> = {
   OB: {
-    selectedOption: AclSortOption.BOUNDARY_TIME,
+    selectedOption: "ACL_BOUNDARY_TIME_SORT_OPTION",
     sector: false,
   },
   OT: {
-    selectedOption: AclSortOption.CONFLICT_TIME,
+    selectedOption: "ACL_CONFLICT_TIME_SORT_OPTION",
     sector: false,
   },
   OC: {
-    selectedOption: AclSortOption.CONFLICT_STATUS,
+    selectedOption: "ACL_CONFLICT_STATUS_SORT_OPTION",
     sector: false,
   },
   OS: {
-    selectedOption: AclSortOption.SECTOR_BY_SECTOR,
+    selectedOption: "ACL_SECTOR_BY_SECTOR_SORT_OPTION",
     sector: false,
   },
   OA: {
-    selectedOption: AclSortOption.ACID,
+    selectedOption: "ACL_ACID_SORT_OPTION",
     sector: false,
   },
   OD: {
-    selectedOption: AclSortOption.DESTINATION,
+    selectedOption: "ACL_DESTINATION_SORT_OPTION",
     sector: false,
   },
   OSB: {
-    selectedOption: AclSortOption.BOUNDARY_TIME,
+    selectedOption: "ACL_BOUNDARY_TIME_SORT_OPTION",
     sector: true,
   },
   OST: {
-    selectedOption: AclSortOption.CONFLICT_TIME,
+    selectedOption: "ACL_CONFLICT_TIME_SORT_OPTION",
     sector: true,
   },
   OSC: {
-    selectedOption: AclSortOption.CONFLICT_STATUS,
+    selectedOption: "ACL_CONFLICT_STATUS_SORT_OPTION",
     sector: true,
   },
   OSA: {
-    selectedOption: AclSortOption.ACID,
+    selectedOption: "ACL_ACID_SORT_OPTION",
     sector: true,
   },
   OSD: {
-    selectedOption: AclSortOption.DESTINATION,
+    selectedOption: "ACL_DESTINATION_SORT_OPTION",
     sector: true,
   },
 };

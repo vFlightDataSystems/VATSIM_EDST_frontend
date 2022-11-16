@@ -4,7 +4,6 @@ import { OptionIndicator, OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, Opti
 import { closeWindow } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "~redux/slices/gpdSlice";
-import { EdstWindow } from "enums/edstWindow";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 export const GpdMapFeaturesMenu = () => {
@@ -38,12 +37,12 @@ export const GpdMapFeaturesMenu = () => {
             onMouseDown={() => {
               // set data when OK is pressed
               dispatch(setGpdMapFeatureOptions(currentOptions));
-              dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU));
+              dispatch(closeWindow("GPD_MAP_OPTIONS_MENU"));
             }}
           />
         </OptionsBodyCol>
         <OptionsBodyCol alignRight>
-          <ExitButton onMouseDown={() => dispatch(closeWindow(EdstWindow.GPD_MAP_OPTIONS_MENU))} />
+          <ExitButton onMouseDown={() => dispatch(closeWindow("GPD_MAP_OPTIONS_MENU"))} />
         </OptionsBodyCol>
       </OptionsBottomRow>
     </>

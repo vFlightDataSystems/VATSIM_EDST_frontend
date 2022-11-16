@@ -6,7 +6,7 @@ import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
 import { buttonBorder2px, buttonBorderInverted2px, outlineHover } from "styles/styles";
 import { EdstTooltip } from "components/utils/EdstTooltip";
 import socket from "~socket";
-import type { EdstWindow } from "enums/edstWindow";
+import type { EdstWindow } from "types/edstWindow";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useRootDispatch } from "~redux/hooks";
 

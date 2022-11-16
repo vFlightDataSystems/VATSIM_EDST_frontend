@@ -44,7 +44,6 @@
       "components/*": ["components/*", "components/acl-components/*", "components/dep-components/*", "components/gpd-components/*", "components/plans-display-components/*", "components/template-components/*", "components/tools-components/*"],
       "contexts/*": ["contexts/*"],
       "css/*": ["css/*"],
-      "enums/*": ["typeDefinitions/enums/*"],
       "hooks/*": ["hooks/*"],
       "resources/*": ["resources/*"],
       "types/*": ["typeDefinitions/types/*"],
