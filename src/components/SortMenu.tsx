@@ -1,4 +1,3 @@
-import type { PropsWithChildren } from "react";
 import React, { useRef } from "react";
 
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
@@ -16,10 +15,11 @@ import styled from "styled-components";
 type SortDivProps = Pick<CSSProperties, "width">;
 export const SortDiv = styled(OptionsMenu)<SortDivProps>((props) => ({ width: props.width }));
 
-type SortMenuProps = PropsWithChildren<{
+type SortMenuProps = {
   menu: "ACL_SORT_MENU" | "DEP_SORT_MENU";
   onSubmit: () => void;
-}>;
+  children: React.ReactNode;
+};
 
 export const SortMenu = ({ menu, onSubmit, children }: SortMenuProps) => {
   const dispatch = useRootDispatch();

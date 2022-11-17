@@ -1,6 +1,5 @@
 import type { CSSProperties } from "styled-components";
 import styled, { css } from "styled-components";
-import type { Nullable } from "types/utility-types";
 import type { WindowPosition } from "types/windowPosition";
 import type { WindowDimension } from "types/windowDimension";
 import { DraggableDiv, NoSelectDiv } from "styles/NoSelectDiv";
@@ -10,18 +9,13 @@ const floatingWindowTitleBackgroundColor = "#575757";
 
 type FloatingWindowDivCSSProps = Pick<CSSProperties, "minWidth" | "width" | "maxWidth">;
 type FloatingWindowDivProps = {
-  pos: Nullable<WindowPosition>;
+  pos: WindowPosition;
   zIndex: number;
   fullscreen?: boolean;
 } & FloatingWindowDivCSSProps;
 export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
   ${(props) =>
     css`
-      ${!props.fullscreen &&
-      props.pos && {
-        left: `${props.pos.left}px`,
-        top: `${props.pos.top}px`,
-      }}
       ${props.minWidth && { "min-width": props.minWidth }};
       ${props.width && { width: props.width }};
       ${props.maxWidth && { "max-width": props.maxWidth }};
@@ -29,6 +23,10 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
       font-size: ${props.theme.fontProps.fontSize};
       z-index: ${10000 + props.zIndex};
       position: ${!props.fullscreen ? "fixed" : "absolute"};
+      ${!props.fullscreen && {
+        left: `${props.pos.left}px`,
+        top: `${props.pos.top}px`,
+      }}
     `};
   color: #adadad;
 `;
@@ -44,7 +42,7 @@ export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFlo
     resize: ${!props.fullscreen ? "both" : "none"};
     width: ${props.fullscreen ? "calc(100% - 10px)" : props.dimension.width};
     height: ${props.fullscreen ? "calc(100% - 10px)" : props.dimension.height};
-  `}
+  `};
   display: flex;
   white-space: nowrap;
   flex-flow: column;

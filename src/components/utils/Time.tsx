@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { NoSelectDiv } from "styles/NoSelectDiv";
 
 const TimeStyle = styled(NoSelectDiv)`
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  color: ${(props) => props.theme.colors.grey};
+  ${(props) => css`
+    font-family: ${props.theme.fontProps.eramFontFamily};
+    color: ${props.theme.colors.grey};
+  `}
   display: flex;
   justify-content: center;
   align-items: center;

@@ -33,11 +33,14 @@ const EdstOuterHeaderButton = styled(EdstOuterButton)`
 type EdstInnerButtonCSSProps = Pick<CSSProperties, "padding" | "flexGrow" | "width" | "height">;
 type EdstInnerButtonProps = { selected?: boolean; disabled?: boolean } & EdstInnerButtonCSSProps;
 const EdstInnerButton = styled.div<EdstInnerButtonProps>`
+  ${(props) => css`
+    flex-grow: ${props.flexGrow ?? 1};
+    width: ${props.width ?? "auto"};
+    height: ${props.height ?? "auto"};
+    padding: ${props.padding ?? "0 4px"};
+  `}
   font-size: inherit;
   display: flex;
-  flex-grow: ${(props) => props.flexGrow ?? 1};
-  width: ${(props) => props.width ?? "auto"};
-  height: ${(props) => props.height ?? "auto"};
   justify-content: center;
   align-items: center;
   ${(props) =>
@@ -53,7 +56,7 @@ const EdstInnerButton = styled.div<EdstInnerButtonProps>`
           ${buttonBorder2px};
         `};
   margin: 0;
-  padding: ${(props) => props.padding ?? "0 4px"};
+
   ${outlineHover};
   &[disabled] {
     pointer-events: none;

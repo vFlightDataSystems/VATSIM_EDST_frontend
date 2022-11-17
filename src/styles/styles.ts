@@ -86,12 +86,14 @@ export const FreeTextRow = styled(BodyRowDiv)<Pick<CSSProperties, "marginLeft">>
   ${borderHover}
 `;
 export const FreeTextInput = styled.input.attrs(() => ({ spellCheck: false }))`
+  ${(props) => css`
+    font-size: ${props.theme.fontProps.fontSize};
+    color: ${props.theme.colors.grey};
+  `}
   width: 100%;
   background-color: transparent;
-  font-size: ${(props) => props.theme.fontProps.fontSize};
   outline: none;
   border: none;
-  color: ${(props) => props.theme.colors.grey};
   caret: #ffffff;
   text-transform: uppercase;
 `;

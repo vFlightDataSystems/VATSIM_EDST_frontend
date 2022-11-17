@@ -32,43 +32,41 @@ export const ToolsMenu = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TOOLS_MENU", "mouseup");
 
   return (
-    windowProps?.position && (
-      <OptionsMenu
-        ref={ref}
-        pos={windowProps.position}
-        zIndex={zStack.indexOf("TOOLS_MENU")}
-        onMouseDown={() => zStack.indexOf("TOOLS_MENU") < zStack.length - 1 && dispatch(pushZStack("TOOLS_MENU"))}
-        anyDragging={anyDragging}
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
-          {optionsMenuOpen ? "Options" : "Tools"} Menu
-        </OptionsMenuHeader>
-        <ToolsBody>
-          {optionsMenuOpen && <ToolsOptionsMenu />}
-          {!optionsMenuOpen && (
-            <>
-              <OptionsBodyRow>
-                <OptionsFlexCol disabled>Airspace Status...</OptionsFlexCol>
-              </OptionsBodyRow>
-              <OptionsBodyRow>
-                <OptionsFlexCol disabled>Airport Stream Filter Status...</OptionsFlexCol>
-              </OptionsBodyRow>
-              <OptionsBodyRow>
-                <OptionsFlexCol onMouseDown={() => setOptionsMenuOpen(true)}>Options...</OptionsFlexCol>
-              </OptionsBodyRow>
-              <OptionsBodyRow>
-                <OptionsFlexCol disabled>Restrictions...</OptionsFlexCol>
-              </OptionsBodyRow>
-              <OptionsBottomRow>
-                <OptionsBodyCol alignRight>
-                  <ExitButton onMouseDown={() => dispatch(closeWindow("TOOLS_MENU"))} />
-                </OptionsBodyCol>
-              </OptionsBottomRow>
-            </>
-          )}
-        </ToolsBody>
-      </OptionsMenu>
-    )
+    <OptionsMenu
+      ref={ref}
+      pos={windowProps.position}
+      zIndex={zStack.indexOf("TOOLS_MENU")}
+      onMouseDown={() => zStack.indexOf("TOOLS_MENU") < zStack.length - 1 && dispatch(pushZStack("TOOLS_MENU"))}
+      anyDragging={anyDragging}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+        {optionsMenuOpen ? "Options" : "Tools"} Menu
+      </OptionsMenuHeader>
+      <ToolsBody>
+        {optionsMenuOpen && <ToolsOptionsMenu />}
+        {!optionsMenuOpen && (
+          <>
+            <OptionsBodyRow>
+              <OptionsFlexCol disabled>Airspace Status...</OptionsFlexCol>
+            </OptionsBodyRow>
+            <OptionsBodyRow>
+              <OptionsFlexCol disabled>Airport Stream Filter Status...</OptionsFlexCol>
+            </OptionsBodyRow>
+            <OptionsBodyRow>
+              <OptionsFlexCol onMouseDown={() => setOptionsMenuOpen(true)}>Options...</OptionsFlexCol>
+            </OptionsBodyRow>
+            <OptionsBodyRow>
+              <OptionsFlexCol disabled>Restrictions...</OptionsFlexCol>
+            </OptionsBodyRow>
+            <OptionsBottomRow>
+              <OptionsBodyCol alignRight>
+                <ExitButton onMouseDown={() => dispatch(closeWindow("TOOLS_MENU"))} />
+              </OptionsBodyCol>
+            </OptionsBottomRow>
+          </>
+        )}
+      </ToolsBody>
+    </OptionsMenu>
   );
 };

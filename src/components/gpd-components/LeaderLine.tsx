@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import React from "react";
 import type { DataBlockOffset } from "components/GpdMapElements";
 
@@ -8,10 +8,12 @@ type LeaderLineDivProps = {
 };
 const LeaderLineDiv = styled.div<LeaderLineDivProps>`
   transform-origin: bottom left;
-  transform: ${(props) => `rotate(${props.angle}deg)`};
+  ${(props) => css`
+    transform: rotate(${props.angle}deg);
+    width: ${props.length}px;
+    background-color: ${props.theme.colors.grey};
+  `}
   height: 1px;
-  width: ${(props) => `${props.length}px`};
-  background-color: ${(props) => props.theme.colors.grey};
 `;
 type LeaderLineProps = {
   offset: DataBlockOffset;

@@ -28,39 +28,37 @@ export const GpdMapOptions = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "GPD_MAP_OPTIONS_MENU", "mouseup");
 
   return (
-    windowProps?.position && (
-      <OptionsMenu
-        ref={ref}
-        pos={windowProps.position}
-        zIndex={zStack.indexOf("GPD_MAP_OPTIONS_MENU")}
-        onMouseDown={() => zStack.indexOf("GPD_MAP_OPTIONS_MENU") < zStack.length - 1 && dispatch(pushZStack("GPD_MAP_OPTIONS_MENU"))}
-        anyDragging={anyDragging}
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
-          {aircraftDisplayMenuIsOpen && "Aircraft Display"}
-          {mapFeaturesMenuOpen && "Map Features"}
-          {!(aircraftDisplayMenuIsOpen || mapFeaturesMenuOpen) && "Map Options"} Menu
-        </OptionsMenuHeader>
-        <OptionsBody>
-          {mapFeaturesMenuOpen && <GpdMapFeaturesMenu />}
-          {!(mapFeaturesMenuOpen || aircraftDisplayMenuIsOpen) && (
-            <>
-              <OptionsBodyRow>
-                <OptionsFlexCol onMouseDown={() => setMapFeaturesMenuOpen(true)}>Map Features...</OptionsFlexCol>
-              </OptionsBodyRow>
-              <OptionsBodyRow>
-                <OptionsFlexCol>AC Display Menu...</OptionsFlexCol>
-              </OptionsBodyRow>
-              <OptionsBottomRow>
-                <OptionsBodyCol alignRight>
-                  <ExitButton onMouseDown={() => dispatch(closeWindow("GPD_MAP_OPTIONS_MENU"))} />
-                </OptionsBodyCol>
-              </OptionsBottomRow>
-            </>
-          )}
-        </OptionsBody>
-      </OptionsMenu>
-    )
+    <OptionsMenu
+      ref={ref}
+      pos={windowProps.position}
+      zIndex={zStack.indexOf("GPD_MAP_OPTIONS_MENU")}
+      onMouseDown={() => zStack.indexOf("GPD_MAP_OPTIONS_MENU") < zStack.length - 1 && dispatch(pushZStack("GPD_MAP_OPTIONS_MENU"))}
+      anyDragging={anyDragging}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+        {aircraftDisplayMenuIsOpen && "Aircraft Display"}
+        {mapFeaturesMenuOpen && "Map Features"}
+        {!(aircraftDisplayMenuIsOpen || mapFeaturesMenuOpen) && "Map Options"} Menu
+      </OptionsMenuHeader>
+      <OptionsBody>
+        {mapFeaturesMenuOpen && <GpdMapFeaturesMenu />}
+        {!(mapFeaturesMenuOpen || aircraftDisplayMenuIsOpen) && (
+          <>
+            <OptionsBodyRow>
+              <OptionsFlexCol onMouseDown={() => setMapFeaturesMenuOpen(true)}>Map Features...</OptionsFlexCol>
+            </OptionsBodyRow>
+            <OptionsBodyRow>
+              <OptionsFlexCol>AC Display Menu...</OptionsFlexCol>
+            </OptionsBodyRow>
+            <OptionsBottomRow>
+              <OptionsBodyCol alignRight>
+                <ExitButton onMouseDown={() => dispatch(closeWindow("GPD_MAP_OPTIONS_MENU"))} />
+              </OptionsBodyCol>
+            </OptionsBottomRow>
+          </>
+        )}
+      </OptionsBody>
+    </OptionsMenu>
   );
 };
