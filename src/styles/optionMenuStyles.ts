@@ -220,13 +220,14 @@ export const ScrollContainer = styled.div<ScrollContainerProps>`
   height: auto;
   display: block;
   overflow: scroll;
+  overflow-x: hidden;
   scrollbar-width: none;
 
   max-height: ${(props) => props.maxHeight ?? "auto"};
 
   &::-webkit-scrollbar {
     //display: none;
-    padding-right: 4px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track,
@@ -237,7 +238,6 @@ export const ScrollContainer = styled.div<ScrollContainerProps>`
   &::-webkit-scrollbar-thumb {
     //border-radius: 2px;
     display: unset;
-    width: 4px;
     background-color: #adadad;
   }
 `;
