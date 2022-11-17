@@ -2,14 +2,7 @@ import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import {
-  aclAckListSelector,
-  aclSpaListSelector,
-  aclUnAckListSelector,
-  anyAssignedHdgSelector,
-  anyAssignedSpdSelector,
-  anyHoldingSelector,
-} from "~redux/selectors";
+import { aclListSelector, anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "~redux/selectors";
 import { aselSelector, setAsel } from "~redux/slices/appSlice";
 import { NoSelectDiv } from "styles/NoSelectDiv";
 import { ScrollContainer } from "styles/optionMenuStyles";
@@ -40,6 +33,8 @@ export const AclTable = () => {
   const anyAssignedHeading = useRootSelector(anyAssignedHdgSelector);
   const anyAssignedSpeed = useRootSelector(anyAssignedSpdSelector);
   const hiddenColumns = useRootSelector(aclHiddenColumnsSelector);
+
+  const [spaList, ackList, unAckList] = useRootSelector(aclListSelector);
   const [, setAltMouseDown] = useState(false);
 
   const handleClickSlash = useCallback(() => {
@@ -129,12 +124,12 @@ export const AclTable = () => {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        <ListMapper selector={aclSpaListSelector} Component={AclRow} showSep />
-        <ListMapper selector={aclAckListSelector} Component={AclRow} />
+        <ListMapper list={spaList} Component={AclRow} showSep />
+        <ListMapper list={ackList} Component={AclRow} />
         {manualPosting && (
           <>
             <BodyRowDiv separator />
-            <ListMapper selector={aclUnAckListSelector} Component={AclRow} />
+            <ListMapper list={unAckList} Component={AclRow} />
           </>
         )}
       </ScrollContainer>

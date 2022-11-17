@@ -7,10 +7,10 @@ import { BodyRowDiv, BodyRowHeaderDiv } from "styles/styles";
 import { depHiddenColumnsSelector, depManualPostingSelector, toggleDepHideColumn } from "~redux/slices/depSlice";
 import { AircraftTypeCol, AltCol, CodeCol, FidCol, RouteCol, SpecialBox } from "styles/sharedColumns";
 import { COMPLETED_CHECKMARK_SYMBOL } from "~/utils/constants";
-import { depAckListSelector, depSpaListSelector, depUnAckListSelector } from "~redux/selectors";
 import { DepPTimeCol, RadioCol } from "components/DepStyled";
 import { DepRow } from "components/DepRow";
 import { ListMapper } from "components/utils/ListMapper";
+import { depListSelector } from "~redux/selectors";
 
 const DepBodyDiv = styled(NoSelectDiv)`
   white-space: nowrap;
@@ -24,6 +24,8 @@ export const DepTable = () => {
   const dispatch = useRootDispatch();
   const manualPosting = useRootSelector(depManualPostingSelector);
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
+
+  const [spaList, ackList, unAckList] = useRootSelector(depListSelector);
 
   return (
     <DepBodyDiv>
@@ -49,12 +51,12 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        <ListMapper selector={depSpaListSelector} Component={DepRow} showSep />
-        <ListMapper selector={depAckListSelector} Component={DepRow} />
+        <ListMapper list={spaList} Component={DepRow} showSep />
+        <ListMapper list={ackList} Component={DepRow} />
         {manualPosting && (
           <>
             <BodyRowDiv separator />
-            <ListMapper selector={depUnAckListSelector} Component={DepRow} />
+            <ListMapper list={unAckList} Component={DepRow} />
           </>
         )}
       </ScrollContainer>

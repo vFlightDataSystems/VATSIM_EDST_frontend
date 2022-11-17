@@ -7,6 +7,7 @@ import { depManualPostingSelector, depSortOptionSelector } from "~redux/slices/d
 import { aclManualPostingSelector, aclSortDataSelector } from "~redux/slices/aclSlice";
 import type { RootState } from "~redux/store";
 import { sigmetSelector } from "~redux/slices/weatherSlice";
+import type { AircraftId } from "types/aircraftId";
 
 export const anyHoldingSelector = createSelector([entriesSelector], (entries) => {
   for (const entry of Object.values(entries)) {
@@ -45,16 +46,6 @@ const depEntriesSelector = createSelector([entriesSelector], (entries) => {
 
 export const depLenSelector = (state: RootState) => depEntriesSelector(state).length;
 
-export const depSpaListSelector = createSelector([depEntriesSelector], (entries) => {
-  return Object.values(entries)
-    .filter((entry) => entry.spa)
-    .map((entry) => entry.aircraftId);
-});
-
-const depNotSpaListSelector = createSelector([depEntriesSelector], (entries) => {
-  return Object.values(entries).filter((entry) => !entry.spa);
-});
-
 const depSortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: EdstEntry) => {
   switch (selectedSortOption) {
     case "DEP_ACID_SORT_OPTION":
@@ -68,35 +59,34 @@ const depSortFunc = (selectedSortOption: DepSortOption) => (u: EdstEntry, v: Eds
   }
 };
 
-export const depAckListSelector = createSelector(
-  [depNotSpaListSelector, depManualPostingSelector, depSortOptionSelector],
+export const depListSelector = createSelector(
+  [entriesSelector, depManualPostingSelector, depSortOptionSelector],
   (entries, manualPosting, sortOption) => {
-    return entries
-      .filter((entry) => entry.depStatus > -1 || !manualPosting)
-      .sort(depSortFunc(sortOption))
-      .map((entry) => entry.aircraftId);
+    const spaList: AircraftId[] = [];
+    const ackEntryList: EdstEntry[] = [];
+    const unAckList: AircraftId[] = [];
+    Object.values(entries).forEach((entry) => {
+      if (entry.status === "Proposed" && !entry.deleted) {
+        if (entry.spa) {
+          spaList.push(entry.aircraftId);
+        } else if (entry.depStatus > -1 || !manualPosting) {
+          ackEntryList.push(entry);
+        } else {
+          unAckList.push(entry.aircraftId);
+        }
+      }
+    });
+    ackEntryList.sort(depSortFunc(sortOption));
+    const ackListSorted = ackEntryList.map((entry) => entry.aircraftId);
+    return [spaList, ackListSorted, unAckList];
   }
 );
-
-export const depUnAckListSelector = createSelector([depNotSpaListSelector], (entries) => {
-  return entries.filter((entry) => entry.depStatus === -1).map((entry) => entry.aircraftId);
-});
 
 const aclEntriesSelector = createSelector([entriesSelector], (entries) => {
   return Object.values(entries).filter((entry) => entry.status === "Active" && !entry.deleted);
 });
 
 export const aclLenSelector = (state: RootState) => aclEntriesSelector(state).length;
-
-export const aclSpaListSelector = createSelector([aclEntriesSelector], (entries) => {
-  return Object.values(entries)
-    .filter((entry) => entry.spa)
-    .map((entry) => entry.aircraftId);
-});
-
-const aclNotSpaListSelector = createSelector([aclEntriesSelector], (entries) => {
-  return Object.values(entries).filter((entry) => !entry.spa);
-});
 
 const aclSortFunc = (selectedOption: AclSortOption) => (u: EdstEntry, v: EdstEntry) => {
   switch (selectedOption) {
@@ -111,19 +101,28 @@ const aclSortFunc = (selectedOption: AclSortOption) => (u: EdstEntry, v: EdstEnt
   }
 };
 
-export const aclAckListSelector = createSelector(
-  [aclNotSpaListSelector, aclManualPostingSelector, aclSortDataSelector],
+export const aclListSelector = createSelector(
+  [entriesSelector, aclManualPostingSelector, aclSortDataSelector],
   (entries, manualPosting, sortData) => {
-    return entries
-      .filter((entry) => entry.vciStatus > -1 || !manualPosting)
-      .sort(aclSortFunc(sortData.selectedOption))
-      .map((entry) => entry.aircraftId);
+    const spaList: AircraftId[] = [];
+    const ackEntryList: EdstEntry[] = [];
+    const unAckList: AircraftId[] = [];
+    Object.values(entries).forEach((entry) => {
+      if (entry.status === "Active" && !entry.deleted) {
+        if (entry.spa) {
+          spaList.push(entry.aircraftId);
+        } else if (entry.vciStatus > -1 || !manualPosting) {
+          ackEntryList.push(entry);
+        } else {
+          unAckList.push(entry.aircraftId);
+        }
+      }
+    });
+    ackEntryList.sort(aclSortFunc(sortData.selectedOption));
+    const ackListSorted = ackEntryList.map((entry) => entry.aircraftId);
+    return [spaList, ackListSorted, unAckList];
   }
 );
-
-export const aclUnAckListSelector = createSelector([aclNotSpaListSelector], (entries) => {
-  return entries.filter((entry) => entry.vciStatus === -1).map((entry) => entry.aircraftId);
-});
 
 export const sigmetLenSelector = createSelector([sigmetSelector], (sigmets) => {
   return Object.values(sigmets).filter((sigmetEntry) => !sigmetEntry.acknowledged).length;
