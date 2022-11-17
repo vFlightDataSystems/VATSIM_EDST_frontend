@@ -138,13 +138,13 @@ const Edst = () => {
 };
 
 const EdstProvider = () => (
-  <SocketContextProvider>
-    <HubContextProvider>
-      <React.StrictMode>
+  <React.StrictMode>
+    <SocketContextProvider>
+      <HubContextProvider>
         <Edst />
-      </React.StrictMode>
-    </HubContextProvider>
-  </SocketContextProvider>
+      </HubContextProvider>
+    </SocketContextProvider>
+  </React.StrictMode>
 );
 
 export default EdstProvider;
