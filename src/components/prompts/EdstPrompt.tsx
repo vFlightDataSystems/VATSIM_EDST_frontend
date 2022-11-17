@@ -1,4 +1,3 @@
-import type { PropsWithChildren } from "react";
 import React, { useRef } from "react";
 import type { CSSProperties } from "styled-components";
 import styled from "styled-components";
@@ -19,7 +18,7 @@ const PromptDiv = styled(OptionsMenu)<PromptDivProps>`
   width: ${(props) => props.width ?? "auto"};
 `;
 
-type EdstPromptProps = PropsWithChildren<{
+type EdstPromptProps = {
   title: string;
   width?: CSSProperties["width"];
   windowId: EdstWindow;
@@ -28,7 +27,8 @@ type EdstPromptProps = PropsWithChildren<{
   cancelText: string;
   onCancel?: () => void;
   stopDragOn?: "mousedown" | "mouseup";
-}>;
+  children: React.ReactNode;
+};
 
 export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps) => {
   const pos = useRootSelector((state) => windowPositionSelector(state, props.windowId));

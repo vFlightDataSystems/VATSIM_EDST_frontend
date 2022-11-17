@@ -1,4 +1,3 @@
-import type { PropsWithChildren } from "react";
 import React, { useRef } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import type { CSSProperties } from "styled-components";
@@ -15,16 +14,15 @@ import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { FloatingWindowHeader } from "components/utils/FloatingWindowHeader";
 
 type FloatingWindowBodyCSSProps = Pick<CSSProperties, "width">;
-type FloatingWindowBodyProps = PropsWithChildren<
-  {
-    title: string;
-    optionsHeaderTitle: string;
-    window: keyof ModifiableWindowOptions;
-    extraOptions?: FloatingWindowOptions;
-    showOptions: boolean;
-    setShowOptions: (value: boolean) => void;
-  } & FloatingWindowBodyCSSProps
->;
+type FloatingWindowBodyProps = {
+  title: string;
+  optionsHeaderTitle: string;
+  window: keyof ModifiableWindowOptions;
+  extraOptions?: FloatingWindowOptions;
+  showOptions: boolean;
+  setShowOptions: (value: boolean) => void;
+  children?: React.ReactNode;
+} & FloatingWindowBodyCSSProps;
 
 export const FloatingWindow = ({ window: edstWindow, children, ...props }: FloatingWindowBodyProps) => {
   const dispatch = useRootDispatch();
