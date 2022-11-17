@@ -2,14 +2,16 @@ import styled, { css } from "styled-components";
 import { NoSelectDiv } from "styles/NoSelectDiv";
 
 export const EdstDiv = styled(NoSelectDiv)`
+  ${(props) => css`
+    font-family: ${props.theme.fontProps.eramFontFamily};
+    font-size: ${props.theme.fontProps.fontSize};
+  `}
   display: flex;
   flex-direction: column;
   height: 100vh;
   padding: 0;
   margin: 0;
   background-color: #000000;
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  font-size: ${(props) => props.theme.fontProps.fontSize};
   //caret-color: transparent;
   //scroll-behavior: auto;
   -webkit-font-smoothing: subpixel-antialiased;

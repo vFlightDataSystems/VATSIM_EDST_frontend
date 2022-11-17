@@ -1,6 +1,5 @@
 import type { CSSProperties } from "styled-components";
 import styled, { css } from "styled-components";
-import type { Nullable } from "types/utility-types";
 import type { WindowPosition } from "types/windowPosition";
 import type { WindowDimension } from "types/windowDimension";
 import { DraggableDiv, NoSelectDiv } from "styles/NoSelectDiv";
@@ -10,7 +9,7 @@ const floatingWindowTitleBackgroundColor = "#575757";
 
 type FloatingWindowDivCSSProps = Pick<CSSProperties, "minWidth" | "width" | "maxWidth">;
 type FloatingWindowDivProps = {
-  pos: Nullable<WindowPosition>;
+  pos: WindowPosition;
   zIndex: number;
   fullscreen?: boolean;
 } & FloatingWindowDivCSSProps;
@@ -20,40 +19,39 @@ export const FloatingWindowDiv = styled(DraggableDiv)<FloatingWindowDivProps>`
       ${props.minWidth && { "min-width": props.minWidth }};
       ${props.width && { width: props.width }};
       ${props.maxWidth && { "max-width": props.maxWidth }};
+      font-family: ${props.theme.fontProps.eramFontFamily};
+      font-size: ${props.theme.fontProps.fontSize};
+      z-index: ${10000 + props.zIndex};
+      position: ${!props.fullscreen ? "fixed" : "absolute"};
+      ${!props.fullscreen && {
+        left: `${props.pos.left}px`,
+        top: `${props.pos.top}px`,
+      }}
     `};
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  font-size: ${(props) => props.theme.fontProps.fontSize};
-  z-index: ${(props) => 10000 + props.zIndex};
-  position: ${(props) => (!props.fullscreen ? "fixed" : "absolute")};
   color: #adadad;
-
-  ${(props) =>
-    !props.fullscreen &&
-    props.pos && {
-      left: `${props.pos.left}px`,
-      top: `${props.pos.top}px`,
-    }}
 `;
 
 type ResizableFloatingWindowDivProps = { dimension: WindowDimension };
 export const ResizableFloatingWindowDiv = styled(FloatingWindowDiv)<ResizableFloatingWindowDivProps>`
-  font-family: ${(props) => props.theme.fontProps.edstFontFamily};
-  font-size: ${(props) => props.theme.fontProps.fontSize};
+  ${(props) => css`
+    font-family: ${props.theme.fontProps.edstFontFamily};
+    font-size: ${props.theme.fontProps.fontSize};
+    border: 3px solid ${props.theme.colors.windowBorderColor};
+    outline: 1px solid ${props.theme.colors.windowOutlineColor};
+    color: ${props.theme.colors.grey};
+    resize: ${!props.fullscreen ? "both" : "none"};
+    width: ${props.fullscreen ? "calc(100% - 10px)" : props.dimension.width};
+    height: ${props.fullscreen ? "calc(100% - 10px)" : props.dimension.height};
+  `};
   display: flex;
   white-space: nowrap;
   flex-flow: column;
   overflow: hidden;
   margin: 2px;
   flex-grow: 1;
-  border: 3px solid ${(props) => props.theme.colors.windowBorderColor};
-  outline: 1px solid ${(props) => props.theme.colors.windowOutlineColor};
-  color: ${(props) => props.theme.colors.grey};
   background-color: #000000;
   min-width: 60ch;
   min-height: 10em;
-  resize: ${(props) => (!props.fullscreen ? "both" : "none")};
-  width: ${(props) => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.width)};
-  height: ${(props) => (props.fullscreen ? "calc(100% - 10px)" : props.dimension.height)};
 `;
 
 type FloatingWindowBodyContainerProps = Pick<CSSProperties, "width"> & {

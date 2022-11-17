@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import _ from "lodash";
 import type { WindowPosition } from "types/windowPosition";
 import { NoSelectDiv } from "styles/NoSelectDiv";
@@ -26,6 +26,11 @@ const AltimeterStationTemplateRowDiv = styled.div`
 `;
 
 const AltimeterStationTemplateInput = styled.input`
+  ${(props) => css`
+    font-family: ${props.theme.fontProps.eramFontFamily};
+    font-size: ${props.theme.fontProps.fontSize};
+    color: ${props.theme.colors.grey};
+  `}
   resize: none;
   white-space: initial;
   overflow: hidden;
@@ -35,10 +40,6 @@ const AltimeterStationTemplateInput = styled.input`
   text-transform: uppercase;
   background-color: #000000;
   border: 1px solid #adadad;
-
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  font-size: ${(props) => props.theme.fontProps.fontSize};
-  color: ${(props) => props.theme.colors.grey};
 `;
 
 type AltimeterStationTemplateProps = {

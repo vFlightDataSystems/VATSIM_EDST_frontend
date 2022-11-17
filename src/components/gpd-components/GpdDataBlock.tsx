@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
@@ -19,13 +19,15 @@ import { LeaderLine } from "components/LeaderLine";
 
 type DataBlockDivProps = { offset: DataBlockOffset };
 const DataBlockDiv = styled.div<DataBlockDivProps>`
+  ${(props) => css`
+    left: ${props.offset.x}px;
+    top: ${props.offset.y}px;
+    font-family: ${props.theme.fontProps.edstFontFamily};
+  `}
   position: relative;
-  left: ${(props) => props.offset.x}px;
-  top: ${(props) => props.offset.y}px;
   font-size: 16px;
   line-height: 1;
   width: 9ch;
-  font-family: ${(props) => props.theme.fontProps.edstFontFamily};
   color: #adadad;
 `;
 
@@ -35,9 +37,11 @@ const DataBlockRow = styled.div`
 `;
 type DataBlockElementProps = { selected: boolean };
 const DataBlockElement = styled.span<DataBlockElementProps>`
+  ${(props) => css`
+    color: ${props.selected ? "#000000" : props.theme.colors.grey};
+    background-color: ${props.selected ? props.theme.colors.grey : "transparent"};
+  `}
   height: 1em;
-  color: ${(props) => (props.selected ? "#000000" : props.theme.colors.grey)};
-  background-color: ${(props) => (props.selected ? props.theme.colors.grey : "transparent")};
   border: 1px solid transparent;
   margin: 0 1px;
   padding: 0 1px;

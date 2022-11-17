@@ -15,6 +15,17 @@ export type ColProps = {
 };
 
 export const Col = styled(EdstTooltip)<ColProps>`
+  ${(props) => css`
+    width: ${props.visibilityHidden || props.hidden ? "2ch" : "auto"};
+    visibility: ${props.visibilityHidden ? "hidden" : "initial"};
+    ${props.color && { color: props.color }};
+    ${props.selected &&
+    css`
+      background-color: ${props.theme.colors.grey};
+      color: #000000;
+    `};
+    ${props.hover && borderHover};
+  `}
   display: flex;
   flex-shrink: 0;
   justify-content: center;
@@ -25,17 +36,6 @@ export const Col = styled(EdstTooltip)<ColProps>`
   &[disabled] {
     pointer-events: none;
   }
-
-  width: ${(props) => (props.visibilityHidden || props.hidden ? "2ch" : "auto")};
-  visibility: ${(props) => (props.visibilityHidden ? "hidden" : "initial")};
-  ${(props) => props.color && { color: props.color }};
-  ${(props) =>
-    props.selected &&
-    css`
-      background-color: ${props.theme.colors.grey};
-      color: #000000;
-    `};
-  ${(props) => props.hover && borderHover};
 `;
 export const FidCol = styled(Col)`
   justify-content: left;
