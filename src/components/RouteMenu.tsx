@@ -125,6 +125,9 @@ export const RouteMenu = () => {
   const [frd, setFrd] = useState<Nullable<string>>(null);
   const hubActions = useHubActions();
   useFitWindowToScreen(ref, "ROUTE_MENU");
+  const focused = useFocused(ref);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "ROUTE_MENU", "mouseup");
+  useCenterCursor(ref, [asel.aircraftId]);
 
   const pdrs = usePdr(entry.aircraftId);
   const pdars = usePdar(entry.aircraftId);
@@ -132,20 +135,15 @@ export const RouteMenu = () => {
 
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
-  const [route, setRoute] = useState<string>(
+  const [route, setRoute] = useState(
     removeStringFromEnd(asel.window === "DEP" ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
   );
-  const [routeInput, setRouteInput] = useState<string>(
-    asel.window === "DEP" ? entry.departure + route + entry.destination : route + entry.destination
-  );
+  const [routeInput, setRouteInput] = useState(asel.window === "DEP" ? entry.departure + route + entry.destination : route + entry.destination);
   const [trialPlan, setTrialPlan] = useState(!(asel.window === "DEP"));
   const [append, setAppend] = useState({
     appendOplus: false,
     appendStar: false,
   });
-  const focused = useFocused(ref);
-  useCenterCursor(ref, [asel.aircraftId]);
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "ROUTE_MENU", "mouseup");
 
   useEffect(() => {
     if (aircraftTrack) {

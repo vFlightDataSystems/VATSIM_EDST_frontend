@@ -12,7 +12,7 @@ export const ListMapper = React.memo(({ list, Component, showSep }: MapRowProps)
     <>
       {list.map((aircraftId, i) => (
         <React.Fragment key={aircraftId}>
-          <Component aircraftId={aircraftId} />
+          <Component key={aircraftId} aircraftId={aircraftId} />
           {i % 3 === 2 && <RowSeparator />}
         </React.Fragment>
       ))}

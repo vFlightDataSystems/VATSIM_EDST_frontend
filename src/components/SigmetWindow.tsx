@@ -32,26 +32,28 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const windowOptions = useRootSelector(windowOptionsSelector("SIGMETS"));
+  const [showOptions, setShowOptions] = useState(false);
 
   const zIndex = zStack.indexOf("SIGMETS");
   const rect = ref.current?.getBoundingClientRect();
 
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    handleMouseDown(e);
+    setShowOptions(true);
+  };
+
   return (
     <>
-      <SigmetRowDiv
-        ref={ref}
-        brightness={windowOptions.brightness}
-        selected={selected}
-        suppressed={sigmetEntry.suppressed}
-        onMouseDown={handleMouseDown}
-      >
+      <SigmetRowDiv ref={ref} brightness={windowOptions.brightness} selected={selected} suppressed={sigmetEntry.suppressed} onMouseDown={onMouseDown}>
         {sigmetEntry.text}
       </SigmetRowDiv>
-      {selected && rect && (
+      {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}
           parentPos={rect}
           zIndex={zIndex}
+          onClose={() => setShowOptions(false)}
           options={{
             toggleSuppressed: {
               value: !sigmetEntry.suppressed ? "SUPPRESS" : "RESTORE",

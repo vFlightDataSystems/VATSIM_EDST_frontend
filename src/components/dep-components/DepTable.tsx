@@ -51,12 +51,12 @@ export const DepTable = () => {
         <RouteCol>Route</RouteCol>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        <ListMapper list={spaList} Component={DepRow} showSep />
-        <ListMapper list={ackList} Component={DepRow} />
+        <ListMapper key="depSpaList" list={spaList} Component={DepRow} showSep />
+        <ListMapper key="depAckList" list={ackList} Component={DepRow} />
         {manualPosting && (
           <>
             <BodyRowDiv separator />
-            <ListMapper list={unAckList} Component={DepRow} />
+            <ListMapper key="depUnAckList" list={unAckList} Component={DepRow} />
           </>
         )}
       </ScrollContainer>

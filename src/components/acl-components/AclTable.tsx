@@ -124,12 +124,12 @@ export const AclTable = () => {
         </InnerRow>
       </BodyRowHeaderDiv>
       <ScrollContainer>
-        <ListMapper list={spaList} Component={AclRow} showSep />
-        <ListMapper list={ackList} Component={AclRow} />
+        <ListMapper key="aclSpaList" list={spaList} Component={AclRow} showSep />
+        <ListMapper key="aclAckList" list={ackList} Component={AclRow} />
         {manualPosting && (
           <>
             <BodyRowDiv separator />
-            <ListMapper list={unAckList} Component={AclRow} />
+            <ListMapper key="aclUnAckList" list={unAckList} Component={AclRow} />
           </>
         )}
       </ScrollContainer>

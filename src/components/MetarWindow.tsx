@@ -20,6 +20,7 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
   const windowOptions = useRootSelector(windowOptionsSelector("METAR"));
+  const [showOptions, setShowOptions] = useState(false);
   const { data: airportMetar, isFetching } = useMetar(airport);
   const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
@@ -32,16 +33,23 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
   const zIndex = zStack.indexOf("METAR");
   const rect = ref.current?.getBoundingClientRect();
 
+  const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    handleMouseDown(event);
+    setShowOptions(true);
+  };
+
   return !airportMetar ? null : (
     <>
-      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={handleMouseDown}>
+      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={onMouseDown}>
         {airportMetar.replace(airport, airportId) ?? "..."}
       </FloatingWindowRow>
-      {selected && rect && (
+      {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}
           parentPos={rect}
           zIndex={zIndex}
+          onClose={() => setShowOptions(false)}
           options={{
             delete: {
               value: `DELETE ${airport}`,

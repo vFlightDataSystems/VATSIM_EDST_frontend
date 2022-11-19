@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
@@ -83,51 +83,52 @@ const checkPdarReroutePending = (pdars: ApiPreferentialDepartureArrivalRoute[]) 
  */
 export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
   const entry = useRootSelector((state) => entrySelector(state, aircraftId));
+  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
   const asel = useRootSelector((state) => aircraftIsAselSelector(state, aircraftId));
   const manualPosting = useRootSelector(depManualPostingSelector);
   const hiddenColumns = useRootSelector(depHiddenColumnsSelector);
-  const formattedRoute = formatRoute(entry.route);
   const routeFixes = useRouteFixes(aircraftId);
   const currentFixNames = routeFixes.map((fix) => fix.name);
-
-  const [onPar, setOnPar] = useState(false);
-  const [onPdr, setOnPdr] = useState(false);
-  const [onPdar, setOnPdar] = useState(false);
   const pdrs = usePdr(aircraftId);
   const pdars = usePdar(aircraftId);
   const pars = usePar(aircraftId);
 
-  const [pendingPdr, setPendingPdr] = useState(checkPdrReroutePending(pdrs));
-  const [pendingPdar, setPendingPdar] = useState(checkPdarReroutePending(pdars));
-  const [pendingPar, setPendingPar] = useState(checkParReroutePending(pars, currentFixNames));
-
-  const now = Date.now();
+  const formattedRoute = formatRoute(entry.route);
   const route = removeStringFromEnd(formattedRoute.slice(0), entry.destination);
 
-  const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
-  const ref = useRef<HTMLDivElement>(null);
+  const onPar = useMemo(() => pars.filter((par) => par.eligible && formattedRoute.includes(par.amendment)).length > 0, [formattedRoute, pars]);
+  const onPdr = useMemo(() => pdars.filter((pdar) => pdar.eligible && formattedRoute === pdar.route).length > 0, [formattedRoute, pdars]);
+  const onPdar = useMemo(() => pdrs.filter((pdr) => route.startsWith(pdr.amendment)).length > 0, [pdrs, route]);
 
   useEffect(() => {
-    const onPar = pars.filter((par) => par.eligible && formattedRoute.includes(par.amendment)).length > 0;
-    const onPdar = pdars.filter((pdar) => pdar.eligible && formattedRoute === pdar.route).length > 0;
-    const onPdr = pdrs.filter((pdr) => route.startsWith(pdr.amendment)).length > 0;
-    setOnPar(onPar);
-    setOnPdar(onPdar);
-    setOnPdr(onPdr);
-    if (!onPar) {
-      setPendingPar(checkParReroutePending(pars, currentFixNames));
-    }
-    if (!onPdar) {
-      setPendingPdar(checkPdarReroutePending(pdars));
-    }
+    setFreeTextContent(entry.freeTextContent);
+  }, [entry.freeTextContent]);
+
+  const pendingPdr = useMemo(() => {
     if (!onPdr) {
-      setPendingPdr(checkPdrReroutePending(pdrs));
+      return checkPdrReroutePending(pdrs);
     }
-  }, [pdrs, pdars, pars, routeFixes, route, formattedRoute, currentFixNames]);
+    return null;
+  }, [onPdr, pdrs]);
+  const pendingPdar = useMemo(() => {
+    if (!onPdar) {
+      return checkPdarReroutePending(pdars);
+    }
+    return null;
+  }, [onPdar, pdars]);
+  const pendingPar = useMemo(() => {
+    if (!onPar) {
+      return checkParReroutePending(pars, currentFixNames);
+    }
+    return null;
+  }, [currentFixNames, onPar, pars]);
+
+  const now = Date.now();
 
   const isSelected = useCallback(
-    (field: DepRowField): boolean => {
+    (field: DepRowField) => {
       return asel?.window === "DEP" && asel?.aircraftId === aircraftId && asel?.field === field;
     },
     [aircraftId, asel?.aircraftId, asel?.field, asel?.window]

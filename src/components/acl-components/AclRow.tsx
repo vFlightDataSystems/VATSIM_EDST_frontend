@@ -46,19 +46,38 @@ type AclRowProps = {
  */
 export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => {
   const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
   const entry = useRootSelector((state) => entrySelector(state, aircraftId));
   const asel = useRootSelector((state) => aircraftIsAselSelector(state, aircraftId));
   const manualPosting = useRootSelector(aclManualPostingSelector);
   const toolOptions = useRootSelector(toolsOptionsSelector);
   const hiddenColumns = useRootSelector(aclHiddenColumnsSelector);
   const anyHolding = useRootSelector(anyHoldingSelector);
-
-  const [parAvail, setParAvail] = useState(false);
-  const [onPar, setOnPar] = useState(false);
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
-  const ref = useRef<HTMLDivElement>(null);
+  const par = usePar(aircraftId);
+
+  const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
+  const currentRoute = formattedRoute;
+  const routeFixes = useRouteFixes(aircraftId);
+  const currentRouteFixes = routeFixes;
+
+  useEffect(() => {
+    setFreeTextContent(entry.freeTextContent);
+  }, [entry.freeTextContent]);
+
+  const { holdAnnotations } = entry;
+
+  const route = removeStringFromEnd((currentRoute.replace(/^\.+/, "") ?? formattedRoute).slice(0), entry.destination);
+  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
+  const showCoralBox = !entry.faaEquipmentSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
+
+  const availPar = useMemo(() => {
+    const currentFixNames = (currentRouteFixes ?? routeFixes).map((fix) => fix.name);
+    return par.filter((par) => par.eligible && currentFixNames.includes(par.triggeredFix));
+  }, [currentRouteFixes, par, routeFixes]);
+  const onPar = useMemo(() => availPar.some((par) => formattedRoute.includes(par.amendment)), [availPar, formattedRoute]);
 
   const isSelected = useCallback(
     (field: AclRowField): boolean => {
@@ -101,34 +120,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   useAselEventListener(routeRef, aircraftId, "acl-route-asel-hold", "ROUTE_ACL_ROW_FIELD", "HOLD_MENU", handleClick);
   useAselEventListener(holdRef, aircraftId, "acl-hold-asel-hold", "HOLD_ACL_ROW_FIELD", "HOLD_MENU", handleClick);
 
-  const par = usePar(aircraftId);
-  const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
-  const currentRoute = formattedRoute;
-  const routeFixes = useRouteFixes(aircraftId);
-  const currentRouteFixes = routeFixes;
-
-  useEffect(() => {
-    const currentFixNames = (currentRouteFixes ?? routeFixes).map((fix) => fix.name);
-    const availPar = par.filter((par) => par.eligible && currentFixNames.includes(par.triggeredFix));
-    const onPar = availPar.some((par) => formattedRoute.includes(par.amendment));
-    setParAvail(availPar.length > 0);
-    setOnPar(onPar);
-  }, [currentRouteFixes, formattedRoute, par, routeFixes]);
-
-  useEffect(() => {
-    setFreeTextContent(entry.freeTextContent);
-  }, [entry.freeTextContent]);
-
-  const { holdAnnotations } = entry;
-  const route = useMemo(() => {
-    const route = currentRoute.replace(/^\.+/, "") ?? formattedRoute;
-    return removeStringFromEnd(route.slice(0), entry.destination);
-  }, [currentRoute, entry.destination, formattedRoute]);
-
   const now = Date.now();
-
-  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
-  const showCoralBox = !entry.faaEquipmentSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
 
   // TODO: move this to the route menu
   // const checkParReroutePending = () => {
@@ -413,7 +405,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               {entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION" && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
-                  <RouteDepAirport amendmentPending={parAvail && !onPar} selected={isSelected("ROUTE_ACL_ROW_FIELD")}>
+                  <RouteDepAirport amendmentPending={availPar.length > 0 && !onPar} selected={isSelected("ROUTE_ACL_ROW_FIELD")}>
                     {entry.departure}
                   </RouteDepAirport>
                   ./.

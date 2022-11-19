@@ -18,20 +18,28 @@ const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const zStack = useRootSelector(zStackSelector);
   const windowOptions = useRootSelector(windowOptionsSelector("GI"));
+  const [showOptions, setShowOptions] = useState(false);
 
   const zIndex = zStack.indexOf("GI");
   const rect = ref.current?.getBoundingClientRect();
 
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    handleMouseDown(e);
+    setShowOptions(true);
+  };
+
   return (
     <>
-      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={handleMouseDown}>
+      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={onMouseDown}>
         {text}
       </FloatingWindowRow>
-      {selected && rect && (
+      {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}
           parentPos={rect}
           zIndex={zIndex}
+          onClose={() => setShowOptions(false)}
           options={{
             delete: {
               value: "DELETE",

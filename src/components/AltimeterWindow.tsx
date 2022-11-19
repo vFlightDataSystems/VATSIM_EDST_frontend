@@ -31,6 +31,7 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
   const zStack = useRootSelector(zStackSelector);
   const { data: airportAltimeterEntry } = useAltimeter(airport);
   const windowOptions = useRootSelector(windowOptionsSelector("ALTIMETER"));
+  const [showOptions, setShowOptions] = useState(false);
   const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
   const utcMinutes = getUtcMinutesAfterMidnight();
@@ -41,9 +42,15 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
   const zIndex = zStack.indexOf("ALTIMETER");
   const rect = ref.current?.getBoundingClientRect();
 
+  const onMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    handleMouseDown(event);
+    setShowOptions(true);
+  };
+
   return (
     <>
-      <FloatingWindowRow brightness={windowOptions.brightness} ref={ref} selected={selected} onMouseDown={handleMouseDown}>
+      <FloatingWindowRow brightness={windowOptions.brightness} ref={ref} selected={selected} onMouseDown={onMouseDown}>
         {airportId && (
           <>
             <AltimCol isReportingStation>{airportId}</AltimCol>
@@ -58,11 +65,12 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
           </>
         )}
       </FloatingWindowRow>
-      {selected && rect && (
+      {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}
           zIndex={zIndex}
           parentPos={rect}
+          onClose={() => setShowOptions(false)}
           options={{
             delete: {
               value: `DELETE ${airport}`,
