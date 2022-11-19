@@ -226,12 +226,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
         </RadioCol>
         <DepPTimeCol>0000</DepPTimeCol>
         <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
-          <FidCol
-            hover
-            selected={isSelected("FID_DEP_ROW_FIELD")}
-            onMouseDown={handleFidClick}
-            onContextMenu={(event: React.MouseEvent) => event.preventDefault()}
-          >
+          <FidCol hover selected={isSelected("FID_DEP_ROW_FIELD")} onMouseDown={handleFidClick}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
             {entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}

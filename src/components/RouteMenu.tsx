@@ -343,12 +343,7 @@ export const RouteMenu = () => {
           <OptionsBodyCol>
             <InputContainer>
               {!(asel.window === "DEP") && (
-                <EdstTooltip
-                  title={Tooltips.routeMenuFrd}
-                  onContextMenu={(event) => {
-                    event.preventDefault();
-                  }}
-                >
+                <EdstTooltip title={Tooltips.routeMenuFrd}>
                   <PposDiv>{frd}..</PposDiv>
                 </EdstTooltip>
               )}

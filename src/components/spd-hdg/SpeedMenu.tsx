@@ -53,7 +53,6 @@ export const SpeedMenu = () => {
   };
 
   const handleMouseDown = (event: any, value: number, mach = false) => {
-    event.preventDefault();
     const valueStr = !mach ? `${amend && sign === Sign.none ? "S" : ""}${value}${sign}` : `M${Math.round(value * 100)}${sign}`;
     switch (event.button) {
       case 0:
