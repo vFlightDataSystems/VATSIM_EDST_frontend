@@ -93,7 +93,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
   const windowSize = useWindowSize();
 
   useLayoutEffect(() => {
-    if (ref.current) {
+    if (ref.current && windowSize.width > 0 && windowSize.height > 0) {
       const rect = ref.current.getBoundingClientRect();
       if (parentPos.left + props.parentWidth + rect.width > windowSize.width) {
         setPos({ left: parentPos.left - rect.width, top: parentPos.top });

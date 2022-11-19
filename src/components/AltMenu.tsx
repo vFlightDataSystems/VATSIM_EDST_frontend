@@ -18,6 +18,7 @@ import { useCenterCursor } from "hooks/useCenterCursor";
 import { useHubActions } from "hooks/useHubActions";
 import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "~/utils/constants";
 import type { Plan } from "types/plan";
+import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 
 type AltMenuDivProps = { width: CSSProperties["width"]; pos: WindowPosition };
 const AltMenuDiv = styled(NoSelectDiv)<AltMenuDivProps>`
@@ -188,6 +189,7 @@ export const AltMenu = () => {
   const [showInvalid, setShowInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { amendFlightplan } = useHubActions();
+  useFitWindowToScreen(ref, "ALTITUDE_MENU");
 
   const assignedAltitude = Number.isFinite(+entry.altitude) ? +entry.altitude : 200;
 

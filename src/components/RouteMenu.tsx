@@ -44,6 +44,7 @@ import { EdstButton, ExitButton } from "components/utils/EdstButton";
 import FLIGHTAWARE_LOGO from "resources/images/FA_1.png";
 import SKYVECTOR_LOGO from "resources/images/glob_bright.png";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
+import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 
 const RouteMenuDiv = styled(OptionsMenu)`
   width: 570px;
@@ -115,6 +116,7 @@ const toggleAppendOplus = (prev: Append) => ({
 
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
   const pos = useRootSelector((state) => windowPositionSelector(state, "ROUTE_MENU"));
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
@@ -122,6 +124,7 @@ export const RouteMenu = () => {
   const zStack = useRootSelector(zStackSelector);
   const [frd, setFrd] = useState<Nullable<string>>(null);
   const hubActions = useHubActions();
+  useFitWindowToScreen(ref, "ROUTE_MENU");
 
   const pdrs = usePdr(entry.aircraftId);
   const pdars = usePdar(entry.aircraftId);
@@ -140,7 +143,6 @@ export const RouteMenu = () => {
     appendOplus: false,
     appendStar: false,
   });
-  const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel.aircraftId]);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "ROUTE_MENU", "mouseup");
