@@ -1,10 +1,6 @@
 import React from "react";
-import {
-  FloatingWindowHeaderBlock8x2,
-  FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderColDivRect,
-  FloatingWindowHeaderDiv,
-} from "styles/floatingWindowStyles";
+import clsx from "clsx";
+import floatingStyles from "css/floatingWindow.module.scss";
 
 type FloatingWindowHeaderProps = {
   title: string;
@@ -15,8 +11,9 @@ type FloatingWindowHeaderProps = {
 
 export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, startDrag }: FloatingWindowHeaderProps) => {
   return (
-    <FloatingWindowHeaderDiv>
-      <FloatingWindowHeaderColDivRect
+    <div className={floatingStyles.header}>
+      <div
+        className={clsx(floatingStyles.col, "rect")}
         onMouseDown={(event) => {
           // TODO: a click event will not close any option menus this way, needs fixing
           event.preventDefault();
@@ -24,11 +21,13 @@ export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, s
         }}
       >
         M
-      </FloatingWindowHeaderColDivRect>
-      <FloatingWindowHeaderColDivFlex onMouseDown={startDrag}>{title}</FloatingWindowHeaderColDivFlex>
-      <FloatingWindowHeaderColDivRect onMouseDown={onClose}>
-        <FloatingWindowHeaderBlock8x2 />
-      </FloatingWindowHeaderColDivRect>
-    </FloatingWindowHeaderDiv>
+      </div>
+      <div className={clsx(floatingStyles.col, "flex")} onMouseDown={startDrag}>
+        {title}
+      </div>
+      <div className={clsx(floatingStyles.col, "rect")} onMouseDown={onClose}>
+        <div className={clsx(floatingStyles.headerBlock, "block1")} />
+      </div>
+    </div>
   );
 };

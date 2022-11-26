@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
 import type { SigmetEntry } from "~redux/slices/weatherSlice";
@@ -10,17 +9,13 @@ import {
   sigmetSelector,
   viewSuppressedSigmetSelector,
 } from "~redux/slices/weatherSlice";
-import { FloatingWindowRow } from "styles/floatingWindowStyles";
-import { ScrollContainer } from "styles/optionMenuStyles";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
 import { FloatingWindow } from "components/utils/FloatingWindow";
-
-const SigmetRowDiv = styled(FloatingWindowRow)`
-  margin-top: 6px;
-`;
+import clsx from "clsx";
+import floatingStyles from "css/floatingWindow.module.scss";
 
 type SigmetRowProps = {
   sigmetEntry: SigmetEntry;
@@ -45,9 +40,14 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
 
   return (
     <>
-      <SigmetRowDiv ref={ref} brightness={windowOptions.brightness} selected={selected} suppressed={sigmetEntry.suppressed} onMouseDown={onMouseDown}>
+      <div
+        className={clsx(floatingStyles.row, "tm6", { selected, suppressed: sigmetEntry.suppressed })}
+        ref={ref}
+        style={{ "--brightness": windowOptions.brightness / 100 }}
+        onMouseDown={onMouseDown}
+      >
         {sigmetEntry.text}
-      </SigmetRowDiv>
+      </div>
       {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}
@@ -122,7 +122,7 @@ export const SigmetWindow = () => {
       setShowOptions={setShowOptionsHandler}
     >
       {Object.values(sigmetList).length > 0 && (
-        <ScrollContainer maxHeight="600px">
+        <div className="scrollContainer bounded-scroll">
           {Object.entries(sigmetList).map(
             ([sigmetId, sigmetEntry]) =>
               (!sigmetEntry.suppressed || viewSuppressed) && (
@@ -143,7 +143,7 @@ export const SigmetWindow = () => {
                 />
               )
           )}
-        </ScrollContainer>
+        </div>
       )}
     </FloatingWindow>
   );

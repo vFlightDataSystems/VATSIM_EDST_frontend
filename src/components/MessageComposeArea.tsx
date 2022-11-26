@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import styled, { css } from "styled-components";
 import { useResizeDetector } from "react-resize-detector";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import {
@@ -18,7 +17,6 @@ import {
   windowsSelector,
   zStackSelector,
 } from "~redux/slices/appSlice";
-import { FloatingWindowDiv } from "styles/floatingWindowStyles";
 import { useDragging } from "hooks/useDragging";
 import { useWindowOptions } from "hooks/useWindowOptions";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
@@ -45,79 +43,12 @@ import socket from "~socket";
 import { GI_EXPR } from "~/utils/constants";
 import { toggleAltimeter, toggleMetar } from "~redux/slices/weatherSlice";
 import { printFlightStrip } from "components/PrintableFlightStrip";
+import mcaStyles from "css/mca.module.scss";
+import clsx from "clsx";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
 }
-
-type MessageComposeAreaDivProps = { brightness: number; fontSizeIndex: number };
-const MessageComposeAreaDiv = styled(FloatingWindowDiv)<MessageComposeAreaDivProps>`
-  ${(props) =>
-    css`
-      color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
-    `};
-  background-color: #000000;
-  border: 1px solid #adadad;
-  line-height: 1em;
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  font-size: ${(props) => props.theme.fontProps.floatingFontSizes[props.fontSizeIndex - 1]};
-`;
-
-type McaInputAreaProps = { width: number; paLines: number };
-const MessageComposeInputAreaDiv = styled.div<McaInputAreaProps>`
-  height: calc(${(props) => `${props.paLines}em`} + 6px);
-  width: auto;
-  overflow: hidden;
-  > pre {
-    width: ${(props) => `${props.width}ch`};
-    margin: 2px;
-  }
-  text-transform: uppercase;
-  border-bottom: 1px solid #adadad;
-`;
-
-type McaCursorProps = { insertMode: boolean };
-const MessageComposeCursor = styled.span<McaCursorProps>`
-  display: inline-block;
-  height: 1em;
-  width: 1ch;
-  border-bottom: 1px solid #adadad;
-  // if not in insert mode, left and right borders are white
-  ${(props) =>
-    !props.insertMode &&
-    css`
-      box-shadow: -1px 0 #adadad, 1px 0 #adadad;
-    `}
-`;
-
-const FeedbackContainerDiv = styled.div`
-  min-height: calc(3em + 12px);
-`;
-const ResponseFeedbackRowDiv = styled.div`
-  height: 1em;
-  line-height: 1;
-  padding: 2px;
-  display: flex;
-  flex-grow: 1;
-`;
-
-const AcceptCheckmarkSpan = styled.span`
-  color: #00ad00;
-  height: 1em;
-
-  ::before {
-    content: "\u2713";
-  }
-`;
-
-const RejectCrossSpan = styled.span`
-  color: #ad0000;
-  height: 1em;
-
-  ::before {
-    content: "\u2715";
-  }
-`;
 
 export const MessageComposeArea = () => {
   const dispatch = useRootDispatch();
@@ -450,17 +381,14 @@ export const MessageComposeArea = () => {
 
   return windows.MESSAGE_COMPOSE_AREA.open ? (
     <>
-      <MessageComposeAreaDiv
+      <div
+        className={clsx(mcaStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { isDragging: anyDragging })}
+        style={{ "--brightness": windowOptions.brightness, ...pos, zIndex: 10000 + zIndex }}
         ref={ref}
-        fontSizeIndex={windowOptions.fontSizeIndex}
-        brightness={windowOptions.brightness}
-        anyDragging={anyDragging}
-        pos={pos}
-        zIndex={zIndex}
         onMouseDown={onMcaMouseDown}
       >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <MessageComposeInputAreaDiv {...windowOptions}>
+        <div className={mcaStyles.inputArea} style={{ "--width": `${windowOptions.width}ch`, "--height": `${windowOptions.paLines}em` }}>
           {chunkString(`${mcaInputValue} `, windowOptions.width).map((chunk, i) => {
             const cursorIndex = cursorPosition - windowOptions.width * i;
             if (cursorIndex >= 0 && cursorIndex < windowOptions.width) {
@@ -468,7 +396,7 @@ export const MessageComposeArea = () => {
                 // eslint-disable-next-line react/no-array-index-key
                 <pre key={i}>
                   {chunk.slice(0, cursorIndex)}
-                  <MessageComposeCursor insertMode={insertMode}>{chunk[cursorIndex]}</MessageComposeCursor>
+                  <span className={clsx(mcaStyles.cursor, { insertMode })}>{chunk[cursorIndex]}</span>
                   {chunk.slice(cursorIndex + 1)}
                 </pre>
               );
@@ -476,21 +404,23 @@ export const MessageComposeArea = () => {
             // eslint-disable-next-line react/no-array-index-key
             return <pre key={i}>{chunk}</pre>;
           })}
-        </MessageComposeInputAreaDiv>
-        <FeedbackContainerDiv>
-          <ResponseFeedbackRowDiv>
-            {mcaFeedbackString.startsWith("ACCEPT") && <AcceptCheckmarkSpan />}
-            {mcaFeedbackString.startsWith("REJECT") && <RejectCrossSpan />}
+        </div>
+        <div className={mcaStyles.feedbackContainer}>
+          <div className={mcaStyles.feedbackRow}>
+            {mcaFeedbackString.startsWith("ACCEPT") && <span className={mcaStyles.checkmark} />}
+            {mcaFeedbackString.startsWith("REJECT") && <span className={mcaStyles.rejectCross} />}
             {feedbackRows[0]}
-          </ResponseFeedbackRowDiv>
+          </div>
           {feedbackRows.slice(1, 30).flatMap((s, i) =>
             chunkString(s, windowOptions.width).map((chunk, j) => (
               // eslint-disable-next-line react/no-array-index-key
-              <ResponseFeedbackRowDiv key={`${i}-${j}`}>{chunk}</ResponseFeedbackRowDiv>
+              <div className={mcaStyles.feedbackRow} key={`${i}-${j}`}>
+                {chunk}
+              </div>
             ))
           )}
-        </FeedbackContainerDiv>
-      </MessageComposeAreaDiv>
+        </div>
+      </div>
       {showOptions && width && (
         <FloatingWindowOptionContainer
           parentWidth={width + 2}

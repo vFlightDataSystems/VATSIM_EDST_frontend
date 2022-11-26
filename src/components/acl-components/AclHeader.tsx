@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aclAselSelector, closeAllMenus, closeWindow } from "~redux/slices/appSlice";
 import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
-import { NoSelectDiv } from "styles/NoSelectDiv";
 import { aclCleanup } from "~redux/thunks/aclCleanup";
 import { AclSortOptionValues } from "types/acl/aclSortOption";
-import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import { aclManualPostingSelector, aclSortDataSelector, setAclManualPosting } from "~redux/slices/aclSlice";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
 import { AddFindInput } from "components/utils/InputComponents";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
-
-const AclHeaderDiv = styled(NoSelectDiv)``;
+import tableStyles from "css/table.module.scss";
+import clsx from "clsx";
 
 /**
  * ACL title bar and header row with add/find input field
@@ -34,7 +31,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
   };
 
   return (
-    <AclHeaderDiv>
+    <div className={tableStyles.header}>
       <WindowTitleBar
         focused={focused}
         toggleFullscreen={toggleFullscreen}
@@ -51,7 +48,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           `${manualPosting ? "Manual" : "Automatic"}`,
         ]}
       />
-      <EdstWindowHeaderRowDiv>
+      <div className={tableStyles.headerRow}>
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openAclPlanOptions"
           edstWindow="PLAN_OPTIONS"
@@ -82,12 +79,12 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           title={Tooltips.template}
         />
         <EdstWindowHeaderButton onMouseDown={() => dispatch(aclCleanup)} content="Clean Up" title={Tooltips.aclCleanUp} />
-      </EdstWindowHeaderRowDiv>
-      <EdstWindowHeaderRowDiv bottomRow>
+      </div>
+      <div className={clsx(tableStyles.headerRow, "bottom")}>
         Add/Find
         <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
         Facilities:
-      </EdstWindowHeaderRowDiv>
-    </AclHeaderDiv>
+      </div>
+    </div>
   );
 };

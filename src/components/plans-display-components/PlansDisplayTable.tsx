@@ -1,57 +1,11 @@
 import React, { useState } from "react";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
 import { useInterval } from "usehooks-ts";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { planQueueSelector, selectedPlanIndexSelector, setSelectedPlanIndex } from "~redux/slices/planSlice";
-import { BodyRowDiv, borderHover } from "styles/styles";
-import { NoSelectDiv } from "styles/NoSelectDiv";
 import { removePlanThunk } from "~redux/thunks/removePlanThunk";
-import { colors } from "~/edstTheme";
-
-const PlansDisplayBody = styled(NoSelectDiv)`
-  overflow: hidden;
-  display: block;
-  flex-flow: column;
-  border-top: 1px solid #adadad;
-  color: ${(props) => props.theme.colors.grey};
-`;
-
-type ColCSSProps = Pick<CSSProperties, "color">;
-type ColProps = { hover?: boolean; disabled?: boolean; selected?: boolean } & ColCSSProps;
-const Col = styled.div<ColProps>`
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  height: 1em;
-  border: 1px solid transparent;
-
-  &[disabled] {
-    pointer-events: none;
-    color: #000000;
-  }
-  ${(props) => props.color && { color: props.color }};
-  ${(props) =>
-    props.selected && {
-      "background-color": props.color ?? "#ADADAD",
-      color: "#000000",
-    }};
-  ${(props) => props.hover && borderHover};
-`;
-const Col1 = styled(Col)`
-  width: 20ch;
-  justify-content: left;
-  padding: 0 4px;
-`;
-const Col2 = styled(Col)<{ expired: boolean }>`
-  margin-left: auto;
-  margin-right: 15vw;
-  width: 6ch;
-  border: 1px solid #00ad00;
-  color: #00ad00;
-  padding: 0 4px;
-`;
+import tableStyles from "css/table.module.scss";
+import pdStyles from "css/plansDisplay.module.scss";
+import clsx from "clsx";
 
 const formatTime = (expirationTime: number, currentTime: number) => {
   const max = Math.max(expirationTime - currentTime, 0);
@@ -83,17 +37,17 @@ export const PlansDisplayTable = () => {
   };
 
   return (
-    <PlansDisplayBody>
+    <div className={pdStyles.body}>
       {planQueue?.map((p, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <BodyRowDiv key={i}>
-          <Col1 selected={selectedPlanIndex === i} color={colors.green} hover onMouseDown={(event: React.MouseEvent) => handleMouseDown(event, i)}>
+        <div className={tableStyles.row} key={i}>
+          <div className={clsx(pdStyles.col1, { selected: selectedPlanIndex === i })} onMouseDown={(event) => handleMouseDown(event, i)}>
             {p.cid} {p.aircraftId}
-          </Col1>
-          <Col>{p.commandString.toUpperCase()}</Col>
-          <Col2 expired={p.expirationTime - time < 0}>{formatTime(p.expirationTime, time)}</Col2>
-        </BodyRowDiv>
+          </div>
+          <div className={pdStyles.col}>{p.commandString.toUpperCase()}</div>
+          <div className={clsx(pdStyles.col2, { expired: p.expirationTime - time < 0 })}>{formatTime(p.expirationTime, time)}</div>
+        </div>
       ))}
-    </PlansDisplayBody>
+    </div>
   );
 };

@@ -1,9 +1,9 @@
 import React from "react";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { FidRow, OptionsBodyCol, OptionsBodyRow } from "styles/optionMenuStyles";
 import { EdstPrompt } from "components/prompts/EdstPrompt";
 import type { PromptProps } from "components/prompts/promptProps";
+import optionStyles from "css/optionMenu.module.scss";
 
 export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
@@ -18,12 +18,12 @@ export const ChangeDestinationMenu = ({ onSubmit, onCancel }: PromptProps) => {
       cancelText="NO"
       onCancel={onCancel}
     >
-      <FidRow>
+      <div className={optionStyles.fidRow}>
         {entry.cid} {entry.aircraftId}
-      </FidRow>
-      <OptionsBodyRow padding="0 8px">
-        <OptionsBodyCol>Are you sure you want to change the destination?</OptionsBodyCol>
-      </OptionsBodyRow>
+      </div>
+      <div className={optionStyles.row}>
+        <div className={optionStyles.col}>Are you sure you want to change the destination?</div>
+      </div>
     </EdstPrompt>
   );
 };

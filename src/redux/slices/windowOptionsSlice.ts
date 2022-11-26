@@ -30,7 +30,7 @@ const initialState = {
     brightness: 80,
   },
   MESSAGE_RESPONSE_AREA: {
-    width: 45,
+    width: 40,
     fontSizeIndex: 2,
     brightness: 80,
   },

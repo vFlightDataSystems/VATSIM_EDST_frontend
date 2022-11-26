@@ -1,37 +1,10 @@
-import type { MouseEventHandler } from "react";
+import type { CSSProperties, MouseEventHandler } from "react";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useOnClickOutside, useWindowSize } from "usehooks-ts";
-import {
-  FloatingWindowDiv,
-  FloatingWindowHeaderColDiv16ch,
-  FloatingWindowHeaderColDivFlex,
-  FloatingWindowHeaderDiv,
-} from "styles/floatingWindowStyles";
 import type { WindowPosition } from "types/windowPosition";
-import { borderHover } from "styles/styles";
-
-const FloatingWindowOptionsBodyDiv = styled(FloatingWindowDiv)<{
-  offsetPos: boolean;
-}>`
-  font-size: ${(props) => props.theme.fontProps.fontSize};
-  display: inline-flex;
-  flex-flow: column;
-  height: auto;
-`;
-
-type FloatingWindowOptionDivProps = { backgroundColor: CSSProperties["backgroundColor"] };
-const FloatingWindowOptionDiv = styled(FloatingWindowHeaderDiv)<FloatingWindowOptionDivProps>`
-  height: 1em;
-  background-color: ${(props) => props.backgroundColor};
-  padding-right: 16px;
-  border: 1px solid #adadad;
-  text-indent: 6px;
-  align-items: center;
-  ${borderHover}
-`;
+import floatingStyles from "css/floatingWindow.module.scss";
+import clsx from "clsx";
 
 type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
 const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
@@ -59,9 +32,14 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
   });
 
   return (
-    <FloatingWindowOptionDiv ref={ref} backgroundColor={option.backgroundColor ?? "#000000"} onMouseDownCapture={option.onMouseDown}>
+    <div
+      className={floatingStyles.floatingOption}
+      ref={ref}
+      style={{ "--background-color": option.backgroundColor }}
+      onMouseDownCapture={option.onMouseDown}
+    >
       {option.value}
-    </FloatingWindowOptionDiv>
+    </div>
   );
 };
 
@@ -133,16 +111,16 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
   });
 
   return (
-    <FloatingWindowOptionsBodyDiv pos={pos} ref={ref} zIndex={props.zIndex + 1} offsetPos={!props.title}>
+    <div className={clsx(floatingStyles.root, "optionsBody")} style={{ ...pos, zIndex: 10000 + props.zIndex + 1 }} ref={ref}>
       {props.title && (
-        <FloatingWindowHeaderDiv ref={headerRef}>
-          <FloatingWindowHeaderColDivFlex>{props.title}</FloatingWindowHeaderColDivFlex>
-          <FloatingWindowHeaderColDiv16ch onMouseDownCapture={props.onClose} ref={xRef}>
+        <div className={floatingStyles.header} ref={headerRef}>
+          <div className={clsx(floatingStyles.col, "flex")}>{props.title}</div>
+          <div className={clsx(floatingStyles.col, "rect")} onMouseDownCapture={props.onClose} ref={xRef}>
             X
-          </FloatingWindowHeaderColDiv16ch>
-        </FloatingWindowHeaderDiv>
+          </div>
+        </div>
       )}
       {props.options && Object.entries(props.options).map(([key, option]) => <FloatingWindowOptionRow key={key} option={option} />)}
-    </FloatingWindowOptionsBodyDiv>
+    </div>
   );
 }

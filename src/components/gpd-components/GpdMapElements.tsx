@@ -14,7 +14,7 @@ import type { ApiLocation } from "types/apiTypes/apiLocation";
 import { locationToPosition } from "~/utils/locationToPosition";
 import { getRemainingFixesFromPpos } from "~/utils/fixes";
 import { useRootSelector } from "~redux/hooks";
-import { colors } from "~/edstTheme";
+import { colors } from "~/colors";
 import { GpdDataBlock } from "components/GpdDataBlock";
 import { fixIcon, trackIcon, vorIcon } from "components/LeafletIcons";
 import "leaflet.vectorgrid";

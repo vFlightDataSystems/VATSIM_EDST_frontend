@@ -127,7 +127,7 @@ const gpdSlice = createSlice({
     setGpdZoomLevel(state, action: PayloadAction<number>) {
       if (action.payload >= GPD_MIN_ZOOM && action.payload <= GPD_MAX_ZOOM) {
         state.zoomLevel = action.payload;
-        sharedSocket.setGpdState(state);
+        // sharedSocket.setGpdState(state);
       }
     },
   },

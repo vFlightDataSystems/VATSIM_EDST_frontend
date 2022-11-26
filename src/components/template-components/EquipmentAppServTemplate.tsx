@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { OptionsBodyRow } from "styles/optionMenuStyles";
 import { isEnum } from "~/utility-functions";
 import type { EquipmentTemplateBodyProps } from "components/EquipmentTemplateMenu";
 import { EquipmentTemplateRow } from "components/EquipmentTemplateMenu";
-import { EqpCol } from "components/EqpStyled";
-
-export const EqpCol2 = styled(EqpCol)`
-  margin: 0 20px;
-`;
+import eqpStyles from "css/eqp.module.scss";
+import clsx from "clsx";
 
 enum ApproachCategory {
   L = "L",
@@ -52,53 +47,51 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
   }, [entry?.icaoEquipmentCodes, setReset]);
 
   return (
-    <div>
-      <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
-        <EqpCol2>
-          <EquipmentTemplateRow
-            key="eqp-app-serv-L"
-            buttonText="L"
-            text="(ILS)"
-            tooltip={Tooltips.equipmentTemplateMenuAppServ_L}
-            selected={appCategories.includes(ApproachCategory.L)}
-            toggleSelect={() => toggleCategory(ApproachCategory.L)}
-          />
-          <EquipmentTemplateRow
-            key="eqp-app-serv-K"
-            buttonText="K"
-            text="(MLS)"
-            tooltip={Tooltips.equipmentTemplateMenuAppServ_K}
-            selected={appCategories.includes(ApproachCategory.K)}
-            toggleSelect={() => toggleCategory(ApproachCategory.K)}
-          />
-          <EquipmentTemplateRow
-            key="eqp-app-serv-A"
-            buttonText="A"
-            text="(GBAS)"
-            tooltip={Tooltips.equipmentTemplateMenuAppServ_A}
-            selected={appCategories.includes(ApproachCategory.A)}
-            toggleSelect={() => toggleCategory(ApproachCategory.A)}
-          />
-          <EquipmentTemplateRow
-            key="eqp-app-serv-B"
-            buttonText="B"
-            text="(LPV)"
-            tooltip={Tooltips.equipmentTemplateMenuAppServ_B}
-            selected={appCategories.includes(ApproachCategory.B)}
-            toggleSelect={() => toggleCategory(ApproachCategory.B)}
-          />
-        </EqpCol2>
-        <EqpCol2>
-          <EquipmentTemplateRow
-            key="eqp-app-serv-S"
-            buttonText="S"
-            text="(STANDARD)"
-            tooltip={Tooltips.equipmentTemplateMenuAppServ_S}
-            selected={appCategories.includes(ApproachCategory.S)}
-            toggleSelect={() => toggleCategory(ApproachCategory.S)}
-          />
-        </EqpCol2>
-      </OptionsBodyRow>
+    <div className={eqpStyles.titleRow}>
+      <div className={clsx(eqpStyles.col, eqpStyles.m20)}>
+        <EquipmentTemplateRow
+          key="eqp-app-serv-L"
+          buttonText="L"
+          text="(ILS)"
+          tooltip={Tooltips.equipmentTemplateMenuAppServ_L}
+          selected={appCategories.includes(ApproachCategory.L)}
+          toggleSelect={() => toggleCategory(ApproachCategory.L)}
+        />
+        <EquipmentTemplateRow
+          key="eqp-app-serv-K"
+          buttonText="K"
+          text="(MLS)"
+          tooltip={Tooltips.equipmentTemplateMenuAppServ_K}
+          selected={appCategories.includes(ApproachCategory.K)}
+          toggleSelect={() => toggleCategory(ApproachCategory.K)}
+        />
+        <EquipmentTemplateRow
+          key="eqp-app-serv-A"
+          buttonText="A"
+          text="(GBAS)"
+          tooltip={Tooltips.equipmentTemplateMenuAppServ_A}
+          selected={appCategories.includes(ApproachCategory.A)}
+          toggleSelect={() => toggleCategory(ApproachCategory.A)}
+        />
+        <EquipmentTemplateRow
+          key="eqp-app-serv-B"
+          buttonText="B"
+          text="(LPV)"
+          tooltip={Tooltips.equipmentTemplateMenuAppServ_B}
+          selected={appCategories.includes(ApproachCategory.B)}
+          toggleSelect={() => toggleCategory(ApproachCategory.B)}
+        />
+      </div>
+      <div className={clsx(eqpStyles.col, eqpStyles.m16)}>
+        <EquipmentTemplateRow
+          key="eqp-app-serv-S"
+          buttonText="S"
+          text="(STANDARD)"
+          tooltip={Tooltips.equipmentTemplateMenuAppServ_S}
+          selected={appCategories.includes(ApproachCategory.S)}
+          toggleSelect={() => toggleCategory(ApproachCategory.S)}
+        />
+      </div>
     </div>
   );
 };

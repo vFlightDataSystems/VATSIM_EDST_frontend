@@ -47,7 +47,6 @@ type AppState = {
   mcaFeedbackString: string;
   giEntryMap: Record<string, GIEntry>;
   tooltipsEnabled: boolean;
-  showSectorSelector: boolean;
   asel: Nullable<Asel>;
   zStack: EdstWindow[];
   outages: OutageEntry[];
@@ -81,7 +80,6 @@ const initialState: AppState = {
   mcaFeedbackString: "",
   giEntryMap: {},
   tooltipsEnabled: true,
-  showSectorSelector: false,
   asel: null,
   zStack: [],
   outages: [],
@@ -109,9 +107,6 @@ const appSlice = createSlice({
     },
     setTooltipsEnabled(state, action: PayloadAction<boolean>) {
       state.tooltipsEnabled = action.payload;
-    },
-    setShowSectorSelector(state, action: PayloadAction<boolean>) {
-      state.showSectorSelector = action.payload;
     },
     setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: WindowPosition }>) {
       state.windows[action.payload.window].position = action.payload.pos;
@@ -235,7 +230,6 @@ export const toggleWindow = (edstWindow: EdstWindow): RootThunkAction => {
 export const {
   setIsFullscreen,
   setTooltipsEnabled,
-  setShowSectorSelector,
   setWindowPosition,
   setWindowDimension,
   openWindow,
@@ -268,4 +262,3 @@ export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
 export const tooltipsEnabledSelector = (state: RootState) => state.app.tooltipsEnabled;
-export const showSectorSelectorSelector = (state: RootState) => state.app.showSectorSelector;

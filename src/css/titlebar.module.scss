@@ -1,0 +1,20 @@
+
+
+.root {
+  display: flex;
+  justify-content: space-between;
+  height: 24px;
+}
+
+.col {
+  display: inline-flex;
+
+  &.middle {
+    color: #000000;
+    flex-grow: 1;
+  }
+
+  > div, button {
+
+  }
+}

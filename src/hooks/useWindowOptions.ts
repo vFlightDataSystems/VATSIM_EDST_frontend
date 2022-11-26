@@ -4,7 +4,7 @@ import type { ModifiableWindowOptions } from "~redux/slices/windowOptionsSlice";
 import { decOptionValue, incOptionValue, windowOptionLabel, windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import type { FloatingWindowOptions } from "components/utils/FloatingWindowOptionContainer";
-import { colors } from "~/edstTheme";
+import { colors } from "~/colors";
 
 type PickByValue<T, V> = Pick<T, { [K in keyof T]: T[K] extends V ? K : never }[keyof T]>;
 type Entries<T> = {

@@ -1,42 +1,29 @@
+import type { CSSProperties } from "react";
 import React, { forwardRef, useEffect, useRef } from "react";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
 import { useRootSelector } from "~redux/hooks";
 import { tooltipsEnabledSelector } from "~redux/slices/appSlice";
 import type { AtMostOne } from "types/utility-types";
-
-const TooltipDiv = styled.div`
-  width: auto;
-  height: auto;
-  position: absolute;
-  color: #ffffff;
-  background-color: #000000;
-  border: 1px solid #adad00;
-  padding: 2px;
-  font-size: 0.85em;
-  transform: translateY(32px);
-  z-index: 2000;
-  white-space: pre-line;
-`;
+import tooltipStyles from "css/tooltip.module.scss";
+import clsx from "clsx";
 
 const TooltipContent = ({ title }: { title: string }) => {
-  // eslint-disable-next-line jsx-a11y/tabindex-no-positive
-  return <TooltipDiv tabIndex={30000}>{title}</TooltipDiv>;
+  return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex,jsx-a11y/tabindex-no-positive
+    <div className={tooltipStyles.tooltip} tabIndex={30000}>
+      {title}
+    </div>
+  );
 };
-
-const TooltipBody = styled.div`
-  all: unset;
-  font-size: inherit;
-`;
 
 type EdstTooltipProps = {
   title?: string;
   style?: CSSProperties;
   disabled?: boolean;
+  className?: string;
 } & AtMostOne<{ content: string; children: React.ReactNode }> &
   React.HTMLAttributes<HTMLDivElement>;
 
-export const EdstTooltip = forwardRef<HTMLDivElement, EdstTooltipProps>(({ title, content, ...props }, ref) => {
+export const EdstTooltip = forwardRef<HTMLDivElement, EdstTooltipProps>(({ className, title, content, ...props }, ref) => {
   const localRef = useRef<HTMLDivElement | null>(null);
   const globalTooltipsEnabled = useRootSelector(tooltipsEnabledSelector);
   const [tooltipEnabled, setTooltipEnabled] = React.useState(false);
@@ -60,7 +47,8 @@ export const EdstTooltip = forwardRef<HTMLDivElement, EdstTooltipProps>(({ title
   }, [title]);
 
   return (
-    <TooltipBody
+    <div
+      className={clsx(tooltipStyles.tooltipContainer, className)}
       ref={(node) => {
         localRef.current = node;
         if (typeof ref === "function") {
@@ -73,6 +61,6 @@ export const EdstTooltip = forwardRef<HTMLDivElement, EdstTooltipProps>(({ title
     >
       {globalTooltipsEnabled && tooltipEnabled && title && <TooltipContent title={title} />}
       {content ?? props.children}
-    </TooltipBody>
+    </div>
   );
 });

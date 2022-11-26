@@ -2,22 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 import "css/styles.css";
 import _ from "lodash";
-import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "~redux/slices/appSlice";
-import {
-  FidRow,
-  OptionIndicator,
-  OptionsBody,
-  OptionsBodyCol,
-  OptionsBodyRow,
-  OptionsMenu,
-  OptionsMenuHeader,
-  UnderlineRow,
-} from "styles/optionMenuStyles";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import type { EdstPreferentialRoute } from "types/edstPreferentialRoute";
@@ -35,7 +24,6 @@ import { formatRoute } from "~/utils/formatRoute";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { removeStringFromStart, removeStringFromEnd } from "~/utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "~/utils/fixes";
-import { borderHover, buttonBorderInverted2px } from "styles/styles";
 import socket from "~socket";
 import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
@@ -45,64 +33,8 @@ import FLIGHTAWARE_LOGO from "resources/images/FA_1.png";
 import SKYVECTOR_LOGO from "resources/images/glob_bright.png";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
 import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
-
-const RouteMenuDiv = styled(OptionsMenu)`
-  width: 570px;
-`;
-const RouteMenuHeader = styled(OptionsMenuHeader)``;
-const RouteMenuBody = styled(OptionsBody)``;
-const RouteMenuRow = styled(OptionsBodyRow)`
-  padding: 4px 0;
-`;
-const InputContainer = styled.div`
-  align-items: center;
-  vertical-align: center;
-  display: flex;
-  flex-grow: 1;
-  padding: 0;
-  overflow: hidden;
-  ${buttonBorderInverted2px};
-`;
-const Input = styled.input.attrs(() => ({ spellCheck: false }))`
-  //cursor: default;
-  font-size: ${(props) => props.theme.fontProps.inputFontSize};
-  outline: none;
-  flex: 1;
-  width: 100%;
-  color: ${(props) => props.theme.colors.grey};
-  background-color: #000000;
-  border: 1px solid transparent;
-
-  ${borderHover}
-`;
-const PposDiv = styled.div`
-  border: 2px solid transparent;
-  border-right: none;
-  padding: 0 2px;
-  width: 11ch;
-  font-size: ${(props) => props.theme.fontProps.fontSize};
-  color: #575757;
-`;
-const ButtonCol = styled(OptionsBodyCol)`
-  padding: 0 4px;
-  display: flex;
-  flex-grow: 0;
-  min-height: 1.2em;
-`;
-const DisplayRouteDiv = styled(OptionsBodyCol)`
-  border: 2px solid #414141;
-  padding: 0 3px;
-  margin: 2px 8px 8px 8px;
-`;
-const DctCol = styled(OptionsBodyCol)`
-  display: flex;
-  flex-grow: 0;
-  justify-content: flex-start;
-  height: 1.1em;
-  padding: 0 4px;
-  width: 9ch;
-  margin: auto 12px;
-`;
+import routeStyles from "css/routeMenu.module.scss";
+import clsx from "clsx";
 
 type Append = { appendOplus: boolean; appendStar: boolean };
 const toggleAppendStar = (prev: Append) => ({
@@ -277,23 +209,22 @@ export const RouteMenu = () => {
   useSharedUiListener("routeMenuClickAppendOplus", setAppend, toggleAppendOplus);
 
   return (
-    <RouteMenuDiv
+    <div
+      className={clsx(routeStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={pos}
-      zIndex={zStack.indexOf("ROUTE_MENU")}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf("ROUTE_MENU") }}
       onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <RouteMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(routeStyles.header, { focused })} onMouseDown={startDrag}>
         Route Menu
-      </RouteMenuHeader>
-      <RouteMenuBody>
-        <FidRow>
+      </div>
+      <div className={routeStyles.body}>
+        <div className={routeStyles.fidRow}>
           {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-        </FidRow>
-        <RouteMenuRow>
-          <OptionsBodyCol>
+        </div>
+        <div className={clsx(routeStyles.row, "pad")}>
+          <div className={routeStyles.col}>
             <EdstButton
               content="Trial Plan"
               selected={trialPlan}
@@ -304,13 +235,13 @@ export const RouteMenu = () => {
               title={Tooltips.routeMenuPlanData}
               disabled={asel.window === "DEP"}
             />
-          </OptionsBodyCol>
-          <OptionsBodyCol maxWidth="24px" maxHeight="24px">
+          </div>
+          <div className={routeStyles.icon}>
             <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
               <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
             </a>
-          </OptionsBodyCol>
-          <OptionsBodyCol maxWidth="24px" maxHeight="24px">
+          </div>
+          <div className={routeStyles.icon}>
             <a
               href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
               target="_blank"
@@ -318,8 +249,8 @@ export const RouteMenu = () => {
             >
               <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
             </a>
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight>
+          </div>
+          <div className={clsx(routeStyles.col, "right")}>
             {entry.cpdlcCapable && (
               <>
                 <EdstButton content="Uplink" />
@@ -335,69 +266,71 @@ export const RouteMenu = () => {
               }}
               title={Tooltips.routeMenuAmend}
             />
-          </OptionsBodyCol>
-        </RouteMenuRow>
-        <RouteMenuRow>
-          <OptionsBodyCol>
-            <InputContainer>
+          </div>
+        </div>
+        <div className={clsx(routeStyles.row, "pad")}>
+          <div className={routeStyles.col}>
+            <div className={routeStyles.inputContainer}>
               {!(asel.window === "DEP") && (
                 <EdstTooltip title={Tooltips.routeMenuFrd}>
-                  <PposDiv>{frd}..</PposDiv>
+                  <div className={routeStyles.ppos}>{frd}..</div>
                 </EdstTooltip>
               )}
-              <Input value={routeInput} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={(event) => handleInputKeyDown(event)} />
-            </InputContainer>
-          </OptionsBodyCol>
-        </RouteMenuRow>
-        <RouteMenuRow topBorder>
-          <ButtonCol hover disabled title={Tooltips.routeMenuPar}>
-            <OptionIndicator disabled size={9} />
+              <input value={routeInput} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={(event) => handleInputKeyDown(event)} />
+            </div>
+          </div>
+        </div>
+        <div className={clsx(routeStyles.row, "pad", "topBorder")}>
+          <div className={clsx(routeStyles.buttonCol, "isDisabled")} title={Tooltips.routeMenuPar}>
+            <div className={clsx(routeStyles.indicator, "isDisabled", "s9")} />
             Include PAR
-          </ButtonCol>
-        </RouteMenuRow>
-        <RouteMenuRow bottomBorder>
-          <ButtonCol
-            hover
+          </div>
+        </div>
+        <div className={clsx(routeStyles.row, "pad", "bottomBorder")}>
+          <div
+            className={clsx(routeStyles.buttonCol)}
             title={Tooltips.routeMenuAppendStar}
             onMouseDown={() => {
               socket.dispatchUiEvent("routeMenuClickAppendStar");
               setAppend(toggleAppendStar);
             }}
           >
-            <OptionIndicator selected={appendStar} size={9} />
+            <div className={clsx(routeStyles.indicator, "s9", { selected: appendStar })} />
             Append *
-          </ButtonCol>
-          <ButtonCol
-            hover
+          </div>
+          <div
+            className={clsx(routeStyles.buttonCol)}
             title={Tooltips.routeMenuAppendOplus}
             onMouseDown={() => {
               socket.dispatchUiEvent("routeMenuClickAppendOplus");
               setAppend(toggleAppendOplus);
             }}
           >
-            <OptionIndicator selected={appendOplus} size={9} />
-            Append<span>&nbsp;{OPLUS_SYMBOL}</span>
-          </ButtonCol>
-        </RouteMenuRow>
+            <div className={clsx(routeStyles.indicator, "s9", { selected: appendOplus })} />
+            Append {OPLUS_SYMBOL}
+          </div>
+        </div>
         <EdstTooltip title={Tooltips.routeMenuDirectFix}>
-          <UnderlineRow as={RouteMenuRow}>Direct-To-Fix</UnderlineRow>
+          <div className={routeStyles.underlineRow}>Direct-To-Fix</div>
         </EdstTooltip>
-        <OptionsBodyRow>
-          <DisplayRouteDiv>{asel.window === "DEP" ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}</DisplayRouteDiv>
-        </OptionsBodyRow>
+        <div className={routeStyles.row}>
+          <div className={routeStyles.route}>
+            {asel.window === "DEP" ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
+          </div>
+        </div>
         {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
-          <OptionsBodyRow key={i}>
+          <div className={routeStyles.row} key={i}>
             {_.range(0, Math.round((routeFixes?.length ?? 0) / 10) + 1).map((j) => {
               const fixName = routeFixes?.[i + j * 10]?.name;
               return (
                 fixName && (
-                  <DctCol hover key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
+                  <div className={routeStyles.dct} key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
                     {fixName}
-                  </DctCol>
+                  </div>
                 )
               );
             })}
-          </OptionsBodyRow>
+          </div>
         ))}
         {routesAvailable && (
           <PreferredRouteDisplay
@@ -407,8 +340,8 @@ export const RouteMenu = () => {
             clearedPrefroute={clearedPrefroute}
           />
         )}
-        <OptionsBodyRow margin="14px 0 0 0" padding="">
-          <OptionsBodyCol>
+        <div className={clsx(routeStyles.row, "top-margin-14")}>
+          <div className={routeStyles.col}>
             <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
             <EdstButton
               disabled={entry.previousRoute === null}
@@ -421,12 +354,12 @@ export const RouteMenu = () => {
               title={Tooltips.routeMenuPrevRoute}
             />
             <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight>
+          </div>
+          <div className={clsx(routeStyles.col, "right")}>
             <ExitButton onMouseDown={() => dispatch(closeWindow("ROUTE_MENU"))} />
-          </OptionsBodyCol>
-        </OptionsBodyRow>
-      </RouteMenuBody>
-    </RouteMenuDiv>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

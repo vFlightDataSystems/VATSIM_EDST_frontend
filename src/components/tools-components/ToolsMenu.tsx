@@ -1,26 +1,16 @@
 import React, { useRef, useState } from "react";
 
-import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { closeWindow, pushZStack, windowSelector, zStackSelector } from "~redux/slices/appSlice";
-import {
-  OptionsBody,
-  OptionsBodyCol,
-  OptionsBodyRow,
-  OptionsBottomRow,
-  OptionsFlexCol,
-  OptionsMenu,
-  OptionsMenuHeader,
-} from "styles/optionMenuStyles";
 import { useDragging } from "hooks/useDragging";
 import { useFocused } from "hooks/useFocused";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { ToolsOptionsMenu } from "components/ToolsOptionsMenu";
 import { ExitButton } from "components/utils/EdstButton";
-
-export const ToolsBody = styled(OptionsBody)`
-  padding: 20px 0 4px 0;
-`;
+import clsx from "clsx";
+import toolsStyles from "css/toolsMenu.module.scss";
+import optionStyles from "css/optionMenu.module.scss";
+import sortStyles from "css/sortMenu.module.scss";
 
 export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
@@ -31,42 +21,41 @@ export const ToolsMenu = () => {
   const focused = useFocused(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TOOLS_MENU", "mouseup");
 
+  const renderRow = (content: string, onMouseDown?: React.MouseEventHandler) => (
+    <div className={optionStyles.row}>
+      <div className={clsx(optionStyles.col, "flex", { isDisabled: !onMouseDown })} onMouseDown={onMouseDown}>
+        {content}
+      </div>
+    </div>
+  );
+
   return (
-    <OptionsMenu
+    <div
+      className={clsx(optionStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={windowProps.position}
-      zIndex={zStack.indexOf("TOOLS_MENU")}
+      style={{ ...windowProps.position, zIndex: 10000 + zStack.indexOf("TOOLS_MENU") }}
       onMouseDown={() => zStack.indexOf("TOOLS_MENU") < zStack.length - 1 && dispatch(pushZStack("TOOLS_MENU"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(sortStyles.header, { focused })} onMouseDown={startDrag}>
         {optionsMenuOpen ? "Options" : "Tools"} Menu
-      </OptionsMenuHeader>
-      <ToolsBody>
+      </div>
+      <div className={toolsStyles.body}>
         {optionsMenuOpen && <ToolsOptionsMenu />}
         {!optionsMenuOpen && (
           <>
-            <OptionsBodyRow>
-              <OptionsFlexCol disabled>Airspace Status...</OptionsFlexCol>
-            </OptionsBodyRow>
-            <OptionsBodyRow>
-              <OptionsFlexCol disabled>Airport Stream Filter Status...</OptionsFlexCol>
-            </OptionsBodyRow>
-            <OptionsBodyRow>
-              <OptionsFlexCol onMouseDown={() => setOptionsMenuOpen(true)}>Options...</OptionsFlexCol>
-            </OptionsBodyRow>
-            <OptionsBodyRow>
-              <OptionsFlexCol disabled>Restrictions...</OptionsFlexCol>
-            </OptionsBodyRow>
-            <OptionsBottomRow>
-              <OptionsBodyCol alignRight>
+            {renderRow("Airspace Status...")}
+            {renderRow("Airport Stream Filter Status...")}
+            {renderRow("Options...", () => setOptionsMenuOpen(true))}
+            {renderRow("Restrictions...")}
+            <div className={optionStyles.bottomRow}>
+              <div className={clsx(optionStyles.col, "right")}>
                 <ExitButton onMouseDown={() => dispatch(closeWindow("TOOLS_MENU"))} />
-              </OptionsBodyCol>
-            </OptionsBottomRow>
+              </div>
+            </div>
           </>
         )}
-      </ToolsBody>
-    </OptionsMenu>
+      </div>
+    </div>
   );
 };

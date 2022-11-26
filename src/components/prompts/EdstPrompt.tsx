@@ -1,7 +1,5 @@
+import type { CSSProperties } from "react";
 import React, { useRef } from "react";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
-import { OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useFocused } from "hooks/useFocused";
@@ -10,13 +8,9 @@ import { useCenterCursor } from "hooks/useCenterCursor";
 import type { EdstWindow } from "types/edstWindow";
 import { EdstButton } from "components/utils/EdstButton";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-
-type PromptDivProps = {
-  width?: CSSProperties["width"];
-};
-const PromptDiv = styled(OptionsMenu)<PromptDivProps>`
-  width: ${(props) => props.width ?? "auto"};
-`;
+import optionStyles from "css/optionMenu.module.scss";
+import clsx from "clsx";
+import speedStyles from "css/hdgSpdMenu.module.scss";
 
 type EdstPromptProps = {
   title: string;
@@ -40,25 +34,23 @@ export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps
   useCenterCursor(ref);
 
   return (
-    <PromptDiv
+    <div
+      className={clsx(optionStyles.root, { isDragging: anyDragging })}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf(props.windowId), "--width": props.width }}
       ref={ref}
-      width={props.width}
-      pos={pos}
-      zIndex={zStack.indexOf(props.windowId)}
-      anyDragging={anyDragging}
       onMouseDown={() => zStack.indexOf(props.windowId) < zStack.length - 1 && dispatch(pushZStack(props.windowId))}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         {props.title}
-      </OptionsMenuHeader>
-      <OptionsBody>
+      </div>
+      <div className={optionStyles.body}>
         {props.children}
-        <OptionsBodyRow margin="0">
-          <OptionsBodyCol>
+        <div className={speedStyles.row}>
+          <div className={optionStyles.col}>
             <EdstButton content={props.submitText} onMouseDown={props.onSubmit} />
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight>
+          </div>
+          <div className={clsx(optionStyles.col, "right")}>
             <EdstButton
               content={props.cancelText}
               onMouseDown={() => {
@@ -66,9 +58,9 @@ export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps
                 props.onCancel?.();
               }}
             />
-          </OptionsBodyCol>
-        </OptionsBodyRow>
-      </OptionsBody>
-    </PromptDiv>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

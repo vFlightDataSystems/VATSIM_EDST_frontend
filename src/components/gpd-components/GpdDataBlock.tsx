@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import styled, { css } from "styled-components";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
@@ -16,61 +15,17 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import type { DataBlockOffset } from "components/GpdMapElements";
 import { LeaderLine } from "components/LeaderLine";
-
-type DataBlockDivProps = { offset: DataBlockOffset };
-const DataBlockDiv = styled.div<DataBlockDivProps>`
-  ${(props) => css`
-    left: ${props.offset.x}px;
-    top: ${props.offset.y}px;
-    font-family: ${props.theme.fontProps.edstFontFamily};
-  `}
-  position: relative;
-  font-size: 16px;
-  line-height: 1;
-  width: 9ch;
-  color: #adadad;
-`;
-
-const DataBlockRow = styled.div`
-  display: flex;
-  width: 9ch;
-`;
-type DataBlockElementProps = { selected: boolean };
-const DataBlockElement = styled.span<DataBlockElementProps>`
-  ${(props) => css`
-    color: ${props.selected ? "#000000" : props.theme.colors.grey};
-    background-color: ${props.selected ? props.theme.colors.grey : "transparent"};
-  `}
-  height: 1em;
-  border: 1px solid transparent;
-  margin: 0 1px;
-  padding: 0 1px;
-  flex-grow: 1;
-  display: inline-flex;
-
-  :hover {
-    border: 1px solid #adadad;
-  }
-`;
-
-const InvisibleTooltip = styled(Tooltip)`
-  &::before {
-    all: unset;
-  }
-  background: transparent;
-  border: none;
-  width: 0;
-  height: 0;
-`;
+import gpdStyles from "css/gpd.module.scss";
+import clsx from "clsx";
 
 type PersistentInvisibleTooltipProps = {
   children: React.ReactNode;
 };
 const PersistentInvisibleTooltip = ({ children }: PersistentInvisibleTooltipProps) => {
   return (
-    <InvisibleTooltip permanent interactive opacity={1} direction="center">
+    <Tooltip permanent interactive opacity={1} direction="center">
       {children}
-    </InvisibleTooltip>
+    </Tooltip>
   );
 };
 
@@ -187,37 +142,42 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <PersistentInvisibleTooltip>
         <LeaderLine offset={offset} toggleShowRoute={toggleShowRoute} />
-        <DataBlockDiv ref={ref} offset={offset} onMouseMoveCapture={(event) => !dragPreviewStyle && startDrag(event)}>
-          <DataBlockRow>
-            <DataBlockElement selected={selectedField === "FID_ACL_ROW_FIELD"} onMouseUp={onCallsignClick}>
+        <div
+          className={gpdStyles.datablock}
+          style={{ left: `${offset.x}px`, top: `${offset.y}px` }}
+          ref={ref}
+          onMouseMoveCapture={(event) => !dragPreviewStyle && startDrag(event)}
+        >
+          <div className={gpdStyles.dbRow}>
+            <div className={clsx(gpdStyles.dbElement, { selected: selectedField === "FID_ACL_ROW_FIELD" })} onMouseUp={onCallsignClick}>
               {entry.aircraftId}
-            </DataBlockElement>
-          </DataBlockRow>
-          <DataBlockRow>
-            <DataBlockElement
+            </div>
+          </div>
+          <div className={gpdStyles.dbRow}>
+            <div
+              className={clsx(gpdStyles.dbElement, { selected: selectedField === "ALT_ACL_ROW_FIELD" })}
               ref={altRef}
-              selected={selectedField === "ALT_ACL_ROW_FIELD"}
               onMouseUp={(event) => handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "gpd-alt-asel", "ALTITUDE_MENU")}
             >
               {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`}
-            </DataBlockElement>
-          </DataBlockRow>
-          <DataBlockRow>
-            <DataBlockElement
+            </div>
+          </div>
+          <div className={gpdStyles.dbRow}>
+            <div
+              className={clsx(gpdStyles.dbElement, { selected: selectedField === "ROUTE_ACL_ROW_FIELD" })}
               ref={destRef}
-              selected={selectedField === "ROUTE_ACL_ROW_FIELD"}
               onMouseUp={(event) => handleClick(event.currentTarget, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
             >
               {entry.destination}
-            </DataBlockElement>
-            <DataBlockElement
-              selected={selectedField === "SPD_ACL_ROW_FIELD"}
+            </div>
+            <div
+              className={clsx(gpdStyles.dbElement, { selected: selectedField === "SPD_ACL_ROW_FIELD" })}
               onMouseUp={(event) => handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
             >
               {entry.speed}
-            </DataBlockElement>
-          </DataBlockRow>
-        </DataBlockDiv>
+            </div>
+          </div>
+        </div>
       </PersistentInvisibleTooltip>
     </>
   );

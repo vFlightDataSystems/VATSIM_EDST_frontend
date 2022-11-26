@@ -1,0 +1,369 @@
+@use "global.scss";
+@use "borderStyles.scss";
+@value grey, green, blue, yellow, brown, stripHighlightColor, stripPendingRemovalColor from "colors.css";
+
+// FOR USAGE WITH ACL/DEP/GPD/PLANS DISPLAY ONLY
+
+.header {
+  @include global.noSelect;
+}
+
+.headerRow {
+  border-bottom: 1px solid #adadad;
+
+  &:global(.bottom) {
+    align-items: center;
+    justify-content: flex-start;
+    display: flex;
+    padding: 0 10px;
+  }
+}
+
+.body {
+  white-space: nowrap;
+  overflow: hidden;
+  flex-flow: column;
+  display: flex;
+  color: grey;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  min-height: 2px;
+  padding: 0 10px;
+
+  &:global(.pendingRemoval) {
+    color: stripPendingRemovalColor;
+  }
+}
+
+.freeText {
+  composes: row;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 1em;
+  border: 1px solid transparent;
+  @include borderStyles.borderHover;
+
+  input {
+    color: grey;
+    width: 100%;
+    background-color: transparent;
+    outline: none!important;
+    border: none;
+    caret: #ffffff;
+    text-transform: uppercase;
+  }
+}
+
+.topRow {
+  composes: row;
+  margin-bottom: 2px;
+  min-height: 24px;
+  max-height: 24px;
+  border-bottom: 1px solid #adadad;
+}
+
+.separator {
+  composes: row;
+  height: 0;
+  border-bottom: 2px solid #aa8800;
+}
+
+.rowContainer {
+  margin: 3px 0;
+  flex-flow: wrap;
+  border: none;
+}
+
+.rowSeparator {
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #252525;
+}
+
+// COLUMN STUFF
+
+.col {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 1em;
+  border: 1px solid transparent;
+
+  &:global(.selected) {
+    background-color: grey;
+    color: #000000;
+  }
+
+  &:global(.hidden) {
+    width: 2ch;
+  }
+
+  &:global(.visibilityHidden) {
+    visibility: hidden;
+    width: 2ch;
+  }
+
+  &:global(.isDisabled) {
+    pointer-events: none;
+  }
+}
+
+.fidCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  justify-content: left;
+  width: 14ch;
+  padding: 0 2px;
+}
+
+.voiceType {
+  color: #989898;
+}
+
+.specialBox {
+  composes: col;
+  @include borderStyles.borderHover;
+
+  margin: 0 1px;
+  width: 1ch;
+
+  &:global(.cBrown) {
+    color: brown;
+  }
+}
+
+.hotbox {
+  composes: specialBox;
+  --border-width: 1px;
+  --top-left-color: #575757;
+  --bottom-right-color: #414141;
+  @include borderStyles.border;
+}
+
+.acTypeCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  width: 7ch;
+  justify-content: left;
+  margin-right: 0;
+  padding-left: 4px;
+}
+
+.codeCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  width: 5ch;
+  padding: 0 2px;
+  justify-content: left;
+}
+
+.altCol {
+  composes: col;
+  display: flex;
+  justify-content: left;
+  padding: 0 2px;
+  width: 7ch;
+  margin-right: 8px;
+}
+
+.innerAltCol {
+  composes: col;
+  border: 1px solid transparent;
+  @include borderStyles.borderHover;
+}
+
+.remarksBox {
+  composes: specialBox;
+  &:global(.unchecked) {
+    color: yellow;
+    border: 1px solid yellow;
+    @include borderStyles.borderHover;
+  }
+};
+
+.routeCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  height: calc(100% - 4px);
+  white-space: nowrap;
+  justify-content: left;
+  border: 1px solid transparent;
+  margin-left: 4px;
+  padding: 0 2px 0 0;
+}
+
+.routeContent {
+  composes: col;
+  justify-content: left;
+  max-width: 50vw;
+  pointer-events: none;
+  white-space: nowrap;
+  border: none;
+  margin: 0;
+  border: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:global(.pad) {
+    padding: 0 2px;
+  }
+}
+
+.embeddedRouteText {
+  color: blue;
+
+  &:global(.selected) {
+    background-color: blue;
+    color: #000000;
+  }
+}
+
+.routeDepAprt {
+  composes: routeContent;
+  padding-left: 2px;
+  &:global(.amendmentPending) {
+    color: blue;
+    background-color: transparent;
+    &:global(.selected) {
+      background-color: blue;
+      color: #000000;
+    }
+  }
+}
+
+.innerRow {
+  display: flex;
+  align-items: center;
+  min-height: 1em;
+  border-bottom: 1px solid transparent;
+  &:global(.highlight) {
+    outline: 1px solid stripHighlightColor;
+    border-bottom: 1px solid stripHighlightColor;
+    background-color: stripHighlightColor;
+  }
+
+  &:global(.showFreeText) {
+    min-width: 1200px;
+  }
+}
+
+// ACL
+
+
+.col1 {
+  composes: col;
+  text-align: center;
+  justify-content: center;
+  margin: 0 2px;
+  width: 14px;
+  &:global(.withBorder) {
+    border: 1px solid grey;
+  }
+
+  &:global(.cRed) {
+    color: red;
+  }
+
+  &:global(.cYellow) {
+    color: yellow;
+  }
+
+  &:global(.cOrange) {
+    color: orange;
+  }
+}
+
+.radioCol {
+  composes: col;
+  justify-content: center;
+  height: 1em;
+  width: 11px;
+  margin: 0 2px;
+  color: grey;
+  @include borderStyles.borderHover;
+
+  &:global(.empty) {
+    pointer-events: none;
+  }
+
+  &:global(.cGreen) {
+    --border-hover-color: green;
+    color: green;
+  }
+
+  &:global(.header) {
+    pointer-events: none;
+  }
+
+  &:global(.keep) {
+    background-color: #414141;
+  }
+}
+
+.paCol {
+  composes: col;
+  width: 30px;
+  justify-content: left;
+}
+
+.coralBox {
+  composes: specialBox;
+  margin: 0 2px;
+  width: 8px;
+  height: 100%;
+  border: 1px solid #d698a5;
+  pointer-events: none;
+}
+
+.slashCol {
+  composes: col;
+  width: 1ch;
+  margin: 0;
+}
+
+.slashColHeader {
+  composes: slashCol;
+  @include borderStyles.borderHover;
+}
+
+.hdgSpdCol {
+  composes: col;
+  height: 1em;
+  width: 4ch;
+  @include borderStyles.borderHover;
+
+  &:global(.selected) {
+    background-color: grey;
+    color: #000000;
+  }
+
+  &:global(.hidden) {
+    width: 2ch;
+  }
+
+  &:global(.scratchpad) {
+    color: yellow;
+
+    &:global(.selected) {
+      color: #000000;
+      background-color: yellow
+    }
+  }
+}
+
+.hdgCol {
+  composes: hdgSpdCol;
+  justify-content: right;
+  padding-right: 1px;
+}
+
+.spdCol {
+  composes: hdgSpdCol;
+  justify-content: left;
+  padding-left: 1px;
+}

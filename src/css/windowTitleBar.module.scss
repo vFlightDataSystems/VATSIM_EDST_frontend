@@ -1,0 +1,83 @@
+@use "borderStyles.scss";
+
+@mixin focused {
+  &:global(.focused) {
+    background-color: #008585;
+  }
+}
+
+.root {
+  display: flex;
+  justify-content: space-between;
+  height: 24px;
+}
+
+.col {
+  display: inline-flex;
+
+  &:global(.middle) {
+    color: #000000;
+    flex-grow: 1;
+
+    .block {
+      flex-grow: 1;
+    }
+  }
+}
+
+.text {
+  margin: 0 12px;
+}
+
+.block {
+  --border-width: 1px;
+  --top-left-color: #adadad;
+  --bottom-right-color: #575757;
+  @include borderStyles.border;
+  @include focused;
+
+  flex-grow: 0;
+  vertical-align: center;
+  background-color: #888888;
+  margin: 0;
+  width: 24px;
+  height: auto;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  &:global(.focused) {
+    --bottom-right-color: #005757;
+  }
+
+  &:is(button):active {
+    --top-left-color: #575757;
+    --bottom-right-color: #adadad;
+
+    &:global(.focused) {
+      --top-left-color: #005757;
+      --bottom-right-color: #adadad;
+    }
+  }
+
+  &:global(.w3) {
+    width: 3px;
+  }
+  &:global(.w8) {
+    width: 8px;
+  }
+  &:global(.h3) {
+    height: 3px;
+  }
+  &:global(.h8) {
+      height: 8px;
+  }
+
+  &:global(.inverted) {
+    --top-left-color: #575757;
+    --bottom-right-color: #adadad;
+    &:global(.focused) {
+      --top-left-color: #005757;
+    }
+  }
+}

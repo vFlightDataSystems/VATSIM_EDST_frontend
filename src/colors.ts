@@ -1,0 +1,15 @@
+export const colors = {
+  grey: "#ADADAD",
+  yellow: "#ADAD00",
+  red: "#AD0000",
+  orange: "#AD5700",
+  green: "#00AD00",
+  blue: "#00ADAD",
+  brown: "#695547",
+  black: "#000000",
+  optionsBackgroundGreen: "#006900",
+  stripPendingRemovalColor: "#595959",
+  stripHighlightColor: "#414141",
+  windowBorderColor: "#888888",
+  windowOutlineColor: "#ADADAD",
+} as const;

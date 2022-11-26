@@ -1,0 +1,92 @@
+@use "optionMenu.module.scss";
+@use "borderStyles.scss";
+@use "input.module.scss";
+
+.root {
+  composes: root from "optionMenu.module.scss";
+  --width: 20ch;
+}
+
+.row {
+  composes: row from "optionMenu.module.scss";
+  padding: 4px 0!important;
+}
+
+.row2 {
+  composes: row;
+  padding: 6px;
+  min-height: 4px;
+  display: flex;
+  align-items: center;
+
+  &:global(.spaceBetween) {
+    justify-content: space-between;
+  }
+}
+
+.phRow {
+  composes: row;
+  margin: 8px 0 0 0;
+  justify-content: center!important;
+}
+
+.scrollContainer {
+  display: flex;
+  flex-flow: column;
+  background-color: #000000;
+}
+
+.hdgColLeft {
+  margin-left: 2ch;
+  margin-right: auto;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.hdgColRight {
+  margin-left: auto;
+  margin-right: 2ch;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.scrollRow {
+  width: 100%;
+  display: flex;
+  margin: 1px 6px;
+  height: 1em;
+  color: #adadad;
+  border: 1px solid #000000;
+}
+
+.scrollCol {
+  @include borderStyles.borderHover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #adadad;
+  border: 1px solid transparent;
+  width: 4ch;
+  padding: 0 2px;
+  &:global(.header) {
+    pointer-events: none;
+  }
+
+  &:global(.w2) {
+    width: 2ch;
+  }
+
+  &:global(.autoMargin) {
+    margin: auto;
+  }
+
+  &:global(.rightMarginAuto) {
+    margin-right: auto;
+  }
+
+  &:global(.rightMargin4) {
+    margin: auto;
+  }
+}

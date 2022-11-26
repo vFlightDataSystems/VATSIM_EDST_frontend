@@ -1,0 +1,47 @@
+@use "borderStyles.scss";
+@use "optionMenu.module.scss";
+@use "global.scss";
+
+.root {
+  composes: root from "optionMenu.module.scss";
+  --width: 90ch;
+}
+
+.body {
+  composes: body from "optionMenu.module.scss";
+  --padding: 10px 0 2px 0;
+}
+
+.row {
+  padding: 2px 12px;
+  display: flex;
+  flex-grow: 1;
+  border: none;
+  overflow: hidden;
+}
+
+.col {
+  margin: 0;
+  align-items: center;
+  vertical-align: center;
+  padding: 0 2px;
+  justify-content: left;
+  display: flex;
+  border: 1px solid transparent;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  &:global(.flexGrow) {
+    flex-grow: 1;
+  }
+}
+
+.flex {
+  flex-grow: 1;
+  flex-shrink: 1;
+  width: auto;
+}
+
+.textIndent {
+  text-indent: 6px;
+}

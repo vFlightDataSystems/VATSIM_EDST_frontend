@@ -1,8 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
-import { FloatingWindowRow } from "styles/floatingWindowStyles";
 import { useAltimeter } from "api/weatherApi";
 import { airportIdSelector, altimeterAirportsSelector, delAltimeter } from "~redux/slices/weatherSlice";
 import { mod } from "~/utils/mod";
@@ -11,13 +9,8 @@ import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
 import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
-
-type AltimColProps = { underline?: boolean; isReportingStation?: boolean };
-const AltimCol = styled.span<AltimColProps>`
-  margin-left: 2ch;
-  ${(props) => props.isReportingStation && { margin: "0 2ch 0 0" }};
-  ${(props) => props.underline && { "text-decoration": "underline" }};
-`;
+import clsx from "clsx";
+import floatingStyles from "css/floatingWindow.module.scss";
 
 type AltimeterRowProps = {
   airport: string;
@@ -50,21 +43,30 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
 
   return (
     <>
-      <FloatingWindowRow brightness={windowOptions.brightness} ref={ref} selected={selected} onMouseDown={onMouseDown}>
+      <div
+        className={clsx(floatingStyles.altimRow, { selected })}
+        ref={ref}
+        style={{ "--brightness": windowOptions.brightness / 100 }}
+        onMouseDown={onMouseDown}
+      >
         {airportId && (
           <>
-            <AltimCol isReportingStation>{airportId}</AltimCol>
-            <AltimCol underline={observationTime ? mod(utcMinutes - observationTime, 1440) > 60 : false}>
+            <span className={floatingStyles.reportingStation}>{airportId}</span>
+            <span
+              className={clsx("altimTime", { [floatingStyles.underline]: observationTime ? mod(utcMinutes - observationTime, 1440) > 60 : false })}
+            >
               {airportAltimeterEntry?.time ?? ""}
-            </AltimCol>
+            </span>
             {!airportAltimeterEntry || (observationTime && mod(utcMinutes - observationTime, 1440) > 120) ? (
               "-M-"
             ) : (
-              <AltimCol underline={Number(airportAltimeterEntry.altimeter) < 2992}>{airportAltimeterEntry.altimeter.slice(1)}</AltimCol>
+              <span className={clsx({ [floatingStyles.underline]: Number(airportAltimeterEntry.altimeter) < 2992 })}>
+                {airportAltimeterEntry.altimeter.slice(1)}
+              </span>
             )}
           </>
         )}
-      </FloatingWindowRow>
+      </div>
       {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}

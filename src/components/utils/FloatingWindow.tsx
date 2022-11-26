@@ -1,10 +1,9 @@
+import type { CSSProperties } from "react";
 import React, { useRef } from "react";
 import { useResizeDetector } from "react-resize-detector";
-import type { CSSProperties } from "styled-components";
 import type { ModifiableWindowOptions } from "~redux/slices/windowOptionsSlice";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { FloatingWindowBodyContainer, FloatingWindowBodyDiv, FloatingWindowDiv } from "styles/floatingWindowStyles";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
 import { useDragging } from "hooks/useDragging";
 import { useWindowOptions } from "hooks/useWindowOptions";
@@ -12,6 +11,8 @@ import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOp
 import type { FloatingWindowOptions } from "components/utils/FloatingWindowOptionContainer";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { FloatingWindowHeader } from "components/utils/FloatingWindowHeader";
+import clsx from "clsx";
+import floatingStyles from "css/floatingWindow.module.scss";
 
 type FloatingWindowBodyCSSProps = Pick<CSSProperties, "width">;
 type FloatingWindowBodyProps = {
@@ -43,12 +44,11 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
   };
 
   return (
-    <FloatingWindowDiv
-      pos={pos}
-      zIndex={zIndex}
+    <div
+      className={clsx(floatingStyles.root, { isDragging: anyDragging })}
+      style={{ ...pos, zIndex: 10000 + zIndex }}
       onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
       ref={ref}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <FloatingWindowHeader
@@ -57,9 +57,9 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
         onClose={() => dispatch(closeWindow(edstWindow))}
         startDrag={startDrag}
       />
-      <FloatingWindowBodyContainer width={props.width} fontSize={windowOptions.fontSizeIndex}>
-        {children && <FloatingWindowBodyDiv>{children}</FloatingWindowBodyDiv>}
-      </FloatingWindowBodyContainer>
+      <div className={clsx(`fontSize${windowOptions.fontSizeIndex}`)} style={{ width: props.width }}>
+        {children && <div className={floatingStyles.body}>{children}</div>}
+      </div>
       {props.showOptions && width && (
         <FloatingWindowOptionContainer
           parentWidth={width}
@@ -70,6 +70,6 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
           options={options}
         />
       )}
-    </FloatingWindowDiv>
+    </div>
   );
 };

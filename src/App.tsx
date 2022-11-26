@@ -18,3 +18,12 @@ const App = () => {
 };
 
 export default App;
+
+declare module "react" {
+  export interface CSSProperties {
+    "--brightness"?: number;
+    "--background-color"?: React.CSSProperties["backgroundColor"];
+    "--width"?: React.CSSProperties["width"];
+    "--height"?: React.CSSProperties["height"];
+  }
+}

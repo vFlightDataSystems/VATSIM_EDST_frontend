@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { entriesSelector } from "~redux/slices/entrySlice";
 import {
@@ -16,6 +15,7 @@ import {
 } from "~redux/slices/gpdSlice";
 import { useArtccBoundaries } from "api/gpdApi";
 import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "components/GpdMapElements";
+import gpdStyles from "css/gpd.module.scss";
 
 const ZOOM_DELTA = 0.5;
 
@@ -37,20 +37,6 @@ const MapConfigurator = () => {
   return null;
 };
 
-const GpdBodyDiv = styled.div`
-  overflow: hidden;
-  min-width: 500px;
-  min-height: 500px;
-  width: 100%;
-  height: 100%;
-
-  .leaflet-container {
-    width: 100%;
-    height: 100%;
-    background: #000000;
-  }
-`;
-
 export const GpdBody = () => {
   const entries = useRootSelector(entriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
@@ -62,7 +48,7 @@ export const GpdBody = () => {
   const entryList = useMemo(() => Object.values(entries).filter((entry) => entry.status === "Active"), [entries]);
 
   return (
-    <GpdBodyDiv>
+    <div className={gpdStyles.body}>
       <MapContainer
         center={center}
         placeholder
@@ -81,6 +67,6 @@ export const GpdBody = () => {
         {!suppressed && entryList.map((entry) => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
         {displayData && <GpdPlanDisplay displayData={displayData} />}
       </MapContainer>
-    </GpdBodyDiv>
+    </div>
   );
 };

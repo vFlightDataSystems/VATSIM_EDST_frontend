@@ -1,0 +1,13 @@
+@use "borderStyles.scss";
+@use "optionMenu.module.scss";
+@use "global.scss";
+
+.root {
+  composes: root from "optionMenu.module.scss";
+  --width: 24ch;
+}
+
+.body {
+  composes: body from "optionMenu.module.scss";
+  text-indent: 4px;
+}

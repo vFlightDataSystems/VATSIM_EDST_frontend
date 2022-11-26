@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
-import { FloatingWindowRow } from "styles/floatingWindowStyles";
 import { useMetar } from "api/weatherApi";
 import { airportIdSelector, delMetar, metarAirportsSelector } from "~redux/slices/weatherSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
 import { FloatingWindow } from "components/utils/FloatingWindow";
+import clsx from "clsx";
+import floatingStyles from "css/floatingWindow.module.scss";
 
 type MetarRowProps = {
   airport: string;
@@ -41,9 +42,14 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
 
   return !airportMetar ? null : (
     <>
-      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={onMouseDown}>
+      <div
+        className={clsx(floatingStyles.row, { selected })}
+        ref={ref}
+        style={{ "--brightness": windowOptions.brightness / 100 }}
+        onMouseDown={onMouseDown}
+      >
         {airportMetar.replace(airport, airportId) ?? "..."}
-      </FloatingWindowRow>
+      </div>
       {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}

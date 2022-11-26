@@ -3,20 +3,7 @@ import type { Nullable } from "types/utility-types";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aircraftIsAselSelector } from "~redux/slices/appSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextInput, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
 import { depAircraftSelect } from "~redux/thunks/aircraftSelect";
-import {
-  AircraftTypeCol,
-  AltCol,
-  AltColDiv,
-  CodeCol,
-  EmbeddedRouteText,
-  FidCol,
-  HotBox,
-  RouteCol,
-  RouteContent,
-  SpecialBox,
-} from "styles/sharedColumns";
 import type { EdstWindow } from "types/edstWindow";
 import type { DepRowField } from "types/dep/depRowField";
 import { COMPLETED_CHECKMARK_SYMBOL, REMOVAL_TIMEOUT, SPA_INDICATOR } from "~/utils/constants";
@@ -31,8 +18,9 @@ import { useAselEventListener } from "hooks/useAselEventListener";
 import { depHiddenColumnsSelector, depManualPostingSelector } from "~redux/slices/depSlice";
 import type { AircraftId } from "types/aircraftId";
 import { convertBeaconCodeToString, removeStringFromEnd } from "~/utils/stringManipulation";
-import { RemarksBox } from "components/AclStyled";
-import { DepPTimeCol, RadioCol } from "components/DepStyled";
+import depStyles from "css/dep.module.scss";
+import tableStyles from "css/table.module.scss";
+import clsx from "clsx";
 
 type DepRowProps = {
   aircraftId: AircraftId;
@@ -219,89 +207,102 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   };
 
   return (
-    <BodyRowContainerDiv>
-      <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
-        <RadioCol checked={entry.depStatus === 1} onMouseDown={updateStatus} keep={entry.keep}>
+    <div className={tableStyles.rowContainer}>
+      <div className={clsx(tableStyles.row, { pendingRemoval: now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT })}>
+        <div className={clsx(depStyles.radioCol, { checked: entry.depStatus === 1, keep: entry.keep })} onMouseDown={updateStatus}>
           {entry.depStatus === -1 && "N"}
           {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
-        </RadioCol>
-        <DepPTimeCol>0000</DepPTimeCol>
-        <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
-          <FidCol hover selected={isSelected("FID_DEP_ROW_FIELD")} onMouseDown={handleFidClick}>
+        </div>
+        <div className={depStyles.pTimeCol}>0000</div>
+        <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
+          <div className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_DEP_ROW_FIELD") })} onMouseDown={handleFidClick}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
-            {entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}
-          </FidCol>
-          <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
-          <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
-          <SpecialBox disabled />
-          <AircraftTypeCol
-            visibilityHidden={hiddenColumns.includes("TYPE_DEP_ROW_FIELD")}
-            hover
-            selected={isSelected("TYPE_DEP_ROW_FIELD")}
+            <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span>
+          </div>
+          <div className={clsx(tableStyles.specialBox, { isDisabled: !entry.spa })}>{entry.spa && SPA_INDICATOR}</div>
+          <div className={tableStyles.hotbox} onMouseDown={handleHotboxMouseDown}>
+            {freeTextContent && "*"}
+          </div>
+          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+          <div
+            className={clsx(tableStyles.acTypeCol, {
+              hover: true,
+              selected: isSelected("TYPE_DEP_ROW_FIELD"),
+              visibilityHidden: hiddenColumns.includes("TYPE_DEP_ROW_FIELD"),
+            })}
             onMouseDown={(e) => handleClick(e.currentTarget, "TYPE_DEP_ROW_FIELD", null)}
           >
             {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-          </AircraftTypeCol>
-          <AltCol>
-            <AltColDiv
+          </div>
+          <div className={tableStyles.altCol}>
+            <div
               ref={altRef}
-              selected={isSelected("ALT_DEP_ROW_FIELD")}
+              className={clsx(tableStyles.innerAltCol, { hover: true, selected: isSelected("ALT_DEP_ROW_FIELD") })}
               onMouseDown={(e) => handleClick(e.currentTarget, "ALT_DEP_ROW_FIELD", "dep-alt-asel", "ALTITUDE_MENU")}
             >
               {entry.altitude}
-            </AltColDiv>
-          </AltCol>
-          <CodeCol
-            visibilityHidden={hiddenColumns.includes("CODE_DEP_ROW_FIELD")}
-            hover
-            selected={isSelected("CODE_DEP_ROW_FIELD")}
-            onMouseDown={(e) => handleClick(e.currentTarget, "CODE_DEP_ROW_FIELD", null)}
+            </div>
+          </div>
+          <div
+            className={clsx(tableStyles.codeCol, {
+              hover: true,
+              selected: isSelected("CODE_DEP_ROW_FIELD"),
+              visibilityHidden: hiddenColumns.includes("CODE_DEP_ROW_FIELD"),
+            })}
+            onMouseDown={(event) => handleClick(event.currentTarget, "CODE_DEP_ROW_FIELD", null)}
           >
             {convertBeaconCodeToString(entry.assignedBeaconCode)}
-          </CodeCol>
-          <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+          </div>
+          <div
+            className={clsx(tableStyles.remarksBox, { unchecked: !entry.remarksChecked && entry.remarks.length > 0 })}
+            onMouseDown={handleRemarksClick}
+          >
             {entry.remarks.length > 0 && "*"}
-          </RemarksBox>
-          <RouteCol
+          </div>
+          <div
+            className={clsx(tableStyles.routeCol, { hover: true, selected: isSelected("ROUTE_DEP_ROW_FIELD") })}
             ref={routeRef}
-            hover
-            selected={isSelected("ROUTE_DEP_ROW_FIELD")}
             onMouseDown={(e) => handleClick(e.currentTarget, "ROUTE_DEP_ROW_FIELD", "dep-route-asel", "ROUTE_MENU")}
           >
-            <RouteContent padding="0 2px">
+            <div className={clsx(tableStyles.routeContent, "pad")}>
               {entry.routeDisplay === "REMARKS_ROUTE_DISPLAY_OPTION" && <span>{entry.remarks}</span>}
               {entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION" && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
-                  <RouteContent>{entry.departure}</RouteContent>
-                  {pendingPdar && !onPdar && <EmbeddedRouteText selected={isSelected("ROUTE_DEP_ROW_FIELD")}>{`[${pendingPdar}]`}</EmbeddedRouteText>}
+                  <div className={tableStyles.routeContent}>{entry.departure}</div>
+                  {pendingPdar && !onPdar && (
+                    <div className={clsx(tableStyles.embeddedRouteText, { selected: isSelected("ROUTE_DEP_ROW_FIELD") })}>{`[${pendingPdar}]`}</div>
+                  )}
                   {!pendingPdar && pendingPdr && !onPdr && (
-                    <EmbeddedRouteText selected={isSelected("ROUTE_DEP_ROW_FIELD")}>{`[${pendingPdr}]`}</EmbeddedRouteText>
+                    <div className={clsx(tableStyles.embeddedRouteText, { selected: isSelected("ROUTE_DEP_ROW_FIELD") })}>{`[${pendingPdr}]`}</div>
                   )}
                   {route}
                   {!pendingPdar && pendingPar && !onPar && (
-                    <EmbeddedRouteText selected={isSelected("ROUTE_DEP_ROW_FIELD")}>{`[${pendingPar}]`}</EmbeddedRouteText>
+                    <div className={clsx(tableStyles.embeddedRouteText, { selected: isSelected("ROUTE_DEP_ROW_FIELD") })}>{`[${pendingPar}]`}</div>
                   )}
                   {route?.slice(-1) !== "." && ".."}
                   {entry.destination}
                 </>
               )}
-            </RouteContent>
-          </RouteCol>
-        </InnerRow>
-      </BodyRowDiv>
+            </div>
+          </div>
+        </div>
+      </div>
       {entry.showFreeText && (
-        <BodyRowDiv>
-          <RadioCol disabled />
-          <DepPTimeCol />
-          <InnerRow2 highlight={entry.highlighted} minWidth={`${Math.max(1200, ref?.current?.clientWidth ?? 0)}px`}>
-            <FreeTextRow marginLeft="calc(17ch + 11px)">
-              <FreeTextInput value={freeTextContent} onChange={(event) => setFreeTextContent(event.target.value)} />
-            </FreeTextRow>
-          </InnerRow2>
-        </BodyRowDiv>
+        <div className={tableStyles.row}>
+          <div className={clsx(depStyles.radioCol, "empty")} />
+          <div className={depStyles.pTimeCol} />
+          <div
+            className={clsx(tableStyles.innerRow, { highlight: entry.highlighted })}
+            style={{ minWidth: `${Math.max(1200, ref?.current?.clientWidth ?? 0)}px` }}
+          >
+            <div className={tableStyles.freeText} style={{ marginLeft: "calc(17ch + 11px)" }}>
+              <input spellCheck={false} value={freeTextContent} onChange={(event) => setFreeTextContent(event.target.value)} />
+            </div>
+          </div>
+        </div>
       )}
-    </BodyRowContainerDiv>
+    </div>
   );
 });

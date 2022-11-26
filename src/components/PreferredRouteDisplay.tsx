@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
-import { OptionsBodyCol, OptionsBodyRow, ScrollContainer, UnderlineRow } from "styles/optionMenuStyles";
 import type { ApiPreferentialArrivalRoute } from "types/apiTypes/apiPreferentialArrivalRoute";
 import type { ApiPreferentialDepartureRoute } from "types/apiTypes/apiPreferentialDepartureRoute";
 import type { ApiPreferentialDepartureArrivalRoute } from "types/apiTypes/apiPreferentialDepartureArrivalRoute";
@@ -9,30 +7,7 @@ import type { EdstPreferentialRoute } from "types/edstPreferentialRoute";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { EdstButton } from "components/utils/EdstButton";
 import socket from "~socket";
-
-const PrefrouteContainer = styled(ScrollContainer)`
-  border: 2px solid #414141;
-  margin: 6px;
-  min-height: 40px;
-`;
-
-const Row = styled(OptionsBodyRow)`
-  padding: 4px 0;
-`;
-
-const PrefrouteRow = styled(OptionsBodyRow)`
-  padding: 0 0 0 10px;
-  margin: 0;
-`;
-
-const Col = styled(OptionsBodyCol)`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  height: auto;
-  margin-right: 0;
-  padding-left: 4px;
-`;
+import routeStyles from "css/routeMenu.module.scss";
 
 type PreferredRouteDisplayProps = {
   par: ApiPreferentialArrivalRoute[];
@@ -71,10 +46,10 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
 
   return (
     <div>
-      <Row bottomBorder />
-      <UnderlineRow as={Row}>Apply ATC Preferred Route</UnderlineRow>
-      <Row>
-        <Col>
+      <div className={routeStyles.row} />
+      <div className={routeStyles.underlineRow}>Apply ATC Preferred Route</div>
+      <div className={routeStyles.row}>
+        <div className={routeStyles.col}>
           <EdstButton
             content="ELIGIBLE"
             selected={eligibleOnly}
@@ -96,26 +71,28 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
             }}
             title={Tooltips.routeMenuPreferredAll}
           />
-        </Col>
-      </Row>
-      <PrefrouteContainer maxHeight="6em">
-        {eligibleOnly && eligibleRoutes.length === 0 && <PrefrouteRow>No Eligible APRs: Select ALL to display Ineligible APRs</PrefrouteRow>}
+        </div>
+      </div>
+      <div className={routeStyles.prefrouteContainer}>
+        {eligibleOnly && eligibleRoutes.length === 0 && (
+          <div className={routeStyles.prefrouteRow}>No Eligible APRs: Select ALL to display Ineligible APRs</div>
+        )}
         {routes.map((route, i) => {
           return (
             route &&
             (!eligibleOnly || route.eligible) && (
               // eslint-disable-next-line react/no-array-index-key
-              <PrefrouteRow key={i}>
-                <Col hover onMouseDown={() => clearedPrefroute(route)}>
+              <div className={routeStyles.prefrouteRow} key={i}>
+                <div className={routeStyles.prefrouteCol} onMouseDown={() => clearedPrefroute(route)}>
                   {route.routeType === "pdr" || route.routeType === "pdar" ? route.departure : ""}
                   {route.routeType === "pdar" ? route.route : route.amendment}
                   {route.routeType === "par" || route.routeType === "pdar" ? route.destination : ""}
-                </Col>
-              </PrefrouteRow>
+                </div>
+              </div>
             )
           );
         })}
-      </PrefrouteContainer>
+      </div>
     </div>
   );
 };

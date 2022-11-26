@@ -1,0 +1,16 @@
+@use "global.scss";
+@use "floatingWindow.module.scss";
+
+.root {
+  @include global.brightness;
+  position: fixed;
+  font-family: ERAM, monospace;
+  line-height: 1em;
+  padding: 0 2px;
+  min-height: 4em;
+  background-color: #000000;
+  border: 1px solid #adadad;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+  width: var(--width);
+}

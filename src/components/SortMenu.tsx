@@ -5,15 +5,11 @@ import { closeWindow, zStackSelector, pushZStack, windowSelector } from "~redux/
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
-import { SortBody, SortHeader } from "styles/sortStyles";
-import { OptionsBodyCol, OptionsBottomRow, OptionsMenu } from "styles/optionMenuStyles";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
-
-type SortDivProps = Pick<CSSProperties, "width">;
-export const SortDiv = styled(OptionsMenu)<SortDivProps>((props) => ({ width: props.width }));
+import optionStyles from "css/optionMenu.module.scss";
+import sortStyles from "css/sortMenu.module.scss";
+import clsx from "clsx";
 
 type SortMenuProps = {
   menu: "ACL_SORT_MENU" | "DEP_SORT_MENU";
@@ -32,37 +28,33 @@ export const SortMenu = ({ menu, onSubmit, children }: SortMenuProps) => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menu, "mouseup");
 
   return (
-    windowProps.position && (
-      <SortDiv
-        ref={ref}
-        width={menu === "ACL_SORT_MENU" ? "220px" : "190px"}
-        pos={windowProps.position}
-        zIndex={zStack.indexOf(menu)}
-        onMouseDown={() => zStack.indexOf(menu) < zStack.length - 1 && dispatch(pushZStack(menu))}
-        anyDragging={anyDragging}
-      >
-        {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-        <SortHeader focused={focused} onMouseDown={startDrag}>
-          Sort Menu
-        </SortHeader>
-        <SortBody>
-          {children}
-          <OptionsBottomRow>
-            <OptionsBodyCol>
-              <EdstButton
-                content="OK"
-                onMouseDown={() => {
-                  onSubmit();
-                  dispatch(closeWindow(menu));
-                }}
-              />
-            </OptionsBodyCol>
-            <OptionsBodyCol alignRight>
-              <ExitButton onMouseDown={() => dispatch(closeWindow(menu))} />
-            </OptionsBodyCol>
-          </OptionsBottomRow>
-        </SortBody>
-      </SortDiv>
-    )
+    <div
+      className={clsx(sortStyles.root, { isDragging: anyDragging })}
+      style={{ ...windowProps.position, zIndex: 10000 + zStack.indexOf(menu) }}
+      ref={ref}
+      onMouseDown={() => zStack.indexOf(menu) < zStack.length - 1 && dispatch(pushZStack(menu))}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <div className={clsx(sortStyles.header, { focused })} onMouseDown={startDrag}>
+        Sort Menu
+      </div>
+      <div className={sortStyles.body}>
+        {children}
+        <div className={optionStyles.bottomRow}>
+          <div className={optionStyles.col}>
+            <EdstButton
+              content="OK"
+              onMouseDown={() => {
+                onSubmit();
+                dispatch(closeWindow(menu));
+              }}
+            />
+          </div>
+          <div className={clsx(optionStyles.col, "right")}>
+            <ExitButton onMouseDown={() => dispatch(closeWindow(menu))} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

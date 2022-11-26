@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "~redux/slices/appSlice";
 import { Tooltips } from "~/tooltips";
-import { EdstInput, EdstTextArea, OptionsBody, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
@@ -15,91 +12,42 @@ import { useHubActions } from "hooks/useHubActions";
 import { formatRoute } from "~/utils/formatRoute";
 import { appendDownArrowToString, appendUpArrowToString, convertBeaconCodeToString } from "~/utils/stringManipulation";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
-
-const TemplateDiv = styled(OptionsMenu)`
-  width: 90ch;
-`;
-const TemplateBodyDiv = styled(OptionsBody)`
-  padding: 10px 0 2px 0;
-`;
-type TemplateRowDivProps = { alignRight?: boolean };
-const TemplateRowDiv = styled.div<TemplateRowDivProps>`
-  padding: 2px 12px;
-  display: flex;
-  flex-grow: 1;
-  border: none;
-  overflow: hidden;
-
-  ${(props) => props.alignRight && { width: "auto" }};
-
-  &.left {
-    flex-grow: 1;
-  }
-`;
-
-type TemplateColCSSProps = Pick<CSSProperties, "width" | "flexGrow" | "flexShrink">;
-type TemplateColProps = {
-  bottomRow?: boolean;
-  alignRight?: boolean;
-  textIndent?: boolean;
-} & TemplateColCSSProps;
-
-const TemplateCol = styled(EdstTooltip)<TemplateColProps>`
-  font-size: ${(props) => props.theme.fontProps.inputFontSize};
-  align-items: center;
-  vertical-align: center;
-  padding: 0 2px;
-  justify-content: left;
-  display: flex;
-  flex-grow: ${(props) => props.flexGrow ?? 0};
-  flex-shrink: ${(props) => props.flexShrink ?? 0};
-  width: ${(props) => props.width ?? "auto"};
-  ${(props) => props.textIndent && { "text-indent": "6px" }}
-  border: 1px solid transparent;
-
-  ${(props) =>
-    props.bottomRow && {
-      padding: "2px",
-    }}
-
-  ${(props) =>
-    props.alignRight && {
-      width: "auto",
-      "margin-left": "auto",
-    }}
-`;
-
-const FlexCol = styled(TemplateCol)`
-  flex-grow: 1;
-  flex-shrink: 1;
-  width: auto;
-`;
+import clsx from "clsx";
+import optionStyles from "css/optionMenu.module.scss";
+import templateStyles from "css/templateMenu.module.scss";
+import inputStyles from "css/input.module.scss";
 
 type TemplateInputProps = {
   title?: string;
   value: string | number;
-  width?: CSSProperties["width"];
-  flexShrink?: CSSProperties["flexShrink"];
+  className?: string;
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   rows?: number;
 };
 
-const TemplateInput = ({ title, width, flexShrink, ...props }: TemplateInputProps) => {
+const TemplateInput = ({ title, className, ...props }: TemplateInputProps) => {
   return (
-    <TemplateCol title={title} width={width} flexShrink={flexShrink}>
-      <EdstInput {...props} />
-    </TemplateCol>
+    <div className={clsx(templateStyles.col, className)} title={title}>
+      <div className={inputStyles.inputContainer}>
+        <input spellCheck={false} {...props} />
+      </div>
+    </div>
   );
 };
 const TemplateTextArea = ({ title, ...props }: TemplateInputProps) => {
   return (
-    <TemplateCol title={title} flexGrow={1}>
-      <EdstTextArea {...props} />
-    </TemplateCol>
+    <div className={clsx(templateStyles.col, "flexGrow")} title={title}>
+      <div className={clsx(inputStyles.inputContainer, "flexGrow")}>
+        <textarea spellCheck={false} {...props} />
+      </div>
+    </div>
   );
 };
+
+const renderCol = (content: string, className?: string) => (
+  <div className={clsx(templateStyles.col, className, templateStyles.textIndent)}>{content}</div>
+);
 
 export const TemplateMenu = () => {
   const dispatch = useRootDispatch();
@@ -149,78 +97,86 @@ export const TemplateMenu = () => {
   }, [aircraftTrack, entry?.aircraftId, generateFrd]);
 
   return (
-    <TemplateDiv
+    <div
+      className={clsx(templateStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={pos}
-      zIndex={zStack.indexOf("TEMPLATE_MENU")}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf("TEMPLATE_MENU") }}
       onMouseDown={() => zStack.indexOf("TEMPLATE_MENU") < zStack.length - 1 && dispatch(pushZStack("TEMPLATE_MENU"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         {asel ? "Amendment" : "Flight Plan"} Menu
-      </OptionsMenuHeader>
-      <TemplateBodyDiv>
-        <TemplateRowDiv>
-          <TemplateCol width="9ch" textIndent content="AID" />
-          <TemplateCol width="5ch" textIndent content="NUM" />
-          <TemplateCol width="5ch" textIndent content="SAI" />
-          <TemplateCol width="6ch" textIndent content="TYP" />
-          <TemplateCol width="8ch">
+      </div>
+      <div className={templateStyles.body}>
+        <div className={templateStyles.row}>
+          {renderCol("AID", "w9")}
+          {renderCol("NUM", "w5")}
+          {renderCol("SAI", "w5")}
+          {renderCol("TYPE", "w6")}
+          <div className={clsx(templateStyles.col, "w8")}>
             <EdstButton
               content="EQP..."
               onMouseDown={() => dispatch(openMenuThunk("EQUIPMENT_TEMPLATE_MENU", ref.current))}
               title={Tooltips.templateMenuEqpButton}
             />
-          </TemplateCol>
-          <TemplateCol width="6ch" textIndent content="BCN" />
-          <TemplateCol width="6ch" textIndent content="SPD" />
-          <TemplateCol width="14ch" textIndent content="FIX" />
-          <TemplateCol width="8ch" textIndent content="TIM" />
-          <FlexCol textIndent>ALT</FlexCol>
-          <TemplateCol>
+          </div>
+          {renderCol("BCN", "w6")}
+          {renderCol("SPD", "w6")}
+          {renderCol("FIX", "w14")}
+          {renderCol("TIM", "w8")}
+          {renderCol("ALT")}
+          <div className={templateStyles.col}>
             <EdstButton margin="0 2px 0 0" disabled content="More..." title={Tooltips.templateMenuMore} />
-          </TemplateCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateInput width="9ch" title={Tooltips.templateMenuAid} value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
-          <TemplateInput width="5ch" title={Tooltips.templateMenuNum} value={numInput} onChange={(event) => setNumInput(event.target.value)} />
-          <TemplateInput width="5ch" title={Tooltips.templateMenuSai} value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
-          <TemplateInput width="6ch" title={Tooltips.templateMenuTyp} value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
-          <TemplateInput width="8ch" title={Tooltips.templateMenuEqpBox} value={equipInput} onChange={(event) => setEquipInput(event.target.value)} />
-          <TemplateInput width="6ch" title={Tooltips.templateMenuBcn} value={beaconInput} onChange={(event) => setBeaconInput(event.target.value)} />
-          <TemplateInput width="6ch" title={Tooltips.templateMenuSpd} value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
-          <TemplateInput width="14ch" title={Tooltips.templateMenuFix} value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
-          <TemplateInput width="8ch" title={Tooltips.templateMenuTim} value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
-          <FlexCol title={Tooltips.templateMenuAlt}>
-            <TemplateInput flexShrink={1} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
-          </FlexCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol width="5ch" textIndent content="RTE" />
-        </TemplateRowDiv>
-        <TemplateRowDiv>
+          </div>
+        </div>
+        <div className={templateStyles.row}>
+          <TemplateInput className="w9" title={Tooltips.templateMenuAid} value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
+          <TemplateInput className="w5" title={Tooltips.templateMenuNum} value={numInput} onChange={(event) => setNumInput(event.target.value)} />
+          <TemplateInput className="w5" title={Tooltips.templateMenuSai} value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
+          <TemplateInput className="w6" title={Tooltips.templateMenuTyp} value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
+          <TemplateInput
+            className="w8"
+            title={Tooltips.templateMenuEqpBox}
+            value={equipInput}
+            onChange={(event) => setEquipInput(event.target.value)}
+          />
+          <TemplateInput
+            className="w6"
+            title={Tooltips.templateMenuBcn}
+            value={beaconInput}
+            onChange={(event) => setBeaconInput(event.target.value)}
+          />
+          <TemplateInput className="w6" title={Tooltips.templateMenuSpd} value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
+          <TemplateInput className="w14" title={Tooltips.templateMenuFix} value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
+          <TemplateInput className="w8" title={Tooltips.templateMenuTim} value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
+          <div className={clsx(templateStyles.col, templateStyles.flex)} title={Tooltips.templateMenuAlt}>
+            <TemplateInput className={templateStyles.flex} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
+          </div>
+        </div>
+        <div className={templateStyles.row}>{renderCol("RTE", "w5")}</div>
+        <div className={templateStyles.row}>
           <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={(event) => setRouteInput(event.target.value)} rows={3} />
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol width="5ch" textIndent content="RMK" />
-          <TemplateRowDiv alignRight />
-          <TemplateCol>
+        </div>
+        <div className={templateStyles.row}>
+          {renderCol("RMK", "w5")}
+          <div className={templateStyles.row} />
+          <div className={templateStyles.col}>
             <EdstButton disabled content="Create FP..." title={Tooltips.templateMenuCreateFp} />
-          </TemplateCol>
-        </TemplateRowDiv>
-        <TemplateRowDiv>
+          </div>
+        </div>
+        <div className={templateStyles.row}>
           <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={(event) => setRmkInput(event.target.value)} rows={3} />
-        </TemplateRowDiv>
-        <TemplateRowDiv>
-          <TemplateCol bottomRow>
+        </div>
+        <div className={clsx(templateStyles.row)}>
+          <div className={templateStyles.col}>
             <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
-          </TemplateCol>
-          <TemplateCol bottomRow alignRight>
+          </div>
+          <div className={templateStyles.row} />
+          <div className={clsx(templateStyles.col)}>
             <ExitButton onMouseDown={() => dispatch(closeWindow("TEMPLATE_MENU"))} />
-          </TemplateCol>
-        </TemplateRowDiv>
-      </TemplateBodyDiv>
-    </TemplateDiv>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

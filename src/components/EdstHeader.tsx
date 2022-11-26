@@ -1,6 +1,5 @@
+import type { CSSProperties } from "react";
 import React from "react";
-import type { CSSProperties } from "styled-components";
-import styled, { css } from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
@@ -8,62 +7,14 @@ import { planQueueSelector } from "~redux/slices/planSlice";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
 import type { EdstWindow } from "types/edstWindow";
 import { openWindowThunk } from "~redux/thunks/openWindowThunk";
-import { borderHover } from "styles/styles";
 import { EdstTooltip } from "components/utils/EdstTooltip";
 import { Time } from "components/utils/Time";
 import { aclLenSelector, depLenSelector, sigmetLenSelector } from "~redux/selectors";
+import edstStyles from "css/edst.module.scss";
+import clsx from "clsx";
 
 const YELLOW = "#A3A300";
 // const RED = "#590000";
-
-const EdstHeaderDiv = styled.div`
-  height: auto;
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  width: 100vw;
-  position: absolute;
-`;
-
-const EdstHeaderRow = styled.div`
-  margin-top: 2px;
-  z-index: 20001;
-  justify-content: space-between;
-  height: auto;
-  display: flex;
-`;
-type EdstHeaderColProps = { bottomRow?: boolean };
-const EdstHeaderCol = styled.div<EdstHeaderColProps>`
-  z-index: 20001;
-  display: inline-flex;
-  ${(props) => props.bottomRow && { "margin-left": "calc(7.6ch + 4px)" }};
-`;
-
-type ColButtonCSSProps = Pick<CSSProperties, "width" | "color" | "fontWeight" | "backgroundColor" | "borderColor">;
-type ColButtonProps = { highlight?: boolean } & ColButtonCSSProps;
-const ColButton = styled.button<ColButtonProps>`
-  padding: 0;
-  border: none;
-  display: flex;
-  height: 2em;
-  justify-content: center;
-  line-height: 0.95em;
-  font-size: inherit;
-  margin: 0 1px;
-  ${(props) => css`
-    font-family: ${props.theme.fontProps.eramFontFamily};
-    width: ${props.width ?? "7ch"};
-    color: ${props.color ?? props.theme.colors.grey};
-    background-color: ${props.highlight ? "#595959" : props.backgroundColor ?? "#000000"};
-    font-weight: ${props.fontWeight ?? "normal"};
-    border: 1px solid ${props.borderColor ?? props.theme.colors.grey};
-  `};
-
-  ${borderHover};
-  &[disabled] {
-    pointer-events: none;
-    border: 1px solid #707070;
-    color: #707070;
-  }
-`;
 
 type EdstHeaderButtonCSSProps = Pick<CSSProperties, "width" | "color" | "backgroundColor" | "borderColor">;
 type EdstHeaderButtonProps = {
@@ -75,23 +26,23 @@ type EdstHeaderButtonProps = {
 
 const noToggleWindows = ["ACL", "DEP", "GPD", "PLANS_DISPLAY"];
 
-const EdstHeaderButton = ({ title, content, ...props }: EdstHeaderButtonProps) => {
+const EdstHeaderButton = ({ title, content, disabled, window, ...props }: EdstHeaderButtonProps) => {
   const dispatch = useRootDispatch();
-  const edstWindow = useRootSelector((state) => windowSelector(state, props.window));
+  const edstWindow = useRootSelector((state) => windowSelector(state, window));
 
   const mouseDownHandler = () => {
-    if (noToggleWindows.includes(props.window)) {
-      dispatch(openWindowThunk(props.window));
+    if (noToggleWindows.includes(window)) {
+      dispatch(openWindowThunk(window));
     } else {
-      dispatch(toggleWindow(props.window));
+      dispatch(toggleWindow(window));
     }
   };
 
   return (
     <EdstTooltip title={title}>
-      <ColButton {...props} highlight={edstWindow.open} disabled={props.disabled} onMouseDown={mouseDownHandler}>
+      <button style={props} type="button" onMouseDown={mouseDownHandler} disabled={disabled} className={clsx({ highlight: edstWindow.open })}>
         {content}
-      </ColButton>
+      </button>
     </EdstTooltip>
   );
 };
@@ -110,15 +61,15 @@ export const EdstHeader = () => {
   const giLen = 0;
 
   return (
-    <EdstHeaderDiv>
-      <EdstHeaderRow>
-        <EdstHeaderCol>
-          <ColButton width="1.6ch" disabled>
+    <div className={edstStyles.header}>
+      <div className={edstStyles.headerRow}>
+        <div className={edstStyles.headerCol}>
+          <button style={{ width: "1.6ch" }} disabled>
             #
-          </ColButton>
-          <ColButton width="6ch" highlight={windows.MORE.open} onMouseDown={() => dispatch(toggleWindow("MORE"))}>
+          </button>
+          <button style={{ width: "6ch" }} className={clsx({ highlight: windows.MORE.open })} onMouseDown={() => dispatch(toggleWindow("MORE"))}>
             MORE
-          </ColButton>
+          </button>
           <EdstHeaderButton window="ACL" content={`ACL ${aclLen.toString().padStart(2, "0")}`} title={Tooltips.acl} />
           <EdstHeaderButton window="DEP" content={`DEP ${depLen.toString().padStart(2, "0")}`} title={Tooltips.dep} />
           <EdstHeaderButton
@@ -150,11 +101,9 @@ export const EdstHeader = () => {
             disabled
             // title={Tooltips.ua}
           />
-          <ColButton highlight={false} disabled>
-            KEEP ALL
-          </ColButton>
-        </EdstHeaderCol>
-        <EdstHeaderCol>
+          <button disabled>KEEP ALL</button>
+        </div>
+        <div className={edstStyles.headerCol}>
           <EdstHeaderButton window="STATUS" content="STATUS ACTIVE" title={Tooltips.statusActive} />
           <EdstHeaderButton window="OUTAGE" content={`OUTAGE ${sectorId}`} title={Tooltips.statusOutage} />
           <Time />
@@ -178,11 +127,11 @@ export const EdstHeader = () => {
             disabled
             // title={Tooltips.msg}
           />
-        </EdstHeaderCol>
-      </EdstHeaderRow>
+        </div>
+      </div>
       {windows.MORE.open && (
-        <EdstHeaderRow>
-          <EdstHeaderCol bottomRow>
+        <div className={edstStyles.headerRow}>
+          <div className={clsx(edstStyles.headerCol, "bottomRow")}>
             <EdstHeaderButton
               window="WIND"
               content="WIND"
@@ -214,9 +163,9 @@ export const EdstHeader = () => {
               disabled
               // title={Tooltips.cpdlc_msg_out}
             />
-          </EdstHeaderCol>
-        </EdstHeaderRow>
+          </div>
+        </div>
       )}
-    </EdstHeaderDiv>
+    </div>
   );
 };

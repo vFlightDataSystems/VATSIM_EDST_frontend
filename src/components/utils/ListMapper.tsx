@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import React from "react";
-import { BodyRowDiv, RowSeparator } from "styles/styles";
+import tableStyles from "css/table.module.scss";
 
 type MapRowProps = {
   list: string[];
@@ -13,10 +13,10 @@ export const ListMapper = React.memo(({ list, Component, showSep }: MapRowProps)
       {list.map((aircraftId, i) => (
         <React.Fragment key={aircraftId}>
           <Component key={aircraftId} aircraftId={aircraftId} />
-          {i % 3 === 2 && <RowSeparator />}
+          {i % 3 === 2 && <div className={tableStyles.rowSeparator} />}
         </React.Fragment>
       ))}
-      {showSep && list.length > 0 && <BodyRowDiv separator />}
+      {showSep && list.length > 0 && <div className={tableStyles.separator} />}
     </>
   );
 });

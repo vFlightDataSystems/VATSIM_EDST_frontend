@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { FidRow, OptionsBodyCol, OptionsBodyRow } from "styles/optionMenuStyles";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useRootSelector } from "~redux/hooks";
 import { useHubActions } from "hooks/useHubActions";
 import { EdstPrompt } from "components/prompts/EdstPrompt";
 import type { PromptProps } from "components/prompts/promptProps";
+import optionStyles from "css/optionMenu.module.scss";
 
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
@@ -34,15 +34,15 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
       cancelText="Exit"
       onCancel={onCancel}
     >
-      <FidRow>
+      <div className={optionStyles.fidRow}>
         {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-      </FidRow>
-      <OptionsBodyRow padding="0 8px">
-        <OptionsBodyCol>
+      </div>
+      <div className={optionStyles.row}>
+        <div className={optionStyles.col}>
           RTE {frd ?? ""}
           {entry.previousRoute}
-        </OptionsBodyCol>
-      </OptionsBodyRow>
+        </div>
+      </div>
     </EdstPrompt>
   );
 };

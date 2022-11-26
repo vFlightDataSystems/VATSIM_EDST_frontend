@@ -1,0 +1,65 @@
+@use "global.scss";
+@use "floatingWindow.module.scss";
+
+.root {
+  @include global.brightness;
+  background-color: #000000;
+  border: 1px solid #adadad;
+  line-height: 1em;
+  position: fixed;
+  font-family: ERAM, monospace;
+};
+
+.inputArea {
+  height: calc(var(--height) + 6px);
+  width: auto;
+  overflow: hidden;
+  text-transform: uppercase;
+  border-bottom: 1px solid #adadad;
+  > pre {
+    width: var(--width);
+    margin: 2px;
+  }
+}
+
+.cursor {
+  display: inline-block;
+  height: 1em;
+  width: 1ch;
+  border-bottom: 1px solid #adadad;
+  box-shadow: -1px 0 #adadad, 1px 0 #adadad;
+
+  &:global(.insertMode) {
+    box-shadow: none;
+  }
+}
+
+.feedbackContainer {
+  min-height: calc(3em + 12px);
+}
+
+.feedbackRow {
+  height: 1em;
+  line-height: 1;
+  padding: 2px;
+  display: flex;
+  flex-grow: 1;
+}
+
+.checkmark {
+  color: #00ad00;
+  height: 1em;
+
+  &::before {
+    content: "\2713";
+  }
+}
+
+.rejectCross {
+  color: #ad0000;
+  height: 1em;
+
+  &::before {
+    content: "\2715";
+  }
+}

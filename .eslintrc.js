@@ -68,5 +68,6 @@ module.exports = {
     "no-void": "off",
     "no-console": "off",
     "no-underscore-dangle": "off",
+    "react/button-has-type": "off",
   },
 };

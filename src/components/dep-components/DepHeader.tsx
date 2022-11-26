@@ -4,13 +4,13 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "~redux/slices/depSlice";
 import { closeAllMenus, closeWindow, depAselSelector } from "~redux/slices/appSlice";
 import { addDepEntryByFid } from "~redux/thunks/entriesThunks";
-import { NoSelectDiv } from "styles/NoSelectDiv";
 import { DepSortOptionValues } from "types/dep/depSortOption";
-import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
 import { AddFindInput } from "components/utils/InputComponents";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
+import styles from "css/table.module.scss";
+import clsx from "clsx";
 
 /**
  * DEP title bar and header row with add/find input field
@@ -30,7 +30,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
   };
 
   return (
-    <NoSelectDiv>
+    <div className={styles.header}>
       <WindowTitleBar
         focused={focused}
         toggleFullscreen={toggleFullscreen}
@@ -43,7 +43,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         }}
         text={["Departure List", `${DepSortOptionValues[selectedSortOption]}`, `${manualPosting ? "Manual" : "Automatic"}`]}
       />
-      <EdstWindowHeaderRowDiv>
+      <div className={styles.headerRow}>
         <EdstWindowHeaderButtonWithSharedEvent
           sharedUiEventId="openDepPlanOptions"
           edstWindow="PLAN_OPTIONS"
@@ -63,11 +63,11 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           content="Template..."
           title={Tooltips.template}
         />
-      </EdstWindowHeaderRowDiv>
-      <EdstWindowHeaderRowDiv bottomRow>
+      </div>
+      <div className={clsx(styles.headerRow, "bottom")}>
         Add/Find
         <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} />
-      </EdstWindowHeaderRowDiv>
-    </NoSelectDiv>
+      </div>
+    </div>
   );
 };

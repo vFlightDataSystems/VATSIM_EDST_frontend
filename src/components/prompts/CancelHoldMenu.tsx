@@ -1,10 +1,10 @@
 import React from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { FidRow } from "styles/optionMenuStyles";
 import { useHubActions } from "hooks/useHubActions";
 import { closeWindow, setAsel } from "~redux/slices/appSlice";
 import { EdstPrompt } from "components/prompts/EdstPrompt";
+import optionStyles from "css/optionMenu.module.scss";
 
 export const CancelHoldMenu = () => {
   const dispatch = useRootDispatch();
@@ -31,9 +31,9 @@ export const CancelHoldMenu = () => {
       cancelText="Exit"
       onCancel={onCancel}
     >
-      <FidRow>
+      <div className={optionStyles.fidRow}>
         {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-      </FidRow>
+      </div>
     </EdstPrompt>
   );
 };

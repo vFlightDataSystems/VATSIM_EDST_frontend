@@ -1,21 +1,9 @@
+import type { CSSProperties } from "react";
 import React, { useCallback, useRef, useState } from "react";
-import type { CSSProperties } from "styled-components";
-import styled from "styled-components";
 import type { AtMostOne } from "types/utility-types";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { Tooltips } from "~/tooltips";
-import {
-  OptionsBodyCol,
-  OptionsBody,
-  OptionsBodyRow,
-  OptionIndicator,
-  OptionsMenu,
-  OptionsMenuHeader,
-  FidRow,
-  OptionIndicatorDiamond,
-  OptionIndicatorCircle,
-} from "styles/optionMenuStyles";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
@@ -24,26 +12,11 @@ import { EquipmentNavTemplate } from "components/EquipmentNavTemplate";
 import { EquipmentSurvTemplate } from "components/EquipmentSurvTemplate";
 import { EquipmentCommTemplate } from "components/EquipmentCommTemplate";
 import { EquipmentAppServTemplate } from "components/EquipmentAppServTemplate";
-import { EqpContentCol, EqpRow } from "components/EqpStyled";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { EdstButton, EdstTemplateButton10ch } from "components/utils/EdstButton";
-
-const EqpTemplateDiv = styled(OptionsMenu)`
-  width: 92ch;
-`;
-const EqpTemplateBody = styled(OptionsBody)`
-  height: 100%;
-`;
-const EqpTemplateRow = styled(OptionsBodyRow)`
-  display: flex;
-  align-items: center;
-`;
-const EqpTemplateBottomRow = styled(EqpTemplateRow)`
-  margin-bottom: 4px;
-  padding-top: 6px;
-  margin-top: 10px;
-  border-top: 1px solid #adadad;
-`;
+import clsx from "clsx";
+import optionStyles from "css/optionMenu.module.scss";
+import eqpStyles from "css/eqp.module.scss";
 
 enum MenuOptions {
   surv,
@@ -62,18 +35,18 @@ type EquipmentTemplateRowProps = {
 } & AtMostOne<Record<"diamond" | "circle", boolean>>;
 
 export const EquipmentTemplateRow = ({ margin, tooltip, toggleSelect, selected, circle, diamond, buttonText, text }: EquipmentTemplateRowProps) => {
-  let Indicator = OptionIndicator;
+  let indicatorClass = optionStyles.indicator;
   if (circle || diamond) {
-    Indicator = circle ? OptionIndicatorCircle : OptionIndicatorDiamond;
+    indicatorClass = circle ? optionStyles.circleIndicator : optionStyles.diamondIndicator;
   }
   return (
-    <EqpRow margin={margin}>
-      <EqpContentCol title={tooltip} onMouseDown={toggleSelect}>
-        <Indicator selected={selected} />
+    <div className={eqpStyles.row} style={{ margin }}>
+      <div className={eqpStyles.contentCol} title={tooltip} onMouseDown={toggleSelect}>
+        <div className={clsx(indicatorClass, { selected })} />
         {buttonText}
-      </EqpContentCol>
+      </div>
       {text ?? ""}
-    </EqpRow>
+    </div>
   );
 };
 
@@ -98,20 +71,19 @@ export const EquipmentTemplateMenu = () => {
   }, []);
 
   return (
-    <EqpTemplateDiv
+    <div
+      className={clsx(eqpStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={pos}
-      zIndex={zStack.indexOf("EQUIPMENT_TEMPLATE_MENU")}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf("EQUIPMENT_TEMPLATE_MENU") }}
       onMouseDown={() => zStack.indexOf("EQUIPMENT_TEMPLATE_MENU") < zStack.length - 1 && dispatch(pushZStack("EQUIPMENT_TEMPLATE_MENU"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         Equipment Template
-      </OptionsMenuHeader>
-      <EqpTemplateBody>
-        <FidRow>{entry && `${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix}`}</FidRow>
-        <EqpTemplateRow>
+      </div>
+      <div className={clsx(optionStyles.body)}>
+        <div className={optionStyles.fidRow}>{entry && `${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix}`}</div>
+        <div className={eqpStyles.row}>
           <EdstTemplateButton10ch
             selected={selectedMenu === MenuOptions.surv}
             content="SURV"
@@ -136,23 +108,23 @@ export const EquipmentTemplateMenu = () => {
             onMouseDown={() => setSelectedMenu(MenuOptions.appServ)}
             title={Tooltips.equipmentTemplateMenuAppServ}
           />
-          <OptionsBodyCol alignRight>
+          <div className={clsx(optionStyles.col, "right")}>
             <EdstButton content="Reset" onMouseDown={resetRef.current} />
-          </OptionsBodyCol>
-        </EqpTemplateRow>
+          </div>
+        </div>
         {selectedMenu === MenuOptions.surv && <EquipmentSurvTemplate setReset={setReset} />}
         {selectedMenu === MenuOptions.nav && <EquipmentNavTemplate setReset={setReset} />}
         {selectedMenu === MenuOptions.comm && <EquipmentCommTemplate setReset={setReset} />}
         {selectedMenu === MenuOptions.appServ && <EquipmentAppServTemplate setReset={setReset} />}
-        <EqpTemplateBottomRow>
-          <OptionsBodyCol>
+        <div className={eqpStyles.bottomRow}>
+          <div className={optionStyles.col}>
             <EdstButton disabled content="OK" />
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight>
+          </div>
+          <div className={clsx(optionStyles.col, "right")}>
             <EdstButton content="Cancel" onMouseDown={() => dispatch(closeWindow("EQUIPMENT_TEMPLATE_MENU"))} />
-          </OptionsBodyCol>
-        </EqpTemplateBottomRow>
-      </EqpTemplateBody>
-    </EqpTemplateDiv>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -1,0 +1,64 @@
+
+
+.root {
+  height: 100vh;
+  width: 35vw;
+  background-color: #222222;
+  position: fixed;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: -5px 0 40px 5px rgba(0, 0, 0, 0.5);
+
+  > div {
+    background-color: #585858;
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 15px;
+    box-shadow: -5px 0 40px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  button {
+    /* Adapt the colors based on primary prop */
+    background-color: #1dbe77;
+    color: white;
+
+    transition: color 0.05s ease-in-out, background-color 0.05s ease-in-out, border-color 0.05s ease-in-out, box-shadow 0.05s ease-in-out;
+
+    font-size: 1em;
+    margin: 1em;
+    padding: 0.25em 1em;
+    border: 2px solid #1dbe77;
+    border-radius: 3px;
+    width: 150px;
+
+    :not(:disabled) {
+      cursor: pointer;
+    }
+
+    :focus {
+      background-color: #009670;
+      border-color: #008966;
+      box-shadow: 0 0 0 0 rgb(38 198 157 / 50%);
+    }
+
+    :hover:not(:disabled) {
+      background-color: #009670;
+      border-color: #008966;
+    }
+  }
+}
+
+.bg {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("/img/EDST_SEND_ROUTE.jpg");
+}

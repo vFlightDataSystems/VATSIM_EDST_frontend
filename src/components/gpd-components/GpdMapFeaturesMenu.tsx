@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import _ from "lodash";
-import { OptionIndicator, OptionsBodyCol, OptionsBodyRow, OptionsBottomRow, OptionsFlexCol } from "styles/optionMenuStyles";
 import { closeWindow } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { gpdMapFeatureOptionsSelector, MapFeatureOption, setGpdMapFeatureOptions } from "~redux/slices/gpdSlice";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
+import optionStyles from "css/optionMenu.module.scss";
+import clsx from "clsx";
 
 export const GpdMapFeaturesMenu = () => {
   const dispatch = useRootDispatch();
@@ -15,8 +16,9 @@ export const GpdMapFeaturesMenu = () => {
     <>
       {Object.values(MapFeatureOption).map((option) => {
         return (
-          <OptionsBodyRow key={option}>
-            <OptionsFlexCol
+          <div className={optionStyles.row} key={option}>
+            <div
+              className={clsx(optionStyles.col, "flex")}
               onMouseDown={() =>
                 setCurrentOptions((prev) => ({
                   ...prev,
@@ -24,14 +26,14 @@ export const GpdMapFeaturesMenu = () => {
                 }))
               }
             >
-              <OptionIndicator selected={currentOptions[option]} />
+              <div className={clsx(optionStyles.indicator, { selected: currentOptions[option] })} />
               {option}
-            </OptionsFlexCol>
-          </OptionsBodyRow>
+            </div>
+          </div>
         );
       })}
-      <OptionsBottomRow>
-        <OptionsBodyCol>
+      <div className={optionStyles.bottomRow}>
+        <div className={optionStyles.col}>
           <EdstButton
             content="OK"
             onMouseDown={() => {
@@ -40,11 +42,11 @@ export const GpdMapFeaturesMenu = () => {
               dispatch(closeWindow("GPD_MAP_OPTIONS_MENU"));
             }}
           />
-        </OptionsBodyCol>
-        <OptionsBodyCol alignRight>
+        </div>
+        <div className={clsx(optionStyles.col, "right")}>
           <ExitButton onMouseDown={() => dispatch(closeWindow("GPD_MAP_OPTIONS_MENU"))} />
-        </OptionsBodyCol>
-      </OptionsBottomRow>
+        </div>
+      </div>
     </>
   );
 };

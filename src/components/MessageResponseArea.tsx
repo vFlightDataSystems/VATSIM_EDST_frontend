@@ -1,36 +1,14 @@
 import React, { useMemo, useRef, useState } from "react";
-import styled, { css } from "styled-components";
 import { useResizeDetector } from "react-resize-detector";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { mraMsgSelector, pushZStack, setMraMessage, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
-import { FloatingWindowDiv } from "styles/floatingWindowStyles";
 import { useDragging } from "hooks/useDragging";
 import { useWindowOptions } from "hooks/useWindowOptions";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-
-type MessageResponseAreaDivProps = {
-  width: number;
-  fontSizeIndex: number;
-  brightness: number;
-};
-const MessageResponseAreaDiv = styled(FloatingWindowDiv)<MessageResponseAreaDivProps>`
-  font-size: ${(props) => props.theme.fontProps.floatingFontSizes[props.fontSizeIndex - 1]};
-  line-height: 1em;
-  padding: 0 2px;
-  min-height: 4em;
-  width: ${(props) => `${props.width}ch`};
-  background-color: #000000;
-  border: 1px solid #adadad;
-  overflow-wrap: anywhere;
-  white-space: pre-line;
-  font-family: ${(props) => props.theme.fontProps.eramFontFamily};
-  ${(props) =>
-    css`
-      color: rgba(${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.theme.fontProps.baseRGB}, ${props.brightness});
-    `};
-`;
+import clsx from "clsx";
+import mraStyles from "css/mra.module.scss";
 
 export const MessageResponseArea = () => {
   const pos = useRootSelector((state) => windowPositionSelector(state, "MESSAGE_RESPONSE_AREA"));
@@ -56,17 +34,16 @@ export const MessageResponseArea = () => {
   const options = useWindowOptions("MESSAGE_RESPONSE_AREA", extraOptions);
 
   const onMraMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault();
+    if (zStack.indexOf("MESSAGE_RESPONSE_AREA") < zStack.length - 1) {
+      dispatch(pushZStack("MESSAGE_RESPONSE_AREA"));
+    }
     switch (event.button) {
       case 1:
+        event.preventDefault();
         setShowOptions(true);
-        event.stopPropagation();
         break;
       default:
         startDrag(event);
-        if (zStack.indexOf("MESSAGE_RESPONSE_AREA") < zStack.length - 1) {
-          dispatch(pushZStack("MESSAGE_RESPONSE_AREA"));
-        }
         break;
     }
   };
@@ -75,10 +52,15 @@ export const MessageResponseArea = () => {
 
   return (
     <>
-      <MessageResponseAreaDiv {...windowOptions} pos={pos} zIndex={zIndex} ref={ref} anyDragging={anyDragging} onMouseDownCapture={onMraMouseDown}>
+      <div
+        className={clsx(mraStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { isDragging: anyDragging })}
+        ref={ref}
+        style={{ ...pos, zIndex: 10000 + zIndex, "--width": `${windowOptions.width}ch`, "--brightness": windowOptions.brightness / 100 }}
+        onMouseDown={onMraMouseDown}
+      >
         {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
         {msg}
-      </MessageResponseAreaDiv>
+      </div>
       {showOptions && width && (
         <FloatingWindowOptionContainer
           parentWidth={width + 6}

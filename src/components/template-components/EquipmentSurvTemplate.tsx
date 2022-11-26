@@ -1,28 +1,14 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { OptionsBodyRow, OptionIndicator, OptionIndicatorCircle } from "styles/optionMenuStyles";
 import { isEnum } from "~/utility-functions";
-import { borderHover } from "styles/styles";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import type { EquipmentTemplateBodyProps } from "components/EquipmentTemplateMenu";
 import { EquipmentTemplateRow } from "components/EquipmentTemplateMenu";
-import { EqpInput, EqpRow, EqpColTitle, EqpInputRow, EqpCol, EqpInputContainer60 } from "components/EqpStyled";
-
-const ContentCol = styled(EdstTooltip)`
-  justify-content: left;
-  align-items: center;
-  display: inline-flex;
-  flex-grow: 0;
-  border: 1px solid transparent;
-  padding: 1px 6px;
-  text-indent: 0;
-
-  ${borderHover}
-`;
+import clsx from "clsx";
+import optionStyles from "css/optionMenu.module.scss";
+import eqpStyles from "css/eqp.module.scss";
 
 enum TransponderCat {
   A = "A",
@@ -93,19 +79,19 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
 
   return (
     <>
-      <OptionsBodyRow margin="10px 0 0 0">
-        <EqpCol>
-          <EqpColTitle>TRANSPONDER CATEGORY</EqpColTitle>
-          <EqpRow>
-            <ContentCol title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCat(null)}>
-              <OptionIndicatorCircle selected={transponderCat === null} />
+      <div className={eqpStyles.titleRow}>
+        <div className={eqpStyles.col}>
+          <div className={eqpStyles.colTitle}>TRANSPONDER CATEGORY</div>
+          <div className={eqpStyles.row}>
+            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCat(null)}>
+              <div className={clsx(optionStyles.circleIndicator, { selected: transponderCat === null })} />
               No Transponder
-            </ContentCol>
-          </EqpRow>
+            </div>
+          </div>
           {Object.values(TransponderCat).map((category) => (
             <EquipmentTemplateRow
               circle
-              key={`transponder-type-row-${category}`}
+              key={category}
               buttonText={category}
               text={transponderCatText[category]}
               tooltip={Tooltips[`equipmentTemplateMenuSurv_${category}`]}
@@ -113,12 +99,11 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               toggleSelect={() => setTransponderCat(category)}
             />
           ))}
-        </EqpCol>
-        <EqpCol width="23ch">
-          <EqpColTitle>ADS-B CATEGORY</EqpColTitle>
+        </div>
+        <div className={clsx(eqpStyles.col, eqpStyles.w23)}>
+          <div className={eqpStyles.colTitle}>ADS-B CATEGORY</div>
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-no-b"
             buttonText="No 1090"
             tooltip={Tooltips.equipmentTemplateMenuSurv_No1090}
             selected={adsbBCat === null}
@@ -126,7 +111,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           />
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-b1"
             buttonText="B1"
             text="(1090 OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_B1}
@@ -135,7 +119,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           />
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-b2"
             buttonText="B2"
             text="(1090 IN/OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_B2}
@@ -145,7 +128,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           <EquipmentTemplateRow
             margin="10px 0 0 0"
             circle
-            key="adsb-b-type-row-no-uat"
             buttonText="No UAT"
             tooltip={Tooltips.equipmentTemplateMenuSurv_NoUat}
             selected={adsbUCat === null}
@@ -153,7 +135,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           />
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-u1"
             buttonText="U1"
             text="(UAT OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_U1}
@@ -162,7 +143,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           />
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-u2"
             buttonText="U2"
             text="(UAT IN/OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_U2}
@@ -172,7 +152,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           <EquipmentTemplateRow
             margin="10px 0 0 0"
             circle
-            key="adsb-b-type-row-no-vdl"
             buttonText="No VDL"
             tooltip={Tooltips.equipmentTemplateMenuSurv_NoVdl}
             selected={adsbVCat === null}
@@ -180,7 +159,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           />
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-v1"
             buttonText="V1"
             text="(VDL OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_V1}
@@ -189,39 +167,38 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
           />
           <EquipmentTemplateRow
             circle
-            key="adsb-b-type-row-v2"
             buttonText="V2"
             text="(VDL IN/OUT)"
             tooltip={Tooltips.equipmentTemplateMenuSurv_V2}
             selected={adsbVCat === AdsbV.V2}
             toggleSelect={() => setAdsbVCat(AdsbV.V2)}
           />
-        </EqpCol>
-        <EqpCol>
-          <EqpColTitle>
+        </div>
+        <div className={eqpStyles.col}>
+          <div className={eqpStyles.colTitle}>
             ADS-B
             <br /> CERTIFICATION
-          </EqpColTitle>
-          <EqpRow margin="18px 0">
-            <ContentCol title={Tooltips.equipmentTemplateMenuSurv_260b}>
-              <OptionIndicator />
+          </div>
+          <div className={clsx(eqpStyles.row, eqpStyles.hm18)}>
+            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuSurv_260b}>
+              <div className={optionStyles.indicator} />
               260B (1090)
-            </ContentCol>
-          </EqpRow>
-          <EqpRow margin="18px 0">
-            <ContentCol title={Tooltips.equipmentTemplateMenuSurv_262b}>
-              <OptionIndicator />
+            </div>
+          </div>
+          <div className={clsx(eqpStyles.row, eqpStyles.hm18)}>
+            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuSurv_262b}>
+              <div className={optionStyles.indicator} />
               282B (UAT)
-            </ContentCol>
-          </EqpRow>
-        </EqpCol>
-      </OptionsBodyRow>
-      <EqpInputRow>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={eqpStyles.inputRow}>
         SUR/
-        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuSurv_Sur}>
-          <EqpInput readOnly value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`} />
-        </EqpInputContainer60>
-      </EqpInputRow>
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
+          <input readOnly value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`} />
+        </div>
+      </div>
     </>
   );
 };

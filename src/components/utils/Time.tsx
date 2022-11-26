@@ -1,21 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
-import { NoSelectDiv } from "styles/NoSelectDiv";
-
-const TimeStyle = styled(NoSelectDiv)`
-  ${(props) => css`
-    font-family: ${props.theme.fontProps.eramFontFamily};
-    color: ${props.theme.colors.grey};
-  `}
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 8ch;
-  margin: 1px;
-  font-size: 22px;
-  line-height: 1em;
-  height: 100%;
-`;
+import timeStyles from "css/time.module.scss";
 
 export function Time() {
   const [date, setDate] = useState(new Date());
@@ -24,9 +8,9 @@ export function Time() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <TimeStyle>
+    <div className={timeStyles.time}>
       {date.getUTCHours().toString().padStart(2, "0")}
       {date.getUTCMinutes().toString().padStart(2, "0")} {date.getUTCSeconds().toString().padStart(2, "0")}
-    </TimeStyle>
+    </div>
   );
 }

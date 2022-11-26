@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { OptionsBodyRow } from "styles/optionMenuStyles";
 import { isEnum } from "~/utility-functions";
-import { EqpCol, EqpColTitle, EqpInput, EqpInputContainer60, EqpInputRow } from "components/EqpStyled";
 import { EquipmentTemplateRow } from "components/EquipmentTemplateMenu";
 import type { EquipmentTemplateBodyProps } from "components/EquipmentTemplateMenu";
-
-const EqpCol2 = styled(EqpCol)`
-  margin: 0 16px;
-`;
+import eqpStyles from "css/eqp.module.scss";
+import clsx from "clsx";
 
 enum VoiceCat {
   H = "H",
@@ -148,9 +143,9 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
 
   return (
     <>
-      <OptionsBodyRow padding="4px 0 0 0" margin="10px 0 0 0">
-        <EqpCol2>
-          <EqpColTitle>VOICE CATEGORY</EqpColTitle>
+      <div className={eqpStyles.titleRow}>
+        <div className={clsx(eqpStyles.col, eqpStyles.m16)}>
+          <div className={eqpStyles.colTitle}>VOICE CATEGORY</div>
           {Object.values(VoiceCat).map((category) => (
             <EquipmentTemplateRow
               key={`voice-cat-row-${category}`}
@@ -161,9 +156,9 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               toggleSelect={() => toggleCategory(category)}
             />
           ))}
-        </EqpCol2>
-        <EqpCol2>
-          <EqpColTitle>CPDLC CATEGORY</EqpColTitle>
+        </div>
+        <div className={clsx(eqpStyles.col, eqpStyles.m16)}>
+          <div className={eqpStyles.colTitle}>CPDLC CATEGORY</div>
           {Object.values(CpdlcCat).map((category) => (
             <EquipmentTemplateRow
               key={`cpdlc-cat-row-${category}`}
@@ -174,9 +169,9 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               toggleSelect={() => toggleCategory(category)}
             />
           ))}
-        </EqpCol2>
-        <EqpCol2>
-          <EqpColTitle>ACARS CATEGORY</EqpColTitle>
+        </div>
+        <div className={clsx(eqpStyles.col, eqpStyles.m16)}>
+          <div className={eqpStyles.colTitle}>ACARS CATEGORY</div>
           {Object.values(AcarsCat).map((category) => (
             <EquipmentTemplateRow
               key={`acars-cat-row-${category}`}
@@ -187,9 +182,9 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               toggleSelect={() => toggleCategory(category)}
             />
           ))}
-        </EqpCol2>
-        <EqpCol2>
-          <EqpColTitle>SATELLITE RTF</EqpColTitle>
+        </div>
+        <div className={clsx(eqpStyles.col, eqpStyles.m16)}>
+          <div className={eqpStyles.colTitle}>SATELLITE RTF</div>
           {Object.values(SatCat).map((category) => (
             <EquipmentTemplateRow
               key={`satellite-cat-row-${category}`}
@@ -200,32 +195,32 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               toggleSelect={() => toggleCategory(category)}
             />
           ))}
-        </EqpCol2>
-      </OptionsBodyRow>
-      <EqpInputRow>
+        </div>
+      </div>
+      <div className={eqpStyles.inputRow}>
         DAT/
-        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuComm_Dat}>
-          <EqpInput
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuComm_Dat}>
+          <input
             readOnly
             value={[...(acarsCategories as string[])]
               .concat([...(satelliteCategories as string[])])
               .sort((u, v) => u.localeCompare(v))
               .join("")}
           />
-        </EqpInputContainer60>
-      </EqpInputRow>
-      <EqpInputRow>
+        </div>
+      </div>
+      <div className={eqpStyles.inputRow}>
         COM/
-        <EqpInputContainer60 title={Tooltips.equipmentTemplateMenuComm_Com}>
-          <EqpInput
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuComm_Com}>
+          <input
             readOnly
             value={[...(voiceCategories as string[])]
               .concat([...(cpdlcCategories as string[])])
               .sort((u, v) => u.localeCompare(v))
               .join("")}
           />
-        </EqpInputContainer60>
-      </EqpInputRow>
+        </div>
+      </div>
     </>
   );
 };

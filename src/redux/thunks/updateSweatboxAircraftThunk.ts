@@ -12,7 +12,7 @@ export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activat
     Object.entries(entries).forEach(([aircraftId, entry]) => {
       if (Object.keys(aircraftMap).includes(aircraftId)) {
         const aircraft = aircraftMap[aircraftId];
-        const newAircraftTrack: AircraftTrack = {
+        newTracks[aircraftId] = {
           aircraftId,
           altitudeAgl: aircraft.altitudeAgl,
           altitudeTrue: aircraft.altitudeTrue,
@@ -21,8 +21,7 @@ export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activat
           typeCode: aircraft.typeCode,
           lastUpdated: new Date(aircraft.lastUpdatedAt).getTime(),
         };
-        newTracks[aircraftId] = newAircraftTrack;
-        if (entry.status !== "Active" && newAircraftTrack.groundSpeed > 40) {
+        if (entry.status !== "Active") {
           activateFlightplan(aircraftId);
         }
       }

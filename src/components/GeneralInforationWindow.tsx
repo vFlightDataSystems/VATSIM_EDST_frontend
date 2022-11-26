@@ -1,12 +1,12 @@
 import React, { useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
-import { FloatingWindowRow } from "styles/floatingWindowStyles";
-import { ScrollContainer } from "styles/optionMenuStyles";
 import { delGIEntry, giEntryMapSelector, setGIEntryAcknowledged, zStackSelector } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { windowOptionsSelector } from "~redux/slices/windowOptionsSlice";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { FloatingWindowOptionContainer } from "components/utils/FloatingWindowOptionContainer";
+import clsx from "clsx";
+import floatingStyles from "css/floatingWindow.module.scss";
 
 type GIRowProps = {
   text: string;
@@ -31,9 +31,14 @@ const GIRow = ({ text, selected, handleMouseDown, onDelete }: GIRowProps) => {
 
   return (
     <>
-      <FloatingWindowRow ref={ref} brightness={windowOptions.brightness} selected={selected} onMouseDown={onMouseDown}>
+      <div
+        className={clsx(floatingStyles.row, { selected })}
+        ref={ref}
+        style={{ "--brightness": windowOptions.brightness / 100 }}
+        onMouseDown={onMouseDown}
+      >
         {text}
-      </FloatingWindowRow>
+      </div>
       {selected && showOptions && rect && (
         <FloatingWindowOptionContainer
           parentWidth={rect.width}
@@ -100,7 +105,7 @@ export const GIWindow = () => {
       setShowOptions={setShowOptionsHandler}
     >
       {Object.values(giEntryMap).length > 0 && (
-        <ScrollContainer maxHeight="600px">
+        <div className="scrollContainer bounded-scroll">
           {Object.entries(giEntryMap).map(([id, entry]) => (
             <GIRow
               key={id}
@@ -113,7 +118,7 @@ export const GIWindow = () => {
               }}
             />
           ))}
-        </ScrollContainer>
+        </div>
       )}
     </FloatingWindow>
   );

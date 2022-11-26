@@ -6,8 +6,9 @@ import { pushZStack, windowDimensionSelector, windowPositionSelector, zStackSele
 import type { EdstWindow } from "types/edstWindow";
 import { useDragging } from "hooks/useDragging";
 import { useFullscreen } from "hooks/useFullscreen";
-import { ResizableFloatingWindowDiv } from "styles/floatingWindowStyles";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
+import floatingStyles from "css/floatingWindow.module.scss";
+import clsx from "clsx";
 
 export type HeaderComponentProps = {
   focused: boolean;
@@ -27,25 +28,24 @@ export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyC
   const focused = useFocused(ref);
   const zStack = useRootSelector(zStackSelector);
   const pos = useRootSelector((state) => windowPositionSelector(state, edstWindow));
-  const dimension = useRootSelector((state) => windowDimensionSelector(state, edstWindow));
+  const dim = useRootSelector((state) => windowDimensionSelector(state, edstWindow));
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, edstWindow, "mouseup");
   const { isFullscreen, toggleFullscreen } = useFullscreen(ref, edstWindow);
 
   const onMouseDownHandler = () => zStack.indexOf(edstWindow) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(edstWindow));
+  const position = isFullscreen ? {} : pos;
+  const dimension = isFullscreen ? { width: "calc(100% - 10px", height: "calc(100% - 10px)" } : dim;
 
   return (
-    <ResizableFloatingWindowDiv
+    <div
       ref={ref}
-      pos={pos}
-      dimension={dimension}
-      anyDragging={anyDragging}
-      fullscreen={isFullscreen}
-      zIndex={zStack.indexOf(edstWindow)}
+      className={clsx(floatingStyles.root, "resizable", { isFullscreen, isDragging: anyDragging })}
+      style={{ ...dimension, ...position, zIndex: 10000 + zStack.indexOf(edstWindow) }}
       onMouseDownCapture={onMouseDownHandler}
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <HeaderComponent focused={focused} toggleFullscreen={toggleFullscreen} startDrag={(e) => !isFullscreen && startDrag(e)} />
       <BodyComponent />
-    </ResizableFloatingWindowDiv>
+    </div>
   );
 });

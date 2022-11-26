@@ -4,21 +4,8 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { aircraftIsAselSelector } from "~redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "~redux/slices/aclSlice";
-import { BodyRowContainerDiv, BodyRowDiv, FreeTextInput, FreeTextRow, InnerRow, InnerRow2 } from "styles/styles";
 import type { EdstEntry } from "types/edstEntry";
 import { aclAircraftSelect } from "~redux/thunks/aircraftSelect";
-import {
-  AircraftTypeCol,
-  AltCol,
-  AltColDiv,
-  CodeCol,
-  FidCol,
-  HotBox,
-  RouteCol,
-  RouteDepAirport,
-  RouteContent,
-  SpecialBox,
-} from "styles/sharedColumns";
 import type { EdstWindow } from "types/edstWindow";
 import type { AclRowField } from "types/acl/aclRowField";
 import { HoldDirectionValues } from "types/hold/holdDirectionValues";
@@ -31,20 +18,19 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useAselEventListener } from "hooks/useAselEventListener";
 import { convertBeaconCodeToString, removeStringFromEnd } from "~/utils/stringManipulation";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
-import { colors } from "~/edstTheme";
 import type { AircraftId } from "types/aircraftId";
 import { anyHoldingSelector } from "~redux/selectors";
-import { AclCol1, CoralBox, HdgCol, HdgSpdSlashCol, PointOutCol, RadioCol, RemarksBox, SpdCol, VoiceTypeSpan } from "components/AclStyled";
+import tableStyles from "css/table.module.scss";
+import clsx from "clsx";
 
 type AclRowProps = {
   aircraftId: AircraftId;
-  altMouseDown?: boolean;
 };
 
 /**
  * Single ACL row
  */
-export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => {
+export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const entry = useRootSelector((state) => entrySelector(state, aircraftId));
@@ -294,7 +280,7 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
         }
         break;
       case 2:
-        if (displayScratchSpd && (displayScratchSpd || entry.assignedSpeed === null)) {
+        if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
           dispatch(updateEntry({ aircraftId, data: { scratchpadSpeed: null } }));
         } else if (entry.assignedSpeed) {
           dispatch(updateEntry({ aircraftId, data: { assignedSpeed: null } }));
@@ -306,92 +292,118 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
   };
 
   return (
-    <BodyRowContainerDiv>
-      <BodyRowDiv pendingRemoval={now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT}>
-        <RadioCol green={entry.vciStatus === 1} onMouseDown={updateVci} keep={entry.keep}>
+    <div className={tableStyles.rowContainer}>
+      <div className={clsx(tableStyles.row, { pendingRemoval: now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT })}>
+        <div className={clsx(tableStyles.radioCol, { cGreen: entry.vciStatus === 1, keep: entry.keep })} onMouseDown={updateVci}>
           {entry.vciStatus === -1 && "N"}
           {entry.vciStatus === 1 && VCI_SYMBOL}
-        </RadioCol>
-        <AclCol1 border />
-        <AclCol1 border />
-        <AclCol1 border />
-        <SpecialBox disabled />
-        <InnerRow ref={ref} highlight={entry.highlighted} minWidth={entry.showFreeText ? "1200px" : 0}>
-          <FidCol hover onMouseDown={handleFidClick} selected={isSelected("FID_ACL_ROW_FIELD")}>
+        </div>
+        <div className={clsx(tableStyles.col1, "withBorder")} />
+        <div className={clsx(tableStyles.col1, "withBorder")} />
+        <div className={clsx(tableStyles.col1, "withBorder")} />
+        <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+        <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
+          <div className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_ACL_ROW_FIELD") })} onMouseDown={handleFidClick}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
-            <VoiceTypeSpan>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</VoiceTypeSpan>
-          </FidCol>
-          <PointOutCol />
-          {toolOptions.displayCoordinationColumn && <SpecialBox disabled />}
-          <SpecialBox disabled={!entry.spa}>{entry.spa && SPA_INDICATOR}</SpecialBox>
-          <HotBox onMouseDown={handleHotboxMouseDown}>{freeTextContent && "*"}</HotBox>
-          <AircraftTypeCol
-            visibilityHidden={hiddenColumns.includes("TYPE_ACL_ROW_FIELD")}
-            hover
-            selected={isSelected("TYPE_ACL_ROW_FIELD")}
+            <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span>
+          </div>
+          <div className={tableStyles.paCol} />
+          {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "isDisabled")} />}
+          <div className={clsx(tableStyles.specialBox, { isDisabled: !entry.spa })}>{entry.spa && SPA_INDICATOR}</div>
+          <div className={tableStyles.hotbox} onMouseDown={handleHotboxMouseDown}>
+            {freeTextContent && "*"}
+          </div>
+          <div
+            className={clsx(tableStyles.acTypeCol, {
+              hover: true,
+              selected: isSelected("TYPE_ACL_ROW_FIELD"),
+              visibilityHidden: hiddenColumns.includes("TYPE_ACL_ROW_FIELD"),
+            })}
             onMouseDown={(event) => handleClick(event.currentTarget, "TYPE_ACL_ROW_FIELD", null)}
           >
             {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-          </AircraftTypeCol>
-          <AltCol>
-            <AltColDiv
+          </div>
+          <div className={tableStyles.altCol}>
+            <div
+              className={clsx(tableStyles.innerAltCol, { hover: true, selected: isSelected("ALT_ACL_ROW_FIELD") })}
               ref={altRef}
-              headerMouseDown={altMouseDown}
-              selected={isSelected("ALT_ACL_ROW_FIELD")}
               onMouseDown={(event) => handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "acl-alt-asel", "ALTITUDE_MENU")}
             >
               {entry.altitude}
               {entry.interimAltitude && `T${entry.interimAltitude}`}
-            </AltColDiv>
-            {showCoralBox && <CoralBox />}
-          </AltCol>
-          <CodeCol
-            visibilityHidden={hiddenColumns.includes("CODE_ACL_ROW_FIELD")}
-            hover
-            selected={isSelected("CODE_ACL_ROW_FIELD")}
+            </div>
+            {showCoralBox && <div className={tableStyles.coralBox} />}
+          </div>
+          <div
+            className={clsx(tableStyles.codeCol, {
+              hover: true,
+              selected: isSelected("CODE_ACL_ROW_FIELD"),
+              visibilityHidden: hiddenColumns.includes("CODE_ACL_ROW_FIELD"),
+            })}
             onMouseDown={(event) => handleClick(event.currentTarget, "CODE_ACL_ROW_FIELD", null)}
           >
             {convertBeaconCodeToString(entry.assignedBeaconCode)}
-          </CodeCol>
-          <SpecialBox onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)} disabled={!(entry.assignedHeading && entry.scratchpadHeading)}>
+          </div>
+          <div
+            className={clsx(tableStyles.specialBox, { isDisabled: !(entry.assignedHeading && entry.scratchpadHeading) })}
+            onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)}
+          >
             {entry.assignedHeading && entry.scratchpadHeading && "*"}
-          </SpecialBox>
-          <HdgCol
+          </div>
+          <div
+            className={clsx(tableStyles.hdgCol, {
+              hover: true,
+              selected: isSelected("HDG_ACL_ROW_FIELD"),
+              scratchpad: !!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null),
+              visibilityHidden: hiddenColumns.includes("HDG_ACL_ROW_FIELD"),
+            })}
             ref={hdgRef}
-            hover
-            visibilityHidden={hiddenColumns.includes("HDG_ACL_ROW_FIELD")}
-            selected={isSelected("HDG_ACL_ROW_FIELD")}
             onMouseDown={handleHeadingClick}
-            scratchpad={!!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)}
           >
             {entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchpadHeading : entry.assignedHeading}
-          </HdgCol>
-          <HdgSpdSlashCol>/</HdgSpdSlashCol>
-          <SpdCol
+          </div>
+          <div className={tableStyles.slashCol}>/</div>
+          <div
+            className={clsx(tableStyles.spdCol, {
+              hover: true,
+              selected: isSelected("SPD_ACL_ROW_FIELD"),
+              scratchpad: !!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null),
+              visibilityHidden: hiddenColumns.includes("SPD_ACL_ROW_FIELD"),
+            })}
             ref={spdRef}
-            hover
-            visibilityHidden={hiddenColumns.includes("SPD_ACL_ROW_FIELD")}
-            selected={isSelected("SPD_ACL_ROW_FIELD")}
             onMouseDown={handleSpeedClick}
-            scratchpad={!!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)}
           >
             {entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchpadSpeed : entry.assignedSpeed}
-          </SpdCol>
-          <SpecialBox onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)} disabled={!(entry.assignedSpeed && entry.scratchpadSpeed)}>
+          </div>
+          <div
+            className={clsx(tableStyles.specialBox, { isDisabled: !(entry.assignedSpeed && entry.scratchpadSpeed) })}
+            onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)}
+          >
             {entry.assignedSpeed && entry.scratchpadSpeed && "*"}
-          </SpecialBox>
-          <SpecialBox disabled />
+          </div>
+          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
           {anyHolding && (
-            <SpecialBox ref={holdRef} color={colors.brown} selected={isSelected("HOLD_ACL_ROW_FIELD")} onMouseDown={handleHoldClick}>
+            <div
+              ref={holdRef}
+              className={clsx(tableStyles.specialBox, "cBrown", { selected: isSelected("HOLD_ACL_ROW_FIELD") })}
+              onMouseDown={handleHoldClick}
+            >
               {entry.holdAnnotations ? "H" : ""}
-            </SpecialBox>
+            </div>
           )}
-          <RemarksBox unchecked={!entry.remarksChecked && entry.remarks.length > 0} onMouseDown={handleRemarksClick}>
+          <div
+            className={clsx(tableStyles.remarksBox, { unchecked: !entry.remarksChecked && entry.remarks.length > 0 })}
+            onMouseDown={handleRemarksClick}
+          >
             {entry.remarks.length > 0 && "*"}
-          </RemarksBox>
-          <RouteCol ref={routeRef} hover selected={isSelected("ROUTE_ACL_ROW_FIELD")} onMouseDown={(event) => handleRouteClick(event.currentTarget)}>
-            <RouteContent padding="0 2px">
+          </div>
+          <div
+            className={clsx(tableStyles.routeCol, { hover: true, selected: isSelected("ROUTE_ACL_ROW_FIELD") })}
+            ref={routeRef}
+            onMouseDown={(event) => handleRouteClick(event.currentTarget)}
+          >
+            <div className={clsx(tableStyles.routeContent)}>
               {entry.routeDisplay === "HOLD_ANNOTATIONS_DISPLAY_OPTION" &&
                 holdAnnotations &&
                 `${holdAnnotations.fix ?? "PP"} ${HoldDirectionValues[holdAnnotations.direction]} ` +
@@ -405,37 +417,46 @@ export const AclRow = React.memo(({ aircraftId, altMouseDown }: AclRowProps) => 
               {entry.routeDisplay === "RAW_ROUTE_DISPLAY_OPTION" && <span>{entry.route}</span>}
               {!entry.routeDisplay && (
                 <>
-                  <RouteDepAirport amendmentPending={availPar.length > 0 && !onPar} selected={isSelected("ROUTE_ACL_ROW_FIELD")}>
+                  <div
+                    className={clsx(tableStyles.routeDepAprt, {
+                      amendmentPending: availPar.length > 0 && !onPar,
+                      selected: isSelected("ROUTE_ACL_ROW_FIELD"),
+                    })}
+                  >
                     {entry.departure}
-                  </RouteDepAirport>
+                  </div>
                   ./.
                   {route}
                   {!route.endsWith(".") && route.length > 0 && `.`}
                   {entry.destination}
                 </>
               )}
-            </RouteContent>
-          </RouteCol>
-        </InnerRow>
-      </BodyRowDiv>
+            </div>
+          </div>
+        </div>
+      </div>
       {entry.showFreeText && (
-        <BodyRowDiv>
-          <RadioCol disabled />
-          <AclCol1 />
-          <AclCol1 />
-          <AclCol1 />
-          <SpecialBox disabled />
-          <InnerRow2 highlight={entry.highlighted} minWidth={`${Math.max(1200, ref?.current?.clientWidth ?? 0)}px`}>
-            <FreeTextRow marginLeft="calc(19ch + 11px)">
-              <FreeTextInput
+        <div className={tableStyles.row}>
+          <div className={clsx(tableStyles.radioCol, "empty")} />
+          <div className={tableStyles.col1} />
+          <div className={tableStyles.col1} />
+          <div className={tableStyles.col1} />
+          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+          <div
+            className={clsx(tableStyles.innerRow, { highlight: entry.highlighted })}
+            style={{ minWidth: `${Math.max(1200, ref?.current?.clientWidth ?? 0)}px` }}
+          >
+            <div className={tableStyles.freeText} style={{ marginLeft: "calc(19ch + 18px)" }}>
+              <input
+                spellCheck={false}
                 value={freeTextContent}
                 onChange={(event) => setFreeTextContent(event.target.value)}
                 onBlur={() => dispatch(updateEntry({ aircraftId, data: { freeTextContent } }))}
               />
-            </FreeTextRow>
-          </InnerRow2>
-        </BodyRowDiv>
+            </div>
+          </div>
+        </div>
       )}
-    </BodyRowContainerDiv>
+    </div>
   );
 });

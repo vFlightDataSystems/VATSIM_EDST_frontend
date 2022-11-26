@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
-import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import type { RouteFix } from "types/routeFix";
 import { useDragging } from "hooks/useDragging";
@@ -21,70 +19,12 @@ import { useRouteFixes } from "api/aircraftApi";
 import { computeCrossingTimes } from "~/utils/computeCrossingTimes";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { InputContainer } from "components/utils/InputComponents";
 import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton5ch, ExitButton } from "components/utils/EdstButton";
 import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
-
-const HoldDiv = styled(OptionsMenu)`
-  width: 44ch;
-`;
-const FixContainer = styled.div`
-  padding: 4px 0;
-  border-bottom: 1px solid #adadad;
-`;
-const Row1 = styled(OptionsBodyRow)`
-  justify-content: space-between;
-`;
-const Row2 = styled(OptionsBodyRow)`
-  padding: 6px 0;
-`;
-const LeftCol = styled(OptionsBodyCol)`
-  margin-left: 10px;
-  flex-grow: 0;
-  padding: 0;
-  border-bottom: 1px solid #adadad;
-`;
-const Col1 = styled(OptionsBodyCol)`
-  justify-content: left;
-  display: inline-flex;
-  height: 1em;
-  padding: 0 4px;
-  flex-grow: 0;
-  width: 11ch;
-  margin: 0 12px;
-`;
-const Col2 = styled(OptionsBodyCol)`
-  justify-content: center;
-  flex-grow: 0;
-  margin: auto;
-  border-bottom: 1px solid #adadad;
-`;
-const Col3 = styled(OptionsBodyCol)`
-  justify-content: center;
-  margin-top: 2px;
-
-  *[disabled] {
-    pointer-events: none;
-    border-color: transparent;
-  }
-`;
-const Col5 = styled(OptionsBodyCol)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-`;
-const Col7 = styled(OptionsBodyCol)`
-  justify-content: left;
-  align-items: center;
-  margin-left: 10px;
-  margin-right: auto;
-`;
-const EfcInputContainer = styled(InputContainer)`
-  margin-left: 1ch;
-  margin-right: 0;
-  width: 5ch;
-`;
+import clsx from "clsx";
+import optionStyles from "css/optionMenu.module.scss";
+import inputStyles from "css/input.module.scss";
+import holdStyles from "css/holdMenu.module.scss";
 
 export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
@@ -137,26 +77,27 @@ export const HoldMenu = () => {
   };
 
   return (
-    <HoldDiv
+    <div
+      className={clsx(holdStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={pos}
-      zIndex={zStack.indexOf("HOLD_MENU")}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf("HOLD_MENU") }}
       onMouseDown={() => zStack.indexOf("HOLD_MENU") < zStack.length - 1 && dispatch(pushZStack("HOLD_MENU"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         Hold Data Menu
-      </OptionsMenuHeader>
-      <OptionsBody>
-        <FidRow>
+      </div>
+      <div className={optionStyles.body}>
+        <div className={optionStyles.fidRow}>
           {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-        </FidRow>
-        <OptionsBodyRow>
-          <LeftCol title={Tooltips.holdDirection}>Location</LeftCol>
-        </OptionsBodyRow>
-        <OptionsBodyRow>
-          <OptionsBodyCol>
+        </div>
+        <div className={optionStyles.row}>
+          <div className={holdStyles.leftCol} title={Tooltips.holdDirection}>
+            Location
+          </div>
+        </div>
+        <div className={optionStyles.row}>
+          <div className={optionStyles.col}>
             <EdstButton
               content="Present Position"
               selected={fix === null}
@@ -166,20 +107,19 @@ export const HoldMenu = () => {
                 setEfc(utcMinutes + 30);
               }}
             />
-          </OptionsBodyCol>
-        </OptionsBodyRow>
-        <FixContainer>
+          </div>
+        </div>
+        <div className={holdStyles.fixContainer}>
           {holdRouteFixes &&
             _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map((i) => (
-              <OptionsBodyRow key={i}>
+              <div className={optionStyles.row} key={i}>
                 {_.range(0, Math.round((holdRouteFixes.length || 0) / 10) + 1).map((j) => {
                   const fixName = holdRouteFixes?.[Number(i) + Number(j) * 10]?.name;
                   const minutesAtFix = holdRouteFixes?.[Number(i) + Number(j) * 10]?.minutesAtFix;
                   return (
                     fixName && (
-                      <Col1
-                        hover
-                        selected={fix === fixName}
+                      <div
+                        className={clsx(holdStyles.fixCol, { selected: fix === fixName })}
                         key={`${i}-${j}`}
                         onMouseDown={() => {
                           setFix(fixName);
@@ -187,23 +127,29 @@ export const HoldMenu = () => {
                         }}
                       >
                         {fixName}
-                        <OptionsBodyCol alignRight margin="0">
+                        <div className={holdStyles.eftCol}>
                           {`0${Math.floor(minutesAtFix / 60) % 24}`.slice(-2) + `0${Math.floor(minutesAtFix % 60)}`.slice(-2)}
-                        </OptionsBodyCol>
-                      </Col1>
+                        </div>
+                      </div>
                     )
                   );
                 })}
-              </OptionsBodyRow>
+              </div>
             ))}
-        </FixContainer>
-        <Row1>
-          <Col2 title={Tooltips.holdDirection}>Direction</Col2>
-          <Col2 title={Tooltips.holdTurns}>Turns</Col2>
-          <Col2 title={Tooltips.holdLegLength}>Leg Lengths</Col2>
-        </Row1>
-        <Row1>
-          <Col3>
+        </div>
+        <div className={holdStyles.row1}>
+          <div className={holdStyles.col2} title={Tooltips.holdDirection}>
+            Direction
+          </div>
+          <div className={holdStyles.col2} title={Tooltips.holdTurns}>
+            Turns
+          </div>
+          <div className={holdStyles.col2} title={Tooltips.holdLegLength}>
+            Leg Length
+          </div>
+        </div>
+        <div className={holdStyles.row1}>
+          <div className={holdStyles.col3}>
             <HoldDirButton2ch
               content="NW"
               selected={direction === CompassDirection.NORTH_WEST}
@@ -215,33 +161,30 @@ export const HoldMenu = () => {
               selected={direction === CompassDirection.NORTH_EAST}
               onMouseDown={() => setDirection(CompassDirection.NORTH_EAST)}
             />
-          </Col3>
-          <Col3>
+          </div>
+          <div className={holdStyles.col3}>
             <HoldDirButton22ch content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
             <HoldDirButton22ch content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
-          </Col3>
-          <Col3>
+          </div>
+          <div className={holdStyles.col3}>
             <HoldDirButton5ch content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
             <HoldDirButton5ch content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
-          </Col3>
-        </Row1>
-        <Row1>
-          <Col3>
+          </div>
+        </div>
+        <div className={holdStyles.row1}>
+          <div className={holdStyles.col3}>
             <HoldDirButton2ch content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
             <HoldDirButton2ch disabled />
             <HoldDirButton2ch content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
-          </Col3>
-          <Col3>
-            <HoldDirButton22ch disabled />
-            <HoldDirButton22ch disabled />
-          </Col3>
-          <Col3>
+          </div>
+          <div className={holdStyles.col3} />
+          <div className={holdStyles.col3}>
             <HoldDirButton5ch content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
             <HoldDirButton5ch content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
-          </Col3>
-        </Row1>
-        <Row1>
-          <Col3>
+          </div>
+        </div>
+        <div className={holdStyles.row1}>
+          <div className={holdStyles.col3}>
             <HoldDirButton2ch
               content="SW"
               selected={direction === CompassDirection.SOUTH_WEST}
@@ -253,18 +196,15 @@ export const HoldMenu = () => {
               selected={direction === CompassDirection.SOUTH_EAST}
               onMouseDown={() => setDirection(CompassDirection.SOUTH_EAST)}
             />
-          </Col3>
-          <Col3>
-            <HoldDirButton22ch disabled />
-            <HoldDirButton22ch disabled />
-          </Col3>
-          <Col3>
+          </div>
+          <div className={holdStyles.col3} />
+          <div className={holdStyles.col3}>
             <HoldDirButton5ch content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
             <HoldDirButton5ch content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
-          </Col3>
-        </Row1>
-        <Row2 bottomBorder>
-          <Col5>
+          </div>
+        </div>
+        <div className={clsx(holdStyles.row2, "bottomBorder")}>
+          <div className={holdStyles.col5}>
             <EdstButton
               content="Delete Hold Instructions"
               padding="0 20px"
@@ -279,31 +219,33 @@ export const HoldMenu = () => {
               }}
               title={Tooltips.holdDeleteHoldInstr}
             />
-          </Col5>
-        </Row2>
-        <Row1>
-          <Col2 title={Tooltips.holdEfc}>EFC</Col2>
-        </Row1>
-        <OptionsBodyRow>
-          <Col7>
-            <EfcInputContainer>
-              <EdstInput
+          </div>
+        </div>
+        <div className={holdStyles.row1}>
+          <div className={holdStyles.col2} title={Tooltips.holdEfc}>
+            EFC
+          </div>
+        </div>
+        <div className={optionStyles.col}>
+          <div className={holdStyles.efcCol}>
+            <div className={clsx(inputStyles.inputContainer, "w5")}>
+              <input
                 value={formatUtcMinutes(efc)}
                 readOnly
                 // onChange={(e) => setEfc(e.target.value)}
               />
-            </EfcInputContainer>
+            </div>
             <EdstButton content="-" margin="0 0 0 10px" width="2ch" onMouseDown={() => setEfc(efc - 1)} />
             <EdstButton content="+" margin="0 0 0 4px" width="2ch" onMouseDown={() => setEfc(efc + 1)} />
-          </Col7>
-        </OptionsBodyRow>
-        <Row2 bottomBorder>
-          <Col5>
+          </div>
+        </div>
+        <div className={holdStyles.row2}>
+          <div className={holdStyles.col5}>
             <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
-          </Col5>
-        </Row2>
-        <OptionsBodyRow margin="6px 0 0 0">
-          <OptionsBodyCol>
+          </div>
+        </div>
+        <div className={clsx(optionStyles.bottomRow, "topBorder")}>
+          <div className={optionStyles.col}>
             <EdstButton
               content="Hold/SPA"
               margin="0 6px 0 0"
@@ -338,12 +280,12 @@ export const HoldMenu = () => {
                 dispatch(closeWindow("HOLD_MENU"));
               }}
             />
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight>
+          </div>
+          <div className={clsx(optionStyles.col, "right")}>
             <ExitButton onMouseDown={() => dispatch(closeWindow("HOLD_MENU"))} />
-          </OptionsBodyCol>
-        </OptionsBodyRow>
-      </OptionsBody>
-    </HoldDiv>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

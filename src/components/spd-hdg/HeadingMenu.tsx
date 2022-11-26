@@ -1,25 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import _ from "lodash";
-import styled from "styled-components";
 import type { Nullable } from "types/utility-types";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
 import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
-import { EdstInput, FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
 import { mod } from "~/utils/mod";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { InputContainer } from "components/utils/InputComponents";
-import { Row, Row2, Col1, Col2, ScrollContainer, ScrollRow, ScrollCol, ScrollCol2 } from "components/spd-hdg/styled";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
-
-const HeadingDiv = styled(OptionsMenu)`
-  width: 20ch;
-`;
+import optionStyles from "css/optionMenu.module.scss";
+import headingStyles from "css/hdgSpdMenu.module.scss";
+import inputStyles from "css/input.module.scss";
+import clsx from "clsx";
 
 export const HeadingMenu = () => {
   const asel = useRootSelector(aselSelector)!;
@@ -84,65 +80,74 @@ export const HeadingMenu = () => {
   };
 
   return (
-    <HeadingDiv
+    <div
+      className={clsx(headingStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={pos}
-      zIndex={zStack.indexOf("HEADING_MENU")}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf("HEADING_MENU") }}
       onMouseDown={() => zStack.indexOf("HEADING_MENU") < zStack.length - 1 && dispatch(pushZStack("HEADING_MENU"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         Heading Information
-      </OptionsMenuHeader>
-      <OptionsBody>
-        <FidRow>
+      </div>
+      <div className={optionStyles.body}>
+        <div className={optionStyles.fidRow}>
           {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-        </FidRow>
-        <Row
-        // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
-        >
-          <OptionsBodyCol
-          // onMouseDown={() => props.openMenu(routeMenuRef.current, 'spd-hdg-menu', false)}
-          >
+        </div>
+        <div className={headingStyles.row}>
+          <div className={optionStyles.col}>
             <EdstButton content="Amend" selected={amend} onMouseDown={() => setAmend(true)} title={Tooltips.aclHdgAmend} />
-          </OptionsBodyCol>
-          <OptionsBodyCol alignRight>
+          </div>
+          <div className={clsx(optionStyles.col, "right")}>
             <EdstButton content="Scratchpad" selected={!amend} onMouseDown={() => setAmend(false)} title={Tooltips.aclHdgScratchpad} />
-          </OptionsBodyCol>
-        </Row>
-        <Row>
-          <OptionsBodyCol>
+          </div>
+        </div>
+        <div>
+          <div className={optionStyles.col}>
             Heading &nbsp;
-            <InputContainer>
-              <EdstInput value={heading} onChange={(e) => setHeading(Number(e.target.value))} />
-            </InputContainer>
-          </OptionsBodyCol>
-        </Row>
-        <Row2 topBorder justifyContent="space-between">
-          <Col1 title={Tooltips.aclHdgHdg}>Heading</Col1>
-          <Col2 title={Tooltips.aclHdgTurn}>Turn</Col2>
-        </Row2>
-        <Row2 bottomBorder>
-          <ScrollCol noHover />
-          <ScrollCol noHover />
-          <ScrollCol2 noHover>L</ScrollCol2>
-          <ScrollCol2 noHover>R</ScrollCol2>
-        </Row2>
-        <ScrollContainer onWheel={(e) => setDeltaY(deltaY + e.deltaY)}>
+            <div className={clsx(inputStyles.inputContainer, "w5")}>
+              <input value={heading} onChange={(e) => setHeading(Number(e.target.value))} />
+            </div>
+          </div>
+        </div>
+        <div className={clsx(headingStyles.row2, "topBorder", "spaceBetween")}>
+          <div className={headingStyles.hdgColLeft} title={Tooltips.aclHdgHdg}>
+            Heading
+          </div>
+          <div className={headingStyles.hdgColRight} title={Tooltips.aclHdgTurn}>
+            Turn
+          </div>
+        </div>
+        <div className="bottomBorder">
+          <div className={headingStyles.scrollRow}>
+            <div className={clsx(headingStyles.scrollCol, "header")} />
+            <div className={clsx(headingStyles.scrollCol, "header")} />
+            <div className={clsx(headingStyles.scrollCol, "header", "autoMargin", "w2")}>L</div>
+            <div className={clsx(headingStyles.scrollCol, "header", "autoMargin", "w2")}>R</div>
+          </div>
+        </div>
+        <div className="scrollContainer" onWheel={(e) => setDeltaY(deltaY + e.deltaY)}>
           {_.range(50, -70, -10).map((i) => {
             const centerHdg = mod(heading - Math.round(deltaY / 100) * 10 + i, 360);
             const centerRelHdg = 35 + i / 2;
             return (
-              <ScrollRow key={i}>
-                <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerHdg)}>{centerHdg.toString().padStart(3, "0")}</ScrollCol>
-                <ScrollCol onMouseDown={(e) => handleMouseDown(e, centerHdg + 5)}>{(centerHdg + 5).toString().padStart(3, "0")}</ScrollCol>
-                <ScrollCol2 onMouseDown={(e) => handleMouseDown(e, centerRelHdg, "L")}>{centerRelHdg}</ScrollCol2>
-                <ScrollCol2 onMouseDown={(e) => handleMouseDown(e, centerRelHdg, "R")}>{centerRelHdg}</ScrollCol2>
-              </ScrollRow>
+              <div className={headingStyles.scrollRow} key={i}>
+                <div className={headingStyles.scrollCol} onMouseDown={(e) => handleMouseDown(e, centerHdg)}>
+                  {centerHdg.toString().padStart(3, "0")}
+                </div>
+                <div className={headingStyles.scrollCol} onMouseDown={(e) => handleMouseDown(e, centerHdg + 5)}>
+                  {(centerHdg + 5).toString().padStart(3, "0")}
+                </div>
+                <div className={clsx(headingStyles.scrollCol, "w2", "autoMargin")} onMouseDown={(e) => handleMouseDown(e, centerRelHdg, "L")}>
+                  {centerRelHdg}
+                </div>
+                <div className={clsx(headingStyles.scrollCol, "w2", "autoMargin")} onMouseDown={(e) => handleMouseDown(e, centerRelHdg, "R")}>
+                  {centerRelHdg}
+                </div>
+              </div>
             );
           })}
-          <Row margin="8px 0 0 0" justifyContent="center">
+          <div className={headingStyles.phRow}>
             <EdstButton
               content="Present Heading"
               onMouseDown={(event) => {
@@ -157,14 +162,14 @@ export const HeadingMenu = () => {
                 dispatch(closeWindow("HEADING_MENU"));
               }}
             />
-          </Row>
-          <OptionsBodyRow margin="0">
-            <OptionsBodyCol alignRight>
+          </div>
+          <div className={optionStyles.row}>
+            <div className={clsx(optionStyles.col, "right")}>
               <ExitButton onMouseDown={() => dispatch(closeWindow("HEADING_MENU"))} />
-            </OptionsBodyCol>
-          </OptionsBodyRow>
-        </ScrollContainer>
-      </OptionsBody>
-    </HeadingDiv>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

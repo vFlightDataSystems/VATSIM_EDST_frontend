@@ -1,10 +1,8 @@
 import React, { useCallback, useRef } from "react";
-import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselSelector, closeAllMenus, closeWindow, pushZStack, setAsel, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
 import { delEntry, entrySelector, updateEntry } from "~redux/slices/entrySlice";
-import { FidRow, OptionsBody, OptionsBodyCol, OptionsBodyRow, OptionsMenu, OptionsMenuHeader } from "styles/optionMenuStyles";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
@@ -15,13 +13,9 @@ import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import socket from "~socket";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { ExitButton } from "components/utils/EdstButton";
-
-const PlanOptionsDiv = styled(OptionsMenu)`
-  width: 24ch;
-`;
-const PlanOptionsBody = styled(OptionsBody)`
-  text-indent: 4px;
-`;
+import optionStyles from "css/optionMenu.module.scss";
+import clsx from "clsx";
+import planOptionStyles from "css/planOptions.module.scss";
 
 type PlanOptionsRowProps = {
   title?: string;
@@ -29,12 +23,12 @@ type PlanOptionsRowProps = {
   onMouseDown?: React.MouseEventHandler;
   disabled?: boolean;
 };
-const PlanOptionsRow = ({ content, ...props }: PlanOptionsRowProps) => (
-  <OptionsBodyRow>
-    <OptionsBodyCol {...props} hover>
+const PlanOptionsRow = ({ content, disabled, ...props }: PlanOptionsRowProps) => (
+  <div className={optionStyles.row}>
+    <div className={clsx(optionStyles.col, "withHover", { isDisabled: disabled })} {...props}>
       {content}
-    </OptionsBodyCol>
-  </OptionsBodyRow>
+    </div>
+  </div>
 );
 
 export const PlanOptions = () => {
@@ -67,21 +61,20 @@ export const PlanOptions = () => {
   };
 
   return (
-    <PlanOptionsDiv
+    <div
+      className={clsx(planOptionStyles.root, { isDragging: anyDragging })}
       ref={ref}
-      pos={pos}
-      zIndex={zStack.indexOf("PLAN_OPTIONS")}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf("PLAN_OPTIONS") }}
       onMouseDown={() => zStack.indexOf("PLAN_OPTIONS") < zStack.length - 1 && dispatch(pushZStack("PLAN_OPTIONS"))}
-      anyDragging={anyDragging}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <OptionsMenuHeader focused={focused} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         Plan Options Menu
-      </OptionsMenuHeader>
-      <PlanOptionsBody>
-        <FidRow>
+      </div>
+      <div className={planOptionStyles.body}>
+        <div className={optionStyles.fidRow}>
           {entry.cid} {entry.aircraftId}
-        </FidRow>
+        </div>
         <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu("ALTITUDE_MENU")} />
         {!dep && <PlanOptionsRow title={Tooltips.planOptionsSpeed} content="Speed..." disabled />}
         <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu("ROUTE_MENU")} />
@@ -105,12 +98,12 @@ export const PlanOptions = () => {
             dispatch(closeWindow("PLAN_OPTIONS"));
           }}
         />
-        <OptionsBodyRow margin="0">
-          <OptionsBodyCol alignRight>
+        <div className={optionStyles.bottomRow}>
+          <div className={clsx(optionStyles.col, "right")}>
             <ExitButton onMouseDown={() => dispatch(closeWindow("PLAN_OPTIONS"))} />
-          </OptionsBodyCol>
-        </OptionsBodyRow>
-      </PlanOptionsBody>
-    </PlanOptionsDiv>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

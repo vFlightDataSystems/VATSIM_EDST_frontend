@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 
 import { useInterval } from "usehooks-ts";
-import styled, { ThemeProvider } from "styled-components";
 import { HubConnectionState } from "@microsoft/signalr";
 import { EdstHeader } from "components/EdstHeader";
 import { Acl } from "components/Acl";
@@ -18,8 +17,7 @@ import { HoldMenu } from "components/HoldMenu";
 import { MessageComposeArea } from "components/MessageComposeArea";
 import { MessageResponseArea } from "components/MessageResponseArea";
 import { TemplateMenu } from "components/TemplateMenu";
-import { SectorSelector } from "components/SectorSelector";
-import { aselIsNullSelector, showSectorSelectorSelector, windowsSelector } from "~redux/slices/appSlice";
+import { aselIsNullSelector, windowsSelector } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { ToolsMenu } from "components/tools-components/ToolsMenu";
 import { AltimeterWindow } from "components/AltimeterWindow";
@@ -28,7 +26,6 @@ import { refreshWeatherThunk } from "~redux/thunks/weatherThunks";
 import { EquipmentTemplateMenu } from "components/template-components/EquipmentTemplateMenu";
 import { SigmetWindow } from "components/SigmetWindow";
 import { Gpd } from "components/Gpd";
-import { EdstBodyDiv, EdstDiv } from "styles/edstStyles";
 import { GpdMapOptions } from "components/gpd-components/GpdMapOptions";
 import { updateSweatboxAircraftThunk } from "~redux/thunks/updateSweatboxAircraftThunk";
 import type { EdstWindow } from "types/edstWindow";
@@ -40,22 +37,10 @@ import { useHubActions } from "hooks/useHubActions";
 import { useHubConnection } from "hooks/useHubConnection";
 import { fetchAllAircraft } from "api/vNasDataApi";
 import { unsafeEntries } from "~/utility-functions";
-import { edstTheme } from "~/edstTheme";
 import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
-
-const NotConnectedDiv = styled.div`
-  font-family: "Consolas", monospace;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  z-index: 100000;
-  pointer-events: none;
-  color: ${(props) => props.theme.colors.yellow};
-`;
+import edstStyles from "css/edst.module.scss";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -100,7 +85,6 @@ const Edst = () => {
   const dispatch = useRootDispatch();
   const windows = useRootSelector(windowsSelector);
   const aselIsNull = useRootSelector(aselIsNullSelector);
-  const showSectorSelector = useRootSelector(showSectorSelectorSelector);
   const bodyRef = useRef<HTMLDivElement>(null);
   const hubConnection = useHubConnection();
   const hubActions = useHubActions();
@@ -114,26 +98,24 @@ const Edst = () => {
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
 
   return (
-    <ThemeProvider theme={edstTheme}>
-      <EdstDiv
-        ref={bodyRef}
-        onContextMenu={(event) => event.preventDefault()}
-        tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
-      >
-        <EdstHeader />
-        {hubConnection?.state !== HubConnectionState.Connected && <NotConnectedDiv>{NOT_CONNECTED_MSG}</NotConnectedDiv>}
-        <div id="toPrint" />
-        <EdstBodyDiv>
-          {showSectorSelector && <SectorSelector />}
-          {unsafeEntries(edstComponentMap).map(
-            ([edstWindow, Component]) =>
-              windows[edstWindow].open &&
-              (windowRequiresAselNotNull.includes(edstWindow) ? !aselIsNull && <Component key={edstWindow} /> : <Component key={edstWindow} />)
-          )}
-          <MessageComposeArea />
-        </EdstBodyDiv>
-      </EdstDiv>
-    </ThemeProvider>
+    <div
+      className={edstStyles.root}
+      ref={bodyRef}
+      onContextMenu={(event) => event.preventDefault()}
+      tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
+    >
+      <EdstHeader />
+      {hubConnection?.state !== HubConnectionState.Connected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
+      <div id="toPrint" />
+      <div className={edstStyles.body}>
+        {unsafeEntries(edstComponentMap).map(
+          ([edstWindow, Component]) =>
+            windows[edstWindow].open &&
+            (windowRequiresAselNotNull.includes(edstWindow) ? !aselIsNull && <Component key={edstWindow} /> : <Component key={edstWindow} />)
+        )}
+        <MessageComposeArea />
+      </div>
+    </div>
   );
 };
 

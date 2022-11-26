@@ -1,21 +1,18 @@
 import React from "react";
-import styled from "styled-components";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { closeAllMenus, closeWindow, gpdAselSelector } from "~redux/slices/appSlice";
-import { NoSelectDiv } from "styles/NoSelectDiv";
 import { gpdSuppressedSelector, gpdZoomLevelSelector, setGpdZoomLevel, toggleGpdSuppressed } from "~redux/slices/gpdSlice";
-import { EdstWindowHeaderRowDiv } from "styles/edstStyles";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
+import tableStyles from "css/table.module.scss";
+import clsx from "clsx";
 
 type GpdHeaderProps = {
   focused: boolean;
   toggleFullscreen: () => void;
   startDrag: React.MouseEventHandler<HTMLDivElement>;
 };
-
-const GpdDiv = styled(NoSelectDiv)``;
 
 export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderProps) => {
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
@@ -41,7 +38,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
   };
 
   return (
-    <GpdDiv>
+    <div className={tableStyles.header}>
       <WindowTitleBar
         focused={focused}
         toggleFullscreen={toggleFullscreen}
@@ -84,14 +81,14 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
           // title={Tooltips.gpdCleanUp}
         />
       </div>
-      <EdstWindowHeaderRowDiv>
+      <div className={clsx(tableStyles.headerRow)}>
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
         <EdstWindowHeaderButton onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdMapOptions" edstWindow="GPD_MAP_OPTIONS_MENU" content="Map Options..." />
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdToolsMenu" edstWindow="TOOLS_MENU" content="Tools..." />
         <EdstWindowHeaderButton disabled content="Saved Map" />
-      </EdstWindowHeaderRowDiv>
-    </GpdDiv>
+      </div>
+    </div>
   );
 };

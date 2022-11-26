@@ -1,0 +1,17 @@
+.tooltip {
+  width: auto;
+  height: auto;
+  position: absolute;
+  color: #ffffff;
+  background-color: #000000;
+  border: 1px solid #adad00;
+  padding: 2px;
+  font-size: 0.85em;
+  transform: translateY(32px);
+  z-index: 2000;
+  white-space: pre-line;
+}
+
+.tooltipContainer {
+  display: inline;
+}
