@@ -33,8 +33,9 @@ import FLIGHTAWARE_LOGO from "resources/images/FA_1.png";
 import SKYVECTOR_LOGO from "resources/images/glob_bright.png";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
 import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
-import routeStyles from "css/routeMenu.module.scss";
 import clsx from "clsx";
+import optionStyles from "css/optionMenu.module.scss";
+import routeStyles from "css/routeMenu.module.scss";
 
 type Append = { appendOplus: boolean; appendStar: boolean };
 const toggleAppendStar = (prev: Append) => ({
@@ -216,10 +217,10 @@ export const RouteMenu = () => {
       onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <div className={clsx(routeStyles.header, { focused })} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         Route Menu
       </div>
-      <div className={routeStyles.body}>
+      <div className={optionStyles.body}>
         <div className={routeStyles.fidRow}>
           {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
         </div>
@@ -340,7 +341,7 @@ export const RouteMenu = () => {
             clearedPrefroute={clearedPrefroute}
           />
         )}
-        <div className={clsx(routeStyles.row, "top-margin-14")}>
+        <div className={clsx(routeStyles.row, "bottomRow")}>
           <div className={routeStyles.col}>
             <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
             <EdstButton

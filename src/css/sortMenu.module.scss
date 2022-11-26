@@ -15,7 +15,7 @@
 .body {
   composes: body from "optionMenu.module.scss";
   @include borderStyles.border;
-  --padding: 4px 0 0 0;
+  --body-padding: 4px 4px 0 4px;
 }
 
 .sectorRow {
@@ -32,5 +32,6 @@
 .col {
   composes: col from "optionMenu.module.scss";
   @include borderStyles.borderHover;
+  height: 1.2em;
   padding: 0 6px;
 }

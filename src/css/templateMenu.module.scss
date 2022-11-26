@@ -9,7 +9,7 @@
 
 .body {
   composes: body from "optionMenu.module.scss";
-  --padding: 10px 0 2px 0;
+  --body-padding: 10px 0 2px 0;
 }
 
 .row {

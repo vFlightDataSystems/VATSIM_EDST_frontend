@@ -8,27 +8,25 @@
   --width: 570px;
 }
 
-.header {
-  composes: header from "optionMenu.module.scss";
-}
-
-.body {
-  composes: body from "optionMenu.module.scss";
-}
-
-.fidRow {
-  composes: fidRow from "optionMenu.module.scss";
-}
-
 .row {
   composes: row from "optionMenu.module.scss";
+  --padding: 0;
 
   &:global(.pad) {
     padding: 4px 0;
   }
 
-  &:global(.top-margin-14) {
+  &:global(.bottomRow) {
     margin-top: 14px;
+    margin-bottom: 2px;
+  }
+
+  :global(.topBorder) {
+    border-top: 1px solid #adadad;
+  }
+
+  :global(.bottomBorder) {
+    border-bottom: 1px solid #adadad;
   }
 }
 
@@ -108,7 +106,7 @@
 .dct {
   composes: col from "optionMenu.module.scss";
   @include borderStyles.borderHover;
-  max-width: 11ch!important;
+  max-width: 11ch;
   display: flex;
   flex-grow: 0;
   justify-content: flex-start;
@@ -126,9 +124,9 @@
 }
 
 .prefrouteRow {
-  composes: row from "optionMenu.module.scss";
-  padding: 0 0 0 10px!important;
-  margin: 0!important;
+  composes: row;
+  --padding: 0 0 0 10px;
+  margin: 0;
 }
 
 .prefrouteCol {

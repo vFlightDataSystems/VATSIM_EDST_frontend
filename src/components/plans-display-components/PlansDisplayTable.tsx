@@ -41,7 +41,7 @@ export const PlansDisplayTable = () => {
       {planQueue?.map((p, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <div className={tableStyles.row} key={i}>
-          <div className={clsx(pdStyles.col1, { selected: selectedPlanIndex === i })} onMouseDown={(event) => handleMouseDown(event, i)}>
+          <div className={clsx(pdStyles.fixCol, { selected: selectedPlanIndex === i })} onMouseDown={(event) => handleMouseDown(event, i)}>
             {p.cid} {p.aircraftId}
           </div>
           <div className={pdStyles.col}>{p.commandString.toUpperCase()}</div>

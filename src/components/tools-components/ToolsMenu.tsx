@@ -10,7 +10,6 @@ import { ExitButton } from "components/utils/EdstButton";
 import clsx from "clsx";
 import toolsStyles from "css/toolsMenu.module.scss";
 import optionStyles from "css/optionMenu.module.scss";
-import sortStyles from "css/sortMenu.module.scss";
 
 export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
@@ -37,7 +36,7 @@ export const ToolsMenu = () => {
       onMouseDown={() => zStack.indexOf("TOOLS_MENU") < zStack.length - 1 && dispatch(pushZStack("TOOLS_MENU"))}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <div className={clsx(sortStyles.header, { focused })} onMouseDown={startDrag}>
+      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
         {optionsMenuOpen ? "Options" : "Tools"} Menu
       </div>
       <div className={toolsStyles.body}>

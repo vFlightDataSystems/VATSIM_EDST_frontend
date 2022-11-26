@@ -83,15 +83,15 @@
   --bottom-right-color: #414141;
 
   background-color: #000000;
-  padding: var(--padding, 4px 0 0 0);
+  padding: var(--body-padding, 4px 0 0 0);
 }
 
 .row {
   display: flex;
   flex-grow: 1;
   justify-content: left;
-  border: none;
   overflow: hidden;
+  padding: var(--padding, 0);
 
   * a {
     height: auto;
@@ -144,27 +144,26 @@
   flex-grow: 1;
   flex-flow: row;
   font-size: inherit;
-  min-height: 1.2em;
   align-items: center;
   vertical-align: center;
   border: 1px solid transparent;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  margin: 0 4px;
+  margin: 0 2px;
   justify-content: flex-start;
 
   &:global(.right) {
     justify-content: right;
     display: flex;
-    margin: 0 4px 0 auto;
+    margin: 0 2px 0 auto;
   }
 
   &:global(.flex) {
     @include borderStyles.borderHover;
     display: flex;
     justify-content: left;
-    height: 1em;
+    height: 1.2em;
     padding: 0 5px;
   }
 
@@ -173,3 +172,4 @@
     background-color: #adadad;
   }
 }
+
