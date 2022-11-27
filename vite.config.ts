@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import svgrPlugin from "vite-plugin-svgr";
 import autoprefixer from "autoprefixer";
+import loadVersion from "vite-plugin-package-version";
 // import * as path from "path";
 
 // https://vitejs.dev/config/
@@ -19,7 +20,7 @@ export default defineConfig({
       plugins: [autoprefixer({})],
     },
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), loadVersion()],
   // resolve: {
   //   alias: {
   //     "react-dom/client": path.resolve("./node_modules/react-dom/profiling"),

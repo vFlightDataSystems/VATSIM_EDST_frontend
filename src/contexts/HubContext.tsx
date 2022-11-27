@@ -15,6 +15,7 @@ import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
 import { initThunk } from "~redux/thunks/initThunk";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
+import { VERSION } from "~/utils/constants";
 
 const ATC_SERVER_URL = import.meta.env.VITE_ATC_HUB_URL;
 
@@ -124,6 +125,8 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         dispatch(initThunk());
         await hubConnection.invoke<void>("joinSession", {
           sessionId: sessionInfo.id,
+          clientName: "vEDST",
+          clientVersion: VERSION,
         });
         console.log(`joined session ${sessionInfo.id}`);
         setHubConnected(true);

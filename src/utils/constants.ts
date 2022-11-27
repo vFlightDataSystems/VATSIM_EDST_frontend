@@ -19,6 +19,7 @@ export const REMOVAL_TIMEOUT = 120000;
 
 export const DOMAIN = import.meta.env.PROD ? import.meta.env.VITE_PROD_DOMAIN : import.meta.env.VITE_DOMAIN;
 export const VATSIM_CLIENT_ID = import.meta.env.PROD ? import.meta.env.VITE_PROD_VATSIM_CLIENT_ID : import.meta.env.VITE_VATSIM_CLIENT_ID;
+export const VERSION = import.meta.env.PACKAGE_VERSION;
 
 // FOR TESTING PROD LOCALLY
 // export const DOMAIN = import.meta.env.VITE_DOMAIN;
