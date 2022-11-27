@@ -43,6 +43,7 @@ import socket from "~socket";
 import { GI_EXPR } from "~/utils/constants";
 import { toggleAltimeter, toggleMetar } from "~redux/slices/weatherSlice";
 import { printFlightStrip } from "components/PrintableFlightStrip";
+import { appWindow } from "@tauri-apps/api/window";
 import mcaStyles from "css/mca.module.scss";
 import clsx from "clsx";
 
@@ -329,6 +330,16 @@ export const MessageComposeArea = () => {
 
   const handleKeyDown = (event: KeyboardEvent) => {
     // event.preventDefault();
+    if (event.key === "Enter" && event.altKey && window.__TAURI__) {
+      appWindow.isDecorated().then((isDecorated) => {
+        void appWindow.setDecorations(!isDecorated);
+      });
+    }
+    if (event.key === "Enter" && event.ctrlKey && window.__TAURI__) {
+      appWindow.isFullscreen().then((isFullscreen) => {
+        void appWindow.setFullscreen(!isFullscreen);
+      });
+    }
     if (document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" && !windows.ALTITUDE_MENU.open) {
       if (!windows.MESSAGE_COMPOSE_AREA.open) {
         dispatch(openWindowThunk("MESSAGE_COMPOSE_AREA"));
@@ -382,7 +393,7 @@ export const MessageComposeArea = () => {
   return windows.MESSAGE_COMPOSE_AREA.open ? (
     <>
       <div
-        className={clsx(mcaStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { isDragging: anyDragging })}
+        className={clsx(mcaStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { noPointerEvents: anyDragging })}
         style={{ "--brightness": windowOptions.brightness, ...pos, zIndex: 10000 + zIndex }}
         ref={ref}
         onMouseDown={onMcaMouseDown}
