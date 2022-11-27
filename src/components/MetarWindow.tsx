@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
 import { useMetar } from "api/weatherApi";
@@ -25,11 +25,9 @@ const MetarRow = ({ airport, selected, handleMouseDown, onDelete }: MetarRowProp
   const { data: airportMetar, isFetching } = useMetar(airport);
   const airportId = useRootSelector((state) => airportIdSelector(state, airport));
 
-  useEffect(() => {
-    if (!airportMetar && !isFetching) {
-      dispatch(delMetar(airport));
-    }
-  }, [isFetching, airportMetar, dispatch, airport]);
+  if (!airportMetar && !isFetching) {
+    dispatch(delMetar(airport));
+  }
 
   const zIndex = zStack.indexOf("METAR");
   const rect = ref.current?.getBoundingClientRect();
