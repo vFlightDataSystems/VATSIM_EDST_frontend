@@ -55,6 +55,7 @@
 .floatingOption {
   composes: header;
   @include borderStyles.borderHover;
+  font-size: 17px;
   padding-right: 1em;
   border: 1px solid #adadad;
   text-indent: 6px;
