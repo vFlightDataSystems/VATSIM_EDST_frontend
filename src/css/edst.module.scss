@@ -33,10 +33,14 @@
   width: 100vw;
   position: absolute;
   font-family: ERAM, monospace;
+
+  &:global(.bottom) {
+    bottom: 2px;
+  }
 }
 
 .headerRow {
-  margin-top: 2px;
+  margin-top: 1px;
   z-index: 20001;
   justify-content: space-between;
   height: auto;
@@ -98,7 +102,13 @@
     overflow-wrap: anywhere;
     /*caret: underscore;*/
   }
+
+  &:global(.bottom) {
+    top: 0;
+  }
 }
+
+
 
 .windowHeaderRow {
   border-bottom: 1px solid #adadad;

@@ -17,7 +17,7 @@ import { HoldMenu } from "components/HoldMenu";
 import { MessageComposeArea } from "components/MessageComposeArea";
 import { MessageResponseArea } from "components/MessageResponseArea";
 import { TemplateMenu } from "components/TemplateMenu";
-import { aselIsNullSelector, windowsSelector } from "~redux/slices/appSlice";
+import { aselIsNullSelector, headerTopSelector, windowsSelector } from "~redux/slices/appSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { ToolsMenu } from "components/tools-components/ToolsMenu";
 import { AltimeterWindow } from "components/AltimeterWindow";
@@ -41,6 +41,7 @@ import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
 import edstStyles from "css/edst.module.scss";
+import clsx from "clsx";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -88,6 +89,7 @@ const Edst = () => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const hubConnection = useHubConnection();
   const hubActions = useHubActions();
+  const headerTop = useRootSelector(headerTopSelector);
 
   useInterval(() => {
     fetchAllAircraft().then((aircraftList) => {
@@ -107,7 +109,7 @@ const Edst = () => {
       <EdstHeader />
       {hubConnection?.state !== HubConnectionState.Connected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
       <div id="toPrint" />
-      <div className={edstStyles.body}>
+      <div className={clsx(edstStyles.body, { bottom: !headerTop })}>
         {unsafeEntries(edstComponentMap).map(
           ([edstWindow, Component]) =>
             windows[edstWindow].open &&

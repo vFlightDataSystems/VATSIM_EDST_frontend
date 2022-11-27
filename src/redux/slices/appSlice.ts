@@ -50,6 +50,7 @@ type AppState = {
   asel: Nullable<Asel>;
   zStack: EdstWindow[];
   outages: OutageEntry[];
+  headerTop: boolean;
 };
 
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
@@ -83,12 +84,16 @@ const initialState: AppState = {
   asel: null,
   zStack: [],
   outages: [],
+  headerTop: true,
 };
 
 const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
+    setHeaderTop(state, action: PayloadAction<boolean>) {
+      state.headerTop = action.payload;
+    },
     closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
         action.payload.forEach((window) => {
@@ -228,6 +233,7 @@ export const toggleWindow = (edstWindow: EdstWindow): RootThunkAction => {
 };
 
 export const {
+  setHeaderTop,
   setIsFullscreen,
   setTooltipsEnabled,
   setWindowPosition,
@@ -262,3 +268,4 @@ export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
 export const tooltipsEnabledSelector = (state: RootState) => state.app.tooltipsEnabled;
+export const headerTopSelector = (state: RootState) => state.app.headerTop;

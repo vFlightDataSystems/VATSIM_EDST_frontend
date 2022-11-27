@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import React from "react";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
+import { headerTopSelector, setHeaderTop, toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
 import { planQueueSelector } from "~redux/slices/planSlice";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
 import type { EdstWindow } from "types/edstWindow";
@@ -53,6 +53,7 @@ export const EdstHeader = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
   const windows = useRootSelector(windowsSelector);
+  const headerTop = useRootSelector(headerTopSelector);
 
   const sectorId = useRootSelector(sectorIdSelector);
   const aclLen = useRootSelector(aclLenSelector);
@@ -61,11 +62,11 @@ export const EdstHeader = () => {
   const giLen = 0;
 
   return (
-    <div className={edstStyles.header}>
+    <div className={clsx(edstStyles.header, { bottom: !headerTop })}>
       <div className={edstStyles.headerRow}>
         <div className={edstStyles.headerCol}>
-          <button style={{ width: "1.6ch" }} disabled>
-            #
+          <button style={{ width: "1.6ch" }} onMouseDown={() => dispatch(setHeaderTop(!headerTop))}>
+            {headerTop ? "#" : "@"}
           </button>
           <button style={{ width: "6ch" }} className={clsx({ highlight: windows.MORE.open })} onMouseDown={() => dispatch(toggleWindow("MORE"))}>
             MORE

@@ -6,6 +6,7 @@
 
 .header {
   @include global.noSelect;
+  margin: 0;
 }
 
 .headerRow {

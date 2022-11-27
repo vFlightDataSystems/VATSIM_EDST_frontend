@@ -34,7 +34,7 @@ export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyC
 
   const onMouseDownHandler = () => zStack.indexOf(edstWindow) < zStack.length - 1 && !isFullscreen && dispatch(pushZStack(edstWindow));
   const position = isFullscreen ? {} : pos;
-  const dimension = isFullscreen ? { width: "calc(100% - 10px", height: "calc(100% - 10px)" } : dim;
+  const dimension = isFullscreen ? { width: "calc(100% - 7px", height: "calc(100% - 9px)" } : dim;
 
   return (
     <div

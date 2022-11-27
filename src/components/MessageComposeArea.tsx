@@ -334,13 +334,11 @@ export const MessageComposeArea = () => {
       appWindow.isDecorated().then((isDecorated) => {
         void appWindow.setDecorations(!isDecorated);
       });
-    }
-    if (event.key === "Enter" && event.ctrlKey && window.__TAURI__) {
+    } else if (event.key === "Enter" && event.ctrlKey && window.__TAURI__) {
       appWindow.isFullscreen().then((isFullscreen) => {
         void appWindow.setFullscreen(!isFullscreen);
       });
-    }
-    if (document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" && !windows.ALTITUDE_MENU.open) {
+    } else if (document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" && !windows.ALTITUDE_MENU.open) {
       if (!windows.MESSAGE_COMPOSE_AREA.open) {
         dispatch(openWindowThunk("MESSAGE_COMPOSE_AREA"));
       } else if (zStack.indexOf("MESSAGE_COMPOSE_AREA") < zStack.length - 1) {
