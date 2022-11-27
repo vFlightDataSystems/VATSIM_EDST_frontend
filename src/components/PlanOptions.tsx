@@ -25,7 +25,7 @@ type PlanOptionsRowProps = {
 };
 const PlanOptionsRow = ({ content, disabled, ...props }: PlanOptionsRowProps) => (
   <div className={optionStyles.row}>
-    <div className={clsx(optionStyles.col, "withHover", { isDisabled: disabled })} {...props}>
+    <div className={clsx(planOptionStyles.col, "withHover", { isDisabled: disabled })} {...props}>
       {content}
     </div>
   </div>

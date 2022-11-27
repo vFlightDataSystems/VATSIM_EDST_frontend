@@ -150,7 +150,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  margin: 0 2px;
+  margin: var(--col-margin, 0 2px);
   justify-content: flex-start;
 
   &:global(.right) {

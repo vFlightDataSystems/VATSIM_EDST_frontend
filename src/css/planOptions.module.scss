@@ -11,3 +11,11 @@
   composes: body from "optionMenu.module.scss";
   text-indent: 4px;
 }
+
+.col {
+  composes: col from "optionMenu.module.scss";
+  @include borderStyles.borderHover;
+  height: 1.2em;
+  --col-margin: 0 6px;
+  padding: 0 4px;
+}

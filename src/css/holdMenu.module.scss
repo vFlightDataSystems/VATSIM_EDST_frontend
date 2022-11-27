@@ -25,7 +25,7 @@
 }
 
 .leftCol {
-  composes: col from "optionMenu.module.scss";
+  display: flex;
   margin-left: 10px;
   flex-grow: 0;
   padding: 0;
