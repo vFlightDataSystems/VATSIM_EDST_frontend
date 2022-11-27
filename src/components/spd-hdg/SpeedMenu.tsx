@@ -91,7 +91,7 @@ export const SpeedMenu = () => {
 
   return (
     <div
-      className={clsx(speedStyles.root, { isDragging: anyDragging })}
+      className={clsx(speedStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("SPEED_MENU") }}
       onMouseDown={() => zStack.indexOf("SPEED_MENU") < zStack.length - 1 && dispatch(pushZStack("SPEED_MENU"))}

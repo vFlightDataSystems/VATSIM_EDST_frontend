@@ -35,7 +35,7 @@ export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps
 
   return (
     <div
-      className={clsx(optionStyles.root, { isDragging: anyDragging })}
+      className={clsx(optionStyles.root, { noPointerEvents: anyDragging })}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf(props.windowId), "--width": props.width }}
       ref={ref}
       onMouseDown={() => zStack.indexOf(props.windowId) < zStack.length - 1 && dispatch(pushZStack(props.windowId))}

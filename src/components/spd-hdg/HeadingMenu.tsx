@@ -81,7 +81,7 @@ export const HeadingMenu = () => {
 
   return (
     <div
-      className={clsx(headingStyles.root, { isDragging: anyDragging })}
+      className={clsx(headingStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("HEADING_MENU") }}
       onMouseDown={() => zStack.indexOf("HEADING_MENU") < zStack.length - 1 && dispatch(pushZStack("HEADING_MENU"))}

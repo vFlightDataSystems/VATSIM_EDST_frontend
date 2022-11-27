@@ -98,7 +98,7 @@ export const TemplateMenu = () => {
 
   return (
     <div
-      className={clsx(templateStyles.root, { isDragging: anyDragging })}
+      className={clsx(templateStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("TEMPLATE_MENU") }}
       onMouseDown={() => zStack.indexOf("TEMPLATE_MENU") < zStack.length - 1 && dispatch(pushZStack("TEMPLATE_MENU"))}

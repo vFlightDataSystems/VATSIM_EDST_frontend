@@ -53,7 +53,7 @@ export const MessageResponseArea = () => {
   return (
     <>
       <div
-        className={clsx(mraStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { isDragging: anyDragging })}
+        className={clsx(mraStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { noPointerEvents: anyDragging })}
         ref={ref}
         style={{ ...pos, zIndex: 10000 + zIndex, "--width": `${windowOptions.width}ch`, "--brightness": windowOptions.brightness / 100 }}
         onMouseDown={onMraMouseDown}

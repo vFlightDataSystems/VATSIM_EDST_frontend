@@ -30,7 +30,7 @@ export const ToolsMenu = () => {
 
   return (
     <div
-      className={clsx(optionStyles.root, { isDragging: anyDragging })}
+      className={clsx(optionStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...windowProps.position, zIndex: 10000 + zStack.indexOf("TOOLS_MENU") }}
       onMouseDown={() => zStack.indexOf("TOOLS_MENU") < zStack.length - 1 && dispatch(pushZStack("TOOLS_MENU"))}

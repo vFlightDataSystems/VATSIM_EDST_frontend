@@ -22,7 +22,7 @@ export const GpdMapOptions = () => {
 
   return (
     <div
-      className={clsx(optionStyles.root, { isDragging: anyDragging })}
+      className={clsx(optionStyles.root, { noPointerEvents: anyDragging })}
       style={{ ...windowProps.position, zIndex: 10000 + zStack.indexOf("GPD_MAP_OPTIONS_MENU") }}
       ref={ref}
       onMouseDown={() => zStack.indexOf("GPD_MAP_OPTIONS_MENU") < zStack.length - 1 && dispatch(pushZStack("GPD_MAP_OPTIONS_MENU"))}

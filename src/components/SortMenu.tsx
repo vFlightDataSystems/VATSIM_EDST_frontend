@@ -29,7 +29,7 @@ export const SortMenu = ({ menu, onSubmit, children }: SortMenuProps) => {
 
   return (
     <div
-      className={clsx(sortStyles.root, { isDragging: anyDragging })}
+      className={clsx(sortStyles.root, { noPointerEvents: anyDragging })}
       style={{ ...windowProps.position, zIndex: 10000 + zStack.indexOf(menu) }}
       ref={ref}
       onMouseDown={() => zStack.indexOf(menu) < zStack.length - 1 && dispatch(pushZStack(menu))}

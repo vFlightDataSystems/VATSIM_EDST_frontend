@@ -45,7 +45,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
 
   return (
     <div
-      className={clsx(floatingStyles.root, { isDragging: anyDragging })}
+      className={clsx(floatingStyles.root, { noPointerEvents: anyDragging })}
       style={{ ...pos, zIndex: 10000 + zIndex }}
       onMouseDown={() => zIndex < zStack.length - 1 && dispatch(pushZStack(edstWindow))}
       ref={ref}

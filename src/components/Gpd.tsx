@@ -29,7 +29,7 @@ export const Gpd = () => {
   return (
     <div
       ref={ref}
-      className={clsx(floatingStyles.root, "resizable", { isFullscreen, isDragging: anyDragging })}
+      className={clsx(floatingStyles.root, "resizable", { isFullscreen, noPointerEvents: anyDragging })}
       style={{ ...dimension, ...position, zIndex: 10000 + zStack.indexOf("GPD") }}
       onMouseDown={onMouseDownHandler}
     >

@@ -78,7 +78,7 @@ export const HoldMenu = () => {
 
   return (
     <div
-      className={clsx(holdStyles.root, { isDragging: anyDragging })}
+      className={clsx(holdStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("HOLD_MENU") }}
       onMouseDown={() => zStack.indexOf("HOLD_MENU") < zStack.length - 1 && dispatch(pushZStack("HOLD_MENU"))}

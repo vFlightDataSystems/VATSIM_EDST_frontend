@@ -39,7 +39,7 @@ export const FullscreenWindow = React.memo(({ edstWindow, HeaderComponent, BodyC
   return (
     <div
       ref={ref}
-      className={clsx(floatingStyles.root, "resizable", { isFullscreen, isDragging: anyDragging })}
+      className={clsx(floatingStyles.root, "resizable", { isFullscreen, noPointerEvents: anyDragging })}
       style={{ ...dimension, ...position, zIndex: 10000 + zStack.indexOf(edstWindow) }}
       onMouseDownCapture={onMouseDownHandler}
     >

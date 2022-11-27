@@ -62,7 +62,7 @@ export const PlanOptions = () => {
 
   return (
     <div
-      className={clsx(planOptionStyles.root, { isDragging: anyDragging })}
+      className={clsx(planOptionStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("PLAN_OPTIONS") }}
       onMouseDown={() => zStack.indexOf("PLAN_OPTIONS") < zStack.length - 1 && dispatch(pushZStack("PLAN_OPTIONS"))}

@@ -56,7 +56,7 @@ export const AclTable = () => {
         <div className={clsx(aclStyles.col1, "cOrange")}>A</div>
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div className={tableStyles.innerRow}>
-          <div className={clsx(tableStyles.fidCol)}>Flight ID</div>
+          <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
           <div className={aclStyles.paCol} title={Tooltips.aclHeaderPa}>
             PA
           </div>

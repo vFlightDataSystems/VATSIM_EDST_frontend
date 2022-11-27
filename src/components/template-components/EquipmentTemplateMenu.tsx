@@ -72,7 +72,7 @@ export const EquipmentTemplateMenu = () => {
 
   return (
     <div
-      className={clsx(eqpStyles.root, { isDragging: anyDragging })}
+      className={clsx(eqpStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("EQUIPMENT_TEMPLATE_MENU") }}
       onMouseDown={() => zStack.indexOf("EQUIPMENT_TEMPLATE_MENU") < zStack.length - 1 && dispatch(pushZStack("EQUIPMENT_TEMPLATE_MENU"))}

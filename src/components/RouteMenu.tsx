@@ -211,7 +211,7 @@ export const RouteMenu = () => {
 
   return (
     <div
-      className={clsx(routeStyles.root, { isDragging: anyDragging })}
+      className={clsx(routeStyles.root, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf("ROUTE_MENU") }}
       onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
