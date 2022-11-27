@@ -10,6 +10,7 @@ import { ExitButton } from "components/utils/EdstButton";
 import clsx from "clsx";
 import toolsStyles from "css/toolsMenu.module.scss";
 import optionStyles from "css/optionMenu.module.scss";
+import { useCenterCursor } from "hooks/useCenterCursor";
 
 export const ToolsMenu = () => {
   const dispatch = useRootDispatch();
@@ -18,6 +19,7 @@ export const ToolsMenu = () => {
   const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
   const ref = useRef(null);
   const focused = useFocused(ref);
+  useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TOOLS_MENU", "mouseup");
 
   const renderRow = (content: string, onMouseDown?: React.MouseEventHandler) => (
