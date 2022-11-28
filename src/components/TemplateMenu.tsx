@@ -18,15 +18,15 @@ import optionStyles from "css/optionMenu.module.scss";
 import templateStyles from "css/templateMenu.module.scss";
 import inputStyles from "css/input.module.scss";
 
-type TemplateInputProps = {
+type TemplateInputProps<T extends HTMLInputElement | HTMLTextAreaElement> = {
   title?: string;
   value: string | number;
   className?: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onChange: React.ChangeEventHandler<T>;
   rows?: number;
 };
 
-const TemplateInput = ({ title, className, ...props }: TemplateInputProps) => {
+const TemplateInput = ({ title, className, ...props }: TemplateInputProps<HTMLInputElement>) => {
   return (
     <div className={clsx(templateStyles.col, className)} title={title}>
       <div className={inputStyles.inputContainer}>
@@ -35,7 +35,7 @@ const TemplateInput = ({ title, className, ...props }: TemplateInputProps) => {
     </div>
   );
 };
-const TemplateTextArea = ({ title, ...props }: TemplateInputProps) => {
+const TemplateTextArea = ({ title, ...props }: TemplateInputProps<HTMLTextAreaElement>) => {
   return (
     <div className={clsx(templateStyles.col, "flexGrow")} title={title}>
       <div className={clsx(inputStyles.inputContainer, "flexGrow")}>
@@ -56,6 +56,13 @@ export const TemplateMenu = () => {
   const entry = useRootSelector(aselEntrySelector);
   const pos = useRootSelector((state) => windowPositionSelector(state, "TEMPLATE_MENU"));
   const zStack = useRootSelector(zStackSelector);
+  const ref = useRef<HTMLDivElement>(null);
+  const focused = useFocused(ref);
+  useCenterCursor(ref, [asel?.aircraftId]);
+  const { generateFrd } = useHubActions();
+
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TEMPLATE_MENU", "mouseup");
+
   // const [displayRawRoute, setDisplayRawRoute] = useState(false);
   // TODO: use normal formatted route
   const formattedRoute = entry ? formatRoute(entry.route) : "";
@@ -79,14 +86,6 @@ export const TemplateMenu = () => {
     (asel?.window === "DEP" ? (entry?.departure ? appendUpArrowToString(entry?.departure) : "") + route : route) ?? ""
   );
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? "");
-  const { generateFrd } = useHubActions();
-
-  const ref = useRef<HTMLDivElement>(null);
-  const focused = useFocused(ref);
-  useCenterCursor(ref, [asel?.aircraftId]);
-
-  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "TEMPLATE_MENU", "mouseup");
-
   useEffect(() => {
     async function updateFrd() {
       if (aircraftTrack) {
