@@ -23,7 +23,7 @@ export function probeConflict(ac1: ProbeConflictArgs, ac2: ProbeConflictArgs) {
       // minutes until the aircraft reaches intersection based on ground speed
       const timeToFix1 = length(routeToIntersection1, { units: "nauticalmiles" }) * (60 / ac1.track.groundSpeed);
       const timeToFix2 = length(routeToIntersection2, { units: "nauticalmiles" }) * (60 / ac2.track.groundSpeed);
-      if (timeToFix1 - timeToFix1 < 3) {
+      if (Math.abs(timeToFix1 - timeToFix2) < 3) {
         return [
           {
             routeToIntersection: routeToIntersection1,
