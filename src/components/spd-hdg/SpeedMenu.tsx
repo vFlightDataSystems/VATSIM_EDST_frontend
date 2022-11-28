@@ -8,7 +8,6 @@ import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 
 import clsx from "clsx";
@@ -123,7 +122,9 @@ export const SpeedMenu = () => {
         <div className={clsx(speedStyles.row2, "topBorder")} />
         <div className="bottomBorder">
           <div className={speedStyles.row}>
-            <EdstTooltip style={{ marginLeft: "0.5ch" }} content="KNOTS" title={Tooltips.aclSpdKnots} />
+            <div style={{ marginLeft: "0.5ch" }} title={Tooltips.aclSpdKnots}>
+              KNOTS
+            </div>
             <div style={{ justifyContent: "center", margin: "auto" }}>
               <EdstButton
                 margin="0 2px"
@@ -138,7 +139,9 @@ export const SpeedMenu = () => {
                 onMouseDown={() => setSign(sign === Sign.less ? Sign.none : Sign.less)}
               />
             </div>
-            <EdstTooltip style={{ marginRight: "0.5ch" }} content="MACH" title={Tooltips.aclSpdMach} />
+            <div style={{ marginRight: "0.5ch" }} title={Tooltips.aclSpdMach}>
+              MACH
+            </div>
           </div>
         </div>
         <div className="scrollContainer" onWheel={handleScroll}>

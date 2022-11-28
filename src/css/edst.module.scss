@@ -51,10 +51,6 @@
   z-index: 20001;
   display: inline-flex;
 
-  &:global(.bottomRow) {
-    margin-left: calc(7.6ch + 4px);
-  }
-
   button {
     @include borderStyles.borderHover;
     font-family: ERAM, monospace;
@@ -83,6 +79,10 @@
   }
 }
 
+.bottomCol {
+  margin-left: calc(7.6ch + 4px);
+}
+
 .body {
   overflow: hidden;
   position: absolute;
@@ -107,8 +107,6 @@
     top: 0;
   }
 }
-
-
 
 .windowHeaderRow {
   border-bottom: 1px solid #adadad;

@@ -2,7 +2,6 @@ import type { CSSProperties } from "react";
 import React, { useCallback, useRef } from "react";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import socket from "~socket";
 import type { EdstWindow } from "types/edstWindow";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
@@ -20,13 +19,11 @@ type EdstButtonProps = {
 } & EdstButtonCSSProps;
 export const EdstButton = ({ disabled, selected, margin = "0", title, onMouseDown, content, ...props }: EdstButtonProps) => {
   return (
-    <EdstTooltip title={title}>
-      <div style={{ margin }} className={clsx(buttonStyles.outerButton, { isDisabled: disabled })} onMouseDownCapture={onMouseDown}>
-        <div style={props} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
-          {content}
-        </div>
+    <div style={{ margin }} className={clsx(buttonStyles.outerButton, { isDisabled: disabled })} title={title} onMouseDown={onMouseDown}>
+      <div style={props} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
+        {content}
       </div>
-    </EdstTooltip>
+    </div>
   );
 };
 
@@ -50,22 +47,21 @@ export function EdstWindowHeaderButton({ onMouseDown, title, disabled, content, 
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <EdstTooltip title={title}>
-      <div
-        ref={ref}
-        className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
-        onMouseDownCapture={(event) => {
-          if (onMouseDown) {
-            onMouseDown(event);
-            event.stopPropagation();
-          }
-        }}
-      >
-        <div className={clsx(buttonStyles.innerButton)} style={{ width }}>
-          {content}
-        </div>
+    <div
+      ref={ref}
+      className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
+      title={title}
+      onMouseDownCapture={(event) => {
+        if (onMouseDown) {
+          onMouseDown(event);
+          event.stopPropagation();
+        }
+      }}
+    >
+      <div className={clsx(buttonStyles.innerButton)} style={{ width }}>
+        {content}
       </div>
-    </EdstTooltip>
+    </div>
   );
 }
 
@@ -91,32 +87,29 @@ export function EdstWindowHeaderButtonWithSharedEvent({
   useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler);
 
   return (
-    <EdstTooltip title={title}>
-      <div
-        ref={ref}
-        className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
-        onMouseDownCapture={(event) => {
-          dispatch(openMenuThunk(edstWindow, event.currentTarget));
-          if (sharedUiEventId) {
-            socket.dispatchUiEvent(sharedUiEventId);
-          }
-          event.stopPropagation();
-        }}
-      >
-        <div className={clsx(buttonStyles.innerButton)}>{content}</div>
-      </div>
-    </EdstTooltip>
+    <div
+      ref={ref}
+      className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
+      title={title}
+      onMouseDown={(event) => {
+        dispatch(openMenuThunk(edstWindow, event.currentTarget));
+        if (sharedUiEventId) {
+          socket.dispatchUiEvent(sharedUiEventId);
+        }
+        event.stopPropagation();
+      }}
+    >
+      <div className={clsx(buttonStyles.innerButton)}>{content}</div>
+    </div>
   );
 }
 
 const HoldDirButton = ({ width, disabled, selected, ...props }: Omit<EdstButtonProps, "margin">) => (
-  <EdstTooltip title={props.title}>
-    <div className={clsx(buttonStyles.outerButton, "holdDirButton", { isDisabled: disabled })} onMouseDownCapture={props.onMouseDown}>
-      <div style={{ width }} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
-        {props.content}
-      </div>
+  <div className={clsx(buttonStyles.outerButton, "holdDirButton", { isDisabled: disabled })} title={props.title} onMouseDown={props.onMouseDown}>
+    <div style={{ width }} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
+      {props.content}
     </div>
-  </EdstTooltip>
+  </div>
 );
 export const HoldDirButton2ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2ch" {...props} />;
 export const HoldDirButton22ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2.2ch" {...props} />;

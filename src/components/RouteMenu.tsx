@@ -27,7 +27,6 @@ import { getClearedToFixRouteFixes } from "~/utils/fixes";
 import socket from "~socket";
 import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
 import FLIGHTAWARE_LOGO from "resources/images/FA_1.png";
 import SKYVECTOR_LOGO from "resources/images/glob_bright.png";
@@ -273,17 +272,17 @@ export const RouteMenu = () => {
           <div className={routeStyles.col}>
             <div className={routeStyles.inputContainer}>
               {!(asel.window === "DEP") && (
-                <EdstTooltip title={Tooltips.routeMenuFrd}>
-                  <div className={routeStyles.ppos}>{frd}..</div>
-                </EdstTooltip>
+                <div className={routeStyles.ppos} title={Tooltips.routeMenuFrd}>
+                  {frd}..
+                </div>
               )}
-              <input value={routeInput} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={(event) => handleInputKeyDown(event)} />
+              <input value={routeInput} spellCheck={false} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={handleInputKeyDown} />
             </div>
           </div>
         </div>
         <div className={clsx(routeStyles.row, "pad", "topBorder")}>
           <div className={clsx(routeStyles.buttonCol, "isDisabled")} title={Tooltips.routeMenuPar}>
-            <div className={clsx(routeStyles.indicator, "isDisabled", "s9")} />
+            <div className={clsx(routeStyles.indicator, "s9")} />
             Include PAR
           </div>
         </div>
@@ -311,9 +310,9 @@ export const RouteMenu = () => {
             Append {OPLUS_SYMBOL}
           </div>
         </div>
-        <EdstTooltip title={Tooltips.routeMenuDirectFix}>
-          <div className={routeStyles.underlineRow}>Direct-To-Fix</div>
-        </EdstTooltip>
+        <div className={routeStyles.underlineRow} title={Tooltips.routeMenuDirectFix}>
+          Direct-To-Fix
+        </div>
         <div className={routeStyles.row}>
           <div className={routeStyles.route}>
             {asel.window === "DEP" ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
@@ -341,7 +340,7 @@ export const RouteMenu = () => {
             clearedPrefroute={clearedPrefroute}
           />
         )}
-        <div className={clsx(routeStyles.row, "bottomRow")}>
+        <div className={clsx(routeStyles.row, routeStyles.bottomRow)}>
           <div className={routeStyles.col}>
             <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
             <EdstButton

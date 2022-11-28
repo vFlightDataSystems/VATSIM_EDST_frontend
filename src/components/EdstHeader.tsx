@@ -7,7 +7,6 @@ import { planQueueSelector } from "~redux/slices/planSlice";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
 import type { EdstWindow } from "types/edstWindow";
 import { openWindowThunk } from "~redux/thunks/openWindowThunk";
-import { EdstTooltip } from "components/utils/EdstTooltip";
 import { Time } from "components/utils/Time";
 import { aclLenSelector, depLenSelector, sigmetLenSelector } from "~redux/selectors";
 import edstStyles from "css/edst.module.scss";
@@ -39,11 +38,16 @@ const EdstHeaderButton = ({ title, content, disabled, window, ...props }: EdstHe
   };
 
   return (
-    <EdstTooltip title={title}>
-      <button style={props} type="button" onMouseDown={mouseDownHandler} disabled={disabled} className={clsx({ highlight: edstWindow.open })}>
-        {content}
-      </button>
-    </EdstTooltip>
+    <button
+      style={props}
+      type="button"
+      onMouseDown={mouseDownHandler}
+      title={title}
+      disabled={disabled}
+      className={clsx({ highlight: edstWindow.open })}
+    >
+      {content}
+    </button>
   );
 };
 
@@ -132,7 +136,7 @@ export const EdstHeader = () => {
       </div>
       {windows.MORE.open && (
         <div className={edstStyles.headerRow}>
-          <div className={clsx(edstStyles.headerCol, "bottomRow")}>
+          <div className={clsx(edstStyles.headerCol, edstStyles.bottomCol)}>
             <EdstHeaderButton
               window="WIND"
               content="WIND"

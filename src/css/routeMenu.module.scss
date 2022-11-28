@@ -11,23 +11,14 @@
 .row {
   composes: row from "optionMenu.module.scss";
   --padding: 0;
-
   &:global(.pad) {
-    padding: 4px 0;
+    padding: 4px 2px;
   }
+}
 
-  &:global(.bottomRow) {
-    margin-top: 14px;
-    margin-bottom: 2px;
-  }
-
-  :global(.topBorder) {
-    border-top: 1px solid #adadad;
-  }
-
-  :global(.bottomBorder) {
-    border-bottom: 1px solid #adadad;
-  }
+.bottomRow {
+  margin-top: 14px;
+  margin-bottom: 2px;
 }
 
 .underlineRow {
@@ -113,6 +104,11 @@
   height: 1.1em;
   padding: 0 4px;
   margin: auto 12px!important;
+}
+
+.pContainer {
+  border-top: 1px solid #adadad;
+  margin-top: 8px;
 }
 
 .prefrouteContainer {

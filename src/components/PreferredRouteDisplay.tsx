@@ -8,6 +8,7 @@ import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { EdstButton } from "components/utils/EdstButton";
 import socket from "~socket";
 import routeStyles from "css/routeMenu.module.scss";
+import clsx from "clsx";
 
 type PreferredRouteDisplayProps = {
   par: ApiPreferentialArrivalRoute[];
@@ -45,8 +46,8 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
   useSharedUiListener("routeMenuSetEligibleOnly", setEligibleOnly);
 
   return (
-    <div>
-      <div className={routeStyles.row} />
+    <div className={routeStyles.pContainer}>
+      <div className={clsx(routeStyles.row, "topBorder")} />
       <div className={routeStyles.underlineRow}>Apply ATC Preferred Route</div>
       <div className={routeStyles.row}>
         <div className={routeStyles.col}>
