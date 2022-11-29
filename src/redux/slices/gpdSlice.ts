@@ -6,7 +6,7 @@ import type { Nullable } from "types/utility-types";
 import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
 
-export const GPD_MIN_ZOOM = 4;
+export const GPD_MIN_ZOOM = 6;
 export const GPD_MAX_ZOOM = 9;
 
 const BOSCenter = { lat: 42.362944444444445, lng: -71.00638888888889 };

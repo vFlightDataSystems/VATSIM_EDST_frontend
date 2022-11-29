@@ -7,6 +7,7 @@ import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "c
 import { WindowTitleBar } from "components/WindowTitleBar";
 import tableStyles from "css/table.module.scss";
 import clsx from "clsx";
+import { ZOOM_SNAP } from "components/Gpd";
 
 type GpdHeaderProps = {
   focused: boolean;
@@ -23,10 +24,10 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
   const handleRangeClick = (event: React.MouseEvent) => {
     switch (event.button) {
       case 0:
-        dispatch(setGpdZoomLevel(zoomLevel + 1));
+        dispatch(setGpdZoomLevel(zoomLevel + ZOOM_SNAP));
         break;
       case 1:
-        dispatch(setGpdZoomLevel(zoomLevel - 1));
+        dispatch(setGpdZoomLevel(zoomLevel - ZOOM_SNAP));
         break;
       default:
         break;
@@ -83,7 +84,7 @@ export const GpdHeader = ({ focused, toggleFullscreen, startDrag }: GpdHeaderPro
       </div>
       <div className={clsx(tableStyles.headerRow)}>
         <EdstWindowHeaderButton disabled content="Recenter" title={Tooltips.planOptions} />
-        <EdstWindowHeaderButton onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
+        <EdstWindowHeaderButton width="11ch" onMouseDown={handleRangeClick} content={`Range ${zoomLevel}`} />
         <EdstWindowHeaderButton content={!suppressed ? "Suppress" : "Restore"} onMouseDown={handleSuppressClick} width="84px" />
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdMapOptions" edstWindow="GPD_MAP_OPTIONS_MENU" content="Map Options..." />
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openGpdToolsMenu" edstWindow="TOOLS_MENU" content="Tools..." />

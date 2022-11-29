@@ -16,8 +16,7 @@ import {
 import { useArtccBoundaries } from "api/gpdApi";
 import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "components/GpdMapElements";
 import gpdStyles from "css/gpd.module.scss";
-
-const ZOOM_DELTA = 0.5;
+import { ZOOM_SNAP } from "components/Gpd";
 
 const MapConfigurator = () => {
   const dispatch = useRootDispatch();
@@ -25,15 +24,18 @@ const MapConfigurator = () => {
   const map = useMap();
 
   useEffect(() => {
+    map.on("moveend", () => {
+      dispatch(setGpdZoomLevel(map.getZoom()));
+      dispatch(setGpdCenter(map.getCenter()));
+    });
+  }, [dispatch, map]);
+
+  useEffect(() => {
     if (map.getZoom() !== zoomLevel) {
       map.setZoom(zoomLevel);
     }
   }, [map, zoomLevel]);
 
-  map.on("moveend", () => {
-    dispatch(setGpdZoomLevel(map.getZoom()));
-    dispatch(setGpdCenter(map.getCenter()));
-  });
   return null;
 };
 
@@ -51,16 +53,18 @@ export const GpdBody = () => {
     <div className={gpdStyles.body}>
       <MapContainer
         center={center}
+        preferCanvas
         placeholder
         keyboard={false}
         doubleClickZoom={false}
         zoomControl={false}
         zoomAnimation={false}
+        inertia={false}
         zoom={zoomLevel}
         maxZoom={GPD_MAX_ZOOM}
         minZoom={GPD_MIN_ZOOM}
-        zoomDelta={ZOOM_DELTA}
-        inertia={false}
+        zoomSnap={ZOOM_SNAP}
+        zoomDelta={ZOOM_SNAP}
       >
         <MapConfigurator />
         {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}

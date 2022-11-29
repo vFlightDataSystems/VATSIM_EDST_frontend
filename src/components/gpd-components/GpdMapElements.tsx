@@ -1,6 +1,6 @@
 import type { GeoJSON } from "react-leaflet";
 import { Marker, Polyline, useMap } from "react-leaflet";
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo, useLayoutEffect } from "react";
 import type { Position } from "@turf/turf";
 import L from "leaflet";
 import { useBoolean } from "usehooks-ts";
@@ -18,6 +18,7 @@ import { colors } from "~/colors";
 import { GpdDataBlock } from "components/GpdDataBlock";
 import { fixIcon, trackIcon, vorIcon } from "components/LeafletIcons";
 import "leaflet.vectorgrid";
+import { GPD_MAX_ZOOM } from "~redux/slices/gpdSlice";
 
 function posToLatLng(pos: Position | { lat: number | string; lon: number | string }): L.LatLngExpression {
   if (Array.isArray(pos)) {
@@ -61,7 +62,7 @@ const slicedOptions = {
   // vector grid options
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  rendererFactory: L.svg.tile,
+  rendererFactory: L.canvas.tile,
   interactive: false,
   vectorTileLayerStyles: {
     sliced: {
@@ -70,21 +71,21 @@ const slicedOptions = {
       fillColor: "#000000",
       color: "#adadad",
       fillOpacity: 0,
-      opacity: 0.5,
+      opacity: 1,
     },
   },
   // slicer options
   vectorTileLayerName: "sliced",
   // geojson-vt options.
-  maxZoom: 10, // max zoom to preserve detail on; can't be higher than 24
+  maxZoom: GPD_MAX_ZOOM, // max zoom to preserve detail on; can't be higher than 24
   tolerance: 3, // simplification tolerance (higher means simpler)
-  extent: 4096, // tile extent (both width and height)
-  buffer: 64, // tile buffer on each side
+  extent: 8192, // tile extent (both width and height)
+  buffer: 256, // tile buffer on each side
   debug: 0, // logging level (0 to disable, 1 or 2)
   lineMetrics: false, // whether to enable line metrics tracking for LineString/MultiLineString features
   promoteId: null, // name of a feature property to promote to feature.id. Cannot be used with `generateId`
   generateId: false, // whether to generate feature ids. Cannot be used with `promoteId`
-  indexMaxZoom: 4, // max zoom in the initial tile index
+  indexMaxZoom: GPD_MAX_ZOOM, // max zoom in the initial tile index
   indexMaxPoints: 1000, // max number of points per tile in the index
 };
 
@@ -98,7 +99,7 @@ export const GpdPolygon = ({ data }: GpdPolygonProps) => {
   const slicerVectorGrid = useMemo(() => L.vectorGrid.slicer(data, slicedOptions), [data]);
 
   // add vectorGrid to map
-  useEffect(() => {
+  useLayoutEffect(() => {
     map.addLayer(slicerVectorGrid);
     return () => {
       map.removeLayer(slicerVectorGrid);
