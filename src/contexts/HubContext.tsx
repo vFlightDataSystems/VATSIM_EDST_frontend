@@ -16,8 +16,9 @@ import { initThunk } from "~redux/thunks/initThunk";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
+import { clientHubUrl } from "~/config";
 
-const ATC_SERVER_URL = import.meta.env.VITE_ATC_HUB_URL;
+const HUB_URL = clientHubUrl;
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -39,7 +40,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const { disconnectSocket } = useSocketConnector();
 
   useEffect(() => {
-    if (!ATC_SERVER_URL || !vatsimToken) {
+    if (!HUB_URL || !vatsimToken) {
       return;
     }
 
@@ -52,7 +53,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     ref.current = new HubConnectionBuilder()
-      .withUrl(ATC_SERVER_URL, {
+      .withUrl(HUB_URL, {
         accessTokenFactory: getValidNasToken,
         transport: HttpTransportType.WebSockets,
         skipNegotiation: true,
@@ -62,7 +63,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   }, [vatsimToken]);
 
   const connectHub = useCallback(async () => {
-    if (!ATC_SERVER_URL || !vatsimToken || hubConnected || !ref.current) {
+    if (!HUB_URL || !vatsimToken || hubConnected || !ref.current) {
       if (hubConnected) {
         throw new Error("ALREADY CONNECTED");
       }
