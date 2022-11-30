@@ -8,7 +8,6 @@ import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { EdstButton } from "components/utils/EdstButton";
 import socket from "~socket";
 import routeStyles from "css/routeMenu.module.scss";
-import clsx from "clsx";
 
 type PreferredRouteDisplayProps = {
   aar: ApiAdaptedArrivalRoute[];
@@ -47,7 +46,7 @@ export const PreferredRouteDisplay = ({ aar, adr, adar, clearedPrefroute }: Pref
 
   return (
     <div className={routeStyles.pContainer}>
-      <div className={clsx(routeStyles.row, "topBorder")} />
+      <div className={routeStyles.row} />
       <div className={routeStyles.underlineRow}>Apply ATC Preferred Route</div>
       <div className={routeStyles.row}>
         <div className={routeStyles.col}>
