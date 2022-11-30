@@ -2,16 +2,15 @@
    hooks corresponding to the defined endpoints */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { GeoJSON } from "react-leaflet";
-
-const url = "https://data-api.virtualnas.net/Files/";
+import { artccBoundariesUrl } from "~/config";
 
 // Define a service using a base URL and expected endpoints
 export const gpdApi = createApi({
   reducerPath: "gpdApi",
-  baseQuery: fetchBaseQuery({ baseUrl: url }),
+  baseQuery: fetchBaseQuery({ baseUrl: "" }),
   endpoints: (builder) => ({
     getArtccBoundaries: builder.query<GeoJSON.FeatureCollection, Record<never, never>>({
-      query: () => ({ url: "ArtccBoundaries.geojson" }),
+      query: () => ({ url: artccBoundariesUrl }),
     }),
   }),
 });

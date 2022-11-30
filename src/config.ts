@@ -14,3 +14,4 @@ if (!env) {
 }
 export const clientHubUrl = env.clientHubUrl;
 export const apiBaseUrl = env.apiBaseUrl;
+export const artccBoundariesUrl = config.artccBoundariesUrl;
