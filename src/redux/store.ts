@@ -35,7 +35,12 @@ const store = configureStore({
     [gpdApi.reducerPath]: gpdApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }).concat([prefrouteApi.middleware, aircraftApi.middleware, weatherApi.middleware]),
+    getDefaultMiddleware({ serializableCheck: false }).concat([
+      prefrouteApi.middleware,
+      aircraftApi.middleware,
+      weatherApi.middleware,
+      gpdApi.middleware,
+    ]),
 });
 export default store;
 
