@@ -84,7 +84,7 @@ export function EdstWindowHeaderButtonWithSharedEvent({
     },
     [dispatch, edstWindow]
   );
-  useSharedUiListenerWithElement(sharedUiEventId, ref.current, sharedUiEventHandler);
+  useSharedUiListenerWithElement(ref, sharedUiEventId, sharedUiEventHandler);
 
   return (
     <div

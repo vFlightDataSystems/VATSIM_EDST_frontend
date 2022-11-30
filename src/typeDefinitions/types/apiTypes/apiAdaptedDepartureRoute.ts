@@ -1,9 +1,10 @@
-export type ApiPreferentialDepartureArrivalRoute = {
-  route: string;
+export type ApiAdaptedDepartureRoute = {
   departure: string;
-  destination: string;
+  amendment: string;
+  triggeredFix: string;
   eligible: boolean;
   rnavRequired: boolean;
+  truncatedRoute: string;
   order: number;
   routeGroups: string[];
 };

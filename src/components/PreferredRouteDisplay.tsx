@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Tooltips } from "~/tooltips";
-import type { ApiPreferentialArrivalRoute } from "types/apiTypes/apiPreferentialArrivalRoute";
-import type { ApiPreferentialDepartureRoute } from "types/apiTypes/apiPreferentialDepartureRoute";
-import type { ApiPreferentialDepartureArrivalRoute } from "types/apiTypes/apiPreferentialDepartureArrivalRoute";
-import type { EdstPreferentialRoute } from "types/edstPreferentialRoute";
+import type { ApiAdaptedArrivalRoute } from "types/apiTypes/apiAdaptedArrivalRoute";
+import type { ApiAdaptedDepartureRoute } from "types/apiTypes/apiAdaptedDepartureRoute";
+import type { ApiAdaptedDepartureArrivalRoute } from "types/apiTypes/apiAdaptedDepartureArrivalRoute";
+import type { EdstAdaptedRoute } from "types/edstAdaptedRoute";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { EdstButton } from "components/utils/EdstButton";
 import socket from "~socket";
@@ -11,36 +11,36 @@ import routeStyles from "css/routeMenu.module.scss";
 import clsx from "clsx";
 
 type PreferredRouteDisplayProps = {
-  par: ApiPreferentialArrivalRoute[];
-  pdr: ApiPreferentialDepartureRoute[];
-  pdar: ApiPreferentialDepartureArrivalRoute[];
-  clearedPrefroute: (prefRoute: EdstPreferentialRoute) => void;
+  aar: ApiAdaptedArrivalRoute[];
+  adr: ApiAdaptedDepartureRoute[];
+  adar: ApiAdaptedDepartureArrivalRoute[];
+  clearedPrefroute: (prefRoute: EdstAdaptedRoute) => void;
 };
 
 function computeRouteList(
-  par: ApiPreferentialArrivalRoute[],
-  pdr: ApiPreferentialDepartureRoute[],
-  pdar: ApiPreferentialDepartureArrivalRoute[]
-): EdstPreferentialRoute[] {
-  return pdar
+  aar: ApiAdaptedArrivalRoute[],
+  adr: ApiAdaptedDepartureRoute[],
+  adar: ApiAdaptedDepartureArrivalRoute[]
+): EdstAdaptedRoute[] {
+  return adar
     .map((r) => {
-      return { ...r, routeType: "pdar" } as EdstPreferentialRoute;
+      return { ...r, routeType: "adar" } as EdstAdaptedRoute;
     })
     .concat(
-      pdr.map((r) => {
-        return { ...r, routeType: "pdr" } as EdstPreferentialRoute;
+      adr.map((r) => {
+        return { ...r, routeType: "adr" } as EdstAdaptedRoute;
       })
     )
     .concat(
-      par.map((r) => {
-        return { ...r, routeType: "par" } as EdstPreferentialRoute;
+      aar.map((r) => {
+        return { ...r, routeType: "aar" } as EdstAdaptedRoute;
       })
     );
 }
 
-export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: PreferredRouteDisplayProps) => {
+export const PreferredRouteDisplay = ({ aar, adr, adar, clearedPrefroute }: PreferredRouteDisplayProps) => {
   const [eligibleOnly, setEligibleOnly] = useState(false);
-  const routes = computeRouteList(par, pdr, pdar);
+  const routes = computeRouteList(aar, adr, adar);
   const eligibleRoutes = routes.filter((r) => r.eligible);
 
   useSharedUiListener("routeMenuSetEligibleOnly", setEligibleOnly);
@@ -85,9 +85,9 @@ export const PreferredRouteDisplay = ({ par, pdr, pdar, clearedPrefroute }: Pref
               // eslint-disable-next-line react/no-array-index-key
               <div className={routeStyles.prefrouteRow} key={i}>
                 <div className={routeStyles.prefrouteCol} onMouseDown={() => clearedPrefroute(route)}>
-                  {route.routeType === "pdr" || route.routeType === "pdar" ? route.departure : ""}
-                  {route.routeType === "pdar" ? route.route : route.amendment}
-                  {route.routeType === "par" || route.routeType === "pdar" ? route.destination : ""}
+                  {route.routeType === "adr" || route.routeType === "adar" ? route.departure : ""}
+                  {route.routeType === "adar" ? route.route : route.amendment}
+                  {route.routeType === "aar" || route.routeType === "adar" ? route.destination : ""}
                 </div>
               </div>
             )

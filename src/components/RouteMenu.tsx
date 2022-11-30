@@ -9,7 +9,7 @@ import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "~redux/slices/appSlice";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
-import type { EdstPreferentialRoute } from "types/edstPreferentialRoute";
+import type { EdstAdaptedRoute } from "types/edstAdaptedRoute";
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
@@ -18,7 +18,7 @@ import { useFocused } from "hooks/useFocused";
 import { useHubActions } from "hooks/useHubActions";
 import { OPLUS_SYMBOL } from "~/utils/constants";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
-import { usePar, usePdar, usePdr } from "api/prefrouteApi";
+import { useAar, useAdar, useAdr } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
 import { formatRoute } from "~/utils/formatRoute";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
@@ -61,9 +61,9 @@ export const RouteMenu = () => {
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "ROUTE_MENU", "mouseup");
   useCenterCursor(ref, [asel.aircraftId]);
 
-  const pdrs = usePdr(entry.aircraftId);
-  const pdars = usePdar(entry.aircraftId);
-  const pars = usePar(entry.aircraftId);
+  const adrs = useAdr(entry.aircraftId);
+  const adars = useAdar(entry.aircraftId);
+  const aars = useAar(entry.aircraftId);
 
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
@@ -105,9 +105,9 @@ export const RouteMenu = () => {
     }
   }
 
-  let routesAvailable = pars.length > 0;
+  let routesAvailable = aars.length > 0;
   if (asel.window === "DEP") {
-    routesAvailable = routesAvailable || pdrs.length > 0 || pdars.length > 0;
+    routesAvailable = routesAvailable || adrs.length > 0 || adars.length > 0;
   }
 
   const amendPrefroute = async (amendedFlightplan: CreateOrAmendFlightplanDto) => {
@@ -127,18 +127,18 @@ export const RouteMenu = () => {
     }
   };
 
-  const clearedPrefroute = async (prefRoute: EdstPreferentialRoute) => {
+  const clearedPrefroute = async (prefRoute: EdstAdaptedRoute) => {
     let amendedFlightplan: CreateOrAmendFlightplanDto;
-    if (prefRoute.routeType === "pdar") {
+    if (prefRoute.routeType === "adar") {
       amendedFlightplan = { ...entry, route: prefRoute.route };
       await amendPrefroute(amendedFlightplan);
-    } else if (prefRoute.routeType === "pdr") {
+    } else if (prefRoute.routeType === "adr") {
       amendedFlightplan = {
         ...entry,
         route: prefRoute.amendment.split(".").join(" ") + prefRoute.truncatedRoute,
       };
       await amendPrefroute(amendedFlightplan);
-    } else if (prefRoute.routeType === "par") {
+    } else if (prefRoute.routeType === "aar") {
       amendedFlightplan = {
         ...entry,
         route: prefRoute.truncatedRoute + prefRoute.amendment.split(".").join(" "),
@@ -334,9 +334,9 @@ export const RouteMenu = () => {
         ))}
         {routesAvailable && (
           <PreferredRouteDisplay
-            par={pars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
-            pdr={asel.window === "DEP" ? pdrs : []}
-            pdar={asel.window === "DEP" ? pdars : []}
+            aar={aars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+            adr={asel.window === "DEP" ? adrs : []}
+            adar={asel.window === "DEP" ? adars : []}
             clearedPrefroute={clearedPrefroute}
           />
         )}
