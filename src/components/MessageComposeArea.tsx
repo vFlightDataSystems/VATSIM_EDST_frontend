@@ -392,7 +392,7 @@ export const MessageComposeArea = () => {
     <>
       <div
         className={clsx(mcaStyles.root, `fontSize${windowOptions.fontSizeIndex}`, { noPointerEvents: anyDragging })}
-        style={{ "--brightness": windowOptions.brightness, ...pos, zIndex: 10000 + zIndex }}
+        style={{ "--brightness": windowOptions.brightness / 100, ...pos, zIndex: 10000 + zIndex }}
         ref={ref}
         onMouseDown={onMcaMouseDown}
       >
