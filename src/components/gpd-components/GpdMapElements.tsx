@@ -145,7 +145,7 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
         }}
       >
         {showDataBlock && entry && (
-          <GpdDataBlock entry={entry} offset={datablockOffset} setOffset={setDatablockOffset} toggleShowRoute={toggleShowRoute} />
+          <GpdDataBlock aircraftId={aircraftId} offset={datablockOffset} setOffset={setDatablockOffset} toggleShowRoute={toggleShowRoute} />
         )}
       </Marker>
       {showRoute && routeLine && (

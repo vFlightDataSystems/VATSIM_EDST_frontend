@@ -21,7 +21,7 @@ export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activat
           typeCode: aircraft.typeCode,
           lastUpdated: new Date(aircraft.lastUpdatedAt).getTime(),
         };
-        if (entry.status !== "Active") {
+        if (entry.status !== "Active" && newTracks[aircraftId].groundSpeed > 40) {
           activateFlightplan(aircraftId);
         }
       }

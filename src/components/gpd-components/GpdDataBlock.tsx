@@ -4,7 +4,6 @@ import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
 import type { Nullable } from "types/utility-types";
 import { aircraftIsAselSelector, anyDraggingSelector, setAnyDragging } from "~redux/slices/appSlice";
-import type { EdstEntry } from "types/edstEntry";
 import { gpdAircraftSelect } from "~redux/thunks/aircraftSelect";
 import type { EdstWindow } from "types/edstWindow";
 import type { AclRowField } from "types/acl/aclRowField";
@@ -17,6 +16,9 @@ import type { DataBlockOffset } from "components/GpdMapElements";
 import { LeaderLine } from "components/LeaderLine";
 import gpdStyles from "css/gpd.module.scss";
 import clsx from "clsx";
+import type { AircraftId } from "types/aircraftId";
+import { entrySelector } from "~redux/slices/entrySlice";
+import { aircraftTrackSelector } from "~redux/slices/trackSlice";
 
 type PersistentInvisibleTooltipProps = {
   children: React.ReactNode;
@@ -30,16 +32,18 @@ const PersistentInvisibleTooltip = ({ children }: PersistentInvisibleTooltipProp
 };
 
 type GpdDataBlockProps = {
-  entry: EdstEntry;
+  aircraftId: AircraftId;
   offset: DataBlockOffset;
   setOffset: (offset: DataBlockOffset) => void;
   toggleShowRoute: () => void;
 };
 
-export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
+export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
   const map = useMap();
   const dispatch = useRootDispatch();
-  const asel = useRootSelector((state) => aircraftIsAselSelector(state, entry.aircraftId));
+  const entry = useRootSelector((state) => entrySelector(state, aircraftId));
+  const track = useRootSelector((state) => aircraftTrackSelector(state, aircraftId));
+  const asel = useRootSelector((state) => aircraftIsAselSelector(state, aircraftId));
   const anyDragging = useRootSelector(anyDraggingSelector);
   const ref = useRef<HTMLDivElement>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
@@ -171,7 +175,7 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
               className={clsx(gpdStyles.dbElement, { selected: selectedField === "SPD_ACL_ROW_FIELD" })}
               onMouseUp={(event) => handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
             >
-              {entry.speed}
+              {track.groundSpeed}
             </div>
           </div>
         </div>
