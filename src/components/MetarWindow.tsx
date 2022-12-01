@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { zStackSelector } from "~redux/slices/appSlice";
 import { useMetar } from "api/weatherApi";
@@ -80,17 +80,14 @@ export const MetarWindow = () => {
     []
   );
 
-  const handleMouseDown = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
-      setShowOptions(false);
-      if (selectedAirport !== airport) {
-        setSelectedAirport(airport);
-      } else {
-        setSelectedAirport(null);
-      }
-    },
-    [selectedAirport]
-  );
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>, airport: string) => {
+    setShowOptions(false);
+    if (selectedAirport !== airport) {
+      setSelectedAirport(airport);
+    } else {
+      setSelectedAirport(null);
+    }
+  };
 
   const setShowOptionsHandler = (value: boolean) => {
     if (value) {

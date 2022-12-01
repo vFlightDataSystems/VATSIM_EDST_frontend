@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import { Tooltip, useMap } from "react-leaflet";
@@ -44,10 +44,7 @@ export const GpdDataBlock = React.memo(({ entry, offset, setOffset, toggleShowRo
   const ref = useRef<HTMLDivElement>(null);
   const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
 
-  const selectedField = useMemo(
-    () => (asel?.aircraftId === entry.aircraftId && asel?.window === "GPD" ? asel.field : null),
-    [asel?.aircraftId, asel?.field, asel?.window, entry.aircraftId]
-  );
+  const selectedField = asel?.aircraftId === entry.aircraftId && asel?.window === "GPD" ? asel.field : null;
 
   const handleClick = useCallback(
     (element: HTMLElement, field: AclRowField, eventId: Nullable<string>, opensWindow?: EdstWindow) => {

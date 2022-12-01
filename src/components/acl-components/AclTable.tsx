@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aclListSelector, anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "~redux/selectors";
@@ -25,7 +25,7 @@ export const AclTable = () => {
   const [spaList, ackList, unAckList] = useRootSelector(aclListSelector);
   const [, setAltMouseDown] = useState(false);
 
-  const handleClickSlash = useCallback(() => {
+  const handleClickSlash = () => {
     if (hiddenColumns.includes("SPD_ACL_ROW_FIELD") && hiddenColumns.includes("HDG_ACL_ROW_FIELD")) {
       dispatch(toggleAclHideColumn(["SPD_ACL_ROW_FIELD", "HDG_ACL_ROW_FIELD"]));
       if (asel?.field === "SPD_ACL_ROW_FIELD" || asel?.field === "HDG_ACL_ROW_FIELD") {
@@ -45,7 +45,7 @@ export const AclTable = () => {
         }
       }
     }
-  }, [asel?.field, dispatch, hiddenColumns]);
+  };
 
   return (
     <div className={tableStyles.body}>

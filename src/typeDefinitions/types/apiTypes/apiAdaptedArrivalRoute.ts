@@ -1,4 +1,4 @@
-export type ApiPreferentialArrivalRoute = {
+export type ApiAdaptedArrivalRoute = {
   destination: string;
   amendment: string;
   triggeredFix: string;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
@@ -11,7 +11,7 @@ import type { AclRowField } from "types/acl/aclRowField";
 import { HoldDirectionValues } from "types/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "types/hold/turnDirection";
 import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
-import { usePar } from "api/prefrouteApi";
+import { useAar } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
 import { formatRoute } from "~/utils/formatRoute";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
@@ -42,31 +42,29 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   const [displayScratchHdg, setDisplayScratchHdg] = useState(false);
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
-  const par = usePar(aircraftId);
+  const aar = useAar(aircraftId);
 
-  const formattedRoute = useMemo(() => formatRoute(entry.route), [entry.route]);
+  const formattedRoute = formatRoute(entry.route);
   const currentRoute = formattedRoute;
   const routeFixes = useRouteFixes(aircraftId);
   const currentRouteFixes = routeFixes;
+
+  const route = removeStringFromEnd((currentRoute.replace(/^\.+/, "") ?? formattedRoute).slice(0), entry.destination);
+  // coral box indicates that aircraft is assigned an altitude in RVSM airspace but equipment says it is not RVSM approved
+  const showCoralBox = !entry.faaEquipmentSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
+
+  const currentFixNames = (currentRouteFixes ?? routeFixes).map((fix) => fix.name);
+  const availAar = aar.filter((par) => par.eligible && currentFixNames.includes(par.triggeredFix));
+  const onAar = availAar.some((par) => formattedRoute.includes(par.amendment));
+
+  const { holdAnnotations } = entry;
 
   useEffect(() => {
     setFreeTextContent(entry.freeTextContent);
   }, [entry.freeTextContent]);
 
-  const { holdAnnotations } = entry;
-
-  const route = removeStringFromEnd((currentRoute.replace(/^\.+/, "") ?? formattedRoute).slice(0), entry.destination);
-  // coral box indicates that aircraft is not RVSM capable but equipment says it is not RVSM approved
-  const showCoralBox = !entry.faaEquipmentSuffix.match(/[LZWH]/g) && Number(entry.altitude) > 280 && toolOptions.nonRvsmIndicator;
-
-  const availPar = useMemo(() => {
-    const currentFixNames = (currentRouteFixes ?? routeFixes).map((fix) => fix.name);
-    return par.filter((par) => par.eligible && currentFixNames.includes(par.triggeredFix));
-  }, [currentRouteFixes, par, routeFixes]);
-  const onPar = useMemo(() => availPar.some((par) => formattedRoute.includes(par.amendment)), [availPar, formattedRoute]);
-
   const isSelected = useCallback(
-    (field: AclRowField): boolean => {
+    (field: AclRowField) => {
       return asel?.window === "ACL" && asel?.aircraftId === aircraftId && asel?.field === field;
     },
     [aircraftId, asel?.aircraftId, asel?.field, asel?.window]
@@ -82,16 +80,13 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
     [dispatch, aircraftId, isSelected]
   );
 
-  const handleRouteClick = useCallback(
-    (element: HTMLElement, triggerSharedState = true) => {
-      if (entry.routeDisplay === "HOLD_ANNOTATIONS_DISPLAY_OPTION") {
-        handleClick(element, "ROUTE_ACL_ROW_FIELD", "acl-route-asel-hold", "HOLD_MENU", triggerSharedState);
-      } else {
-        handleClick(element, "ROUTE_ACL_ROW_FIELD", "acl-route-asel", "ROUTE_MENU", triggerSharedState);
-      }
-    },
-    [entry.routeDisplay, handleClick]
-  );
+  const handleRouteClick = (element: HTMLElement, triggerSharedState = true) => {
+    if (entry.routeDisplay === "HOLD_ANNOTATIONS_DISPLAY_OPTION") {
+      handleClick(element, "ROUTE_ACL_ROW_FIELD", "acl-route-asel-hold", "HOLD_MENU", triggerSharedState);
+    } else {
+      handleClick(element, "ROUTE_ACL_ROW_FIELD", "acl-route-asel", "ROUTE_MENU", triggerSharedState);
+    }
+  };
 
   const altRef = useRef<HTMLDivElement>(null);
   const spdRef = useRef<HTMLDivElement>(null);
@@ -107,20 +102,6 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   useAselEventListener(holdRef, aircraftId, "acl-hold-asel-hold", "HOLD_ACL_ROW_FIELD", "HOLD_MENU", handleClick);
 
   const now = Date.now();
-
-  // TODO: move this to the route menu
-  // const checkParReroutePending = () => {
-  //   const currentFixNames = (currentRouteFixes ?? entry.routeFixes).map(fix => fix.name);
-  //   const eligiblePar = par.filter(par => par.eligible);
-  //   if (eligiblePar?.length === 1) {
-  //     const par = eligiblePar[0];
-  //     if (currentFixNames.includes(par.triggeredFix) && !entry.formattedRoute.includes(par.amendment)) {
-  //       return par.amendment;
-  //     }
-  //   }
-  //   return null;
-  // };
-  // const pendingPar = checkParReroutePending();
 
   const handleHotboxMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
@@ -419,7 +400,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
                 <>
                   <div
                     className={clsx(tableStyles.routeDepAprt, {
-                      amendmentPending: availPar.length > 0 && !onPar,
+                      amendmentPending: availAar.length > 0 && !onAar,
                       selected: isSelected("ROUTE_ACL_ROW_FIELD"),
                     })}
                   >

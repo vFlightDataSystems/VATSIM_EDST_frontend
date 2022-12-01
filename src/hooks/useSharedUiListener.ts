@@ -1,5 +1,5 @@
+import type { RefObject } from "react";
 import { useEffect } from "react";
-import type { Nullable } from "types/utility-types";
 import sharedStateSocket from "~socket";
 import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
 
@@ -29,11 +29,11 @@ export function useSharedUiListener<T = any>(
   }, [eventId, handler, arg]);
 }
 
-export function useSharedUiListenerWithElement(eventId?: SharedUiEvent, element?: Nullable<HTMLElement>, handler?: (element: HTMLElement) => void) {
+export function useSharedUiListenerWithElement(ref: RefObject<HTMLElement>, eventId?: SharedUiEvent, handler?: (element: HTMLElement) => void) {
   useEffect(() => {
     const eventHandler = (evId: SharedUiEvent) => {
-      if (evId === eventId && element && handler) {
-        handler(element);
+      if (evId === eventId && ref.current && handler) {
+        handler(ref.current);
       }
     };
     if (eventId) {
@@ -44,5 +44,5 @@ export function useSharedUiListenerWithElement(eventId?: SharedUiEvent, element?
         sharedStateSocket.socket?.off("receiveUiEvent", eventHandler);
       }
     };
-  }, [handler, eventId, element]);
+  }, [handler, eventId, ref]);
 }
