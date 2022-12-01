@@ -8,6 +8,7 @@ import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "c
 import { WindowTitleBar } from "components/WindowTitleBar";
 import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
+import tableStyles from "css/table.module.scss";
 
 /**
  * Plans Display title bar and header row with add/find input field
@@ -29,7 +30,7 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
   };
 
   return (
-    <div>
+    <div className={tableStyles.header}>
       <WindowTitleBar
         focused={focused}
         toggleFullscreen={toggleFullscreen}
