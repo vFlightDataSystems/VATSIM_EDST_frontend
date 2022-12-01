@@ -144,7 +144,7 @@ export const SpeedMenu = () => {
             </div>
           </div>
         </div>
-        <div className="scrollContainer" onWheel={handleScroll}>
+        <div onWheel={handleScroll}>
           {_.range(5, -6, -1).map((i) => {
             const centerSpd = speed - Math.round(deltaY / 100) * 10 + i * 10;
             const centerMach = 0.79 - Math.round(deltaY / 100) / 100 + i / 100;

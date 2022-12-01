@@ -126,7 +126,7 @@ export const HeadingMenu = () => {
             <div className={clsx(headingStyles.scrollCol, "header", "autoMargin", "w2")}>R</div>
           </div>
         </div>
-        <div className="scrollContainer" onWheel={(e) => setDeltaY(deltaY + e.deltaY)}>
+        <div onWheel={(e) => setDeltaY(deltaY + e.deltaY)}>
           {_.range(50, -70, -10).map((i) => {
             const centerHdg = mod(heading - Math.round(deltaY / 100) * 10 + i, 360);
             const centerRelHdg = 35 + i / 2;

@@ -48,7 +48,7 @@ export const HoldMenu = () => {
   const routeFixes = useRouteFixes(entry.aircraftId);
 
   useEffect(() => {
-    if (!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current)) {
+    if (!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current) || !holdRouteFixes) {
       const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
       const utcMinutes = getUtcMinutesAfterMidnight();
       setFix(entry.holdAnnotations?.fix ?? null);
@@ -59,7 +59,7 @@ export const HoldMenu = () => {
       setHoldRouteFixes(holdRouteFixes ?? null);
     }
     holdAnnotationRef.current = entry.holdAnnotations;
-  }, [dispatch, entry, routeFixes, track]);
+  }, [dispatch, entry, holdRouteFixes, routeFixes, track]);
 
   const clearedHold = () => {
     if (entry) {
@@ -244,7 +244,7 @@ export const HoldMenu = () => {
             <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
           </div>
         </div>
-        <div className={clsx(optionStyles.bottomRow, "topBorder")}>
+        <div className={optionStyles.bottomRow}>
           <div className={optionStyles.col}>
             <EdstButton
               content="Hold/SPA"

@@ -9,13 +9,12 @@
 
 .row {
   composes: row from "optionMenu.module.scss";
-  padding: 4px 0!important;
+  --padding: 4px 0;
 }
 
 .row2 {
   composes: row;
-  padding: 6px;
-  min-height: 4px;
+  --padding: 0 4px;
   display: flex;
   align-items: center;
 
@@ -28,12 +27,6 @@
   composes: row;
   margin: 8px 0 0 0;
   justify-content: center!important;
-}
-
-.scrollContainer {
-  display: flex;
-  flex-flow: column;
-  background-color: #000000;
 }
 
 .hdgColLeft {
@@ -53,9 +46,8 @@
 }
 
 .scrollRow {
-  width: 100%;
   display: flex;
-  margin: 1px 6px;
+  padding: 1px 6px;
   height: 1em;
   color: #adadad;
   border: 1px solid #000000;
@@ -87,6 +79,6 @@
   }
 
   &:global(.rightMargin4) {
-    margin: auto;
+    margin-right: 4px;
   }
 }
