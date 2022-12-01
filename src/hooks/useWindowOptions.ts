@@ -15,24 +15,43 @@ function getEntries<T extends object>(obj: T) {
   return Object.entries(obj) as Entries<T>;
 }
 
-export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(window: T, extraOptions?: FloatingWindowOptions) => {
+export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(edstWindow: T, extraOptions?: FloatingWindowOptions) => {
   const dispatch = useRootDispatch();
-  const windowOptions = useRootSelector(windowOptionsSelector(window));
+  const windowOptions = useRootSelector(windowOptionsSelector(edstWindow));
 
   const mouseDownHandler = useCallback(
     (event: React.MouseEvent<HTMLElement>, key: keyof ModifiableWindowOptions[T]) => {
+      const delayInterval = (callback: () => void, _delay = 500) => {
+        let intervalId = 0;
+        const timeoutId = setTimeout(() => {
+          intervalId = setInterval(callback, 100);
+        }, _delay);
+        const mouseUpListener = () => {
+          clearTimeout(timeoutId);
+          if (intervalId !== 0) {
+            clearInterval(intervalId);
+          }
+        };
+        window.addEventListener("mouseup", mouseUpListener, { once: true });
+      };
       switch (event.button) {
         case 0:
-          dispatch(decOptionValue(window, key));
+          dispatch(decOptionValue(edstWindow, key));
+          if (key === "brightness") {
+            delayInterval(() => dispatch(decOptionValue(edstWindow, key)));
+          }
           break;
         case 1:
-          dispatch(incOptionValue(window, key));
+          dispatch(incOptionValue(edstWindow, key));
+          if (key === "brightness") {
+            delayInterval(() => dispatch(incOptionValue(edstWindow, key)));
+          }
           break;
         default:
           break;
       }
     },
-    [dispatch, window]
+    [dispatch, edstWindow]
   );
 
   const options: FloatingWindowOptions = useMemo(
