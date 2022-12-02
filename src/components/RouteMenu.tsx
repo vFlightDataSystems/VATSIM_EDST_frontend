@@ -130,18 +130,18 @@ export const RouteMenu = () => {
   const clearedPrefroute = async (prefRoute: EdstAdaptedRoute) => {
     let amendedFlightplan: CreateOrAmendFlightplanDto;
     if (prefRoute.routeType === "adar") {
-      amendedFlightplan = { ...entry, route: prefRoute.route };
+      amendedFlightplan = { ...entry, route: prefRoute.route.split(/\.+/).join(" ") };
       await amendPrefroute(amendedFlightplan);
     } else if (prefRoute.routeType === "adr") {
       amendedFlightplan = {
         ...entry,
-        route: prefRoute.amendment.split(".").join(" ") + prefRoute.truncatedRoute,
+        route: [...new Set(prefRoute.amendment.split(/\.+/).concat(prefRoute.truncatedRoute.split(/\.+/)))].join(" "),
       };
       await amendPrefroute(amendedFlightplan);
     } else if (prefRoute.routeType === "aar") {
       amendedFlightplan = {
         ...entry,
-        route: prefRoute.truncatedRoute + prefRoute.amendment.split(".").join(" "),
+        route: prefRoute.truncatedRoute.split(/\.+/).concat(prefRoute.amendment.split(/\.+/)).join(" "),
       };
       await amendPrefroute(amendedFlightplan);
     }
