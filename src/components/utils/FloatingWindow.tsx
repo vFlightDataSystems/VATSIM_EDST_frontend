@@ -57,7 +57,7 @@ export const FloatingWindow = ({ window: edstWindow, children, ...props }: Float
         onClose={() => dispatch(closeWindow(edstWindow))}
         startDrag={startDrag}
       />
-      <div className={clsx(`fontSize${windowOptions.fontSizeIndex}`)} style={{ width: props.width }}>
+      <div className={clsx(`fontSize${windowOptions.fontSizeIndex}`)} style={{ width: `min(80vw, ${props.width})` }}>
         {children && <div className={floatingStyles.body}>{children}</div>}
       </div>
       {props.showOptions && width && (

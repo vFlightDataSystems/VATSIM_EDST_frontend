@@ -1,3 +1,4 @@
+@use "global.scss";
 @use "borderStyles.scss";
 @value yellow, grey from "colors.css";
 
@@ -29,6 +30,7 @@
 }
 
 .header {
+  @include global.noSelect;
   height: auto;
   width: 100vw;
   position: absolute;
@@ -52,6 +54,7 @@
   display: inline-flex;
 
   button {
+    @include global.noSelect;
     @include borderStyles.borderHover;
     font-family: ERAM, monospace;
     --border-color: grey;
