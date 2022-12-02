@@ -290,6 +290,7 @@
   @include borderStyles.borderHover;
 
   &:global(.empty) {
+    border-color: transparent;
     pointer-events: none;
   }
 
