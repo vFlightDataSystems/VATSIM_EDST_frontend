@@ -9,7 +9,7 @@ const ROUTE_FORMAT_EXPRESSIONS = {
 
 const cleanRoutePattern = /\+|\/(.*?)\s|(\s?)DCT(\s?)|N[0-9]{4}[FAM][0-9]{3,4}/;
 function cleanRoute(route: string, dep = "", dest = "") {
-  const cleanedRoute = route.slice(0).replace(cleanRoutePattern, "");
+  const cleanedRoute = route.slice(0).replace(/\.+/, " ").replace(cleanRoutePattern, "");
   cleanedRoute.replace(new RegExp(`^\\s*${dep}|${dest}\\s*$`), "");
   return cleanedRoute.trim();
 }
