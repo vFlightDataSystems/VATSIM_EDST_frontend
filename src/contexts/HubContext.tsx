@@ -136,7 +136,8 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
         });
       } else {
-        ref.current?.stop().then(() => setHubConnected(false));
+        await hubConnection.stop();
+        setHubConnected(false);
         throw new Error("NOT SIGNED INTO A CENTER POSITION");
       }
     }
