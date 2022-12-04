@@ -1,4 +1,5 @@
-import { ApiLocation } from "./apiLocation";
+import type { ApiLocation } from "types/apiTypes/apiLocation";
+import type { Nullable } from "types/utility-types";
 
 export type ApiAircraftTrack = {
   aircraftId: string;
@@ -6,6 +7,6 @@ export type ApiAircraftTrack = {
   altitudeTrue: number;
   groundSpeed: number;
   location: ApiLocation;
-  typeCode: string | null;
+  typeCode: Nullable<string>;
   interimAltitude?: number;
 };

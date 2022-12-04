@@ -1,0 +1,115 @@
+@use "global.scss";
+@use "borderStyles.scss";
+@use "optionMenu.module.scss";
+@use "input.module.scss";
+
+.root {
+  composes: root from "optionMenu.module.scss";
+  --width: 44ch;
+}
+
+.fixContainer {
+  padding: 4px 0;
+  border-bottom: 1px solid #adadad;
+}
+
+.row1 {
+  composes: row from "optionMenu.module.scss";
+  justify-content: space-between;
+}
+
+.row2 {
+  composes: row from "optionMenu.module.scss";
+  padding: 6px 0!important;
+  border-bottom: 1px solid #adadad;
+}
+
+.col {
+  display: flex;
+  flex-grow: 1;
+  flex-flow: row;
+  font-size: inherit;
+  min-height: 1em;
+  align-items: center;
+  vertical-align: center;
+  border: 1px solid transparent;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0 4px;
+  justify-content: flex-start;
+
+  &:global(.selected) {
+    color: #000000;
+    background-color: grey;
+    --top-left-color: #575757;
+    --bottom-right-color: #888888;
+  }
+}
+
+.leftCol {
+  display: flex;
+  margin-left: 10px;
+  flex-grow: 0;
+  padding: 0;
+  border-bottom: 1px solid #adadad;
+}
+
+.eftCol {
+  justify-content: right;
+  display: flex;
+  margin-left: auto;
+}
+
+.fixCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  justify-content: left;
+  display: inline-flex;
+  height: 1em;
+  padding: 0 4px;
+  flex-grow: 0;
+  width: 11ch;
+  margin: 0 12px;
+}
+
+.col2 {
+  composes: col;
+  justify-content: center;
+  flex-grow: 0;
+  margin: auto;
+  border-bottom: 1px solid #adadad;
+}
+
+.col3 {
+  composes: col;
+  min-width: 12ch;
+  justify-content: center;
+  margin-top: 2px;
+
+  [class~="isDisabled"] {
+    border-color: transparent;
+  }
+}
+
+.col5 {
+  composes: col;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.efcCol {
+  composes: col;
+  justify-content: left;
+  align-items: center;
+  margin-left: 10px;
+  margin-right: auto;
+}
+
+.efcInputContainer {
+  composes: inputContainer from "input.module.scss";
+  margin-left: 1ch;
+  margin-right: 0;
+}

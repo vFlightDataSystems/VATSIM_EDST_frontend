@@ -1,4 +1,5 @@
-import { AclRouteDisplayOption } from "../enums/aclRouteDisplayOption";
+import type { RouteDisplayOption } from "types/routeDisplayOption";
+import type { Nullable } from "types/utility-types";
 
 export class LocalVEdstEntry {
   freeTextContent = "";
@@ -9,12 +10,10 @@ export class LocalVEdstEntry {
   // -1: not acknowledged, 0: acknowledged but not checked, 1: verified
   depStatus: -1 | 0 | 1 = -1;
 
-  aclHighlighted = false;
-
-  depHighlighted = false;
+  highlighted = false;
 
   // what data to display in ACL route column
-  aclRouteDisplay: AclRouteDisplayOption | null = null;
+  routeDisplay: Nullable<RouteDisplayOption> = null;
 
   remarksChecked = false;
 
@@ -24,35 +23,29 @@ export class LocalVEdstEntry {
   boundaryTime = 0;
 
   // if not null, number represents timestamp when pendingRemoval status was activated
-  pendingRemoval: number | null = null;
-
-  // speed assigned in the scratchpad
-  scratchpadHeading: string | null = null;
+  pendingRemoval: Nullable<number> = null;
 
   // heading assigned in the scratchpad
-  scratchpadSpeed: string | null = null;
+  scratchpadHeading: Nullable<string> = null;
+
+  // speed assigned in the scratchpad
+  scratchpadSpeed: Nullable<string> = null;
 
   showFreeText = false;
 
   voiceType?: string;
 
-  aclDisplay = false;
-
-  aclDeleted = false;
-
-  depDisplay = false;
-
-  depDeleted = false;
+  deleted = false;
 
   keep = false;
 
   cpdlcCapable = false;
 
-  assignedSpeed: string | null = null;
+  assignedSpeed: Nullable<string> = null;
 
-  assignedHeading: string | null = null;
+  assignedHeading: Nullable<string> = null;
 
-  interimAltitude: number | null = null;
+  interimAltitude: Nullable<number> = null;
 
-  previousRoute: string | null = null;
+  previousRoute: Nullable<string> = null;
 }

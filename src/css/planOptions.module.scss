@@ -1,0 +1,21 @@
+@use "borderStyles.scss";
+@use "optionMenu.module.scss";
+@use "global.scss";
+
+.root {
+  composes: root from "optionMenu.module.scss";
+  --width: 24ch;
+}
+
+.body {
+  composes: body from "optionMenu.module.scss";
+  text-indent: 4px;
+}
+
+.col {
+  composes: col from "optionMenu.module.scss";
+  @include borderStyles.borderHover;
+  height: 1.2em;
+  --col-margin: 0 6px;
+  padding: 0 4px;
+}

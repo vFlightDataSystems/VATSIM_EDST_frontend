@@ -1,34 +1,38 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true
+    es2021: true,
   },
   extends: [
     "airbnb",
+    "react-app",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: "module"
+    sourceType: "module",
   },
   plugins: ["react", "@typescript-eslint", "react-hooks", "unused-imports", "prettier"],
   settings: {
     react: {
-      version: "detect"
+      version: "detect",
     },
     "import/resolver": {
-      typescript: {}
-    }
+      typescript: {},
+    },
   },
   rules: {
     "react/jsx-filename-extension": [2, { extensions: [".js", ".jsx", ".ts", ".tsx"] }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/consistent-type-imports": "warn",
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -36,20 +40,21 @@ module.exports = {
         js: "never",
         jsx: "never",
         ts: "never",
-        tsx: "never"
-      }
+        tsx: "never",
+      },
     ],
     "prettier/prettier": [
       "warn",
       {
         endOfLine: "auto",
-        printWidth: 150
-      }
+        printWidth: 150,
+      },
     ],
     "no-param-reassign": "off",
     "no-use-before-define": "off",
     "import/prefer-default-export": "off",
     "react/function-component-definition": "off",
+    "react/destructuring-assignment": "off",
     "no-shadow": "off",
     "@typescript-eslint/no-explicit-any": ["off"],
     "jsx-a11y/label-has-associated-control": "off",
@@ -57,7 +62,12 @@ module.exports = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
+    "react/display-name": "off",
     "jsx-a11y/no-static-element-interactions": "off",
-    "@typescript-eslint/no-namespace": "off"
-  }
+    "prefer-destructuring": "off",
+    "no-void": "off",
+    "no-console": "off",
+    "no-underscore-dangle": "off",
+    "react/button-has-type": "off",
+  },
 };

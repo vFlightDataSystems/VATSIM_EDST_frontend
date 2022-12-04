@@ -1,27 +1,30 @@
-import React, { createContext, ReactNode, useCallback, useState } from "react";
-import { receiveSharedStateAircraft } from "../redux/thunks/sharedStateThunks/receiveSharedStateAircraft";
-import { log } from "../console";
-import { useRootDispatch } from "../redux/hooks";
-import { receiveUiStateThunk } from "../redux/thunks/sharedStateThunks/receiveUiStateThunk";
-import { receiveAclStateThunk } from "../redux/thunks/sharedStateThunks/receiveAclStateThunk";
-import { receivePlansDisplayStateThunk } from "../redux/thunks/sharedStateThunks/receivePlansDisplayStateThunk";
-import { receiveDepStateThunk } from "../redux/thunks/sharedStateThunks/receiveDepStateThunk";
-import { receiveGpdStateThunk } from "../redux/thunks/sharedStateThunks/receiveGpdStateThunk";
-import { pushZStack } from "../redux/slices/appSlice";
-import sharedSocket from "../sharedState/socket";
-import { sharedStateAircraftSelect } from "../redux/thunks/aircraftSelect";
+import type { ReactNode } from "react";
+import React, { createContext, useCallback, useState } from "react";
+import { receiveSharedStateAircraft } from "~redux/thunks/sharedStateThunks/receiveSharedStateAircraft";
+import { useRootDispatch } from "~redux/hooks";
+import { receiveUiStateThunk } from "~redux/thunks/sharedStateThunks/receiveUiStateThunk";
+import { addGIEntries, closeWindow, openWindow } from "~redux/slices/appSlice";
+import { sharedStateAircraftSelect } from "~redux/thunks/aircraftSelect";
+import { setAclState } from "~redux/slices/aclSlice";
+import { setDepState } from "~redux/slices/depSlice";
+import { setGpdState } from "~redux/slices/gpdSlice";
+import { setPlanState } from "~redux/slices/planSlice";
+import sharedSocket from "~socket";
+import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 
-class SocketContextValue {
-  connectSocket: (artccId: string, sectorId: string) => void = sharedSocket.connect;
+type SocketContextValue = {
+  connectSocket: (artccId: string, sectorId: string) => void;
+  disconnectSocket: () => void;
+  isConnected: boolean;
+};
 
-  disconnectSocket = sharedSocket.disconnect;
+export const SocketContext = createContext<SocketContextValue>({
+  connectSocket: sharedSocket.connect,
+  disconnectSocket: sharedSocket.disconnect,
+  isConnected: false,
+});
 
-  isConnected = false;
-}
-
-export const SocketContext = createContext<SocketContextValue>(new SocketContextValue());
-
-const useSocketContextInit = () => {
+export const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useRootDispatch();
 
   const [isConnected, setIsConnected] = useState(false);
@@ -31,33 +34,52 @@ const useSocketContextInit = () => {
       const socket = sharedSocket.connect(artccId, sectorId);
       if (socket) {
         setIsConnected(true);
-        socket.on("receiveAircraft", aircraft => {
+        socket.on("connect", () => {
+          setIsConnected(true);
+        });
+        socket.on("disconnect", () => {
+          setIsConnected(false);
+        });
+        socket.on("receiveAircraft", (aircraft) => {
           dispatch(receiveSharedStateAircraft(aircraft));
         });
-        socket.on("receiveUiState", state => {
+        socket.on("receiveUiState", (state) => {
           dispatch(receiveUiStateThunk(state));
         });
-        socket.on("receiveAclState", state => {
-          dispatch(receiveAclStateThunk(state));
+        socket.on("receiveAclState", (state) => {
+          dispatch(setAclState(state));
         });
-        socket.on("receiveDepState", state => {
-          dispatch(receiveDepStateThunk(state));
+        socket.on("receiveDepState", (state) => {
+          dispatch(setDepState(state));
         });
-        socket.on("receiveGpdState", state => {
-          dispatch(receiveGpdStateThunk(state));
+        socket.on("receiveGpdState", (state) => {
+          dispatch(setGpdState(state));
         });
-        socket.on("receivePlansDisplayState", state => {
-          dispatch(receivePlansDisplayStateThunk(state));
+        socket.on("receivePlansDisplayState", (state) => {
+          dispatch(setPlanState(state));
         });
-        socket.on("receiveBringWindowToFront", edstWindow => {
-          dispatch(pushZStack(edstWindow));
+        socket.on("receiveOpenWindow", (edstWindow) => {
+          dispatch(openWindow(edstWindow));
         });
-        socket.on("receiveAircraftSelect", asel => {
-          dispatch(sharedStateAircraftSelect(asel));
+        socket.on("receiveCloseWindow", (edstWindow) => {
+          dispatch(closeWindow(edstWindow, false));
         });
-        socket.on("disconnect", reason => {
+        socket.on("receiveAircraftSelect", (asel, eventId) => {
+          if (eventId === null) {
+            dispatch(sharedStateAircraftSelect(asel));
+          }
+        });
+        socket.on("receiveGIMessage", (sender, message) => {
+          const formattedMsg = `GI ${sender} ${formatUtcMinutes()} ${message}`;
+          dispatch(
+            addGIEntries({
+              [formattedMsg]: { text: formattedMsg, acknowledged: false },
+            })
+          );
+        });
+        socket.on("disconnect", (reason) => {
           setIsConnected(false);
-          log(reason);
+          console.log(reason);
         });
       }
     },
@@ -66,13 +88,11 @@ const useSocketContextInit = () => {
 
   const disconnectSocket = useCallback(() => {
     sharedSocket.disconnect();
-  }, [dispatch]);
+    setIsConnected(false);
+  }, []);
 
-  return { connectSocket, disconnectSocket, isConnected };
-};
-
-export const SocketContextProvider = ({ children }: { children: ReactNode }) => {
-  const contextValue = useSocketContextInit();
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
+  const contextValue = { connectSocket, disconnectSocket, isConnected };
 
   return <SocketContext.Provider value={contextValue}>{children}</SocketContext.Provider>;
 };

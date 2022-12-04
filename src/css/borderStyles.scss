@@ -1,0 +1,19 @@
+
+@mixin borderHover {
+  &:hover {
+     border: 1px solid var(--border-hover-color, #f0f0f0);
+ }
+}
+
+@mixin outlineHover {
+  &:hover {
+    outline: 1px solid var(--outline-hover-color, #f0f0f0);
+  }
+}
+
+@mixin border {
+  border-bottom: var(--border-width) solid var(--bottom-right-color);
+  border-right: var(--border-width) solid var(--bottom-right-color);
+  border-top: var(--border-width) solid var(--top-left-color);
+  border-left: var(--border-width) solid var(--top-left-color);
+}

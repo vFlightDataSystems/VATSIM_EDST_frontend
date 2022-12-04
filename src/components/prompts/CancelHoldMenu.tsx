@@ -1,41 +1,39 @@
 import React from "react";
-import { useRootDispatch, useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { EdstPrompt } from "./EdstPrompt";
-import { FidRow } from "../../styles/optionMenuStyles";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
-import { closeWindow, setAsel } from "../../redux/slices/appSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { useHubActions } from "hooks/useHubActions";
+import { closeWindow, setAsel } from "~redux/slices/appSlice";
+import { EdstPrompt } from "components/prompts/EdstPrompt";
+import optionStyles from "css/optionMenu.module.scss";
 
 export const CancelHoldMenu = () => {
   const dispatch = useRootDispatch();
   const entry = useRootSelector(aselEntrySelector)!;
   const hubActions = useHubActions();
 
-  const onSubmit = () => {
-    hubActions.cancelHold(entry.aircraftId).then();
+  const onSubmit = async () => {
+    await hubActions.cancelHold(entry.aircraftId);
     dispatch(setAsel(null));
-    dispatch(closeWindow(EdstWindow.CANCEL_HOLD_MENU));
+    dispatch(closeWindow("CANCEL_HOLD_MENU"));
   };
 
   const onCancel = () => {
-    dispatch(closeWindow(EdstWindow.CANCEL_HOLD_MENU));
+    dispatch(closeWindow("CANCEL_HOLD_MENU"));
   };
 
   return (
     <EdstPrompt
       title="Cancel Hold Confirmation"
-      windowId={EdstWindow.CANCEL_HOLD_MENU}
+      windowId="CANCEL_HOLD_MENU"
       width="250px"
       submitText="Cancel Hold"
       onSubmit={onSubmit}
       cancelText="Exit"
       onCancel={onCancel}
-      id="cancel-hold-menu"
     >
-      <FidRow>
+      <div className={optionStyles.fidRow}>
         {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-      </FidRow>
+      </div>
     </EdstPrompt>
   );
 };

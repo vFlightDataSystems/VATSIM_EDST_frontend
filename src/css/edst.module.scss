@@ -1,0 +1,122 @@
+@use "global.scss";
+@use "borderStyles.scss";
+@value yellow, grey from "colors.css";
+
+.notConnected {
+  font-family: "Consolas", monospace;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100000;
+  pointer-events: none;
+  color: yellow;
+}
+
+.root {
+  font-family: ERAM, monospace;
+  font-size: 17px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background-color: #000000;
+  /*caret-color: transparent;*/
+  /*scroll-behavior: auto;*/
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.header {
+  @include global.noSelect;
+  height: auto;
+  width: 100vw;
+  position: absolute;
+  font-family: ERAM, monospace;
+
+  &:global(.bottom) {
+    bottom: 2px;
+  }
+}
+
+.headerRow {
+  margin-top: 1px;
+  z-index: 20001;
+  justify-content: space-between;
+  height: auto;
+  display: flex;
+}
+
+.headerCol {
+  z-index: 20001;
+  display: inline-flex;
+
+  button {
+    @include global.noSelect;
+    @include borderStyles.borderHover;
+    font-family: ERAM, monospace;
+    --border-color: grey;
+    padding: 0;
+    display: flex;
+    height: 2em;
+    justify-content: center;
+    line-height: 0.95em;
+    font-size: inherit;
+    margin: 0 1px;
+    width: 7ch;
+    color: grey;
+    font-weight: normal;
+    background-color: #000000;
+    border: 1px solid var(--border-color);
+
+    &:global(.highlight) {
+      background-color: #595959;
+    }
+    &:disabled {
+      pointer-events: none;
+      border: 1px solid #707070;
+      color: #707070;
+    }
+  }
+}
+
+.bottomCol {
+  margin-left: calc(7.6ch + 4px);
+}
+
+.body {
+  overflow: hidden;
+  position: absolute;
+  display: flex;
+  font-size: inherit;
+  top: calc(2em + 4px);
+  left: 0;
+  height: calc(100% - 2em - 4px);
+  width: 100%;
+  flex-grow: 1;
+
+  button, input, textarea {
+    font-family: EDST, monospace;
+    text-transform: uppercase;
+  //font-weight: bold;
+    cursor: default;
+    overflow-wrap: anywhere;
+    /*caret: underscore;*/
+  }
+
+  &:global(.bottom) {
+    top: 0;
+  }
+}
+
+.windowHeaderRow {
+  border-bottom: 1px solid #adadad;
+  &.bottomRow {
+    align-items: center;
+    justify-content: flex-start;
+    display: flex;
+    padding: 0 10px;
+  }
+}

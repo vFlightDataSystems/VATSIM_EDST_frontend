@@ -1,6 +1,6 @@
-import { RootThunkAction } from "../../store";
-import { SharedAircraftDto } from "../../../typeDefinitions/types/sharedStateTypes/sharedAircraftDto";
-import { updateEntry } from "../../slices/entrySlice";
+import type { SharedAircraftDto } from "types/sharedStateTypes/sharedAircraftDto";
+import type { RootThunkAction } from "~redux/store";
+import { updateEntry } from "~redux/slices/entrySlice";
 
 export function receiveSharedStateAircraft(aircraft: SharedAircraftDto): RootThunkAction {
   return (dispatch, getState) => {

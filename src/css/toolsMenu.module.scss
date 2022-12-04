@@ -1,0 +1,6 @@
+@use "optionMenu.module.scss";
+
+.body {
+  composes: body from "optionMenu.module.scss";
+  --body-padding: 20px 4px 0 4px;
+}

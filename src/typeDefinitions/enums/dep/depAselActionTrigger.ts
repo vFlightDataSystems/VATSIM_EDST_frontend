@@ -1,3 +1,0 @@
-export enum DepAselActionTrigger {
-  SET_DEP_STATUS_NEUTRAL = "SET_DEP_STATUS_NEUTRAL_DEP_ASEL_ACTION_TRIGGER"
-}

@@ -1,0 +1,42 @@
+@use "table.module";
+@use "borderStyles.scss";
+@value col from "table.module.scss";
+@value grey from "colors.css";
+
+.radioCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  margin: 0 2px;
+  width: 1ch;
+
+  --border-width: 1px;
+  --top-left-color: #575757;
+  --bottom-right-color: #414141;
+  @include borderStyles.border;
+
+  &:global(.empty) {
+    pointer-events: none;
+  }
+
+  &:global(.border) {
+    outline: 1px solid grey;
+  }
+
+  &:global(.header) {
+    margin: 0 2px;
+    width: 1ch;
+    pointer-events: none;
+  }
+
+  &:global(.checked) {
+    color: #adadad;
+  }
+  &:global(.keep) {
+    background-color: #414141;
+  }
+}
+
+.pTimeCol {
+  composes: col;
+  width: 6ch;
+}

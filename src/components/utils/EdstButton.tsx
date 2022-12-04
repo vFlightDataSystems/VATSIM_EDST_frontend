@@ -1,128 +1,116 @@
-import React, { PropsWithChildren } from "react";
-import styled from "styled-components";
-import { EdstTooltip } from "./EdstTooltip";
-import { edstFontGrey } from "../../styles/colors";
+import type { CSSProperties } from "react";
+import React, { useCallback, useRef } from "react";
+import type { SharedUiEvent } from "types/sharedStateTypes/sharedUiEvent";
+import { useSharedUiListenerWithElement } from "hooks/useSharedUiListener";
+import socket from "~socket";
+import type { EdstWindow } from "types/edstWindow";
+import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { useRootDispatch } from "~redux/hooks";
+import buttonStyles from "css/button.module.scss";
+import clsx from "clsx";
 
-type EdstOuterButtonProps = { width?: string; height?: string; margin?: string; disabled?: boolean };
-const EdstOuterButton = styled.div.attrs((props: EdstOuterButtonProps) => ({
-  width: props.width ?? "auto",
-  height: props.height ?? "auto",
-  margin: props.margin ?? "initial"
-}))<EdstOuterButtonProps>`
-  display: inline-flex;
-  border: 1px solid #000000;
-
-  width: ${props => props.width};
-  height: ${props => props.height};
-  margin: ${props => props.margin};
-  &:hover {
-    border: 1px solid #ffffff;
-  }
-  &[disabled] {
-    pointer-events: none;
-  }
-`;
-
-const EdstOuterHeaderButton = styled(EdstOuterButton)`
-  font-size: inherit;
-  margin-left: 6px;
-  margin-right: 6px;
-  margin-bottom: 1px;
-`;
-
-type EdstInnerButtonProps = { selected?: boolean; flexGrow?: number; width?: string; height?: string; padding?: string; disabled?: boolean };
-const EdstInnerButton = styled.div.attrs((props: EdstInnerButtonProps) => ({
-  width: props.width ?? "auto",
-  height: props.height ?? "auto",
-  padding: props.padding ?? "0 4px",
-  flexGrow: props.flexGrow ?? 1
-}))<EdstInnerButtonProps>`
-  font-size: inherit;
-  display: flex;
-  flex-grow: ${props => props.flexGrow};
-  justify-content: center;
-  align-items: center;
-  color: ${props => (props.selected ? "#000000" : edstFontGrey)};
-  background-color: ${props => (props.selected ? "#ADADAD" : "#000000")};
-  border-bottom: 2px solid ${props => (props.selected ? "#888888" : "#575757")};
-  border-right: 2px solid ${props => (props.selected ? "#888888" : "#575757")};
-  border-top: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
-  border-left: 2px solid ${props => (props.selected ? "#575757" : "#888888")};
-  padding: ${props => props.padding};
-  width: ${props => props.width};
-  height: ${props => props.height};
-  &[disabled] {
-    pointer-events: none;
-    color: #707070;
-  }
-`;
-
+type EdstButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin" | "padding">;
 type EdstButtonProps = {
   disabled?: boolean;
   selected?: boolean;
-  width?: string;
-  height?: string;
-  margin?: string;
-  padding?: string;
-  content?: string;
-  id?: string;
   title?: string;
-  onMouseDown?: (event: React.MouseEvent<HTMLDivElement>) => void;
-};
-
-export const EdstButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
+  content?: string;
+  onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
+} & EdstButtonCSSProps;
+export const EdstButton = ({ disabled, selected, margin = "0", title, onMouseDown, content, ...props }: EdstButtonProps) => {
   return (
-    <EdstTooltip title={props.title}>
-      <EdstOuterButton
-        disabled={props.disabled}
-        width={props.width}
-        height={props.height}
-        margin={props.margin}
-        id={id}
-        onMouseDownCapture={onMouseDown}
-      >
-        <EdstInnerButton selected={props.selected} disabled={props.disabled} padding={props.padding}>
-          {props.content ?? props.children}
-        </EdstInnerButton>
-      </EdstOuterButton>
-    </EdstTooltip>
-  );
-};
-export const EdstButton12x12 = (props: EdstButtonProps) => <EdstButton width="12px" height="12px" {...props} />;
-export const EdstButton20x20 = (props: EdstButtonProps) => <EdstButton width="20px" height="20px" {...props} />;
-export const EdstRouteButton12x12 = (props: EdstButtonProps) => <EdstButton12x12 padding="0 4px" margin="0 5px 0 0" {...props} />;
-export const EdstTemplateButton85 = (props: EdstButtonProps) => <EdstButton width="85px" margin="0 4px" {...props} />;
-
-export const EdstWindowHeaderButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => {
-  return (
-    <EdstTooltip title={props.title}>
-      <EdstOuterHeaderButton
-        disabled={props.disabled}
-        id={id}
-        onMouseDownCapture={event => {
-          if (onMouseDown) {
-            onMouseDown(event);
-            event.stopPropagation();
-          }
-        }}
-      >
-        <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} height={props.height}>
-          {props.content ?? props.children}
-        </EdstInnerButton>
-      </EdstOuterHeaderButton>
-    </EdstTooltip>
+    <div style={{ margin }} className={clsx(buttonStyles.outerButton, { isDisabled: disabled })} title={title} onMouseDown={onMouseDown}>
+      <div style={props} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
+        {content}
+      </div>
+    </div>
   );
 };
 
-const HoldDirButton = ({ onMouseDown, id, ...props }: PropsWithChildren<EdstButtonProps>) => (
-  <EdstTooltip title={props.title}>
-    <EdstOuterButton disabled={props.disabled} margin="0 2px" id={id} onMouseDownCapture={onMouseDown}>
-      <EdstInnerButton selected={props.selected} disabled={props.disabled} width={props.width} flexGrow={0}>
-        {props.content ?? props.children}
-      </EdstInnerButton>
-    </EdstOuterButton>
-  </EdstTooltip>
+type EdstButtonFixedSizeProps = Omit<EdstButtonProps, "width" | "height">;
+type ExitButtonProps = {
+  onMouseDown: React.MouseEventHandler<HTMLDivElement>;
+  title?: string;
+};
+export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit" {...props} />;
+
+export const EdstTemplateButton10ch = (props: Omit<EdstButtonFixedSizeProps, "margin">) => <EdstButton width="10ch" margin="0 4px" {...props} />;
+
+type EdstWindowHeaderButtonProps = {
+  title?: string;
+  onMouseDown?: React.MouseEventHandler<HTMLElement>;
+  disabled?: boolean;
+  content: string;
+  width?: CSSProperties["width"];
+};
+export function EdstWindowHeaderButton({ onMouseDown, title, disabled, content, width }: EdstWindowHeaderButtonProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  return (
+    <div
+      ref={ref}
+      className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
+      title={title}
+      onMouseDownCapture={(event) => {
+        if (onMouseDown) {
+          onMouseDown(event);
+          event.stopPropagation();
+        }
+      }}
+    >
+      <div className={clsx(buttonStyles.innerButton)} style={{ width }}>
+        {content}
+      </div>
+    </div>
+  );
+}
+
+type EdstWindowHeaderButtonWithSharedEventProps = Omit<EdstWindowHeaderButtonProps, "onMouseDown"> & {
+  sharedUiEventId: SharedUiEvent;
+  edstWindow: EdstWindow;
+};
+export function EdstWindowHeaderButtonWithSharedEvent({
+  sharedUiEventId,
+  edstWindow,
+  title,
+  disabled,
+  content,
+}: EdstWindowHeaderButtonWithSharedEventProps) {
+  const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
+  const sharedUiEventHandler = useCallback(
+    (element: HTMLElement) => {
+      dispatch(openMenuThunk(edstWindow, element));
+    },
+    [dispatch, edstWindow]
+  );
+  useSharedUiListenerWithElement(ref, sharedUiEventId, sharedUiEventHandler);
+
+  return (
+    <div
+      ref={ref}
+      className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
+      title={title}
+      onMouseDown={(event) => {
+        dispatch(openMenuThunk(edstWindow, event.currentTarget));
+        if (sharedUiEventId) {
+          socket.dispatchUiEvent(sharedUiEventId);
+        }
+        event.stopPropagation();
+      }}
+    >
+      <div className={clsx(buttonStyles.innerButton)}>{content}</div>
+    </div>
+  );
+}
+
+const HoldDirButton = ({ width, disabled, selected, ...props }: Omit<EdstButtonProps, "margin">) => (
+  <div className={clsx(buttonStyles.outerButton, "holdDirButton", { isDisabled: disabled })} title={props.title} onMouseDown={props.onMouseDown}>
+    <div style={{ width }} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
+      {props.content}
+    </div>
+  </div>
 );
-export const HoldDirButton2ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="2ch" {...props} />;
-export const HoldDirButton22ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="2.2ch" {...props} />;
-export const HoldDirButton6ch = (props: PropsWithChildren<EdstButtonProps>) => <HoldDirButton width="6ch" {...props} />;
+export const HoldDirButton2ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2ch" {...props} />;
+export const HoldDirButton22ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2.2ch" {...props} />;
+export const HoldDirButton5ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="5ch" {...props} />;

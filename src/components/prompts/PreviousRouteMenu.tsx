@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useRootSelector } from "../../redux/hooks";
-import { aselEntrySelector } from "../../redux/slices/entrySlice";
-import { FidRow, OptionsBodyCol, OptionsBodyRow } from "../../styles/optionMenuStyles";
-import { aselTrackSelector } from "../../redux/slices/trackSlice";
-import { useCenterCursor } from "../../hooks/useCenterCursor";
-import { EdstPrompt } from "./EdstPrompt";
-import { PromptProps } from "./promptProps";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { useHubActions } from "../../hooks/useHubActions";
+import type { Nullable } from "types/utility-types";
+import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { aselTrackSelector } from "~redux/slices/trackSlice";
+import { useCenterCursor } from "hooks/useCenterCursor";
+import { useRootSelector } from "~redux/hooks";
+import { useHubActions } from "hooks/useHubActions";
+import { EdstPrompt } from "components/prompts/EdstPrompt";
+import type { PromptProps } from "components/prompts/promptProps";
+import optionStyles from "css/optionMenu.module.scss";
 
 export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector)!;
   const ref = useRef<HTMLDivElement>(null);
-  const [frd, setFrd] = useState<string | null>(null);
+  const [frd, setFrd] = useState<Nullable<string>>(null);
   useCenterCursor(ref);
   const { generateFrd } = useHubActions();
 
@@ -21,29 +21,28 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
     async function updateFrd() {
       setFrd(await generateFrd(aircraftTrack.location));
     }
-    updateFrd().then();
-  }, []);
+    void updateFrd();
+  }, [aircraftTrack.location, generateFrd]);
 
   return (
     <EdstPrompt
       title="Previous Route Menu"
-      windowId={EdstWindow.PREV_ROUTE_MENU}
+      windowId="PREV_ROUTE_MENU"
       width="380px"
       submitText="Apply Previous Route"
       onSubmit={onSubmit}
       cancelText="Exit"
       onCancel={onCancel}
-      id="previous-route-menu"
     >
-      <FidRow>
+      <div className={optionStyles.fidRow}>
         {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
-      </FidRow>
-      <OptionsBodyRow padding="0 8px">
-        <OptionsBodyCol>
-          RTE {frd || ""}
+      </div>
+      <div className={optionStyles.row}>
+        <div className={optionStyles.col}>
+          RTE {frd ?? ""}
           {entry.previousRoute}
-        </OptionsBodyCol>
-      </OptionsBodyRow>
+        </div>
+      </div>
     </EdstPrompt>
   );
 };

@@ -1,4 +1,4 @@
-import { OutageType } from "../enums/outageType";
+import type { OutageType } from "types/outageType";
 
 export type OutageEntry = {
   message: string;

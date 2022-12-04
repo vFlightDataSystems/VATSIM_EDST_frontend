@@ -1,11 +1,8 @@
 export const Tooltips = {
-  mca:
-    '"Message Composition Area"\nInput commands here such as:\nUU-calls forward the ACL\nUU D-calls forward the DEP list\nUU C-same as the ACL Clean Up button\nUU AID-selects the aircraft; if not in the EDST, will add the entry\nUU H AID-toggles highlighting for this entry',
+  mca: '"Message Composition Area"\nInput commands here such as:\nUU-calls forward the ACL\nUU D-calls forward the DEP list\nUU C-same as the ACL Clean Up button\nUU AID-selects the aircraft; if not in the EDST, will add the entry\nUU H AID-toggles highlighting for this entry',
   ra: '"Response Area"\nDisplays response to certain commands.',
-  acl:
-    '"Aircraft List", Displays active flights projected to transit your airspace (lateral and vertically).\nRW: entry is added when aircraft is 30min or less from the boundary.\nCurrently: displays when aircraft is 100nm or less form the boundary.',
-  dep:
-    '"Departure List", Displays all proposed departures\nRW: entry is added if you are the first CTR sector the aircraft will enter.\nCurrently: displays all departures for airports listed as in the jurisdiction of the selected ARTCC.',
+  acl: '"Aircraft List", Displays active flights projected to transit your airspace (lateral and vertically).\nRW: entry is added when aircraft is 30min or less from the boundary.\nCurrently: displays when aircraft is 100nm or less form the boundary.',
+  dep: '"Departure List", Displays all proposed departures\nRW: entry is added if you are the first CTR sector the aircraft will enter.\nCurrently: displays all departures for airports listed as in the jurisdiction of the selected ARTCC.',
   plans:
     "Displays the results of a submitted trial plan in text format.\nFLID=GREEN, no conflicts detected\nFLID=YELLOW, at least one conflict detected that will bring the aircraft between 6-10 miles of another aircraft\nFLID=RED, at least one conflict detected that will bring the aircraft within 5 miles of another aircraft\n\nNOTE: Conflict Detection is not yet simulated",
   statusActive: "[NOT SIMULATED, YET]\nRW: Displays the current status of various systems the EDST connects to.\nvEDST: Misc. Information.",
@@ -35,8 +32,7 @@ export const Tooltips = {
   holdDelEfc: "When this button is selected, the existing EFC time for the flight is deleted from the input box in the Hold Data Menu.",
   holdHoldBtn: "Execute/Place in hold.",
   holdHoldSpaBtn: "Execute/Place in hold and move to Special Positing Area (SPA)",
-  sort:
-    "Set sorting method.\nOrganizes this list in order per the selected sort method.\n\nTIPS:\n-ACL: RW controllers tend to leave this on Sector/NonSector with either Boundary Time or ACID\n\n-DEP list: RW controllers tend to use the Proposed Departure Time (P-Time) however with the nature of the simulated environment, it is suggested to not use this option.",
+  sort: "Set sorting method.\nOrganizes this list in order per the selected sort method.\n\nTIPS:\n-ACL: RW controllers tend to leave this on Sector/NonSector with either Boundary Time or ACID\n\n-DEP list: RW controllers tend to use the Proposed Departure Time (P-Time) however with the nature of the simulated environment, it is suggested to not use this option.",
   sortAclSectorNonSector:
     "Sorts aircraft first by what sector has track-control for the aircraft; with your sector being above all others.\nThen the system sorts per the selected sort method below.\n\nNOTE: This is not yet simulated, as the system does not know who has track-control for an aircraft. Access to the RADAR client is required for this feature to be simulated.",
   sortAcid:
@@ -60,9 +56,9 @@ export const Tooltips = {
   aclHeaderType: "",
   aclHeaderAlt: "",
   aclHeaderCode: "",
-  aclHeaderHdg: "Show/hide assigned heading\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclHeaderSlash: "Show/hide assigned heading and speed\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclHeaderSpd: "Show/hide assigned speed\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
+  aclHeaderHdg: "Show/hide assigned heading",
+  aclHeaderSlash: "Show/hide assigned heading and speed",
+  aclHeaderSpd: "Show/hide assigned speed",
   aclNAndVciBtn:
     'Removes the "new (N)" entry indicator and then it will toggle the voice communication indicator (VCI) with further clicks\n\nNOTE: Entry will not grey-out if the VCI is toggled on.\nThe //(AID) command will also toggle the VCI on/off.',
   aclFlightId: "Callsign",
@@ -71,20 +67,17 @@ export const Tooltips = {
   aclAlt: "Assigned Altitude\n\nNOTE: Does not push assignments from vEDST to the controller client or server until we have access to these systems.",
   aclCode: "Assigned squawk/beacon code\n\nNOTE: This may not match what the aircraft is actually squawking.",
   aclHdg: "Assign heading\n\n.NOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclHdgAmend: "Assign heading now.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
+  aclHdgAmend: "Assign heading now.",
   aclHdgScratchpad: "Heading planned to assign in future.",
-  aclHdgTurn: "Incremental left/right turn.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclHdgHdg: "Heading to assign.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclSpd: "Assign speed.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclSpdAmend: "Assign speed now.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclSpdScratchpad: "Speed planned to assign in future.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclSpdKnots: "Indicated airspeed\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  aclSpdMach: "Mach number.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
+  aclHdgTurn: "Incremental left/right turn.",
+  aclHdgHdg: "Heading to assign.",
+  aclSpd: "Assign speed.",
+  aclSpdAmend: "Assign speed now.",
+  aclSpdScratchpad: "Speed planned to assign in future.",
+  aclSpdKnots: "Indicated airspeed",
+  aclSpdMach: "Mach number.",
   aclRemarksBtn: "LMB: toggle flight plan remarks | RMB: toggle route as displayed on VATSIM",
   aclRoute: "Open route menu",
-  depHeaderType: "",
-  depHeaderAlt: "",
-  depHeaderCode: "",
   depCheckmarkNBtn: "Acknowledge flight plan\n\nTIP: Toggle the N to off once you have reviewed the flight plan and made any required changes.",
   depFlightId: "Callsign",
   depHotbox:
@@ -100,20 +93,18 @@ export const Tooltips = {
   plansIcao: "[NOT SIMULATED, YET]\nDisplays available International Civil Aviation Organization (ICAO) flight data for a selected entry",
   plansCleanUp: "Cancel and clear all trial plans",
   routeMenuPlanData:
-    'Any actions taken while this button is selected will be sent as a trial plan only.\nTo have the action actually submitted, select "Amend" to the right.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.',
+    'Any actions taken while this button is selected will be sent as a trial plan only.\nTo have the action actually submitted, select "Amend" to the right.',
   routeMenuVatsimLogo:
     "Toggle the non-formatted route, as seen on VATSIM.\n\nTIP: If you have a route discontinuity [XXX], toggle the VATSIM route to see what the problem is.",
   routeMenuAmend:
-    'Any actions taken while this button is selected will be sent as an actual amendment.\nTo have the action submitted as only a trial plan, select "Trial Plan" to the left.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.',
+    'Any actions taken while this button is selected will be sent as an actual amendment.\nTo have the action submitted as only a trial plan, select "Trial Plan" to the left.',
   routeMenuFrd: "Current location relative to a predefined reference fix in the fix/radial/distance (FRD) format.\nRMB: copy FRD to clipboard",
-  routeMenuRouteInput: "Type the route manually here.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
+  routeMenuRouteInput: "Type the route manually here.",
   routeMenuPar: "[NOT SIMULATED, YET]\nInclude applicable PAR",
-  routeMenuAppendStar:
-    "[NOT SIMULATED, YET]\nOverride and ignore required PAR/PDAR routing\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
-  routeMenuAppendOplus:
-    "[NOT SIMULATED, YET]\nInhibits ERR application if the box was not previously selected.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
+  routeMenuAppendStar: "[NOT SIMULATED, YET]\nOverride and ignore required PAR/PDAR routing",
+  routeMenuAppendOplus: "[NOT SIMULATED, YET]\nInhibits ERR application if the box was not previously selected.",
   routeMenuDirectFix:
-    "Proceed direct to this fix from current location.\nLMS on fix: will copy FRD+remaining route to the clipboard if AMEND is selected in the top right.\n\nNOTE: Does not sync with assignments via the RADAR client until we have access.",
+    "Proceed direct to this fix from current location.\nLMS on fix: will copy FRD+remaining route to the clipboard if AMEND is selected in the top right.",
   routeMenuPreferredEligible: "Show eligible preferred routes based on routing criteria.",
   routeMenuPreferredAll: "Show all known preferred routes, regardless if the aircraft meet the qualifications for the route.",
   routeMenuPreferredRoute: "Click to apply this preferred route.\n\nNOTE, this will replace the full route, not append it.",
@@ -140,7 +131,6 @@ export const Tooltips = {
   templateMenuCreateFp: `Create new flight plan`,
   templateMenuRmk: `Flight Plan remarks`,
   templateMenuSend: `Finalize the flight plan`,
-  templateMenuExit: `Exit template`,
   equipmentTemplateMenuSurv: `Surveillance Equipment Template`,
   equipmentTemplateMenuSurv_NoXpdr: `No transponder (default selection)`,
   equipmentTemplateMenuSurv_A: `Mode A with no Mode C (Field 910b 1st character)`,
@@ -216,5 +206,5 @@ export const Tooltips = {
   equipmentTemplateMenuAppServ_S: `Standard (Field 910a)`,
   equipmentTemplateMenuAppServ_Ok: `Equipment Template is removed and the Template (Flight Plan or Amendment) is updated and displayed such that the equipment qualifier text entry box cannot be edited (grayed out) and the cursor rests over the Send button.`,
   equipmentTemplateMenuAppServ_Reset: `Changes to the template are discarded and the displayed data reverts to its initial state.`,
-  equipmentTemplateMenuAppServ_Cancel: `Equipment Template is removed, the changes (if any) are not retained, and the Template (Flight Plan or Amendment) is displayed with the cursor positioned over the Exit button.`
+  equipmentTemplateMenuAppServ_Cancel: `Equipment Template is removed, the changes (if any) are not retained, and the Template (Flight Plan or Amendment) is displayed with the cursor positioned over the Exit button.`,
 };

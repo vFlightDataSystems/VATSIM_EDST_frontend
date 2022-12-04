@@ -1,10 +1,11 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addPlan } from "../slices/planSlice";
-import { openWindow } from "../slices/appSlice";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
-import { Plan } from "../../typeDefinitions/types/plan";
+import type { Plan } from "types/plan";
+import { addPlan } from "~redux/slices/planSlice";
+import { openWindowThunk } from "~redux/thunks/openWindowThunk";
+import type { RootThunkAction } from "~redux/store";
 
-export const addPlanThunk = createAsyncThunk<void, Plan>("plan/trial/route", async (plan, thunkAPI) => {
-  thunkAPI.dispatch(openWindow(EdstWindow.PLANS_DISPLAY));
-  thunkAPI.dispatch(addPlan(plan));
-});
+export const addPlanThunk = (plan: Plan): RootThunkAction => {
+  return (dispatch) => {
+    dispatch(openWindowThunk("PLANS_DISPLAY"));
+    dispatch(addPlan(plan));
+  };
+};

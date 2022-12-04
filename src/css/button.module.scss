@@ -1,0 +1,59 @@
+@use "borderStyles";
+@value grey from "colors.css";
+@value border from "global.scss";
+
+.outerButton {
+  display: inline-flex;
+  border: 1px solid transparent;
+  height: auto;
+
+  padding: 0;
+  &:global {
+    &.isDisabled {
+      pointer-events: none;
+      border-color: transparent;
+
+      :local(.innerButton) {
+        color: #707070;
+      }
+    }
+
+    &.header {
+      font-size: inherit;
+      margin-left: 6px;
+      margin-right: 6px;
+      margin-bottom: 1px;
+    }
+
+    &.holdDirButton {
+      margin: 0 2px;
+    }
+  }
+
+}
+
+.innerButton {
+  composes: border;
+  --border-width: 2px;
+  --top-left-color: #888888;
+  --bottom-right-color: #575757;
+  @include borderStyles.border;
+  @include borderStyles.outlineHover;
+  font-size: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  padding: 0 4px;
+  margin: 0;
+
+  color: grey;
+  background-color: #000000;
+
+  &:global(.selected) {
+    color: #000000;
+    background-color: grey;
+    --top-left-color: #575757;
+    --bottom-right-color: #888888;
+  }
+}

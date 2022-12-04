@@ -1,0 +1,50 @@
+@use "borderStyles.scss";
+@value green, red from "colors.css";
+
+.body {
+  composes: body from "table.module.scss";
+  border-top: 1px solid #adadad;
+}
+
+.col {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  height: 1em;
+  border: 1px solid transparent;
+
+  &:global(.isDisabled) {
+    pointer-events: none;
+    color: #000000;
+  }
+}
+
+.fixCol {
+  composes: col;
+  @include borderStyles.borderHover;
+  width: 20ch;
+  justify-content: left;
+  padding: 0 4px;
+  color: green;
+
+  &:global(.selected) {
+    background-color: green;
+    color: #000000;
+  }
+}
+
+.col2 {
+  composes: col;
+  margin-left: auto;
+  margin-right: 15vw;
+  width: 6ch;
+  border: 1px solid #00ad00;
+  color: #00ad00;
+  padding: 0 4px;
+
+  &:global(.expired) {
+    color: red;
+    border: 1px solid red;
+  }
+}

@@ -1,14 +1,16 @@
-import { SharedAclState } from "./sharedAclState";
-import { SharedDepState } from "./sharedDepState";
-import { SharedPlansDisplayState } from "./sharedPlansDisplayState";
-import { SharedGpdState } from "./sharedGpdState";
+import type { EdstWindow } from "types/edstWindow";
+import type { AclState } from "~redux/slices/aclSlice";
+import type { DepState } from "~redux/slices/depSlice";
+import type { GpdState } from "~redux/slices/gpdSlice";
+import type { PlanState } from "~redux/slices/planSlice";
+import type { Asel } from "types/asel";
+import type { Nullable } from "types/utility-types";
 
-export class SharedUiState {
-  acl = new SharedAclState();
-
-  dep = new SharedDepState();
-
-  gpd = new SharedGpdState();
-
-  plansDisplay = new SharedPlansDisplayState();
-}
+export type SharedUiState = {
+  acl: AclState;
+  dep: DepState;
+  gpd: GpdState;
+  plansDisplay: PlanState;
+  openWindows: EdstWindow[];
+  asel: Nullable<Asel>;
+};

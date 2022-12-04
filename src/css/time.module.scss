@@ -1,0 +1,16 @@
+@use "global.scss";
+@value grey from "colors.css";
+
+.time {
+  @include global.noSelect;
+  font-family: ERAM, monospace;
+  color: grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 8ch;
+  margin: 1px;
+  font-size: 22px;
+  line-height: 1em;
+  height: 100%;
+}

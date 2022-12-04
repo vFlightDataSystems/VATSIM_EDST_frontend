@@ -1,29 +1,30 @@
-import React, { RefObject, useCallback, useEffect, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "../redux/slices/appSlice";
-import { WindowPosition } from "../typeDefinitions/types/windowPosition";
-import { DragPreviewStyle } from "../typeDefinitions/types/dragPreviewStyle";
-import { EdstWindow } from "../typeDefinitions/enums/edstWindow";
+import type { Nullable } from "types/utility-types";
+import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "~redux/slices/appSlice";
+import type { WindowPosition } from "types/windowPosition";
+import type { DragPreviewStyle } from "types/dragPreviewStyle";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import type { EdstWindow } from "types/edstWindow";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
-  EdstWindow.STATUS,
-  EdstWindow.OUTAGE,
-  EdstWindow.MESSAGE_COMPOSE_AREA,
-  EdstWindow.MESSAGE_RESPONSE_AREA,
-  EdstWindow.ALTIMETER,
-  EdstWindow.METAR,
-  EdstWindow.SIGMETS,
-  EdstWindow.NOTAMS,
-  EdstWindow.GI
+  "STATUS",
+  "OUTAGE",
+  "MESSAGE_COMPOSE_AREA",
+  "MESSAGE_RESPONSE_AREA",
+  "ALTIMETER",
+  "METAR",
+  "SIGMETS",
+  "GI",
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const computePreviewPos = (x: number, y: number, _width: number, _height: number): { left: number; top: number } => {
+const computePreviewPos = (x: number, y: number, _width: number, _height: number): WindowPosition => {
   return {
     left: x - 1,
-    top: y
+    top: y,
   };
 };
 
@@ -31,75 +32,77 @@ type StopDragOn = "mousedown" | "mouseup";
 
 /**
  * hook to provide startDrag/endDrag functions with a previewStyle to render the previewWindow
- * @param element ref to a DOM element
+ * @param ref ref to a DOM element
  * @param edstWindow window for which to trigger dragging events
  * @param stopDragOn whether to listen for stopDrag onMouseDown or onMouseUp
  * @returns
  */
-export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
+export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
   const dispatch = useRootDispatch();
+  // on middleClick I always want to stop drag onmouseup
+  const [currentStopDragOn, setCurrentStopDragOn] = useState(stopDragOn);
   const zStack = useRootSelector(zStackSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
   const [dragging, setDragging] = useState(false);
   const windows = useRootSelector(windowsSelector);
   const repositionCursor = DRAGGING_REPOSITION_CURSOR.includes(edstWindow);
-  const [dragPreviewStyle, setDragPreviewStyle] = useState<DragPreviewStyle | null>(null);
-  let ppos: WindowPosition | null = null;
-  ppos = windows[edstWindow as EdstWindow].position;
+  const [dragPreviewStyle, setDragPreviewStyle] = useState<Nullable<DragPreviewStyle>>(null);
+  let ppos: Nullable<WindowPosition> = null;
+  ppos = windows[edstWindow].position;
 
   useEffect(() => {
     return () => {
       dispatch(setAnyDragging(false));
     };
-  }, []);
+  }, [dispatch]);
 
   const draggingHandler = useCallback(
     (event: MouseEvent) => {
-      if (event && element.current) {
+      if (ref.current) {
         if (repositionCursor) {
-          setDragPreviewStyle(prevStyle => ({
+          setDragPreviewStyle((prevStyle) => ({
             ...prevStyle!,
             left: event.clientX,
-            top: event.clientY
+            top: event.clientY,
           }));
         } else {
-          const { clientWidth: width, clientHeight: height } = element.current;
-          setDragPreviewStyle(prevStyle => ({
+          const { clientWidth: width, clientHeight: height } = ref.current;
+          setDragPreviewStyle((prevStyle) => ({
             ...prevStyle!,
-            ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height)
+            ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height),
           }));
         }
       }
     },
-    [element, repositionCursor]
+    [ref, repositionCursor]
   );
 
-  const startDrag = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      if (element.current && ppos && !anyDragging) {
-        event.stopPropagation();
+  const startDrag: React.MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      if (ref.current && ppos && !anyDragging && (event.button === 0 || event.button === 1)) {
+        if (event.button === 1) {
+          setCurrentStopDragOn("mousedown");
+        }
         if (zStack.indexOf(edstWindow) < zStack.length - 1) {
           dispatch(pushZStack(edstWindow));
         }
         let previewPos;
         let relX = 0;
         let relY = 0;
-        // eslint-disable-next-line no-underscore-dangle
         if (window.__TAURI__) {
-          invoke("set_cursor_grab", { value: true }).then();
+          void invoke<void>("set_cursor_grab", { value: true });
         }
         if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
-          // eslint-disable-next-line no-underscore-dangle
           if (window.__TAURI__) {
-            previewPos = { x: ppos.x, y: ppos.y };
-            invoke("set_cursor_position", previewPos).then();
+            previewPos = { x: ppos.left, y: ppos.top };
+            void invoke<void>("set_cursor_position", previewPos);
           } else {
             previewPos = { x: event.pageX, y: event.pageY };
           }
         } else {
           previewPos = { x: event.pageX, y: event.pageY };
-          relX = ppos.x - event.pageX;
-          relY = ppos.y - event.pageY;
+          relX = ppos.left - event.pageX;
+          relY = ppos.top - event.pageY;
         }
         const style = {
           left: previewPos.x + relX - 1,
@@ -107,13 +110,13 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
           relX,
           relY,
           height:
-            element.current.clientHeight +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("border")) +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("margin")) * 2,
+            ref.current.clientHeight +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("border")) +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("margin")) * 2,
           width:
-            element.current.clientWidth +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("border")) +
-            parseFloat(getComputedStyle(element.current).getPropertyValue("margin")) * 2
+            ref.current.clientWidth +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("border")) +
+            parseFloat(getComputedStyle(ref.current).getPropertyValue("margin")) * 2,
         };
         setDragPreviewStyle(style);
         setDragging(true);
@@ -121,21 +124,20 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
         window.addEventListener("mousemove", draggingHandler);
       }
     },
-    [anyDragging, dispatch, draggingHandler, edstWindow, element, ppos]
+    [anyDragging, dispatch, draggingHandler, edstWindow, ref, ppos, zStack]
   );
 
   const stopDrag = useCallback(() => {
-    if (dragging && element?.current && dragPreviewStyle) {
-      const { left: x, top: y } = dragPreviewStyle;
-      const newPos = { x: x + 1, y };
-      // eslint-disable-next-line no-underscore-dangle
+    if (dragging && ref?.current && dragPreviewStyle) {
+      const { left, top } = dragPreviewStyle;
+      const newPos = { left: left + 1, top };
       if (window.__TAURI__) {
-        invoke("set_cursor_grab", { value: false }).then();
+        void invoke<void>("set_cursor_grab", { value: false });
       }
       dispatch(
         setWindowPosition({
           window: edstWindow,
-          pos: newPos
+          pos: newPos,
         })
       );
       dispatch(setAnyDragging(false));
@@ -143,13 +145,19 @@ export const useDragging = (element: RefObject<HTMLElement>, edstWindow: EdstWin
       setDragPreviewStyle(null);
       window.removeEventListener("mousemove", draggingHandler);
     }
-  }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, element]);
+  }, [dispatch, dragPreviewStyle, dragging, draggingHandler, edstWindow, ref]);
 
-  useEventListener(stopDragOn, () => {
-    if (dragPreviewStyle) {
-      stopDrag();
-    }
-  });
+  useEventListener(
+    currentStopDragOn,
+    (event) => {
+      if (dragPreviewStyle && event.button === 0) {
+        setCurrentStopDragOn(stopDragOn);
+        stopDrag();
+      }
+    },
+    undefined,
+    true
+  );
 
   return { startDrag, dragPreviewStyle, anyDragging };
 };

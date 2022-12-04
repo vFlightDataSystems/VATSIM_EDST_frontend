@@ -1,6 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { refreshSigmets } from "./weatherThunks";
+import { refreshAirSigmets } from "~redux/thunks/weatherThunks";
+import type { RootThunkAction } from "~redux/store";
 
-export const initThunk = createAsyncThunk("app/init", async (_args, thunkAPI) => {
-  thunkAPI.dispatch(refreshSigmets());
-});
+export function initThunk(): RootThunkAction {
+  return async (dispatch) => {
+    dispatch(refreshAirSigmets());
+  };
+}

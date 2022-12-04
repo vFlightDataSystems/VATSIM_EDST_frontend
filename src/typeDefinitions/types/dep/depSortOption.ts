@@ -1,0 +1,8 @@
+export type DepSortOption = "DEP_ACID_SORT_OPTION" | "DEP_DESTINATION_SORT_OPTION" | "DEP_ORIGIN_SORT_OPTION" | "DEP_P_TIME_SORT_OPTION";
+
+export const DepSortOptionValues = {
+  DEP_ACID_SORT_OPTION: "ACID",
+  DEP_DESTINATION_SORT_OPTION: "Destination",
+  DEP_ORIGIN_SORT_OPTION: "Origin",
+  DEP_P_TIME_SORT_OPTION: "P Time",
+};

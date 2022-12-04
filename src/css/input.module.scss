@@ -1,0 +1,35 @@
+@use "global.scss";
+@use "borderStyles.scss";
+@value grey from "colors.css";
+
+@value inputFontSize: 17px;
+
+.inputContainer {
+  display: inline-flex;
+  border: 1px solid transparent;
+
+  input, textarea {
+    color: grey;
+    width: calc(100% - 7px);
+    font-size: inputFontSize;
+    @include borderStyles.outlineHover;
+    --border-width: 2px;
+    --top-left-color: #888888;
+    --bottom-right-color: #575757;
+    @include borderStyles.border;
+    outline: none;
+    display: flex;
+    overflow: hidden;
+    background-color: #000000;
+    resize: none;
+    text-transform: uppercase;
+  }
+}
+
+.addFindContainer {
+  composes: inputContainer;
+  border: 1px solid #000000;
+  display: inline-flex;
+  margin: 1px 20px 1px 14px;
+  width: 10ch;
+}

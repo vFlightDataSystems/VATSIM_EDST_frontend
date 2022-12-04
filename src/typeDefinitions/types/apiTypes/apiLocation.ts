@@ -1,4 +1,4 @@
 export type ApiLocation = {
-  lat: number;
-  lon: number;
+  lat: number | string;
+  lon: number | string;
 };

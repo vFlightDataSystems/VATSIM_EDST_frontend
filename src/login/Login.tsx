@@ -1,57 +1,11 @@
-// noinspection CssUnknownTarget
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import styled from "styled-components";
-import { login, vatsimTokenSelector } from "../redux/slices/authSlice";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-
-const LoginPanel = styled.div`
-  height: 100vh;
-  width: 35vw;
-  background-color: #222222;
-  position: fixed;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  box-shadow: -5px 0 40px 5px rgba(0, 0, 0, 0.5);
-
-  > div {
-    background-color: #585858;
-    padding: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    border-radius: 15px;
-    box-shadow: -5px 0 40px 5px rgba(0, 0, 0, 0.5);
-  }
-`;
-
-const LoginBackground = styled.div`
-  height: 100vh;
-  width: 100vw;
-  position: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-image: url(${process.env.PUBLIC_URL}/img/EDST_SEND_ROUTE.jpg);
-`;
-
-const Button = styled.button`
-  /* Adapt the colors based on primary prop */
-  background-color: #1dbe77;
-  color: white;
-
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid #1dbe77;
-  border-radius: 3px;
-  width: 150px;
-`;
+import { login, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
+import loginStyles from "css/login.module.scss";
 
 const Login = () => {
   const dispatch = useRootDispatch();
@@ -62,29 +16,34 @@ const Login = () => {
 
   useEffect(() => {
     if (code) {
-      dispatch(login({ code, redirectUrl: encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`) }));
+      dispatch(
+        login({
+          code,
+          redirectUrl: encodeURIComponent(`${DOMAIN}/login`),
+        })
+      );
     }
-  }, [code]);
+  }, [code, dispatch]);
 
   useEffect(() => {
     if (vatsimToken) {
       navigate("/", { replace: true });
     }
-  }, [vatsimToken]);
+  }, [navigate, vatsimToken]);
 
   return (
     <>
-      <LoginBackground />
-      <LoginPanel>
+      <div className={loginStyles.bg} />
+      <div className={loginStyles.root}>
         <div>
           <img src="/img/vEDSTLogo.png" alt="vEDST Logo" width="200" />
-          <Button
+          <button
             type="button"
             disabled={code !== null}
             onClick={() => {
-              window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${
-                process.env.REACT_APP_VATSIM_CLIENT_ID
-              }&redirect_uri=${encodeURIComponent(`${process.env.REACT_APP_DOMAIN}/login`)}&response_type=code&scope=vatsim_details`;
+              window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+                `${DOMAIN}/login`
+              )}&response_type=code&scope=vatsim_details`;
             }}
           >
             {code ? (
@@ -96,9 +55,9 @@ const Login = () => {
             ) : (
               "Login with VATSIM"
             )}
-          </Button>
+          </button>
         </div>
-      </LoginPanel>
+      </div>
     </>
   );
 };

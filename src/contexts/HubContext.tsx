@@ -1,157 +1,162 @@
-/* eslint-disable no-console */
-import React, { createContext, ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { decodeJwt } from "jose";
-import { log } from "../console";
-import { useRootDispatch, useRootSelector } from "../redux/hooks";
-import { clearSession, nasTokenSelector, setSession, vatsimTokenSelector } from "../redux/slices/authSlice";
-import { refreshToken } from "../api/vNasDataApi";
-import { ApiSessionInfo } from "../typeDefinitions/types/apiTypes/apiSessionInfo";
-import { ApiTopic } from "../typeDefinitions/types/apiTypes/apiTopic";
-import { ApiFlightplan } from "../typeDefinitions/types/apiTypes/apiFlightplan";
-import { updateFlightplanThunk } from "../redux/thunks/updateFlightplanThunk";
-import { ApiAircraftTrack } from "../typeDefinitions/types/apiTypes/apiAircraftTrack";
-import { updateAircraftTrackThunk } from "../redux/thunks/updateAircraftTrackThunk";
-import { setMcaRejectMessage } from "../redux/slices/appSlice";
-import { setArtccId, setSectorId } from "../redux/slices/sectorSlice";
-import { initThunk } from "../redux/thunks/initThunk";
-import { useSocketConnector } from "../hooks/useSocketConnector";
+import type { ReactNode } from "react";
+import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import type { HubConnection } from "@microsoft/signalr";
+import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
+import type { Nullable } from "types/utility-types";
+import { clearSession, setSession, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { refreshToken } from "~/api/vNasDataApi";
+import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
+import { ApiTopic } from "types/apiTypes/apiTopic";
+import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
+import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
+import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
+import { setMcaRejectMessage } from "~redux/slices/appSlice";
+import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
+import { initThunk } from "~redux/thunks/initThunk";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { useSocketConnector } from "hooks/useSocketConnector";
+import { VERSION } from "~/utils/constants";
+import { clientHubUrl } from "~/config";
 
-const ATC_SERVER_URL = process.env.REACT_APP_ATC_HUB_URL;
+const HUB_URL = clientHubUrl;
 
-const useHubContextInit = () => {
+type HubContextValue = {
+  connectHub: () => Promise<void>;
+  disconnectHub: () => Promise<void>;
+  hubConnection: HubConnection | null;
+};
+
+export const HubContext = createContext<HubContextValue>({
+  connectHub: Promise.reject,
+  disconnectHub: Promise.reject,
+  hubConnection: null,
+});
+
+export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
-  const nasToken = useRootSelector(nasTokenSelector)!;
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
-  const ref = useRef<HubConnection | null>(null);
-  const { connectSocket, disconnectSocket } = useSocketConnector();
-
-  const getValidNasToken = () => {
-    const decodedToken = decodeJwt(nasToken);
-    if (decodedToken.exp! - Math.trunc(Date.now() / 1000) < 0) {
-      console.log("Refreshed NAS token");
-      return refreshToken(vatsimToken).then(r => {
-        return r.data;
-      });
-    }
-    return nasToken;
-  };
+  const ref = useRef<Nullable<HubConnection>>(null);
+  const { disconnectSocket } = useSocketConnector();
 
   useEffect(() => {
-    if (!ATC_SERVER_URL || !nasToken || hubConnected) {
+    if (!HUB_URL || !vatsimToken) {
       return;
     }
 
+    const getValidNasToken = async () => {
+      // const decodedToken = decodeJwt(nasToken);
+      return refreshToken(vatsimToken).then((r) => {
+        console.log("Refreshed NAS token");
+        return r.data;
+      });
+    };
+
     ref.current = new HubConnectionBuilder()
-      .withUrl(ATC_SERVER_URL, {
+      .withUrl(HUB_URL, {
         accessTokenFactory: getValidNasToken,
         transport: HttpTransportType.WebSockets,
-        skipNegotiation: true
+        skipNegotiation: true,
       })
       .withAutomaticReconnect()
       .build();
-  }, []);
+  }, [vatsimToken]);
 
   const connectHub = useCallback(async () => {
-    if (!ATC_SERVER_URL || !nasToken || hubConnected || !ref.current) {
-      return Promise.reject();
+    if (!HUB_URL || !vatsimToken || hubConnected || !ref.current) {
+      if (hubConnected) {
+        throw new Error("ALREADY CONNECTED");
+      }
+      throw new Error("SOMETHING WENT WRONG");
     }
     const hubConnection = ref.current;
     async function start() {
       hubConnection.onclose(() => {
-        log("ATC hub disconnected");
+        dispatch(setArtccId(""));
+        dispatch(setSectorId(""));
+        console.log("ATC hub disconnected");
       });
 
-      hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfo) => {
-        log(sessionInfo);
+      hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
+        console.log(sessionInfo);
         dispatch(setSession(sessionInfo));
       });
 
       hubConnection.on("HandleSessionEnded", () => {
-        log("clearing session");
+        console.log("clearing session");
         dispatch(clearSession());
       });
       hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
-        // log("received flightplan:", flightplan);
+        console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
       });
-      hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
-        // log("received aircraft:", aircraft);
-        aircraft.forEach(t => {
-          dispatch(updateAircraftTrackThunk(t));
+      hubConnection.on("receiveFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
+        flightplans.forEach((flightplan) => {
+          console.log("received flightplan:", flightplan);
+          dispatch(updateFlightplanThunk(flightplan));
         });
+      });
+      hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
+        console.log("received aircraft:", aircraft);
+        // aircraft.forEach(t => {
+        //   dispatch(updateAircraftTrackThunk(t));
+        // });
       });
 
       hubConnection.on("receiveError", (message: string) => {
         dispatch(setMcaRejectMessage(message));
       });
 
-      hubConnection
-        .start()
-        .then(() => {
-          hubConnection
-            .invoke<ApiSessionInfo>("getSessionInfo")
-            .then(sessionInfo => {
-              log(sessionInfo);
-              if (sessionInfo.position.eramConfiguration) {
-                const { artccId } = sessionInfo;
-                const { sectorId } = sessionInfo.position.eramConfiguration;
-                dispatch(setArtccId(artccId));
-                dispatch(setSectorId(sectorId));
-                connectSocket?.(artccId, sectorId);
-                dispatch(setSession(sessionInfo));
-                dispatch(initThunk());
-                hubConnection
-                  .invoke<void>("joinSession", { sessionId: sessionInfo.id })
-                  .then(() => {
-                    log(`joined session ${sessionInfo.id}`);
-                    hubConnection
-                      .invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.facilityId))
-                      .then(() => log("subscribe succeeded."))
-                      .catch(console.log);
-                  })
-                  .catch(console.log);
-              } else {
-                console.log("not signed in to a Center position");
-              }
-            })
-            .catch(() => {
-              console.log("No session found");
-            });
-          setHubConnected(true);
-          console.log("Connected to ATC hub");
-        })
-        .catch(e => {
-          console.error("Error starting connection: ", e);
+      await hubConnection.start();
+      let sessionInfo: ApiSessionInfoDto;
+      try {
+        sessionInfo = await hubConnection.invoke<ApiSessionInfoDto>("getSessionInfo");
+      } catch {
+        ref.current?.stop().then(() => setHubConnected(false));
+        throw new Error("SESSION NOT FOUND");
+      }
+      console.log(sessionInfo);
+      const primaryPosition = sessionInfo?.positions.slice(0).filter((pos) => pos.isPrimary)?.[0]?.position;
+      if (primaryPosition?.eramConfiguration) {
+        const artccId = sessionInfo.artccId;
+        const sectorId = primaryPosition.eramConfiguration.sectorId;
+        dispatch(setArtccId(artccId));
+        dispatch(setSectorId(sectorId));
+        dispatch(setSession(sessionInfo));
+        dispatch(initThunk());
+        await hubConnection.invoke<void>("joinSession", {
+          sessionId: sessionInfo.id,
+          clientName: "vEDST",
+          clientVersion: VERSION,
         });
+        console.log(`joined session ${sessionInfo.id}`);
+        setHubConnected(true);
+        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
+          ref.current?.stop().then(() => setHubConnected(false));
+          throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
+        });
+      } else {
+        ref.current?.stop().then(() => setHubConnected(false));
+        throw new Error("NOT SIGNED INTO A CENTER POSITION");
+      }
     }
 
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, [connectSocket]);
+  }, [dispatch, hubConnected, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
-    ref.current?.stop().then(() => setHubConnected(false));
+    ref.current?.stop()?.then(() => setHubConnected(false));
     disconnectSocket();
   }, [disconnectSocket]);
 
-  return {
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
+  const contextValue = {
     hubConnection: ref.current,
     connectHub,
-    disconnectHub
+    disconnectHub,
   };
+
+  return <HubContext.Provider value={contextValue}>{children}</HubContext.Provider>;
 };
-
-type HubContextValue = ReturnType<typeof useHubContextInit>;
-
-export const HubContext = createContext<HubContextValue>({ connectHub: Promise.reject, disconnectHub: Promise.reject, hubConnection: null });
-
-export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const hubConnection = useHubContextInit();
-  log(hubConnection);
-
-  return <HubContext.Provider value={hubConnection}>{children}</HubContext.Provider>;
-};
-/* eslint-enable no-console */

@@ -1,0 +1,94 @@
+.fontSize1 {
+  font-size: 14px;
+}
+.fontSize2 {
+  font-size: 17px;
+}
+.fontSize3 {
+  font-size: 20px;
+}
+
+@mixin brightness {
+  color: rgba(173, 173, 173, var(--brightness, 1));
+
+  &:global(.selected) {
+    color: #000000;
+    background-color: rgba(173, 173, 173, var(--brightness, 1));
+  }
+}
+
+@mixin noSelect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.noPointerEvents {
+  pointer-events: none;
+}
+
+.scrollContainer {
+  height: auto;
+  display: block;
+  overflow: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    //display: none;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    //border-radius: 2px;
+    display: unset;
+    background-color: #adadad;
+  }
+
+  &.bounded-scroll {
+    max-height: 40em;  }
+}
+
+.draggingOutline {
+  position: fixed;
+  pointer-events: all;
+  z-index: 30000;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+
+  &.absolute {
+    position: absolute;
+  }
+}
+
+@for $i from 1 through 20 {
+  .w#{$i} {
+    width: #{$i}ch;
+  }
+}
+
+.flexGrow {
+  flex-grow: 1;
+}
+
+.topBorder {
+  border-top: 1px solid #adadad;
+}
+
+.bottomBorder {
+  border-bottom: 1px solid #adadad;
+}
+
+.draggingOutline {
+  position: fixed;
+  pointer-events: all;
+  z-index: 30000;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+}

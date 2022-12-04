@@ -1,75 +1,74 @@
-import { RootThunkAction } from "../store";
-import { WindowPosition } from "../../typeDefinitions/types/windowPosition";
-import { openWindow, setWindowPosition } from "../slices/appSlice";
-import { EdstWindow } from "../../typeDefinitions/enums/edstWindow";
+import type { Nullable } from "types/utility-types";
+import type { WindowPosition } from "types/windowPosition";
+import type { EdstWindow } from "types/edstWindow";
+import type { RootThunkAction } from "~redux/store";
+import { openWindow, setWindowPosition } from "~redux/slices/appSlice";
+import sharedSocket from "~socket";
 
 export function openMenuThunk(
   window: EdstWindow,
-  eventTarget?: (EventTarget & HTMLElement) | null,
-  triggeredFromWindow?: EdstWindow,
-  plan = false
+  element: Nullable<HTMLElement>,
+  triggerSharedState = false,
+  plan = false,
+  centerMenu = false
 ): RootThunkAction {
-  return dispatch => {
-    if (eventTarget) {
+  return (dispatch) => {
+    if (element) {
       let menuPos: WindowPosition;
-      const { x, y, height, width } = eventTarget.getBoundingClientRect();
+      const { x, y, height, width } = element.getBoundingClientRect();
       switch (window) {
-        case EdstWindow.ALTITUDE_MENU:
+        case "ALTITUDE_MENU":
           menuPos = {
-            x: x + (plan ? 0 : width),
-            y: plan ? eventTarget.offsetTop : y - 76,
-            w: width,
-            h: height
+            left: x + (plan ? 0 : width),
+            top: plan ? element.offsetTop : y - 76,
           };
           break;
-        case EdstWindow.ROUTE_MENU:
-          menuPos =
-            triggeredFromWindow !== EdstWindow.DEP
-              ? {
-                  x: x - (plan ? 0 : 569),
-                  y: plan ? eventTarget.offsetTop : y - 3 * height,
-                  w: width,
-                  h: height
-                }
-              : {
-                  x: x - 1,
-                  y: 200,
-                  w: width,
-                  h: height
-                };
+        case "ROUTE_MENU":
+          menuPos = !centerMenu
+            ? {
+                left: x - (plan ? 0 : 569),
+                top: plan ? element.offsetTop : y - 3 * height,
+              }
+            : {
+                left: x - 1,
+                top: 200,
+              };
           break;
-        case EdstWindow.PREV_ROUTE_MENU:
+        case "PREV_ROUTE_MENU":
           menuPos = {
-            x,
-            y: plan ? eventTarget.offsetTop : y - 2 * height,
-            w: width,
-            h: height
+            left: x,
+            top: plan ? element.offsetTop : y - 2 * height,
           };
           break;
-        case EdstWindow.SPEED_MENU:
+        case "SPEED_MENU":
           menuPos = {
-            x: x + width,
-            y: 200,
-            w: width,
-            h: height
+            left: x + width,
+            top: 200,
           };
           break;
-        case EdstWindow.HEADING_MENU:
+        case "HEADING_MENU":
           menuPos = {
-            x: x + width,
-            y: 200,
-            w: width,
-            h: height
+            left: x + width,
+            top: 200,
+          };
+          break;
+        case "TEMPLATE_MENU":
+          menuPos = {
+            left: 200,
+            top: 200,
           };
           break;
         default:
           menuPos = {
-            x,
-            y: y + eventTarget.offsetHeight
+            left: x,
+            top: y + element.offsetHeight,
           };
       }
       dispatch(setWindowPosition({ window, pos: menuPos }));
     }
     dispatch(openWindow(window));
+    if (triggerSharedState) {
+      sharedSocket.openSharedWindow(window);
+    }
   };
 }

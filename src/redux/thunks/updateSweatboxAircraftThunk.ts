@@ -1,37 +1,28 @@
-import { ApiAircraft } from "../../typeDefinitions/types/apiTypes/apiAircraft";
-import { RootThunkAction } from "../store";
-import { AircraftId } from "../../typeDefinitions/types/aircraftId";
-import { AircraftTrack } from "../../typeDefinitions/types/aircraftTrack";
-import { depFilter } from "../../filters";
-import { addEntryToAcl, addEntryToDep } from "../slices/entrySlice";
-import { setTracks } from "../slices/trackSlice";
+import type { ApiAircraft } from "types/apiTypes/apiAircraft";
+import type { AircraftId } from "types/aircraftId";
+import type { AircraftTrack } from "types/aircraftTrack";
+import type { RootThunkAction } from "~redux/store";
+import { setTracks } from "~redux/slices/trackSlice";
 
-export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[]): RootThunkAction {
+export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activateFlightplan: (aircraftId: string) => void): RootThunkAction {
   return (dispatch, getState) => {
-    const { entries, sectorData } = getState();
+    const { entries } = getState();
     const newTracks: Record<AircraftId, AircraftTrack> = {};
-    const aircraftMap = Object.fromEntries(aircraftList.map(aircraft => [aircraft.id, aircraft]));
+    const aircraftMap = Object.fromEntries(aircraftList.map((aircraft) => [aircraft.id, aircraft]));
     Object.entries(entries).forEach(([aircraftId, entry]) => {
       if (Object.keys(aircraftMap).includes(aircraftId)) {
         const aircraft = aircraftMap[aircraftId];
-        const newAircraftTrack: AircraftTrack = {
+        newTracks[aircraftId] = {
           aircraftId,
           altitudeAgl: aircraft.altitudeAgl,
           altitudeTrue: aircraft.altitudeTrue,
           groundSpeed: aircraft.groundSpeed,
           location: aircraft.location,
           typeCode: aircraft.typeCode,
-          lastUpdated: new Date(aircraft.lastUpdatedAt).getTime()
+          lastUpdated: new Date(aircraft.lastUpdatedAt).getTime(),
         };
-        newTracks[aircraftId] = newAircraftTrack;
-        if (entry && !entry.aclDisplay) {
-          depFilter(entry, newAircraftTrack, sectorData.artccId).then(result => {
-            if (result) {
-              dispatch(addEntryToDep(aircraftId));
-            } else {
-              dispatch(addEntryToAcl(aircraftId));
-            }
-          });
+        if (entry.status !== "Active" && newTracks[aircraftId].groundSpeed > 40) {
+          activateFlightplan(aircraftId);
         }
       }
     });

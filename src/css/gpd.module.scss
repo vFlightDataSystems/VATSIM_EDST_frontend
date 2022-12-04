@@ -1,0 +1,66 @@
+@value grey from "colors.css";
+
+.body {
+  overflow: hidden;
+  min-width: 500px;
+  min-height: 500px;
+  width: 100%;
+  height: 100%;
+}
+
+:global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+}
+
+.datablock {
+  font-family: ERAM, monospace;
+  position: relative;
+  font-size: 15px;
+  line-height: 1;
+  width: 9ch;
+  color: #adadad;
+}
+
+.dbRow {
+  display: flex;
+  width: 9ch;
+}
+
+.dbElement {
+  height: 1em;
+  border: 1px solid transparent;
+  margin: 0 1px;
+  padding: 0 1px;
+  flex-grow: 1;
+  min-width: 3ch;
+  display: inline-flex;
+  background-color: transparent;
+  color: grey;
+
+  :hover {
+    border: 1px solid #adadad;
+  }
+
+  &:global(.selected) {
+    color: #000000;
+    background-color: grey;
+  }
+}
+
+.leaderline {
+  background-color: grey;
+  transform-origin: bottom left;
+  height: 1px;
+}
+
+[class~="leaflet-tooltip"] {
+  &::before {
+    all: unset;
+  }
+  background: transparent;
+  border: none;
+  width: 0;
+  height: 0;
+}
