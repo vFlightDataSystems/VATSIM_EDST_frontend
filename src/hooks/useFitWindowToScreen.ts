@@ -5,9 +5,9 @@ import { setWindowPosition, windowPositionSelector } from "~redux/slices/appSlic
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import type { EdstWindow } from "types/edstWindow";
 
-export const useFitWindowToScreen = (ref: RefObject<HTMLElement>, window: EdstWindow) => {
+export const useFitWindowToScreen = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
-  const pos = useRootSelector((state) => windowPositionSelector(state, window));
+  const pos = useRootSelector((state) => windowPositionSelector(state, edstWindow));
   const windowSize = useWindowSize();
 
   useLayoutEffect(() => {
@@ -17,9 +17,9 @@ export const useFitWindowToScreen = (ref: RefObject<HTMLElement>, window: EdstWi
         const newLeft = Math.min(pos.left, windowSize.width - rect.width);
         const newTop = Math.min(pos.top, windowSize.height - rect.height);
         if (newLeft !== pos.left || newTop !== pos.top) {
-          dispatch(setWindowPosition({ window: "ROUTE_MENU", pos: { left: newLeft, top: newTop } }));
+          dispatch(setWindowPosition({ window: edstWindow, pos: { left: newLeft, top: newTop } }));
         }
       }
     }
-  }, [dispatch, pos.left, pos.top, ref, windowSize.height, windowSize.width]);
+  }, [dispatch, edstWindow, pos.left, pos.top, ref, windowSize.height, windowSize.width]);
 };
