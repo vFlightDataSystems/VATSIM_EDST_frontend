@@ -67,6 +67,43 @@ export const EdstHeader = () => {
 
   return (
     <div className={clsx(edstStyles.header, { bottom: !headerTop })}>
+      {windows.MORE.open && !headerTop && (
+        <div className={edstStyles.headerRow}>
+          <div className={clsx(edstStyles.headerCol, edstStyles.bottomCol)}>
+            <EdstHeaderButton
+              window="WIND"
+              content="WIND"
+              disabled
+              // title={Tooltips.wind}
+            />
+            <EdstHeaderButton
+              window="ALTIMETER"
+              content="ALTIM SET"
+              // title={Tooltips.alt}
+            />
+            <EdstHeaderButton window="MESSAGE_COMPOSE_AREA" content="MCA" title={Tooltips.mca} />
+            <EdstHeaderButton window="MESSAGE_RESPONSE_AREA" content="RA" title={Tooltips.ra} />
+            <EdstHeaderButton
+              window="FEL"
+              content="FEL"
+              disabled
+              // title={Tooltips.fel}
+            />
+            <EdstHeaderButton
+              window="CPDLC_HIST"
+              content="CPDLC HIST"
+              disabled
+              // title={Tooltips.cpdlc_hist}
+            />
+            <EdstHeaderButton
+              window="CPDLC_MSG"
+              content="CPDLC MSGOUT"
+              disabled
+              // title={Tooltips.cpdlc_msg_out}
+            />
+          </div>
+        </div>
+      )}
       <div className={edstStyles.headerRow}>
         <div className={edstStyles.headerCol}>
           <button style={{ width: "1.6ch" }} onMouseDown={() => dispatch(setHeaderTop(!headerTop))}>
@@ -134,7 +171,7 @@ export const EdstHeader = () => {
           />
         </div>
       </div>
-      {windows.MORE.open && (
+      {windows.MORE.open && headerTop && (
         <div className={edstStyles.headerRow}>
           <div className={clsx(edstStyles.headerCol, edstStyles.bottomCol)}>
             <EdstHeaderButton
