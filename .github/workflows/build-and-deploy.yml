@@ -63,4 +63,4 @@ jobs:
       - name: Add known host
         run: echo '${{ secrets.KNOWN_HOSTS }}' >> ~/.ssh/known_hosts
       - name: Deploy to server
-        run: rsync -avz --delete --exclude=docs --exclude=utilities . ${{secrets.USER}}@${{secrets.HOST}}:/var/www/edst.virtualnas.net/wwwroot
+        run: rsync -avz --delete --exclude=docs --exclude=downloads . ${{secrets.USER}}@${{secrets.HOST}}:/var/www/edst.virtualnas.net/wwwroot
