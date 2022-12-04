@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import "css/styles.css";
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import { Tooltips } from "~/tooltips";
@@ -28,8 +27,8 @@ import socket from "~socket";
 import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
 import { EdstButton, ExitButton } from "components/utils/EdstButton";
-import FLIGHTAWARE_LOGO from "resources/images/FA_1.png";
-import SKYVECTOR_LOGO from "resources/images/glob_bright.png";
+import FLIGHTAWARE_LOGO from "assets/images/FA_1.png";
+import SKYVECTOR_LOGO from "assets/images/glob_bright.png";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
 import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 import clsx from "clsx";

@@ -7,7 +7,6 @@ import { aclHiddenColumnsSelector, aclManualPostingSelector, toggleAclHideColumn
 import { VCI_SYMBOL } from "~/utils/constants";
 import { AclRow } from "components/AclRow";
 import { ListMapper } from "components/utils/ListMapper";
-import aclStyles from "css/acl.module.scss";
 import tableStyles from "css/table.module.scss";
 import clsx from "clsx";
 
@@ -50,17 +49,17 @@ export const AclTable = () => {
   return (
     <div className={tableStyles.body}>
       <div className={tableStyles.topRow}>
-        <div className={clsx(aclStyles.radioCol, "header", "cGreen")}>{VCI_SYMBOL}</div>
-        <div className={clsx(aclStyles.col1, "cRed")}>R</div>
-        <div className={clsx(aclStyles.col1, "cYellow")}>Y</div>
-        <div className={clsx(aclStyles.col1, "cOrange")}>A</div>
+        <div className={clsx(tableStyles.radioCol, "header", "cGreen")}>{VCI_SYMBOL}</div>
+        <div className={clsx(tableStyles.col1, "cRed")}>R</div>
+        <div className={clsx(tableStyles.col1, "cYellow")}>Y</div>
+        <div className={clsx(tableStyles.col1, "cOrange")}>A</div>
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div className={tableStyles.innerRow}>
           <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
-          <div className={aclStyles.paCol} title={Tooltips.aclHeaderPa}>
+          <div className={tableStyles.paCol} title={Tooltips.aclHeaderPa}>
             PA
           </div>
-          {toolOptions.displayCoordinationColumn && <div className={clsx(aclStyles.specialBox, "isDisabled")} />}
+          {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "isDisabled")} />}
           {/* spa indicator column */}
           <div className={clsx(tableStyles.specialBox, "isDisabled")} />
           {/* hotbox column */}
@@ -86,17 +85,17 @@ export const AclTable = () => {
           </div>
           <div className={clsx(tableStyles.specialBox, "isDisabled")} />
           <div
-            className={clsx(aclStyles.hdgCol, { hover: true, hidden: hiddenColumns.includes("HDG_ACL_ROW_FIELD") })}
+            className={clsx(tableStyles.hdgCol, { hover: true, hidden: hiddenColumns.includes("HDG_ACL_ROW_FIELD") })}
             title={Tooltips.aclHeaderHdg}
             onMouseDown={() => dispatch(toggleAclHideColumn("HDG_ACL_ROW_FIELD"))}
           >
             {hiddenColumns.includes("HDG_ACL_ROW_FIELD") && anyAssignedHeading && "*"}H{!hiddenColumns.includes("HDG_ACL_ROW_FIELD") && "dg"}
           </div>
-          <div className={aclStyles.slashColHeader} title={Tooltips.aclHeaderSlash} onMouseDown={handleClickSlash}>
+          <div className={tableStyles.slashColHeader} title={Tooltips.aclHeaderSlash} onMouseDown={handleClickSlash}>
             /
           </div>
           <div
-            className={clsx(aclStyles.spdCol, { hover: true, hidden: hiddenColumns.includes("SPD_ACL_ROW_FIELD") })}
+            className={clsx(tableStyles.spdCol, { hover: true, hidden: hiddenColumns.includes("SPD_ACL_ROW_FIELD") })}
             title={Tooltips.aclHeaderSpd}
             onMouseDown={() => dispatch(toggleAclHideColumn("SPD_ACL_ROW_FIELD"))}
           >

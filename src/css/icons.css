@@ -1,27 +1,27 @@
 .circle-icon {
-    background-image: url("../resources/images/Circle.svg");
+    background-image: url("../assets/images/Circle.svg");
 }
 
 .diamond-icon {
-    background-image: url("../resources/images/Diamond.svg");
+    background-image: url("../assets/images/Diamond.svg");
 }
 
 .square-icon {
-    background-image: url("../resources/images/Square.svg");
+    background-image: url("../assets/images/Square.svg");
 }
 
 .plus-icon {
-    background-image: url("../resources/images/Plus.svg");
+    background-image: url("../assets/images/Plus.svg");
 }
 
 .vatsim-logo {
-    background-image: url("../resources/images/VATSIM-social_icon.svg");
+    background-image: url("../assets/images/VATSIM-social_icon.svg");
 }
 
 .skyvector-logo {
-    background-image: url("../resources/images/glob_bright.png");
+    background-image: url("../assets/images/glob_bright.png");
 }
 
 .flightaware-logo {
-    background-image: url("../resources/images/FA_1.png");
+    background-image: url("../assets/images/FA_1.png");
 }
