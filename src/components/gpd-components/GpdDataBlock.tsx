@@ -66,17 +66,8 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
   useAselEventListener(altRef, entry.aircraftId, "gpd-dest-asel", "ROUTE_ACL_ROW_FIELD", "ROUTE_MENU", handleClick);
 
   const onCallsignClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    if (!anyDragging) {
-      switch (event.button) {
-        case 0:
-          dispatch(gpdAircraftSelect(entry.aircraftId, "FID_ACL_ROW_FIELD", null));
-          break;
-        case 1:
-          toggleShowRoute();
-          break;
-        default:
-          break;
-      }
+    if (!anyDragging && event.button === 0) {
+      dispatch(gpdAircraftSelect(entry.aircraftId, "FID_ACL_ROW_FIELD", null));
     }
   };
 
@@ -94,7 +85,8 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
     (event: React.MouseEvent) => {
       const pos = ref.current?.getBoundingClientRect();
       const ppos = pos ? { x: pos.left, y: pos.top } : null;
-      if (event.buttons && ref.current && ppos) {
+      if (event.buttons === 1 && ref.current && ppos) {
+        map.dragging.disable();
         if (window.__TAURI__) {
           void invoke("set_cursor_grab", { value: true });
         }
@@ -111,7 +103,6 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
         setDragPreviewStyle(style);
         dispatch(setAnyDragging(true));
         window.addEventListener("mousemove", draggingHandler);
-        map.dragging.disable();
       }
     },
     [dispatch, draggingHandler, map]
@@ -158,7 +149,11 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
             <div
               className={clsx(gpdStyles.dbElement, { selected: selectedField === "ALT_ACL_ROW_FIELD" })}
               ref={altRef}
-              onMouseUp={(event) => handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "gpd-alt-asel", "ALTITUDE_MENU")}
+              onMouseUp={(event) => {
+                if (event.button === 0) {
+                  handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "gpd-alt-asel", "ALTITUDE_MENU");
+                }
+              }}
             >
               {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`}
             </div>
@@ -167,13 +162,21 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
             <div
               className={clsx(gpdStyles.dbElement, { selected: selectedField === "ROUTE_ACL_ROW_FIELD" })}
               ref={destRef}
-              onMouseUp={(event) => handleClick(event.currentTarget, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
+              onMouseUp={(event) => {
+                if (event.button === 0) {
+                  handleClick(event.currentTarget, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU");
+                }
+              }}
             >
               {entry.destination}
             </div>
             <div
               className={clsx(gpdStyles.dbElement, { selected: selectedField === "SPD_ACL_ROW_FIELD" })}
-              onMouseUp={(event) => handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
+              onMouseUp={(event) => {
+                if (event.button === 0) {
+                  handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "gpd-spd-asel");
+                }
+              }}
             >
               {track.groundSpeed}
             </div>

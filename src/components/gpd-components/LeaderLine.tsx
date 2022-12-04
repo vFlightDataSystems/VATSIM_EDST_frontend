@@ -15,7 +15,11 @@ export const LeaderLine = ({ offset, toggleShowRoute }: LeaderLineProps) => {
     <div
       className={gpdStyles.leaderline}
       style={{ width: `${length}px`, transform: `rotate(${angle}deg)` }}
-      onMouseDown={(event) => event.button === 1 && toggleShowRoute()}
+      onMouseDown={(event) => {
+        if (event.button === 1) {
+          toggleShowRoute();
+        }
+      }}
     />
   );
 };

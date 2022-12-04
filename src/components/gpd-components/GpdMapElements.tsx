@@ -115,7 +115,7 @@ export const GpdAircraftTrack = ({ aircraftId }: GpdAircraftTrackProps) => {
   const entry = useRootSelector((state) => entrySelector(state, aircraftId));
   const track = useRootSelector((state) => aircraftTrackSelector(state, aircraftId));
   const [routeLine, setRouteLine] = useState<RouteFix[] | null>(null);
-  const posLatLng = track?.location ? posToLatLng({ ...track.location }) : null;
+  const posLatLng = useMemo(() => (track?.location ? posToLatLng({ ...track.location }) : null), [track.location]);
   const { value: showRoute, toggle: toggleShowRoute } = useBoolean(false);
   const { value: showDataBlock, toggle: toggleShowDataBlock } = useBoolean(true);
   const ref = useRef<Nullable<L.Marker>>(null);
