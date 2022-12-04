@@ -15,7 +15,7 @@ import clsx from "clsx";
 const YELLOW = "#A3A300";
 // const RED = "#590000";
 
-type EdstHeaderButtonCSSProps = Pick<CSSProperties, "width" | "color" | "backgroundColor" | "borderColor">;
+type EdstHeaderButtonCSSProps = Pick<CSSProperties, "width" | "color" | "borderColor" | "backgroundColor">;
 type EdstHeaderButtonProps = {
   title?: string;
   disabled?: boolean;
@@ -25,7 +25,7 @@ type EdstHeaderButtonProps = {
 
 const noToggleWindows = ["ACL", "DEP", "GPD", "PLANS_DISPLAY"];
 
-const EdstHeaderButton = ({ title, content, disabled, window, ...props }: EdstHeaderButtonProps) => {
+const EdstHeaderButton = ({ title, content, disabled, window, borderColor, ...props }: EdstHeaderButtonProps) => {
   const dispatch = useRootDispatch();
   const edstWindow = useRootSelector((state) => windowSelector(state, window));
 
@@ -39,7 +39,7 @@ const EdstHeaderButton = ({ title, content, disabled, window, ...props }: EdstHe
 
   return (
     <button
-      style={props}
+      style={{ "--border-color": borderColor, ...props }}
       type="button"
       onMouseDown={mouseDownHandler}
       title={title}
