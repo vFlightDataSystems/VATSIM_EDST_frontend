@@ -60,6 +60,7 @@ export const GpdBody = () => {
         zoomControl={false}
         zoomAnimation={false}
         inertia={false}
+        attributionControl={false}
         zoom={zoomLevel}
         maxZoom={GPD_MAX_ZOOM}
         minZoom={GPD_MIN_ZOOM}

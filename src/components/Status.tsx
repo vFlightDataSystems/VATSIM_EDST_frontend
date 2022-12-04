@@ -6,6 +6,8 @@ import { artccIdSelector, sectorIdSelector } from "~redux/slices/sectorSlice";
 import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 
+// TODO: add leaflet attribution
+
 export const Status = () => {
   const [showOptions, setShowOptions] = useState(false);
 
