@@ -82,19 +82,19 @@ export const AltMenu = () => {
 
   useEventListener("keydown", keyDownHandler);
 
-  const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
+  const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
 
   return (
     <div className={clsx(altStyles.root, { manualInput: manualInput !== null })} ref={ref} style={pos}>
       <div className={altStyles.header}>
-        <div className={clsx(altStyles.headerCol, "flex")}>{entry?.aircraftId}</div>
+        <div className={clsx(altStyles.headerCol, "flex", "noPointerEvents")}>{entry.aircraftId}</div>
         <div className={altStyles.headerXCol} onMouseDown={() => dispatch(closeWindow("ALTITUDE_MENU"))}>
           X
         </div>
       </div>
       {manualInput !== null && (
         <>
-          <div className={clsx(altStyles.row, "noHover")}>FP{entry.altitude}</div>
+          <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
           <div className={clsx(altStyles.row, "bgBlack")}>
             <input
               ref={inputRef}
@@ -113,7 +113,7 @@ export const AltMenu = () => {
               }}
             />
           </div>
-          {showInvalid && <div className={clsx(altStyles.row, "invalid", "noHover")}>INVALID</div>}
+          {showInvalid && <div className={clsx(altStyles.row, "invalid", "noPointerEvents")}>INVALID</div>}
         </>
       )}
       {manualInput === null && (
@@ -132,7 +132,7 @@ export const AltMenu = () => {
           >
             AMEND
           </div>
-          <div className={clsx(altStyles.row, "noHover")}>FP{entry.altitude}</div>
+          <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
           <div className={clsx(altStyles.row, "isDisabled")}>UPLINK</div>
           <div className={clsx(altStyles.row, "isDisabled")}>
             <div className={altStyles.col}>PD</div>

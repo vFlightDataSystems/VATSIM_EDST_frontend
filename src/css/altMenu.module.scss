@@ -71,10 +71,6 @@
   align-items: center;
   border: 1px solid #adadad;
 
-  &:global(.noHover) {
-    pointer-events: none;
-  }
-
   &:global(.isDisabled) {
     pointer-events: none;
     color: grey;
