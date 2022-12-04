@@ -6,7 +6,7 @@ export const Outage = () => {
 
   return (
     <FloatingWindow title="OUTAGE" optionsHeaderTitle="OUTAGE" width="40ch" window="OUTAGE" showOptions={showOptions} setShowOptions={setShowOptions}>
-      OUTAGE TEST
+      <p>No Outages</p>
     </FloatingWindow>
   );
 };

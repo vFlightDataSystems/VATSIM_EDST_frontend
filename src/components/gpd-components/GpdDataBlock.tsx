@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import React, { useCallback, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
@@ -129,6 +130,26 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
 
   useEventListener("mouseup", stopDrag);
 
+  const dbElement = (
+    elemRef: RefObject<HTMLDivElement> | null,
+    content: string | number,
+    fieldName: AclRowField,
+    eventId: string,
+    opensWindow?: EdstWindow
+  ) => (
+    <div
+      className={clsx(gpdStyles.dbElement, { selected: selectedField === fieldName })}
+      ref={elemRef}
+      onMouseUp={(event) => {
+        if (event.button === 0) {
+          handleClick(event.currentTarget, fieldName, eventId, opensWindow);
+        }
+      }}
+    >
+      {content}
+    </div>
+  );
+
   return (
     <>
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
@@ -146,40 +167,17 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
             </div>
           </div>
           <div className={gpdStyles.dbRow}>
-            <div
-              className={clsx(gpdStyles.dbElement, { selected: selectedField === "ALT_ACL_ROW_FIELD" })}
-              ref={altRef}
-              onMouseUp={(event) => {
-                if (event.button === 0) {
-                  handleClick(event.currentTarget, "ALT_ACL_ROW_FIELD", "gpd-alt-asel", "ALTITUDE_MENU");
-                }
-              }}
-            >
-              {entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`}
-            </div>
+            {dbElement(
+              altRef,
+              entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`,
+              "ALT_ACL_ROW_FIELD",
+              "gpd-alt-asel",
+              "ALTITUDE_MENU"
+            )}
           </div>
           <div className={gpdStyles.dbRow}>
-            <div
-              className={clsx(gpdStyles.dbElement, { selected: selectedField === "ROUTE_ACL_ROW_FIELD" })}
-              ref={destRef}
-              onMouseUp={(event) => {
-                if (event.button === 0) {
-                  handleClick(event.currentTarget, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU");
-                }
-              }}
-            >
-              {entry.destination}
-            </div>
-            <div
-              className={clsx(gpdStyles.dbElement, { selected: selectedField === "SPD_ACL_ROW_FIELD" })}
-              onMouseUp={(event) => {
-                if (event.button === 0) {
-                  handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "gpd-spd-asel");
-                }
-              }}
-            >
-              {track.groundSpeed}
-            </div>
+            {dbElement(destRef, entry.destination, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
+            {dbElement(null, track.groundSpeed, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
           </div>
         </div>
       </PersistentInvisibleTooltip>

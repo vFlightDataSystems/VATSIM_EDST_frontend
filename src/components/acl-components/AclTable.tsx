@@ -53,17 +53,17 @@ export const AclTable = () => {
         <div className={clsx(tableStyles.col1, "cRed")}>R</div>
         <div className={clsx(tableStyles.col1, "cYellow")}>Y</div>
         <div className={clsx(tableStyles.col1, "cOrange")}>A</div>
-        <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+        <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={tableStyles.innerRow}>
           <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
           <div className={tableStyles.paCol} title={Tooltips.aclHeaderPa}>
             PA
           </div>
-          {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "isDisabled")} />}
+          {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />}
           {/* spa indicator column */}
-          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+          <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
           {/* hotbox column */}
-          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+          <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
           <div
             className={clsx(tableStyles.acTypeCol, { hover: true, hidden: hiddenColumns.includes("TYPE_ACL_ROW_FIELD") })}
             onMouseDown={() => dispatch(toggleAclHideColumn("TYPE_ACL_ROW_FIELD"))}
@@ -102,12 +102,12 @@ export const AclTable = () => {
             S{!hiddenColumns.includes("SPD_ACL_ROW_FIELD") && "pd"}
             {hiddenColumns.includes("SPD_ACL_ROW_FIELD") && anyAssignedSpeed && "*"}
           </div>
-          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
-          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
-          {anyHolding && <div className={clsx(tableStyles.specialBox, "isDisabled")}>H</div>}
+          <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
+          <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
+          {anyHolding && <div className={clsx(tableStyles.specialBox, "noPointerEvents")}>H</div>}
           {/* toggle remarks column */}
-          <div className={clsx(tableStyles.specialBox, "isDisabled")} />
-          <div className={tableStyles.routeCol}>Route</div>
+          <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
+          <div className={clsx(tableStyles.routeCol, "noPointerEvents")}>Route</div>
         </div>
       </div>
       <div className="scrollContainer">
