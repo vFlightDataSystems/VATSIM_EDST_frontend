@@ -46,7 +46,6 @@ type AppState = {
   mraMsg: string;
   mcaFeedbackString: string;
   giEntryMap: Record<string, GIEntry>;
-  tooltipsEnabled: boolean;
   asel: Nullable<Asel>;
   zStack: EdstWindow[];
   outages: OutageEntry[];
@@ -80,7 +79,6 @@ const initialState: AppState = {
   mraMsg: "",
   mcaFeedbackString: "",
   giEntryMap: {},
-  tooltipsEnabled: true,
   asel: null,
   zStack: [],
   outages: [],
@@ -109,9 +107,6 @@ const appSlice = createSlice({
     },
     setIsFullscreen(state, action: PayloadAction<{ window: EdstWindow; value: boolean }>) {
       state.windows[action.payload.window].isFullscreen = action.payload.value;
-    },
-    setTooltipsEnabled(state, action: PayloadAction<boolean>) {
-      state.tooltipsEnabled = action.payload;
     },
     setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: WindowPosition }>) {
       state.windows[action.payload.window].position = action.payload.pos;
@@ -235,7 +230,6 @@ export const toggleWindow = (edstWindow: EdstWindow): RootThunkAction => {
 export const {
   setHeaderTop,
   setIsFullscreen,
-  setTooltipsEnabled,
   setWindowPosition,
   setWindowDimension,
   openWindow,
@@ -267,5 +261,4 @@ export const anyDraggingSelector = (state: RootState) => state.app.anyDragging;
 export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
-export const tooltipsEnabledSelector = (state: RootState) => state.app.tooltipsEnabled;
 export const headerTopSelector = (state: RootState) => state.app.headerTop;
