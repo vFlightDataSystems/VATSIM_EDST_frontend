@@ -1,3 +1,5 @@
+@value grey from "colors.css";
+
 .fontSize1 {
   font-size: 14px;
 }
@@ -74,6 +76,21 @@
   }
 }
 
+.isDisabled {
+  pointer-events: none;
+  color: var(--disabled-color, #575757);
+}
+
+.left {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.right {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
 .flexGrow {
   flex-grow: 1;
 }
@@ -107,4 +124,20 @@
 @font-face {
   font-family: MyConsolas;
   src: url("../assets/fonts/CONSOLAB.TTF");
+}
+
+.circle-icon {
+  background-image: url("../assets/images/Circle.svg");
+}
+
+.diamond-icon {
+  background-image: url("../assets/images/Diamond.svg");
+}
+
+.square-icon {
+  background-image: url("../assets/images/Square.svg");
+}
+
+.plus-icon {
+  background-image: url("../assets/images/Plus.svg");
 }
