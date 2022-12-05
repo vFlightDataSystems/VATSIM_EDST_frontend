@@ -89,18 +89,6 @@ export const EdstHeader = () => {
               disabled
               // title={Tooltips.fel}
             />
-            <EdstHeaderButton
-              window="CPDLC_HIST"
-              content="CPDLC HIST"
-              disabled
-              // title={Tooltips.cpdlc_hist}
-            />
-            <EdstHeaderButton
-              window="CPDLC_MSG"
-              content="CPDLC MSGOUT"
-              disabled
-              // title={Tooltips.cpdlc_msg_out}
-            />
           </div>
         </div>
       )}
@@ -143,6 +131,9 @@ export const EdstHeader = () => {
             disabled
             // title={Tooltips.ua}
           />
+          <EdstHeaderButton window="CPDLC_ADV" content="CPDLC ADV" disabled />
+          <EdstHeaderButton window="CPDLC_HIST" content="CPDLC HIST" disabled />
+          <EdstHeaderButton window="CPDLC_MSG" content="CPDLC MSGOUT" disabled />
           <button disabled>KEEP ALL</button>
         </div>
         <div className={edstStyles.headerCol}>
@@ -192,18 +183,6 @@ export const EdstHeader = () => {
               content="FEL"
               disabled
               // title={Tooltips.fel}
-            />
-            <EdstHeaderButton
-              window="CPDLC_HIST"
-              content="CPDLC HIST"
-              disabled
-              // title={Tooltips.cpdlc_hist}
-            />
-            <EdstHeaderButton
-              window="CPDLC_MSG"
-              content="CPDLC MSGOUT"
-              disabled
-              // title={Tooltips.cpdlc_msg_out}
             />
           </div>
         </div>
