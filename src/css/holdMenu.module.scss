@@ -1,26 +1,27 @@
 @use "global.scss";
 @use "borderStyles.scss";
-@use "optionMenu.module.scss";
 @use "input.module.scss";
 
 .root {
-  composes: root from "optionMenu.module.scss";
-  --width: 44ch;
+  composes: root from "movableMenu.module.scss";
+  --width: 40ch;
 }
 
 .fixContainer {
+  @include global.noSelect;
   padding: 4px 0;
   border-bottom: 1px solid #adadad;
 }
 
 .row1 {
-  composes: row from "optionMenu.module.scss";
+  composes: row from "movableMenu.module.scss";
+  @include global.noSelect;
   justify-content: space-between;
 }
 
 .row2 {
-  composes: row from "optionMenu.module.scss";
-  padding: 6px 0!important;
+  composes: row from "movableMenu.module.scss";
+  padding-bottom: 2px;
   border-bottom: 1px solid #adadad;
 }
 
@@ -38,13 +39,6 @@
   overflow: hidden;
   margin: 0 4px;
   justify-content: flex-start;
-
-  &:global(.selected) {
-    color: #000000;
-    background-color: grey;
-    --top-left-color: #575757;
-    --bottom-right-color: #888888;
-  }
 }
 
 .leftCol {
@@ -69,24 +63,27 @@
   height: 1em;
   padding: 0 4px;
   flex-grow: 0;
-  width: 11ch;
+  width: 16ch;
   margin: 0 12px;
 }
 
+.colContainer {
+  width: 30%;
+  justify-content: center;
+  text-align: center;
+}
+
+
 .col2 {
-  composes: col;
+  display: inline-flex;
   justify-content: center;
   flex-grow: 0;
-  margin: auto;
   border-bottom: 1px solid #adadad;
 }
 
 .col3 {
-  composes: col;
-  min-width: 12ch;
-  justify-content: center;
+  display: inline-flex;
   margin-top: 2px;
-
   [class~="isDisabled"] {
     border-color: transparent;
   }
@@ -104,12 +101,9 @@
   composes: col;
   justify-content: left;
   align-items: center;
-  margin-left: 10px;
   margin-right: auto;
 }
 
 .efcInputContainer {
-  composes: inputContainer from "input.module.scss";
-  margin-left: 1ch;
   margin-right: 0;
 }

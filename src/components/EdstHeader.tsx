@@ -94,7 +94,7 @@ export const EdstHeader = () => {
       )}
       <div className={edstStyles.headerRow}>
         <div className={edstStyles.headerCol}>
-          <button style={{ width: "1.6ch" }} onMouseDown={() => dispatch(setHeaderTop(!headerTop))}>
+          <button style={{ width: "1.4ch" }} onMouseDown={() => dispatch(setHeaderTop(!headerTop))}>
             {headerTop ? "#" : "@"}
           </button>
           <button style={{ width: "6ch" }} className={clsx({ highlight: windows.MORE.open })} onMouseDown={() => dispatch(toggleWindow("MORE"))}>

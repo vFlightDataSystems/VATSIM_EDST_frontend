@@ -19,12 +19,12 @@ import { useRouteFixes } from "api/aircraftApi";
 import { computeCrossingTimes } from "~/utils/computeCrossingTimes";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { EdstButton, HoldDirButton2ch, HoldDirButton22ch, HoldDirButton5ch, ExitButton } from "components/utils/EdstButton";
+import { HoldDirButton24ch, HoldDirButton5ch, MovableBlackButton, MovableBlueButton } from "components/utils/EdstButton";
 import { getUtcMinutesAfterMidnight } from "~/utils/getUtcMinutesAfterMidnight";
 import clsx from "clsx";
 import optionStyles from "css/optionMenu.module.scss";
-import inputStyles from "css/input.module.scss";
 import holdStyles from "css/holdMenu.module.scss";
+import movableMenu from "css/movableMenu.module.scss";
 
 export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
@@ -84,32 +84,31 @@ export const HoldMenu = () => {
       onMouseDown={() => zStack.indexOf("HOLD_MENU") < zStack.length - 1 && dispatch(pushZStack("HOLD_MENU"))}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
-        Hold Data Menu
-      </div>
-      <div className={optionStyles.body}>
-        <div className={optionStyles.fidRow}>
-          {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+      <div className={clsx(movableMenu.header, { focused })}>
+        <div className={clsx(movableMenu.headerCol, "flexGrow")} onMouseDown={startDrag}>
+          HOLD DATA {entry.cid} {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
         </div>
-        <div className={optionStyles.row}>
+        <div className={movableMenu.headerXCol} onMouseDown={() => dispatch(closeWindow("HOLD_MENU"))}>
+          X
+        </div>
+      </div>
+      <div className={movableMenu.body}>
+        <div className={movableMenu.row}>
           <div className={holdStyles.leftCol} title={Tooltips.holdDirection}>
             Location
           </div>
         </div>
-        <div className={optionStyles.row}>
-          <div className={optionStyles.col}>
-            <EdstButton
-              content="Present Position"
-              selected={fix === null}
-              onMouseDown={() => {
-                const utcMinutes = getUtcMinutesAfterMidnight();
-                setFix(null);
-                setEfc(utcMinutes + 30);
-              }}
-            />
-          </div>
-        </div>
         <div className={holdStyles.fixContainer}>
+          <div
+            className={clsx(holdStyles.fixCol, { [movableMenu.selected]: fix === null })}
+            onMouseDown={() => {
+              const utcMinutes = getUtcMinutesAfterMidnight();
+              setFix(null);
+              setEfc(utcMinutes + 30);
+            }}
+          >
+            PRESENT POSITION
+          </div>
           {holdRouteFixes &&
             _.range(0, Math.min(holdRouteFixes.length || 0, 10)).map((i) => (
               <div className={optionStyles.row} key={i}>
@@ -119,7 +118,7 @@ export const HoldMenu = () => {
                   return (
                     fixName && (
                       <div
-                        className={clsx(holdStyles.fixCol, { selected: fix === fixName })}
+                        className={clsx(holdStyles.fixCol, { [movableMenu.selected]: fix === fixName })}
                         key={`${i}-${j}`}
                         onMouseDown={() => {
                           setFix(fixName);
@@ -138,76 +137,81 @@ export const HoldMenu = () => {
             ))}
         </div>
         <div className={holdStyles.row1}>
-          <div className={holdStyles.col2} title={Tooltips.holdDirection}>
-            Direction
+          <div className={clsx(holdStyles.colContainer)}>
+            <div className={holdStyles.col2} title={Tooltips.holdDirection}>
+              Direction
+            </div>
           </div>
-          <div className={holdStyles.col2} title={Tooltips.holdTurns}>
-            Turns
+          <div className={holdStyles.colContainer}>
+            <div className={holdStyles.col2} title={Tooltips.holdTurns}>
+              Turns
+            </div>
           </div>
-          <div className={holdStyles.col2} title={Tooltips.holdLegLength}>
-            Leg Length
+          <div className={holdStyles.colContainer}>
+            <div className={holdStyles.col2} title={Tooltips.holdLegLength}>
+              Leg Length
+            </div>
           </div>
         </div>
         <div className={holdStyles.row1}>
-          <div className={holdStyles.col3}>
-            <HoldDirButton2ch
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
+            <HoldDirButton24ch
               content="NW"
               selected={direction === CompassDirection.NORTH_WEST}
               onMouseDown={() => setDirection(CompassDirection.NORTH_WEST)}
             />
-            <HoldDirButton2ch content="N" selected={direction === CompassDirection.NORTH} onMouseDown={() => setDirection(CompassDirection.NORTH)} />
-            <HoldDirButton2ch
+            <HoldDirButton24ch content="N" selected={direction === CompassDirection.NORTH} onMouseDown={() => setDirection(CompassDirection.NORTH)} />
+            <HoldDirButton24ch
               content="NE"
               selected={direction === CompassDirection.NORTH_EAST}
               onMouseDown={() => setDirection(CompassDirection.NORTH_EAST)}
             />
           </div>
-          <div className={holdStyles.col3}>
-            <HoldDirButton22ch content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
-            <HoldDirButton22ch content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
+            <HoldDirButton24ch content="LT" selected={turns === TurnDirection.LEFT} onMouseDown={() => setTurns(TurnDirection.LEFT)} />
+            <HoldDirButton24ch content="RT" selected={turns === TurnDirection.RIGHT} onMouseDown={() => setTurns(TurnDirection.RIGHT)} />
           </div>
-          <div className={holdStyles.col3}>
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
             <HoldDirButton5ch content="STD" selected={legLength === null} onMouseDown={() => setLegLength(null)} />
             <HoldDirButton5ch content="15 NM" selected={legLength === 15} onMouseDown={() => setLegLength(15)} />
           </div>
         </div>
         <div className={holdStyles.row1}>
-          <div className={holdStyles.col3}>
-            <HoldDirButton2ch content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
-            <HoldDirButton2ch disabled />
-            <HoldDirButton2ch content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
+            <HoldDirButton24ch content="W" selected={direction === CompassDirection.WEST} onMouseDown={() => setDirection(CompassDirection.WEST)} />
+            <HoldDirButton24ch disabled />
+            <HoldDirButton24ch content="E" selected={direction === CompassDirection.EAST} onMouseDown={() => setDirection(CompassDirection.EAST)} />
           </div>
-          <div className={holdStyles.col3} />
-          <div className={holdStyles.col3}>
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)} />
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
             <HoldDirButton5ch content="5 NM" selected={legLength === 5} onMouseDown={() => setLegLength(5)} />
             <HoldDirButton5ch content="20 NM" selected={legLength === 20} onMouseDown={() => setLegLength(20)} />
           </div>
         </div>
         <div className={holdStyles.row1}>
-          <div className={holdStyles.col3}>
-            <HoldDirButton2ch
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
+            <HoldDirButton24ch
               content="SW"
               selected={direction === CompassDirection.SOUTH_WEST}
               onMouseDown={() => setDirection(CompassDirection.SOUTH_WEST)}
             />
-            <HoldDirButton2ch content="S" selected={direction === CompassDirection.SOUTH} onMouseDown={() => setDirection(CompassDirection.SOUTH)} />
-            <HoldDirButton2ch
+            <HoldDirButton24ch content="S" selected={direction === CompassDirection.SOUTH} onMouseDown={() => setDirection(CompassDirection.SOUTH)} />
+            <HoldDirButton24ch
               content="SE"
               selected={direction === CompassDirection.SOUTH_EAST}
               onMouseDown={() => setDirection(CompassDirection.SOUTH_EAST)}
             />
           </div>
-          <div className={holdStyles.col3} />
-          <div className={holdStyles.col3}>
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)} />
+          <div className={clsx(holdStyles.colContainer, holdStyles.col3)}>
             <HoldDirButton5ch content="10 NM" selected={legLength === 10} onMouseDown={() => setLegLength(10)} />
             <HoldDirButton5ch content="25 NM" selected={legLength === 25} onMouseDown={() => setLegLength(25)} />
           </div>
         </div>
         <div className={clsx(holdStyles.row2, "bottomBorder")}>
           <div className={holdStyles.col5}>
-            <EdstButton
-              content="Delete Hold Instructions"
-              padding="0 20px"
+            <div
+              className={clsx(movableMenu.blueButton, { isDisabled: !!entry?.holdAnnotations })}
               onMouseDown={() => {
                 dispatch(
                   updateEntry({
@@ -217,8 +221,9 @@ export const HoldMenu = () => {
                 );
                 dispatch(closeWindow("HOLD_MENU"));
               }}
-              title={Tooltips.holdDeleteHoldInstr}
-            />
+            >
+              CLEAR HOLD DATA
+            </div>
           </div>
         </div>
         <div className={holdStyles.row1}>
@@ -226,48 +231,37 @@ export const HoldMenu = () => {
             EFC
           </div>
         </div>
-        <div className={optionStyles.col}>
+        <div className={movableMenu.col}>
           <div className={holdStyles.efcCol}>
-            <div className={clsx(inputStyles.inputContainer, "w5")}>
-              <input
-                value={formatUtcMinutes(efc)}
-                readOnly
-                // onChange={(e) => setEfc(e.target.value)}
-              />
-            </div>
-            <EdstButton content="-" margin="0 0 0 10px" width="2ch" onMouseDown={() => setEfc(efc - 1)} />
-            <EdstButton content="+" margin="0 0 0 4px" width="2ch" onMouseDown={() => setEfc(efc + 1)} />
+            <MovableBlackButton className="noPointerEvents" width="5ch" content={formatUtcMinutes(efc)} />
+            <MovableBlackButton width="2ch" content="-" onMouseDown={() => setEfc(efc - 1)} />
+            <MovableBlackButton width="2ch" content="+" onMouseDown={() => setEfc(efc + 1)} />
           </div>
         </div>
         <div className={holdStyles.row2}>
           <div className={holdStyles.col5}>
-            <EdstButton content="Delete EFC" padding="0 6px" onMouseDown={() => setEfc(0)} title={Tooltips.holdDelEfc} />
+            <div className={clsx(movableMenu.blueButton, { isDisabled: !!entry?.holdAnnotations })} onMouseDown={() => setEfc(0)}>
+              DELETE EFC
+            </div>
           </div>
         </div>
-        <div className={optionStyles.bottomRow}>
-          <div className={optionStyles.col}>
-            <EdstButton
-              content="Hold/SPA"
-              margin="0 6px 0 0"
-              padding="0 6px"
-              disabled={!!entry?.holdAnnotations}
+        <div className={clsx(movableMenu.row, "topBorder")}>
+          <div className={clsx(movableMenu.col, "center")}>
+            <MovableBlueButton
+              width="33%"
+              content="HOLD/SPA"
               onMouseDown={() => {
                 if (!entry.spa) {
                   dispatch(toggleSpa(entry.aircraftId));
                 }
                 clearedHold();
               }}
-              title={Tooltips.holdHoldSpaBtn}
-            />
-            <EdstButton
-              content="Hold"
-              margin="0 6px 0 0"
-              onMouseDown={clearedHold}
               disabled={!!entry?.holdAnnotations}
-              title={Tooltips.holdHoldBtn}
             />
-            <EdstButton
-              content="Cancel Hold"
+            <MovableBlueButton width="33%" content="HOLD" onMouseDown={clearedHold} disabled={!!entry?.holdAnnotations} />
+            <MovableBlueButton
+              width="33%"
+              content="CANCEL HOLD"
               disabled={!entry?.holdAnnotations}
               onMouseDown={() => {
                 dispatch(
@@ -280,9 +274,6 @@ export const HoldMenu = () => {
                 dispatch(closeWindow("HOLD_MENU"));
               }}
             />
-          </div>
-          <div className={clsx(optionStyles.col, "right")}>
-            <ExitButton onMouseDown={() => dispatch(closeWindow("HOLD_MENU"))} />
           </div>
         </div>
       </div>

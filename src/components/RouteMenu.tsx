@@ -24,15 +24,11 @@ import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { removeStringFromStart, removeStringFromEnd } from "~/utils/stringManipulation";
 import { getClearedToFixRouteFixes } from "~/utils/fixes";
 import socket from "~socket";
-import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
-import { EdstButton, ExitButton } from "components/utils/EdstButton";
-import FLIGHTAWARE_LOGO from "assets/images/FA_1.png";
-import SKYVECTOR_LOGO from "assets/images/glob_bright.png";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
 import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 import clsx from "clsx";
-import optionStyles from "css/optionMenu.module.scss";
+import movableMenu from "css/movableMenu.module.scss";
 import routeStyles from "css/routeMenu.module.scss";
 
 type Append = { appendOplus: boolean; appendStar: boolean };
@@ -215,106 +211,86 @@ export const RouteMenu = () => {
       onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <div className={clsx(optionStyles.header, { focused })} onMouseDown={startDrag}>
-        Route Menu
-      </div>
-      <div className={optionStyles.body}>
-        <div className={routeStyles.fidRow}>
-          {entry.aircraftId} {`${entry.aircraftType}/${entry.faaEquipmentSuffix}`}
+      <div className={clsx(movableMenu.header, { focused })}>
+        <div className={clsx(movableMenu.headerCol, "flexGrow")} onMouseDown={startDrag}>
+          Route Menu {entry.aircraftId}
         </div>
-        <div className={clsx(routeStyles.row, "pad")}>
-          <div className={routeStyles.col}>
-            <EdstButton
-              content="Trial Plan"
-              selected={trialPlan}
+        <div className={movableMenu.headerXCol} onMouseDown={() => dispatch(closeWindow("ROUTE_MENU"))}>
+          X
+        </div>
+      </div>
+      <div className={movableMenu.body}>
+        <div className={movableMenu.row}>
+          <div className={clsx(movableMenu.col, "left")}>
+            <div
+              className={clsx(movableMenu.button, { [movableMenu.selected]: trialPlan, isDisabled: asel.window === "DEP" })}
               onMouseDown={() => {
                 socket.dispatchUiEvent("routeMenuSetTrialPlan", true);
                 setTrialPlan(true);
               }}
-              title={Tooltips.routeMenuPlanData}
-              disabled={asel.window === "DEP"}
-            />
-          </div>
-          <div className={routeStyles.icon}>
-            <a href={`https://skyvector.com/?fpl=${entry.departure} ${entry.route} ${entry.destination}`} target="_blank" rel="noreferrer">
-              <img src={SKYVECTOR_LOGO} alt="skyvector-logo" />
-            </a>
-          </div>
-          <div className={routeStyles.icon}>
-            <a
-              href={`https://flightaware.com/analysis/route.rvt?origin=${entry.departure}&destination=${entry.destination}`}
-              target="_blank"
-              rel="noreferrer"
             >
-              <img src={FLIGHTAWARE_LOGO} alt="flightaware-logo" />
-            </a>
-          </div>
-          <div className={clsx(routeStyles.col, "right")}>
-            {entry.cpdlcCapable && (
-              <>
-                <EdstButton content="Uplink" />
-                <DownlinkSymbol />
-              </>
-            )}
-            <EdstButton
-              content="Amend"
-              selected={!trialPlan}
+              TRIAL PLAN
+            </div>
+            <div
+              className={clsx(movableMenu.button, { [movableMenu.selected]: !trialPlan })}
               onMouseDown={() => {
                 socket.dispatchUiEvent("routeMenuSetTrialPlan", false);
                 setTrialPlan(false);
               }}
-              title={Tooltips.routeMenuAmend}
-            />
-          </div>
-        </div>
-        <div className={clsx(routeStyles.row, "pad")}>
-          <div className={routeStyles.col}>
-            <div className={routeStyles.inputContainer}>
-              {!(asel.window === "DEP") && (
-                <div className={routeStyles.ppos} title={Tooltips.routeMenuFrd}>
-                  {frd}..
-                </div>
-              )}
-              <input value={routeInput} spellCheck={false} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={handleInputKeyDown} />
+            >
+              AMEND
             </div>
           </div>
-        </div>
-        <div className={clsx(routeStyles.row, "pad", "topBorder")}>
-          <div className={clsx(routeStyles.buttonCol, "isDisabled")} title={Tooltips.routeMenuPar}>
-            <div className={clsx(routeStyles.indicator, "s9")} />
-            Include PAR
+          <div className={clsx(movableMenu.col, "right")}>
+            {/* <div className={clsx(movableMenu.button, "isDisabled")}>UPLINK</div> */}
+            {/* <div className={clsx(movableMenu.button, "isDisabled")}>{DOWNLINK_SYMBOL}</div> */}
+            {/* <div className={clsx(movableMenu.button, "isDisabled")}>CAR</div> */}
+            {/* <div className={clsx(movableMenu.button, "isDisabled")}>X RES</div> */}
+            <div className={clsx(movableMenu.button, "isDisabled")}>HOLD DATA</div>
           </div>
         </div>
-        <div className={clsx(routeStyles.row, "pad", "bottomBorder")}>
-          <div
-            className={clsx(routeStyles.buttonCol)}
-            title={Tooltips.routeMenuAppendStar}
-            onMouseDown={() => {
-              socket.dispatchUiEvent("routeMenuClickAppendStar");
-              setAppend(toggleAppendStar);
-            }}
-          >
-            <div className={clsx(routeStyles.indicator, "s9", { selected: appendStar })} />
-            Append *
-          </div>
-          <div
-            className={clsx(routeStyles.buttonCol)}
-            title={Tooltips.routeMenuAppendOplus}
-            onMouseDown={() => {
-              socket.dispatchUiEvent("routeMenuClickAppendOplus");
-              setAppend(toggleAppendOplus);
-            }}
-          >
-            <div className={clsx(routeStyles.indicator, "s9", { selected: appendOplus })} />
-            Append {OPLUS_SYMBOL}
+        <div className={movableMenu.row} />
+        <div className={movableMenu.row}>
+          <div className={movableMenu.segmentHeader}>CURRENT RTE EDIT AREA</div>
+        </div>
+        <div className={clsx(movableMenu.row)}>
+          <div className={routeStyles.inputContainer}>
+            {!(asel.window === "DEP") && <div className={routeStyles.ppos}>{frd}..</div>}
+            <input value={routeInput} spellCheck={false} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={handleInputKeyDown} />
           </div>
         </div>
-        <div className={routeStyles.underlineRow} title={Tooltips.routeMenuDirectFix}>
-          Direct-To-Fix
+        <div className={movableMenu.row} />
+        <div className={clsx(movableMenu.row, "topBorder")}>
+          <div className={clsx(movableMenu.col, "left")}>
+            <div className={clsx(movableMenu.blueButton, "isDisabled")}>INCLUDE PAR</div>
+            <div
+              className={clsx(movableMenu.blueButton, { [movableMenu.selected]: appendStar })}
+              onMouseDown={() => {
+                socket.dispatchUiEvent("routeMenuClickAppendStar");
+                setAppend(toggleAppendStar);
+              }}
+            >
+              APPEND *
+            </div>
+            <div
+              className={clsx(movableMenu.blueButton, { [movableMenu.selected]: appendOplus })}
+              onMouseDown={() => {
+                socket.dispatchUiEvent("routeMenuClickAppendOplus");
+                setAppend(toggleAppendOplus);
+              }}
+            >
+              Append {OPLUS_SYMBOL}
+            </div>
+          </div>
+          <div className={clsx(movableMenu.col, "right")}>
+            <div className={clsx(movableMenu.blueButton, "isDisabled")}>FRC</div>
+          </div>
         </div>
+        <div className={movableMenu.row} />
+        <div className={movableMenu.segmentHeader}>DIRECT-TO-FIX</div>
         <div className={routeStyles.row}>
           <div className={routeStyles.route}>
-            {asel.window === "DEP" ? entry.departure + route + entry.destination : `./.${route}${entry.destination}`}
+            {asel.window === "DEP" ? entry.departure + route + entry.destination : `${route}${entry.destination}`}
           </div>
         </div>
         {_.range(0, Math.min(routeFixes?.length ?? 0, 10)).map((i) => (
@@ -331,31 +307,26 @@ export const RouteMenu = () => {
             })}
           </div>
         ))}
-        {routesAvailable && (
-          <PreferredRouteDisplay
-            aar={aars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
-            adr={asel.window === "DEP" ? adrs : []}
-            adar={asel.window === "DEP" ? adars : []}
-            clearedPrefroute={clearedPrefroute}
-          />
-        )}
-        <div className={clsx(routeStyles.row, routeStyles.bottomRow)}>
-          <div className={routeStyles.col}>
-            <EdstButton disabled margin="0 4px 0 0" content="Flight Data" title={Tooltips.routeMenuFlightData} />
-            <EdstButton
-              disabled={entry.previousRoute === null}
-              margin="0 4px 0 0"
-              content="Previous Route"
+        <div className={movableMenu.segmentHeader}>APR</div>
+        <PreferredRouteDisplay
+          aar={aars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+          adr={asel.window === "DEP" ? adrs : []}
+          adar={asel.window === "DEP" ? adars : []}
+          clearedPrefroute={clearedPrefroute}
+        />
+        <div className={clsx(movableMenu.row, "topBorder")}>
+          <div className={clsx(movableMenu.col, "right")}>
+            <div className={clsx(movableMenu.blueButton, "isDisabled")}>FLIGHT DATA</div>
+            <div
+              className={clsx(movableMenu.blueButton, "isDisabled")}
               onMouseDown={() => {
                 dispatch(openMenuThunk("PREV_ROUTE_MENU", ref.current, false, true));
                 dispatch(closeWindow("ROUTE_MENU"));
               }}
-              title={Tooltips.routeMenuPrevRoute}
-            />
-            <EdstButton disabled content="TFM Reroute Menu" title={Tooltips.routeMenuTfmReroute} />
-          </div>
-          <div className={clsx(routeStyles.col, "right")}>
-            <ExitButton onMouseDown={() => dispatch(closeWindow("ROUTE_MENU"))} />
+            >
+              PREVIOUS ROUTE
+            </div>
+            <div className={clsx(movableMenu.blackButton, "isDisabled")}>TFM REROUTE MENU</div>
           </div>
         </div>
       </div>

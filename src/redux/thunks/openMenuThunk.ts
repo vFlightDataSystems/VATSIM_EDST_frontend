@@ -26,7 +26,7 @@ export function openMenuThunk(
         case "ROUTE_MENU":
           menuPos = !centerMenu
             ? {
-                left: x - (plan ? 0 : 569),
+                left: x - (plan ? 0 : 590),
                 top: plan ? element.offsetTop : y - 3 * height,
               }
             : {

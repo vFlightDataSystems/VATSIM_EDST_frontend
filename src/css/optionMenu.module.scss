@@ -68,11 +68,6 @@
   }
 }
 
-[class*="isDisabled"] {
-  pointer-events: none;
-  color: #575757;
-}
-
 [class*="withHover"] {
   @include borderStyles.borderHover;
 }
@@ -80,7 +75,7 @@
 .body {
   @include borderStyles.border;
   --border-width: 1px;
-  --top-left-color: #575757;
+  --top-left-color: #414141;
   --bottom-right-color: #414141;
 
   background-color: #000000;
@@ -93,16 +88,6 @@
   justify-content: left;
   overflow: hidden;
   padding: var(--padding, 0);
-
-  * a {
-    height: auto;
-  }
-
-  img {
-    max-width: 24px;
-    max-height: 24px;
-    //transform: scale(0.2);
-  }
 }
 
 .bottomRow {

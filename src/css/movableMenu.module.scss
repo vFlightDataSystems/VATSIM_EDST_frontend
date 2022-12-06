@@ -1,0 +1,107 @@
+@use "global.scss";
+@use "borderStyles.scss";
+@value grey, buttonBlue from "colors.css";
+
+.root {
+  @include global.noSelect;
+  z-index: 11000;
+  background-color: #888888;
+  position: fixed;
+  color: #d6d6d6;
+  font-size: 16px;
+  width: var(--width, auto);
+}
+
+.header {
+  display: flex;
+  height: 18px;
+}
+
+.headerCol {
+  @include global.noSelect;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #adadad;
+  flex-grow: 0;
+  width: auto;
+
+  &:global(.flexGrow) {
+    flex-grow: 1;
+  }
+
+  @include borderStyles.borderHover;
+}
+
+.segmentHeader {
+  @include global.noSelect;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  background-color: #414141;
+  border: 1px solid #adadad;
+}
+
+.headerXCol {
+  composes: headerCol;
+  text-align: center;
+  width: 1.4ch;
+}
+
+.body {
+  @include borderStyles.border;
+  --border-width: 1px;
+  --top-left-color: #adadad;
+  --bottom-right-color: #adadad;
+  background-color: #000000;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  min-height: 1em;
+  padding: 1px 0;
+}
+
+.col {
+  @include global.noSelect;
+  height: 100%;
+  display: inline-flex;
+  flex-grow: 1;
+}
+
+.button {
+  @include global.noSelect;
+  @include borderStyles.borderHover;
+  background-color: #888888;
+  min-height: 1em;
+  flex-grow: 0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #adadad;
+  margin: 0 1px;
+  padding: 0 2px;
+
+  --disabled-color: #adadad;
+}
+
+.blackButton {
+  composes: button;
+  background-color: #000000;
+  --disabled-color: #666666;
+}
+
+.blackButton2 {
+  composes: blackButton;
+  --selected-color: #888888;
+}
+
+.blueButton {
+  composes: button;
+  background-color: buttonBlue;
+}
+
+.selected {
+  background-color: var(--selected-color, #AD6C6C);
+}
