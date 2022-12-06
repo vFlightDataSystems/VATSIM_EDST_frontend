@@ -1,3 +1,5 @@
+@use "fonts.scss";
+@use "icons.css";
 @value grey from "colors.css";
 
 .fontSize1 {
@@ -121,35 +123,4 @@
   z-index: 30000;
   background-color: transparent;
   border: 1px solid #ffffff;
-}
-
-@font-face {
-  font-family: EDST;
-  src: url("../assets/fonts/EDSTv200.ttf");
-}
-
-@font-face {
-  font-family: ERAM;
-  src: url("../assets/fonts/ERAMv200.ttf");
-}
-
-@font-face {
-  font-family: MyConsolas;
-  src: url("../assets/fonts/CONSOLAB.TTF");
-}
-
-.circle-icon {
-  background-image: url("../assets/images/Circle.svg");
-}
-
-.diamond-icon {
-  background-image: url("../assets/images/Diamond.svg");
-}
-
-.square-icon {
-  background-image: url("../assets/images/Square.svg");
-}
-
-.plus-icon {
-  background-image: url("../assets/images/Plus.svg");
 }
