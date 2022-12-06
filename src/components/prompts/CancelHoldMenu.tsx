@@ -1,6 +1,6 @@
 import React from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { aselEntrySelector } from "~redux/slices/entrySlice";
+import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
 import { useHubActions } from "hooks/useHubActions";
 import { closeWindow, setAsel } from "~redux/slices/appSlice";
 import { EdstPrompt } from "components/prompts/EdstPrompt";
@@ -13,6 +13,7 @@ export const CancelHoldMenu = () => {
 
   const onSubmit = async () => {
     await hubActions.cancelHold(entry.aircraftId);
+    dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { routeDisplay: null } }));
     dispatch(setAsel(null));
     dispatch(closeWindow("CANCEL_HOLD_MENU"));
   };

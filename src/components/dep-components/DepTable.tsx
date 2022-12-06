@@ -21,10 +21,10 @@ export const DepTable = () => {
       <div className={tableStyles.topRow}>
         <div className={clsx(depStyles.radioCol, "header")}>{COMPLETED_CHECKMARK_SYMBOL}</div>
         <div className={depStyles.pTimeCol}>P-Time</div>
-        <div className={clsx(tableStyles.fidCol)}>Flight ID</div>
-        <div className={clsx(tableStyles.specialBox, "isDisabled")} />
-        <div className={clsx(tableStyles.specialBox, "isDisabled")} />
-        <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+        <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
+        <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
+        <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
+        <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div
           className={clsx(tableStyles.acTypeCol, { hover: true, hidden: hiddenColumns.includes("TYPE_DEP_ROW_FIELD") })}
           onMouseDown={() => dispatch(toggleDepHideColumn("TYPE_DEP_ROW_FIELD"))}
@@ -38,7 +38,7 @@ export const DepTable = () => {
         >
           C{!hiddenColumns.includes("CODE_DEP_ROW_FIELD") && "ode"}
         </div>
-        <div className={clsx(tableStyles.specialBox, "isDisabled")} />
+        <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={tableStyles.routeCol}>Route</div>
       </div>
       <div className="scrollContainer">

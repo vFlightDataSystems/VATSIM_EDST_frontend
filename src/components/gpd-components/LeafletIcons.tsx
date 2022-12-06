@@ -1,5 +1,4 @@
 import L from "leaflet";
-import "css/styles.css";
 
 export const trackIcon = L.divIcon({
   className: "diamond-icon",

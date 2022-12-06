@@ -9,10 +9,9 @@
   --bottom-right-color: #575757;
 
   display: inline-flex;
-  --size: 8px;
-  width: var(--size);
-  height: var(--size);
-  margin-right: var(--size);
+  width: var(--size, 8px);
+  height: var(--size, 8px);
+  margin-right: var(--size, 8px);
 
   &:global(.s9) {
     --size: 9px;
@@ -27,8 +26,7 @@
 
 .diamondIndicator {
   composes: indicator;
-  width: 6px;
-  height: 6px;
+  --size: 6px;
   transform: rotate(45deg);
 }
 
@@ -68,11 +66,6 @@
   }
 }
 
-[class*="isDisabled"] {
-  pointer-events: none;
-  color: #575757;
-}
-
 [class*="withHover"] {
   @include borderStyles.borderHover;
 }
@@ -80,7 +73,7 @@
 .body {
   @include borderStyles.border;
   --border-width: 1px;
-  --top-left-color: #575757;
+  --top-left-color: #414141;
   --bottom-right-color: #414141;
 
   background-color: #000000;
@@ -90,19 +83,9 @@
 .row {
   display: flex;
   flex-grow: 1;
-  justify-content: left;
+  justify-content: var(--justify, left);
   overflow: hidden;
   padding: var(--padding, 0);
-
-  * a {
-    height: auto;
-  }
-
-  img {
-    max-width: 24px;
-    max-height: 24px;
-    //transform: scale(0.2);
-  }
 }
 
 .bottomRow {
@@ -145,7 +128,6 @@
   flex-grow: 1;
   flex-flow: row;
   font-size: inherit;
-  align-items: center;
   vertical-align: center;
   border: 1px solid transparent;
   text-overflow: ellipsis;

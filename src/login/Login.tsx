@@ -7,6 +7,12 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
 
+function redirectLogin() {
+  window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    `${DOMAIN}/login`
+  )}&response_type=code&scope=vatsim_details`;
+}
+
 const Login = () => {
   const dispatch = useRootDispatch();
   const navigate = useNavigate();
@@ -37,15 +43,7 @@ const Login = () => {
       <div className={loginStyles.root}>
         <div>
           <img src="/img/vEDSTLogo.png" alt="vEDST Logo" width="200" />
-          <button
-            type="button"
-            disabled={code !== null}
-            onClick={() => {
-              window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-                `${DOMAIN}/login`
-              )}&response_type=code&scope=vatsim_details`;
-            }}
-          >
+          <button type="button" disabled={code !== null} onClick={redirectLogin}>
             {code ? (
               /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
               <FontAwesomeIcon // @ts-ignore

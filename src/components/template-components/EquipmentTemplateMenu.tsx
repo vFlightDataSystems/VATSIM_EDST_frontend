@@ -3,7 +3,6 @@ import React, { useCallback, useRef, useState } from "react";
 import type { AtMostOne } from "types/utility-types";
 import { zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { Tooltips } from "~/tooltips";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useFocused } from "hooks/useFocused";
@@ -29,19 +28,18 @@ type EquipmentTemplateRowProps = {
   margin?: CSSProperties["margin"];
   buttonText: string;
   selected: boolean;
-  tooltip: string;
   text?: string;
   toggleSelect(): void;
 } & AtMostOne<Record<"diamond" | "circle", boolean>>;
 
-export const EquipmentTemplateRow = ({ margin, tooltip, toggleSelect, selected, circle, diamond, buttonText, text }: EquipmentTemplateRowProps) => {
+export const EquipmentTemplateRow = ({ margin, toggleSelect, selected, circle, diamond, buttonText, text }: EquipmentTemplateRowProps) => {
   let indicatorClass = optionStyles.indicator;
   if (circle || diamond) {
     indicatorClass = circle ? optionStyles.circleIndicator : optionStyles.diamondIndicator;
   }
   return (
     <div className={eqpStyles.row} style={{ margin }}>
-      <div className={eqpStyles.contentCol} title={tooltip} onMouseDown={toggleSelect}>
+      <div className={eqpStyles.contentCol} onMouseDown={toggleSelect}>
         <div className={clsx(indicatorClass, { selected })} />
         {buttonText}
       </div>
@@ -84,29 +82,13 @@ export const EquipmentTemplateMenu = () => {
       <div className={clsx(optionStyles.body)}>
         <div className={optionStyles.fidRow}>{entry && `${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix}`}</div>
         <div className={eqpStyles.row}>
-          <EdstTemplateButton10ch
-            selected={selectedMenu === MenuOptions.surv}
-            content="SURV"
-            onMouseDown={() => setSelectedMenu(MenuOptions.surv)}
-            title={Tooltips.equipmentTemplateMenuSurv}
-          />
-          <EdstTemplateButton10ch
-            selected={selectedMenu === MenuOptions.nav}
-            content="NAV"
-            onMouseDown={() => setSelectedMenu(MenuOptions.nav)}
-            title={Tooltips.equipmentTemplateMenuNAV}
-          />
-          <EdstTemplateButton10ch
-            selected={selectedMenu === MenuOptions.comm}
-            content="COMM"
-            onMouseDown={() => setSelectedMenu(MenuOptions.comm)}
-            title={Tooltips.equipmentTemplateMenuComm}
-          />
+          <EdstTemplateButton10ch selected={selectedMenu === MenuOptions.surv} content="SURV" onMouseDown={() => setSelectedMenu(MenuOptions.surv)} />
+          <EdstTemplateButton10ch selected={selectedMenu === MenuOptions.nav} content="NAV" onMouseDown={() => setSelectedMenu(MenuOptions.nav)} />
+          <EdstTemplateButton10ch selected={selectedMenu === MenuOptions.comm} content="COMM" onMouseDown={() => setSelectedMenu(MenuOptions.comm)} />
           <EdstTemplateButton10ch
             selected={selectedMenu === MenuOptions.appServ}
             content="APP/SERV"
             onMouseDown={() => setSelectedMenu(MenuOptions.appServ)}
-            title={Tooltips.equipmentTemplateMenuAppServ}
           />
           <div className={clsx(optionStyles.col, "right")}>
             <EdstButton content="Reset" onMouseDown={resetRef.current} />

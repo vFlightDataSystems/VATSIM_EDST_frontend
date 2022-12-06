@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import _ from "lodash";
 import { useEventListener } from "usehooks-ts";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import type { Nullable } from "types/utility-types";
@@ -9,7 +8,7 @@ import { aselSelector, closeWindow, windowPositionSelector } from "~redux/slices
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useHubActions } from "hooks/useHubActions";
-import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "~/utils/constants";
+import { ALTITUDE_VALIDATION_EXPRESSIONS } from "~/utils/constants";
 import type { Plan } from "types/plan";
 import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 import clsx from "clsx";
@@ -82,19 +81,19 @@ export const AltMenu = () => {
 
   useEventListener("keydown", keyDownHandler);
 
-  const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(+entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
+  const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
 
   return (
     <div className={clsx(altStyles.root, { manualInput: manualInput !== null })} ref={ref} style={pos}>
       <div className={altStyles.header}>
-        <div className={clsx(altStyles.headerCol, "flex")}>{entry?.aircraftId}</div>
+        <div className={clsx(altStyles.headerCol, "flex", "noPointerEvents")}>{entry.aircraftId}</div>
         <div className={altStyles.headerXCol} onMouseDown={() => dispatch(closeWindow("ALTITUDE_MENU"))}>
           X
         </div>
       </div>
       {manualInput !== null && (
         <>
-          <div className={clsx(altStyles.row, "noHover")}>FP{entry.altitude}</div>
+          <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
           <div className={clsx(altStyles.row, "bgBlack")}>
             <input
               ref={inputRef}
@@ -113,32 +112,27 @@ export const AltMenu = () => {
               }}
             />
           </div>
-          {showInvalid && <div className={clsx(altStyles.row, "invalid", "noHover")}>INVALID</div>}
+          {showInvalid && <div className={clsx(altStyles.row, "invalid", "noPointerEvents")}>INVALID</div>}
         </>
       )}
       {manualInput === null && (
         <>
           <div
             className={clsx(altStyles.row, { selected: selected === "trial", isDisabled: asel.window === "DEP" })}
-            title={Tooltips.altMenuPlanData}
             onMouseDown={() => setSelected("trial")}
           >
             TRIAL PLAN
           </div>
-          <div
-            className={clsx(altStyles.row, { selected: selected === "amend" })}
-            title={Tooltips.altMenuAmend}
-            onMouseDown={() => setSelected("amend")}
-          >
+          <div className={clsx(altStyles.row, { selected: selected === "amend" })} onMouseDown={() => setSelected("amend")}>
             AMEND
           </div>
-          <div className={clsx(altStyles.row, "noHover")}>FP{entry.altitude}</div>
-          <div className={clsx(altStyles.row, "isDisabled")}>UPLINK</div>
-          <div className={clsx(altStyles.row, "isDisabled")}>
-            <div className={altStyles.col}>PD</div>
-            <div className={altStyles.col}>TFC</div>
-            <div className={clsx(altStyles.col, "uplink")}>{DOWNLINK_SYMBOL}</div>
-          </div>
+          <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
+          {/* <div className={clsx(altStyles.row, "isDisabled")}>UPLINK</div> */}
+          {/* <div className={clsx(altStyles.row, "isDisabled")}> */}
+          {/*  <div className={altStyles.col}>PD</div> */}
+          {/*  <div className={altStyles.col}>TFC</div> */}
+          {/*  <div className={clsx(altStyles.col, "uplink")}>{DOWNLINK_SYMBOL}</div> */}
+          {/* </div> */}
           <div className={clsx(altStyles.row, "isDisabled")}>{asel.window !== "DEP" ? "PROCEDURE" : "NO ALT"}</div>
           <div className={altStyles.selectContainer} onWheel={handleScroll}>
             {_.range(30, -40, -10).map((i) => {
@@ -151,7 +145,6 @@ export const AltMenu = () => {
                   {asel.window !== "DEP" && (
                     <div
                       className={clsx(altStyles.tempAltCol, { isDisabled: !(selected === "amend") })}
-                      title={Tooltips.altMenuT}
                       onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
                       onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
                       onMouseDown={() => handleTempAltClick(alt)}

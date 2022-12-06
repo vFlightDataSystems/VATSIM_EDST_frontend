@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { depManualPostingSelector, depSortOptionSelector, setDepManualPosting } from "~redux/slices/depSlice";
 import { closeAllMenus, closeWindow, depAselSelector } from "~redux/slices/appSlice";
@@ -49,20 +48,10 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           edstWindow="PLAN_OPTIONS"
           disabled={asel === null}
           content="Plan Options..."
-          title={Tooltips.planOptions}
         />
-        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openDepSortMenu" edstWindow="DEP_SORT_MENU" content="Sort..." title={Tooltips.sort} />
-        <EdstWindowHeaderButton
-          onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))}
-          content="Posting Mode"
-          title={Tooltips.postingMode}
-        />
-        <EdstWindowHeaderButtonWithSharedEvent
-          sharedUiEventId="openDepTemplateMenu"
-          edstWindow="TEMPLATE_MENU"
-          content="Template..."
-          title={Tooltips.template}
-        />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openDepSortMenu" edstWindow="DEP_SORT_MENU" content="Sort..." />
+        <EdstWindowHeaderButton onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))} content="Posting Mode" />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openDepTemplateMenu" edstWindow="TEMPLATE_MENU" content="Template..." />
       </div>
       <div className={clsx(styles.headerRow, "bottom")}>
         Add/Find

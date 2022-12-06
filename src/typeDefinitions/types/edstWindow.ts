@@ -37,6 +37,7 @@ export const edstWindows = [
   "ALTIMETER",
   "FEL",
   "MORE",
+  "CPDLC_ADV",
   "CPDLC_HIST",
   "CPDLC_MSG",
 ].concat(edstMenus);

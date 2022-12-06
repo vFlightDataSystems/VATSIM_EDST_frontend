@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import type { Nullable } from "types/utility-types";
-import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { isEnum } from "~/utility-functions";
@@ -83,7 +82,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         <div className={eqpStyles.col}>
           <div className={eqpStyles.colTitle}>TRANSPONDER CATEGORY</div>
           <div className={eqpStyles.row}>
-            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuSurv_NoXpdr} onMouseDown={() => setTransponderCat(null)}>
+            <div className={eqpStyles.contentCol} onMouseDown={() => setTransponderCat(null)}>
               <div className={clsx(optionStyles.circleIndicator, { selected: transponderCat === null })} />
               No Transponder
             </div>
@@ -94,7 +93,6 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               key={category}
               buttonText={category}
               text={transponderCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuSurv_${category}`]}
               selected={transponderCat === category}
               toggleSelect={() => setTransponderCat(category)}
             />
@@ -102,18 +100,11 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
         </div>
         <div className={clsx(eqpStyles.col, eqpStyles.w23)}>
           <div className={eqpStyles.colTitle}>ADS-B CATEGORY</div>
-          <EquipmentTemplateRow
-            circle
-            buttonText="No 1090"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_No1090}
-            selected={adsbBCat === null}
-            toggleSelect={() => setAdsbBCat(null)}
-          />
+          <EquipmentTemplateRow circle buttonText="No 1090" selected={adsbBCat === null} toggleSelect={() => setAdsbBCat(null)} />
           <EquipmentTemplateRow
             circle
             buttonText="B1"
             text="(1090 OUT)"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_B1}
             selected={adsbBCat === AdsbB.B1}
             toggleSelect={() => setAdsbBCat(AdsbB.B1)}
           />
@@ -121,55 +112,24 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             circle
             buttonText="B2"
             text="(1090 IN/OUT)"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_B2}
             selected={adsbBCat === AdsbB.B2}
             toggleSelect={() => setAdsbBCat(AdsbB.B2)}
           />
-          <EquipmentTemplateRow
-            margin="10px 0 0 0"
-            circle
-            buttonText="No UAT"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_NoUat}
-            selected={adsbUCat === null}
-            toggleSelect={() => setAdsbUCat(null)}
-          />
-          <EquipmentTemplateRow
-            circle
-            buttonText="U1"
-            text="(UAT OUT)"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_U1}
-            selected={adsbUCat === AdsbU.U1}
-            toggleSelect={() => setAdsbUCat(AdsbU.U1)}
-          />
+          <EquipmentTemplateRow margin="10px 0 0 0" circle buttonText="No UAT" selected={adsbUCat === null} toggleSelect={() => setAdsbUCat(null)} />
+          <EquipmentTemplateRow circle buttonText="U1" text="(UAT OUT)" selected={adsbUCat === AdsbU.U1} toggleSelect={() => setAdsbUCat(AdsbU.U1)} />
           <EquipmentTemplateRow
             circle
             buttonText="U2"
             text="(UAT IN/OUT)"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_U2}
             selected={adsbUCat === AdsbU.U2}
             toggleSelect={() => setAdsbUCat(AdsbU.U2)}
           />
-          <EquipmentTemplateRow
-            margin="10px 0 0 0"
-            circle
-            buttonText="No VDL"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_NoVdl}
-            selected={adsbVCat === null}
-            toggleSelect={() => setAdsbVCat(null)}
-          />
-          <EquipmentTemplateRow
-            circle
-            buttonText="V1"
-            text="(VDL OUT)"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_V1}
-            selected={adsbVCat === AdsbV.V1}
-            toggleSelect={() => setAdsbVCat(AdsbV.V1)}
-          />
+          <EquipmentTemplateRow margin="10px 0 0 0" circle buttonText="No VDL" selected={adsbVCat === null} toggleSelect={() => setAdsbVCat(null)} />
+          <EquipmentTemplateRow circle buttonText="V1" text="(VDL OUT)" selected={adsbVCat === AdsbV.V1} toggleSelect={() => setAdsbVCat(AdsbV.V1)} />
           <EquipmentTemplateRow
             circle
             buttonText="V2"
             text="(VDL IN/OUT)"
-            tooltip={Tooltips.equipmentTemplateMenuSurv_V2}
             selected={adsbVCat === AdsbV.V2}
             toggleSelect={() => setAdsbVCat(AdsbV.V2)}
           />
@@ -180,13 +140,13 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             <br /> CERTIFICATION
           </div>
           <div className={clsx(eqpStyles.row, eqpStyles.hm18)}>
-            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuSurv_260b}>
+            <div className={eqpStyles.contentCol}>
               <div className={optionStyles.indicator} />
               260B (1090)
             </div>
           </div>
           <div className={clsx(eqpStyles.row, eqpStyles.hm18)}>
-            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuSurv_262b}>
+            <div className={eqpStyles.contentCol}>
               <div className={optionStyles.indicator} />
               282B (UAT)
             </div>
@@ -195,7 +155,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       </div>
       <div className={eqpStyles.inputRow}>
         SUR/
-        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuSurv_Sur}>
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)}>
           <input readOnly value={`${transponderCat ?? ""}${adsbBCat ?? ""}${adsbUCat ?? ""}${adsbVCat ?? ""}`} />
         </div>
       </div>

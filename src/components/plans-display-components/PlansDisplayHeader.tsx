@@ -1,5 +1,4 @@
 import React from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "~redux/slices/planSlice";
 import { closeWindow } from "~redux/slices/appSlice";
@@ -43,13 +42,12 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
         edstWindow="PLAN_OPTIONS"
         disabled={selectedPlanIndex === null}
         content="Plan Options..."
-        title={Tooltips.planOptions}
       />
       <EdstWindowHeaderButton disabled content="Show" />
       <EdstWindowHeaderButton disabled content="Show ALL" />
       <DownlinkSymbol disabled />
       <EdstWindowHeaderButton disabled content="AM+Uplink" />
-      <EdstWindowHeaderButton disabled={selectedPlanIndex === null} content="Amend" onMouseDown={handleAmendClick} title={Tooltips.plansAmend} />
+      <EdstWindowHeaderButton disabled={selectedPlanIndex === null} content="Amend" onMouseDown={handleAmendClick} />
       <EdstWindowHeaderButton
         disabled={interimDisabled}
         content="Interim"
@@ -58,15 +56,10 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
             /* TODO: implement */
           }
         }}
-        // title={Tooltips.plans_interim}
+        //
       />
       <EdstWindowHeaderButton disabled content="Tools..." />
-      <EdstWindowHeaderButtonWithSharedEvent
-        sharedUiEventId="openPlansDisplayTemplateMenu"
-        edstWindow="TEMPLATE_MENU"
-        content="Template..."
-        title={Tooltips.template}
-      />
+      <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openPlansDisplayTemplateMenu" edstWindow="TEMPLATE_MENU" content="Template..." />
       <EdstWindowHeaderButton disabled content="ICAO" />
       <EdstWindowHeaderButton
         onMouseDown={() => {
@@ -74,7 +67,6 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
           dispatch(closeWindow("PLANS_DISPLAY"));
         }}
         content="Clean Up"
-        title={Tooltips.plansCleanUp}
       />
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aclAselSelector, closeAllMenus, closeWindow } from "~redux/slices/appSlice";
 import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
@@ -54,31 +53,15 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
           edstWindow="PLAN_OPTIONS"
           disabled={asel === null}
           content="Plan Options..."
-          title={Tooltips.planOptions}
         />
-        <EdstWindowHeaderButtonWithSharedEvent
-          sharedUiEventId="openAclHoldMenu"
-          edstWindow="HOLD_MENU"
-          disabled={asel === null}
-          content="Hold..."
-          title={Tooltips.hold}
-        />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclHoldMenu" edstWindow="HOLD_MENU" disabled={asel === null} content="Hold..." />
         <EdstWindowHeaderButton disabled content="Show" />
         <EdstWindowHeaderButton disabled content="Show ALL" />
-        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclSortMenu" edstWindow="ACL_SORT_MENU" content="Sort..." title={Tooltips.sort} />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclSortMenu" edstWindow="ACL_SORT_MENU" content="Sort..." />
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclToolsMenu" edstWindow="TOOLS_MENU" content="Tools..." />
-        <EdstWindowHeaderButton
-          onMouseDown={() => dispatch(setAclManualPosting(!manualPosting))}
-          content="Posting Mode"
-          title={Tooltips.postingMode}
-        />
-        <EdstWindowHeaderButtonWithSharedEvent
-          sharedUiEventId="openAclTemplateMenu"
-          edstWindow="TEMPLATE_MENU"
-          content="Template..."
-          title={Tooltips.template}
-        />
-        <EdstWindowHeaderButton onMouseDown={() => dispatch(aclCleanup)} content="Clean Up" title={Tooltips.aclCleanUp} />
+        <EdstWindowHeaderButton onMouseDown={() => dispatch(setAclManualPosting(!manualPosting))} content="Posting Mode" />
+        <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclTemplateMenu" edstWindow="TEMPLATE_MENU" content="Template..." />
+        <EdstWindowHeaderButton onMouseDown={() => dispatch(aclCleanup)} content="Clean Up" />
       </div>
       <div className={clsx(tableStyles.headerRow, "bottom")}>
         Add/Find

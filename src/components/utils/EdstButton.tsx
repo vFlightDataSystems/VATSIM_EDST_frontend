@@ -8,6 +8,7 @@ import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useRootDispatch } from "~redux/hooks";
 import buttonStyles from "css/button.module.scss";
 import clsx from "clsx";
+import movableMenu from "css/movableMenu.module.scss";
 
 type EdstButtonCSSProps = Pick<CSSProperties, "width" | "height" | "margin" | "padding">;
 type EdstButtonProps = {
@@ -34,30 +35,56 @@ type ExitButtonProps = {
 };
 export const ExitButton = (props: ExitButtonProps) => <EdstButton content="Exit" {...props} />;
 
+type MovableMenuButtonProps = {
+  onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
+  content?: string;
+  selected?: boolean;
+  disabled?: boolean;
+  className?: string;
+} & EdstButtonCSSProps;
+export const MovableMenuButton = (props: MovableMenuButtonProps) => (
+  <div
+    style={props}
+    className={clsx(movableMenu.button, props.className, { [movableMenu.selected]: props.selected, isDisabled: props.disabled })}
+    onMouseDown={props.onMouseDown}
+  >
+    {props.content}
+  </div>
+);
+
+export const MovableBlackButton = (props: MovableMenuButtonProps) => (
+  <div
+    style={props}
+    className={clsx(movableMenu.blackButton, props.className, { [movableMenu.selected]: props.selected, isDisabled: props.disabled })}
+    onMouseDown={props.onMouseDown}
+  >
+    {props.content}
+  </div>
+);
+
+export const MovableBlueButton = (props: MovableMenuButtonProps) => (
+  <div
+    style={props}
+    className={clsx(movableMenu.blueButton, props.className, { [movableMenu.selected]: props.selected, isDisabled: props.disabled })}
+    onMouseDown={props.onMouseDown}
+  >
+    {props.content}
+  </div>
+);
+
 export const EdstTemplateButton10ch = (props: Omit<EdstButtonFixedSizeProps, "margin">) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
 type EdstWindowHeaderButtonProps = {
-  title?: string;
   onMouseDown?: React.MouseEventHandler<HTMLElement>;
   disabled?: boolean;
   content: string;
   width?: CSSProperties["width"];
 };
-export function EdstWindowHeaderButton({ onMouseDown, title, disabled, content, width }: EdstWindowHeaderButtonProps) {
+export function EdstWindowHeaderButton({ onMouseDown, disabled, content, width }: EdstWindowHeaderButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      ref={ref}
-      className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
-      title={title}
-      onMouseDownCapture={(event) => {
-        if (onMouseDown) {
-          onMouseDown(event);
-          event.stopPropagation();
-        }
-      }}
-    >
+    <div ref={ref} className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })} onMouseDown={onMouseDown}>
       <div className={clsx(buttonStyles.innerButton)} style={{ width }}>
         {content}
       </div>
@@ -72,7 +99,6 @@ type EdstWindowHeaderButtonWithSharedEventProps = Omit<EdstWindowHeaderButtonPro
 export function EdstWindowHeaderButtonWithSharedEvent({
   sharedUiEventId,
   edstWindow,
-  title,
   disabled,
   content,
 }: EdstWindowHeaderButtonWithSharedEventProps) {
@@ -90,7 +116,6 @@ export function EdstWindowHeaderButtonWithSharedEvent({
     <div
       ref={ref}
       className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
-      title={title}
       onMouseDown={(event) => {
         dispatch(openMenuThunk(edstWindow, event.currentTarget));
         if (sharedUiEventId) {
@@ -104,13 +129,5 @@ export function EdstWindowHeaderButtonWithSharedEvent({
   );
 }
 
-const HoldDirButton = ({ width, disabled, selected, ...props }: Omit<EdstButtonProps, "margin">) => (
-  <div className={clsx(buttonStyles.outerButton, "holdDirButton", { isDisabled: disabled })} title={props.title} onMouseDown={props.onMouseDown}>
-    <div style={{ width }} className={clsx(buttonStyles.innerButton, { isDisabled: disabled, selected })}>
-      {props.content}
-    </div>
-  </div>
-);
-export const HoldDirButton2ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2ch" {...props} />;
-export const HoldDirButton22ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="2.2ch" {...props} />;
-export const HoldDirButton5ch = (props: EdstButtonFixedSizeProps) => <HoldDirButton width="5ch" {...props} />;
+export const HoldDirButton24ch = (props: EdstButtonFixedSizeProps) => <MovableBlackButton width="2.4ch" {...props} />;
+export const HoldDirButton5ch = (props: EdstButtonFixedSizeProps) => <MovableBlackButton width="5ch" {...props} />;

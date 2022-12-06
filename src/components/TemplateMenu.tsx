@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { aselSelector, closeWindow, windowPositionSelector, pushZStack, zStackSelector } from "~redux/slices/appSlice";
-import { Tooltips } from "~/tooltips";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useDragging } from "hooks/useDragging";
@@ -28,7 +27,7 @@ type TemplateInputProps<T extends HTMLInputElement | HTMLTextAreaElement> = {
 
 const TemplateInput = ({ title, className, ...props }: TemplateInputProps<HTMLInputElement>) => {
   return (
-    <div className={clsx(templateStyles.col, className)} title={title}>
+    <div className={clsx(templateStyles.col, className)}>
       <div className={inputStyles.inputContainer}>
         <input spellCheck={false} {...props} />
       </div>
@@ -37,7 +36,7 @@ const TemplateInput = ({ title, className, ...props }: TemplateInputProps<HTMLIn
 };
 const TemplateTextArea = ({ title, ...props }: TemplateInputProps<HTMLTextAreaElement>) => {
   return (
-    <div className={clsx(templateStyles.col, "flexGrow")} title={title}>
+    <div className={clsx(templateStyles.col, "flexGrow")}>
       <div className={clsx(inputStyles.inputContainer, "flexGrow")}>
         <textarea spellCheck={false} {...props} />
       </div>
@@ -113,11 +112,7 @@ export const TemplateMenu = () => {
           {renderCol("SAI", "w5")}
           {renderCol("TYPE", "w6")}
           <div className={clsx(templateStyles.col, "w8")}>
-            <EdstButton
-              content="EQP..."
-              onMouseDown={() => dispatch(openMenuThunk("EQUIPMENT_TEMPLATE_MENU", ref.current))}
-              title={Tooltips.templateMenuEqpButton}
-            />
+            <EdstButton content="EQP..." onMouseDown={() => dispatch(openMenuThunk("EQUIPMENT_TEMPLATE_MENU", ref.current))} />
           </div>
           {renderCol("BCN", "w6")}
           {renderCol("SPD", "w6")}
@@ -125,50 +120,40 @@ export const TemplateMenu = () => {
           {renderCol("TIM", "w8")}
           {renderCol("ALT")}
           <div className={templateStyles.col}>
-            <EdstButton margin="0 2px 0 0" disabled content="More..." title={Tooltips.templateMenuMore} />
+            <EdstButton margin="0 2px 0 0" disabled content="More..." />
           </div>
         </div>
         <div className={templateStyles.row}>
-          <TemplateInput className="w9" title={Tooltips.templateMenuAid} value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
-          <TemplateInput className="w5" title={Tooltips.templateMenuNum} value={numInput} onChange={(event) => setNumInput(event.target.value)} />
-          <TemplateInput className="w5" title={Tooltips.templateMenuSai} value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
-          <TemplateInput className="w6" title={Tooltips.templateMenuTyp} value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
-          <TemplateInput
-            className="w8"
-            title={Tooltips.templateMenuEqpBox}
-            value={equipInput}
-            onChange={(event) => setEquipInput(event.target.value)}
-          />
-          <TemplateInput
-            className="w6"
-            title={Tooltips.templateMenuBcn}
-            value={beaconInput}
-            onChange={(event) => setBeaconInput(event.target.value)}
-          />
-          <TemplateInput className="w6" title={Tooltips.templateMenuSpd} value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
-          <TemplateInput className="w14" title={Tooltips.templateMenuFix} value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
-          <TemplateInput className="w8" title={Tooltips.templateMenuTim} value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
-          <div className={clsx(templateStyles.col, templateStyles.flex)} title={Tooltips.templateMenuAlt}>
+          <TemplateInput className="w9" value={aidInput} onChange={(event) => setAidInput(event.target.value)} />
+          <TemplateInput className="w5" value={numInput} onChange={(event) => setNumInput(event.target.value)} />
+          <TemplateInput className="w5" value={saiInput} onChange={(event) => setSaiInput(event.target.value)} />
+          <TemplateInput className="w6" value={typeInput} onChange={(event) => setTypeInput(event.target.value)} />
+          <TemplateInput className="w8" value={equipInput} onChange={(event) => setEquipInput(event.target.value)} />
+          <TemplateInput className="w6" value={beaconInput} onChange={(event) => setBeaconInput(event.target.value)} />
+          <TemplateInput className="w6" value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
+          <TemplateInput className="w14" value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
+          <TemplateInput className="w8" value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
+          <div className={clsx(templateStyles.col, templateStyles.flex)}>
             <TemplateInput className={templateStyles.flex} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
           </div>
         </div>
         <div className={templateStyles.row}>{renderCol("RTE", "w5")}</div>
         <div className={templateStyles.row}>
-          <TemplateTextArea title={Tooltips.templateMenuRte} value={routeInput} onChange={(event) => setRouteInput(event.target.value)} rows={3} />
+          <TemplateTextArea value={routeInput} onChange={(event) => setRouteInput(event.target.value)} rows={3} />
         </div>
         <div className={templateStyles.row}>
           {renderCol("RMK", "w5")}
           <div className={templateStyles.row} />
           <div className={templateStyles.col}>
-            <EdstButton disabled content="Create FP..." title={Tooltips.templateMenuCreateFp} />
+            <EdstButton disabled content="Create FP..." />
           </div>
         </div>
         <div className={templateStyles.row}>
-          <TemplateTextArea title={Tooltips.templateMenuRmk} value={rmkInput} onChange={(event) => setRmkInput(event.target.value)} rows={3} />
+          <TemplateTextArea value={rmkInput} onChange={(event) => setRmkInput(event.target.value)} rows={3} />
         </div>
         <div className={clsx(templateStyles.row)}>
           <div className={templateStyles.col}>
-            <EdstButton disabled content="Send" title={Tooltips.templateMenuSend} />
+            <EdstButton disabled content="Send" />
           </div>
           <div className={templateStyles.row} />
           <div className={clsx(templateStyles.col)}>

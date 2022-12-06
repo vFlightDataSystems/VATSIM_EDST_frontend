@@ -54,7 +54,7 @@
     font-size: inherit;
     width: 100%;
     background-color: transparent;
-    outline: none!important;
+    outline: none;
     border: none;
     caret: #ffffff;
     text-transform: uppercase;
@@ -142,8 +142,8 @@
 .hotbox {
   composes: specialBox;
   --border-width: 1px;
-  --top-left-color: #575757;
-  --bottom-right-color: #414141;
+  --top-left-color: #6d6d6d;
+  --bottom-right-color: #575757;
   @include borderStyles.border;
 }
 

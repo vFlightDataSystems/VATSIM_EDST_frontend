@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Tooltips } from "~/tooltips";
 import type { ApiAdaptedArrivalRoute } from "types/apiTypes/apiAdaptedArrivalRoute";
 import type { ApiAdaptedDepartureRoute } from "types/apiTypes/apiAdaptedDepartureRoute";
 import type { ApiAdaptedDepartureArrivalRoute } from "types/apiTypes/apiAdaptedDepartureArrivalRoute";
 import type { EdstAdaptedRoute } from "types/edstAdaptedRoute";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
-import { EdstButton } from "components/utils/EdstButton";
 import socket from "~socket";
 import routeStyles from "css/routeMenu.module.scss";
+import movableMenuStyles from "css/movableMenu.module.scss";
+import clsx from "clsx";
 
 type PreferredRouteDisplayProps = {
   aar: ApiAdaptedArrivalRoute[];
@@ -46,31 +46,28 @@ export const PreferredRouteDisplay = ({ aar, adr, adar, clearedPrefroute }: Pref
 
   return (
     <div className={routeStyles.pContainer}>
-      <div className={routeStyles.row} />
-      <div className={routeStyles.underlineRow}>Apply ATC Preferred Route</div>
-      <div className={routeStyles.row}>
-        <div className={routeStyles.col}>
-          <EdstButton
-            content="ELIGIBLE"
-            selected={eligibleOnly}
-            margin="0 6px"
-            width="85px"
+      <div className={movableMenuStyles.row}>
+        <div className={movableMenuStyles.col}>
+          <div
+            style={{ width: "8ch" }}
+            className={clsx(movableMenuStyles.blackButton2, { [movableMenuStyles.selected]: eligibleOnly })}
             onMouseDown={() => {
               socket.dispatchUiEvent("routeMenuSetEligibleOnly", true);
               setEligibleOnly(true);
             }}
-            title={Tooltips.routeMenuPreferredEligible}
-          />
-          <EdstButton
-            content="ALL"
-            selected={!eligibleOnly}
-            width="75px"
+          >
+            ELIGIBLE
+          </div>
+          <div
+            style={{ width: "8ch" }}
+            className={clsx(movableMenuStyles.blackButton2, { [movableMenuStyles.selected]: !eligibleOnly })}
             onMouseDown={() => {
               socket.dispatchUiEvent("routeMenuSetEligibleOnly", false);
               setEligibleOnly(false);
             }}
-            title={Tooltips.routeMenuPreferredAll}
-          />
+          >
+            ALL
+          </div>
         </div>
       </div>
       <div className={routeStyles.prefrouteContainer}>

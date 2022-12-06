@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { isEnum } from "~/utility-functions";
@@ -98,7 +97,6 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
               key={`nav-cat-row-${category}`}
               buttonText={category}
               text={navCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category}`]}
               selected={navCategories.includes(category)}
               toggleSelect={() => toggleCategory(category)}
             />
@@ -111,7 +109,6 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
               key={`rnav-cat-row-${category}`}
               buttonText={category}
               text={rnavCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuNAV_${category}`]}
               selected={rnavCategories.includes(category)}
               toggleSelect={() => toggleCategory(category)}
             />
@@ -119,47 +116,47 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
         </div>
         <div className={eqpStyles.col}>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuNAV_Rnav}>
+            <div className={eqpStyles.contentCol}>
               <div className={optionStyles.circleIndicator} />
               RNAV
             </div>
-            <div className={eqpStyles.contentCol} title={Tooltips.equipmentTemplateMenuNAV_Rnp}>
+            <div className={eqpStyles.contentCol}>
               <div className={optionStyles.circleIndicator} />
               RNP
             </div>
           </div>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.inputContainer} title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <div className={eqpStyles.inputContainer}>
               <input />
             </div>
             D (DEPARTURE)
           </div>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.inputContainer} title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <div className={eqpStyles.inputContainer}>
               <input />
             </div>
             E (EN ROUTE)
           </div>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.inputContainer} title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <div className={eqpStyles.inputContainer}>
               <input />
             </div>
             A (ARRIVAL)
           </div>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.inputContainer} title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <div className={eqpStyles.inputContainer}>
               <input />
             </div>
             G (GLOBAL/OCEAN)
           </div>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.inputContainer} title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <div className={eqpStyles.inputContainer}>
               <input />
             </div>
             L (LANDING)
           </div>
           <div className={eqpStyles.contentRow}>
-            <div className={eqpStyles.inputContainer} title={Tooltips.equipmentTemplateMenuNAV_RnavRnpFields}>
+            <div className={eqpStyles.inputContainer}>
               <input />
             </div>
             S (SPECIAL)
@@ -167,19 +164,12 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
         </div>
         <div className={eqpStyles.col}>
           <div className={eqpStyles.colTitle}>RVSM</div>
-          <EquipmentTemplateRow
-            key="eqp-rvsm-row"
-            buttonText="W"
-            text="(RVSM)"
-            tooltip={Tooltips.equipmentTemplateMenuNAV_W}
-            selected={rvsm}
-            toggleSelect={() => setRvsm(!rvsm)}
-          />
+          <EquipmentTemplateRow key="eqp-rvsm-row" buttonText="W" text="(RVSM)" selected={rvsm} toggleSelect={() => setRvsm(!rvsm)} />
         </div>
       </div>
       <div className={eqpStyles.inputRow}>
         NAV/
-        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuNAV_Nav}>
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)}>
           <input
             readOnly
             value={

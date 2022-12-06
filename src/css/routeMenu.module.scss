@@ -1,53 +1,28 @@
 @use "global.scss";
 @use "borderStyles.scss";
-@use "optionMenu.module.scss";
-@value grey from "colors.css";
+@value grey, buttonBlue from "colors.css";
 
 .root {
-  composes: root from "optionMenu.module.scss";
-  --width: 570px;
+  composes: root from "movableMenu.module.scss";
+  --width: 58ch;
 }
 
 .row {
-  composes: row from "optionMenu.module.scss";
-  --padding: 0;
-  &:global(.pad) {
-    padding: 4px 2px;
-  }
-}
-
-.bottomRow {
-  margin-top: 14px;
-  margin-bottom: 2px;
-}
-
-.underlineRow {
-  composes: row;
-  composes: underlineRow from "optionMenu.module.scss";
-  padding: 4px 0!important;
-  &:before {
-    content: "";
-    position: absolute;
-    width: 18%;
-    height: 1.2em;
-    left: 41%;
-    border-bottom: 1px solid #adadad;
-  }
-}
-
-.buttonCol {
-  composes: col from "optionMenu.module.scss";
-  @include borderStyles.borderHover;
-  padding: 0 4px;
   display: flex;
-  flex-grow: 0!important;
-  min-height: 1.2em;
 }
 
 .icon {
   composes: col from "optionMenu.module.scss";;
-  max-width: 24px;
-  max-height: 24px;
+  max-width: 1em;
+  max-height: 1em;
+
+  * a {
+    height: auto;
+  }
+
+  img {
+    //transform: scale(0.2);
+  }
 }
 
 .inputContainer {
@@ -57,33 +32,32 @@
   flex-grow: 1;
   padding: 0;
   overflow: hidden;
-
-  @include borderStyles.border;
-  --border-width: 2px;
-  --top-left-color: #575757;
-  --bottom-right-color: #888888;
+  border: 1px solid #adadad;
 
   input {
     @include borderStyles.borderHover;
-    font-size: inherit;
     outline: none;
+    font-size: 17px;
     flex: 1;
     width: 100%;
-    color: grey;
+    color: #d6d6d6;
     background-color: #000000;
     border: 1px solid transparent;
   }
 }
 
-.indicator {
-  composes: indicator from "optionMenu.module.scss";
-}
-
 .route {
-  composes: col from "optionMenu.module.scss";
-  border: 2px solid #414141!important;
-  padding: 0 3px;
-  margin: 2px 8px 8px 8px!important;
+  @include global.noSelect;
+  align-items: center;
+  overflow-wrap: anywhere;
+  vertical-align: center;
+  display: flex;
+  flex-grow: 1;
+  padding: 0 2px;
+  overflow: hidden;
+  border: 1px solid #adadad;
+  margin-top: 0;
+  margin-bottom: 2px;
 }
 
 .ppos {
@@ -91,10 +65,11 @@
   border-right: none;
   padding: 0 2px;
   width: 11ch;
-  color: #575757;
+  color: #888888;
 }
 
 .dct {
+  @include global.noSelect;
   composes: col from "optionMenu.module.scss";
   @include borderStyles.borderHover;
   max-width: 11ch;
@@ -103,29 +78,29 @@
   justify-content: flex-start;
   height: 1.1em;
   padding: 0 4px;
-  margin: auto 12px!important;
+  --col-margin: auto 12px;
 }
 
 .pContainer {
   border-top: 1px solid #adadad;
-  margin-top: 8px;
 }
 
 .prefrouteContainer {
   composes: scrollContainer from "global.scss";
+  @include global.noSelect;
   border: 2px solid #414141;
-  margin: 6px;
-  min-height: calc(2em + 8px);
   max-height: 6em;
+  font-size: 16px;
+  margin-bottom: 2px;
 }
 
 .prefrouteRow {
   composes: row;
-  --padding: 0 0 0 10px;
-  margin: 0;
+  padding-left: 1.4ch;
 }
 
 .prefrouteCol {
+  @include global.noSelect;
   composes: col from "optionMenu.module.scss";
   @include borderStyles.borderHover;
 

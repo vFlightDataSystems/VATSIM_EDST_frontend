@@ -5,6 +5,7 @@ import { useHubConnection } from "hooks/useHubConnection";
 import { artccIdSelector, sectorIdSelector } from "~redux/slices/sectorSlice";
 import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
+import { HubConnectionState } from "@microsoft/signalr";
 
 // TODO: add leaflet attribution
 
@@ -16,7 +17,7 @@ export const Status = () => {
   const hubConnection = useHubConnection();
   const { connectSocket, disconnectSocket, isConnected } = useSocketConnector();
 
-  const onClickToggleSocket = () => {
+  const toggleSocket = () => {
     if (isConnected) {
       disconnectSocket();
     } else if (hubConnection?.state === "Connected" && artccId && sectorId) {
@@ -26,14 +27,11 @@ export const Status = () => {
 
   return (
     <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>
-      <EdstButton onMouseDown={onClickToggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
-      <span>
-        Submit Feedback{" "}
-        <a href="https://forms.gle/LpzgyNMNMwa8CY8e8" target="_blank" rel="noreferrer">
-          here
-        </a>{" "}
-        or on the Discord server.
-      </span>
+      <p>vEDST version 0.1.0</p>
+      <p>{hubConnection?.state === HubConnectionState.Connected ? `Connected to ${import.meta.env.VITE_VNAS_ENV_NAME}` : "NOT CONNECTED"}</p>
+      <p>
+        <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
+      </p>
     </FloatingWindow>
   );
 };

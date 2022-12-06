@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselSelector, closeAllMenus, closeWindow, pushZStack, setAsel, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
 import { delEntry, entrySelector, updateEntry } from "~redux/slices/entrySlice";
@@ -75,21 +74,15 @@ export const PlanOptions = () => {
         <div className={optionStyles.fidRow}>
           {entry.cid} {entry.aircraftId}
         </div>
-        <PlanOptionsRow title={Tooltips.planOptionsAlt} content="Altitude..." onMouseDown={() => openMenu("ALTITUDE_MENU")} />
-        {!dep && <PlanOptionsRow title={Tooltips.planOptionsSpeed} content="Speed..." disabled />}
-        <PlanOptionsRow title={Tooltips.planOptionsRoute} content="Route..." onMouseDown={() => openMenu("ROUTE_MENU")} />
+        <PlanOptionsRow content="Altitude..." onMouseDown={() => openMenu("ALTITUDE_MENU")} />
+        {!dep && <PlanOptionsRow content="Speed..." disabled />}
+        <PlanOptionsRow content="Route..." onMouseDown={() => openMenu("ROUTE_MENU")} />
+        <PlanOptionsRow content="Previous Route" onMouseDown={() => openMenu("PREV_ROUTE_MENU")} disabled={!!entry?.previousRoute} />
+        {!dep && <PlanOptionsRow content="Stop Probe..." disabled />}
+        <PlanOptionsRow content={`Trial ${dep ? "Departure" : "Restrictions"}...`} disabled />
+        {!dep && <PlanOptionsRow content="Plans" disabled />}
+        <PlanOptionsRow content="Keep" onMouseDown={onKeepClick} />
         <PlanOptionsRow
-          title={Tooltips.planOptionsPrevRoute}
-          content="Previous Route"
-          onMouseDown={() => openMenu("PREV_ROUTE_MENU")}
-          disabled={!!entry?.previousRoute}
-        />
-        {!dep && <PlanOptionsRow title={Tooltips.planOptionsStopProbe} content="Stop Probe..." disabled />}
-        <PlanOptionsRow title={Tooltips.planOptionsTrialRestr} content={`Trial ${dep ? "Departure" : "Restrictions"}...`} disabled />
-        {!dep && <PlanOptionsRow title={Tooltips.planOptionsPlans} content="Plans" disabled />}
-        <PlanOptionsRow title={Tooltips.planOptionsKeep} content="Keep" onMouseDown={onKeepClick} />
-        <PlanOptionsRow
-          title={Tooltips.planOptionsDelete}
           content="Delete"
           onMouseDown={() => {
             dispatch(setAsel(null));

@@ -51,7 +51,7 @@
 
 .headerXCol {
   composes: headerCol;
-  width: 1.6ch;
+  width: 1.4ch;
 }
 
 .selectContainer {
@@ -70,10 +70,6 @@
   justify-content: center;
   align-items: center;
   border: 1px solid #adadad;
-
-  &:global(.noHover) {
-    pointer-events: none;
-  }
 
   &:global(.isDisabled) {
     pointer-events: none;
@@ -103,10 +99,6 @@
   align-items: center;
   border-left: 1px solid #adadad;
   border-right: 1px solid #adadad;
-  &:global(.isDisabled) {
-    pointer-events: none;
-    color: grey;
-  }
   padding: 0;
 
   &:global(.uplink) {

@@ -23,6 +23,7 @@ declare module "react" {
   export interface CSSProperties {
     "--brightness"?: number;
     "--background-color"?: React.CSSProperties["backgroundColor"];
+    "--border-color"?: React.CSSProperties["borderColor"];
     "--width"?: React.CSSProperties["width"];
     "--height"?: React.CSSProperties["height"];
   }
