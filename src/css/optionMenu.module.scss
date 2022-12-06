@@ -8,7 +8,7 @@
   --top-left-color: #888888;
   --bottom-right-color: #575757;
 
-  display: inline-flex;
+  display: flex;
   width: var(--size, 8px);
   height: var(--size, 8px);
   margin-right: var(--size, 8px);
@@ -129,6 +129,7 @@
   flex-flow: row;
   font-size: inherit;
   vertical-align: center;
+  align-items: center;
   border: 1px solid transparent;
   text-overflow: ellipsis;
   white-space: nowrap;
