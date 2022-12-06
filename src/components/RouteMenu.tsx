@@ -253,11 +253,9 @@ export const RouteMenu = () => {
         <div className={movableMenu.row}>
           <div className={movableMenu.segmentHeader}>CURRENT RTE EDIT AREA</div>
         </div>
-        <div className={clsx(movableMenu.row)}>
-          <div className={routeStyles.inputContainer}>
-            {!(asel.window === "DEP") && <div className={routeStyles.ppos}>{frd}..</div>}
-            <input value={routeInput} spellCheck={false} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={handleInputKeyDown} />
-          </div>
+        <div className={routeStyles.inputContainer}>
+          {!(asel.window === "DEP") && <div className={routeStyles.ppos}>{frd}..</div>}
+          <input value={routeInput} spellCheck={false} onChange={(event) => setRouteInput(event.target.value)} onKeyDown={handleInputKeyDown} />
         </div>
         <div className={movableMenu.row} />
         <div className={clsx(movableMenu.row, "topBorder")}>

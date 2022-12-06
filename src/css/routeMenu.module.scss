@@ -34,8 +34,6 @@
   overflow: hidden;
   border: 1px solid #adadad;
 
-  margin: 0 1px;
-
   input {
     @include borderStyles.borderHover;
     outline: none;
@@ -57,7 +55,6 @@
   padding: 0;
   overflow: hidden;
   border: 1px solid #adadad;
-  margin: 0 1px;
 }
 
 .ppos {
