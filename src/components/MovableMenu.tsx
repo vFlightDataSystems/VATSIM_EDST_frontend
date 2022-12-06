@@ -1,0 +1,44 @@
+import type { ReactNode } from "react";
+import React, { useRef } from "react";
+import movableMenu from "css/movableMenu.module.scss";
+import clsx from "clsx";
+import { useDragging } from "hooks/useDragging";
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import { closeWindow, pushZStack, windowPositionSelector, zStackSelector } from "~redux/slices/appSlice";
+import { EdstDraggingOutline } from "components/utils/EdstDraggingOutline";
+
+type MovableMenuProps = {
+  menuName: "ROUTE_MENU" | "HOLD_MENU";
+  rootClassName: string;
+  title: string;
+  children: ReactNode;
+};
+
+export const MovableMenu = ({ menuName, title, rootClassName, children }: MovableMenuProps) => {
+  const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
+  const pos = useRootSelector((state) => windowPositionSelector(state, menuName));
+  const zStack = useRootSelector(zStackSelector);
+  const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, menuName, "mouseup");
+
+  return (
+    <div
+      className={clsx(rootClassName, { noPointerEvents: anyDragging })}
+      ref={ref}
+      style={{ ...pos, zIndex: 10000 + zStack.indexOf(menuName) }}
+      onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
+    >
+      {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
+      <div className={movableMenu.header}>
+        <div className={movableMenu.triangle} />
+        <div className={movableMenu.headerCol} onMouseDown={startDrag}>
+          {title}
+        </div>
+        <div className={movableMenu.headerXCol} onMouseDown={() => dispatch(closeWindow(menuName))}>
+          X
+        </div>
+      </div>
+      <div className={movableMenu.body}>{children}</div>
+    </div>
+  );
+};
