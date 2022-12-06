@@ -5,7 +5,7 @@
 .root {
   @include global.noSelect;
   z-index: 11000;
-  background-color: #888888;
+  background-color: #707070;
   position: fixed;
   color: #d6d6d6;
   font-size: 16px;
@@ -40,6 +40,7 @@
   justify-content: center;
   background-color: #414141;
   border: 1px solid #adadad;
+  margin: 2px 1px 0 1px;
 }
 
 .headerXCol {

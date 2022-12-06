@@ -48,7 +48,7 @@ export const HoldMenu = () => {
   const routeFixes = useRouteFixes(entry.aircraftId);
 
   useEffect(() => {
-    if (!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current) || !holdRouteFixes) {
+    if ((!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current) || !holdRouteFixes) && track) {
       const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
       const utcMinutes = getUtcMinutesAfterMidnight();
       setFix(entry.holdAnnotations?.fix ?? null);

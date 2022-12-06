@@ -11,15 +11,6 @@
   display: flex;
 }
 
-.bottomRow {
-  margin-top: 14px;
-  margin-bottom: 2px;
-}
-
-.underlineRow {
-  composes: row;
-}
-
 .icon {
   composes: col from "optionMenu.module.scss";;
   max-width: 1em;
@@ -43,6 +34,8 @@
   overflow: hidden;
   border: 1px solid #adadad;
 
+  margin: 0 1px;
+
   input {
     @include borderStyles.borderHover;
     outline: none;
@@ -55,13 +48,16 @@
   }
 }
 
-.indicator {
-  composes: indicator from "optionMenu.module.scss";
-}
-
 .route {
-  composes: col from "optionMenu.module.scss";
-  border: 2px solid #414141!important;
+  align-items: center;
+  overflow-wrap: anywhere;
+  vertical-align: center;
+  display: flex;
+  flex-grow: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #adadad;
+  margin: 0 1px;
 }
 
 .ppos {
