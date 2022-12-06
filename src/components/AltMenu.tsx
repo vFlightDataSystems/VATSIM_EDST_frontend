@@ -9,7 +9,7 @@ import { aselSelector, closeWindow, windowPositionSelector } from "~redux/slices
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { useCenterCursor } from "hooks/useCenterCursor";
 import { useHubActions } from "hooks/useHubActions";
-import { ALTITUDE_VALIDATION_EXPRESSIONS, DOWNLINK_SYMBOL } from "~/utils/constants";
+import { ALTITUDE_VALIDATION_EXPRESSIONS } from "~/utils/constants";
 import type { Plan } from "types/plan";
 import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 import clsx from "clsx";
@@ -133,12 +133,12 @@ export const AltMenu = () => {
             AMEND
           </div>
           <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
-          <div className={clsx(altStyles.row, "isDisabled")}>UPLINK</div>
-          <div className={clsx(altStyles.row, "isDisabled")}>
-            <div className={altStyles.col}>PD</div>
-            <div className={altStyles.col}>TFC</div>
-            <div className={clsx(altStyles.col, "uplink")}>{DOWNLINK_SYMBOL}</div>
-          </div>
+          {/* <div className={clsx(altStyles.row, "isDisabled")}>UPLINK</div> */}
+          {/* <div className={clsx(altStyles.row, "isDisabled")}> */}
+          {/*  <div className={altStyles.col}>PD</div> */}
+          {/*  <div className={altStyles.col}>TFC</div> */}
+          {/*  <div className={clsx(altStyles.col, "uplink")}>{DOWNLINK_SYMBOL}</div> */}
+          {/* </div> */}
           <div className={clsx(altStyles.row, "isDisabled")}>{asel.window !== "DEP" ? "PROCEDURE" : "NO ALT"}</div>
           <div className={altStyles.selectContainer} onWheel={handleScroll}>
             {_.range(30, -40, -10).map((i) => {
