@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aclListSelector, anyAssignedHdgSelector, anyAssignedSpdSelector, anyHoldingSelector } from "~redux/selectors";
 import { aselSelector, setAsel } from "~redux/slices/appSlice";
@@ -56,9 +55,7 @@ export const AclTable = () => {
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={tableStyles.innerRow}>
           <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
-          <div className={tableStyles.paCol} title={Tooltips.aclHeaderPa}>
-            PA
-          </div>
+          <div className={tableStyles.paCol}>PA</div>
           {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />}
           {/* spa indicator column */}
           <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
@@ -86,17 +83,15 @@ export const AclTable = () => {
           <div className={clsx(tableStyles.specialBox, "isDisabled")} />
           <div
             className={clsx(tableStyles.hdgCol, { hover: true, hidden: hiddenColumns.includes("HDG_ACL_ROW_FIELD") })}
-            title={Tooltips.aclHeaderHdg}
             onMouseDown={() => dispatch(toggleAclHideColumn("HDG_ACL_ROW_FIELD"))}
           >
             {hiddenColumns.includes("HDG_ACL_ROW_FIELD") && anyAssignedHeading && "*"}H{!hiddenColumns.includes("HDG_ACL_ROW_FIELD") && "dg"}
           </div>
-          <div className={tableStyles.slashColHeader} title={Tooltips.aclHeaderSlash} onMouseDown={handleClickSlash}>
+          <div className={tableStyles.slashColHeader} onMouseDown={handleClickSlash}>
             /
           </div>
           <div
             className={clsx(tableStyles.spdCol, { hover: true, hidden: hiddenColumns.includes("SPD_ACL_ROW_FIELD") })}
-            title={Tooltips.aclHeaderSpd}
             onMouseDown={() => dispatch(toggleAclHideColumn("SPD_ACL_ROW_FIELD"))}
           >
             S{!hiddenColumns.includes("SPD_ACL_ROW_FIELD") && "pd"}

@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import _ from "lodash";
 import { useEventListener } from "usehooks-ts";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import type { Nullable } from "types/utility-types";
@@ -120,16 +119,11 @@ export const AltMenu = () => {
         <>
           <div
             className={clsx(altStyles.row, { selected: selected === "trial", isDisabled: asel.window === "DEP" })}
-            title={Tooltips.altMenuPlanData}
             onMouseDown={() => setSelected("trial")}
           >
             TRIAL PLAN
           </div>
-          <div
-            className={clsx(altStyles.row, { selected: selected === "amend" })}
-            title={Tooltips.altMenuAmend}
-            onMouseDown={() => setSelected("amend")}
-          >
+          <div className={clsx(altStyles.row, { selected: selected === "amend" })} onMouseDown={() => setSelected("amend")}>
             AMEND
           </div>
           <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
@@ -151,7 +145,6 @@ export const AltMenu = () => {
                   {asel.window !== "DEP" && (
                     <div
                       className={clsx(altStyles.tempAltCol, { isDisabled: !(selected === "amend") })}
-                      title={Tooltips.altMenuT}
                       onMouseEnter={() => selected === "amend" && setTempAltHover(alt)}
                       onMouseLeave={() => selected === "amend" && setTempAltHover(null)}
                       onMouseDown={() => handleTempAltClick(alt)}

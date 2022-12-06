@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "~redux/slices/appSlice";
 import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
@@ -105,10 +104,10 @@ export const SpeedMenu = () => {
         </div>
         <div className={speedStyles.row}>
           <div className={optionStyles.col}>
-            <EdstButton content="Amend" selected={amend} onMouseDown={() => setAmend(true)} title={Tooltips.aclSpdAmend} />
+            <EdstButton content="Amend" selected={amend} onMouseDown={() => setAmend(true)} />
           </div>
           <div className={clsx(optionStyles.col, "right")}>
-            <EdstButton content="Scratchpad" selected={!amend} onMouseDown={() => setAmend(false)} title={Tooltips.aclSpdScratchpad} />
+            <EdstButton content="Scratchpad" selected={!amend} onMouseDown={() => setAmend(false)} />
           </div>
         </div>
         <div className={optionStyles.row}>
@@ -122,9 +121,7 @@ export const SpeedMenu = () => {
         <div className={clsx(speedStyles.row2, "topBorder")} />
         <div className="bottomBorder">
           <div className={speedStyles.row}>
-            <div style={{ marginLeft: "0.5ch" }} title={Tooltips.aclSpdKnots}>
-              KNOTS
-            </div>
+            <div style={{ marginLeft: "0.5ch" }}>KNOTS</div>
             <div style={{ justifyContent: "center", margin: "auto" }}>
               <EdstButton
                 margin="0 2px"
@@ -139,9 +136,7 @@ export const SpeedMenu = () => {
                 onMouseDown={() => setSign(sign === Sign.less ? Sign.none : Sign.less)}
               />
             </div>
-            <div style={{ marginRight: "0.5ch" }} title={Tooltips.aclSpdMach}>
-              MACH
-            </div>
+            <div style={{ marginRight: "0.5ch" }}>MACH</div>
           </div>
         </div>
         <div onWheel={handleScroll}>

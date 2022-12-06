@@ -1,6 +1,5 @@
 import type { CSSProperties } from "react";
 import React from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { headerTopSelector, setHeaderTop, toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
 import { planQueueSelector } from "~redux/slices/planSlice";
@@ -17,7 +16,6 @@ const YELLOW = "#A3A300";
 
 type EdstHeaderButtonCSSProps = Pick<CSSProperties, "width" | "color" | "borderColor" | "backgroundColor">;
 type EdstHeaderButtonProps = {
-  title?: string;
   disabled?: boolean;
   content: string;
   window: EdstWindow;
@@ -25,7 +23,7 @@ type EdstHeaderButtonProps = {
 
 const noToggleWindows = ["ACL", "DEP", "GPD", "PLANS_DISPLAY"];
 
-const EdstHeaderButton = ({ title, content, disabled, window, borderColor, ...props }: EdstHeaderButtonProps) => {
+const EdstHeaderButton = ({ content, disabled, window, borderColor, ...props }: EdstHeaderButtonProps) => {
   const dispatch = useRootDispatch();
   const edstWindow = useRootSelector((state) => windowSelector(state, window));
 
@@ -42,7 +40,6 @@ const EdstHeaderButton = ({ title, content, disabled, window, borderColor, ...pr
       style={{ "--border-color": borderColor, ...props }}
       type="button"
       onMouseDown={mouseDownHandler}
-      title={title}
       disabled={disabled}
       className={clsx({ highlight: edstWindow.open })}
     >
@@ -81,8 +78,8 @@ export const EdstHeader = () => {
               content="ALTIM SET"
               // title={Tooltips.alt}
             />
-            <EdstHeaderButton window="MESSAGE_COMPOSE_AREA" content="MCA" title={Tooltips.mca} />
-            <EdstHeaderButton window="MESSAGE_RESPONSE_AREA" content="RA" title={Tooltips.ra} />
+            <EdstHeaderButton window="MESSAGE_COMPOSE_AREA" content="MCA" />
+            <EdstHeaderButton window="MESSAGE_RESPONSE_AREA" content="RA" />
             <EdstHeaderButton
               window="FEL"
               content="FEL"
@@ -100,14 +97,14 @@ export const EdstHeader = () => {
           <button style={{ width: "6ch" }} className={clsx({ highlight: windows.MORE.open })} onMouseDown={() => dispatch(toggleWindow("MORE"))}>
             MORE
           </button>
-          <EdstHeaderButton window="ACL" content={`ACL ${aclLen.toString().padStart(2, "0")}`} title={Tooltips.acl} />
-          <EdstHeaderButton window="DEP" content={`DEP ${depLen.toString().padStart(2, "0")}`} title={Tooltips.dep} />
+          <EdstHeaderButton window="ACL" content={`ACL ${aclLen.toString().padStart(2, "0")}`} />
+          <EdstHeaderButton window="DEP" content={`DEP ${depLen.toString().padStart(2, "0")}`} />
           <EdstHeaderButton
             window="GPD"
             content="GPD"
             // title={Tooltips.gpd}
           />
-          <EdstHeaderButton window="PLANS_DISPLAY" content="PLANS" disabled={planQueue.length === 0} title={Tooltips.plans} />
+          <EdstHeaderButton window="PLANS_DISPLAY" content="PLANS" disabled={planQueue.length === 0} />
           <EdstHeaderButton
             window="METAR"
             content="WX REPORT"
@@ -137,8 +134,8 @@ export const EdstHeader = () => {
           <button disabled>KEEP ALL</button>
         </div>
         <div className={edstStyles.headerCol}>
-          <EdstHeaderButton window="STATUS" content="STATUS ACTIVE" title={Tooltips.statusActive} />
-          <EdstHeaderButton window="OUTAGE" content={`OUTAGE ${sectorId}`} title={Tooltips.statusOutage} />
+          <EdstHeaderButton window="STATUS" content="STATUS ACTIVE" />
+          <EdstHeaderButton window="OUTAGE" content={`OUTAGE ${sectorId}`} />
           <Time />
           <EdstHeaderButton6
             window="ADSB"
@@ -176,8 +173,8 @@ export const EdstHeader = () => {
               content="ALTIM SET"
               // title={Tooltips.alt}
             />
-            <EdstHeaderButton window="MESSAGE_COMPOSE_AREA" content="MCA" title={Tooltips.mca} />
-            <EdstHeaderButton window="MESSAGE_RESPONSE_AREA" content="RA" title={Tooltips.ra} />
+            <EdstHeaderButton window="MESSAGE_COMPOSE_AREA" content="MCA" />
+            <EdstHeaderButton window="MESSAGE_RESPONSE_AREA" content="RA" />
             <EdstHeaderButton
               window="FEL"
               content="FEL"

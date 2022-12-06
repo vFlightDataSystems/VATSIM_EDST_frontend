@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { isEnum } from "~/utility-functions";
@@ -151,7 +150,6 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               key={`voice-cat-row-${category}`}
               buttonText={category}
               text={voiceCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={voiceCategories.includes(category)}
               toggleSelect={() => toggleCategory(category)}
             />
@@ -164,7 +162,6 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               key={`cpdlc-cat-row-${category}`}
               buttonText={category}
               text={cpdlcCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={cpdlcCategories.includes(category)}
               toggleSelect={() => toggleCategory(category)}
             />
@@ -177,7 +174,6 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               key={`acars-cat-row-${category}`}
               buttonText={category}
               text={acarsCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={acarsCategories.includes(category)}
               toggleSelect={() => toggleCategory(category)}
             />
@@ -190,7 +186,6 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
               key={`satellite-cat-row-${category}`}
               buttonText={category}
               text={satCatText[category]}
-              tooltip={Tooltips[`equipmentTemplateMenuComm_${category}`]}
               selected={satelliteCategories.includes(category)}
               toggleSelect={() => toggleCategory(category)}
             />
@@ -199,7 +194,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       </div>
       <div className={eqpStyles.inputRow}>
         DAT/
-        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuComm_Dat}>
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)}>
           <input
             readOnly
             value={[...(acarsCategories as string[])]
@@ -211,7 +206,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
       </div>
       <div className={eqpStyles.inputRow}>
         COM/
-        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)} title={Tooltips.equipmentTemplateMenuComm_Com}>
+        <div className={clsx(eqpStyles.inputContainer, eqpStyles.mw60)}>
           <input
             readOnly
             value={[...(voiceCategories as string[])]

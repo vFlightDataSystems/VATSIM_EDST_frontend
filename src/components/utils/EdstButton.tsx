@@ -75,27 +75,16 @@ export const MovableBlueButton = (props: MovableMenuButtonProps) => (
 export const EdstTemplateButton10ch = (props: Omit<EdstButtonFixedSizeProps, "margin">) => <EdstButton width="10ch" margin="0 4px" {...props} />;
 
 type EdstWindowHeaderButtonProps = {
-  title?: string;
   onMouseDown?: React.MouseEventHandler<HTMLElement>;
   disabled?: boolean;
   content: string;
   width?: CSSProperties["width"];
 };
-export function EdstWindowHeaderButton({ onMouseDown, title, disabled, content, width }: EdstWindowHeaderButtonProps) {
+export function EdstWindowHeaderButton({ onMouseDown, disabled, content, width }: EdstWindowHeaderButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      ref={ref}
-      className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
-      title={title}
-      onMouseDownCapture={(event) => {
-        if (onMouseDown) {
-          onMouseDown(event);
-          event.stopPropagation();
-        }
-      }}
-    >
+    <div ref={ref} className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })} onMouseDown={onMouseDown}>
       <div className={clsx(buttonStyles.innerButton)} style={{ width }}>
         {content}
       </div>
@@ -110,7 +99,6 @@ type EdstWindowHeaderButtonWithSharedEventProps = Omit<EdstWindowHeaderButtonPro
 export function EdstWindowHeaderButtonWithSharedEvent({
   sharedUiEventId,
   edstWindow,
-  title,
   disabled,
   content,
 }: EdstWindowHeaderButtonWithSharedEventProps) {
@@ -128,7 +116,6 @@ export function EdstWindowHeaderButtonWithSharedEvent({
     <div
       ref={ref}
       className={clsx(buttonStyles.outerButton, "header", { isDisabled: disabled })}
-      title={title}
       onMouseDown={(event) => {
         dispatch(openMenuThunk(edstWindow, event.currentTarget));
         if (sharedUiEventId) {

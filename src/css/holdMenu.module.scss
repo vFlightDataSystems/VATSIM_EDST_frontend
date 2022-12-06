@@ -22,7 +22,6 @@
 .row2 {
   composes: row from "movableMenu.module.scss";
   padding-bottom: 2px;
-  border-bottom: 1px solid #adadad;
 }
 
 .col {
@@ -43,7 +42,7 @@
 
 .leftCol {
   display: flex;
-  margin-left: 10px;
+  margin-left: 7px;
   flex-grow: 0;
   padding: 0;
   border-bottom: 1px solid #adadad;

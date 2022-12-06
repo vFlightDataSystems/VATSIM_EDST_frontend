@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
 import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
@@ -96,10 +95,10 @@ export const HeadingMenu = () => {
         </div>
         <div className={headingStyles.row}>
           <div className={optionStyles.col}>
-            <EdstButton content="Amend" selected={amend} onMouseDown={() => setAmend(true)} title={Tooltips.aclHdgAmend} />
+            <EdstButton content="Amend" selected={amend} onMouseDown={() => setAmend(true)} />
           </div>
           <div className={clsx(optionStyles.col, "right")}>
-            <EdstButton content="Scratchpad" selected={!amend} onMouseDown={() => setAmend(false)} title={Tooltips.aclHdgScratchpad} />
+            <EdstButton content="Scratchpad" selected={!amend} onMouseDown={() => setAmend(false)} />
           </div>
         </div>
         <div>
@@ -111,12 +110,8 @@ export const HeadingMenu = () => {
           </div>
         </div>
         <div className={clsx(headingStyles.row2, "topBorder", "spaceBetween")}>
-          <div className={headingStyles.hdgColLeft} title={Tooltips.aclHdgHdg}>
-            Heading
-          </div>
-          <div className={headingStyles.hdgColRight} title={Tooltips.aclHdgTurn}>
-            Turn
-          </div>
+          <div className={headingStyles.hdgColLeft}>Heading</div>
+          <div className={headingStyles.hdgColRight}>Turn</div>
         </div>
         <div className="bottomBorder">
           <div className={headingStyles.scrollRow}>

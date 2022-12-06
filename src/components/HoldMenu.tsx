@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
 import { closeWindow } from "~redux/slices/appSlice";
@@ -78,7 +77,7 @@ export const HoldMenu = () => {
       title={`HOLD DATA ${entry.cid} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix}
 `}
     >
-      <div className={movableMenu.row}>
+      <div className={clsx(movableMenu.row, "bottomBorder")}>
         <div className={clsx(movableMenu.col, "right")}>
           <div className={movableMenu.button} onMouseDown={() => dispatch(openMenuThunk("ROUTE_MENU"))}>
             ROUTE DATA
@@ -86,9 +85,7 @@ export const HoldMenu = () => {
         </div>
       </div>
       <div className={movableMenu.row}>
-        <div className={holdStyles.leftCol} title={Tooltips.holdDirection}>
-          Location
-        </div>
+        <div className={holdStyles.leftCol}>Location</div>
       </div>
       <div className={holdStyles.fixContainer}>
         <div
@@ -130,19 +127,13 @@ export const HoldMenu = () => {
       </div>
       <div className={holdStyles.row1}>
         <div className={clsx(holdStyles.colContainer)}>
-          <div className={holdStyles.col2} title={Tooltips.holdDirection}>
-            Direction
-          </div>
+          <div className={holdStyles.col2}>Direction</div>
         </div>
         <div className={holdStyles.colContainer}>
-          <div className={holdStyles.col2} title={Tooltips.holdTurns}>
-            Turns
-          </div>
+          <div className={holdStyles.col2}>Turns</div>
         </div>
         <div className={holdStyles.colContainer}>
-          <div className={holdStyles.col2} title={Tooltips.holdLegLength}>
-            Leg Length
-          </div>
+          <div className={holdStyles.col2}>Leg Length</div>
         </div>
       </div>
       <div className={holdStyles.row1}>
@@ -219,9 +210,7 @@ export const HoldMenu = () => {
         </div>
       </div>
       <div className={holdStyles.row1}>
-        <div className={holdStyles.col2} title={Tooltips.holdEfc}>
-          EFC
-        </div>
+        <div className={holdStyles.leftCol}>EFC</div>
       </div>
       <div className={movableMenu.col}>
         <div className={holdStyles.efcCol}>

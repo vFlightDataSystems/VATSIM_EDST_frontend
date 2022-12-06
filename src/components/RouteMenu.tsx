@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
-import { Tooltips } from "~/tooltips";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { aselSelector, closeWindow } from "~redux/slices/appSlice";
@@ -275,7 +274,7 @@ export const RouteMenu = () => {
             const fixName = routeFixes?.[i + j * 10]?.name;
             return (
               fixName && (
-                <div className={routeStyles.dct} key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)} title={Tooltips.routeMenuDirectFix}>
+                <div className={routeStyles.dct} key={`${i}-${j}`} onMouseDown={() => clearedToFix(fixName)}>
                   {fixName}
                 </div>
               )

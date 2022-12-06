@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Tooltips } from "~/tooltips";
 import { useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
 import { isEnum } from "~/utility-functions";
@@ -53,7 +52,6 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
           key="eqp-app-serv-L"
           buttonText="L"
           text="(ILS)"
-          tooltip={Tooltips.equipmentTemplateMenuAppServ_L}
           selected={appCategories.includes(ApproachCategory.L)}
           toggleSelect={() => toggleCategory(ApproachCategory.L)}
         />
@@ -61,7 +59,6 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
           key="eqp-app-serv-K"
           buttonText="K"
           text="(MLS)"
-          tooltip={Tooltips.equipmentTemplateMenuAppServ_K}
           selected={appCategories.includes(ApproachCategory.K)}
           toggleSelect={() => toggleCategory(ApproachCategory.K)}
         />
@@ -69,7 +66,6 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
           key="eqp-app-serv-A"
           buttonText="A"
           text="(GBAS)"
-          tooltip={Tooltips.equipmentTemplateMenuAppServ_A}
           selected={appCategories.includes(ApproachCategory.A)}
           toggleSelect={() => toggleCategory(ApproachCategory.A)}
         />
@@ -77,7 +73,6 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
           key="eqp-app-serv-B"
           buttonText="B"
           text="(LPV)"
-          tooltip={Tooltips.equipmentTemplateMenuAppServ_B}
           selected={appCategories.includes(ApproachCategory.B)}
           toggleSelect={() => toggleCategory(ApproachCategory.B)}
         />
@@ -87,7 +82,6 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
           key="eqp-app-serv-S"
           buttonText="S"
           text="(STANDARD)"
-          tooltip={Tooltips.equipmentTemplateMenuAppServ_S}
           selected={appCategories.includes(ApproachCategory.S)}
           toggleSelect={() => toggleCategory(ApproachCategory.S)}
         />
