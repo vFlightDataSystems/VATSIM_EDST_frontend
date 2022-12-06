@@ -32,6 +32,7 @@
 .col {
   composes: col from "optionMenu.module.scss";
   @include borderStyles.borderHover;
+  align-items: center;
   height: 1.2em;
   padding: 0 6px;
 }

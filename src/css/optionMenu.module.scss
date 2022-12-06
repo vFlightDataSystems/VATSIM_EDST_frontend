@@ -9,10 +9,9 @@
   --bottom-right-color: #575757;
 
   display: inline-flex;
-  --size: 8px;
-  width: var(--size);
-  height: var(--size);
-  margin-right: var(--size);
+  width: var(--size, 8px);
+  height: var(--size, 8px);
+  margin-right: var(--size, 8px);
 
   &:global(.s9) {
     --size: 9px;
@@ -27,8 +26,7 @@
 
 .diamondIndicator {
   composes: indicator;
-  width: 6px;
-  height: 6px;
+  --size: 6px;
   transform: rotate(45deg);
 }
 
@@ -85,7 +83,7 @@
 .row {
   display: flex;
   flex-grow: 1;
-  justify-content: left;
+  justify-content: var(--justify, left);
   overflow: hidden;
   padding: var(--padding, 0);
 }
@@ -130,7 +128,6 @@
   flex-grow: 1;
   flex-flow: row;
   font-size: inherit;
-  align-items: center;
   vertical-align: center;
   border: 1px solid transparent;
   text-overflow: ellipsis;

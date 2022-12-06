@@ -10,6 +10,8 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import type { EdstWindow } from "types/edstWindow";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
+  "ROUTE_MENU",
+  "HOLD_MENU",
   "STATUS",
   "OUTAGE",
   "MESSAGE_COMPOSE_AREA",

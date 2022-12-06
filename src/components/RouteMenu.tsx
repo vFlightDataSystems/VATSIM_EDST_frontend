@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
@@ -11,7 +11,6 @@ import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import type { EdstAdaptedRoute } from "types/edstAdaptedRoute";
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
-import { useCenterCursor } from "hooks/useCenterCursor";
 import { useHubActions } from "hooks/useHubActions";
 import { OPLUS_SYMBOL } from "~/utils/constants";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
@@ -23,7 +22,6 @@ import { removeStringFromStart, removeStringFromEnd } from "~/utils/stringManipu
 import { getClearedToFixRouteFixes } from "~/utils/fixes";
 import socket from "~socket";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
-import { useFitWindowToScreen } from "hooks/useFitWindowToScreen";
 import clsx from "clsx";
 import movableMenu from "css/movableMenu.module.scss";
 import routeStyles from "css/routeMenu.module.scss";
@@ -41,14 +39,11 @@ const toggleAppendOplus = (prev: Append) => ({
 
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
-  const ref = useRef<HTMLDivElement>(null);
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const aircraftTrack = useRootSelector(aselTrackSelector);
   const [frd, setFrd] = useState<Nullable<string>>(null);
   const hubActions = useHubActions();
-  useFitWindowToScreen(ref, "ROUTE_MENU");
-  useCenterCursor(ref, [asel.aircraftId]);
 
   const adrs = useAdr(entry.aircraftId);
   const adars = useAdar(entry.aircraftId);
@@ -198,7 +193,12 @@ export const RouteMenu = () => {
   useSharedUiListener("routeMenuClickAppendOplus", setAppend, toggleAppendOplus);
 
   return (
-    <MovableMenu menuName="ROUTE_MENU" rootClassName={routeStyles.root} title={`Route Menu ${entry.aircraftId}`}>
+    <MovableMenu
+      menuName="ROUTE_MENU"
+      centerCursorDeps={[entry.aircraftId]}
+      rootClassName={routeStyles.root}
+      title={`Route Menu ${entry.aircraftId}`}
+    >
       <div className={movableMenu.row}>
         <div className={clsx(movableMenu.col, "left")}>
           <div
@@ -261,9 +261,6 @@ export const RouteMenu = () => {
             Append {OPLUS_SYMBOL}
           </div>
         </div>
-        <div className={clsx(movableMenu.col, "right")}>
-          <div className={clsx(movableMenu.blueButton, "isDisabled")}>FRC</div>
-        </div>
       </div>
       <div className={movableMenu.row} />
       <div className={movableMenu.segmentHeader}>DIRECT-TO-FIX</div>
@@ -299,7 +296,7 @@ export const RouteMenu = () => {
           <div
             className={clsx(movableMenu.blueButton, "isDisabled")}
             onMouseDown={() => {
-              dispatch(openMenuThunk("PREV_ROUTE_MENU", ref.current, false, true));
+              dispatch(openMenuThunk("PREV_ROUTE_MENU", null, false, true));
               dispatch(closeWindow("ROUTE_MENU"));
             }}
           >

@@ -47,14 +47,17 @@
 }
 
 .route {
+  @include global.noSelect;
   align-items: center;
   overflow-wrap: anywhere;
   vertical-align: center;
   display: flex;
   flex-grow: 1;
-  padding: 0;
+  padding: 0 2px;
   overflow: hidden;
   border: 1px solid #adadad;
+  margin-top: 0;
+  margin-bottom: 2px;
 }
 
 .ppos {
@@ -75,7 +78,7 @@
   justify-content: flex-start;
   height: 1.1em;
   padding: 0 4px;
-  margin: auto 12px!important;
+  --col-margin: auto 12px;
 }
 
 .pContainer {
@@ -87,12 +90,12 @@
   border: 2px solid #414141;
   max-height: 6em;
   font-size: 16px;
+  margin-bottom: 2px;
 }
 
 .prefrouteRow {
   composes: row;
-  --padding: 0 0 0 10px;
-  margin: 0;
+  padding-left: 1.4ch;
 }
 
 .prefrouteCol {
