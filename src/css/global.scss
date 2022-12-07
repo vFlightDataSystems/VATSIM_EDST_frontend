@@ -71,10 +71,23 @@
   }
 }
 
-@for $i from 1 through 20 {
-  .w#{$i} {
-    width: #{$i}ch;
-  }
+.w5 {
+  width: 5ch;
+}
+.w6 {
+  width: 6ch;
+}
+.w8 {
+  width: 8ch;
+}
+.w9 {
+  width: 9ch;
+}
+.w14 {
+  width: 14ch;
+}
+.w23 {
+  width: 23ch;
 }
 
 .isDisabled {

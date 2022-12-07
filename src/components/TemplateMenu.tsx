@@ -119,8 +119,8 @@ export const TemplateMenu = () => {
           {renderCol("FIX", "w14")}
           {renderCol("TIM", "w8")}
           {renderCol("ALT")}
-          <div className={templateStyles.col}>
-            <EdstButton margin="0 2px 0 0" disabled content="More..." />
+          <div className={clsx(templateStyles.col, "right")}>
+            <EdstButton disabled content="More..." />
           </div>
         </div>
         <div className={templateStyles.row}>
@@ -133,9 +133,7 @@ export const TemplateMenu = () => {
           <TemplateInput className="w6" value={speedInput} onChange={(event) => setSpeedInput(event.target.value)} />
           <TemplateInput className="w14" value={frdInput} onChange={(event) => setFrdInput(event.target.value)} />
           <TemplateInput className="w8" value={timeInput} onChange={(event) => setTimeInput(event.target.value)} />
-          <div className={clsx(templateStyles.col, templateStyles.flex)}>
-            <TemplateInput className={templateStyles.flex} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
-          </div>
+          <TemplateInput className={templateStyles.flex} value={altInput} onChange={(event) => setAltInput(event.target.value)} />
         </div>
         <div className={templateStyles.row}>{renderCol("RTE", "w5")}</div>
         <div className={templateStyles.row}>

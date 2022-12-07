@@ -98,7 +98,7 @@ export const EquipmentSurvTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
             />
           ))}
         </div>
-        <div className={clsx(eqpStyles.col, eqpStyles.w23)}>
+        <div className={clsx(eqpStyles.col, "w23")}>
           <div className={eqpStyles.colTitle}>ADS-B CATEGORY</div>
           <EquipmentTemplateRow circle buttonText="No 1090" selected={adsbBCat === null} toggleSelect={() => setAdsbBCat(null)} />
           <EquipmentTemplateRow
