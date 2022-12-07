@@ -3,6 +3,7 @@
 @value yellow, grey from "colors.css";
 
 .notConnected {
+  @include global.noSelect;
   font-family: "Consolas", monospace;
   font-size: 24px;
   display: flex;
@@ -16,6 +17,7 @@
 }
 
 .root {
+  @include global.noSelect;
   font-family: ERAM, monospace;
   font-size: 17px;
   display: flex;
