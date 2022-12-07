@@ -13,6 +13,15 @@ declare global {
   }
 }
 
+const edstFont = new FontFace("EDST", "url(fonts/EDSTv200.ttf)");
+const eramFont = new FontFace("ERAM", "url(fonts/ERAMv200.ttf)");
+
+document.fonts.add(edstFont);
+document.fonts.add(eramFont);
+
+void edstFont.load();
+void eramFont.load();
+
 const container = document.getElementById("root");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 root.render(
