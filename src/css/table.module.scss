@@ -2,7 +2,7 @@
 @use "borderStyles.scss";
 @value grey, green, blue, yellow, brown, stripHighlightColor, stripPendingRemovalColor from "colors.css";
 
-// FOR USAGE WITH ACL/DEP/GPD/PLANS DISPLAY ONLY
+/* FOR USAGE WITH ACL/DEP/GPD/PLANS DISPLAY ONLY */
 
 .header {
   @include global.noSelect;
@@ -87,7 +87,7 @@
   border-bottom: 1px solid #252525;
 }
 
-// COLUMN STUFF
+/* COLUMN STUFF */
 
 .col {
   display: flex;
@@ -254,8 +254,7 @@
   }
 }
 
-// ACL
-
+/* ACL */
 
 .col1 {
   composes: col;
