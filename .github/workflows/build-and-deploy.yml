@@ -41,7 +41,7 @@ jobs:
           VITE_SHARED_STATE_URL: https://tdls.oakartcc.org
           VITE_SHARED_STATE_AUTH_KEY: ${{secrets.SHARED_STATE_AUTH_KEY}}
           VITE_BACKEND_BASEURL: https://tdls.oakartcc.org/api
-          VITE_APP_VERSION: ${{ steps.version-number.outputs.VERSION_NUMBER }}
+          VITE_VERSION: ${{ steps.version-number.outputs.VERSION_NUMBER }}
         run: npm run build
       - name: Archive build artifact
         uses: actions/upload-artifact@v3
