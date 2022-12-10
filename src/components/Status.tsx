@@ -6,6 +6,7 @@ import { artccIdSelector, sectorIdSelector } from "~redux/slices/sectorSlice";
 import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { HubConnectionState } from "@microsoft/signalr";
+import { VERSION } from "~/utils/constants";
 
 // TODO: add leaflet attribution
 
@@ -27,8 +28,14 @@ export const Status = () => {
 
   return (
     <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>
-      <p>vEDST version 0.1.0</p>
+      <p>vEDST version {VERSION}</p>
       <p>{hubConnection?.state === HubConnectionState.Connected ? `Connected to ${import.meta.env.VITE_VNAS_ENV_NAME}` : "NOT CONNECTED"}</p>
+      <p>
+        GPD powered by{" "}
+        <a href="https://leafletjs.com" target="_blank" rel="noreferrer">
+          Leaflet
+        </a>
+      </p>
       <p>
         <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
       </p>
