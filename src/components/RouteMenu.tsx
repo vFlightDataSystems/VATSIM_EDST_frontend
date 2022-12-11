@@ -88,11 +88,6 @@ export const RouteMenu = () => {
     }
   }
 
-  let routesAvailable = aars.length > 0;
-  if (asel.window === "DEP") {
-    routesAvailable = routesAvailable || adrs.length > 0 || adars.length > 0;
-  }
-
   const amendPrefroute = async (amendedFlightplan: CreateOrAmendFlightplanDto) => {
     if (!trialPlan) {
       await hubActions.amendFlightplan(amendedFlightplan);
