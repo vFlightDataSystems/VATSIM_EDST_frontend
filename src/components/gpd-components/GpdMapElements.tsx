@@ -12,10 +12,10 @@ import { GpdDataBlock } from "components/GpdDataBlock";
 import { useGpdContext } from "components/GpdBody";
 import * as d3geo from "d3-geo";
 import type { Feature } from "geojson";
-import type { Position } from "@turf/turf";
+import type { LineString, Position } from "@turf/turf";
 import type { AircraftId } from "types/aircraftId";
 
-function createFeature<T extends { pos: Position }>(fixes: T[]): Feature {
+function createLineString<T extends { pos: Position }>(fixes: T[]): Feature<LineString> {
   return {
     type: "Feature",
     geometry: {
@@ -35,9 +35,11 @@ export const GpdRouteLine = ({ aircraftId }: { aircraftId: AircraftId }) => {
   const [routeLine, setRouteLine] = useState<Nullable<Feature>>(null);
 
   useEffect(() => {
-    const remainingFixes = getRemainingFixesFromPpos(routeFixes, locationToPosition(track.location));
-    if (remainingFixes && remainingFixes.length > 0) {
-      setRouteLine(track ? createFeature(remainingFixes) : null);
+    if (routeFixes && track) {
+      const remainingFixes = getRemainingFixesFromPpos(routeFixes, locationToPosition(track.location));
+      if (remainingFixes && remainingFixes.length > 0) {
+        setRouteLine(track ? createLineString(remainingFixes) : null);
+      }
     }
   }, [routeFixes, track]);
 
