@@ -1,6 +1,4 @@
-import React, { useEffect, useMemo } from "react";
-import { MapContainer, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import React, { createContext, useLayoutEffect, useMemo, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { entriesSelector } from "~redux/slices/entrySlice";
 import {
@@ -10,68 +8,99 @@ import {
   gpdPlanDataSelector,
   gpdSuppressedSelector,
   gpdZoomLevelSelector,
-  setGpdCenter,
   setGpdZoomLevel,
 } from "~redux/slices/gpdSlice";
 import { useArtccBoundaries } from "api/gpdApi";
-import { GpdAircraftTrack, GpdPlanDisplay, GpdPolygon } from "components/GpdMapElements";
 import gpdStyles from "css/gpd.module.scss";
-import { ZOOM_SNAP } from "components/Gpd";
+import * as d3geo from "d3-geo";
+import { useResizeDetector } from "react-resize-detector";
+import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
+import { useEventListener } from "usehooks-ts";
+import { anyDraggingSelector } from "~redux/slices/appSlice";
+import type { AircraftId } from "types/aircraftId";
 
-const MapConfigurator = () => {
-  const dispatch = useRootDispatch();
-  const zoomLevel = useRootSelector(gpdZoomLevelSelector);
-  const map = useMap();
+const initialProjection = d3geo.geoMercator();
 
-  useEffect(() => {
-    map.on("moveend", () => {
-      dispatch(setGpdZoomLevel(map.getZoom()));
-      dispatch(setGpdCenter(map.getCenter()));
-    });
-  }, [dispatch, map]);
-
-  useEffect(() => {
-    if (map.getZoom() !== zoomLevel) {
-      map.setZoom(zoomLevel);
-    }
-  }, [map, zoomLevel]);
-
-  return null;
-};
+const GpdContext = createContext<d3geo.GeoProjection>(initialProjection);
+export const useGpdContext = () => React.useContext(GpdContext);
 
 export const GpdBody = () => {
+  const dispatch = useRootDispatch();
+  const ref = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const gRef = useRef<SVGGElement>(null);
+  const { width, height } = useResizeDetector({ targetRef: ref });
   const entries = useRootSelector(entriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const center = useRootSelector(gpdCenterSelector);
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
+  const anyDragging = useRootSelector(anyDraggingSelector);
   const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
+  const [translate, setTranslate] = React.useState<[number, number] | null>(null);
+  const [showRouteLines, setShowRouteLines] = React.useState<AircraftId[]>([]);
+
+  useLayoutEffect(() => {
+    if (translate === null && width && height) {
+      setTranslate([width / 2, height / 2]);
+    }
+  }, [height, translate, width]);
+
+  const projection = initialProjection
+    .center(center)
+    .translate(translate ?? [0, 0])
+    .scale(zoomLevel);
+
+  const pathGenerator = d3geo.geoPath(projection);
+
+  useEventListener(
+    "mousemove",
+    (e) => {
+      if (e.buttons === 1 && translate && !anyDragging) {
+        setTranslate([translate[0] + e.movementX, translate[1] + e.movementY]);
+      }
+    },
+    ref
+  );
+
+  useEventListener("wheel", (e) => {
+    const sign = Math.sign(e.deltaY);
+    if ((zoomLevel < GPD_MAX_ZOOM && sign < 0) || (zoomLevel > GPD_MIN_ZOOM && sign > 0)) {
+      dispatch(setGpdZoomLevel(zoomLevel - sign * 500));
+    }
+  });
+
+  const toggleRouteLine = (aircraftId: AircraftId) => {
+    const index = showRouteLines.indexOf(aircraftId);
+    if (index === -1) {
+      setShowRouteLines([...showRouteLines, aircraftId]);
+    } else {
+      setShowRouteLines(showRouteLines.filter((id) => id !== aircraftId));
+    }
+  };
 
   const entryList = useMemo(() => Object.values(entries).filter((entry) => entry.status === "Active"), [entries]);
 
   return (
-    <div className={gpdStyles.body}>
-      <MapContainer
-        center={center}
-        preferCanvas
-        placeholder
-        keyboard={false}
-        doubleClickZoom={false}
-        zoomControl={false}
-        zoomAnimation={false}
-        inertia={false}
-        attributionControl={false}
-        zoom={zoomLevel}
-        maxZoom={GPD_MAX_ZOOM}
-        minZoom={GPD_MIN_ZOOM}
-        zoomSnap={ZOOM_SNAP}
-        zoomDelta={ZOOM_SNAP}
-      >
-        <MapConfigurator />
-        {isSuccess && artccBoundaries && <GpdPolygon data={artccBoundaries} />}
-        {!suppressed && entryList.map((entry) => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} />)}
-        {displayData && <GpdPlanDisplay displayData={displayData} />}
-      </MapContainer>
+    <div className={gpdStyles.body} ref={ref}>
+      <GpdContext.Provider value={projection}>
+        <svg width={width} height={height} ref={svgRef}>
+          <g ref={gRef}>
+            {isSuccess &&
+              artccBoundaries.features.map((shape, index) => {
+                return (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <path key={index} d={pathGenerator(shape) ?? undefined} fill="none" stroke="#adadad" />
+                );
+              })}
+            {showRouteLines.map((aircraftId) => (
+              <GpdRouteLine key={aircraftId} aircraftId={aircraftId} />
+            ))}
+          </g>
+        </svg>
+        {!suppressed &&
+          entryList.map((entry) => <GpdAircraftTrack key={entry.aircraftId} aircraftId={entry.aircraftId} toggleRouteLine={toggleRouteLine} />)}
+      </GpdContext.Provider>
     </div>
   );
 };

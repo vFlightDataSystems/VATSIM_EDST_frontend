@@ -8,14 +8,15 @@ type LeaderLineProps = {
 };
 
 export const LeaderLine = ({ offset, toggleShowRoute }: LeaderLineProps) => {
-  const angle = Math.atan2(offset.y + 6, offset.x) * (180 / Math.PI);
+  const angle = Math.atan2(offset.y, offset.x) * (180 / Math.PI);
   const length = Math.sqrt(offset.x ** 2 + (offset.y + 6) ** 2);
 
   return (
     <div
       className={gpdStyles.leaderline}
       style={{ width: `${length}px`, transform: `rotate(${angle}deg)` }}
-      onMouseDown={(event) => {
+      onMouseDownCapture={(event) => {
+        console.log(event);
         if (event.button === 1) {
           toggleShowRoute();
         }

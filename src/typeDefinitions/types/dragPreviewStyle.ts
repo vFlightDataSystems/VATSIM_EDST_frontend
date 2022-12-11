@@ -5,4 +5,5 @@ export type DragPreviewStyle = {
   relY: number;
   height: number;
   width: number;
+  position?: "fixed" | "absolute" | "relative";
 };

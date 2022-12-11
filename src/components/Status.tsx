@@ -8,8 +8,6 @@ import { FloatingWindow } from "components/utils/FloatingWindow";
 import { HubConnectionState } from "@microsoft/signalr";
 import { VERSION } from "~/utils/constants";
 
-// TODO: add leaflet attribution
-
 export const Status = () => {
   const [showOptions, setShowOptions] = useState(false);
 
@@ -32,8 +30,8 @@ export const Status = () => {
       <p>{hubConnection?.state === HubConnectionState.Connected ? `Connected to ${import.meta.env.VITE_VNAS_ENV_NAME}` : "NOT CONNECTED"}</p>
       <p>
         GPD powered by{" "}
-        <a href="https://leafletjs.com" target="_blank" rel="noreferrer">
-          Leaflet
+        <a href="https://d3js.org" target="_blank" rel="noreferrer">
+          D3
         </a>
       </p>
       <p>
