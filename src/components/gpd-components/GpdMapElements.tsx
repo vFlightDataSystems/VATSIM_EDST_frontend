@@ -10,7 +10,7 @@ import { useRootSelector } from "~redux/hooks";
 import { colors } from "~/colors";
 import { GpdDataBlock } from "components/GpdDataBlock";
 import { useGpdContext } from "components/GpdBody";
-import * as d3geo from "d3-geo";
+import * as d3 from "d3";
 import type { Feature } from "geojson";
 import type { LineString, Position } from "@turf/turf";
 import type { AircraftId } from "types/aircraftId";
@@ -43,7 +43,7 @@ export const GpdRouteLine = ({ aircraftId }: { aircraftId: AircraftId }) => {
     }
   }, [routeFixes, track]);
 
-  return routeLine ? <path d={d3geo.geoPath(projection)(routeLine) ?? undefined} stroke={colors.green} fill="none" /> : null;
+  return routeLine ? <path d={d3.geoPath(projection)(routeLine) ?? undefined} stroke={colors.green} fill="none" /> : null;
 };
 
 type GpdAircraftTrackProps = { aircraftId: AircraftId; toggleRouteLine: (aircraftId: AircraftId) => void };

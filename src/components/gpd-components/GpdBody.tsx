@@ -12,16 +12,16 @@ import {
 } from "~redux/slices/gpdSlice";
 import { useArtccBoundaries } from "api/gpdApi";
 import gpdStyles from "css/gpd.module.scss";
-import * as d3geo from "d3-geo";
+import * as d3 from "d3";
 import { useResizeDetector } from "react-resize-detector";
 import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
 import { useEventListener } from "usehooks-ts";
 import { anyDraggingSelector } from "~redux/slices/appSlice";
 import type { AircraftId } from "types/aircraftId";
 
-const initialProjection = d3geo.geoMercator();
+const initialProjection = d3.geoMercator();
 
-const GpdContext = createContext<d3geo.GeoProjection>(initialProjection);
+const GpdContext = createContext<d3.GeoProjection>(initialProjection);
 export const useGpdContext = () => React.useContext(GpdContext);
 
 export const GpdBody = () => {
@@ -51,7 +51,9 @@ export const GpdBody = () => {
     .translate(translate ?? [0, 0])
     .scale(zoomLevel);
 
-  const pathGenerator = d3geo.geoPath(projection);
+  console.log(projection.center());
+
+  const pathGenerator = d3.geoPath(projection);
 
   useEventListener(
     "mousemove",
