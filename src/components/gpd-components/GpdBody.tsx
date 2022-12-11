@@ -63,12 +63,16 @@ export const GpdBody = () => {
     ref
   );
 
-  useEventListener("wheel", (e) => {
-    const sign = Math.sign(e.deltaY);
-    if ((zoomLevel < GPD_MAX_ZOOM && sign < 0) || (zoomLevel > GPD_MIN_ZOOM && sign > 0)) {
-      dispatch(setGpdZoomLevel(zoomLevel - sign * 500));
-    }
-  });
+  useEventListener(
+    "wheel",
+    (e) => {
+      const sign = Math.sign(e.deltaY);
+      if ((zoomLevel < GPD_MAX_ZOOM && sign < 0) || (zoomLevel > GPD_MIN_ZOOM && sign > 0)) {
+        dispatch(setGpdZoomLevel(zoomLevel - sign * 500));
+      }
+    },
+    ref
+  );
 
   const toggleRouteLine = (aircraftId: AircraftId) => {
     const index = showRouteLines.indexOf(aircraftId);

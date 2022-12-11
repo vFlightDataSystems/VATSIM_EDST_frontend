@@ -6,7 +6,7 @@ import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
 
 export const GPD_MIN_ZOOM = 3000;
-export const GPD_MAX_ZOOM = 9000;
+export const GPD_MAX_ZOOM = 12000;
 
 const BOSCenter = [-71.00638888888889, 42.362944444444445] as [number, number];
 
