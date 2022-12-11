@@ -9,7 +9,7 @@ type LeaderLineProps = {
 
 export const LeaderLine = ({ offset, toggleShowRoute }: LeaderLineProps) => {
   const angle = Math.atan2(offset.y, offset.x) * (180 / Math.PI);
-  const length = Math.sqrt(offset.x ** 2 + (offset.y + 6) ** 2);
+  const length = Math.sqrt(offset.x ** 2 + (Math.abs(offset.y) - 8) ** 2);
 
   return (
     <div
