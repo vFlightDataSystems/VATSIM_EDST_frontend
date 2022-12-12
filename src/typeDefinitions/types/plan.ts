@@ -3,7 +3,7 @@ import type { UnixTime } from "types/unixTime";
 
 export type Plan = {
   cid: string;
-  aircraftId: string;
+  aircraftId: AircraftId;
   amendedFlightplan: CreateOrAmendFlightplanDto;
   commandString: string;
   expirationTime: UnixTime;

@@ -8,7 +8,7 @@ import type { RootThunkAction } from "~redux/store";
 
 function aircraftSelect(
   edstWindow: EdstWindow,
-  aircraftId: string,
+  aircraftId: AircraftId,
   field: AclRowField | DepRowField,
   eventId: Nullable<string>,
   triggerSharedState = true
@@ -24,15 +24,15 @@ function aircraftSelect(
   };
 }
 
-export function aclAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
+export function aclAircraftSelect(aircraftId: AircraftId, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
   return aircraftSelect("ACL", aircraftId, field, eventId, triggerSharedState);
 }
 
-export function depAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
+export function depAircraftSelect(aircraftId: AircraftId, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
   return aircraftSelect("DEP", aircraftId, field, eventId, triggerSharedState);
 }
 
-export function gpdAircraftSelect(aircraftId: string, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
+export function gpdAircraftSelect(aircraftId: AircraftId, field: AclRowField | DepRowField, eventId: Nullable<string>, triggerSharedState = true) {
   return aircraftSelect("GPD", aircraftId, field, eventId, triggerSharedState);
 }
 

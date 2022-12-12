@@ -4,7 +4,7 @@ import tableStyles from "css/table.module.scss";
 
 type MapRowProps = {
   list: string[];
-  Component: ComponentType<{ aircraftId: string }>;
+  Component: ComponentType<{ aircraftId: AircraftId }>;
   showSep?: boolean;
 };
 export const ListMapper = React.memo(({ list, Component, showSep }: MapRowProps) => {

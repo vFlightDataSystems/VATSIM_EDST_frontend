@@ -9,7 +9,7 @@ type Handler<F> = (element: HTMLElement, field: F, eventId: Nullable<string>, op
 
 export function useAselEventListener<F>(
   ref: RefObject<HTMLElement>,
-  aircraftId: string,
+  aircraftId: AircraftId,
   eventId: string,
   field: F,
   opensWindow: EdstWindow,

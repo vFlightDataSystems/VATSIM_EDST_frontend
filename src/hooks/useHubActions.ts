@@ -36,7 +36,7 @@ export const useHubActions = () => {
       });
   };
 
-  const cancelHold = async (aircraftId: string) =>
+  const cancelHold = async (aircraftId: AircraftId) =>
     hubConnection?.invoke<void>("deleteHoldAnnotations", aircraftId).catch((error) => {
       console.log(error);
     });
