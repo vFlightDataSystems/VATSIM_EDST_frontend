@@ -26,17 +26,17 @@ export const Status = () => {
 
   return (
     <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>
-      <p>vEDST version {VERSION}</p>
-      <p>{hubConnection?.state === HubConnectionState.Connected ? `Connected to ${import.meta.env.VITE_VNAS_ENV_NAME}` : "NOT CONNECTED"}</p>
-      <p>
+      <div>vEDST version {VERSION}</div>
+      <div>{hubConnection?.state === HubConnectionState.Connected ? `Connected to ${import.meta.env.VITE_VNAS_ENV_NAME}` : "NOT CONNECTED"}</div>
+      <div>
         GPD powered by{" "}
         <a href="https://d3js.org" target="_blank" rel="noreferrer">
           D3
         </a>
-      </p>
-      <p>
+      </div>
+      <div>
         <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
-      </p>
+      </div>
     </FloatingWindow>
   );
 };
