@@ -51,8 +51,6 @@ export const GpdBody = () => {
     .translate(translate ?? [0, 0])
     .scale(zoomLevel);
 
-  console.log(projection.center());
-
   const pathGenerator = d3.geoPath(projection);
 
   useEventListener(
