@@ -4,11 +4,12 @@ import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
+import type { Coordinate } from "types/gpd/coordinate";
 
 export const GPD_MIN_ZOOM = 3000;
 export const GPD_MAX_ZOOM = 12000;
 
-const BOSCenter = [-71.00638888888889, 42.362944444444445] as [number, number];
+const BOSCenter = [-71.00638888888889, 42.362944444444445] as Coordinate;
 
 export enum SectorType {
   ultraLow = "UL",
@@ -55,7 +56,7 @@ export type GpdState = {
   gpdConfiguration: GpdConfiguration;
   mapFeatureOptions: MapFeatureOptions;
   aircraftDisplayOptions: AircraftDisplayOptions;
-  center: [number, number];
+  center: Coordinate;
   zoomLevel: number;
   suppressed: boolean;
   planData: Record<string, unknown>[];
@@ -119,7 +120,7 @@ const gpdSlice = createSlice({
       state.suppressed = !state.suppressed;
       sharedSocket.setGpdState(state);
     },
-    setGpdCenter(state, action: PayloadAction<[number, number]>) {
+    setGpdCenter(state, action: PayloadAction<Coordinate>) {
       state.center = action.payload;
       sharedSocket.setGpdState(state);
     },

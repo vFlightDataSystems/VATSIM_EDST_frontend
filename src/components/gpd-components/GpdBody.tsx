@@ -1,5 +1,7 @@
-import React, { createContext, useLayoutEffect, useRef } from "react";
+import React, { createContext, useEffect, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
+import type { AircraftId } from "types/aircraftId";
+import type { Coordinate } from "types/gpd/coordinate";
 import {
   GPD_MAX_ZOOM,
   GPD_MIN_ZOOM,
@@ -7,6 +9,7 @@ import {
   gpdPlanDataSelector,
   gpdSuppressedSelector,
   gpdZoomLevelSelector,
+  setGpdCenter,
   setGpdZoomLevel,
 } from "~redux/slices/gpdSlice";
 import { useArtccBoundaries } from "api/gpdApi";
@@ -16,7 +19,6 @@ import { useResizeDetector } from "react-resize-detector";
 import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
 import { useEventListener } from "usehooks-ts";
 import { anyDraggingSelector } from "~redux/slices/appSlice";
-import type { AircraftId } from "types/aircraftId";
 import { aclEntriesSelector } from "~redux/selectors";
 
 const initialProjection = d3.geoMercator();
@@ -33,31 +35,35 @@ export const GpdBody = () => {
   const entryList = useRootSelector(aclEntriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
-  const center = useRootSelector(gpdCenterSelector);
+  const initialCenter = useRootSelector(gpdCenterSelector);
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
   const anyDragging = useRootSelector(anyDraggingSelector);
   const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
-  const [translate, setTranslate] = React.useState<[number, number] | null>(null);
   const [showRouteLines, setShowRouteLines] = React.useState<AircraftId[]>([]);
+  const [center, setCenter] = React.useState<Coordinate>(initialCenter);
 
-  useLayoutEffect(() => {
-    if (translate === null && width && height) {
-      setTranslate([width / 2, height / 2]);
-    }
-  }, [height, translate, width]);
+  // update the GPD center in redux when the component unmounts
+  useEffect(() => {
+    return () => {
+      dispatch(setGpdCenter(center));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const projection = initialProjection
-    .center(center)
-    .translate(translate ?? [0, 0])
-    .scale(zoomLevel);
+  const translate = (width && height ? [width / 2, height / 2] : [0, 0]) as Coordinate;
+
+  const projection = initialProjection.center(center).translate(translate).scale(zoomLevel);
 
   const pathGenerator = d3.geoPath(projection);
 
   useEventListener(
     "mousemove",
     (e) => {
-      if (e.buttons === 1 && translate && !anyDragging) {
-        setTranslate([translate[0] + e.movementX, translate[1] + e.movementY]);
+      if (e.buttons === 1 && !anyDragging) {
+        const newCenter = projection.invert?.([translate[0] - e.movementX, translate[1] - e.movementY]);
+        if (newCenter) {
+          setCenter(newCenter);
+        }
       }
     },
     ref
