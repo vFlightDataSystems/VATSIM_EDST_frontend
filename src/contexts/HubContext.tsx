@@ -10,13 +10,14 @@ import { ApiTopic } from "types/apiTypes/apiTopic";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { setMcaRejectMessage } from "~redux/slices/appSlice";
+import { addOutageMessage, delOutageMessage } from "~redux/slices/appSlice";
 import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
 import { initThunk } from "~redux/thunks/initThunk";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
 import { clientHubUrl } from "~/config";
+import { OutageEntry } from "types/outageEntry";
 
 const HUB_URL = clientHubUrl;
 
@@ -102,9 +103,12 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         //   dispatch(updateAircraftTrackThunk(t));
         // });
       });
-
-      hubConnection.on("receiveError", (message: string) => {
-        dispatch(setMcaRejectMessage(message));
+      hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
+        if (!state) {
+          dispatch(addOutageMessage(new OutageEntry("FSD_DOWN", "FSD CONNECTION DOWN")));
+        } else {
+          dispatch(delOutageMessage("FSD_DOWN"));
+        }
       });
 
       await hubConnection.start();
@@ -149,8 +153,10 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
 
   const disconnectHub = useCallback(async () => {
     ref.current?.stop()?.then(() => setHubConnected(false));
+    dispatch(setArtccId(""));
+    dispatch(setSectorId(""));
     disconnectSocket();
-  }, [disconnectSocket]);
+  }, [disconnectSocket, dispatch]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
