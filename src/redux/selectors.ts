@@ -82,7 +82,7 @@ export const depListSelector = createSelector(
   }
 );
 
-const aclEntriesSelector = createSelector([entriesSelector], (entries) => {
+export const aclEntriesSelector = createSelector([entriesSelector], (entries) => {
   return Object.values(entries).filter((entry) => entry.status === "Active" && !entry.deleted);
 });
 

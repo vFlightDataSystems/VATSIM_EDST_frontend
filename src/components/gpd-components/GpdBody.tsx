@@ -1,6 +1,5 @@
-import React, { createContext, useLayoutEffect, useMemo, useRef } from "react";
+import React, { createContext, useLayoutEffect, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { entriesSelector } from "~redux/slices/entrySlice";
 import {
   GPD_MAX_ZOOM,
   GPD_MIN_ZOOM,
@@ -18,6 +17,7 @@ import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
 import { useEventListener } from "usehooks-ts";
 import { anyDraggingSelector } from "~redux/slices/appSlice";
 import type { AircraftId } from "types/aircraftId";
+import { aclEntriesSelector } from "~redux/selectors";
 
 const initialProjection = d3.geoMercator();
 
@@ -30,7 +30,7 @@ export const GpdBody = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const gRef = useRef<SVGGElement>(null);
   const { width, height } = useResizeDetector({ targetRef: ref });
-  const entries = useRootSelector(entriesSelector);
+  const entryList = useRootSelector(aclEntriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const center = useRootSelector(gpdCenterSelector);
@@ -82,8 +82,6 @@ export const GpdBody = () => {
       setShowRouteLines(showRouteLines.filter((id) => id !== aircraftId));
     }
   };
-
-  const entryList = useMemo(() => Object.values(entries).filter((entry) => entry.status === "Active"), [entries]);
 
   return (
     <div className={gpdStyles.body} ref={ref}>
