@@ -37,7 +37,7 @@ export const Gpd = () => {
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <GpdHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={(e) => !isFullscreen && startDrag(e)} />
-      <GpdBody key={dimension.width + dimension.height} />
+      <GpdBody />
     </div>
   );
 };
