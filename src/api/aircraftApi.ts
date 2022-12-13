@@ -4,6 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { RouteFix } from "types/routeFix";
 import { useRootSelector } from "~redux/hooks";
 import { entrySelector } from "~redux/slices/entrySlice";
+import type { AircraftId } from "types/aircraftId";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
 
@@ -22,7 +23,7 @@ export const aircraftApi = createApi({
 
 const { useGetRouteFixesQuery } = aircraftApi;
 
-export const useRouteFixes = (aircraftId: string) => {
+export const useRouteFixes = (aircraftId: AircraftId) => {
   const entry = useRootSelector((state) => entrySelector(state, aircraftId));
   const { data } = useGetRouteFixesQuery({
     dep: entry.departure,

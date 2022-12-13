@@ -1,6 +1,7 @@
 @value grey from "colors.css";
 
 .body {
+  position: relative;
   overflow: hidden;
   min-width: 500px;
   min-height: 500px;
@@ -8,15 +9,9 @@
   height: 100%;
 }
 
-:global(.leaflet-container) {
-  width: 100%;
-  height: 100%;
-  background: #000000;
-}
-
 .datablock {
   font-family: ERAM, monospace;
-  position: relative;
+  position: absolute;
   font-size: 15px;
   line-height: 1;
   width: 9ch;
@@ -50,17 +45,10 @@
 }
 
 .leaderline {
+  position: relative;
+  top: 5px;
+  left: 5px;
   background-color: grey;
   transform-origin: bottom left;
   height: 1px;
-}
-
-[class~="leaflet-tooltip"] {
-  &::before {
-    all: unset;
-  }
-  background: transparent;
-  border: none;
-  width: 0;
-  height: 0;
 }

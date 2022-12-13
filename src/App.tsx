@@ -1,10 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 import EdstProvider from "~/Edst";
 import Login from "~/login/Login";
 import PrivateRoute from "~/routes/PrivateRoute";
+import { useRootDispatch } from "~redux/hooks";
+import { getVnasConfig } from "~redux/slices/authSlice";
 
 const App = () => {
+  const dispatch = useRootDispatch();
+
+  useEffect(() => {
+    dispatch(getVnasConfig());
+  }, [dispatch]);
+
   return (
     <BrowserRouter>
       <Routes>

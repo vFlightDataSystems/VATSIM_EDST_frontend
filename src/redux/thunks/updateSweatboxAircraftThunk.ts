@@ -4,7 +4,7 @@ import type { AircraftTrack } from "types/aircraftTrack";
 import type { RootThunkAction } from "~redux/store";
 import { setTracks } from "~redux/slices/trackSlice";
 
-export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activateFlightplan: (aircraftId: string) => void): RootThunkAction {
+export function updateSweatboxAircraftThunk(aircraftList: ApiAircraft[], activateFlightplan: (aircraftId: AircraftId) => void): RootThunkAction {
   return (dispatch, getState) => {
     const { entries } = getState();
     const newTracks: Record<AircraftId, AircraftTrack> = {};

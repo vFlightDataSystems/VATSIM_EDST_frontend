@@ -42,6 +42,7 @@ import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
 import edstStyles from "css/edst.module.scss";
 import clsx from "clsx";
+import { envSelector } from "~redux/slices/authSlice";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -90,9 +91,10 @@ const Edst = () => {
   const hubConnection = useHubConnection();
   const hubActions = useHubActions();
   const headerTop = useRootSelector(headerTopSelector);
+  const env = useRootSelector(envSelector)!;
 
   useInterval(() => {
-    fetchAllAircraft().then((aircraftList) => {
+    fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {
       dispatch(updateSweatboxAircraftThunk(aircraftList, hubActions.activateFlightplan));
     });
   }, 5000);

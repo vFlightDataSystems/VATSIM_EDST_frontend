@@ -11,7 +11,7 @@ import { GpdHeader } from "components/GpdHeader";
 import clsx from "clsx";
 import floatingStyles from "css/floatingWindow.module.scss";
 
-export const ZOOM_SNAP = 0.25;
+export const ZOOM_SNAP = 500;
 
 export const Gpd = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ export const Gpd = () => {
     >
       {!isFullscreen && dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <GpdHeader focused={focused} toggleFullscreen={toggleFullscreen} startDrag={(e) => !isFullscreen && startDrag(e)} />
-      <GpdBody key={dimension.width + dimension.height} />
+      <GpdBody />
     </div>
   );
 };

@@ -2,7 +2,6 @@ import type { RefObject } from "react";
 import React, { useCallback, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
-import { Tooltip, useMap } from "react-leaflet";
 import type { Nullable } from "types/utility-types";
 import { aircraftIsAselSelector, anyDraggingSelector, setAnyDragging } from "~redux/slices/appSlice";
 import { gpdAircraftSelect } from "~redux/thunks/aircraftSelect";
@@ -21,17 +20,6 @@ import type { AircraftId } from "types/aircraftId";
 import { entrySelector } from "~redux/slices/entrySlice";
 import { aircraftTrackSelector } from "~redux/slices/trackSlice";
 
-type PersistentInvisibleTooltipProps = {
-  children: React.ReactNode;
-};
-const PersistentInvisibleTooltip = ({ children }: PersistentInvisibleTooltipProps) => {
-  return (
-    <Tooltip permanent interactive opacity={1} direction="center">
-      {children}
-    </Tooltip>
-  );
-};
-
 type GpdDataBlockProps = {
   aircraftId: AircraftId;
   offset: DataBlockOffset;
@@ -40,7 +28,6 @@ type GpdDataBlockProps = {
 };
 
 export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleShowRoute }: GpdDataBlockProps) => {
-  const map = useMap();
   const dispatch = useRootDispatch();
   const entry = useRootSelector((state) => entrySelector(state, aircraftId));
   const track = useRootSelector((state) => aircraftTrackSelector(state, aircraftId));
@@ -73,13 +60,11 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
   };
 
   const draggingHandler = useCallback((event: MouseEvent) => {
-    if (event) {
-      setDragPreviewStyle((prevStyle) => ({
-        ...prevStyle!,
-        left: event.pageX + prevStyle!.relX,
-        top: event.pageY + prevStyle!.relY,
-      }));
-    }
+    setDragPreviewStyle((prevStyle) => ({
+      ...prevStyle!,
+      left: event.pageX + prevStyle!.relX,
+      top: event.pageY + prevStyle!.relY,
+    }));
   }, []);
 
   const startDrag = useCallback(
@@ -87,7 +72,6 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
       const pos = ref.current?.getBoundingClientRect();
       const ppos = pos ? { x: pos.left, y: pos.top } : null;
       if (event.buttons === 1 && ref.current && ppos) {
-        map.dragging.disable();
         if (window.__TAURI__) {
           void invoke("set_cursor_grab", { value: true });
         }
@@ -101,16 +85,16 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
           height: ref.current.clientHeight,
           width: ref.current.clientWidth,
         };
+        console.log(style);
         setDragPreviewStyle(style);
         dispatch(setAnyDragging(true));
         window.addEventListener("mousemove", draggingHandler);
       }
     },
-    [dispatch, draggingHandler, map]
+    [dispatch, draggingHandler]
   );
 
   const stopDrag = useCallback(() => {
-    map.dragging.enable();
     if (ref.current && dragPreviewStyle) {
       const pos = ref.current.getBoundingClientRect();
       const ppos = { x: pos.left, y: pos.top };
@@ -126,7 +110,7 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
       setDragPreviewStyle(null);
       window.removeEventListener("mousemove", draggingHandler);
     }
-  }, [dispatch, dragPreviewStyle, draggingHandler, map, offset, setOffset]);
+  }, [dispatch, dragPreviewStyle, draggingHandler, offset, setOffset]);
 
   useEventListener("mouseup", stopDrag);
 
@@ -150,37 +134,35 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
     </div>
   );
 
-  return (
+  return track ? (
     <>
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
-      <PersistentInvisibleTooltip>
-        <LeaderLine offset={offset} toggleShowRoute={toggleShowRoute} />
-        <div
-          className={gpdStyles.datablock}
-          style={{ left: `${offset.x}px`, top: `${offset.y}px` }}
-          ref={ref}
-          onMouseMoveCapture={(event) => !dragPreviewStyle && startDrag(event)}
-        >
-          <div className={gpdStyles.dbRow}>
-            <div className={clsx(gpdStyles.dbElement, { selected: selectedField === "FID_ACL_ROW_FIELD" })} onMouseUp={onCallsignClick}>
-              {entry.aircraftId}
-            </div>
-          </div>
-          <div className={gpdStyles.dbRow}>
-            {dbElement(
-              altRef,
-              entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`,
-              "ALT_ACL_ROW_FIELD",
-              "gpd-alt-asel",
-              "ALTITUDE_MENU"
-            )}
-          </div>
-          <div className={gpdStyles.dbRow}>
-            {dbElement(destRef, entry.destination, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
-            {dbElement(null, track.groundSpeed, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
+      <LeaderLine offset={offset} toggleShowRoute={toggleShowRoute} />
+      <div
+        className={gpdStyles.datablock}
+        style={{ left: `${offset.x}px`, top: `${offset.y}px` }}
+        ref={ref}
+        onMouseMoveCapture={(event) => !dragPreviewStyle && startDrag(event)}
+      >
+        <div className={gpdStyles.dbRow}>
+          <div className={clsx(gpdStyles.dbElement, { selected: selectedField === "FID_ACL_ROW_FIELD" })} onMouseUp={onCallsignClick}>
+            {entry.aircraftId}
           </div>
         </div>
-      </PersistentInvisibleTooltip>
+        <div className={gpdStyles.dbRow}>
+          {dbElement(
+            altRef,
+            entry.interimAltitude ? `${entry.interimAltitude}T${entry.altitude}` : `${entry.altitude}`,
+            "ALT_ACL_ROW_FIELD",
+            "gpd-alt-asel",
+            "ALTITUDE_MENU"
+          )}
+        </div>
+        <div className={gpdStyles.dbRow}>
+          {dbElement(destRef, entry.destination, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
+          {dbElement(null, track.groundSpeed, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
+        </div>
+      </div>
     </>
-  );
+  ) : null;
 });

@@ -3,22 +3,20 @@ import React, { createContext, useCallback, useEffect, useRef, useState } from "
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
-import { clearSession, setSession, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { clearSession, envSelector, setSession, vatsimTokenSelector } from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { setMcaRejectMessage } from "~redux/slices/appSlice";
+import { addOutageMessage, delOutageMessage } from "~redux/slices/appSlice";
 import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
 import { initThunk } from "~redux/thunks/initThunk";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
-import { clientHubUrl } from "~/config";
-
-const HUB_URL = clientHubUrl;
+import { OutageEntry } from "types/outageEntry";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -38,32 +36,35 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
   const ref = useRef<Nullable<HubConnection>>(null);
   const { disconnectSocket } = useSocketConnector();
+  const env = useRootSelector(envSelector);
 
   useEffect(() => {
-    if (!HUB_URL || !vatsimToken) {
+    if (!env || !vatsimToken) {
       return;
     }
 
+    const hubUrl = env.clientHubUrl;
+
     const getValidNasToken = async () => {
       // const decodedToken = decodeJwt(nasToken);
-      return refreshToken(vatsimToken).then((r) => {
+      return refreshToken(env.apiBaseUrl, vatsimToken).then((r) => {
         console.log("Refreshed NAS token");
         return r.data;
       });
     };
 
     ref.current = new HubConnectionBuilder()
-      .withUrl(HUB_URL, {
+      .withUrl(hubUrl, {
         accessTokenFactory: getValidNasToken,
         transport: HttpTransportType.WebSockets,
         skipNegotiation: true,
       })
       .withAutomaticReconnect()
       .build();
-  }, [vatsimToken]);
+  }, [env, vatsimToken]);
 
   const connectHub = useCallback(async () => {
-    if (!HUB_URL || !vatsimToken || hubConnected || !ref.current) {
+    if (!env || !vatsimToken || hubConnected || !ref.current) {
       if (hubConnected) {
         throw new Error("ALREADY CONNECTED");
       }
@@ -102,9 +103,12 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         //   dispatch(updateAircraftTrackThunk(t));
         // });
       });
-
-      hubConnection.on("receiveError", (message: string) => {
-        dispatch(setMcaRejectMessage(message));
+      hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
+        if (!state) {
+          dispatch(addOutageMessage(new OutageEntry("FSD_DOWN", "FSD CONNECTION DOWN")));
+        } else {
+          dispatch(delOutageMessage("FSD_DOWN"));
+        }
       });
 
       await hubConnection.start();
@@ -145,12 +149,14 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, [dispatch, hubConnected, vatsimToken]);
+  }, [dispatch, env, hubConnected, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
     ref.current?.stop()?.then(() => setHubConnected(false));
+    dispatch(setArtccId(""));
+    dispatch(setSectorId(""));
     disconnectSocket();
-  }, [disconnectSocket]);
+  }, [disconnectSocket, dispatch]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {

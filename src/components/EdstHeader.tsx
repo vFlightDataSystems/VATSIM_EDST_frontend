@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import React from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { headerTopSelector, setHeaderTop, toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
+import { headerTopSelector, outageSelector, setHeaderTop, toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
 import { planQueueSelector } from "~redux/slices/planSlice";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
 import type { EdstWindow } from "types/edstWindow";
@@ -12,7 +12,7 @@ import edstStyles from "css/edst.module.scss";
 import clsx from "clsx";
 
 const YELLOW = "#A3A300";
-// const RED = "#590000";
+const RED = "#590000";
 
 type EdstHeaderButtonCSSProps = Pick<CSSProperties, "width" | "color" | "borderColor" | "backgroundColor">;
 type EdstHeaderButtonProps = {
@@ -53,6 +53,7 @@ const EdstHeaderButton6 = (props: EdstHeaderButtonProps) => <EdstHeaderButton wi
 export const EdstHeader = () => {
   const dispatch = useRootDispatch();
   const planQueue = useRootSelector(planQueueSelector);
+  const outages = useRootSelector(outageSelector);
   const windows = useRootSelector(windowsSelector);
   const headerTop = useRootSelector(headerTopSelector);
 
@@ -135,7 +136,12 @@ export const EdstHeader = () => {
         </div>
         <div className={edstStyles.headerCol}>
           <EdstHeaderButton window="STATUS" content="STATUS ACTIVE" />
-          <EdstHeaderButton window="OUTAGE" content={`OUTAGE ${sectorId}`} />
+          <EdstHeaderButton
+            backgroundColor={outages.filter((o) => !o.acknowledged).length > 0 ? RED : undefined}
+            window="OUTAGE"
+            content={`OUTAGE ${sectorId}`}
+            disabled={outages.length === 0}
+          />
           <Time />
           <EdstHeaderButton6
             window="ADSB"

@@ -88,11 +88,6 @@ export const RouteMenu = () => {
     }
   }
 
-  let routesAvailable = aars.length > 0;
-  if (asel.window === "DEP") {
-    routesAvailable = routesAvailable || adrs.length > 0 || adars.length > 0;
-  }
-
   const amendPrefroute = async (amendedFlightplan: CreateOrAmendFlightplanDto) => {
     if (!trialPlan) {
       await hubActions.amendFlightplan(amendedFlightplan);
@@ -224,9 +219,11 @@ export const RouteMenu = () => {
           {/* <div className={clsx(movableMenu.button, "isDisabled")}>{DOWNLINK_SYMBOL}</div> */}
           {/* <div className={clsx(movableMenu.button, "isDisabled")}>CAR</div> */}
           {/* <div className={clsx(movableMenu.button, "isDisabled")}>X RES</div> */}
-          <div className={movableMenu.button} onMouseDown={() => dispatch(openMenuThunk("HOLD_MENU"))}>
-            HOLD DATA
-          </div>
+          {!(asel.window === "DEP") && (
+            <div className={movableMenu.button} onMouseDown={() => dispatch(openMenuThunk("HOLD_MENU"))}>
+              HOLD DATA
+            </div>
+          )}
         </div>
       </div>
       <div className={movableMenu.row} />

@@ -142,10 +142,8 @@ const appSlice = createSlice({
       state.outages = [...state.outages, action.payload];
     },
     // removes outage message at index
-    delOutageMessage(state, action: PayloadAction<number>) {
-      if (action.payload > -1 && action.payload < state.outages.length) {
-        state.outages.splice(action.payload, 1);
-      }
+    delOutageMessage(state, action: PayloadAction<string>) {
+      state.outages = state.outages.filter((outage) => outage.id !== action.payload);
     },
   },
 });

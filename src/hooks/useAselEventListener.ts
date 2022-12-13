@@ -4,12 +4,13 @@ import type { Nullable } from "types/utility-types";
 import type { Asel } from "types/asel";
 import sharedStateSocket from "~socket";
 import type { EdstWindow } from "types/edstWindow";
+import type { AircraftId } from "types/aircraftId";
 
 type Handler<F> = (element: HTMLElement, field: F, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
 
 export function useAselEventListener<F>(
   ref: RefObject<HTMLElement>,
-  aircraftId: string,
+  aircraftId: AircraftId,
   eventId: string,
   field: F,
   opensWindow: EdstWindow,

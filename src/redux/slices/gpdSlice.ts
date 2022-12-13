@@ -1,15 +1,15 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import type L from "leaflet";
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
+import type { Coordinate } from "types/gpd/coordinate";
 
-export const GPD_MIN_ZOOM = 6;
-export const GPD_MAX_ZOOM = 9;
+export const GPD_MIN_ZOOM = 3000;
+export const GPD_MAX_ZOOM = 12000;
 
-const BOSCenter = { lat: 42.362944444444445, lng: -71.00638888888889 };
+const BOSCenter = [-71.00638888888889, 42.362944444444445] as Coordinate;
 
 export enum SectorType {
   ultraLow = "UL",
@@ -56,7 +56,7 @@ export type GpdState = {
   gpdConfiguration: GpdConfiguration;
   mapFeatureOptions: MapFeatureOptions;
   aircraftDisplayOptions: AircraftDisplayOptions;
-  center: L.LatLngExpression | undefined;
+  center: Coordinate;
   zoomLevel: number;
   suppressed: boolean;
   planData: Record<string, unknown>[];
@@ -82,7 +82,7 @@ const initialState: GpdState = {
     routePreviewMinutes: ["Route Preview (minutes)", 0],
   },
   center: BOSCenter,
-  zoomLevel: 7,
+  zoomLevel: 4000,
   suppressed: false,
   planData: [],
 };
@@ -120,7 +120,7 @@ const gpdSlice = createSlice({
       state.suppressed = !state.suppressed;
       sharedSocket.setGpdState(state);
     },
-    setGpdCenter(state, action: PayloadAction<L.LatLngExpression>) {
+    setGpdCenter(state, action: PayloadAction<Coordinate>) {
       state.center = action.payload;
       sharedSocket.setGpdState(state);
     },

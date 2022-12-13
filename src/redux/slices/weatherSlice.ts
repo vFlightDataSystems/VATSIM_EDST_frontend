@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { Feature, MultiPolygon, Polygon, Position } from "@turf/turf";
 import type { RootState } from "~redux/store";
 import { fetchAirportInfo } from "api/vNasDataApi";
+import { assert } from "~/utility-functions";
 
 type WeatherState = {
   sigmetMap: Record<string, SigmetEntry>;
@@ -98,10 +99,10 @@ const weatherSlice = createSlice({
   },
 });
 
-async function getAirportInfoList(airports: string[]) {
+async function getAirportInfoList(apiBaseUrl: string, airports: string[]) {
   return Promise.all(
     airports.map(async (airport) => {
-      const airportInfo = await fetchAirportInfo(airport);
+      const airportInfo = await fetchAirportInfo(apiBaseUrl, airport);
       const icaoId = airportInfo?.icaoId ? airportInfo.icaoId : airport;
       const airportId = icaoId.length === 4 ? icaoId : `K${icaoId}`;
       return [airportId, airportInfo?.faaId ?? airportId] as const;
@@ -112,7 +113,9 @@ async function getAirportInfoList(airports: string[]) {
 export const toggleAltimeter = createAsyncThunk<void, string[], { state: RootState }>(
   "weather/toggleAsyncAltimeter",
   async (airports, { dispatch, getState }) => {
-    const airportList = await getAirportInfoList(airports);
+    const env = getState().auth.environment;
+    assert(env, "Environment not set");
+    const airportList = await getAirportInfoList(env.apiBaseUrl, airports);
 
     const currentAirports = getState().weather.altimeterAirports;
     airportList.forEach(([airportId]) => {
@@ -129,7 +132,9 @@ export const toggleAltimeter = createAsyncThunk<void, string[], { state: RootSta
 export const toggleMetar = createAsyncThunk<void, string[], { state: RootState }>(
   "weather/toggleAsyncMetar",
   async (airports, { dispatch, getState }) => {
-    const airportList = await getAirportInfoList(airports);
+    const env = getState().auth.environment;
+    assert(env, "Environment not set");
+    const airportList = await getAirportInfoList(env.apiBaseUrl, airports);
 
     const currentAirports = getState().weather.metarAirports;
     airportList.forEach(([airportId]) => {

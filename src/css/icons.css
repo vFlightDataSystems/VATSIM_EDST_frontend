@@ -6,6 +6,14 @@
     background-image: url("../assets/images/Diamond.svg");
 }
 
+.track-icon {
+    background-image: url("../assets/images/Diamond.svg");
+    position: absolute;
+    translate: -5px -5px;
+    width: 10px;
+    height: 10px;
+}
+
 .square-icon {
     background-image: url("../assets/images/Square.svg");
 }
