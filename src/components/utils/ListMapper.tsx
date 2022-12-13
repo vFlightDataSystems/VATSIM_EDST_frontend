@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import React from "react";
 import tableStyles from "css/table.module.scss";
+import type { AircraftId } from "types/aircraftId";
 
 type MapRowProps = {
   list: string[];

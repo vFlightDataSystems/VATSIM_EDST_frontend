@@ -5,6 +5,7 @@ import type { DepRowField } from "types/dep/depRowField";
 import type { Asel } from "types/asel";
 import { setAsel } from "~redux/slices/appSlice";
 import type { RootThunkAction } from "~redux/store";
+import type { AircraftId } from "types/aircraftId";
 
 function aircraftSelect(
   edstWindow: EdstWindow,
