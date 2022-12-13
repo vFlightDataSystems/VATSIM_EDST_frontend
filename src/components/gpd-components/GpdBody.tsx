@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useRef } from "react";
+import React, { createContext, useRef } from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import type { AircraftId } from "types/aircraftId";
 import type { Coordinate } from "types/gpd/coordinate";
@@ -19,6 +19,7 @@ import { useResizeDetector } from "react-resize-detector";
 import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
 import { useEventListener } from "usehooks-ts";
 import { aclEntriesSelector } from "~redux/selectors";
+import { useOnUnmount } from "hooks/useOnUnmount";
 
 const initialProjection = d3.geoMercator();
 
@@ -39,14 +40,6 @@ export const GpdBody = () => {
   const [center, setCenter] = React.useState<Coordinate>(initialCenter);
   const [dragging, setDragging] = React.useState(false);
 
-  // update the GPD center in redux when the component unmounts
-  useEffect(() => {
-    return () => {
-      dispatch(setGpdCenter(center));
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const translate = (width && height ? [width / 2, height / 2] : [0, 0]) as Coordinate;
 
   const projection = initialProjection.center(center).translate(translate).scale(zoomLevel);
@@ -60,6 +53,11 @@ export const GpdBody = () => {
         setCenter(newCenter);
       }
     }
+  });
+
+  // update the GPD center in redux when the component unmounts
+  useOnUnmount(() => {
+    dispatch(setGpdCenter(center));
   });
 
   useEventListener("mouseup", () => {
