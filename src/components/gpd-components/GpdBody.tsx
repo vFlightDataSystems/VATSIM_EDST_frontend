@@ -18,7 +18,6 @@ import * as d3 from "d3";
 import { useResizeDetector } from "react-resize-detector";
 import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
 import { useEventListener } from "usehooks-ts";
-import { anyDraggingSelector } from "~redux/slices/appSlice";
 import { aclEntriesSelector } from "~redux/selectors";
 
 const initialProjection = d3.geoMercator();
@@ -37,10 +36,10 @@ export const GpdBody = () => {
   const suppressed = useRootSelector(gpdSuppressedSelector);
   const initialCenter = useRootSelector(gpdCenterSelector);
   const zoomLevel = useRootSelector(gpdZoomLevelSelector);
-  const anyDragging = useRootSelector(anyDraggingSelector);
   const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
   const [showRouteLines, setShowRouteLines] = React.useState<AircraftId[]>([]);
   const [center, setCenter] = React.useState<Coordinate>(initialCenter);
+  const [dragging, setDragging] = React.useState(false);
 
   // update the GPD center in redux when the component unmounts
   useEffect(() => {
@@ -56,29 +55,31 @@ export const GpdBody = () => {
 
   const pathGenerator = d3.geoPath(projection);
 
-  useEventListener(
-    "mousemove",
-    (e) => {
-      if (e.buttons === 1 && !anyDragging) {
-        const newCenter = projection.invert?.([translate[0] - e.movementX, translate[1] - e.movementY]);
-        if (newCenter) {
-          setCenter(newCenter);
-        }
+  useEventListener("mousemove", (e) => {
+    if (e.buttons === 1 && dragging) {
+      const newCenter = projection.invert?.([translate[0] - e.movementX, translate[1] - e.movementY]);
+      if (newCenter) {
+        setCenter(newCenter);
       }
-    },
-    ref
-  );
+    }
+  });
 
-  useEventListener(
-    "wheel",
-    (e) => {
-      const sign = Math.sign(e.deltaY);
-      if ((zoomLevel < GPD_MAX_ZOOM && sign < 0) || (zoomLevel > GPD_MIN_ZOOM && sign > 0)) {
-        dispatch(setGpdZoomLevel(zoomLevel - sign * 500));
-      }
-    },
-    ref
-  );
+  useEventListener("mouseup", () => {
+    if (dragging) {
+      setDragging(false);
+    }
+  });
+
+  const handleMouseDown = () => {
+    setDragging(true);
+  };
+
+  const wheelHandler: React.WheelEventHandler = (e) => {
+    const sign = Math.sign(e.deltaY);
+    if ((zoomLevel < GPD_MAX_ZOOM && sign < 0) || (zoomLevel > GPD_MIN_ZOOM && sign > 0)) {
+      dispatch(setGpdZoomLevel(zoomLevel - sign * 500));
+    }
+  };
 
   const toggleRouteLine = (aircraftId: AircraftId) => {
     const index = showRouteLines.indexOf(aircraftId);
@@ -90,7 +91,7 @@ export const GpdBody = () => {
   };
 
   return (
-    <div className={gpdStyles.body} ref={ref}>
+    <div className={gpdStyles.body} ref={ref} onMouseDown={handleMouseDown} onWheel={wheelHandler}>
       <GpdContext.Provider value={projection}>
         <svg width={width} height={height} ref={svgRef}>
           <g ref={gRef}>
