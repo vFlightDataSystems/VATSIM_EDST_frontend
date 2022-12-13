@@ -2,7 +2,7 @@ import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { login, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { configSelector, envSelector, login, setEnv, vatsimTokenSelector } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
@@ -19,9 +19,11 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
   const vatsimToken = useRootSelector(vatsimTokenSelector);
+  const config = useRootSelector(configSelector);
+  const env = useRootSelector(envSelector);
 
   useEffect(() => {
-    if (code) {
+    if (code && env) {
       dispatch(
         login({
           code,
@@ -29,7 +31,7 @@ const Login = () => {
         })
       );
     }
-  }, [code, dispatch]);
+  }, [code, dispatch, env]);
 
   useEffect(() => {
     if (vatsimToken) {
@@ -43,6 +45,16 @@ const Login = () => {
       <div className={loginStyles.root}>
         <div>
           <img src="/img/vEDSTLogo.png" alt="vEDST Logo" width="200" />
+          <select
+            onChange={(e) => {
+              if (e.target.value) {
+                dispatch(setEnv(e.target.value));
+              }
+            }}
+            value={env?.name}
+          >
+            {config && config.environments.map((e) => <option key={e.name}>{e.name}</option>)}
+          </select>
           <button type="button" disabled={code !== null} onClick={redirectLogin}>
             {code ? (
               /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */

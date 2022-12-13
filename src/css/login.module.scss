@@ -52,6 +52,21 @@
       border-color: #008966;
     }
   }
+
+  select {
+    color: white;
+    background-color: #343a40;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    width: 150px;
+    padding: 0.375rem 0.75rem;
+    margin: 15px 0;
+    &:focus {
+      border-color: #80bdff;
+    }
+  }
 }
 
 .bg {
