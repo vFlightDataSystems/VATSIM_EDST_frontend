@@ -28,8 +28,6 @@ export const useGpdContext = () => React.useContext(GpdContext);
 export const GpdBody = () => {
   const dispatch = useRootDispatch();
   const ref = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const gRef = useRef<SVGGElement>(null);
   const { width, height } = useResizeDetector({ targetRef: ref });
   const entryList = useRootSelector(aclEntriesSelector);
   const displayData = useRootSelector(gpdPlanDataSelector);
@@ -93,8 +91,8 @@ export const GpdBody = () => {
   return (
     <div className={gpdStyles.body} ref={ref} onMouseDown={handleMouseDown} onWheel={wheelHandler}>
       <GpdContext.Provider value={projection}>
-        <svg width={width} height={height} ref={svgRef}>
-          <g ref={gRef}>
+        <svg width={width} height={height}>
+          <g>
             {isSuccess &&
               artccBoundaries.features.map((shape, index) => {
                 return (
