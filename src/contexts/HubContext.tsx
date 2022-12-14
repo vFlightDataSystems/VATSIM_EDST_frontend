@@ -10,7 +10,7 @@ import { ApiTopic } from "types/apiTypes/apiTopic";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { addOutageMessage, delOutageMessage } from "~redux/slices/appSlice";
+import { addOutageMessage, delOutageMessage, setFsdIsConnected } from "~redux/slices/appSlice";
 import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
 import { initThunk } from "~redux/thunks/initThunk";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
@@ -104,6 +104,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         // });
       });
       hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
+        dispatch(setFsdIsConnected(state));
         if (!state) {
           dispatch(addOutageMessage(new OutageEntry("FSD_DOWN", "FSD CONNECTION DOWN")));
         } else {
@@ -116,7 +117,8 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       try {
         sessionInfo = await hubConnection.invoke<ApiSessionInfoDto>("getSessionInfo");
       } catch {
-        ref.current?.stop().then(() => setHubConnected(false));
+        await ref.current?.stop();
+        setHubConnected(false);
         throw new Error("SESSION NOT FOUND");
       }
       console.log(sessionInfo);
@@ -135,8 +137,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         });
         console.log(`joined session ${sessionInfo.id}`);
         setHubConnected(true);
-        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
-          ref.current?.stop().then(() => setHubConnected(false));
+        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(async () => {
+          await hubConnection.stop();
+          setHubConnected(false);
           throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
         });
       } else {
@@ -152,7 +155,8 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   }, [dispatch, env, hubConnected, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
-    ref.current?.stop()?.then(() => setHubConnected(false));
+    await ref.current?.stop();
+    setHubConnected(false);
     dispatch(setArtccId(""));
     dispatch(setSectorId(""));
     disconnectSocket();
