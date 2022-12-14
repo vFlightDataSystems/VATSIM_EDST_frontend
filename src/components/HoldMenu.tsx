@@ -23,6 +23,8 @@ import holdStyles from "css/holdMenu.module.scss";
 import movableMenu from "css/movableMenu.module.scss";
 import { MovableMenu } from "components/MovableMenu";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
+import { getRemainingFixesFromPpos } from "~/utils/fixes";
+import { locationToPosition } from "~/utils/locationToPosition";
 
 export const HoldMenu = () => {
   const entry = useRootSelector(aselEntrySelector)!;
@@ -42,15 +44,18 @@ export const HoldMenu = () => {
   const routeFixes = useRouteFixes(entry.aircraftId);
 
   useEffect(() => {
-    if ((!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current) || !holdRouteFixes) && track) {
-      const holdRouteFixes = computeCrossingTimes(entry, routeFixes, track);
-      const utcMinutes = getUtcMinutesAfterMidnight();
-      setFix(entry.holdAnnotations?.fix ?? null);
-      setLegLength(entry.holdAnnotations?.legLength ?? null);
-      setDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
-      setTurns(entry.holdAnnotations?.turns ?? TurnDirection.RIGHT);
-      setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
-      setHoldRouteFixes(holdRouteFixes ?? null);
+    if ((!_.isEqual(entry.holdAnnotations, holdAnnotationRef.current) || !holdRouteFixes) && track && routeFixes) {
+      const remainingFixes = getRemainingFixesFromPpos(routeFixes, locationToPosition(track.location));
+      if (remainingFixes) {
+        const holdRouteFixes = computeCrossingTimes(entry, remainingFixes.slice(1), track);
+        const utcMinutes = getUtcMinutesAfterMidnight();
+        setFix(entry.holdAnnotations?.fix ?? null);
+        setLegLength(entry.holdAnnotations?.legLength ?? null);
+        setDirection(entry.holdAnnotations?.direction ?? CompassDirection.NORTH);
+        setTurns(entry.holdAnnotations?.turns ?? TurnDirection.RIGHT);
+        setEfc(entry.holdAnnotations?.efc ?? utcMinutes + 30);
+        setHoldRouteFixes(holdRouteFixes ?? null);
+      }
     }
     holdAnnotationRef.current = entry.holdAnnotations;
   }, [dispatch, entry, holdRouteFixes, routeFixes, track]);
