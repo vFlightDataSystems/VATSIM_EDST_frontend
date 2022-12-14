@@ -5,7 +5,7 @@ import type { RootState } from "~redux/store";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { login as apiLogin } from "api/vNasDataApi";
 
-type Environment = { name: string; apiBaseUrl: string; clientHubUrl: string; isSweatbox: boolean };
+type Environment = { name: string; apiBaseUrl: string; clientHubUrl: string; isSweatbox: boolean; isPrimary?: boolean; isDisabled?: boolean };
 type Config = {
   artccBoundariesUrl: string;
   artccAoisUrl: string;
