@@ -29,7 +29,7 @@ export const MovableMenu = ({ menuName, title, rootClassName, centerCursorDeps =
       className={clsx(rootClassName, { noPointerEvents: anyDragging })}
       ref={ref}
       style={{ ...pos, zIndex: 10000 + zStack.indexOf(menuName) }}
-      onMouseDown={() => zStack.indexOf("ROUTE_MENU") < zStack.length - 1 && dispatch(pushZStack("ROUTE_MENU"))}
+      onMouseDown={() => zStack.indexOf(menuName) < zStack.length - 1 && dispatch(pushZStack(menuName))}
     >
       {dragPreviewStyle && <EdstDraggingOutline style={dragPreviewStyle} />}
       <div className={movableMenu.header}>
