@@ -127,9 +127,14 @@ export const RouteMenu = () => {
   };
 
   const clearedToFix = async (clearedFixName: string) => {
+    let route: string | null;
     const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
-    const route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd)?.route;
-    if (route) {
+    if (clearedFixName === entry.destination) {
+      route = frd;
+    } else {
+      route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd)?.route ?? null;
+    }
+    if (route !== null) {
       const amendedFlightplan: ApiFlightplan = {
         ...entry,
         route: route.split(/\.+/g).join(" ").trim(),
