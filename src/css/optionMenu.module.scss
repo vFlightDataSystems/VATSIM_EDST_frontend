@@ -85,7 +85,7 @@
   flex-grow: 1;
   justify-content: var(--justify, left);
   overflow: hidden;
-  padding: var(--padding, 0);
+  padding: var(--row-padding, 0);
 }
 
 .bottomRow {

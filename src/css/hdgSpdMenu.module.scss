@@ -9,12 +9,12 @@
 
 .row {
   composes: row from "optionMenu.module.scss";
-  --padding: 4px 0;
+  --row-padding: 4px 0;
 }
 
 .row2 {
   composes: row;
-  --padding: 0 4px;
+  --row-padding: 0 4px;
   display: flex;
   align-items: center;
 
