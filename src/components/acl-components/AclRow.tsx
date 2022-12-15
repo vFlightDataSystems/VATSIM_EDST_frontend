@@ -279,12 +279,15 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
           {entry.vciStatus === -1 && "N"}
           {entry.vciStatus === 1 && VCI_SYMBOL}
         </div>
-        <div className={clsx(tableStyles.col1, "withBorder")} />
-        <div className={clsx(tableStyles.col1, "withBorder")} />
-        <div className={clsx(tableStyles.col1, "withBorder")} />
+        <div className={clsx(tableStyles.col1, "withBorder", { noProbe: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, "withBorder", { noProbe: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, "withBorder", { noProbe: !entry.probe })} />
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
-          <div className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_ACL_ROW_FIELD") })} onMouseDown={handleFidClick}>
+          <div
+            className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_ACL_ROW_FIELD"), noProbe: !entry.probe })}
+            onMouseDown={handleFidClick}
+          >
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
             {/* <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span> */}

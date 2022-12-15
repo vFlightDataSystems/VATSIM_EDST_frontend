@@ -1,6 +1,6 @@
 @use "global.scss";
 @use "borderStyles.scss";
-@value grey, green, blue, yellow, brown, stripHighlightColor, stripPendingRemovalColor from "colors.css";
+@value grey, red, orange, green, blue, yellow, brown, stripHighlightColor, stripPendingRemovalColor from "colors.css";
 
 /* FOR USAGE WITH ACL/DEP/GPD/PLANS DISPLAY ONLY */
 
@@ -96,11 +96,6 @@
   height: 1em;
   border: 1px solid transparent;
 
-  &:global(.selected) {
-    background-color: grey;
-    color: #000000;
-  }
-
   &:global(.hidden) {
     width: 2ch;
   }
@@ -115,12 +110,22 @@
   }
 }
 
+:global(.selected) {
+  background-color: var(--selected-background-color, grey);
+  color: #000000 !important;
+}
+
 .fidCol {
   composes: col;
   @include borderStyles.borderHover;
   justify-content: left;
   width: 14ch;
   padding: 0 2px;
+
+  &:global(.noProbe) {
+    color: brown;
+    --selected-background-color: brown;
+  }
 }
 
 .voiceType {
@@ -218,23 +223,16 @@
 
 .embeddedRouteText {
   color: blue;
-
-  &:global(.selected) {
-    background-color: blue;
-    color: #000000;
-  }
+  --selected-background-color: blue;
 }
 
 .routeDepAprt {
   composes: routeContent;
   padding-left: 2px;
+  --selected-background-color: blue;
   &:global(.amendmentPending) {
     color: blue;
     background-color: transparent;
-    &:global(.selected) {
-      background-color: blue;
-      color: #000000;
-    }
   }
 }
 
@@ -277,6 +275,15 @@
   &:global(.cOrange) {
     color: orange;
   }
+
+  &:global(.noProbe) {
+    color: brown;
+    border: 1px solid brown;
+
+    &:global(::before) {
+      content: 'S';
+    }
+  }
 }
 
 .radioCol {
@@ -309,7 +316,7 @@
 
 .paCol {
   composes: col;
-  width: 30px;
+  width: 4ch;
   justify-content: left;
 }
 
@@ -339,22 +346,13 @@
   width: 4ch;
   @include borderStyles.borderHover;
 
-  &:global(.selected) {
-    background-color: grey;
-    color: #000000;
-  }
-
   &:global(.hidden) {
     width: 2ch;
   }
 
   &:global(.scratchpad) {
     color: yellow;
-
-    &:global(.selected) {
-      color: #000000;
-      background-color: yellow
-    }
+    --selected-background-color: yellow;
   }
 }
 
