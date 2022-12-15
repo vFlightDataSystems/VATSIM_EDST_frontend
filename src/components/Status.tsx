@@ -19,7 +19,7 @@ export const Status = () => {
   const toggleSocket = () => {
     if (isConnected) {
       disconnectSocket();
-    } else if (hubConnection?.state === "Connected" && artccId && sectorId) {
+    } else if (hubConnection?.state === HubConnectionState.Connected && artccId && sectorId) {
       connectSocket(artccId, sectorId);
     }
   };

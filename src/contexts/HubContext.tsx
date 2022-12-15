@@ -17,6 +17,7 @@ import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
 import { OutageEntry } from "types/outageEntry";
+import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -64,10 +65,12 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   }, [env, vatsimToken]);
 
   const connectHub = useCallback(async () => {
-    if (!env || !vatsimToken || hubConnected || !ref.current) {
-      if (hubConnected) {
+    if (!env || !vatsimToken || !ref.current) {
+      if (ref.current?.state === HubConnectionState.Connected) {
+        setHubConnected(true);
         throw new Error("ALREADY CONNECTED");
       }
+      setHubConnected(false);
       throw new Error("SOMETHING WENT WRONG");
     }
     const hubConnection = ref.current;
@@ -75,9 +78,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       hubConnection.onclose(() => {
         dispatch(setArtccId(""));
         dispatch(setSectorId(""));
+        setHubConnected(false);
         console.log("ATC hub disconnected");
       });
-
       hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
         console.log(sessionInfo);
         dispatch(setSession(sessionInfo));
@@ -152,7 +155,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, [dispatch, env, hubConnected, vatsimToken]);
+  }, [dispatch, env, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
     await ref.current?.stop();
@@ -165,6 +168,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
     hubConnection: ref.current,
+    hubConnected,
     connectHub,
     disconnectHub,
   };
