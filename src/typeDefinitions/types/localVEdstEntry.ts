@@ -33,13 +33,13 @@ export class LocalVEdstEntry {
 
   showFreeText = false;
 
-  voiceType?: string;
-
   deleted = false;
 
   keep = false;
 
   cpdlcCapable = false;
+
+  probe = false;
 
   assignedSpeed: Nullable<string> = null;
 
