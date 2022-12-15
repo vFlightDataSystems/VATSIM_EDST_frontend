@@ -222,7 +222,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
           <div className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_DEP_ROW_FIELD") })} onMouseDown={handleFidClick}>
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
-            <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span>
+            {/* <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span> */}
           </div>
           <div className={clsx(tableStyles.specialBox, { isDisabled: !entry.spa })}>{entry.spa && SPA_INDICATOR}</div>
           <div className={tableStyles.hotbox} onMouseDown={handleHotboxMouseDown}>
