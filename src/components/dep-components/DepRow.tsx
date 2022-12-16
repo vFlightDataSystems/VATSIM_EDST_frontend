@@ -213,7 +213,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   return (
     <div className={tableStyles.rowContainer}>
       <div className={clsx(tableStyles.row, { pendingRemoval: now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT })}>
-        <div className={clsx(depStyles.radioCol, { checked: entry.depStatus === 1, keep: entry.keep })} onMouseDown={updateStatus}>
+        <div className={clsx(depStyles.checkmarkCol, { checked: entry.depStatus === 1, keep: entry.keep })} onMouseDown={updateStatus}>
           {entry.depStatus === -1 && "N"}
           {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
         </div>
@@ -295,7 +295,7 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
       </div>
       {entry.showFreeText && (
         <div className={tableStyles.row}>
-          <div className={clsx(depStyles.radioCol, "empty")} />
+          <div className={clsx(depStyles.checkmarkCol, "empty")} />
           <div className={depStyles.pTimeCol} />
           <div
             className={clsx(tableStyles.innerRow, { highlight: entry.highlighted })}

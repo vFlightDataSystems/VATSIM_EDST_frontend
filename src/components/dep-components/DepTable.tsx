@@ -19,7 +19,7 @@ export const DepTable = () => {
   return (
     <div className={tableStyles.body}>
       <div className={tableStyles.topRow}>
-        <div className={clsx(depStyles.radioCol, "header")}>{COMPLETED_CHECKMARK_SYMBOL}</div>
+        <div className={clsx(depStyles.checkmarkCol, "header")}>{COMPLETED_CHECKMARK_SYMBOL}</div>
         <div className={depStyles.pTimeCol}>P-Time</div>
         <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
