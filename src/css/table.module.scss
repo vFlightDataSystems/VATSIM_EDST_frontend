@@ -11,13 +11,14 @@
 
 .headerRow {
   border-bottom: 1px solid #adadad;
+}
 
-  &:global(.bottom) {
-    align-items: center;
-    justify-content: flex-start;
-    display: flex;
-    padding: 0 10px;
-  }
+.bottomHeaderRow {
+  composes: headerRow;
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  padding: 0 10px;
 }
 
 .body {
@@ -229,8 +230,8 @@
 .routeDepAprt {
   composes: routeContent;
   padding-left: 2px;
-  --selected-background-color: blue;
   &:global(.amendmentPending) {
+    --selected-background-color: blue;
     color: blue;
     background-color: transparent;
   }
@@ -260,30 +261,6 @@
   justify-content: center;
   margin: 0 2px;
   width: 14px;
-  &:global(.withBorder) {
-    border: 1px solid grey;
-  }
-
-  &:global(.cRed) {
-    color: red;
-  }
-
-  &:global(.cYellow) {
-    color: yellow;
-  }
-
-  &:global(.cOrange) {
-    color: orange;
-  }
-
-  &:global(.noProbe) {
-    color: brown;
-    border: 1px solid brown;
-
-    &:global(::before) {
-      content: 'S';
-    }
-  }
 }
 
 .radioCol {
@@ -294,24 +271,45 @@
   margin: 0 2px;
   color: grey;
   @include borderStyles.borderHover;
+}
 
-  &:global(.empty) {
-    border-color: transparent;
-    pointer-events: none;
-  }
+.cGreen {
+  --border-hover-color: green;
+  color: green;
+}
 
-  &:global(.cGreen) {
-    --border-hover-color: green;
-    color: green;
-  }
+.cRed {
+  color: red;
+}
 
-  &:global(.header) {
-    pointer-events: none;
-  }
+.cYellow {
+  color: yellow;
+}
 
-  &:global(.keep) {
-    background-color: #414141;
+.cOrange {
+  color: orange;
+}
+
+.withBorder {
+  border: 1px solid grey;
+}
+
+.noProbe {
+  color: brown;
+  border: 1px solid brown;
+
+  &::before {
+    content: 'S';
   }
+}
+
+.keep {
+  background-color: #414141;
+}
+
+.empty {
+  border-color: transparent !important;
+  pointer-events: none;
 }
 
 .paCol {
@@ -366,4 +364,22 @@
   composes: hdgSpdCol;
   justify-content: left;
   padding-left: 1px;
+}
+
+/* DEP */
+
+.checkmarkCol {
+  @include borderStyles.borderHover;
+  margin: 0 2px;
+  width: 1ch;
+  height: 1em;
+  --border-width: 1px;
+  --top-left-color: #575757;
+  --bottom-right-color: #414141;
+  @include borderStyles.border;
+}
+
+.pTimeCol {
+  composes: col;
+  width: 6ch;
 }

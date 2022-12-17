@@ -5,7 +5,6 @@ import { COMPLETED_CHECKMARK_SYMBOL } from "~/utils/constants";
 import { DepRow } from "components/DepRow";
 import { ListMapper } from "components/utils/ListMapper";
 import { depListSelector } from "~redux/selectors";
-import depStyles from "css/dep.module.scss";
 import tableStyles from "css/table.module.scss";
 import clsx from "clsx";
 
@@ -19,8 +18,8 @@ export const DepTable = () => {
   return (
     <div className={tableStyles.body}>
       <div className={tableStyles.topRow}>
-        <div className={clsx(depStyles.checkmarkCol, "header")}>{COMPLETED_CHECKMARK_SYMBOL}</div>
-        <div className={depStyles.pTimeCol}>P-Time</div>
+        <div className={clsx(tableStyles.checkmarkCol, "noPointerEvents")}>{COMPLETED_CHECKMARK_SYMBOL}</div>
+        <div className={tableStyles.pTimeCol}>P-Time</div>
         <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />

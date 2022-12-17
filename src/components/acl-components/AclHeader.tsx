@@ -10,7 +10,6 @@ import { AddFindInput } from "components/utils/InputComponents";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 import tableStyles from "css/table.module.scss";
-import clsx from "clsx";
 
 /**
  * ACL title bar and header row with add/find input field
@@ -63,7 +62,7 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openAclTemplateMenu" edstWindow="TEMPLATE_MENU" content="Template..." />
         <EdstWindowHeaderButton onMouseDown={() => dispatch(aclCleanup)} content="Clean Up" />
       </div>
-      <div className={clsx(tableStyles.headerRow, "bottom")}>
+      <div className={tableStyles.bottomHeaderRow}>
         Add/Find
         <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
         Facilities:

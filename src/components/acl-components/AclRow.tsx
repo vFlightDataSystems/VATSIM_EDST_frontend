@@ -275,13 +275,16 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   return (
     <div className={tableStyles.rowContainer}>
       <div className={clsx(tableStyles.row, { pendingRemoval: now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT })}>
-        <div className={clsx(tableStyles.radioCol, { cGreen: entry.vciStatus === 1, keep: entry.keep })} onMouseDown={updateVci}>
+        <div
+          className={clsx(tableStyles.radioCol, { [tableStyles.cGreen]: entry.vciStatus === 1, [tableStyles.keep]: entry.keep })}
+          onMouseDown={updateVci}
+        >
           {entry.vciStatus === -1 && "N"}
           {entry.vciStatus === 1 && VCI_SYMBOL}
         </div>
-        <div className={clsx(tableStyles.col1, "withBorder", { noProbe: !entry.probe })} />
-        <div className={clsx(tableStyles.col1, "withBorder", { noProbe: !entry.probe })} />
-        <div className={clsx(tableStyles.col1, "withBorder", { noProbe: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
           <div
@@ -421,7 +424,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
       </div>
       {entry.showFreeText && (
         <div className={tableStyles.row}>
-          <div className={clsx(tableStyles.radioCol, "empty")} />
+          <div className={clsx(tableStyles.radioCol, tableStyles.empty)} />
           <div className={tableStyles.col1} />
           <div className={tableStyles.col1} />
           <div className={tableStyles.col1} />

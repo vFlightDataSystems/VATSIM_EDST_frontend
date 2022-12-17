@@ -18,7 +18,6 @@ import { useAselEventListener } from "hooks/useAselEventListener";
 import { depHiddenColumnsSelector, depManualPostingSelector } from "~redux/slices/depSlice";
 import type { AircraftId } from "types/aircraftId";
 import { convertBeaconCodeToString, removeStringFromEnd } from "~/utils/stringManipulation";
-import depStyles from "css/dep.module.scss";
 import tableStyles from "css/table.module.scss";
 import clsx from "clsx";
 
@@ -213,11 +212,11 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
   return (
     <div className={tableStyles.rowContainer}>
       <div className={clsx(tableStyles.row, { pendingRemoval: now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT })}>
-        <div className={clsx(depStyles.checkmarkCol, { checked: entry.depStatus === 1, keep: entry.keep })} onMouseDown={updateStatus}>
+        <div className={clsx(tableStyles.checkmarkCol, { checked: entry.depStatus === 1, keep: entry.keep })} onMouseDown={updateStatus}>
           {entry.depStatus === -1 && "N"}
           {entry.depStatus === 1 && COMPLETED_CHECKMARK_SYMBOL}
         </div>
-        <div className={depStyles.pTimeCol}>0000</div>
+        <div className={tableStyles.pTimeCol}>0000</div>
         <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
           <div className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_DEP_ROW_FIELD") })} onMouseDown={handleFidClick}>
             {entry.cid} {entry.aircraftId}
@@ -295,8 +294,8 @@ export const DepRow = React.memo(({ aircraftId }: DepRowProps) => {
       </div>
       {entry.showFreeText && (
         <div className={tableStyles.row}>
-          <div className={clsx(depStyles.checkmarkCol, "empty")} />
-          <div className={depStyles.pTimeCol} />
+          <div className={clsx(tableStyles.checkmarkCol, tableStyles.empty)} />
+          <div className={tableStyles.pTimeCol} />
           <div
             className={clsx(tableStyles.innerRow, { highlight: entry.highlighted })}
             style={{ minWidth: `${Math.max(1200, ref?.current?.clientWidth ?? 0)}px` }}

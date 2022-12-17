@@ -48,10 +48,10 @@ export const AclTable = () => {
   return (
     <div className={tableStyles.body}>
       <div className={tableStyles.topRow}>
-        <div className={clsx(tableStyles.radioCol, "header", "cGreen")}>{VCI_SYMBOL}</div>
-        <div className={clsx(tableStyles.col1, "cRed")}>R</div>
-        <div className={clsx(tableStyles.col1, "cYellow")}>Y</div>
-        <div className={clsx(tableStyles.col1, "cOrange")}>A</div>
+        <div className={clsx(tableStyles.radioCol, "noPointerEvents", tableStyles.cGreen)}>{VCI_SYMBOL}</div>
+        <div className={clsx(tableStyles.col1, tableStyles.cRed)}>R</div>
+        <div className={clsx(tableStyles.col1, tableStyles.cYellow)}>Y</div>
+        <div className={clsx(tableStyles.col1, tableStyles.cOrange)}>A</div>
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={tableStyles.innerRow}>
           <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>

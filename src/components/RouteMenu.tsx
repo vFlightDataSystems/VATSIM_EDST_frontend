@@ -48,8 +48,6 @@ export const RouteMenu = () => {
   const adars = useAdar(entry.aircraftId);
   const aars = useAar(entry.aircraftId);
 
-  console.log(adrs);
-
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
   const [route, setRoute] = useState(
