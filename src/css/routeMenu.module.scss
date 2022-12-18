@@ -99,8 +99,8 @@
 }
 
 .prefrouteCol {
-  @include global.noSelect;
   composes: col from "optionMenu.module.scss";
+  @include global.noSelect;
   @include borderStyles.borderHover;
 
   display: flex;
