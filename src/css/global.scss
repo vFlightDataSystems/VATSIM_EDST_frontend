@@ -38,6 +38,12 @@
   overflow-x: hidden;
   scrollbar-width: none;
 
+  transform: scaleX(-1); //Reflects the parent horizontally
+
+  & > div {
+    transform: scaleX(-1); //Flips the child back to normal
+  }
+
   &::-webkit-scrollbar {
     //display: none;
     width: 6px;
