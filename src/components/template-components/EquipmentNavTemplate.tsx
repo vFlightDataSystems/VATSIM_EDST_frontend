@@ -72,7 +72,7 @@ export const EquipmentNavTemplate = ({ setReset }: EquipmentTemplateBodyProps) =
   };
 
   useEffect(() => {
-    const field10a = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
+    const field10a: string[] = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
     const navaidCats = field10a.filter(isNavCat);
     const rnavCats = field10a.filter(isRnavCat);
     const initialRvsm = field10a.includes("W");

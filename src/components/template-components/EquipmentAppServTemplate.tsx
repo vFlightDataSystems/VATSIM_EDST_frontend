@@ -33,7 +33,7 @@ export const EquipmentAppServTemplate = ({ setReset }: EquipmentTemplateBodyProp
   };
 
   useEffect(() => {
-    const field10a = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
+    const field10a: string[] = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
 
     const appCats = field10a.filter(isApproachCat);
 

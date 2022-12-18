@@ -122,7 +122,7 @@ export const EquipmentCommTemplate = ({ setReset }: EquipmentTemplateBodyProps) 
   };
 
   useEffect(() => {
-    const field10a = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
+    const field10a: string[] = entry?.icaoEquipmentCodes?.match(/[A-Z]\d?/g) ?? [];
 
     const voiceCats = field10a.filter(isVoiceCat);
     const cpdlcCats = field10a.filter(isCpdlcCat);
