@@ -50,6 +50,7 @@ type AppState = {
   zStack: EdstWindow[];
   outages: OutageEntry[];
   headerTop: boolean;
+  fsdIsConnected: boolean;
 };
 
 export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
@@ -83,6 +84,7 @@ const initialState: AppState = {
   zStack: [],
   outages: [],
   headerTop: true,
+  fsdIsConnected: true,
 };
 
 const appSlice = createSlice({
@@ -137,6 +139,9 @@ const appSlice = createSlice({
     },
     pushZStack(state, action: PayloadAction<EdstWindow>) {
       state.zStack = [...state.zStack.filter((window) => window !== action.payload), action.payload];
+    },
+    setFsdIsConnected(state, action: PayloadAction<boolean>) {
+      state.fsdIsConnected = action.payload;
     },
     addOutageMessage(state, action: PayloadAction<OutageEntry>) {
       state.outages = [...state.outages, action.payload];
@@ -236,6 +241,7 @@ export const {
   addGIEntries,
   setGIEntryAcknowledged,
   delGIEntry,
+  setFsdIsConnected,
   addOutageMessage,
   delOutageMessage,
 } = appSlice.actions;
@@ -260,3 +266,4 @@ export const zStackSelector = (state: RootState) => state.app.zStack;
 export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
 export const headerTopSelector = (state: RootState) => state.app.headerTop;
+export const fsdIsConnectedSelector = (state: RootState) => state.app.fsdIsConnected;

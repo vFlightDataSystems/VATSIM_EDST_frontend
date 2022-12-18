@@ -81,12 +81,12 @@ export const AltMenu = () => {
 
   useEventListener("keydown", keyDownHandler);
 
-  const centerAlt = Math.max(40, Math.min(560, (Number.isFinite(entry.altitude) ? +entry.altitude : 200) - Math.round(deltaY / 100) * 10));
+  const centerAlt = Math.max(40, Math.min(560, assignedAltitude - Math.round(deltaY / 100) * 10));
 
   return (
     <div className={clsx(altStyles.root, { manualInput: manualInput !== null })} ref={ref} style={pos}>
       <div className={altStyles.header}>
-        <div className={clsx(altStyles.headerCol, "flex", "noPointerEvents")}>{entry.aircraftId}</div>
+        <div className={clsx(altStyles.headerCol, "flexGrow", "noPointerEvents")}>{entry.aircraftId}</div>
         <div className={altStyles.headerXCol} onMouseDown={() => dispatch(closeWindow("ALTITUDE_MENU"))}>
           X
         </div>
@@ -112,18 +112,18 @@ export const AltMenu = () => {
               }}
             />
           </div>
-          {showInvalid && <div className={clsx(altStyles.row, "invalid", "noPointerEvents")}>INVALID</div>}
+          {showInvalid && <div className={clsx(altStyles.row, altStyles.invalid, "noPointerEvents")}>INVALID</div>}
         </>
       )}
       {manualInput === null && (
         <>
           <div
-            className={clsx(altStyles.row, { selected: selected === "trial", isDisabled: asel.window === "DEP" })}
+            className={clsx(altStyles.row, { [altStyles.selected]: selected === "trial", isDisabled: asel.window === "DEP" })}
             onMouseDown={() => setSelected("trial")}
           >
             TRIAL PLAN
           </div>
-          <div className={clsx(altStyles.row, { selected: selected === "amend" })} onMouseDown={() => setSelected("amend")}>
+          <div className={clsx(altStyles.row, { [altStyles.selected]: selected === "amend" })} onMouseDown={() => setSelected("amend")}>
             AMEND
           </div>
           <div className={clsx(altStyles.row, "noPointerEvents")}>FP{entry.altitude}</div>
@@ -139,7 +139,10 @@ export const AltMenu = () => {
               const alt = centerAlt + i;
               return (
                 <div className={clsx(altStyles.scrollRow, { hover: selected === "amend" && tempAltHover === alt })} key={i}>
-                  <div className={clsx(altStyles.scrollCol, { selected: alt === +entry.altitude })} onMouseDown={() => handleAltClick(alt)}>
+                  <div
+                    className={clsx(altStyles.scrollCol, { [altStyles.scrollSelected]: alt === +entry.altitude })}
+                    onMouseDown={() => handleAltClick(alt)}
+                  >
                     {alt.toString().padStart(3, "0")}
                   </div>
                   {asel.window !== "DEP" && (

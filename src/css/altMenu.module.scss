@@ -39,12 +39,7 @@
   justify-content: center;
   align-items: center;
   border: 1px solid #adadad;
-  flex-grow: 0;
   width: auto;
-
-  &:global(.flex) {
-    flex-grow: 1;
-  }
 
   @include borderStyles.borderHover;
 }
@@ -75,20 +70,16 @@
     pointer-events: none;
     color: grey;
   }
+}
 
-  &:global(.selected) {
-    background-color: #AD6C6C;
-    border: 1px solid #f0f0f0;
-  }
+.invalid {
+  background-color: #000000;
+  color: yellow;
+}
 
-  &:global(.bgBlack) {
-    background-color: #000000;
-  }
-
-  &:global(.invalid) {
-    background-color: #000000;
-    color: yellow;
-  }
+.selected {
+  background-color: #AD6C6C;
+  border: 1px solid #f0f0f0;
 }
 
 .col {
@@ -117,9 +108,6 @@
   &:global(.hover) {
     @include borderStyles.borderHover;
   }
-  &:global(.noHover) {
-    pointer-events: none;
-  }
 }
 
 .scrollCol {
@@ -130,11 +118,11 @@
   align-items: center;
   color: grey;
   //border: 1px solid #000000;
+}
 
-  &:global(.selected) {
-    background-color: #AD6C6C;
-    color: #D6D6D6;
-  }
+.scrollSelected {
+  background-color: #AD6C6C;
+  color: #D6D6D6;
 }
 
 .tempAltCol {
@@ -146,9 +134,4 @@
   align-items: center;
   /*height: 10px;*/
   color: #adadad;
-
-  &:global(.isDisabled) {
-    pointer-events: none;
-    color: #575757;
-  }
 }

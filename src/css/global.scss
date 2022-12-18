@@ -36,10 +36,17 @@
   display: block;
   overflow: scroll;
   overflow-x: hidden;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+
+  &.barLeft {
+    transform: scaleX(-1); /* Reflects the parent horizontally */
+
+    & > div {
+      transform: scaleX(-1); /* Flips the child back to normal */
+    }
+  }
 
   &::-webkit-scrollbar {
-    //display: none;
     width: 6px;
   }
 
@@ -69,6 +76,14 @@
   &.absolute {
     position: absolute;
   }
+}
+
+.bgBlack {
+  background-color: #000000;
+}
+
+.tm6 {
+  margin-top: 6px;
 }
 
 .w5 {
@@ -114,11 +129,11 @@
 }
 
 .flexGrow {
-  flex-grow: 1;
+  flex-grow: 1 !important;
 }
 
 .noGrow {
-  flex-grow: 0;
+  flex-grow: 0 !important;
 }
 
 .topBorder {

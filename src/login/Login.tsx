@@ -53,7 +53,12 @@ const Login = () => {
             }}
             value={env?.name}
           >
-            {config && config.environments.map((e) => <option key={e.name}>{e.name}</option>)}
+            {config &&
+              config.environments.map((e) => (
+                <option key={e.name} disabled={e.isDisabled}>
+                  {e.name}
+                </option>
+              ))}
           </select>
           <button type="button" disabled={code !== null} onClick={redirectLogin}>
             {code ? (

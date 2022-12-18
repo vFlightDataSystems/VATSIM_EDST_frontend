@@ -53,7 +53,9 @@ const AltimeterRow = ({ airport, selected, handleMouseDown, onDelete }: Altimete
           <>
             <span className={floatingStyles.reportingStation}>{airportId}</span>
             <span
-              className={clsx("altimTime", { [floatingStyles.underline]: observationTime ? mod(utcMinutes - observationTime, 1440) > 60 : false })}
+              className={clsx(floatingStyles.altimTime, {
+                [floatingStyles.underline]: observationTime ? mod(utcMinutes - observationTime, 1440) > 60 : false,
+              })}
             >
               {airportAltimeterEntry?.time ?? ""}
             </span>

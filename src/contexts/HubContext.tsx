@@ -10,13 +10,14 @@ import { ApiTopic } from "types/apiTypes/apiTopic";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
-import { addOutageMessage, delOutageMessage } from "~redux/slices/appSlice";
+import { addOutageMessage, delOutageMessage, setFsdIsConnected } from "~redux/slices/appSlice";
 import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
 import { initThunk } from "~redux/thunks/initThunk";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
 import { OutageEntry } from "types/outageEntry";
+import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -64,10 +65,12 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   }, [env, vatsimToken]);
 
   const connectHub = useCallback(async () => {
-    if (!env || !vatsimToken || hubConnected || !ref.current) {
-      if (hubConnected) {
+    if (!env || !vatsimToken || !ref.current) {
+      if (ref.current?.state === HubConnectionState.Connected) {
+        setHubConnected(true);
         throw new Error("ALREADY CONNECTED");
       }
+      setHubConnected(false);
       throw new Error("SOMETHING WENT WRONG");
     }
     const hubConnection = ref.current;
@@ -75,9 +78,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       hubConnection.onclose(() => {
         dispatch(setArtccId(""));
         dispatch(setSectorId(""));
+        setHubConnected(false);
         console.log("ATC hub disconnected");
       });
-
       hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
         console.log(sessionInfo);
         dispatch(setSession(sessionInfo));
@@ -104,6 +107,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         // });
       });
       hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
+        dispatch(setFsdIsConnected(state));
         if (!state) {
           dispatch(addOutageMessage(new OutageEntry("FSD_DOWN", "FSD CONNECTION DOWN")));
         } else {
@@ -116,7 +120,8 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       try {
         sessionInfo = await hubConnection.invoke<ApiSessionInfoDto>("getSessionInfo");
       } catch {
-        ref.current?.stop().then(() => setHubConnected(false));
+        await ref.current?.stop();
+        setHubConnected(false);
         throw new Error("SESSION NOT FOUND");
       }
       console.log(sessionInfo);
@@ -135,8 +140,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         });
         console.log(`joined session ${sessionInfo.id}`);
         setHubConnected(true);
-        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(() => {
-          ref.current?.stop().then(() => setHubConnected(false));
+        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(async () => {
+          await hubConnection.stop();
+          setHubConnected(false);
           throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
         });
       } else {
@@ -149,10 +155,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return start();
-  }, [dispatch, env, hubConnected, vatsimToken]);
+  }, [dispatch, env, vatsimToken]);
 
   const disconnectHub = useCallback(async () => {
-    ref.current?.stop()?.then(() => setHubConnected(false));
+    await ref.current?.stop();
+    setHubConnected(false);
     dispatch(setArtccId(""));
     dispatch(setSectorId(""));
     disconnectSocket();
@@ -161,6 +168,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
     hubConnection: ref.current,
+    hubConnected,
     connectHub,
     disconnectHub,
   };

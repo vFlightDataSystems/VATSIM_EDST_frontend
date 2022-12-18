@@ -78,7 +78,7 @@ export const PlanOptions = () => {
         {!dep && <PlanOptionsRow content="Speed..." disabled />}
         <PlanOptionsRow content="Route..." onMouseDown={() => openMenu("ROUTE_MENU")} />
         <PlanOptionsRow content="Previous Route" onMouseDown={() => openMenu("PREV_ROUTE_MENU")} disabled={!!entry?.previousRoute} />
-        {!dep && <PlanOptionsRow content="Stop Probe..." disabled />}
+        {!dep && <PlanOptionsRow content={`${entry.probe ? "Stop" : "Resume"} Probe...`} disabled />}
         <PlanOptionsRow content={`Trial ${dep ? "Departure" : "Restrictions"}...`} disabled />
         {!dep && <PlanOptionsRow content="Plans" disabled />}
         <PlanOptionsRow content="Keep" onMouseDown={onKeepClick} />

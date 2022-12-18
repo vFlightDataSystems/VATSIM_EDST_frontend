@@ -275,19 +275,25 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   return (
     <div className={tableStyles.rowContainer}>
       <div className={clsx(tableStyles.row, { pendingRemoval: now - (entry.pendingRemoval ?? now) > REMOVAL_TIMEOUT })}>
-        <div className={clsx(tableStyles.radioCol, { cGreen: entry.vciStatus === 1, keep: entry.keep })} onMouseDown={updateVci}>
+        <div
+          className={clsx(tableStyles.radioCol, { [tableStyles.cGreen]: entry.vciStatus === 1, [tableStyles.keep]: entry.keep })}
+          onMouseDown={updateVci}
+        >
           {entry.vciStatus === -1 && "N"}
           {entry.vciStatus === 1 && VCI_SYMBOL}
         </div>
-        <div className={clsx(tableStyles.col1, "withBorder")} />
-        <div className={clsx(tableStyles.col1, "withBorder")} />
-        <div className={clsx(tableStyles.col1, "withBorder")} />
+        <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
+        <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
-          <div className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_ACL_ROW_FIELD") })} onMouseDown={handleFidClick}>
+          <div
+            className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_ACL_ROW_FIELD"), noProbe: !entry.probe })}
+            onMouseDown={handleFidClick}
+          >
             {entry.cid} {entry.aircraftId}
             {/* eslint-disable-next-line no-nested-ternary */}
-            <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span>
+            {/* <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span> */}
           </div>
           <div className={tableStyles.paCol} />
           {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "isDisabled")} />}
@@ -367,7 +373,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
           {anyHolding && (
             <div
               ref={holdRef}
-              className={clsx(tableStyles.specialBox, "cBrown", { selected: isSelected("HOLD_ACL_ROW_FIELD") })}
+              className={clsx(tableStyles.specialBox, tableStyles.cBrown, { selected: isSelected("HOLD_ACL_ROW_FIELD") })}
               onMouseDown={handleHoldClick}
             >
               {entry.holdAnnotations ? "H" : ""}
@@ -418,7 +424,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
       </div>
       {entry.showFreeText && (
         <div className={tableStyles.row}>
-          <div className={clsx(tableStyles.radioCol, "empty")} />
+          <div className={clsx(tableStyles.radioCol, tableStyles.empty)} />
           <div className={tableStyles.col1} />
           <div className={tableStyles.col1} />
           <div className={tableStyles.col1} />

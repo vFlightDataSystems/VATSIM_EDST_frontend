@@ -14,8 +14,8 @@
 
 .body {
   composes: body from "optionMenu.module.scss";
+  --row-padding: 0 4px;
   @include borderStyles.border;
-  --body-padding: 4px 4px 0 4px;
 }
 
 .sectorRow {
@@ -24,7 +24,7 @@
   justify-content: left;
   border: none;
   overflow: hidden;
-  padding-bottom: 4px;
+  padding: 0 4px 4px 4px;
   margin-bottom: 4px;
   border-bottom: 1px solid #adadad;
 }

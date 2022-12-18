@@ -1,6 +1,6 @@
 @use "global.scss";
 @use "borderStyles.scss";
-@value grey, green, blue, yellow, brown, stripHighlightColor, stripPendingRemovalColor from "colors.css";
+@value grey, red, orange, green, blue, yellow, brown, stripHighlightColor, stripPendingRemovalColor from "colors.css";
 
 /* FOR USAGE WITH ACL/DEP/GPD/PLANS DISPLAY ONLY */
 
@@ -11,13 +11,14 @@
 
 .headerRow {
   border-bottom: 1px solid #adadad;
+}
 
-  &:global(.bottom) {
-    align-items: center;
-    justify-content: flex-start;
-    display: flex;
-    padding: 0 10px;
-  }
+.bottomHeaderRow {
+  composes: headerRow;
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  padding: 0 10px;
 }
 
 .body {
@@ -32,7 +33,7 @@
   display: flex;
   align-items: center;
   min-height: 2px;
-  padding: 0 10px;
+  padding: var(--row-padding, 0 10px);
 
   &:global(.pendingRemoval) {
     color: stripPendingRemovalColor;
@@ -64,15 +65,14 @@
 .topRow {
   composes: row;
   margin-bottom: 2px;
-  min-height: 24px;
-  max-height: 24px;
+  height: 24px;
   border-bottom: 1px solid #adadad;
 }
 
 .separator {
   composes: row;
   height: 0;
-  border-bottom: 2px solid #aa8800;
+  border-bottom: 2px solid #E3CFB4;
 }
 
 .rowContainer {
@@ -96,11 +96,6 @@
   height: 1em;
   border: 1px solid transparent;
 
-  &:global(.selected) {
-    background-color: grey;
-    color: #000000;
-  }
-
   &:global(.hidden) {
     width: 2ch;
   }
@@ -109,10 +104,11 @@
     visibility: hidden;
     width: 2ch;
   }
+}
 
-  &:global(.isDisabled) {
-    pointer-events: none;
-  }
+:global(.selected) {
+  background-color: var(--selected-background-color, grey);
+  color: var(--selected-fg-color, #000000) !important;
 }
 
 .fidCol {
@@ -121,6 +117,11 @@
   justify-content: left;
   width: 14ch;
   padding: 0 2px;
+
+  &:global(.noProbe) {
+    color: brown;
+    --selected-background-color: brown;
+  }
 }
 
 .voiceType {
@@ -133,10 +134,6 @@
 
   margin: 0 1px;
   width: 1ch;
-
-  &:global(.cBrown) {
-    color: brown;
-  }
 }
 
 .hotbox {
@@ -218,23 +215,16 @@
 
 .embeddedRouteText {
   color: blue;
-
-  &:global(.selected) {
-    background-color: blue;
-    color: #000000;
-  }
+  --selected-background-color: blue;
 }
 
 .routeDepAprt {
   composes: routeContent;
   padding-left: 2px;
   &:global(.amendmentPending) {
+    --selected-background-color: blue;
     color: blue;
     background-color: transparent;
-    &:global(.selected) {
-      background-color: blue;
-      color: #000000;
-    }
   }
 }
 
@@ -262,21 +252,6 @@
   justify-content: center;
   margin: 0 2px;
   width: 14px;
-  &:global(.withBorder) {
-    border: 1px solid grey;
-  }
-
-  &:global(.cRed) {
-    color: red;
-  }
-
-  &:global(.cYellow) {
-    color: yellow;
-  }
-
-  &:global(.cOrange) {
-    color: orange;
-  }
 }
 
 .radioCol {
@@ -287,29 +262,54 @@
   margin: 0 2px;
   color: grey;
   @include borderStyles.borderHover;
+}
 
-  &:global(.empty) {
-    border-color: transparent;
-    pointer-events: none;
-  }
+.cGreen {
+  --border-hover-color: green;
+  color: green;
+}
 
-  &:global(.cGreen) {
-    --border-hover-color: green;
-    color: green;
-  }
+.cRed {
+  color: red;
+}
 
-  &:global(.header) {
-    pointer-events: none;
-  }
+.cYellow {
+  color: yellow;
+}
 
-  &:global(.keep) {
-    background-color: #414141;
+.cOrange {
+  color: orange;
+}
+
+.cBrown {
+  color: brown;
+}
+
+.withBorder {
+  border: 1px solid grey;
+}
+
+.noProbe {
+  color: brown;
+  border: 1px solid brown;
+
+  &::before {
+    content: 'S';
   }
+}
+
+.keep {
+  background-color: #414141;
+}
+
+.empty {
+  border-color: transparent !important;
+  pointer-events: none;
 }
 
 .paCol {
   composes: col;
-  width: 30px;
+  width: 4ch;
   justify-content: left;
 }
 
@@ -339,22 +339,13 @@
   width: 4ch;
   @include borderStyles.borderHover;
 
-  &:global(.selected) {
-    background-color: grey;
-    color: #000000;
-  }
-
   &:global(.hidden) {
     width: 2ch;
   }
 
   &:global(.scratchpad) {
     color: yellow;
-
-    &:global(.selected) {
-      color: #000000;
-      background-color: yellow
-    }
+    --selected-background-color: yellow;
   }
 }
 
@@ -368,4 +359,23 @@
   composes: hdgSpdCol;
   justify-content: left;
   padding-left: 1px;
+}
+
+/* DEP */
+
+.checkmarkCol {
+  @include borderStyles.borderHover;
+  margin: 0 2px;
+  min-width: 1ch;
+  width: 1ch;
+  height: 1em;
+  --border-width: 1px;
+  --top-left-color: #575757;
+  --bottom-right-color: #414141;
+  @include borderStyles.border;
+}
+
+.pTimeCol {
+  composes: col;
+  width: 6ch;
 }

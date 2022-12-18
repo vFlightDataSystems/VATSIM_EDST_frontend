@@ -41,7 +41,7 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
   return (
     <>
       <div
-        className={clsx(floatingStyles.row, "tm6", { selected, suppressed: sigmetEntry.suppressed })}
+        className={clsx(floatingStyles.row, "tm6", { selected, [floatingStyles.suppressed]: sigmetEntry.suppressed })}
         ref={ref}
         style={{ "--brightness": windowOptions.brightness / 100 }}
         onMouseDown={onMouseDown}
@@ -122,7 +122,7 @@ export const SigmetWindow = () => {
       setShowOptions={setShowOptionsHandler}
     >
       {Object.values(sigmetList).length > 0 && (
-        <div className="scrollContainer bounded-scroll">
+        <div className="scrollContainer bounded-scroll barLeft">
           {Object.entries(sigmetList).map(
             ([sigmetId, sigmetEntry]) =>
               (!sigmetEntry.suppressed || viewSuppressed) && (

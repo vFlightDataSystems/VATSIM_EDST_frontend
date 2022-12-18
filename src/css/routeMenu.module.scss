@@ -86,7 +86,6 @@
 }
 
 .prefrouteContainer {
-  composes: scrollContainer from "global.scss";
   @include global.noSelect;
   border: 2px solid #414141;
   max-height: 6em;
@@ -100,8 +99,8 @@
 }
 
 .prefrouteCol {
-  @include global.noSelect;
   composes: col from "optionMenu.module.scss";
+  @include global.noSelect;
   @include borderStyles.borderHover;
 
   display: flex;

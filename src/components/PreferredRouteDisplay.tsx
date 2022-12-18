@@ -70,7 +70,7 @@ export const PreferredRouteDisplay = ({ aar, adr, adar, clearedPrefroute }: Pref
           </div>
         </div>
       </div>
-      <div className={clsx(routeStyles.prefrouteContainer, "scrollContainer")}>
+      <div className={clsx(routeStyles.prefrouteContainer, "scrollContainer", "barLeft")}>
         {eligibleOnly && eligibleRoutes.length === 0 && (
           <div className={routeStyles.prefrouteRow}>No Eligible APRs: Select ALL to display Ineligible APRs</div>
         )}

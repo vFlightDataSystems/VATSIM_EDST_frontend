@@ -14,34 +14,37 @@
   line-height: 1em;
   position: fixed;
   font-family: ERAM, monospace;
+}
 
-  &:global(.resizable) {
-    display: flex;
-    white-space: nowrap;
-    flex-flow: column;
-    overflow: hidden;
-    margin: 1px;
-    padding: 0;
-    flex-grow: 1;
-    background-color: #000000;
-    min-width: 60ch;
-    min-height: 10em;
-    border: 3px solid #888888;
-    outline: 1px solid #adadad;
-    color: #adadad;
-    resize: both;
-    font-family: EDST, monospace;
-    &:global(.isFullscreen) {
-      resize: none;
-      position: absolute;
-    }
-  }
+.resizable {
+  composes: root;
+  display: flex;
+  white-space: nowrap;
+  flex-flow: column;
+  overflow: hidden;
+  margin: 1px;
+  padding: 0;
+  flex-grow: 1;
+  background-color: #000000;
+  min-width: 60ch;
+  min-height: 10em;
+  border: 3px solid #888888;
+  outline: 1px solid #adadad;
+  color: #adadad;
+  resize: both;
+  font-family: EDST, monospace;
+}
 
-  &:global(.optionsBody) {
-    display: inline-flex;
-    flex-flow: column;
-    height: auto;
-  }
+.isFullscreen {
+  resize: none;
+  position: absolute;
+}
+
+.optionsBody {
+  composes: root;
+  display: inline-flex;
+  flex-flow: column;
+  height: auto;
 }
 
 .header {
@@ -73,15 +76,15 @@
   text-align: center;
   background-color: backgroundColor;
   border: 1px solid #adadad;
+}
 
-  &:global(.rect) {
-    width: 1em;
-  }
+.rect {
+  width: 1em;
+}
 
-  &:global(.flex) {
-    flex-grow: 1;
-    padding: 0 6px;
-  }
+.flex {
+  flex-grow: 1;
+  padding: 0 6px;
 }
 
 .headerBlock {
@@ -90,10 +93,8 @@
   outline: none;
   pointer-events: none;
 
-  &:global(.block1) {
-    width: 50%;
-    height: 2px;
-  }
+  width: 50%;
+  height: 2px;
 }
 
 .body {
@@ -115,14 +116,10 @@
   border: 1px solid transparent;
   min-height: 1em;
   flex-flow: column;
+}
 
-  &:global(.suppressed) {
-    color: #575757;
-  }
-
-  &:global(.tm6) {
-    margin-top: 6px;
-  }
+.suppressed {
+  color: #575757;
 }
 
 .altimRow {
@@ -130,11 +127,11 @@
 
   span {
     margin-right: 2ch;
-
-    &:global(.altimTime) {
-      margin-left: 2ch;
-    }
   }
+}
+
+.altimTime {
+  margin-left: 2ch;
 }
 
 .underline {

@@ -5,6 +5,7 @@ import { useOnClickOutside, useWindowSize } from "usehooks-ts";
 import type { WindowPosition } from "types/windowPosition";
 import floatingStyles from "css/floatingWindow.module.scss";
 import clsx from "clsx";
+import { Portal } from "react-portal";
 
 type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
 const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
@@ -111,16 +112,18 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
   });
 
   return (
-    <div className={clsx(floatingStyles.root, "optionsBody")} style={{ ...pos, zIndex: 10000 + props.zIndex + 1 }} ref={ref}>
-      {props.title && (
-        <div className={floatingStyles.header} ref={headerRef}>
-          <div className={clsx(floatingStyles.col, "flex")}>{props.title}</div>
-          <div className={clsx(floatingStyles.col, "rect")} onMouseDownCapture={props.onClose} ref={xRef}>
-            X
+    <Portal>
+      <div className={floatingStyles.optionsBody} style={{ ...pos, zIndex: 10000 + props.zIndex + 1 }} ref={ref}>
+        {props.title && (
+          <div className={floatingStyles.header} ref={headerRef}>
+            <div className={clsx(floatingStyles.col, floatingStyles.flex)}>{props.title}</div>
+            <div className={clsx(floatingStyles.col, floatingStyles.rect)} onMouseDownCapture={props.onClose} ref={xRef}>
+              X
+            </div>
           </div>
-        </div>
-      )}
-      {props.options && Object.entries(props.options).map(([key, option]) => <FloatingWindowOptionRow key={key} option={option} />)}
-    </div>
+        )}
+        {props.options && Object.entries(props.options).map(([key, option]) => <FloatingWindowOptionRow key={key} option={option} />)}
+      </div>
+    </Portal>
   );
 }

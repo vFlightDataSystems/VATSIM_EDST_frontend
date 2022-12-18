@@ -20,6 +20,7 @@ import { GpdAircraftTrack, GpdRouteLine } from "components/GpdMapElements";
 import { useEventListener } from "usehooks-ts";
 import { aclEntriesSelector } from "~redux/selectors";
 import { useOnUnmount } from "hooks/useOnUnmount";
+import { anyDraggingSelector } from "~redux/slices/appSlice";
 
 const initialProjection = d3.geoMercator();
 
@@ -38,6 +39,7 @@ export const GpdBody = () => {
   const { data: artccBoundaries, isSuccess } = useArtccBoundaries();
   const [showRouteLines, setShowRouteLines] = React.useState<AircraftId[]>([]);
   const [center, setCenter] = React.useState<Coordinate>(initialCenter);
+  const anyDragging = useRootSelector(anyDraggingSelector);
   const [dragging, setDragging] = React.useState(false);
 
   const translate = (width && height ? [width / 2, height / 2] : [0, 0]) as Coordinate;
@@ -47,7 +49,7 @@ export const GpdBody = () => {
   const pathGenerator = d3.geoPath(projection);
 
   useEventListener("mousemove", (e) => {
-    if (e.buttons === 1 && dragging) {
+    if (e.buttons === 1 && dragging && !anyDragging) {
       const newCenter = projection.invert?.([translate[0] - e.movementX, translate[1] - e.movementY]);
       if (newCenter) {
         setCenter(newCenter);

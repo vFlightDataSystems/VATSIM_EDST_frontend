@@ -22,7 +22,8 @@ export function formatRoute(route: string, dep = "", dest = "") {
   let formattedRoute = "";
   const routeSegments = cleanRoute(route, dep, dest)
     .replace(/(\.|\s)+/, " ")
-    .split(" ");
+    .split(" ")
+    .filter((e) => e !== "");
   let prevIsFix = true;
   let isFix = true;
   routeSegments.forEach((segment) => {

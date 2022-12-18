@@ -9,7 +9,6 @@ import { AddFindInput } from "components/utils/InputComponents";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 import styles from "css/table.module.scss";
-import clsx from "clsx";
 
 /**
  * DEP title bar and header row with add/find input field
@@ -53,7 +52,7 @@ export const DepHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
         <EdstWindowHeaderButton onMouseDown={() => dispatch(setDepManualPosting(!manualPosting))} content="Posting Mode" />
         <EdstWindowHeaderButtonWithSharedEvent sharedUiEventId="openDepTemplateMenu" edstWindow="TEMPLATE_MENU" content="Template..." />
       </div>
-      <div className={clsx(styles.headerRow, "bottom")}>
+      <div className={styles.bottomHeaderRow}>
         Add/Find
         <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} />
       </div>

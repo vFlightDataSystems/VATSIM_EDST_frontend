@@ -13,7 +13,7 @@ export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, s
   return (
     <div className={floatingStyles.header}>
       <div
-        className={clsx(floatingStyles.col, "rect")}
+        className={clsx(floatingStyles.col, floatingStyles.rect)}
         onMouseDown={(event) => {
           // TODO: a click event will not close any option menus this way, needs fixing
           event.preventDefault();
@@ -22,11 +22,11 @@ export const FloatingWindowHeader = ({ title, handleOptionsMouseDown, onClose, s
       >
         M
       </div>
-      <div className={clsx(floatingStyles.col, "flex")} onMouseDown={startDrag}>
+      <div className={clsx(floatingStyles.col, floatingStyles.flex)} onMouseDown={startDrag}>
         {title}
       </div>
-      <div className={clsx(floatingStyles.col, "rect")} onMouseDown={onClose}>
-        <div className={clsx(floatingStyles.headerBlock, "block1")} />
+      <div className={clsx(floatingStyles.col, floatingStyles.rect)} onMouseDown={onClose}>
+        <div className={floatingStyles.headerBlock} />
       </div>
     </div>
   );
