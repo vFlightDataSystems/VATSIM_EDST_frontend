@@ -105,7 +105,7 @@ export const GIWindow = () => {
       setShowOptions={setShowOptionsHandler}
     >
       {Object.values(giEntryMap).length > 0 && (
-        <div className="scrollContainer bounded-scroll">
+        <div className="scrollContainer bounded-scroll barLeft">
           {Object.entries(giEntryMap).map(([id, entry]) => (
             <GIRow
               key={id}

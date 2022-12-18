@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   min-height: 2px;
-  padding: 0 10px;
+  padding: var(--row-padding, 0 10px);
 
   &:global(.pendingRemoval) {
     color: stripPendingRemovalColor;
@@ -65,8 +65,7 @@
 .topRow {
   composes: row;
   margin-bottom: 2px;
-  min-height: 24px;
-  max-height: 24px;
+  height: 24px;
   border-bottom: 1px solid #adadad;
 }
 
@@ -135,10 +134,6 @@
 
   margin: 0 1px;
   width: 1ch;
-
-  &:global(.cBrown) {
-    color: brown;
-  }
 }
 
 .hotbox {
@@ -286,6 +281,10 @@
   color: orange;
 }
 
+.cBrown {
+  color: brown;
+}
+
 .withBorder {
   border: 1px solid grey;
 }
@@ -367,6 +366,7 @@
 .checkmarkCol {
   @include borderStyles.borderHover;
   margin: 0 2px;
+  min-width: 1ch;
   width: 1ch;
   height: 1em;
   --border-width: 1px;

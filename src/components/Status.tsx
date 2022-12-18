@@ -7,12 +7,14 @@ import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { HubConnectionState } from "@microsoft/signalr";
 import { VERSION } from "~/utils/constants";
+import { envSelector } from "~redux/slices/authSlice";
 
 export const Status = () => {
   const [showOptions, setShowOptions] = useState(false);
 
   const artccId = useRootSelector(artccIdSelector);
   const sectorId = useRootSelector(sectorIdSelector);
+  const environment = useRootSelector(envSelector);
   const hubConnection = useHubConnection();
   const { connectSocket, disconnectSocket, isConnected } = useSocketConnector();
 
@@ -27,13 +29,7 @@ export const Status = () => {
   return (
     <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>
       <div>vEDST version {VERSION}</div>
-      <div>{hubConnection?.state === HubConnectionState.Connected ? `Connected to ${import.meta.env.VITE_VNAS_ENV_NAME}` : "NOT CONNECTED"}</div>
-      <div>
-        GPD powered by{" "}
-        <a href="https://d3js.org" target="_blank" rel="noreferrer">
-          D3
-        </a>
-      </div>
+      <div>{hubConnection?.state === HubConnectionState.Connected && environment ? `Connected to ${environment.name}` : "NOT CONNECTED"}</div>
       <div>
         <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
       </div>

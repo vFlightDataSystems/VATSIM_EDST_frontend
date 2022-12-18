@@ -373,7 +373,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
           {anyHolding && (
             <div
               ref={holdRef}
-              className={clsx(tableStyles.specialBox, "cBrown", { selected: isSelected("HOLD_ACL_ROW_FIELD") })}
+              className={clsx(tableStyles.specialBox, tableStyles.cBrown, { selected: isSelected("HOLD_ACL_ROW_FIELD") })}
               onMouseDown={handleHoldClick}
             >
               {entry.holdAnnotations ? "H" : ""}

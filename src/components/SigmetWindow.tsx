@@ -122,7 +122,7 @@ export const SigmetWindow = () => {
       setShowOptions={setShowOptionsHandler}
     >
       {Object.values(sigmetList).length > 0 && (
-        <div className="scrollContainer bounded-scroll">
+        <div className="scrollContainer bounded-scroll barLeft">
           {Object.entries(sigmetList).map(
             ([sigmetId, sigmetEntry]) =>
               (!sigmetEntry.suppressed || viewSuppressed) && (
