@@ -85,6 +85,7 @@ export const TemplateMenu = () => {
     (asel?.window === "DEP" ? (entry?.departure ? appendUpArrowToString(entry?.departure) : "") + route : route) ?? ""
   );
   const [rmkInput, setRmkInput] = useState(entry?.remarks ?? "");
+
   useEffect(() => {
     async function updateFrd() {
       if (aircraftTrack) {
@@ -93,6 +94,10 @@ export const TemplateMenu = () => {
     }
     void updateFrd();
   }, [aircraftTrack, entry?.aircraftId, generateFrd]);
+
+  const onSend = () => {
+    // TODO: implement
+  };
 
   return (
     <div
@@ -151,7 +156,7 @@ export const TemplateMenu = () => {
         </div>
         <div className={clsx(templateStyles.row)}>
           <div className={templateStyles.col}>
-            <EdstButton disabled content="Send" />
+            <EdstButton disabled content="Send" onMouseDown={onSend} />
           </div>
           <div className={templateStyles.row} />
           <div className={clsx(templateStyles.col)}>

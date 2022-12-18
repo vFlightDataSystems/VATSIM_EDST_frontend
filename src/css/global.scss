@@ -38,10 +38,10 @@
   overflow-x: hidden;
   scrollbar-width: none;
 
-  transform: scaleX(-1); //Reflects the parent horizontally
+  transform: scaleX(-1); /* Reflects the parent horizontally */
 
   & > div {
-    transform: scaleX(-1); //Flips the child back to normal
+    transform: scaleX(-1); /* Flips the child back to normal */
   }
 
   &::-webkit-scrollbar {
@@ -75,6 +75,14 @@
   &.absolute {
     position: absolute;
   }
+}
+
+.bgBlack {
+  background-color: #000000;
+}
+
+.tm6 {
+  margin-top: 6px;
 }
 
 .w5 {
@@ -120,11 +128,11 @@
 }
 
 .flexGrow {
-  flex-grow: 1;
+  flex-grow: 1 !important;
 }
 
 .noGrow {
-  flex-grow: 0;
+  flex-grow: 0 !important;
 }
 
 .topBorder {

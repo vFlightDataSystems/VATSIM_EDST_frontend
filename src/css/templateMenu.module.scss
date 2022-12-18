@@ -30,10 +30,6 @@
   border: 1px solid transparent;
   flex-grow: 0;
   flex-shrink: 0;
-
-  &:global(.flexGrow) {
-    flex-grow: 1;
-  }
 }
 
 .flex {

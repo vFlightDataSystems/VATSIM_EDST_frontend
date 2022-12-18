@@ -112,7 +112,7 @@ export const AltMenu = () => {
               }}
             />
           </div>
-          {showInvalid && <div className={clsx(altStyles.row, "invalid", "noPointerEvents")}>INVALID</div>}
+          {showInvalid && <div className={clsx(altStyles.row, altStyles.invalid, "noPointerEvents")}>INVALID</div>}
         </>
       )}
       {manualInput === null && (

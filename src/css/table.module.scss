@@ -105,15 +105,11 @@
     visibility: hidden;
     width: 2ch;
   }
-
-  &:global(.isDisabled) {
-    pointer-events: none;
-  }
 }
 
 :global(.selected) {
   background-color: var(--selected-background-color, grey);
-  color: #000000 !important;
+  color: var(--selected-fg-color, #000000) !important;
 }
 
 .fidCol {

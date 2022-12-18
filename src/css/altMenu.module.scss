@@ -70,15 +70,11 @@
     pointer-events: none;
     color: grey;
   }
+}
 
-  &:global(.bgBlack) {
-    background-color: #000000;
-  }
-
-  &:global(.invalid) {
-    background-color: #000000;
-    color: yellow;
-  }
+.invalid {
+  background-color: #000000;
+  color: yellow;
 }
 
 .selected {
@@ -138,9 +134,4 @@
   align-items: center;
   /*height: 10px;*/
   color: #adadad;
-
-  &:global(.isDisabled) {
-    pointer-events: none;
-    color: #575757;
-  }
 }

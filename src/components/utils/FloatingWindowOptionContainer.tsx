@@ -113,11 +113,11 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
 
   return (
     <Portal>
-      <div className={clsx(floatingStyles.root, "optionsBody")} style={{ ...pos, zIndex: 10000 + props.zIndex + 1 }} ref={ref}>
+      <div className={floatingStyles.optionsBody} style={{ ...pos, zIndex: 10000 + props.zIndex + 1 }} ref={ref}>
         {props.title && (
           <div className={floatingStyles.header} ref={headerRef}>
-            <div className={clsx(floatingStyles.col, "flex")}>{props.title}</div>
-            <div className={clsx(floatingStyles.col, "rect")} onMouseDownCapture={props.onClose} ref={xRef}>
+            <div className={clsx(floatingStyles.col, floatingStyles.flex)}>{props.title}</div>
+            <div className={clsx(floatingStyles.col, floatingStyles.rect)} onMouseDownCapture={props.onClose} ref={xRef}>
               X
             </div>
           </div>

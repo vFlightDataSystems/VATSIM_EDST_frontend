@@ -41,7 +41,7 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
   return (
     <>
       <div
-        className={clsx(floatingStyles.row, "tm6", { selected, suppressed: sigmetEntry.suppressed })}
+        className={clsx(floatingStyles.row, "tm6", { selected, [floatingStyles.suppressed]: sigmetEntry.suppressed })}
         ref={ref}
         style={{ "--brightness": windowOptions.brightness / 100 }}
         onMouseDown={onMouseDown}
