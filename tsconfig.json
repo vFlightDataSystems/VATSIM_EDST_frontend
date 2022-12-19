@@ -132,7 +132,6 @@
   ],
   "exclude": [
     "node_modules/**/*",
-    "node_modules/@microsoft/signalr/src/HubConnection.ts",
     "build",
     "scripts"
   ]
