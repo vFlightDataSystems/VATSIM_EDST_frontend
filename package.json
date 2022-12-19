@@ -16,7 +16,6 @@
     "@microsoft/signalr": "^7.0.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@tauri-apps/api": "^1.2.0",
-    "@tauri-apps/cli": "^1.2.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -80,6 +79,7 @@
     ]
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^1.2.2",
     "@types/d3": "^7.4.0",
     "@types/d3-geo": "^3.0.2",
     "@types/jest": "^27.5.2",
