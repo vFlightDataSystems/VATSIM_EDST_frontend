@@ -46,7 +46,7 @@
       "css/*": ["css/*"],
       "hooks/*": ["hooks/*"],
       "resources/*": ["resources/*"],
-      "types/*": ["typeDefinitions/types/*"],
+      "types/*": ["types/*"],
       "styles/*": ["styles/*"],
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
