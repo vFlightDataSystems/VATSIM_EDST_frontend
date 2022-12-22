@@ -40,7 +40,8 @@ export const edstWindows = [
   "CPDLC_ADV",
   "CPDLC_HIST",
   "CPDLC_MSG",
-].concat(edstMenus);
+  ...edstMenus,
+] as const;
 
 export type EdstWindow = typeof edstWindows[number];
 export type EdstMenu = typeof edstMenus[number];

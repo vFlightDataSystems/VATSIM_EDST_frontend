@@ -50,15 +50,13 @@
     "vite": "^4.0.2",
     "vite-plugin-package-version": "^1.0.2",
     "vite-plugin-svgr": "^2.4.0",
-    "vite-tsconfig-paths": "^4.0.3",
-    "web-vitals": "^1.1.2"
+    "vite-tsconfig-paths": "^4.0.3"
   },
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "tauri": "tauri",
-    "test": "wdio run wdio.conf.js"
+    "tauri": "tauri"
   },
   "eslintConfig": {
     "extends": [
