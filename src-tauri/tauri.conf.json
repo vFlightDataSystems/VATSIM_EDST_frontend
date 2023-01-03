@@ -47,7 +47,9 @@
       "window": {
         "setCursorGrab": true,
         "setCursorVisible": true,
-        "setCursorPosition": true
+        "setCursorPosition": true,
+        "setFullscreen": true,
+        "setDecorations": true
       },
       "all": false
     },
