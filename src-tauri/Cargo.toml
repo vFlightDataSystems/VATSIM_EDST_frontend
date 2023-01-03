@@ -1,11 +1,11 @@
 [package]
-name = "v_edst"
+name = "vedst"
 version = "0.1.0"
 description = "vEDST"
 authors = ["Milan Kroemer"]
 license = "MIT"
 repository = ""
-default-run = "v_edst"
+default-run = "vedst"
 edition = "2021"
 rust-version = "1.57"
 
@@ -17,7 +17,7 @@ tauri-build = { git = "https://github.com/tauri-apps/tauri", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { git = "https://github.com/tauri-apps/tauri", features = ["api-all"] }
+tauri = { git = "https://github.com/tauri-apps/tauri", features = ["window-set-cursor-grab", "window-set-cursor-position", "window-set-cursor-visible"] }
 
 [features]
 # by default Tauri runs in production mode

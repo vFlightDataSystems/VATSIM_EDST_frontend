@@ -1,6 +1,6 @@
 import type { DependencyList, RefObject } from "react";
 import { useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import { appWindow, LogicalPosition } from "@tauri-apps/api/window";
 
 /**
  * hook for tauri to center the mouse in the middle of element
@@ -15,7 +15,7 @@ export const useCenterCursor = (ref: RefObject<HTMLElement>, deps: DependencyLis
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2,
       };
-      void invoke<void>("set_cursor_position", newCursorPos);
+      void appWindow.setCursorPosition(new LogicalPosition(newCursorPos.x - 1, newCursorPos.y - 1));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, ...deps]);

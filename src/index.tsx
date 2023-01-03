@@ -1,11 +1,10 @@
-import * as React from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import "~/index.css";
 import "css/global.scss";
 import store from "~/redux/store";
 import App from "~/App";
-// import reportWebVitals from './reportWebVitals';
 
 declare global {
   interface Window {
@@ -13,8 +12,8 @@ declare global {
   }
 }
 
-const edstFont = new FontFace("EDST", "url(fonts/EDSTv200.ttf)");
-const eramFont = new FontFace("ERAM", "url(fonts/ERAMv200.ttf)");
+const edstFont = new FontFace("EDST", "url(fonts/EDSTv300.ttf)");
+const eramFont = new FontFace("ERAM", "url(fonts/ERAMv300.ttf)");
 
 document.fonts.add(edstFont);
 document.fonts.add(eramFont);

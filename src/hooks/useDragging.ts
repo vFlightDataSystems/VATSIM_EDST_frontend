@@ -1,6 +1,5 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import type { Nullable } from "types/utility-types";
 import { anyDraggingSelector, pushZStack, setAnyDragging, setWindowPosition, windowsSelector, zStackSelector } from "~redux/slices/appSlice";
@@ -8,6 +7,7 @@ import type { WindowPosition } from "types/windowPosition";
 import type { DragPreviewStyle } from "types/dragPreviewStyle";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import type { EdstWindow } from "types/edstWindow";
+import { appWindow, LogicalPosition } from "@tauri-apps/api/window";
 
 const DRAGGING_REPOSITION_CURSOR: EdstWindow[] = [
   "ROUTE_MENU",
@@ -92,12 +92,12 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
         let relX = 0;
         let relY = 0;
         if (window.__TAURI__) {
-          void invoke<void>("set_cursor_grab", { value: true });
+          void appWindow.setCursorGrab(true);
         }
         if (DRAGGING_REPOSITION_CURSOR.includes(edstWindow)) {
           if (window.__TAURI__) {
             previewPos = { x: ppos.left, y: ppos.top };
-            void invoke<void>("set_cursor_position", previewPos);
+            void appWindow.setCursorPosition(new LogicalPosition(previewPos.x - 1, previewPos.y - 1));
           } else {
             previewPos = { x: event.pageX, y: event.pageY };
           }
@@ -134,7 +134,7 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
       const { left, top } = dragPreviewStyle;
       const newPos = { left: left + 1, top };
       if (window.__TAURI__) {
-        void invoke<void>("set_cursor_grab", { value: false });
+        void appWindow.setCursorGrab(false);
       }
       dispatch(
         setWindowPosition({

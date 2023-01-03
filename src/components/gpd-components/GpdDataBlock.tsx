@@ -1,6 +1,5 @@
 import type { RefObject } from "react";
 import React, { useCallback, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useEventListener } from "usehooks-ts";
 import type { Nullable } from "types/utility-types";
 import { aircraftIsAselSelector, anyDraggingSelector, setAnyDragging } from "~redux/slices/appSlice";
@@ -19,6 +18,7 @@ import clsx from "clsx";
 import type { AircraftId } from "types/aircraftId";
 import { entrySelector } from "~redux/slices/entrySlice";
 import { aircraftTrackSelector } from "~redux/slices/trackSlice";
+import { appWindow } from "@tauri-apps/api/window";
 
 type GpdDataBlockProps = {
   aircraftId: AircraftId;
@@ -73,7 +73,7 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
       const ppos = pos ? { x: pos.left, y: pos.top } : null;
       if (event.buttons === 1 && ref.current && ppos) {
         if (window.__TAURI__) {
-          void invoke("set_cursor_grab", { value: true });
+          void appWindow.setCursorGrab(true);
         }
         const relX = ppos.x - event.pageX;
         const relY = ppos.y - event.pageY;
@@ -103,7 +103,7 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
         y: offset.y - ppos.y + dragPreviewStyle.top,
       };
       if (window.__TAURI__) {
-        void invoke("set_cursor_grab", { value: false });
+        void appWindow.setCursorGrab(false);
       }
       setOffset(newOffset);
       dispatch(setAnyDragging(false));

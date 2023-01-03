@@ -1,11 +1,11 @@
 import type { CSSProperties, MouseEventHandler } from "react";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useOnClickOutside, useWindowSize } from "usehooks-ts";
 import type { WindowPosition } from "types/windowPosition";
 import floatingStyles from "css/floatingWindow.module.scss";
 import clsx from "clsx";
 import { Portal } from "react-portal";
+import { appWindow, LogicalPosition } from "@tauri-apps/api/window";
 
 type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
 const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
@@ -24,7 +24,7 @@ const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2,
           };
-          void invoke("set_cursor_position", newCursorPos);
+          void appWindow.setCursorPosition(new LogicalPosition(newCursorPos.x - 1, newCursorPos.y - 1));
           prevOptionValueRef.current = option.value;
         }
       }
@@ -100,7 +100,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2,
         };
-        void invoke("set_cursor_position", newCursorPos);
+        void appWindow.setCursorPosition(new LogicalPosition(newCursorPos.x - 1, newCursorPos.y - 1));
       }
     }
   }, []);
