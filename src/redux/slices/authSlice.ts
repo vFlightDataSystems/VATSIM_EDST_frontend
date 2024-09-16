@@ -5,6 +5,7 @@ import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { login as apiLogin } from "api/vNasDataApi";
 import type { RootState } from "~redux/store";
 import * as jose from "jose";
+import { toast } from "react-toastify";
 
 ///
 
@@ -60,6 +61,9 @@ const initialState: AuthState = {
 export const getVnasConfig = createAsyncThunk<Config>("auth/getVnasConfig", async () => {
     const response = await fetch(import.meta.env.VITE_VNAS_CONFIG_URL);
     if (!response.ok) {
+      toast.error(`Failed to load vNAS config`, {
+        position: "bottom-right",
+      })
       throw new Error("Failed to load config");
     }
     return response.json();
@@ -70,6 +74,9 @@ export const login = createAsyncThunk<Awaited<ReturnType<typeof apiLogin>>, Code
     async (data, thunkAPI) => {
       const environment = thunkAPI.getState().auth.environment;
       if (!environment) {
+        toast.error(`vNAS Environment not set. Failed to log in`, {
+          position: "bottom-right",
+        })
         throw new Error("Environment not set");
       }
       return apiLogin(environment.apiBaseUrl, data.code, data.redirectUrl);
@@ -102,7 +109,9 @@ export const authSlice = createSlice({
               state.vatsimToken = newToken;
               localStorage.setItem('vatsim-token', newToken);
             } else {
-              // TODO: inform user that login failed via a GUI perhaps??
+              toast.error(`Failed to log in: ${action.payload.statusText}`, {
+                position: "bottom-right",
+              })
               console.log(`Failed to log in: ${action.payload.statusText}`);
             }
         });
@@ -110,6 +119,9 @@ export const authSlice = createSlice({
           state.vatsimToken = null;
           state.vatsimCode = null;
           localStorage.removeItem("vatsim-token");
+          toast.error(`Failed to log in: ${action.error.message}`, {
+            position: "bottom-right",
+          })
           console.log(`Failed to log in: ${action.error.message}`);
         });
     },

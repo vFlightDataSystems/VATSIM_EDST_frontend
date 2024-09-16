@@ -5,6 +5,9 @@ import Login from "~/login/Login";
 import PrivateRoute from "~/routes/PrivateRoute";
 import { useRootDispatch } from "~redux/hooks";
 import { getVnasConfig } from "~redux/slices/authSlice";
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const dispatch = useRootDispatch();
@@ -15,6 +18,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute />}>
