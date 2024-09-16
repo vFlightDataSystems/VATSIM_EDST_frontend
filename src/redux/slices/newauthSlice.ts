@@ -54,7 +54,7 @@ export const login = createAsyncThunk<Awaited<ReturnType<typeof apiLogin>>, Code
 );
 
 export const authSlice = createSlice({
-    name: "authSlice",
+    name: "auth",
     initialState,
     extraReducers: (builder) => {
         builder.addCase(getVnasConfig.fulfilled, (state, action) => {
@@ -62,9 +62,9 @@ export const authSlice = createSlice({
             state.vnasConfiguration = newConfig;
             const localEnvironment = localStorage.getItem("vedst-environment");
             if (localEnvironment !== null) {
-                const availaleEnvironment = newConfig.environments.find((e) => e.name === localEnvironment);
-                if (availaleEnvironment !== null) {
-                    state.environment = availaleEnvironment;
+                const availableEnvironment = newConfig.environments.find((e) => e.name === localEnvironment);
+                if (availableEnvironment !== null) {
+                    state.environment = availableEnvironment;
                 } else {
                     localStorage.removeItem("vedst-environment");
                     state.environment = newConfig.environments[0];
