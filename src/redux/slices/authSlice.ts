@@ -126,6 +126,13 @@ export const authSlice = createSlice({
               localStorage.setItem("vedst-environment", action.payload);
             }
         },
+        logout(state) {
+          state.vatsimCode = null;
+          state.vatsimToken = null;
+          state.session = null;
+          state.environment = null;
+          localStorage.removeItem("vatsim-token");
+        },
     }
 })
 
