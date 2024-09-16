@@ -11,7 +11,7 @@ export const gpdApi = createApi({
     getArtccBoundaries: builder.query<FeatureCollection, Record<never, never>>({
       queryFn: async (_, { getState }) => {
         // we cannot put RootState here because then gpdApi would reference itself
-        const url = (getState() as any).auth.vnasConfig.artccBoundariesUrl;
+        const url = (getState() as any).auth.vnasConfiguration.artccBoundariesUrl;
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error("could not fetch ARTCC boundaries");
