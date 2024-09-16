@@ -14,7 +14,6 @@ function redirectLogin() {
 }
 
 const Login = () => {
-  console.log("initalised login")
   const dispatch = useRootDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
