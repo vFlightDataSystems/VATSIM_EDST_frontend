@@ -31,3 +31,4 @@ yarn-error.log*
 /.idea/codeStyles/Project.xml
 /.idea/VATSIM_EDST_frontend.iml
 /.idea/
+./tsconfig.json
