@@ -18,6 +18,7 @@ import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
 import { OutageEntry } from "types/outageEntry";
 import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
+import { plainToInstance } from "class-transformer";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -89,6 +90,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       hubConnection.on("HandleSessionEnded", () => {
         console.log("clearing session");
         dispatch(clearSession());
+        disconnectHub();
       });
       hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
         console.log("received flightplan:", flightplan);
@@ -116,31 +118,43 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       await hubConnection.start();
-      let sessionInfo: ApiSessionInfoDto;
+      let sessions: ApiSessionInfoDto[];
       try {
-        sessionInfo = await hubConnection.invoke<ApiSessionInfoDto>("getSessionInfo");
+        sessions = await hubConnection.invoke<ApiSessionInfoDto[]>("GetSessions");
       } catch {
-        await ref.current?.stop();
-        setHubConnected(false);
+        disconnectHub();
         throw new Error("SESSION NOT FOUND");
       }
-      console.log(sessionInfo);
-      const primaryPosition = sessionInfo?.positions.slice(0).filter((pos) => pos.isPrimary)?.[0]?.position;
+
+      const primarySession = sessions.find((s) => !s.isPseudoController) as ApiSessionInfoDto;
+      
+      if(!primarySession) {
+        disconnectHub();
+        throw new Error("PRIMARY SESSION NOT FOUND");
+      }
+
+      const primaryPosition = primarySession.positions.find((p) => p.isPrimary)?.position;
+
+      if(!primaryPosition) {
+        disconnectHub();
+        throw new Error("PRIMARY POSITION NOT FOUND");
+      }
+
       if (primaryPosition?.eramConfiguration) {
-        const artccId = sessionInfo.artccId;
+        const artccId = primarySession.artccId;
         const sectorId = primaryPosition.eramConfiguration.sectorId;
         dispatch(setArtccId(artccId));
         dispatch(setSectorId(sectorId));
-        dispatch(setSession(sessionInfo));
+        dispatch(setSession(primarySession));
         dispatch(initThunk());
         await hubConnection.invoke<void>("joinSession", {
-          sessionId: sessionInfo.id,
+          sessionId: primarySession.id,
           clientName: "vEDST",
           clientVersion: VERSION,
         });
-        console.log(`joined session ${sessionInfo.id}`);
+        console.log(`joined session ${primarySession.id}`);
         setHubConnected(true);
-        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId)).catch(async () => {
+        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", primarySession.positions[0].facilityId)).catch(async () => {
           await hubConnection.stop();
           setHubConnected(false);
           throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");

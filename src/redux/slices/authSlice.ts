@@ -37,6 +37,7 @@ type AuthState = {
     vatsimToken: Nullable<string>;
     environment: Nullable<Environment>;
     session: Nullable<ApiSessionInfoDto>;
+    sessionActive: boolean;
 }
 
 type Config = {
@@ -55,8 +56,9 @@ const initialState: AuthState = {
     vatsimCode: null,
     vatsimToken: getLocalVatsimToken(),
     environment: null,
-    session: null
-}
+    session: null,
+    sessionActive: false,
+};
 
 export const getVnasConfig = createAsyncThunk<Config>("auth/getVnasConfig", async () => {
     const response = await fetch(import.meta.env.VITE_VNAS_CONFIG_URL);
@@ -138,19 +140,31 @@ export const authSlice = createSlice({
               localStorage.setItem("vedst-environment", action.payload);
             }
         },
+        setSessionIsActive(state, action: PayloadAction<boolean>) {
+          if (!state.session) {
+            toast.error(`Failed to set session active status. Session is not defined.`, {
+              position: "bottom-right",
+            })
+            return;
+          }
+          const active = action.payload;
+          state.sessionActive = active;
+        },
         logout(state) {
           state.vatsimCode = null;
           state.vatsimToken = null;
           state.session = null;
           state.environment = null;
+          state.sessionActive = false;
           localStorage.removeItem("vatsim-token");
         },
     }
 })
 
-export const { setSession, clearSession, setEnv } = authSlice.actions;
+export const { setSession, clearSession, setEnv, setSessionIsActive, logout } = authSlice.actions;
 export default authSlice.reducer;
 
-export const vatsimTokenSelector = (state: RootState) => state.auth.vatsimToken;
+export const vatsimTokenSelector = () => localStorage.getItem('vatsim-token');
 export const configSelector = (state: RootState) => state.auth.vnasConfiguration;
 export const envSelector = (state: RootState) => state.auth.environment;
+export const sessionActiveSelector = (state: RootState) => state.auth.sessionActive;

@@ -11,5 +11,6 @@ export type ApiSessionInfoDto = {
   artccId: string;
   callsign: string;
   isActive: boolean;
+  isPseudoController: boolean;
   positions: ApiPositionSpecDto[];
 };
