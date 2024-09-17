@@ -2,7 +2,7 @@ import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { configSelector, envSelector, login, setEnv, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, sessionActiveSelector } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
@@ -21,6 +21,7 @@ const Login = () => {
   const vatsimToken = useRootSelector(vatsimTokenSelector);
   const config = useRootSelector(configSelector);
   const env = useRootSelector(envSelector);
+  const sessionActive = useRootSelector(sessionActiveSelector);
 
   useEffect(() => {
     if (code && env) {
@@ -36,6 +37,8 @@ const Login = () => {
   useEffect(() => {
     if (vatsimToken) {
       navigate("/", { replace: true });
+    } else if (sessionActive === false) {
+      console.log("should redirect to session selector")
     }
   }, [navigate, vatsimToken]);
 

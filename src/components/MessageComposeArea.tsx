@@ -155,7 +155,7 @@ export const MessageComposeArea = () => {
 
   const parseQU = async (args: string[]) => {
     if (args.length === 2) {
-      const entry = getEntryByFid(args[1]);
+      const entry = getEntryByFid(args[0]);
       if (entry && entry.status === "Active") {
         const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
         if (routeFixes?.map((fix) => fix.name)?.includes(args[0])) {
