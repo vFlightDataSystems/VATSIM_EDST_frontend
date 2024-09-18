@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useEffect, useRef, useState } from "
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
-import { clearSession, envSelector, setSession, vatsimTokenSelector } from "~redux/slices/authSlice";
+import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive } from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
@@ -116,6 +116,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           dispatch(delOutageMessage("FSD_DOWN"));
         }
       });
+
+      hubConnection.on("SetSessionActive", (isActive) => {
+        dispatch(setSessionIsActive(isActive));
+        sessionStorage.setItem('session-active', `${isActive}`)
+      })
 
       await hubConnection.start();
       let sessions: ApiSessionInfoDto[];
