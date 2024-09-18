@@ -37,8 +37,6 @@ const Login = () => {
   useEffect(() => {
     if (vatsimToken) {
       navigate("/", { replace: true });
-    } else if (sessionActive === false) {
-      console.log("should redirect to session selector")
     }
   }, [navigate, vatsimToken]);
 

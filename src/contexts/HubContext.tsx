@@ -18,7 +18,6 @@ import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
 import { OutageEntry } from "types/outageEntry";
 import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
-import { plainToInstance } from "class-transformer";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
