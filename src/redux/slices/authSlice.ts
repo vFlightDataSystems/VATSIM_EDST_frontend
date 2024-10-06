@@ -4,12 +4,12 @@ import type { Nullable } from "types/utility-types";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { login as apiLogin } from "api/vNasDataApi";
 import type { RootState } from "~redux/store";
-import * as jose from "jose";
 import { toast } from "react-toastify";
+import * as jose from "jose";
 
 ///
 
-function tokenHasExpired(token: JWTPayload) {
+function tokenHasExpired(token: jose.JWTPayload) {
   return token.exp! - Math.trunc(Date.now() / 1000) < 0;
 };
 
