@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRootSelector, useRootDispatch } from "~redux/hooks";
 import { useSocketConnector } from "hooks/useSocketConnector";
 import { useHubConnection } from "hooks/useHubConnection";
+import { useHubConnector } from "hooks/useHubConnector";
 import { artccIdSelector, sectorIdSelector } from "~redux/slices/sectorSlice";
 import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
@@ -19,6 +20,7 @@ export const Status = () => {
   const hubConnection = useHubConnection();
   const { connectSocket, disconnectSocket, isConnected } = useSocketConnector();
   const dispatch = useRootDispatch();
+  const {disconnectHub} = useHubConnector();
 
   const toggleSocket = () => {
     if (isConnected) {
@@ -30,6 +32,7 @@ export const Status = () => {
 
   const logoutHandler = () => {
     console.log("Logging out");
+    disconnectHub();
     dispatch(logout());
   }
 
