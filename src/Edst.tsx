@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useInterval } from "usehooks-ts";
 import { HubConnectionState } from "@microsoft/signalr";
@@ -93,6 +93,8 @@ const Edst = () => {
   const hubActions = useHubActions();
   const headerTop = useRootSelector(headerTopSelector);
   const env = useRootSelector(envSelector)!;
+  const { connectHub } = useHubConnector();
+
 
   useInterval(() => {
     fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {
@@ -102,6 +104,14 @@ const Edst = () => {
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
 
+  useInterval(() => {
+    connectHub()
+      .catch((e) => {
+        console.log("AN ERROR OCCURED: " + e.message)
+      })
+  }, 1000);
+
+
   return (
     <div
       className={edstStyles.root}
@@ -109,6 +119,7 @@ const Edst = () => {
       onContextMenu={(event) => event.preventDefault()}
       tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
     >
+
       <EdstHeader />
       {hubConnection?.state !== HubConnectionState.Connected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
       <div id="toPrint" />
