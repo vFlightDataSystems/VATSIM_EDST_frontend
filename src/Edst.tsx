@@ -34,7 +34,6 @@ import { GIWindow } from "components/GeneralInforationWindow";
 import { AclSortMenu } from "components/acl-components/AclSortMenu";
 import { DepSortMenu } from "components/dep-components/DepSortMenu";
 import { useHubActions } from "hooks/useHubActions";
-import { useHubConnection } from "hooks/useHubConnection";
 import { fetchAllAircraft } from "api/vNasDataApi";
 import { unsafeEntries } from "~/utility-functions";
 import { SocketContextProvider } from "contexts/SocketContext";
@@ -42,7 +41,7 @@ import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
 import edstStyles from "css/edst.module.scss";
 import clsx from "clsx";
-import { envSelector } from "~redux/slices/authSlice";
+import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
 import { useHubConnector } from "hooks/useHubConnector";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
@@ -89,12 +88,11 @@ const Edst = () => {
   const windows = useRootSelector(windowsSelector);
   const aselIsNull = useRootSelector(aselIsNullSelector);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const hubConnection = useHubConnection();
   const hubActions = useHubActions();
   const headerTop = useRootSelector(headerTopSelector);
   const env = useRootSelector(envSelector)!;
   const { connectHub } = useHubConnector();
-
+  const hubConnected = useRootSelector(hubConnectedSelector);
 
   useInterval(() => {
     fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {
@@ -121,7 +119,7 @@ const Edst = () => {
     >
 
       <EdstHeader />
-      {hubConnection?.state !== HubConnectionState.Connected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
+      {!hubConnected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
       <div id="toPrint" />
       <div className={clsx(edstStyles.body, { bottom: !headerTop })}>
         {unsafeEntries(edstComponentMap).map(

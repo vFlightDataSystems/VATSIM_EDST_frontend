@@ -1,5 +1,4 @@
 import { useHubConnector } from "hooks/useHubConnector";
-import { useHubConnection } from "hooks/useHubConnection";
 import { useInterval } from "usehooks-ts";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,9 +7,10 @@ import { HubContextProvider } from '../contexts/HubContext';
 import { SocketContextProvider } from '../contexts/SocketContext';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, hubConnectedSelector, logout } from "~redux/slices/authSlice";
-import { useRootDispatch, useRootSelector } from "~redux/hooks"; 
+import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
+import { toast } from "react-toastify";
 
 function redirectLogin() {
   window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -27,7 +27,7 @@ const Login = () => {
   const config = useRootSelector(configSelector);
   const env = useRootSelector(envSelector);
   const hubConnected = useRootSelector(hubConnectedSelector);
-  const { connectHub } = useHubConnector();
+  const { connectHub, disconnectHub } = useHubConnector();
 
   useEffect(() => {
     if (code && env) {
@@ -41,20 +41,20 @@ const Login = () => {
   }, [code, dispatch, env]);
 
   const handleLogout = () => {
+    disconnectHub();
     dispatch(logout());
-    dispatch(setEnv(null));
-    window.location.reload(); // Force a page reload to clear all state
+    dispatch(setEnv(""));
+    const currentPath = window.location.pathname;
+    window.history.replaceState({}, document.title, currentPath);
+    window.location.reload();
   };
 
-  // Try connecting to hub every second when we have a token but session isn't active
+  // Try connecting to hub every second when we have a token but no CRC connection
   useInterval(() => {
-    // Early return if we don't have required values
     if (!vatsimToken || hubConnected === undefined) {
-      console.debug('Waiting for vatsim token or session state...');
       return;
     }
 
-    // Only try connecting if we have token but no active session
     if (vatsimToken && hubConnected === false) {
       try {
         console.debug('Attempting hub connection...');
@@ -62,7 +62,7 @@ const Login = () => {
           console.warn("Failed to connect to hub:", e?.message || 'Unknown error');
         });
       } catch (err) {
-        console.error("Error during hub connection:", err);
+        toast.error("Error during hub connection:", err);
       }
     }
   }, 1000);
@@ -82,19 +82,19 @@ const Login = () => {
           <img src="/img/vEDSTLogo.png" alt="vEDST Logo" width="200" />
           {vatsimToken ? (
             <>
-            <div className={loginStyles.waiting}>
-            <br />
-            Waiting for vNAS Connection...
-            <br />
-            </div>
-            <button 
-              type="button" 
-              onClick={handleLogout}
-              className={loginStyles.logoutButton}
-            >
-              Logout
-            </button>
-          </>
+              <div className={loginStyles.waiting}>
+                <br />
+                Waiting for vNAS Connection...
+                <br />
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className={loginStyles.logoutButton}
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <select

@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import React from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { headerTopSelector, outageSelector, setHeaderTop, toggleWindow, windowSelector, windowsSelector } from "~redux/slices/appSlice";
+import { sessionActiveSelector } from "~redux/slices/authSlice";
 import { planQueueSelector } from "~redux/slices/planSlice";
 import { sectorIdSelector } from "~redux/slices/sectorSlice";
 import type { EdstWindow } from "types/edstWindow";
@@ -56,6 +57,7 @@ export const EdstHeader = () => {
   const outages = useRootSelector(outageSelector);
   const windows = useRootSelector(windowsSelector);
   const headerTop = useRootSelector(headerTopSelector);
+  const sessionActive = useRootSelector(sessionActiveSelector);
 
   const sectorId = useRootSelector(sectorIdSelector);
   const aclLen = useRootSelector(aclLenSelector);
@@ -135,7 +137,12 @@ export const EdstHeader = () => {
           <button disabled>KEEP ALL</button>
         </div>
         <div className={edstStyles.headerCol}>
-          <EdstHeaderButton window="STATUS" content="STATUS ACTIVE" />
+          <EdstHeaderButton 
+            window="STATUS" 
+            content={sessionActive ? "STATUS ACTIVE" : "STATUS INACT"}
+            color={!sessionActive ? YELLOW : undefined}
+            borderColor={!sessionActive ? YELLOW : undefined}
+          />
           <EdstHeaderButton
             backgroundColor={outages.filter((o) => !o.acknowledged).length > 0 ? RED : undefined}
             window="OUTAGE"
