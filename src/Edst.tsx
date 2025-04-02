@@ -93,6 +93,14 @@ const Edst = () => {
   const env = useRootSelector(envSelector)!;
   const { connectHub } = useHubConnector();
   const hubConnected = useRootSelector(hubConnectedSelector);
+  
+  useEffect(() => {
+    if (!hubConnected) {
+      connectHub().catch((e) => {
+        console.log("Failed to connect to hub:", e?.message || "Unknown error");
+      });
+    }
+  }, [connectHub, hubConnected]);
 
   useInterval(() => {
     fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {
@@ -101,14 +109,6 @@ const Edst = () => {
   }, 5000);
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
-
-  useInterval(() => {
-    connectHub()
-      .catch((e) => {
-        console.log("AN ERROR OCCURED: " + e.message)
-      })
-  }, 1000);
-
 
   return (
     <div
