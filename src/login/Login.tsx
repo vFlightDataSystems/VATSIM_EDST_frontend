@@ -7,7 +7,7 @@ import React, { useEffect } from "react";
 import { HubContextProvider } from '../contexts/HubContext';
 import { SocketContextProvider } from '../contexts/SocketContext';
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, hubConnectedSelector } from "~redux/slices/authSlice";
+import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, hubConnectedSelector, logout } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks"; 
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
@@ -39,6 +39,12 @@ const Login = () => {
       );
     }
   }, [code, dispatch, env]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(setEnv(null));
+    window.location.reload(); // Force a page reload to clear all state
+  };
 
   // Try connecting to hub every second when we have a token but session isn't active
   useInterval(() => {
@@ -75,10 +81,20 @@ const Login = () => {
         <div>
           <img src="/img/vEDSTLogo.png" alt="vEDST Logo" width="200" />
           {vatsimToken ? (
+            <>
             <div className={loginStyles.waiting}>
-              <br></br>
-              Waiting for vNAS Connection...
+            <br />
+            Waiting for vNAS Connection...
+            <br />
             </div>
+            <button 
+              type="button" 
+              onClick={handleLogout}
+              className={loginStyles.logoutButton}
+            >
+              Logout
+            </button>
+          </>
           ) : (
             <>
               <select
