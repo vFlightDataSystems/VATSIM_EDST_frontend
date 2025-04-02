@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
-import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive, setHubConnected, hubConnectedSelector } from "~redux/slices/authSlice";
+import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive, setHubConnected, hubConnectedSelector, logout } from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
@@ -184,6 +184,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     dispatch(setArtccId(""));
     dispatch(setSectorId(""));
     disconnectSocket();
+    logout();
     navigate("/login", { replace: true })
   }, [disconnectSocket, dispatch]);
 
