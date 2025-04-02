@@ -38,6 +38,7 @@ type AuthState = {
     environment: Nullable<Environment>;
     session: Nullable<ApiSessionInfoDto>;
     sessionActive: boolean;
+    hubConnected: boolean;
 }
 
 type Config = {
@@ -58,6 +59,7 @@ const initialState: AuthState = {
     environment: null,
     session: null,
     sessionActive: false,
+    hubConnected: false,
 };
 
 export const getVnasConfig = createAsyncThunk<Config>("auth/getVnasConfig", async () => {
@@ -150,21 +152,26 @@ export const authSlice = createSlice({
           const active = action.payload;
           state.sessionActive = active;
         },
+        setHubConnected(state, action: PayloadAction<boolean>) {
+          state.hubConnected = action.payload;
+        },
         logout(state) {
           state.vatsimCode = null;
           state.vatsimToken = null;
           state.session = null;
           state.environment = null;
           state.sessionActive = false;
+          state.hubConnected = false;
           localStorage.removeItem("vatsim-token");
         },
     }
 })
 
-export const { setSession, clearSession, setEnv, setSessionIsActive, logout } = authSlice.actions;
+export const { setSession, clearSession, setEnv, setSessionIsActive, setHubConnected, logout } = authSlice.actions;
 export default authSlice.reducer;
 
 export const vatsimTokenSelector = () => localStorage.getItem('vatsim-token');
 export const configSelector = (state: RootState) => state.auth.vnasConfiguration;
 export const envSelector = (state: RootState) => state.auth.environment;
 export const sessionActiveSelector = (state: RootState) => state.auth.sessionActive;
+export const hubConnectedSelector = (state: RootState) => state.auth.hubConnected;

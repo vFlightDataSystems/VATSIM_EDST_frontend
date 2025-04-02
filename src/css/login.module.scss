@@ -23,6 +23,13 @@
     box-shadow: -5px 0 40px 5px rgba(0, 0, 0, 0.5);
   }
 
+  .waiting {
+    color: white;
+    font-size: 1em;
+    margin: 1em;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
   button {
     /* Adapt the colors based on primary prop */
     background-color: #1dbe77;

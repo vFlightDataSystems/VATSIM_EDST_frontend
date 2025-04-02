@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
-import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive } from "~redux/slices/authSlice";
+import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive, setHubConnected, hubConnectedSelector } from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
@@ -32,12 +33,13 @@ export const HubContext = createContext<HubContextValue>({
 });
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
   const ref = useRef<Nullable<HubConnection>>(null);
   const { disconnectSocket } = useSocketConnector();
   const env = useRootSelector(envSelector);
+  const navigate = useNavigate();
+  const hubConnected = useRootSelector(hubConnectedSelector);
 
   useEffect(() => {
     if (!env || !vatsimToken) {
@@ -67,10 +69,10 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const connectHub = useCallback(async () => {
     if (!env || !vatsimToken || !ref.current) {
       if (ref.current?.state === HubConnectionState.Connected) {
-        setHubConnected(true);
+        dispatch(setHubConnected(true));
         throw new Error("ALREADY CONNECTED");
       }
-      setHubConnected(false);
+      dispatch(setHubConnected(false));
       throw new Error("SOMETHING WENT WRONG");
     }
     const hubConnection = ref.current;
@@ -78,8 +80,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       hubConnection.onclose(() => {
         dispatch(setArtccId(""));
         dispatch(setSectorId(""));
-        setHubConnected(false);
+        dispatch(setHubConnected(false));
         console.log("ATC hub disconnected");
+        navigate("/login", { replace: true })
       });
       hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
         console.log(sessionInfo);
@@ -157,15 +160,15 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           clientVersion: VERSION,
         });
         console.log(`joined session ${primarySession.id}`);
-        setHubConnected(true);
+        dispatch(setHubConnected(true));
         hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", primarySession.positions[0].facilityId)).catch(async () => {
           await hubConnection.stop();
-          setHubConnected(false);
+          dispatch(setHubConnected(false));
           throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
         });
       } else {
         await hubConnection.stop();
-        setHubConnected(false);
+        dispatch(setHubConnected(false));
         throw new Error("NOT SIGNED INTO A CENTER POSITION");
       }
     }
@@ -177,10 +180,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
 
   const disconnectHub = useCallback(async () => {
     await ref.current?.stop();
-    setHubConnected(false);
+    dispatch(setHubConnected(false));
     dispatch(setArtccId(""));
     dispatch(setSectorId(""));
     disconnectSocket();
+    navigate("/login", { replace: true })
   }, [disconnectSocket, dispatch]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
