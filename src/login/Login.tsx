@@ -1,12 +1,11 @@
 import { useHubConnector } from "hooks/useHubConnector";
-import { useInterval } from "usehooks-ts";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { HubContextProvider } from '../contexts/HubContext';
 import { SocketContextProvider } from '../contexts/SocketContext';
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, hubConnectedSelector, logout } from "~redux/slices/authSlice";
+import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, logout, sessionSelector } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
@@ -26,7 +25,7 @@ const Login = () => {
   const vatsimToken = useRootSelector(vatsimTokenSelector);
   const config = useRootSelector(configSelector);
   const env = useRootSelector(envSelector);
-  const hubConnected = useRootSelector(hubConnectedSelector);
+  const hubSession = useRootSelector(sessionSelector);
   const { connectHub, disconnectHub } = useHubConnector();
 
   useEffect(() => {
@@ -49,30 +48,26 @@ const Login = () => {
     window.location.reload();
   };
 
-  // Try connecting to hub every second when we have a token but no CRC connection
-  useInterval(() => {
-    if (!vatsimToken || hubConnected === undefined) {
-      return;
-    }
-
-    if (vatsimToken && hubConnected === false) {
-      try {
+  useEffect(() => {
+    // Only attempt to connect when we have a token and no session yet
+    if (vatsimToken && env && hubSession === null) {
+      // Add a small delay to ensure HubContext has time to initialize
+      const connectionTimer = setTimeout(() => {
         console.debug('Attempting hub connection...');
         connectHub().catch((e) => {
           console.warn("Failed to connect to hub:", e?.message || 'Unknown error');
         });
-      } catch (err) {
-        toast.error("Error during hub connection:", err);
-      }
+      }, 500); // 500ms should be enough for HubContext's useEffect to run
+      
+      return () => clearTimeout(connectionTimer);
     }
-  }, 1000);
+  }, [vatsimToken, env, hubSession, connectHub]);
 
-  // Navigate when session becomes active
   useEffect(() => {
-    if (vatsimToken && hubConnected) {
+    if (vatsimToken && hubSession) {
       navigate("/", { replace: true });
     }
-  }, [navigate, vatsimToken, hubConnected]);
+  }, [navigate, vatsimToken, hubSession]);
 
   return (
     <>

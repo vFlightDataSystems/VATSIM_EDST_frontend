@@ -175,3 +175,4 @@ export const configSelector = (state: RootState) => state.auth.vnasConfiguration
 export const envSelector = (state: RootState) => state.auth.environment;
 export const sessionActiveSelector = (state: RootState) => state.auth.sessionActive;
 export const hubConnectedSelector = (state: RootState) => state.auth.hubConnected;
+export const sessionSelector = (state: RootState) => state.auth.session;
