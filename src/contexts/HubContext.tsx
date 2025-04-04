@@ -194,7 +194,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       }
       dispatch(setHubConnected(false));
       throw new Error(`Cannot connect - env: ${!!env}, token: ${!!vatsimToken}, ref: ${!!ref.current}`);
-      disconnectHub();
     }
 
     const hubConnection = ref.current;
@@ -203,7 +202,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       try {
         await hubConnection.start();
         console.log("Connected to hub, waiting for session...");
-        dispatch(setHubConnected(true));
 
         // Join session if already available, but don't fail if not
         try {
@@ -221,6 +219,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
               clientVersion: VERSION,
             });
             console.log(`joined existing session ${primarySession.id}`);
+            console.log(hubConnection);
             await handleSessionStart(primarySession, hubConnection);
           } else {
             console.log("No primary ERAM session found, waiting for HandleSessionStarted event");
