@@ -1,10 +1,19 @@
 import type { ReactNode } from "react";
-import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
-import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive, setHubConnected, hubConnectedSelector, logout } from "~redux/slices/authSlice";
+import {
+  clearSession,
+  envSelector,
+  setSession,
+  vatsimTokenSelector,
+  setSessionIsActive,
+  setHubConnected,
+  hubConnectedSelector,
+  logout,
+} from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
@@ -41,6 +50,54 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const hubConnected = useRootSelector(hubConnectedSelector);
 
+  const disconnectHub = useCallback(async () => {
+    await ref.current?.stop();
+    dispatch(setHubConnected(false));
+    dispatch(setArtccId(""));
+    dispatch(setSectorId(""));
+    disconnectSocket();
+    logout();
+    navigate("/login", { replace: true });
+  }, [disconnectSocket, dispatch, navigate]);
+
+  const handleSessionStart = useCallback(
+    async (sessionInfo: ApiSessionInfoDto, hubConnection: HubConnection) => {
+      if (!sessionInfo || sessionInfo.isPseudoController) {
+        return;
+      }
+
+      try {
+        const primaryPosition = sessionInfo.positions.find((p) => p.isPrimary)?.position;
+
+        if (!primaryPosition?.eramConfiguration) {
+          throw new Error("No primary position configuration found");
+        }
+
+        // Set state before attempting subscription
+        const artccId = sessionInfo.artccId;
+        const sectorId = primaryPosition.eramConfiguration.sectorId;
+
+        dispatch(setArtccId(artccId));
+        dispatch(setSectorId(sectorId));
+        dispatch(setSession(sessionInfo));
+        dispatch(setSessionIsActive(sessionInfo.isActive ?? false));
+        dispatch(initThunk());
+
+        // Check connection state before subscribing
+        if (hubConnection.state === HubConnectionState.Connected) {
+          await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId));
+          dispatch(setHubConnected(true));
+        } else {
+          throw new Error("Hub connection not in Connected state");
+        }
+      } catch (error) {
+        console.error("Session start failed:", error);
+        await disconnectHub();
+      }
+    },
+    [dispatch, disconnectHub]
+  );
+
   useEffect(() => {
     if (!env || !vatsimToken) {
       return;
@@ -49,7 +106,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     const hubUrl = env.clientHubUrl;
 
     const getValidNasToken = async () => {
-      // const decodedToken = decodeJwt(nasToken);
       return refreshToken(env.apiBaseUrl, vatsimToken).then((r) => {
         console.log("Refreshed NAS token");
         return r.data;
@@ -65,7 +121,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       .withAutomaticReconnect()
       .build();
 
-    // Set up event handlers immediately
     const hubConnection = ref.current;
 
     hubConnection.onclose(() => {
@@ -76,35 +131,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       navigate("/login", { replace: true });
     });
 
-    // This is the key handler we're waiting for
     hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
       console.log("Session started:", sessionInfo);
-
-      // Process the session info
-      if (sessionInfo && !sessionInfo.isPseudoController) {
-        const primaryPosition = sessionInfo.positions.find((p) => p.isPrimary)?.position;
-
-        if (primaryPosition?.eramConfiguration) {
-          const artccId = sessionInfo.artccId;
-          const sectorId = primaryPosition.eramConfiguration.sectorId;
-
-          dispatch(setArtccId(artccId));
-          dispatch(setSectorId(sectorId));
-          dispatch(setSession(sessionInfo));
-          dispatch(initThunk());
-
-          // Subscribe to flight plans
-          hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId))
-            .catch(error => {
-              console.error("Failed to subscribe to flight plans:", error);
-            });
-
-          dispatch(setHubConnected(true));
-        }
-      }
+      handleSessionStart(sessionInfo, hubConnection);
     });
 
-    // Other event handlers
     hubConnection.on("HandleSessionEnded", () => {
       console.log("clearing session");
       dispatch(clearSession());
@@ -138,18 +169,23 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
 
     hubConnection.on("SetSessionActive", (isActive) => {
       dispatch(setSessionIsActive(isActive));
-      sessionStorage.setItem('session-active', `${isActive}`)
-    })
+      sessionStorage.setItem("session-active", `${isActive}`);
+    });
 
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
 
     return () => {
       // Clean up on component unmount
-      hubConnection.stop().catch(err => console.error("Error stopping connection:", err));
+      (async () => {
+        try {
+          await hubConnection.stop();
+        } catch (err) {
+          console.error("Error stopping connection:", err);
+        }
+      })();
     };
-  }, [env, vatsimToken, dispatch, navigate]);
+  }, [dispatch, navigate, disconnectHub, handleSessionStart, env, vatsimToken]);
 
-  // Simplified connectHub function - just establishes connection
   const connectHub = useCallback(async () => {
     if (!env || !vatsimToken || !ref.current) {
       if (ref.current?.state === HubConnectionState.Connected) {
@@ -160,21 +196,20 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       throw new Error(`Cannot connect - env: ${!!env}, token: ${!!vatsimToken}, ref: ${!!ref.current}`);
       disconnectHub();
     }
-    
+
     const hubConnection = ref.current;
-    
-    // Only start if not already connected
+
     if (hubConnection.state !== HubConnectionState.Connected) {
       try {
         await hubConnection.start();
         console.log("Connected to hub, waiting for session...");
         dispatch(setHubConnected(true));
-        
+
         // Join session if already available, but don't fail if not
         try {
           const sessions = await hubConnection.invoke<ApiSessionInfoDto[]>("GetSessions");
-          const primarySession = sessions?.find(s => !s.isPseudoController);
-          
+          const primarySession = sessions?.find((s) => !s.isPseudoController);
+
           if (primarySession) {
             await hubConnection.invoke<void>("joinSession", {
               sessionId: primarySession.id,
@@ -182,29 +217,19 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
               clientVersion: VERSION,
             });
             console.log(`joined existing session ${primarySession.id}`);
+            await handleSessionStart(primarySession, hubConnection);
           } else {
             console.log("No primary session found, waiting for HandleSessionStarted event");
           }
         } catch (error) {
           console.log("No active session yet, waiting for HandleSessionStarted event");
-          // Don't throw here - just wait for events
         }
       } catch (error) {
         dispatch(setHubConnected(false));
         throw error;
       }
     }
-  }, [dispatch, env, vatsimToken]);
-
-  const disconnectHub = useCallback(async () => {
-    await ref.current?.stop();
-    dispatch(setHubConnected(false));
-    dispatch(setArtccId(""));
-    dispatch(setSectorId(""));
-    disconnectSocket();
-    logout();
-    navigate("/login", { replace: true })
-  }, [disconnectSocket, dispatch]);
+  }, [dispatch, disconnectHub, handleSessionStart, env, vatsimToken]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
