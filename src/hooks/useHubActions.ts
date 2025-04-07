@@ -94,9 +94,9 @@ export const useHubActions = () => {
     })};
 
     const sendEramMessage = async (eramMessage: ProcessEramMessageDto) => {
-      if (!checkSessionActive()) {
-        return;
-      }
+      // if (!checkSessionActive()) {
+      //   return;
+      // }
 
       if (!hubConnection) {
         console.log("Hub connection is not available");

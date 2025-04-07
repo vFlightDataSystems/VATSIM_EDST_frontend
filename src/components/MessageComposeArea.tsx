@@ -249,126 +249,109 @@ export const MessageComposeArea = () => {
     socket.sendGIMessage(recipient, message, callback);
   };
 
-  const parseCommand = (input: string) => {
+  const parseCommand = async (input: string) => {
     // TODO: rename command variable
     const [command, ...args] = input
       .trim()
       .split(/\s+/)
       .map((s) => s.toUpperCase());
-    console.log(command, args);
 
-    // Construct ERAM message from command and args
-    const elements: EramMessageElement[] = [{ token: command }];
-    args.forEach((arg) => {
-      elements.push({ token: arg });
-    });
+    let match;
+    switch (command) {
+      case "SI":
+        accept("SIGN IN")
+        break;
+      case "SO":
+        accept("SIGN OUT")
+        break;
+      case "GI": // send GI message
+        match = GI_EXPR.exec(input.toUpperCase());
+        if (match?.length === 3) {
+          parseGI(match[1], match[2]);
+        } else {
+          reject(`FORMAT\n${input}`);
+        }
+        break; // end case GI
+      case "UU":
+        parseUU(args);
+        break; // end case UU
+      case "QD": // altimeter request: QD <station>
+        dispatch(openWindowThunk("ALTIMETER"));
+        dispatch(toggleAltimeter(args));
+        accept("ALTIMETER REQ");
+        break; // end case QD
+      case "WR": {
+        if (args.length !== 1) {
+          reject(`FORMAT\n${input}`);
+          return;
+        }
 
-    const eramMessage: ProcessEramMessageDto = {
-      source: EramPositionType.DSide,
-      elements,
-      invertNumericKeypad: false,
-    };
-
-    // Send the ERAM message using hubActions
-    hubActions.sendEramMessage(eramMessage)
-      .then((result) => {
-        if(result) {
-        if (result.isSuccess) {
-          // If successful, accept the command with feedback
-          const feedbackMessage = result.feedback.length > 0 
-            ? result.feedback.join('\n')
-            : mcaInputValue;
-          dispatch(setMcaAcceptMessage(feedbackMessage));
-          
-          // If there's a response, show it in the response area
-          if (result.response) {
-            dispatch(setMraMessage(result.response));
-            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
+        dispatch(openWindowThunk("METAR"));
+      
+        const result = await dispatch(toggleMetar(args));
+      
+        if (toggleMetar.rejected.match(result)) {
+          reject(`REJECT ${result.payload ?? result.error.message}`);
+        } else {
+          accept(`WEATHER STAT REQ\n${input}`);
+        }
+        break;
+      }
+      case "SR":
+        if (args.length === 1) {
+          const entry = getEntryByFid(args[0]);
+          if (entry) {
+            printFlightStrip(entry);
+            acceptDposKeyBD();
+          } else {
+            reject(input);
           }
         } else {
-          // If not successful, reject with feedback
-          const rejectMessage = result?.feedback?.length > 0 
-            ? `REJECT\n${result.feedback.join('\n')}` 
-            : `REJECT\n${mcaInputValue}`;
-          dispatch(setMcaRejectMessage(rejectMessage));
+          reject(input);
         }
-      }})
-      .catch((error) => {
-        reject(`REJECT\n${error?.message || "Command failed"}`);
-      });
+        break; // end case SR
+      default:
+        // Construct ERAM message from command and args
+        const elements: EramMessageElement[] = [{ token: command }];
+        args.forEach((arg) => {
+          elements.push({ token: arg });
+        });
 
-    // let match;
-    // if (command.match(/\/\/\w+/)) {
-    //   toggleVci(command.slice(2));
-    //   acceptDposKeyBD();
-    // } else {
-    //   switch (command) {
-    //     case "//": // should turn vci on/off for a CID
-    //       toggleVci(args[0]);
-    //       acceptDposKeyBD();
-    //       break; // end case //
-    //     case "SI":
-    //       connectHub()
-    //         .then(() => accept("SIGN IN"))
-    //         .catch((reason) => reject(`SIGN IN\n${reason?.message ?? "UNKNOWN ERROR"}`));
-    //       break;
-    //     case "SO":
-    //       disconnectHub()
-    //         .then(() => accept("SIGN OUT"))
-    //         .catch(() => reject("SIGN OUT"));
-    //       break;
-    //     case "GI": // send GI message
-    //       match = GI_EXPR.exec(input.toUpperCase());
-    //       if (match?.length === 3) {
-    //         parseGI(match[1], match[2]);
-    //       } else {
-    //         reject(`FORMAT\n${input}`);
-    //       }
-    //       break; // end case GI
-    //     case "UU":
-    //       parseUU(args);
-    //       break; // end case UU
-    //     case "QU": // cleared direct to fix: QU <fix> <fid>
-    //       void parseQU(args);
-    //       break; // end case QU
-    //     case "QD": // altimeter request: QD <station>
-    //       dispatch(toggleAltimeter(args));
-    //       dispatch(openWindowThunk("ALTIMETER"));
-    //       accept("ALTIMETER REQ");
-    //       break; // end case QD
-    //     case "WR": // weather request: WR <station>
-    //       dispatch(toggleMetar(args));
-    //       dispatch(openWindowThunk("METAR"));
-    //       accept(`WEATHER STAT REQ\n${input}`);
-    //       break; // end case WR
-    //     case "FR": // flightplan readout: FR <fid>
-    //       if (args.length === 0) {
-    //         reject(`READOUT\n${input}`);
-    //       } else if (args.length === 1) {
-    //         flightplanReadout(args[0]).then(() => accept(`READOUT\n${input}`));
-    //         dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
-    //       } else {
-    //         dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${input}`));
-    //       }
-    //       break; // end case FR
-    //     case "SR":
-    //       if (args.length === 1) {
-    //         const entry = getEntryByFid(args[0]);
-    //         if (entry) {
-    //           printFlightStrip(entry);
-    //           acceptDposKeyBD();
-    //         } else {
-    //           reject(input);
-    //         }
-    //       } else {
-    //         reject(input);
-    //       }
-    //       break; // end case SR
-    //     default:
-    //       // TODO: give better error msg
-    //       reject(input);
-    //   }
-    // }
+        const eramMessage: ProcessEramMessageDto = {
+          source: EramPositionType.DSide,
+          elements,
+          invertNumericKeypad: false,
+        };
+
+        // Send the ERAM message using hubActions
+        hubActions.sendEramMessage(eramMessage)
+          .then((result) => {
+            if (result) {
+              if (result.isSuccess) {
+                // If successful, accept the command with feedback
+                const feedbackMessage = result.feedback.length > 0
+                  ? result.feedback.join('\n')
+                  : mcaInputValue;
+                dispatch(setMcaAcceptMessage(feedbackMessage));
+
+                // If there's a response, show it in the response area
+                if (result.response) {
+                  dispatch(setMraMessage(result.response));
+                  dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
+                }
+              } else {
+                // If not successful, reject with feedback
+                const rejectMessage = result?.feedback?.length > 0
+                  ? `REJECT\n${result.feedback.join('\n')}`
+                  : `REJECT\n${mcaInputValue}`;
+                dispatch(setMcaRejectMessage(rejectMessage));
+              }
+            }
+          })
+          .catch((error) => {
+            reject(`REJECT\n${error?.message || "Command failed"}`);
+          });
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {

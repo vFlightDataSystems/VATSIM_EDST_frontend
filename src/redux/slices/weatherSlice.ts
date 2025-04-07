@@ -99,16 +99,29 @@ const weatherSlice = createSlice({
   },
 });
 
-async function getAirportInfoList(apiBaseUrl: string, airports: string[]) {
-  return Promise.all(
+export async function getAirportInfoList(apiBaseUrl: string, airports: string[]) {
+  const results = await Promise.all(
     airports.map(async (airport) => {
-      const airportInfo = await fetchAirportInfo(apiBaseUrl, airport);
-      const icaoId = airportInfo?.icaoId ? airportInfo.icaoId : airport;
-      const airportId = icaoId.length === 4 ? icaoId : `K${icaoId}`;
-      return [airportId, airportInfo?.faaId ?? airportId] as const;
+      try {
+        const airportInfo = await fetchAirportInfo(apiBaseUrl, airport);
+
+        if (!airportInfo) {
+          throw new Error(`INVALID APT ID`);
+        }
+
+        const icaoId = airportInfo.icaoId || airport;
+        const airportId = icaoId.length === 4 ? icaoId : `K${icaoId}`;
+
+        return [airportId, airportInfo.faaId ?? airportId] as const;
+      } catch (err) {
+        throw new Error(`INVALID APT ID`);
+      }
     })
   );
+
+  return results;
 }
+
 
 export const toggleAltimeter = createAsyncThunk<void, string[], { state: RootState }>(
   "weather/toggleAsyncAltimeter",
@@ -116,8 +129,10 @@ export const toggleAltimeter = createAsyncThunk<void, string[], { state: RootSta
     const env = getState().auth.environment;
     assert(env, "Environment not set");
     const airportList = await getAirportInfoList(env.apiBaseUrl, airports);
+    console.log("Received airport list from info fetch:", airportList);
 
     const currentAirports = getState().weather.altimeterAirports;
+    console.log("Current Altimeter Airports: ", currentAirports);
     airportList.forEach(([airportId]) => {
       if (currentAirports.includes(airportId)) {
         dispatch(delAltimeter(airportId));
@@ -131,20 +146,28 @@ export const toggleAltimeter = createAsyncThunk<void, string[], { state: RootSta
 
 export const toggleMetar = createAsyncThunk<void, string[], { state: RootState }>(
   "weather/toggleAsyncMetar",
-  async (airports, { dispatch, getState }) => {
-    const env = getState().auth.environment;
-    assert(env, "Environment not set");
-    const airportList = await getAirportInfoList(env.apiBaseUrl, airports);
+  async (airports, { dispatch, getState, rejectWithValue }) => {
+    try {
+      const env = getState().auth.environment;
+      assert(env, "Environment not set");
 
-    const currentAirports = getState().weather.metarAirports;
-    airportList.forEach(([airportId]) => {
-      if (currentAirports.includes(airportId)) {
-        dispatch(delMetar(airportId));
-      } else {
-        dispatch(addMetar(airportId));
-      }
-    });
-    dispatch(weatherSlice.actions.setAirportIdMap(Object.fromEntries(airportList)));
+      const airportList = await getAirportInfoList(env.apiBaseUrl, airports);
+
+      const currentAirports = getState().weather.metarAirports;
+
+      airportList.forEach(([airportId]) => {
+        if (currentAirports.includes(airportId)) {
+          dispatch(delMetar(airportId));
+        } else {
+          dispatch(addMetar(airportId));
+        }
+      });
+
+      dispatch(weatherSlice.actions.setAirportIdMap(Object.fromEntries(airportList)));
+    } catch (err) {
+      console.error("toggleMetar failed:", err);
+      return rejectWithValue(err instanceof Error ? err.message : String(err));
+    }
   }
 );
 
