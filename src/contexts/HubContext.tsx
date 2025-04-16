@@ -1,9 +1,19 @@
 import type { ReactNode } from "react";
-import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
-import { clearSession, envSelector, setSession, vatsimTokenSelector, setSessionIsActive } from "~redux/slices/authSlice";
+import {
+  clearSession,
+  envSelector,
+  setSession,
+  vatsimTokenSelector,
+  setSessionIsActive,
+  setHubConnected,
+  hubConnectedSelector,
+  logout,
+} from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
@@ -32,12 +42,61 @@ export const HubContext = createContext<HubContextValue>({
 });
 
 export const HubContextProvider = ({ children }: { children: ReactNode }) => {
-  const [hubConnected, setHubConnected] = useState(false);
   const dispatch = useRootDispatch();
   const vatsimToken = useRootSelector(vatsimTokenSelector)!;
   const ref = useRef<Nullable<HubConnection>>(null);
   const { disconnectSocket } = useSocketConnector();
   const env = useRootSelector(envSelector);
+  const navigate = useNavigate();
+  const hubConnected = useRootSelector(hubConnectedSelector);
+
+  const disconnectHub = useCallback(async () => {
+    await ref.current?.stop();
+    dispatch(setHubConnected(false));
+    dispatch(setArtccId(""));
+    dispatch(setSectorId(""));
+    disconnectSocket();
+    logout();
+    navigate("/login", { replace: true });
+  }, [disconnectSocket, dispatch, navigate]);
+
+  const handleSessionStart = useCallback(
+    async (sessionInfo: ApiSessionInfoDto, hubConnection: HubConnection) => {
+      if (!sessionInfo || sessionInfo.isPseudoController) {
+        return;
+      }
+
+      try {
+        const primaryPosition = sessionInfo.positions.find((p) => p.isPrimary)?.position;
+
+        if (!primaryPosition?.eramConfiguration) {
+          throw new Error("No primary position configuration found");
+        }
+
+        // Set state before attempting subscription
+        const artccId = sessionInfo.artccId;
+        const sectorId = primaryPosition.eramConfiguration.sectorId;
+
+        dispatch(setArtccId(artccId));
+        dispatch(setSectorId(sectorId));
+        dispatch(setSession(sessionInfo));
+        dispatch(setSessionIsActive(sessionInfo.isActive ?? false));
+        dispatch(initThunk());
+
+        // Check connection state before subscribing
+        if (hubConnection.state === HubConnectionState.Connected) {
+          await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId));
+          dispatch(setHubConnected(true));
+        } else {
+          throw new Error("Hub connection not in Connected state");
+        }
+      } catch (error) {
+        console.error("Session start failed:", error);
+        await disconnectHub();
+      }
+    },
+    [dispatch, disconnectHub]
+  );
 
   useEffect(() => {
     if (!env || !vatsimToken) {
@@ -47,7 +106,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     const hubUrl = env.clientHubUrl;
 
     const getValidNasToken = async () => {
-      // const decodedToken = decodeJwt(nasToken);
       return refreshToken(env.apiBaseUrl, vatsimToken).then((r) => {
         console.log("Refreshed NAS token");
         return r.data;
@@ -62,126 +120,116 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       })
       .withAutomaticReconnect()
       .build();
-  }, [env, vatsimToken]);
+
+    const hubConnection = ref.current;
+
+    hubConnection.onclose(() => {
+      dispatch(setArtccId(""));
+      dispatch(setSectorId(""));
+      dispatch(setHubConnected(false));
+      console.log("ATC hub disconnected");
+      navigate("/login", { replace: true });
+    });
+
+    hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
+      console.log("Session started:", sessionInfo);
+      handleSessionStart(sessionInfo, hubConnection);
+    });
+
+    hubConnection.on("HandleSessionEnded", () => {
+      console.log("clearing session");
+      dispatch(clearSession());
+      disconnectHub();
+    });
+
+    hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
+      console.log("received flightplan:", flightplan);
+      dispatch(updateFlightplanThunk(flightplan));
+    });
+    hubConnection.on("receiveFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
+      flightplans.forEach((flightplan) => {
+        console.log("received flightplan:", flightplan);
+        dispatch(updateFlightplanThunk(flightplan));
+      });
+    });
+    hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
+      console.log("received aircraft:", aircraft);
+      // aircraft.forEach(t => {
+      //   dispatch(updateAircraftTrackThunk(t));
+      // });
+    });
+    hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
+      dispatch(setFsdIsConnected(state));
+      if (!state) {
+        dispatch(addOutageMessage(new OutageEntry("FSD_DOWN", "FSD CONNECTION DOWN")));
+      } else {
+        dispatch(delOutageMessage("FSD_DOWN"));
+      }
+    });
+
+    hubConnection.on("SetSessionActive", (isActive) => {
+      dispatch(setSessionIsActive(isActive));
+      sessionStorage.setItem("session-active", `${isActive}`);
+    });
+
+    hubConnection.keepAliveIntervalInMilliseconds = 1000;
+
+    return () => {
+      // Clean up on component unmount
+      (async () => {
+        try {
+          await hubConnection.stop();
+        } catch (err) {
+          console.error("Error stopping connection:", err);
+        }
+      })();
+    };
+  }, [dispatch, navigate, disconnectHub, handleSessionStart, env, vatsimToken]);
 
   const connectHub = useCallback(async () => {
     if (!env || !vatsimToken || !ref.current) {
       if (ref.current?.state === HubConnectionState.Connected) {
-        setHubConnected(true);
-        throw new Error("ALREADY CONNECTED");
+        dispatch(setHubConnected(true));
+        return; // Already connected
       }
-      setHubConnected(false);
-      throw new Error("SOMETHING WENT WRONG");
+      dispatch(setHubConnected(false));
+      throw new Error(`Cannot connect - env: ${!!env}, token: ${!!vatsimToken}, ref: ${!!ref.current}`);
+      disconnectHub();
     }
+
     const hubConnection = ref.current;
-    async function start() {
-      hubConnection.onclose(() => {
-        dispatch(setArtccId(""));
-        dispatch(setSectorId(""));
-        setHubConnected(false);
-        console.log("ATC hub disconnected");
-      });
-      hubConnection.on("HandleSessionStarted", (sessionInfo: ApiSessionInfoDto) => {
-        console.log(sessionInfo);
-        dispatch(setSession(sessionInfo));
-      });
 
-      hubConnection.on("HandleSessionEnded", () => {
-        console.log("clearing session");
-        dispatch(clearSession());
-        disconnectHub();
-      });
-      hubConnection.on("receiveFlightplan", async (topic: ApiTopic, flightplan: ApiFlightplan) => {
-        console.log("received flightplan:", flightplan);
-        dispatch(updateFlightplanThunk(flightplan));
-      });
-      hubConnection.on("receiveFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
-        flightplans.forEach((flightplan) => {
-          console.log("received flightplan:", flightplan);
-          dispatch(updateFlightplanThunk(flightplan));
-        });
-      });
-      hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
-        console.log("received aircraft:", aircraft);
-        // aircraft.forEach(t => {
-        //   dispatch(updateAircraftTrackThunk(t));
-        // });
-      });
-      hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
-        dispatch(setFsdIsConnected(state));
-        if (!state) {
-          dispatch(addOutageMessage(new OutageEntry("FSD_DOWN", "FSD CONNECTION DOWN")));
-        } else {
-          dispatch(delOutageMessage("FSD_DOWN"));
-        }
-      });
-
-      hubConnection.on("SetSessionActive", (isActive) => {
-        dispatch(setSessionIsActive(isActive));
-        sessionStorage.setItem('session-active', `${isActive}`)
-      })
-
-      await hubConnection.start();
-      let sessions: ApiSessionInfoDto[];
+    if (hubConnection.state !== HubConnectionState.Connected) {
       try {
-        sessions = await hubConnection.invoke<ApiSessionInfoDto[]>("GetSessions");
-      } catch {
-        disconnectHub();
-        throw new Error("SESSION NOT FOUND");
-      }
+        await hubConnection.start();
+        console.log("Connected to hub, waiting for session...");
+        dispatch(setHubConnected(true));
 
-      const primarySession = sessions.find((s) => !s.isPseudoController) as ApiSessionInfoDto;
-      
-      if(!primarySession) {
-        disconnectHub();
-        throw new Error("PRIMARY SESSION NOT FOUND");
-      }
+        // Join session if already available, but don't fail if not
+        try {
+          const sessions = await hubConnection.invoke<ApiSessionInfoDto[]>("GetSessions");
+          const primarySession = sessions?.find((s) => !s.isPseudoController);
 
-      const primaryPosition = primarySession.positions.find((p) => p.isPrimary)?.position;
-
-      if(!primaryPosition) {
-        disconnectHub();
-        throw new Error("PRIMARY POSITION NOT FOUND");
-      }
-
-      if (primaryPosition?.eramConfiguration) {
-        const artccId = primarySession.artccId;
-        const sectorId = primaryPosition.eramConfiguration.sectorId;
-        dispatch(setArtccId(artccId));
-        dispatch(setSectorId(sectorId));
-        dispatch(setSession(primarySession));
-        dispatch(initThunk());
-        await hubConnection.invoke<void>("joinSession", {
-          sessionId: primarySession.id,
-          clientName: "vEDST",
-          clientVersion: VERSION,
-        });
-        console.log(`joined session ${primarySession.id}`);
-        setHubConnected(true);
-        hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", primarySession.positions[0].facilityId)).catch(async () => {
-          await hubConnection.stop();
-          setHubConnected(false);
-          throw new Error("COULD NOT SUBSCRIBE TO FLIGHTPLANS");
-        });
-      } else {
-        await hubConnection.stop();
-        setHubConnected(false);
-        throw new Error("NOT SIGNED INTO A CENTER POSITION");
+          if (primarySession) {
+            await hubConnection.invoke<void>("joinSession", {
+              sessionId: primarySession.id,
+              clientName: "vEDST",
+              clientVersion: VERSION,
+            });
+            console.log(`joined existing session ${primarySession.id}`);
+            await handleSessionStart(primarySession, hubConnection);
+          } else {
+            console.log("No primary session found, waiting for HandleSessionStarted event");
+          }
+        } catch (error) {
+          console.log("No active session yet, waiting for HandleSessionStarted event");
+        }
+      } catch (error) {
+        dispatch(setHubConnected(false));
+        throw error;
       }
     }
-
-    hubConnection.keepAliveIntervalInMilliseconds = 1000;
-
-    return start();
-  }, [dispatch, env, vatsimToken]);
-
-  const disconnectHub = useCallback(async () => {
-    await ref.current?.stop();
-    setHubConnected(false);
-    dispatch(setArtccId(""));
-    dispatch(setSectorId(""));
-    disconnectSocket();
-  }, [disconnectSocket, dispatch]);
+  }, [dispatch, disconnectHub, handleSessionStart, env, vatsimToken]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
