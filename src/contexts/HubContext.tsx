@@ -210,6 +210,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           const sessions = await hubConnection.invoke<ApiSessionInfoDto[]>("GetSessions");
           const primarySession = sessions?.find((s) => !s.isPseudoController);
 
+          console.log(sessions);
+          console.log(primarySession);
+
           if (primarySession) {
             await hubConnection.invoke<void>("joinSession", {
               sessionId: primarySession.id,
@@ -222,6 +225,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
             console.log("No primary session found, waiting for HandleSessionStarted event");
           }
         } catch (error) {
+          console.log(error);
           console.log("No active session yet, waiting for HandleSessionStarted event");
         }
       } catch (error) {

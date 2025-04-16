@@ -9,7 +9,6 @@ import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, logout
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
-import { toast } from "react-toastify";
 
 function redirectLogin() {
   window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
