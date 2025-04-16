@@ -209,11 +209,12 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         try {
           const sessions = await hubConnection.invoke<ApiSessionInfoDto[]>("GetSessions");
           const primarySession = sessions?.find((s) => !s.isPseudoController);
+          const eramConfig = primarySession?.positions.find((p) => p.isPrimary)?.position.eramConfiguration;
 
           console.log(sessions);
           console.log(primarySession);
 
-          if (primarySession) {
+          if (primarySession && eramConfig) {
             await hubConnection.invoke<void>("joinSession", {
               sessionId: primarySession.id,
               clientName: "vEDST",
@@ -222,7 +223,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
             console.log(`joined existing session ${primarySession.id}`);
             await handleSessionStart(primarySession, hubConnection);
           } else {
-            console.log("No primary session found, waiting for HandleSessionStarted event");
+            console.log("No primary ERAM session found, waiting for HandleSessionStarted event");
           }
         } catch (error) {
           console.log(error);
