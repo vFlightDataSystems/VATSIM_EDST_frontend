@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import React, { useEffect } from "react";
 import EdstProvider from "~/Edst";
-import Login from "~/login/Login";
+import LoginProvider from "~/login/Login";
 import PrivateRoute from "~/routes/PrivateRoute";
 import { useRootDispatch } from "~redux/hooks";
 import { getVnasConfig } from "~redux/slices/authSlice";
@@ -20,7 +20,7 @@ const App = () => {
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginProvider />} />
         <Route path="/" element={<PrivateRoute />}>
           <Route path="/" element={<EdstProvider />} />
         </Route>

@@ -1,13 +1,13 @@
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { vatsimTokenSelector } from "~redux/slices/authSlice";
+import { vatsimTokenSelector, sessionActiveSelector } from "~redux/slices/authSlice";
 import { useRootSelector } from "~redux/hooks";
 
 const PrivateRoute = () => {
   const token = useRootSelector(vatsimTokenSelector);
 
-  // User needs a valid token before viewing EDST
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  // User needs a valid token and a connection before viewing EDST
+
+  return (token) ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

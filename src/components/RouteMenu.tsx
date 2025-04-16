@@ -62,7 +62,13 @@ export const RouteMenu = () => {
 
   useEffect(() => {
     if (aircraftTrack) {
-      hubActions.generateFrd(aircraftTrack.location).then((frd) => setFrd(frd));
+      hubActions.generateFrd(aircraftTrack.location).then((frd) =>  {
+        if(!frd) {
+          console.log("Frd is set to null");
+          return;
+        }
+        setFrd(frd);
+      });
     }
   }, [aircraftTrack, entry.aircraftId, hubActions]);
 
@@ -130,9 +136,9 @@ export const RouteMenu = () => {
     let route: string | null;
     const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
     if (clearedFixName === entry.destination) {
-      route = frd;
+      route = frd ?? "";
     } else {
-      route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd)?.route ?? null;
+      route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd ?? "")?.route ?? null;
     }
     if (route !== null) {
       const amendedFlightplan: ApiFlightplan = {

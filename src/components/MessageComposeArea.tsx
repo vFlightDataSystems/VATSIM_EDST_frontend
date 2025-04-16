@@ -46,6 +46,7 @@ import { printFlightStrip } from "components/PrintableFlightStrip";
 import { appWindow } from "@tauri-apps/api/window";
 import mcaStyles from "css/mca.module.scss";
 import clsx from "clsx";
+import { ConsoleLogger } from "@microsoft/signalr/src/Utils";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
@@ -155,14 +156,14 @@ export const MessageComposeArea = () => {
 
   const parseQU = async (args: string[]) => {
     if (args.length === 2) {
-      const entry = getEntryByFid(args[1]);
+      const entry = getEntryByFid(args[0]);
       if (entry && entry.status === "Active") {
         const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
-        if (routeFixes?.map((fix) => fix.name)?.includes(args[0])) {
+        if (routeFixes?.map((fix) => fix.name)?.includes(args[1])) {
           const aircraftTrack = aircraftTracks[entry.aircraftId];
           const frd = await hubActions.generateFrd(aircraftTrack.location);
           const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-          const route = getClearedToFixRouteFixes(args[0], entry, routeFixes, formattedRoute, frd)?.route;
+          const route = getClearedToFixRouteFixes(args[1], entry, routeFixes, formattedRoute, frd ?? "")?.route;
           if (route) {
             const amendedFlightplan: ApiFlightplan = {
               ...entry,
