@@ -43,6 +43,7 @@ import edstStyles from "css/edst.module.scss";
 import clsx from "clsx";
 import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
 import { useHubConnector } from "hooks/useHubConnector";
+import { useNavigate } from "react-router-dom";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -93,6 +94,7 @@ const Edst = () => {
   const env = useRootSelector(envSelector)!;
   const { connectHub } = useHubConnector();
   const hubConnected = useRootSelector(hubConnectedSelector);
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (!hubConnected) {
@@ -101,6 +103,24 @@ const Edst = () => {
       });
     }
   }, [connectHub, hubConnected]);
+
+  // This effect handles if the user initiates a page reload.
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('pageReloaded', 'true');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Check if we're coming from a reload
+    if (sessionStorage.getItem('pageReloaded') === 'true') {
+      sessionStorage.removeItem('pageReloaded');
+      if (!hubConnected) {
+        navigate('/login', { replace: true });
+      }
+    }
+
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [navigate, hubConnected]);
 
   useInterval(() => {
     fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {

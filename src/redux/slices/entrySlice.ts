@@ -45,7 +45,7 @@ const entrySlice = createSlice({
       }
     },
     delEntry(state, action: PayloadAction<AircraftId>) {
-      entryUpdater(state, action.payload, { deleted: true });
+      delete state[action.payload];
     },
   },
 });

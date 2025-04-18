@@ -47,6 +47,7 @@ import { appWindow } from "@tauri-apps/api/window";
 import mcaStyles from "css/mca.module.scss";
 import clsx from "clsx";
 import { ConsoleLogger } from "@microsoft/signalr/src/Utils";
+import { EramMessageElement, EramPositionType, ProcessEramMessageDto } from "~/types/apiTypes/ProcessEramMessageDto";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
@@ -105,19 +106,6 @@ export const MessageComposeArea = () => {
     dispatch(setMcaRejectMessage(message));
   };
 
-  const toggleVci = (fid: string) => {
-    const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      (e) => e.cid === fid || e.aircraftId === fid || (e.assignedBeaconCode ?? 0).toString().padStart(4, "0") === fid
-    );
-    if (entry) {
-      if (entry.vciStatus < 1) {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 1 } }));
-      } else {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
-      }
-    }
-  };
-
   const toggleHighlightEntry = (fid: string) => {
     const entry = Object.values(entries).find(
       (entry) => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
@@ -136,45 +124,6 @@ export const MessageComposeArea = () => {
     return Object.values(entries).find(
       (entry) => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
-  };
-
-  const flightplanReadout = async (fid: string) => {
-    const entry = getEntryByFid(fid);
-    if (entry) {
-      const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-      const msg =
-        `${formatUtcMinutes()}\n` +
-        `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
-          entry.assignedBeaconCode
-        )} ${entry.speed} EXX00` +
-        ` ${entry.altitude} ${entry.departure}./.` +
-        `${formattedRoute.replace(/^\.+/, "")}` +
-        `${entry.destination ?? ""}`;
-      dispatch(setMraMessage(msg));
-    }
-  };
-
-  const parseQU = async (args: string[]) => {
-    if (args.length === 2) {
-      const entry = getEntryByFid(args[0]);
-      if (entry && entry.status === "Active") {
-        const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
-        if (routeFixes?.map((fix) => fix.name)?.includes(args[1])) {
-          const aircraftTrack = aircraftTracks[entry.aircraftId];
-          const frd = await hubActions.generateFrd(aircraftTrack.location);
-          const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-          const route = getClearedToFixRouteFixes(args[1], entry, routeFixes, formattedRoute, frd ?? "")?.route;
-          if (route) {
-            const amendedFlightplan: ApiFlightplan = {
-              ...entry,
-              route: route.split(/\.+/g).join(" ").trim(),
-            };
-            hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
-          }
-        }
-        reject("FORMAT");
-      }
-    }
   };
 
   const parseUU = (args: string[]) => {
@@ -248,84 +197,108 @@ export const MessageComposeArea = () => {
     socket.sendGIMessage(recipient, message, callback);
   };
 
-  const parseCommand = (input: string) => {
+  const parseCommand = async (input: string) => {
     // TODO: rename command variable
     const [command, ...args] = input
       .trim()
       .split(/\s+/)
       .map((s) => s.toUpperCase());
-    // console.log(command, args)
+
     let match;
-    if (command.match(/\/\/\w+/)) {
-      toggleVci(command.slice(2));
-      acceptDposKeyBD();
-    } else {
-      switch (command) {
-        case "//": // should turn vci on/off for a CID
-          toggleVci(args[0]);
-          acceptDposKeyBD();
-          break; // end case //
-        case "SI":
-          connectHub()
-            .then(() => accept("SIGN IN"))
-            .catch((reason) => reject(`SIGN IN\n${reason?.message ?? "UNKNOWN ERROR"}`));
-          break;
-        case "SO":
-          disconnectHub()
-            .then(() => accept("SIGN OUT"))
-            .catch(() => reject("SIGN OUT"));
-          break;
-        case "GI": // send GI message
-          match = GI_EXPR.exec(input.toUpperCase());
-          if (match?.length === 3) {
-            parseGI(match[1], match[2]);
-          } else {
-            reject(`FORMAT\n${input}`);
-          }
-          break; // end case GI
-        case "UU":
-          parseUU(args);
-          break; // end case UU
-        case "QU": // cleared direct to fix: QU <fix> <fid>
-          void parseQU(args);
-          break; // end case QU
-        case "QD": // altimeter request: QD <station>
-          dispatch(toggleAltimeter(args));
-          dispatch(openWindowThunk("ALTIMETER"));
-          accept("ALTIMETER REQ");
-          break; // end case QD
-        case "WR": // weather request: WR <station>
-          dispatch(toggleMetar(args));
-          dispatch(openWindowThunk("METAR"));
+    switch (command) {
+      case "SI":
+        accept("SIGN IN")
+        break;
+      case "SO":
+        accept("SIGN OUT")
+        break;
+      case "GI": // send GI message
+        match = GI_EXPR.exec(input.toUpperCase());
+        if (match?.length === 3) {
+          parseGI(match[1], match[2]);
+        } else {
+          reject(`FORMAT\n${input}`);
+        }
+        break; // end case GI
+      case "UU":
+        parseUU(args);
+        break; // end case UU
+      case "QD": // altimeter request: QD <station>
+        dispatch(openWindowThunk("ALTIMETER"));
+        dispatch(toggleAltimeter(args));
+        accept("ALTIMETER REQ");
+        break; // end case QD
+      case "WR": {
+        if (args.length !== 1) {
+          reject(`FORMAT\n${input}`);
+          return;
+        }
+
+        dispatch(openWindowThunk("METAR"));
+      
+        const result = await dispatch(toggleMetar(args));
+      
+        if (toggleMetar.rejected.match(result)) {
+          reject(`REJECT ${result.payload ?? result.error.message}`);
+        } else {
           accept(`WEATHER STAT REQ\n${input}`);
-          break; // end case WR
-        case "FR": // flightplan readout: FR <fid>
-          if (args.length === 0) {
-            reject(`READOUT\n${input}`);
-          } else if (args.length === 1) {
-            flightplanReadout(args[0]).then(() => accept(`READOUT\n${input}`));
-            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
-          } else {
-            dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${input}`));
-          }
-          break; // end case FR
-        case "SR":
-          if (args.length === 1) {
-            const entry = getEntryByFid(args[0]);
-            if (entry) {
-              printFlightStrip(entry);
-              acceptDposKeyBD();
-            } else {
-              reject(input);
-            }
+        }
+        break;
+      }
+      case "SR":
+        if (args.length === 1) {
+          const entry = getEntryByFid(args[0]);
+          if (entry) {
+            printFlightStrip(entry);
+            acceptDposKeyBD();
           } else {
             reject(input);
           }
-          break; // end case SR
-        default:
-          // TODO: give better error msg
+        } else {
           reject(input);
-      }
+        }
+        break; // end case SR
+      default:
+        // Construct ERAM message from command and args
+        const elements: EramMessageElement[] = [{ token: command }];
+        args.forEach((arg) => {
+          elements.push({ token: arg });
+        });
+
+        const eramMessage: ProcessEramMessageDto = {
+          source: EramPositionType.DSide,
+          elements,
+          invertNumericKeypad: false,
+        };
+
+        // Send the ERAM message using hubActions
+        hubActions.sendEramMessage(eramMessage)
+          .then((result) => {
+            if (result) {
+              if (result.isSuccess) {
+                // If successful, accept the command with feedback
+                const feedbackMessage = result.feedback.length > 0
+                  ? result.feedback.join('\n')
+                  : mcaInputValue;
+                dispatch(setMcaAcceptMessage(feedbackMessage));
+
+                // If there's a response, show it in the response area
+                if (result.response) {
+                  dispatch(setMraMessage(result.response));
+                  dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
+                }
+              } else {
+                // If not successful, reject with feedback
+                const rejectMessage = result?.feedback?.length > 0
+                  ? `REJECT\n${result.feedback.join('\n')}`
+                  : `REJECT\n${mcaInputValue}`;
+                dispatch(setMcaRejectMessage(rejectMessage));
+              }
+            }
+          })
+          .catch((error) => {
+            reject(`REJECT\n${error?.message || "Command failed"}`);
+          });
     }
   };
 
