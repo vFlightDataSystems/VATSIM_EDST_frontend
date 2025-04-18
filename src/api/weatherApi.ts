@@ -59,5 +59,5 @@ export const useAltimeter = (airport: string) => {
 };
 
 export const useMetar = (airport: string) => {
-  return useGetMetarEntryQuery(airport, { pollingInterval: 12000 }); // 2 minutes
+  return useGetMetarEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
 };

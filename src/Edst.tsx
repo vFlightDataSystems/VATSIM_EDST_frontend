@@ -104,17 +104,16 @@ const Edst = () => {
     }
   }, [connectHub, hubConnected]);
 
-  // Add this effect to handle page reloads
+  // This effect handles if the user initiates a page reload.
   useEffect(() => {
     const handleBeforeUnload = () => {
-      // Set a flag in sessionStorage when the page is being reloaded
       sessionStorage.setItem('pageReloaded', 'true');
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     // Check if we're coming from a reload
     if (sessionStorage.getItem('pageReloaded') === 'true') {
-      sessionStorage.removeItem('pageReloaded'); // Clear the flag
+      sessionStorage.removeItem('pageReloaded');
       if (!hubConnected) {
         navigate('/login', { replace: true });
       }
