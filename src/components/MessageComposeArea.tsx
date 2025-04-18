@@ -106,19 +106,6 @@ export const MessageComposeArea = () => {
     dispatch(setMcaRejectMessage(message));
   };
 
-  const toggleVci = (fid: string) => {
-    const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      (e) => e.cid === fid || e.aircraftId === fid || (e.assignedBeaconCode ?? 0).toString().padStart(4, "0") === fid
-    );
-    if (entry) {
-      if (entry.vciStatus < 1) {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 1 } }));
-      } else {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
-      }
-    }
-  };
-
   const toggleHighlightEntry = (fid: string) => {
     const entry = Object.values(entries).find(
       (entry) => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
@@ -137,45 +124,6 @@ export const MessageComposeArea = () => {
     return Object.values(entries).find(
       (entry) => entry.cid === fid || entry.aircraftId === fid || convertBeaconCodeToString(entry.assignedBeaconCode) === fid
     );
-  };
-
-  const flightplanReadout = async (fid: string) => {
-    const entry = getEntryByFid(fid);
-    if (entry) {
-      const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-      const msg =
-        `${formatUtcMinutes()}\n` +
-        `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
-          entry.assignedBeaconCode
-        )} ${entry.speed} EXX00` +
-        ` ${entry.altitude} ${entry.departure}./.` +
-        `${formattedRoute.replace(/^\.+/, "")}` +
-        `${entry.destination ?? ""}`;
-      dispatch(setMraMessage(msg));
-    }
-  };
-
-  const parseQU = async (args: string[]) => {
-    if (args.length === 2) {
-      const entry = getEntryByFid(args[0]);
-      if (entry && entry.status === "Active") {
-        const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
-        if (routeFixes?.map((fix) => fix.name)?.includes(args[1])) {
-          const aircraftTrack = aircraftTracks[entry.aircraftId];
-          const frd = await hubActions.generateFrd(aircraftTrack.location);
-          const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-          const route = getClearedToFixRouteFixes(args[1], entry, routeFixes, formattedRoute, frd ?? "")?.route;
-          if (route) {
-            const amendedFlightplan: ApiFlightplan = {
-              ...entry,
-              route: route.split(/\.+/g).join(" ").trim(),
-            };
-            hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
-          }
-        }
-        reject("FORMAT");
-      }
-    }
   };
 
   const parseUU = (args: string[]) => {

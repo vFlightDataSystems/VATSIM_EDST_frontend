@@ -10,7 +10,7 @@ import { HubConnectionState } from "@microsoft/signalr";
 import { useHubConnector } from "./useHubConnector";
 import { EramMessageProcessingResultDto } from "~/types/apiTypes/EramMessageProcessingResultDto";
 
-function checkSessionActive(){
+function checkSessionActive() {
   const currentSessionActiveValue = sessionStorage.getItem('session-active');
   if (!currentSessionActiveValue) {
     console.log("Session storage does not contain a value for 'session-active'");
@@ -45,7 +45,8 @@ export const useHubActions = () => {
     hubConnection?.invoke<string>("generateFrd", location).catch((error) => {
       console.log(error);
       return null;
-    }) ?? null; }
+    }) ?? null;
+  }
 
   const amendFlightplan = async (fp: CreateOrAmendFlightplanDto) => {
 
@@ -81,7 +82,8 @@ export const useHubActions = () => {
 
     hubConnection?.invoke<void>("deleteHoldAnnotations", aircraftId).catch((error) => {
       console.log(error);
-    })};
+    })
+  };
 
   const sendUplinkMessage = async (aircraftId: AircraftId, message: string) => {
 
@@ -91,30 +93,31 @@ export const useHubActions = () => {
 
     hubConnection?.invoke<void>("sendPrivateMessage", aircraftId, message).catch((error) => {
       console.log(error);
-    })};
+    })
+  };
 
-    const sendEramMessage = async (eramMessage: ProcessEramMessageDto) => {
-      // if (!checkSessionActive()) {
-      //   return;
-      // }
+  const sendEramMessage = async (eramMessage: ProcessEramMessageDto) => {
+    // if (!checkSessionActive()) {
+    //   return;
+    // }
 
-      if (!hubConnection) {
-        console.log("Hub connection is not available");
-        return;
-      }
+    if (!hubConnection) {
+      console.log("Hub connection is not available");
+      return;
+    }
 
-      if (hubConnection.state !== HubConnectionState.Connected) {
-        console.log("Reconnecting hub connection before sending ERAM message");
-        await connectHub(); // Wait for connection to complete
-      }
+    if (hubConnection.state !== HubConnectionState.Connected) {
+      console.log("Reconnecting hub connection before sending ERAM message");
+      await connectHub(); // Wait for connection to complete
+    }
 
-      try {
-        const result = await hubConnection.invoke<EramMessageProcessingResultDto>("processEramMessage", eramMessage);
-        return result;
-      } catch (error) {
-        console.log("Error sending ERAM message:", error);
-      }
-    };
+    try {
+      const result = await hubConnection.invoke<EramMessageProcessingResultDto>("processEramMessage", eramMessage);
+      return result;
+    } catch (error) {
+      console.log("Error sending ERAM message:", error);
+    }
+  };
 
   return {
     activateFlightplan,
