@@ -16,9 +16,10 @@ import {
 } from "~redux/slices/authSlice";
 import { refreshToken } from "~/api/vNasDataApi";
 import type { ApiSessionInfoDto } from "types/apiTypes/apiSessionInfoDto";
+import type { EramTrackDto } from "types/apiTypes/EramTrackDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
-import { updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
+import { deleteFlightplanThunk, updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import { addOutageMessage, delOutageMessage, setFsdIsConnected } from "~redux/slices/appSlice";
 import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
@@ -28,6 +29,7 @@ import { useSocketConnector } from "hooks/useSocketConnector";
 import { VERSION } from "~/utils/constants";
 import { OutageEntry } from "types/outageEntry";
 import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
+import { deleteTrackThunk, updateTrackThunk } from "~/redux/thunks/updateTrackThunk";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -86,6 +88,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         // Check connection state before subscribing
         if (hubConnection.state === HubConnectionState.Connected) {
           await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId));
+          await hubConnection.invoke<void>("subscribe", new ApiTopic("EramTracks", sessionInfo.positions[0].facilityId));
           dispatch(setHubConnected(true));
         } else {
           throw new Error("Hub connection not in Connected state");
@@ -150,6 +153,24 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       flightplans.forEach((flightplan) => {
         console.log("received flightplan:", flightplan);
         dispatch(updateFlightplanThunk(flightplan));
+      });
+    });
+    hubConnection.on("DeleteFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
+      flightplans.forEach((flightplan) => {
+        console.log("deleting flightplan:", flightplan);
+        dispatch(deleteFlightplanThunk(flightplan.aircraftId));
+      });
+    });
+    hubConnection.on("ReceiveEramTracks", async (topic: ApiTopic, targets: EramTrackDto[]) => {
+      console.log("received targets:", targets);
+      targets.forEach((t) => {
+        dispatch(updateTrackThunk(t));
+      });
+    });
+    hubConnection.on("DeleteEramTargets", async (topic: ApiTopic, targets: string[]) => {
+      console.log("deleting targets:", targets);
+      targets.forEach((target) => {
+        dispatch(deleteTrackThunk(target));
       });
     });
     hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {

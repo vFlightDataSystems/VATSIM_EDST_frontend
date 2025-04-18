@@ -3,7 +3,7 @@ import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import type { EdstEntry } from "types/edstEntry";
 import { LocalVEdstEntry } from "types/localVEdstEntry";
 import type { RootThunkAction } from "~redux/store";
-import { setEntry, updateEntry } from "~redux/slices/entrySlice";
+import { delEntry, setEntry, updateEntry } from "~redux/slices/entrySlice";
 import sharedSocket from "~socket";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
@@ -25,6 +25,16 @@ export function updateFlightplanThunk(flightplan: ApiFlightplan): RootThunkActio
     } else {
       const entry = createEntryFromFlightplan(flightplan);
       dispatch(setEntry(entry));
+    }
+  };
+}
+
+export function deleteFlightplanThunk(aircraftId: string): RootThunkAction {
+  return (dispatch, getState) => {
+    const entries = getState().entries;
+    const aircraftIds = Object.keys(entries);
+    if (aircraftIds.includes(aircraftId)) {
+      dispatch(delEntry(aircraftId));
     }
   };
 }

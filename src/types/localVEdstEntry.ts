@@ -9,6 +9,8 @@ export class LocalVEdstEntry {
 
   // -1: not acknowledged, 0: acknowledged but not checked, 1: verified
   depStatus: -1 | 0 | 1 = -1;
+  
+  owned = false; // track ownership status
 
   highlighted = false;
 
