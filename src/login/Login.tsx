@@ -48,15 +48,13 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // Only attempt to connect when we have a token and no session yet
     if (vatsimToken && env && hubSession === null) {
-      // Add a small delay to ensure HubContext has time to initialize
       const connectionTimer = setTimeout(() => {
         console.debug('Attempting hub connection...');
         connectHub().catch((e) => {
           console.warn("Failed to connect to hub:", e?.message || 'Unknown error');
         });
-      }, 500); // 500ms should be enough for HubContext's useEffect to run
+      }, 500);
       
       return () => clearTimeout(connectionTimer);
     }

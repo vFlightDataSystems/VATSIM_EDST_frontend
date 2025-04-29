@@ -37,7 +37,7 @@ export const Status = () => {
     dispatch(logout());
   }
 
-  // shared state button code here (removed from the beta build cause it doesn't work rn) <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
+  // TODO: re-enable shared-state <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
 
   return (
     <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>

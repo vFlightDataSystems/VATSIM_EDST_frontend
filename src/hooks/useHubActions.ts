@@ -6,22 +6,26 @@ import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFli
 import type { AircraftId } from "types/aircraftId";
 import { useHubConnection } from "hooks/useHubConnection";
 import { ProcessEramMessageDto } from "~/types/apiTypes/ProcessEramMessageDto";
-import { HubConnectionState } from "@microsoft/signalr";
+import { HubConnectionState, HubConnection } from "@microsoft/signalr";
 import { useHubConnector } from "./useHubConnector";
 import { EramMessageProcessingResultDto } from "~/types/apiTypes/EramMessageProcessingResultDto";
 
-function checkSessionActive() {
-  const currentSessionActiveValue = sessionStorage.getItem('session-active');
-  if (!currentSessionActiveValue) {
-    console.log("Session storage does not contain a value for 'session-active'");
-    return false;
+// Refactored helper
+async function ensureConnected(
+  hubConnection: HubConnection | null,
+  connectHub: () => Promise<void>
+): Promise<HubConnection | null> {
+  if (!hubConnection) {
+    console.log("Hub connection is not available");
+    return null;
   }
 
-  if (currentSessionActiveValue === "true") {
-    return true;
-  } else {
-    return false;
+  if (hubConnection.state !== HubConnectionState.Connected) {
+    console.log("Reconnecting hub connection...");
+    await connectHub();
   }
+
+  return hubConnection;
 }
 
 export const useHubActions = () => {
@@ -29,45 +33,35 @@ export const useHubActions = () => {
   const hubConnection = useHubConnection();
   const { connectHub } = useHubConnector();
 
-  const activateFlightplan = (aircraftId: AircraftId) => {
-    if (!checkSessionActive()) {
-      return
-    }
-    hubConnection?.invoke("activateFlightplan", aircraftId).then(console.log);
+  const activateFlightplan = async (aircraftId: AircraftId) => {
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return;
+    connection.invoke("activateFlightplan", aircraftId).then(console.log);
   };
 
   const generateFrd = async (location: ApiLocation) => {
-
-    if (!checkSessionActive()) {
-      return null
-    }
-
-    hubConnection?.invoke<string>("generateFrd", location).catch((error) => {
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return null;
+    return connection.invoke<string>("generateFrd", location).catch((error) => {
       console.log(error);
       return null;
-    }) ?? null;
-  }
+    });
+  };
 
   const amendFlightplan = async (fp: CreateOrAmendFlightplanDto) => {
-
-    if (!checkSessionActive()) {
-      return
-    }
-
-    hubConnection?.invoke<void>("amendFlightPlan", fp).catch((e) => {
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return;
+    connection.invoke<void>("amendFlightPlan", fp).catch((e) => {
       console.log("error amending flightplan:", e);
     });
   };
 
   const setHoldAnnotations = async (aircraftId: AircraftId, annotations: HoldAnnotations) => {
-
-    if (!checkSessionActive()) {
-      return
-    }
-
-    activateFlightplan(aircraftId);
-    return hubConnection
-      ?.invoke<void>("setHoldAnnotations", aircraftId, annotations)
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return;
+    await activateFlightplan(aircraftId);
+    return connection
+      .invoke<void>("setHoldAnnotations", aircraftId, annotations)
       .then(() => dispatch(setMcaAcceptMessage(`HOLD\n${aircraftId}`)))
       .catch((error) => {
         console.log(error);
@@ -75,44 +69,26 @@ export const useHubActions = () => {
   };
 
   const cancelHold = async (aircraftId: AircraftId) => {
-
-    if (!checkSessionActive()) {
-      return
-    }
-
-    hubConnection?.invoke<void>("deleteHoldAnnotations", aircraftId).catch((error) => {
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return;
+    connection.invoke<void>("deleteHoldAnnotations", aircraftId).catch((error) => {
       console.log(error);
-    })
+    });
   };
 
   const sendUplinkMessage = async (aircraftId: AircraftId, message: string) => {
-
-    if (!checkSessionActive()) {
-      return
-    }
-
-    hubConnection?.invoke<void>("sendPrivateMessage", aircraftId, message).catch((error) => {
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return;
+    connection.invoke<void>("sendPrivateMessage", aircraftId, message).catch((error) => {
       console.log(error);
-    })
+    });
   };
 
   const sendEramMessage = async (eramMessage: ProcessEramMessageDto) => {
-    // if (!checkSessionActive()) {
-    //   return;
-    // }
-
-    if (!hubConnection) {
-      console.log("Hub connection is not available");
-      return;
-    }
-
-    if (hubConnection.state !== HubConnectionState.Connected) {
-      console.log("Reconnecting hub connection before sending ERAM message");
-      await connectHub(); // Wait for connection to complete
-    }
-
+    const connection = await ensureConnected(hubConnection, connectHub);
+    if (!connection) return;
     try {
-      const result = await hubConnection.invoke<EramMessageProcessingResultDto>("processEramMessage", eramMessage);
+      const result = await connection.invoke<EramMessageProcessingResultDto>("processEramMessage", eramMessage);
       return result;
     } catch (error) {
       console.log("Error sending ERAM message:", error);

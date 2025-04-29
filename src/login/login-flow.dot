@@ -1,0 +1,46 @@
+digraph AuthFlow {
+  graph [fontname = "Helvetica";];
+  node [fontname = "Helvetica"; shape = box; style = rounded; color = "#444444"; fontcolor = "#333333";];
+  edge [fontname = "Helvetica"; color = "#777777";];
+  
+  rankdir = TB;
+  node [shape = box;];
+  
+  Start [label = "User opens app";];
+  RouteCheck [label = "Router:\nPath = /login?";];
+  PrivateRouteCheck [label = "PrivateRoute:\nHas token?";];
+  RedirectLogin [label = "Redirect to /login";];
+  RenderLogin [label = "Render Login page";];
+  OAuthCodeCheck [label = "Login page:\nHas OAuth code?";];
+  DispatchLogin [label = "Dispatch login(code)";];
+  StoreToken [label = "Store token in Redux and localStorage";];
+  TokenCheck [label = "Login page:\nHas token?";];
+  ConnectHub [label = "Connect to Hub";];
+  HubSessionCheck [label = "HubSession established?";];
+  NavigateEDST [label = "Navigate to '/'";];
+  RenderEDST [label = "Render EDST app";];
+  
+  Start -> RouteCheck;
+  
+  RouteCheck -> RenderLogin [label = "yes";];
+  RouteCheck -> PrivateRouteCheck [label = "no";];
+  
+  PrivateRouteCheck -> RenderEDST [label = "yes";];
+  PrivateRouteCheck -> RedirectLogin [label = "no";];
+  RedirectLogin -> RenderLogin;
+  
+  RenderLogin -> OAuthCodeCheck;
+  OAuthCodeCheck -> DispatchLogin [label = "yes";];
+  OAuthCodeCheck -> TokenCheck [label = "no";];
+  
+  DispatchLogin -> StoreToken;
+  StoreToken -> TokenCheck;
+  
+  TokenCheck -> ConnectHub [label = "token exists";];
+  ConnectHub -> HubSessionCheck;
+  
+  HubSessionCheck -> NavigateEDST [label = "yes";];
+  HubSessionCheck -> HubSessionCheck [label = "no, wait...";];
+  
+  NavigateEDST -> RenderEDST;
+}
