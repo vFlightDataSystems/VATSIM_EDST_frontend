@@ -122,12 +122,6 @@ const Edst = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [navigate, hubConnected]);
 
-  useInterval(() => {
-    fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {
-      dispatch(updateSweatboxAircraftThunk(aircraftList, hubActions.activateFlightplan));
-    });
-  }, 5000);
-
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
 
   return (
