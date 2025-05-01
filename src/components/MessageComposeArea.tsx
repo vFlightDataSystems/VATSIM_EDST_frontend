@@ -127,13 +127,14 @@ export const MessageComposeArea = () => {
   };
 
   const parseUU = (args: string[]) => {
+    const UUParam = args[0];
     switch (args.length) {
       case 0:
         dispatch(openWindowThunk("ACL"));
         acceptDposKeyBD();
         break;
       case 1:
-        switch (args[0]) {
+        switch (UUParam) {
           case "C":
             dispatch(aclCleanup);
             break;
@@ -160,10 +161,10 @@ export const MessageComposeArea = () => {
             dispatch(closeAllWindows());
             break;
           default:
-            if (isAclSortKey(args[0])) {
+            if (isAclSortKey(UUParam)) {
               if (!SORT_KEYS_NOT_IMPLEMENTED.includes(args[0])) {
                 dispatch(openWindowThunk("ACL"));
-                dispatch(setAclSort(args[0]));
+                dispatch(setAclSort(UUParam));
               }
             } else {
               dispatch(addAclEntryByFid(args[0]));
@@ -173,7 +174,7 @@ export const MessageComposeArea = () => {
         acceptDposKeyBD();
         break;
       case 2:
-        if (args[0] === "H") {
+        if (UUParam === "H") {
           toggleHighlightEntry(args[1]);
           acceptDposKeyBD();
         } else {
@@ -204,7 +205,7 @@ export const MessageComposeArea = () => {
       .split(/\s+/)
       .map((s) => s.toUpperCase());
 
-    let match;
+    let giParamMatch;
     switch (command) {
       case "SI":
         accept("SIGN IN")
@@ -213,9 +214,11 @@ export const MessageComposeArea = () => {
         accept("SIGN OUT")
         break;
       case "GI": // send GI message
-        match = GI_EXPR.exec(input.toUpperCase());
-        if (match?.length === 3) {
-          parseGI(match[1], match[2]);
+        giParamMatch = GI_EXPR.exec(input.toUpperCase());
+        if (giParamMatch?.length === 3) {
+          const recipient = giParamMatch[1];
+          const message = giParamMatch[2];
+          parseGI(recipient, message);
         } else {
           reject(`FORMAT\n${input}`);
         }
@@ -230,14 +233,14 @@ export const MessageComposeArea = () => {
         break; // end case QD
       case "WR": {
         if (args.length !== 1) {
-          reject(`FORMAT\n${input}`);
+          reject(`REJECT\nFORMAT ${input}`);
           return;
         }
 
         dispatch(openWindowThunk("METAR"));
-      
+
         const result = await dispatch(toggleMetar(args));
-      
+
         if (toggleMetar.rejected.match(result)) {
           reject(`REJECT ${result.payload ?? result.error.message}`);
         } else {
@@ -247,7 +250,8 @@ export const MessageComposeArea = () => {
       }
       case "SR":
         if (args.length === 1) {
-          const entry = getEntryByFid(args[0]);
+          const acidParam = 1;
+          const entry = getEntryByFid(args[acidParam]);
           if (entry) {
             printFlightStrip(entry);
             acceptDposKeyBD();
@@ -282,13 +286,11 @@ export const MessageComposeArea = () => {
                   : mcaInputValue;
                 dispatch(setMcaAcceptMessage(feedbackMessage));
 
-                // If there's a response, show it in the response area
                 if (result.response) {
                   dispatch(setMraMessage(result.response));
                   dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
                 }
               } else {
-                // If not successful, reject with feedback
                 const rejectMessage = result?.feedback?.length > 0
                   ? `REJECT\n${result.feedback.join('\n')}`
                   : `REJECT\n${mcaInputValue}`;

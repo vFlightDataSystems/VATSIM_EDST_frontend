@@ -8,8 +8,7 @@ import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { HubConnectionState } from "@microsoft/signalr";
 import { VERSION } from "~/utils/constants";
-import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
-import {logout} from "~redux/slices/authSlice";
+import { envSelector, hubConnectedSelector, logout } from "~redux/slices/authSlice";
 
 export const Status = () => {
   const [showOptions, setShowOptions] = useState(false);
@@ -31,7 +30,7 @@ export const Status = () => {
     }
   };
 
-  const logoutHandler = () => {
+  const logOutHandler = () => {
     console.log("Logging out");
     disconnectHub();
     dispatch(logout());
@@ -44,7 +43,7 @@ export const Status = () => {
       <div>vEDST version {VERSION}</div>
       <div>{hubConnected && environment ? `Connected to ${environment.name}` : "NOT CONNECTED"}</div>
       <div>
-        <EdstButton onMouseDown={logoutHandler} content={`LOGOUT / CHANGE ENVIRONMENT`} />
+        <EdstButton onMouseDown={logOutHandler} content="LOG OUT / CHANGE ENVIRONMENT" />
       </div>
     </FloatingWindow>
   );
