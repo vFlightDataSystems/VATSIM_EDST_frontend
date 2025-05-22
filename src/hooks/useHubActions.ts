@@ -10,7 +10,6 @@ import { HubConnectionState, HubConnection } from "@microsoft/signalr";
 import { useHubConnector } from "./useHubConnector";
 import { EramMessageProcessingResultDto } from "~/types/apiTypes/EramMessageProcessingResultDto";
 
-// Refactored helper
 async function ensureConnected(
   hubConnection: HubConnection | null,
   connectHub: () => Promise<void>

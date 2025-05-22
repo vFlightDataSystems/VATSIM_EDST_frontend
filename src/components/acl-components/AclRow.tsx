@@ -323,6 +323,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
               hover: true, 
               selected: isSelected("FID_ACL_ROW_FIELD"), 
               owned: entry.owned 
+              // TODO: report non-probing state correctly
             })}
             onMouseDown={handleFidClick}
           >

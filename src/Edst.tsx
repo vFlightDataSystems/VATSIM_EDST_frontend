@@ -27,14 +27,12 @@ import { EquipmentTemplateMenu } from "components/template-components/EquipmentT
 import { SigmetWindow } from "components/SigmetWindow";
 import { Gpd } from "components/Gpd";
 import { GpdMapOptions } from "components/gpd-components/GpdMapOptions";
-import { updateSweatboxAircraftThunk } from "~redux/thunks/updateSweatboxAircraftThunk";
 import type { EdstWindow } from "types/edstWindow";
 import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
 import { GIWindow } from "components/GeneralInforationWindow";
 import { AclSortMenu } from "components/acl-components/AclSortMenu";
 import { DepSortMenu } from "components/dep-components/DepSortMenu";
 import { useHubActions } from "hooks/useHubActions";
-import { fetchAllAircraft } from "api/vNasDataApi";
 import { unsafeEntries } from "~/utility-functions";
 import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
