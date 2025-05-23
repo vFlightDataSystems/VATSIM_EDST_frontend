@@ -46,6 +46,9 @@ import { printFlightStrip } from "components/PrintableFlightStrip";
 import { appWindow } from "@tauri-apps/api/window";
 import mcaStyles from "css/mca.module.scss";
 import clsx from "clsx";
+import { ConsoleLogger } from "@microsoft/signalr/src/Utils";
+import { EramMessageElement, EramPositionType, ProcessEramMessageDto } from "~/types/apiTypes/ProcessEramMessageDto";
+import { useMetar } from "~/api/weatherApi";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
@@ -93,7 +96,7 @@ export const MessageComposeArea = () => {
   const zIndex = zStack.indexOf("MESSAGE_COMPOSE_AREA");
 
   const accept = (message: string) => {
-    dispatch(setMcaAcceptMessage(message));
+    dispatch(setMcaAcceptMessage(`ACCEPT ${message}`));
   };
 
   const acceptDposKeyBD = () => {
@@ -101,20 +104,7 @@ export const MessageComposeArea = () => {
   };
 
   const reject = (message: string) => {
-    dispatch(setMcaRejectMessage(message));
-  };
-
-  const toggleVci = (fid: string) => {
-    const entry: EdstEntry | undefined = Object.values(entries)?.find(
-      (e) => e.cid === fid || e.aircraftId === fid || (e.assignedBeaconCode ?? 0).toString().padStart(4, "0") === fid
-    );
-    if (entry) {
-      if (entry.vciStatus < 1) {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 1 } }));
-      } else {
-        dispatch(updateEntry({ aircraftId: entry.aircraftId, data: { vciStatus: 0 } }));
-      }
-    }
+    dispatch(setMcaRejectMessage(`REJECT ${message}`));
   };
 
   const toggleHighlightEntry = (fid: string) => {
@@ -137,53 +127,15 @@ export const MessageComposeArea = () => {
     );
   };
 
-  const flightplanReadout = async (fid: string) => {
-    const entry = getEntryByFid(fid);
-    if (entry) {
-      const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-      const msg =
-        `${formatUtcMinutes()}\n` +
-        `${entry.aircraftId} ${entry.aircraftId} ${entry.aircraftType}/${entry.faaEquipmentSuffix} ${convertBeaconCodeToString(
-          entry.assignedBeaconCode
-        )} ${entry.speed} EXX00` +
-        ` ${entry.altitude} ${entry.departure}./.` +
-        `${formattedRoute.replace(/^\.+/, "")}` +
-        `${entry.destination ?? ""}`;
-      dispatch(setMraMessage(msg));
-    }
-  };
-
-  const parseQU = async (args: string[]) => {
-    if (args.length === 2) {
-      const entry = getEntryByFid(args[1]);
-      if (entry && entry.status === "Active") {
-        const routeFixes = await fetchRouteFixes(entry.route, entry.departure, entry?.destination);
-        if (routeFixes?.map((fix) => fix.name)?.includes(args[0])) {
-          const aircraftTrack = aircraftTracks[entry.aircraftId];
-          const frd = await hubActions.generateFrd(aircraftTrack.location);
-          const formattedRoute = formatRoute(entry.route, entry.departure, entry.destination);
-          const route = getClearedToFixRouteFixes(args[0], entry, routeFixes, formattedRoute, frd)?.route;
-          if (route) {
-            const amendedFlightplan: ApiFlightplan = {
-              ...entry,
-              route: route.split(/\.+/g).join(" ").trim(),
-            };
-            hubActions.amendFlightplan(amendedFlightplan).then(() => dispatch(setMcaAcceptMessage(`CLEARED DIRECT`)));
-          }
-        }
-        reject("FORMAT");
-      }
-    }
-  };
-
   const parseUU = (args: string[]) => {
+    const UUParam = args[0];
     switch (args.length) {
       case 0:
         dispatch(openWindowThunk("ACL"));
         acceptDposKeyBD();
         break;
       case 1:
-        switch (args[0]) {
+        switch (UUParam) {
           case "C":
             dispatch(aclCleanup);
             break;
@@ -210,10 +162,10 @@ export const MessageComposeArea = () => {
             dispatch(closeAllWindows());
             break;
           default:
-            if (isAclSortKey(args[0])) {
+            if (isAclSortKey(UUParam)) {
               if (!SORT_KEYS_NOT_IMPLEMENTED.includes(args[0])) {
                 dispatch(openWindowThunk("ACL"));
-                dispatch(setAclSort(args[0]));
+                dispatch(setAclSort(UUParam));
               }
             } else {
               dispatch(addAclEntryByFid(args[0]));
@@ -223,7 +175,7 @@ export const MessageComposeArea = () => {
         acceptDposKeyBD();
         break;
       case 2:
-        if (args[0] === "H") {
+        if (UUParam === "H") {
           toggleHighlightEntry(args[1]);
           acceptDposKeyBD();
         } else {
@@ -247,84 +199,103 @@ export const MessageComposeArea = () => {
     socket.sendGIMessage(recipient, message, callback);
   };
 
-  const parseCommand = (input: string) => {
+  const handleEramMessage = async (command: string, args: string[]): Promise<void> => {
+    const elements: EramMessageElement[] = [{ token: command }];
+    args.forEach((arg) => {
+      elements.push({ token: arg });
+    });
+
+    const eramMessage: ProcessEramMessageDto = {
+      source: EramPositionType.DSide,
+      elements,
+      invertNumericKeypad: false,
+    };
+
+    try {
+      const result = await hubActions.sendEramMessage(eramMessage);
+      if (result) {
+        if (result.isSuccess) {
+          // If successful, accept the command with feedback
+          const feedbackMessage = result.feedback.length > 0 ? result.feedback.join("\n") : mcaInputValue;
+          dispatch(setMcaAcceptMessage(feedbackMessage));
+
+          if (result.response) {
+            dispatch(setMraMessage(result.response));
+            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
+          }
+        } else {
+          const rejectMessage = result?.feedback?.length > 0 ? `REJECT\n${result.feedback.join("\n")}` : `REJECT\n${mcaInputValue}`;
+          dispatch(setMcaRejectMessage(rejectMessage));
+        }
+      }
+    } catch (error) {
+      reject(`\n${error?.message || "Command failed"}`);
+    }
+  };
+
+  const handleWeatherRequest = async (args: string[], input: string) => {
+    if (args.length !== 1) {
+      reject(`FORMAT\n${input}`);
+      return;
+    }
+
+    // Handle normal WR {APT} format
+    dispatch(openWindowThunk("METAR"));
+    const result = await dispatch(toggleMetar(args));
+
+    if (toggleMetar.rejected.match(result)) {
+      reject(`${result.payload ?? result.error.message}`);
+    } else {
+      accept(`WEATHER STAT REQ\n${input}`);
+    }
+  };
+
+  const parseCommand = async (input: string) => {
     // TODO: rename command variable
     const [command, ...args] = input
       .trim()
       .split(/\s+/)
       .map((s) => s.toUpperCase());
-    // console.log(command, args)
-    let match;
-    if (command.match(/\/\/\w+/)) {
-      toggleVci(command.slice(2));
-      acceptDposKeyBD();
-    } else {
-      switch (command) {
-        case "//": // should turn vci on/off for a CID
-          toggleVci(args[0]);
-          acceptDposKeyBD();
-          break; // end case //
-        case "SI":
-          connectHub()
-            .then(() => accept("SIGN IN"))
-            .catch((reason) => reject(`SIGN IN\n${reason?.message ?? "UNKNOWN ERROR"}`));
-          break;
-        case "SO":
-          disconnectHub()
-            .then(() => accept("SIGN OUT"))
-            .catch(() => reject("SIGN OUT"));
-          break;
-        case "GI": // send GI message
-          match = GI_EXPR.exec(input.toUpperCase());
-          if (match?.length === 3) {
-            parseGI(match[1], match[2]);
-          } else {
-            reject(`FORMAT\n${input}`);
-          }
-          break; // end case GI
-        case "UU":
-          parseUU(args);
-          break; // end case UU
-        case "QU": // cleared direct to fix: QU <fix> <fid>
-          void parseQU(args);
-          break; // end case QU
-        case "QD": // altimeter request: QD <station>
-          dispatch(toggleAltimeter(args));
-          dispatch(openWindowThunk("ALTIMETER"));
-          accept("ALTIMETER REQ");
-          break; // end case QD
-        case "WR": // weather request: WR <station>
-          dispatch(toggleMetar(args));
-          dispatch(openWindowThunk("METAR"));
-          accept(`WEATHER STAT REQ\n${input}`);
-          break; // end case WR
-        case "FR": // flightplan readout: FR <fid>
-          if (args.length === 0) {
-            reject(`READOUT\n${input}`);
-          } else if (args.length === 1) {
-            flightplanReadout(args[0]).then(() => accept(`READOUT\n${input}`));
-            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
-          } else {
-            dispatch(setMcaResponse(`REJECT: MESSAGE TOO LONG\nREADOUT\n${input}`));
-          }
-          break; // end case FR
-        case "SR":
-          if (args.length === 1) {
-            const entry = getEntryByFid(args[0]);
-            if (entry) {
-              printFlightStrip(entry);
-              acceptDposKeyBD();
-            } else {
-              reject(input);
-            }
-          } else {
-            reject(input);
-          }
-          break; // end case SR
-        default:
-          // TODO: give better error msg
-          reject(input);
+
+    let giParamMatch;
+    switch (command) {
+      case "GI": // send GI message
+        giParamMatch = GI_EXPR.exec(input.toUpperCase());
+        if (giParamMatch?.length === 3) {
+          const recipient = giParamMatch[1];
+          const message = giParamMatch[2];
+          parseGI(recipient, message);
+        } else {
+          reject(`FORMAT\n${input}`);
+        }
+        break; // end case GI
+      case "UU":
+        parseUU(args);
+        break; // end case UU
+      case "QD": // altimeter request: QD <station>
+        dispatch(openWindowThunk("ALTIMETER"));
+        dispatch(toggleAltimeter(args));
+        accept("ALTIMETER REQ");
+        break; // end case QD
+      case "WR": {
+        await handleWeatherRequest(args, input);
+        break;
       }
+      case "SR":
+        if (args.length === 1) {
+          const entry = getEntryByFid(args[0]);
+          if (entry) {
+            printFlightStrip(entry);
+            acceptDposKeyBD();
+          } else {
+            reject(`\n${input}`);
+          }
+        } else {
+          reject(`\n${input}`);
+        }
+        break; // end case SR
+      default:
+        await handleEramMessage(command, args);
     }
   };
 

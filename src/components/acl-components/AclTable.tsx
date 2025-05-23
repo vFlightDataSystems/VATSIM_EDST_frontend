@@ -54,7 +54,7 @@ export const AclTable = () => {
         <div className={clsx(tableStyles.col1, tableStyles.cOrange)}>A</div>
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={tableStyles.innerRow}>
-          <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
+          <div className={clsx(tableStyles.fidCol, "owned", "noPointerEvents")}>Flight ID</div>
           <div className={tableStyles.paCol}>PA</div>
           {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />}
           {/* spa indicator column */}

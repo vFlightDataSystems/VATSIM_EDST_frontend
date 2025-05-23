@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useInterval } from "usehooks-ts";
 import { HubConnectionState } from "@microsoft/signalr";
@@ -27,22 +27,21 @@ import { EquipmentTemplateMenu } from "components/template-components/EquipmentT
 import { SigmetWindow } from "components/SigmetWindow";
 import { Gpd } from "components/Gpd";
 import { GpdMapOptions } from "components/gpd-components/GpdMapOptions";
-import { updateSweatboxAircraftThunk } from "~redux/thunks/updateSweatboxAircraftThunk";
 import type { EdstWindow } from "types/edstWindow";
 import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
 import { GIWindow } from "components/GeneralInforationWindow";
 import { AclSortMenu } from "components/acl-components/AclSortMenu";
 import { DepSortMenu } from "components/dep-components/DepSortMenu";
 import { useHubActions } from "hooks/useHubActions";
-import { useHubConnection } from "hooks/useHubConnection";
-import { fetchAllAircraft } from "api/vNasDataApi";
 import { unsafeEntries } from "~/utility-functions";
 import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
 import { WEATHER_REFRESH_RATE } from "~/utils/constants";
 import edstStyles from "css/edst.module.scss";
 import clsx from "clsx";
-import { envSelector } from "~redux/slices/authSlice";
+import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
+import { useHubConnector } from "hooks/useHubConnector";
+import { useNavigate } from "react-router-dom";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -88,16 +87,38 @@ const Edst = () => {
   const windows = useRootSelector(windowsSelector);
   const aselIsNull = useRootSelector(aselIsNullSelector);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const hubConnection = useHubConnection();
   const hubActions = useHubActions();
   const headerTop = useRootSelector(headerTopSelector);
   const env = useRootSelector(envSelector)!;
+  const { connectHub } = useHubConnector();
+  const hubConnected = useRootSelector(hubConnectedSelector);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!hubConnected) {
+      connectHub().catch((e) => {
+        console.log("Failed to connect to hub:", e?.message || "Unknown error");
+      });
+    }
+  }, [connectHub, hubConnected]);
 
-  useInterval(() => {
-    fetchAllAircraft(env.apiBaseUrl).then((aircraftList) => {
-      dispatch(updateSweatboxAircraftThunk(aircraftList, hubActions.activateFlightplan));
-    });
-  }, 5000);
+  // This effect handles if the user initiates a page reload.
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('pageReloaded', 'true');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Check if we're coming from a reload
+    if (sessionStorage.getItem('pageReloaded') === 'true') {
+      sessionStorage.removeItem('pageReloaded');
+      if (!hubConnected) {
+        navigate('/login', { replace: true });
+      }
+    }
+
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [navigate, hubConnected]);
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
 
@@ -108,8 +129,9 @@ const Edst = () => {
       onContextMenu={(event) => event.preventDefault()}
       tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
     >
+
       <EdstHeader />
-      {hubConnection?.state !== HubConnectionState.Connected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
+      {!hubConnected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
       <div id="toPrint" />
       <div className={clsx(edstStyles.body, { bottom: !headerTop })}>
         {unsafeEntries(edstComponentMap).map(

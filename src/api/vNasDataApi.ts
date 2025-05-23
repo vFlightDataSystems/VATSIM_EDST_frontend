@@ -1,6 +1,7 @@
 import type { ApiAirportInfo } from "types/apiTypes/apiAirportInfo";
 import type { ApiAircraft } from "types/apiTypes/apiAircraft";
 import { VATSIM_CLIENT_ID } from "~/utils/constants";
+import { resolve } from "path";
 
 type LoginDto = {
   nasToken: string;
@@ -26,14 +27,13 @@ export const refreshToken = async (apiBaseUrl: string, vatsimToken: string) => {
 };
 
 export async function fetchAirportInfo(apiBaseUrl: string, airport: string): Promise<ApiAirportInfo | null> {
-  return fetch(`${apiBaseUrl}/airports/${airport}`).then((response) => {
+  return fetch(`${apiBaseUrl}/airports/${airport}`).then(async (response) => {
     if (response.status === 404) {
       return null;
     }
-    return response.json();
+    const json = await response.json();
+    console.log("Fetched airport info:", json);
+    return json;
   });
 }
 
-export async function fetchAllAircraft(apiBaseUrl: string): Promise<ApiAircraft[]> {
-  return fetch(`${apiBaseUrl}/aircraft`).then((response) => response.json());
-}

@@ -118,7 +118,12 @@
   width: 14ch;
   padding: 0 2px;
 
-  &:global(.noProbe) {
+  &:global(.owned) {
+    color: grey;
+    --selected-background-color: grey;
+  }
+
+  &:not(:global(.owned)) {
     color: brown;
     --selected-background-color: brown;
   }
@@ -252,6 +257,7 @@
   justify-content: center;
   margin: 0 2px;
   width: 14px;
+  color: white;
 }
 
 .radioCol {

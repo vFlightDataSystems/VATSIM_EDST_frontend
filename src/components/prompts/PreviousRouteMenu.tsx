@@ -19,7 +19,8 @@ export const PreviousRouteMenu = ({ onSubmit, onCancel }: PromptProps) => {
 
   useEffect(() => {
     async function updateFrd() {
-      setFrd(await generateFrd(aircraftTrack.location));
+      const frdResult = await generateFrd(aircraftTrack.location);
+      setFrd(frdResult ?? null);
     }
     void updateFrd();
   }, [aircraftTrack.location, generateFrd]);

@@ -22,6 +22,8 @@ import type { AircraftId } from "types/aircraftId";
 import { anyHoldingSelector } from "~redux/selectors";
 import tableStyles from "css/table.module.scss";
 import clsx from "clsx";
+import { EramPositionType } from "~/types/apiTypes/ProcessEramMessageDto";
+import { useHubActions } from "~/hooks/useHubActions";
 
 type AclRowProps = {
   aircraftId: AircraftId;
@@ -43,6 +45,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   const [displayScratchSpd, setDisplayScratchSpd] = useState(false);
   const [freeTextContent, setFreeTextContent] = useState(entry.freeTextContent);
   const aar = useAar(aircraftId);
+  const hubActions = useHubActions();
 
   const formattedRoute = formatRoute(entry.route);
   const currentRoute = formattedRoute;
@@ -130,19 +133,47 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
     }
   };
 
-  const updateVci = () => {
+  const updateVci = async () => {
+    // Early return with state update if coming from vciStatus -1
     if (entry.vciStatus === -1 && manualPosting) {
       dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
-    } else if (entry.vciStatus < 1) {
-      dispatch(
-        updateEntry({
-          aircraftId,
-          data: {
-            vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"],
-          },
-        })
-      );
+      return;
+    }
+
+    // Only send ERAM message if we're not transitioning from -1 to 0
+    if (!(entry.vciStatus === -1)) {
+      const eramMessage = {
+        source: EramPositionType.DSide,
+        elements: [
+          { token: '//' },
+          { token: entry.cid }
+        ],
+        invertNumericKeypad: false
+      };
+
+      try {
+        const result = await hubActions.sendEramMessage(eramMessage);
+        if (result?.isSuccess) {
+          if (entry.vciStatus < 1) {
+            // Toggle VCI on
+            dispatch(
+              updateEntry({
+                aircraftId,
+                data: {
+                  vciStatus: (entry.vciStatus + 1) as EdstEntry["vciStatus"],
+                },
+              })
+            );
+          } else {
+            // Toggle VCI off
+            dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to send VCI status update:', error);
+      }
     } else {
+      // Direct state update when going from -1 to 0
       dispatch(updateEntry({ aircraftId, data: { vciStatus: 0 } }));
     }
   };
@@ -287,13 +318,16 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
         <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
-          <div
-            className={clsx(tableStyles.fidCol, { hover: true, selected: isSelected("FID_ACL_ROW_FIELD"), noProbe: !entry.probe })}
+        <div
+            className={clsx(tableStyles.fidCol, { 
+              hover: true, 
+              selected: isSelected("FID_ACL_ROW_FIELD"), 
+              owned: entry.owned 
+              // TODO: report non-probing state correctly
+            })}
             onMouseDown={handleFidClick}
           >
             {entry.cid} {entry.aircraftId}
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {/* <span className={tableStyles.voiceType}>{entry.voiceType === "r" ? "/R" : entry.voiceType === "t" ? "/T" : ""}</span> */}
           </div>
           <div className={tableStyles.paCol} />
           {toolOptions.displayCoordinationColumn && <div className={clsx(tableStyles.specialBox, "isDisabled")} />}

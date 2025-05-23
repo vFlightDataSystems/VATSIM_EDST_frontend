@@ -20,7 +20,7 @@ export const DepTable = () => {
       <div className={tableStyles.topRow}>
         <div className={clsx(tableStyles.checkmarkCol, "noPointerEvents")}>{COMPLETED_CHECKMARK_SYMBOL}</div>
         <div className={tableStyles.pTimeCol}>P-Time</div>
-        <div className={clsx(tableStyles.fidCol, "noPointerEvents")}>Flight ID</div>
+        <div className={clsx(tableStyles.fidCol, "owned", "noPointerEvents")}>Flight ID</div>
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />
         <div className={clsx(tableStyles.specialBox, "noPointerEvents")} />

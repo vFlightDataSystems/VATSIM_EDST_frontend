@@ -197,9 +197,9 @@ export const setMcaResponse = (message: string): RootThunkAction => {
   };
 };
 
-export const setMcaAcceptMessage = (message: string) => setMcaResponse(`ACCEPT\n${message}`);
+export const setMcaAcceptMessage = (message: string) => setMcaResponse(message);
 
-export const setMcaRejectMessage = (message: string) => setMcaResponse(`REJECT\n${message}`);
+export const setMcaRejectMessage = (message: string) => setMcaResponse(message);
 
 export const setMraMessage = (message: string): RootThunkAction => {
   return (dispatch) => {
