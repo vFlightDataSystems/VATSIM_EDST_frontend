@@ -254,7 +254,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         throw error;
       }
     }
-  }, [dispatch, disconnectHub, handleSessionStart, env, vatsimToken]);
+  }, [dispatch, handleSessionStart, env, vatsimToken]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {

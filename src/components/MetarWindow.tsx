@@ -96,8 +96,6 @@ export const MetarWindow = () => {
     setShowOptions(value);
   };
 
-  console.log("airports:", airports); // should list airport codes
-
   return (
     <FloatingWindow
       title="WX"

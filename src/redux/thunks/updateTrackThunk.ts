@@ -19,55 +19,57 @@ export function updateTrackThunk(target: EramTrackDto): RootThunkAction {
 
       // Set VCI status if aircraft is on our frequency
       if (target.onFrequencySectorIds.includes(mySectorId)) {
-        console.log("Setting " + target.aircraftId + " VCI status to 1");
         localData.vciStatus = 1;
       } else if (target.onFrequencySectorIds.length === 0 && localData.vciStatus === 1) {
         // If the aircraft is not on any frequency and we previously set VCI status to 1, set it to 0
-        console.log("Setting " + target.aircraftId + " VCI status to 0");
         localData.vciStatus = 0;
       }
 
       // Set Ownership status if we own the track
       if (target.owner.sectorId === mySectorId) {
-        console.log("Setting " + target.aircraftId + " ownership status to 1. My sector ID: " + mySectorId + "Sectors owning the track: " + target.owner.sectorId);
         localData.probe = true;
         localData.owned = true;
       } else {
         // If we don't own the track, set ownership status to false
-        console.log("Setting " + target.aircraftId + " ownership status to 0. My sector ID: " + mySectorId + "Sectors owning the track: " + target.owner.sectorId);
         localData.probe = false;
         localData.owned = false;
       }
 
       // Update the entry with new local data
-      dispatch(updateEntry({ 
-        aircraftId: target.aircraftId, 
-        data: {
-          ...entries[target.aircraftId],
-          ...localData
-        }
-      }));
+      dispatch(
+        updateEntry({
+          aircraftId: target.aircraftId,
+          data: {
+            ...entries[target.aircraftId],
+            ...localData,
+          },
+        })
+      );
     }
   };
 }
 
-export const deleteTrackThunk = (target: string): RootThunkAction => (dispatch, getState) => {
-  const state = getState();
-  const { entries } = state;
-  const now = Date.now();
+export const deleteTrackThunk =
+  (target: string): RootThunkAction =>
+  (dispatch, getState) => {
+    const state = getState();
+    const { entries } = state;
+    const now = Date.now();
 
-  const entry = entries[target];
-  if (entry) {
-    dispatch(updateEntry({
-      aircraftId: target,
-      data: {
-        ...entry,
-        status: "Active",
-        pendingRemoval: now,
-        vciStatus: 0,
-        owned: false,
-        probe: false,
-      }
-    }));
-  }
-};
+    const entry = entries[target];
+    if (entry) {
+      dispatch(
+        updateEntry({
+          aircraftId: target,
+          data: {
+            ...entry,
+            status: "Active",
+            pendingRemoval: now,
+            vciStatus: 0,
+            owned: false,
+            probe: false,
+          },
+        })
+      );
+    }
+  };
