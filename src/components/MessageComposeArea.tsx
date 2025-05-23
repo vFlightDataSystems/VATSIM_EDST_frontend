@@ -95,7 +95,7 @@ export const MessageComposeArea = () => {
   const zIndex = zStack.indexOf("MESSAGE_COMPOSE_AREA");
 
   const accept = (message: string) => {
-    dispatch(setMcaAcceptMessage(message));
+    dispatch(setMcaAcceptMessage(`ACCEPT ${message}`));
   };
 
   const acceptDposKeyBD = () => {
@@ -103,7 +103,7 @@ export const MessageComposeArea = () => {
   };
 
   const reject = (message: string) => {
-    dispatch(setMcaRejectMessage(message));
+    dispatch(setMcaRejectMessage(`REJECT ${message}`));
   };
 
   const toggleHighlightEntry = (fid: string) => {
@@ -207,12 +207,6 @@ export const MessageComposeArea = () => {
 
     let giParamMatch;
     switch (command) {
-      case "SI":
-        accept("SIGN IN")
-        break;
-      case "SO":
-        accept("SIGN OUT")
-        break;
       case "GI": // send GI message
         giParamMatch = GI_EXPR.exec(input.toUpperCase());
         if (giParamMatch?.length === 3) {
@@ -233,7 +227,7 @@ export const MessageComposeArea = () => {
         break; // end case QD
       case "WR": {
         if (args.length !== 1) {
-          reject(`REJECT\nFORMAT ${input}`);
+          reject(`FORMAT\n${input}`);
           return;
         }
 
@@ -242,7 +236,7 @@ export const MessageComposeArea = () => {
         const result = await dispatch(toggleMetar(args));
 
         if (toggleMetar.rejected.match(result)) {
-          reject(`REJECT ${result.payload ?? result.error.message}`);
+          reject(`${result.payload ?? result.error.message}`);
         } else {
           accept(`WEATHER STAT REQ\n${input}`);
         }
@@ -251,15 +245,15 @@ export const MessageComposeArea = () => {
       case "SR":
         if (args.length === 1) {
           const acidParam = 1;
-          const entry = getEntryByFid(args[acidParam]);
+          const entry = getEntryByFid(args[0]);
           if (entry) {
             printFlightStrip(entry);
             acceptDposKeyBD();
           } else {
-            reject(input);
+            reject(`\n${input}`);
           }
         } else {
-          reject(input);
+          reject(`\n${input}`);
         }
         break; // end case SR
       default:
@@ -299,7 +293,7 @@ export const MessageComposeArea = () => {
             }
           })
           .catch((error) => {
-            reject(`REJECT\n${error?.message || "Command failed"}`);
+            reject(`\n${error?.message || "Command failed"}`);
           });
     }
   };
