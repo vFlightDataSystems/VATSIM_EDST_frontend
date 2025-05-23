@@ -234,7 +234,7 @@ export const MessageComposeArea = () => {
   };
 
   const handleWeatherRequest = async (args: string[], input: string) => {
-    if (args.length < 1 || args.length > 2) {
+    if (args.length === 2) {
       reject(`FORMAT\n${input}`);
       return;
     }
