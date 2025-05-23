@@ -34,7 +34,6 @@ export function deleteFlightplanThunk(aircraftId: string): RootThunkAction {
     const entries = getState().entries;
     const aircraftIds = Object.keys(entries);
     if (aircraftIds.includes(aircraftId)) {
-      console.log("Deleting flightplan for aircraftId:", aircraftId);
       dispatch(delEntry(aircraftId));
     }
   };

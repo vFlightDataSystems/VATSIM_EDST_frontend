@@ -158,7 +158,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     hubConnection.on("DeleteFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
       flightplans.forEach((flightplan) => {
         console.log("deleting flightplan:", flightplan);
-        dispatch(deleteFlightplanThunk(flightplan.aircraftId));
+        dispatch(deleteFlightplanThunk(flightplan));
       });
     });
     hubConnection.on("ReceiveEramTracks", async (topic: ApiTopic, targets: EramTrackDto[]) => {
