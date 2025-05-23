@@ -44,6 +44,7 @@ import clsx from "clsx";
 import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
 import { useHubConnector } from "hooks/useHubConnector";
 import { useNavigate } from "react-router-dom";
+import { initializeGpdCenter } from "./redux/slices/gpdSlice";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -125,6 +126,10 @@ const Edst = () => {
   }, [navigate, hubConnected]);
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
+
+  useEffect(() => {
+    dispatch(initializeGpdCenter());
+  }, [dispatch]);
 
   return (
     <div
