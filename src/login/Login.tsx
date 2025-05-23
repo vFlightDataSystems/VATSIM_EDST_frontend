@@ -2,10 +2,10 @@ import { useHubConnector } from "hooks/useHubConnector";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
-import { HubContextProvider } from '../contexts/HubContext';
-import { SocketContextProvider } from '../contexts/SocketContext';
+import { HubContextProvider } from "../contexts/HubContext";
+import { SocketContextProvider } from "../contexts/SocketContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, logout, sessionSelector } from "~redux/slices/authSlice";
+import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, logout, sessionSelector, logoutThunk } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
@@ -40,22 +40,18 @@ const Login = () => {
 
   const handleLogout = () => {
     disconnectHub();
-    dispatch(logout());
-    dispatch(setEnv(""));
-    const currentPath = window.location.pathname;
-    window.history.replaceState({}, document.title, currentPath);
-    window.location.reload();
+    dispatch(logoutThunk(true));
   };
 
   useEffect(() => {
     if (vatsimToken && env && hubSession === null) {
       const connectionTimer = setTimeout(() => {
-        console.debug('Attempting hub connection...');
+        console.debug("Attempting hub connection...");
         connectHub().catch((e) => {
-          console.warn("Failed to connect to hub:", e?.message || 'Unknown error');
+          console.warn("Failed to connect to hub:", e?.message || "Unknown error");
         });
       }, 500);
-      
+
       return () => clearTimeout(connectionTimer);
     }
   }, [vatsimToken, env, hubSession, connectHub]);
@@ -79,11 +75,7 @@ const Login = () => {
                 Waiting for vNAS Connection...
                 <br />
               </div>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className={loginStyles.logoutButton}
-              >
+              <button type="button" onClick={handleLogout} className={loginStyles.logoutButton}>
                 Logout
               </button>
             </>
@@ -105,11 +97,7 @@ const Login = () => {
                   ))}
               </select>
               <button type="button" disabled={code !== null} onClick={redirectLogin}>
-                {code ? (
-                  <FontAwesomeIcon icon={faGear} className="fa-spin" />
-                ) : (
-                  "Login with VATSIM"
-                )}
+                {code ? <FontAwesomeIcon icon={faGear} className="fa-spin" /> : "Login with VATSIM"}
               </button>
             </>
           )}

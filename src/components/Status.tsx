@@ -8,7 +8,7 @@ import { EdstButton } from "components/utils/EdstButton";
 import { FloatingWindow } from "components/utils/FloatingWindow";
 import { HubConnectionState } from "@microsoft/signalr";
 import { VERSION } from "~/utils/constants";
-import { envSelector, hubConnectedSelector, logout } from "~redux/slices/authSlice";
+import { envSelector, hubConnectedSelector, logout, logoutThunk } from "~redux/slices/authSlice";
 
 export const Status = () => {
   const [showOptions, setShowOptions] = useState(false);
@@ -19,7 +19,7 @@ export const Status = () => {
   const hubConnection = useHubConnection();
   const { connectSocket, disconnectSocket, isConnected } = useSocketConnector();
   const dispatch = useRootDispatch();
-  const {disconnectHub} = useHubConnector();
+  const { disconnectHub } = useHubConnector();
   const hubConnected = useRootSelector(hubConnectedSelector);
 
   const toggleSocket = () => {
@@ -31,10 +31,9 @@ export const Status = () => {
   };
 
   const logOutHandler = () => {
-    console.log("Logging out");
     disconnectHub();
-    dispatch(logout());
-  }
+    dispatch(logoutThunk(false)); // false since we don't need page reload
+  };
 
   // TODO: re-enable shared-state <EdstButton onMouseDown={toggleSocket} content={`${isConnected ? "Disable" : "Enable"} Shared State`} />
 
