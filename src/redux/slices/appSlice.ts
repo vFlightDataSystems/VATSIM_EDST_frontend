@@ -25,7 +25,9 @@ export const AIRCRAFT_MENUS: EdstMenu[] = [
   "EQUIPMENT_TEMPLATE_MENU",
 ];
 
-export const FULLSCREEN_WINDOWS: EdstWindow[] = ["ACL", "DEP", "GPD", "PLANS_DISPLAY"];
+export const FULLSCREEN_WINDOWS: EdstWindow[] = ["ACL", "GPD", "PLANS_DISPLAY"];
+const WINDOW_POSITIONS_KEY = "edst-window-positions";
+const HEADER_POSITION_KEY = "edst-header-position";
 
 type GIEntry = {
   text: string;
@@ -53,25 +55,88 @@ type AppState = {
   fsdIsConnected: boolean;
 };
 
-export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = {
-  STATUS: { left: 400, top: 100 },
-  OUTAGE: { left: 400, top: 100 },
-  MESSAGE_COMPOSE_AREA: { left: 100, top: 400 },
-  GPD: { left: 0, top: 38 },
-  ACL: { left: 0, top: 38 },
-  DEP: { left: 0, top: 38 },
+const getScreenDimensions = () => ({
+  width: window.innerWidth,
+  height: window.innerHeight,
+});
+
+const loadSavedWindowPositions = (): Partial<Record<EdstWindow, WindowPosition>> => {
+  const saved = localStorage.getItem(WINDOW_POSITIONS_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return {};
+    }
+  }
+  return {};
 };
 
-const initialWindowState = Object.fromEntries(
-  edstWindows.map((value) => [
-    value,
-    {
-      open: false,
-      isFullscreen: FULLSCREEN_WINDOWS.includes(value),
-      position: defaultWindowPositions[value] ?? { left: 100, top: 100 },
-      dimension: { width: "auto", height: "auto" },
+const saveWindowPositions = (positions: Partial<Record<EdstWindow, WindowPosition>>) => {
+  localStorage.setItem(WINDOW_POSITIONS_KEY, JSON.stringify(positions));
+};
+
+const loadHeaderPosition = (): boolean => {
+  const saved = localStorage.getItem(HEADER_POSITION_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return true;
+    }
+  }
+  return true; // Default to top (raised) if no saved value
+};
+
+const saveHeaderPosition = (isTop: boolean) => {
+  localStorage.setItem(HEADER_POSITION_KEY, JSON.stringify(isTop));
+};
+
+export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>> = (() => {
+  const screen = getScreenDimensions();
+  const savedPositions = loadSavedWindowPositions();
+
+  const defaultPos = {
+    STATUS: { left: 400, top: 100 },
+    OUTAGE: { left: 400, top: 100 },
+    MESSAGE_COMPOSE_AREA: {
+      left: screen.width - 400,
+      top: screen.height - 200,
     },
-  ])
+    GPD: { left: 0, top: 38 },
+    ACL: { left: 0, top: 38 },
+    DEP: {
+      left: 0,
+      top: Math.floor(screen.height * (2 / 3)),
+    },
+  };
+
+  // Merge saved positions with defaults
+  return { ...defaultPos, ...savedPositions };
+})();
+
+const initialWindowState = Object.fromEntries(
+  edstWindows.map((value) => {
+    const screen = getScreenDimensions();
+    let dimension = { width: "auto", height: "auto" };
+
+    if (value === "DEP") {
+      dimension = {
+        width: screen.width,
+        height: Math.floor(screen.height * (1 / 3)),
+      };
+    }
+
+    return [
+      value,
+      {
+        open: ["MESSAGE_COMPOSE_AREA", "DEP", "ACL"].includes(value),
+        isFullscreen: FULLSCREEN_WINDOWS.includes(value),
+        position: defaultWindowPositions[value] ?? { left: 100, top: 100 },
+        dimension,
+      },
+    ];
+  })
 ) as Record<EdstWindow, AppWindow>;
 
 const initialState: AppState = {
@@ -83,7 +148,7 @@ const initialState: AppState = {
   asel: null,
   zStack: [],
   outages: [],
-  headerTop: true,
+  headerTop: loadHeaderPosition(),
   fsdIsConnected: true,
 };
 
@@ -93,6 +158,7 @@ const appSlice = createSlice({
   reducers: {
     setHeaderTop(state, action: PayloadAction<boolean>) {
       state.headerTop = action.payload;
+      saveHeaderPosition(action.payload);
     },
     closeWindow(state, action: PayloadAction<EdstWindow | EdstWindow[]>) {
       if (Array.isArray(action.payload)) {
@@ -112,6 +178,8 @@ const appSlice = createSlice({
     },
     setWindowPosition(state, action: PayloadAction<{ window: EdstWindow; pos: WindowPosition }>) {
       state.windows[action.payload.window].position = action.payload.pos;
+      const positions = Object.fromEntries(Object.entries(state.windows).map(([key, value]) => [key, value.position]));
+      saveWindowPositions(positions);
     },
     setWindowDimension(state, action: PayloadAction<{ window: EdstWindow; dim: WindowDimension }>) {
       state.windows[action.payload.window].dimension = action.payload.dim;
