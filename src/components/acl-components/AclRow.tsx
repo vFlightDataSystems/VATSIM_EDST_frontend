@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
-import { aircraftIsAselSelector } from "~redux/slices/appSlice";
+import { aircraftIsAselSelector, invertNumpadSelector } from "~redux/slices/appSlice";
 import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "~redux/slices/aclSlice";
 import type { EdstEntry } from "types/edstEntry";
 import { aclAircraftSelect } from "~redux/thunks/aircraftSelect";
@@ -10,7 +10,7 @@ import type { EdstWindow } from "types/edstWindow";
 import type { AclRowField } from "types/acl/aclRowField";
 import { HoldDirectionValues } from "types/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "types/hold/turnDirection";
-import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
+import { D_SIDE_ENUM, REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
 import { useAar } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
 import { formatRoute } from "~/utils/formatRoute";
@@ -59,6 +59,8 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   const currentFixNames = (currentRouteFixes ?? routeFixes).map((fix) => fix.name);
   const availAar = aar.filter((par) => par.eligible && currentFixNames.includes(par.triggeredFix));
   const onAar = availAar.some((par) => formattedRoute.includes(par.amendment));
+
+  const invertNumpad = useRootSelector(invertNumpadSelector);
 
   const { holdAnnotations } = entry;
 
@@ -143,12 +145,9 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
     // Only send ERAM message if we're not transitioning from -1 to 0
     if (!(entry.vciStatus === -1)) {
       const eramMessage = {
-        source: EramPositionType.DSide,
-        elements: [
-          { token: '//' },
-          { token: entry.cid }
-        ],
-        invertNumericKeypad: false
+        source: D_SIDE_ENUM,
+        elements: [{ token: "//" }, { token: entry.cid }],
+        invertNumericKeypad: invertNumpad,
       };
 
       try {
@@ -170,7 +169,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
           }
         }
       } catch (error) {
-        console.error('Failed to send VCI status update:', error);
+        console.error("Failed to send VCI status update:", error);
       }
     } else {
       // Direct state update when going from -1 to 0
@@ -318,11 +317,11 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
         <div className={clsx(tableStyles.col1, tableStyles.withBorder, { [tableStyles.noProbe]: !entry.probe })} />
         <div className={clsx(tableStyles.specialBox, "isDisabled")} />
         <div ref={ref} className={clsx(tableStyles.innerRow, { highlight: entry.highlighted, showFreeText: entry.showFreeText })}>
-        <div
-            className={clsx(tableStyles.fidCol, { 
-              hover: true, 
-              selected: isSelected("FID_ACL_ROW_FIELD"), 
-              owned: entry.owned 
+          <div
+            className={clsx(tableStyles.fidCol, {
+              hover: true,
+              selected: isSelected("FID_ACL_ROW_FIELD"),
+              owned: entry.owned,
               // TODO: report non-probing state correctly
             })}
             onMouseDown={handleFidClick}
