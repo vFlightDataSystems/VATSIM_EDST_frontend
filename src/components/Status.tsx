@@ -9,6 +9,9 @@ import { FloatingWindow } from "components/utils/FloatingWindow";
 import { HubConnectionState } from "@microsoft/signalr";
 import { VERSION } from "~/utils/constants";
 import { envSelector, hubConnectedSelector, logout, logoutThunk } from "~redux/slices/authSlice";
+import { invertNumpadSelector, setInvertNumpad } from "~/redux/slices/appSlice";
+import optionStyles from "css/optionMenu.module.scss";
+import clsx from "clsx";
 
 export const Status = () => {
   const [showOptions, setShowOptions] = useState(false);
@@ -21,6 +24,7 @@ export const Status = () => {
   const dispatch = useRootDispatch();
   const { disconnectHub } = useHubConnector();
   const hubConnected = useRootSelector(hubConnectedSelector);
+  const invertNumpad = useRootSelector(invertNumpadSelector);
 
   const toggleSocket = () => {
     if (isConnected) {
@@ -41,6 +45,12 @@ export const Status = () => {
     <FloatingWindow title="STATUS" optionsHeaderTitle="STATUS" width="40ch" window="STATUS" showOptions={showOptions} setShowOptions={setShowOptions}>
       <div>vEDST version {VERSION}</div>
       <div>{hubConnected && environment ? `Connected to ${environment.name}` : "NOT CONNECTED"}</div>
+      <div className={optionStyles.row}>
+        <div className={clsx(optionStyles.col, "flex")} onMouseDown={() => dispatch(setInvertNumpad(!invertNumpad))}>
+          <div className={clsx(optionStyles.indicator, { selected: invertNumpad })} />
+          Invert Numpad
+        </div>
+      </div>
       <div>
         <EdstButton onMouseDown={logOutHandler} content="LOG OUT / CHANGE ENVIRONMENT" />
       </div>
