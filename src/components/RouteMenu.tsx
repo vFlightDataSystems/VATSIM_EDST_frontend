@@ -4,27 +4,28 @@ import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { aselEntrySelector } from "~redux/slices/entrySlice";
-import { aselSelector, closeWindow } from "~redux/slices/appSlice";
+import { aselSelector, closeWindow, invertNumpadSelector } from "~redux/slices/appSlice";
 import { aselTrackSelector } from "~redux/slices/trackSlice";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import type { EdstAdaptedRoute } from "types/edstAdaptedRoute";
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useHubActions } from "hooks/useHubActions";
-import { OPLUS_SYMBOL } from "~/utils/constants";
+import { D_SIDE_ENUM, OPLUS_SYMBOL } from "~/utils/constants";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
 import { useAar, useAdar, useAdr } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
 import { formatRoute } from "~/utils/formatRoute";
 import { useSharedUiListener } from "hooks/useSharedUiListener";
 import { removeStringFromStart, removeStringFromEnd } from "~/utils/stringManipulation";
-import { getClearedToFixRouteFixes } from "~/utils/fixes";
+import { getClearedToFixRouteFixes, getNextFix } from "~/utils/fixes";
 import socket from "~socket";
 import { PreferredRouteDisplay } from "components/PreferredRouteDisplay";
 import clsx from "clsx";
 import movableMenu from "css/movableMenu.module.scss";
 import routeStyles from "css/routeMenu.module.scss";
 import { MovableMenu } from "components/MovableMenu";
+import { locationToPosition } from "~/utils/locationToPosition";
 
 type Append = { appendOplus: boolean; appendStar: boolean };
 const toggleAppendStar = (prev: Append) => ({
@@ -36,6 +37,14 @@ const toggleAppendOplus = (prev: Append) => ({
   appendOplus: !prev.appendOplus,
 });
 
+// Format current UTC time as HHmm for coordination time segment
+const getCoordinationTime = (): string => {
+  const now = new Date();
+  const hh = now.getUTCHours().toString().padStart(2, "0");
+  const mm = now.getUTCMinutes().toString().padStart(2, "0");
+  return `${hh}${mm}`;
+};
+
 export const RouteMenu = () => {
   const dispatch = useRootDispatch();
   const asel = useRootSelector(aselSelector)!;
@@ -43,6 +52,7 @@ export const RouteMenu = () => {
   const aircraftTrack = useRootSelector(aselTrackSelector);
   const [frd, setFrd] = useState<Nullable<string>>(null);
   const hubActions = useHubActions();
+  const invertNumpad = useRootSelector(invertNumpadSelector);
 
   const adrs = useAdr(entry.aircraftId);
   const adars = useAdar(entry.aircraftId);
@@ -50,110 +60,138 @@ export const RouteMenu = () => {
 
   const formattedRoute = formatRoute(entry.route);
   const currentRouteFixes = useRouteFixes(entry.aircraftId);
-  const [route, setRoute] = useState(
-    removeStringFromEnd(asel.window === "DEP" ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "", entry.destination)
+  const routeFixes = useRouteFixes(entry.aircraftId);
+  const [route, setRoute] = useState<string>(
+    removeStringFromEnd(asel.window === "DEP" ? formattedRoute : formattedRoute.replace(/^\.+/, ""), entry.destination)
   );
-  const [routeInput, setRouteInput] = useState(asel.window === "DEP" ? entry.departure + route + entry.destination : route + entry.destination);
-  const [trialPlan, setTrialPlan] = useState(!(asel.window === "DEP"));
-  const [append, setAppend] = useState({
-    appendOplus: false,
-    appendStar: false,
-  });
+  const [routeInput, setRouteInput] = useState<string>(
+    asel.window === "DEP" ? entry.departure + route + entry.destination : route + entry.destination
+  );
+  const [trialPlan, setTrialPlan] = useState<boolean>(false);
+  const [append, setAppend] = useState<Append>({ appendOplus: false, appendStar: false });
 
   useEffect(() => {
     if (aircraftTrack) {
-      hubActions.generateFrd(aircraftTrack.location).then((frd) =>  {
-        if(!frd) {
-          console.log("Frd is set to null");
-          return;
-        }
-        setFrd(frd);
-      });
+      hubActions.generateFrd(aircraftTrack.location).then((val) => setFrd(val));
     }
   }, [aircraftTrack, entry.aircraftId, hubActions]);
 
-  const { appendOplus, appendStar } = append;
-
   useEffect(() => {
     const dep = asel.window === "DEP";
-    let route = dep ? formattedRoute : formattedRoute.replace(/^\.*/, "") ?? "";
-    route = removeStringFromEnd(route ?? "", entry.destination);
-    if (dep) {
-      setTrialPlan(false);
-    }
-    setRoute(route);
-    setRouteInput(dep ? entry.departure + route + entry.destination : route + entry.destination);
-  }, [asel.window, formattedRoute, entry.departure, entry.destination, entry.route]);
+    let routeStr = dep ? formattedRoute : formattedRoute.replace(/^\.+/, "");
+    routeStr = removeStringFromEnd(routeStr, entry.destination);
+    if (dep) setTrialPlan(false);
+    setRoute(routeStr);
+    setRouteInput(dep ? entry.departure + routeStr + entry.destination : routeStr + entry.destination);
+  }, [asel.window, formattedRoute, entry.departure, entry.destination]);
 
-  const currentRouteFixNames: string[] = currentRouteFixes.map((fix) => fix.name) ?? [];
-  let routeFixes = currentRouteFixes;
-  if (routeFixes.length > 1) {
-    // if first fix is FRD
-    if (routeFixes?.[0]?.name?.match(/^\w+\d{6}$/gi)) {
-      routeFixes = routeFixes.slice(1);
+  const getControlFlag = (): string => {
+    return entry.owned ? "" : "/OK";
+  };
+
+  useEffect(() => {
+    if (aircraftTrack && currentRouteFixes) {
+      const nextFix = getNextFix(currentRouteFixes, locationToPosition(aircraftTrack.location));
+      if (nextFix) {
+        // Split on dots but preserve procedure names
+        const originalRouteParts = route.split(".").filter((part) => {
+          // Only filter out FRD patterns (12 chars, ends in 6 digits)
+          const isFrd = /^[A-Z0-9]{6}\d{6}$/.test(part);
+          return !isFrd;
+        });
+
+        const startSegmentIndex = originalRouteParts.findIndex((part) => part.includes(nextFix.name));
+
+        // Make sure we found a valid segment
+        if (startSegmentIndex !== -1) {
+          const futureRoute = originalRouteParts.slice(startSegmentIndex).join(".");
+
+          setRouteInput(asel.window === "DEP" ? `${entry.departure}.${futureRoute}.${entry.destination}` : `${futureRoute}.${entry.destination}`);
+        }
+      }
     }
-  }
+  }, [aircraftTrack, currentRouteFixes, route, asel.window, entry.departure, entry.destination]);
+
+  const buildCommandString = (cid: string, fix: string, routeStr: string, destination: string): string => {
+    const controlFlag = trialPlan ? "/OK" : getControlFlag();
+    const timeSegment = trialPlan ? "" : ` 07 ${getCoordinationTime()}`;
+    let suffix = "";
+    if (append.appendStar) {
+      suffix = "*";
+    } else if (append.appendOplus) {
+      suffix = OPLUS_SYMBOL;
+    }
+    return `AM ${cid}${controlFlag} 06 ${fix}${timeSegment} 10 ${routeStr}${destination}${suffix}`;
+  };
 
   const amendPrefroute = async (amendedFlightplan: CreateOrAmendFlightplanDto) => {
     if (!trialPlan) {
       await hubActions.amendFlightplan(amendedFlightplan);
     } else {
-      const route = formatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+      const routeStr = formatRoute(amendedFlightplan.route, entry.departure, entry.destination);
+      const cmd = buildCommandString(entry.cid, frd || "", routeStr, amendedFlightplan.destination);
       dispatch(
         addPlanThunk({
           cid: entry.cid,
           aircraftId: entry.aircraftId,
           amendedFlightplan,
-          commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+          commandString: cmd,
           expirationTime: Date.now() / 1000 + 120,
         })
       );
     }
   };
 
-  const clearedPrefroute = async (prefRoute: EdstAdaptedRoute) => {
-    let amendedFlightplan: CreateOrAmendFlightplanDto;
-    if (prefRoute.routeType === "adar") {
-      amendedFlightplan = { ...entry, route: prefRoute.route.split(/\.+/).join(" ") };
-      await amendPrefroute(amendedFlightplan);
-    } else if (prefRoute.routeType === "adr") {
-      amendedFlightplan = {
-        ...entry,
-        route: [...new Set(prefRoute.amendment.split(/\.+/).concat(prefRoute.truncatedRoute.split(/\.+/)))].join(" "),
-      };
-      await amendPrefroute(amendedFlightplan);
-    } else if (prefRoute.routeType === "aar") {
-      amendedFlightplan = {
-        ...entry,
-        route: prefRoute.truncatedRoute.split(/\.+/).concat(prefRoute.amendment.split(/\.+/)).join(" "),
-      };
-      await amendPrefroute(amendedFlightplan);
+  const getEditableRoute = (): string => {
+    if (asel.window === "DEP") {
+      return entry.departure + route + entry.destination;
     }
-    dispatch(closeWindow("ROUTE_MENU"));
+
+    if (!aircraftTrack || !currentRouteFixes) {
+      return route + entry.destination;
+    }
+
+    const nextFix = getNextFix(currentRouteFixes, locationToPosition(aircraftTrack.location));
+    if (!nextFix) {
+      return route + entry.destination;
+    }
+
+    // Find the segment containing the next fix
+    const originalRouteParts = route.split(".");
+
+    // Find which part of the original route contains our next fix
+    const startSegmentIndex = originalRouteParts.findIndex((part) => part.includes(nextFix.name));
+
+    // Take all segments from that point forward
+    const futureRoute = originalRouteParts.slice(startSegmentIndex).join(".");
+
+    return futureRoute + entry.destination;
   };
 
-  const clearedToFix = async (clearedFixName: string) => {
-    let route: string | null;
-    const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
-    if (clearedFixName === entry.destination) {
-      route = frd ?? "";
-    } else {
-      route = getClearedToFixRouteFixes(clearedFixName, entry, routeFixes, formattedRoute, frd ?? "")?.route ?? null;
-    }
-    if (route !== null) {
-      const amendedFlightplan: ApiFlightplan = {
-        ...entry,
-        route: route.split(/\.+/g).join(" ").trim(),
+  const clearedToFix = async (fixName: string) => {
+    const suffix = append.appendStar ? "*" : append.appendOplus ? OPLUS_SYMBOL : "";
+    if (!trialPlan) {
+      const message = {
+        source: D_SIDE_ENUM,
+        elements: [{ token: "QU" }, { token: fixName + suffix }, { token: entry.cid }],
+        invertNumericKeypad: invertNumpad,
       };
-      if (!trialPlan) {
-        await hubActions.amendFlightplan(amendedFlightplan);
-      } else {
+      await hubActions.sendEramMessage(message);
+    } else {
+      const info = getClearedToFixRouteFixes(fixName, entry, currentRouteFixes, formattedRoute, frd || "");
+      if (info?.route) {
+        const routeStr = info.route;
+        const amendedFlightplan: ApiFlightplan = {
+          ...entry,
+          route: routeStr.split(/\.+/g).join(" ").trim(),
+        };
+        const cmd = buildCommandString(entry.cid, frd || "", routeStr, amendedFlightplan.destination);
         dispatch(
           addPlanThunk({
             cid: entry.cid,
             aircraftId: entry.aircraftId,
             amendedFlightplan,
-            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${route}${amendedFlightplan.destination}`,
+            commandString: cmd,
             expirationTime: Date.now() / 1000 + 120,
           })
         );
@@ -163,26 +201,24 @@ export const RouteMenu = () => {
   };
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = async (event) => {
-    event.persist();
     if (event.key === "Enter") {
-      const frd = aircraftTrack ? await hubActions.generateFrd(aircraftTrack.location) : null;
+      const fix = frd || "";
       let newRoute = removeStringFromEnd(routeInput, entry.destination);
       if (asel.window === "DEP") {
         newRoute = removeStringFromStart(newRoute, entry.departure);
       } else {
-        newRoute = `${frd}..${newRoute.replace(/^\.+/g, "")}`;
+        newRoute = `${fix}..${newRoute.replace(/^\.+/, "")}`;
       }
-      const amendedFlightplan = {
-        ...entry,
-        route: newRoute.toUpperCase().replace(/^\.+/gi, "").trim(),
-      };
+      const cleaned = newRoute.toUpperCase().replace(/^\.+/, "").trim();
+      const amendedFlightplan = { ...entry, route: cleaned };
       if (trialPlan) {
+        const cmd = buildCommandString(entry.cid, fix, cleaned, amendedFlightplan.destination);
         dispatch(
           addPlanThunk({
             cid: entry.cid,
             aircraftId: entry.aircraftId,
             amendedFlightplan,
-            commandString: `AM ${entry.aircraftId} FIX ${frd} TIM EXX00 RTE ${newRoute}${amendedFlightplan.destination}`,
+            commandString: cmd,
             expirationTime: Date.now() / 1000 + 120,
           })
         );
@@ -191,6 +227,16 @@ export const RouteMenu = () => {
       }
       dispatch(closeWindow("ROUTE_MENU"));
     }
+  };
+
+  const handleClearedPrefroute = async (prefRoute: EdstAdaptedRoute) => {
+    const amendedFlightplan: CreateOrAmendFlightplanDto = {
+      ...entry,
+      route: prefRoute.routeGroups.join(" "),
+    };
+
+    await amendPrefroute(amendedFlightplan);
+    dispatch(closeWindow("ROUTE_MENU"));
   };
 
   useSharedUiListener("routeMenuSetTrialPlan", setTrialPlan);
@@ -250,7 +296,7 @@ export const RouteMenu = () => {
         <div className={clsx(movableMenu.col, "left")}>
           <div className={clsx(movableMenu.blueButton, "isDisabled")}>INCLUDE PAR</div>
           <div
-            className={clsx(movableMenu.blueButton, { [movableMenu.selected]: appendStar })}
+            className={clsx(movableMenu.blueButton, { [movableMenu.selected]: append.appendStar })}
             onMouseDown={() => {
               socket.dispatchUiEvent("routeMenuClickAppendStar");
               setAppend(toggleAppendStar);
@@ -259,7 +305,7 @@ export const RouteMenu = () => {
             APPEND *
           </div>
           <div
-            className={clsx(movableMenu.blueButton, { [movableMenu.selected]: appendOplus })}
+            className={clsx(movableMenu.blueButton, { [movableMenu.selected]: append.appendOplus })}
             onMouseDown={() => {
               socket.dispatchUiEvent("routeMenuClickAppendOplus");
               setAppend(toggleAppendOplus);
@@ -292,10 +338,10 @@ export const RouteMenu = () => {
       ))}
       <div className={movableMenu.segmentHeader}>APR</div>
       <PreferredRouteDisplay
-        aar={aars.filter((parData) => currentRouteFixNames.includes(parData.triggeredFix)) ?? []}
+        aar={aars.filter((parData) => (currentRouteFixes?.map((fix) => fix.name) ?? []).includes(parData.triggeredFix)) ?? []}
         adr={asel.window === "DEP" ? adrs : []}
         adar={asel.window === "DEP" ? adars : []}
-        clearedPrefroute={clearedPrefroute}
+        clearedPrefroute={handleClearedPrefroute}
       />
       <div className={clsx(movableMenu.row, "topBorder")}>
         <div className={clsx(movableMenu.col, "right")}>

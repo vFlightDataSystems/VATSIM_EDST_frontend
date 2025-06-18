@@ -6,7 +6,7 @@ export type ApiAircraftTrack = {
   aircraftId: AircraftId;
   altitudeAgl: number;
   altitudeTrue: number;
-  groundSpeed: number;
+  groundSpeed: number | undefined;
   location: ApiLocation;
   typeCode: Nullable<string>;
   interimAltitude?: number;

@@ -49,8 +49,14 @@ export const useHubActions = () => {
   const hubConnection = useHubConnection();
   const { connectHub } = useHubConnector();
 
-  const generateFrd = async (location: ApiLocation) =>
-    invokeHub(hubConnection, connectHub, (connection) => connection.invoke<string>("generateFrd", location));
+  const generateFrd = async (location: ApiLocation): Promise<string> => {
+    const result = await invokeHub(hubConnection, connectHub, (connection) => connection.invoke<string>("GenerateFrd", location));
+    if (!result) {
+      dispatch(setMcaRejectMessage("REJECT\nUnable to generate FRD"));
+      throw new Error("Failed to generate FRD");
+    }
+    return result;
+  };
 
   const amendFlightplan = async (fp: CreateOrAmendFlightplanDto) =>
     invokeHub(hubConnection, connectHub, (connection) => connection.invoke<void>("amendFlightPlan", fp));
