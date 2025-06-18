@@ -123,8 +123,8 @@ const initialWindowState = Object.fromEntries(
 
     if (value === "DEP") {
       dimension = {
-        width: screen.width,
-        height: Math.floor(screen.height * (1 / 3)),
+        width: String(screen.width),
+        height: String(Math.floor(screen.height * (1 / 3))),
       };
     }
 

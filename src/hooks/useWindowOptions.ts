@@ -22,9 +22,9 @@ export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(edstWi
   const mouseDownHandler = useCallback(
     (event: React.MouseEvent<HTMLElement>, key: keyof ModifiableWindowOptions[T]) => {
       const delayInterval = (callback: () => void, _delay = 500) => {
-        let intervalId: NodeJS.Timer | null = null;
+        let intervalId: number | null = null;
         const timeoutId = setTimeout(() => {
-          intervalId = setInterval(callback, 100);
+          intervalId = window.setInterval(callback, 100) as unknown as number;
         }, _delay);
         const mouseUpListener = () => {
           clearTimeout(timeoutId);
