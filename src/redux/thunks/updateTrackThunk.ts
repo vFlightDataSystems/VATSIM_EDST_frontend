@@ -5,6 +5,7 @@ import { EramTrackDto } from "~/types/apiTypes/EramTrackDto";
 import { sectorIdSelector } from "~/redux/slices/sectorSlice";
 import { LocalVEdstEntry } from "types/localVEdstEntry";
 import { REMOVAL_TIMEOUT } from "~/utils/constants";
+import { setTrack } from "../slices/trackSlice";
 
 export function updateTrackThunk(target: EramTrackDto): RootThunkAction {
   return (dispatch, getState) => {
@@ -12,6 +13,14 @@ export function updateTrackThunk(target: EramTrackDto): RootThunkAction {
     const entries = state.entries;
     const mySectorId = sectorIdSelector(state);
     const aircraftIds = Object.keys(entries);
+    const updateTime = Date.now();
+
+    dispatch(
+      setTrack({
+        ...target,
+        lastUpdated: updateTime,
+      })
+    );
 
     if (aircraftIds.includes(target.aircraftId)) {
       // Create new LocalVEdstEntry with updated values
