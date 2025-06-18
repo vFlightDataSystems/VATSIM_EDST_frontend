@@ -15,7 +15,14 @@ export function probeConflict(ac1: ProbeConflictArgs, ac2: ProbeConflictArgs) {
   const routeLine1 = getRouteLineString(ac1.fixes, pos1);
   const routeLine2 = getRouteLineString(ac2.fixes, pos2);
 
-  if (routeLine1 && routeLine2 && ac1.track.groundSpeed > 0 && ac2.track.groundSpeed > 0) {
+  if (
+    routeLine1 &&
+    routeLine2 &&
+    ac1.track.groundSpeed !== undefined &&
+    ac2.track.groundSpeed !== undefined &&
+    ac1.track.groundSpeed > 0 &&
+    ac2.track.groundSpeed > 0
+  ) {
     const intersections = lineIntersect(routeLine1, routeLine2);
     if (intersections.features.length > 0) {
       const routeToIntersection1 = lineSlice(pos1, intersections.features[0].geometry, routeLine1);

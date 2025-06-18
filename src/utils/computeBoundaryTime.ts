@@ -18,5 +18,6 @@ export function computeBoundaryTime(entry: EdstEntry, track: ApiAircraftTrack, p
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const sdist = getSignedStratumDistancePointToPolygons(posPoint, polygons, Number(entry.flightplan.altitude), entry.interimAltitude);
-  return (sdist * 60) / track.groundSpeed;
+  const groundSpeed = track.groundSpeed ?? 250; // Default ground speed if not provided, e.g., 250 knots
+  return (sdist * 60) / groundSpeed;
 }
