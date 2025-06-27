@@ -41,7 +41,7 @@ import { aclCleanup } from "~redux/thunks/aclCleanup";
 import { isAclSortKey, SORT_KEYS_NOT_IMPLEMENTED } from "types/aclSortData";
 import { addAclEntryByFid } from "~redux/thunks/entriesThunks";
 import socket from "~socket";
-import { D_SIDE_ENUM, GI_EXPR } from "~/utils/constants";
+import { GI_EXPR } from "~/utils/constants";
 import { toggleAltimeter, toggleMetar } from "~redux/slices/weatherSlice";
 import { printFlightStrip } from "components/PrintableFlightStrip";
 import { appWindow } from "@tauri-apps/api/window";
@@ -209,7 +209,7 @@ export const MessageComposeArea = () => {
     });
 
     const eramMessage: ProcessEramMessageDto = {
-      source: D_SIDE_ENUM,
+      source: EramPositionType.DSide,
       elements,
       invertNumericKeypad: invertNumpad,
     };

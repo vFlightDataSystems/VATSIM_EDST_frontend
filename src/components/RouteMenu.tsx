@@ -11,7 +11,7 @@ import type { EdstAdaptedRoute } from "types/edstAdaptedRoute";
 import { addPlanThunk } from "~redux/thunks/addPlanThunk";
 import { openMenuThunk } from "~redux/thunks/openMenuThunk";
 import { useHubActions } from "hooks/useHubActions";
-import { D_SIDE_ENUM, OPLUS_SYMBOL } from "~/utils/constants";
+import { OPLUS_SYMBOL } from "~/utils/constants";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
 import { useAar, useAdar, useAdr } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
@@ -26,6 +26,7 @@ import movableMenu from "css/movableMenu.module.scss";
 import routeStyles from "css/routeMenu.module.scss";
 import { MovableMenu } from "components/MovableMenu";
 import { locationToPosition } from "~/utils/locationToPosition";
+import { EramPositionType } from "~/types/apiTypes/ProcessEramMessageDto";
 
 type Append = { appendOplus: boolean; appendStar: boolean };
 const toggleAppendStar = (prev: Append) => ({
@@ -172,7 +173,7 @@ export const RouteMenu = () => {
     const suffix = append.appendStar ? "*" : append.appendOplus ? OPLUS_SYMBOL : "";
     if (!trialPlan) {
       const message = {
-        source: D_SIDE_ENUM,
+        source: EramPositionType.DSide,
         elements: [{ token: "QU" }, { token: fixName + suffix }, { token: entry.cid }],
         invertNumericKeypad: invertNumpad,
       };

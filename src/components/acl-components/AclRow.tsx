@@ -10,7 +10,7 @@ import type { EdstWindow } from "types/edstWindow";
 import type { AclRowField } from "types/acl/aclRowField";
 import { HoldDirectionValues } from "types/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "types/hold/turnDirection";
-import { D_SIDE_ENUM, REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
+import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
 import { useAar } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
 import { formatRoute } from "~/utils/formatRoute";
@@ -145,7 +145,7 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
     // Only send ERAM message if we're not transitioning from -1 to 0
     if (!(entry.vciStatus === -1)) {
       const eramMessage = {
-        source: D_SIDE_ENUM,
+        source: EramPositionType.DSide,
         elements: [{ token: "//" }, { token: entry.cid }],
         invertNumericKeypad: invertNumpad,
       };
