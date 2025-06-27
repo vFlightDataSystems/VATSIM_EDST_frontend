@@ -155,7 +155,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         dispatch(updateFlightplanThunk(flightplan));
       });
     });
-    hubConnection.on("DeleteFlightplans", async (topic: ApiTopic, flightplans: ApiFlightplan[]) => {
+    hubConnection.on("DeleteFlightplans", async (topic: ApiTopic, flightplans: string[]) => {
       flightplans.forEach((flightplan) => {
         console.log("deleting flightplan:", flightplan);
         dispatch(deleteFlightplanThunk(flightplan));
@@ -167,17 +167,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         dispatch(updateTrackThunk(t));
       });
     });
-    hubConnection.on("DeleteEramTargets", async (topic: ApiTopic, targets: string[]) => {
+    hubConnection.on("DeleteEramTracks", async (topic: ApiTopic, targets: string[]) => {
       console.log("deleting targets:", targets);
       targets.forEach((target) => {
         dispatch(deleteTrackThunk(target));
       });
-    });
-    hubConnection.on("receiveAircraft", (aircraft: ApiAircraftTrack[]) => {
-      console.log("received aircraft:", aircraft);
-      // aircraft.forEach(t => {
-      //   dispatch(updateAircraftTrackThunk(t));
-      // });
     });
     hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
       dispatch(setFsdIsConnected(state));

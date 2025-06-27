@@ -1,4 +1,4 @@
-import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import type { UnixTime } from "types/unixTime";
+import type { EramTrackDto } from "./apiTypes/EramTrackDto";
 
-export type AircraftTrack = ApiAircraftTrack & { lastUpdated: UnixTime };
+export type AircraftTrack = EramTrackDto & { lastUpdated: UnixTime };

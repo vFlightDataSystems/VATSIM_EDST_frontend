@@ -5,6 +5,7 @@ import {
   closeAllWindows,
   defaultWindowPositions,
   FULLSCREEN_WINDOWS,
+  invertNumpadSelector,
   mcaFeedbackSelector,
   pushZStack,
   setIsFullscreen,
@@ -77,6 +78,8 @@ export const MessageComposeArea = () => {
   const options = useWindowOptions("MESSAGE_COMPOSE_AREA");
 
   const feedbackRows = mcaFeedbackString.toUpperCase().split("\n");
+
+  const invertNumpad = useRootSelector(invertNumpadSelector);
 
   const onMcaMouseDown: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (zStack.indexOf("MESSAGE_COMPOSE_AREA") < zStack.length - 1) {
@@ -208,29 +211,10 @@ export const MessageComposeArea = () => {
     const eramMessage: ProcessEramMessageDto = {
       source: EramPositionType.DSide,
       elements,
-      invertNumericKeypad: false,
+      invertNumericKeypad: invertNumpad,
     };
 
-    try {
-      const result = await hubActions.sendEramMessage(eramMessage);
-      if (result) {
-        if (result.isSuccess) {
-          // If successful, accept the command with feedback
-          const feedbackMessage = result.feedback.length > 0 ? result.feedback.join("\n") : mcaInputValue;
-          dispatch(setMcaAcceptMessage(feedbackMessage));
-
-          if (result.response) {
-            dispatch(setMraMessage(result.response));
-            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
-          }
-        } else {
-          const rejectMessage = result?.feedback?.length > 0 ? `REJECT\n${result.feedback.join("\n")}` : `REJECT\n${mcaInputValue}`;
-          dispatch(setMcaRejectMessage(rejectMessage));
-        }
-      }
-    } catch (error) {
-      reject(`\n${error?.message || "Command failed"}`);
-    }
+    await hubActions.sendEramMessage(eramMessage);
   };
 
   const handleWeatherRequest = async (args: string[], input: string) => {
