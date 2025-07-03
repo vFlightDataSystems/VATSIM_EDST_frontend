@@ -64,7 +64,10 @@
   border: 2px solid transparent;
   border-right: none;
   padding: 0 2px;
-  width: 11ch;
+  min-width: 11ch;
+  max-width: 13ch;
+  width: fit-content;
+  text-align: right;
   color: #888888;
 }
 

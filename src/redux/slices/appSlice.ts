@@ -53,6 +53,7 @@ type AppState = {
   outages: OutageEntry[];
   headerTop: boolean;
   fsdIsConnected: boolean;
+  invertNumpad: boolean;
 };
 
 const getScreenDimensions = () => ({
@@ -150,6 +151,7 @@ const initialState: AppState = {
   outages: [],
   headerTop: loadHeaderPosition(),
   fsdIsConnected: true,
+  invertNumpad: false,
 };
 
 const appSlice = createSlice({
@@ -217,6 +219,9 @@ const appSlice = createSlice({
     // removes outage message at index
     delOutageMessage(state, action: PayloadAction<string>) {
       state.outages = state.outages.filter((outage) => outage.id !== action.payload);
+    },
+    setInvertNumpad(state, action: PayloadAction<boolean>) {
+      state.invertNumpad = action.payload;
     },
   },
 });
@@ -312,6 +317,7 @@ export const {
   setFsdIsConnected,
   addOutageMessage,
   delOutageMessage,
+  setInvertNumpad,
 } = appSlice.actions;
 export default appSlice.reducer;
 
@@ -335,3 +341,4 @@ export const outageSelector = (state: RootState) => state.app.outages;
 export const windowsSelector = (state: RootState) => state.app.windows;
 export const headerTopSelector = (state: RootState) => state.app.headerTop;
 export const fsdIsConnectedSelector = (state: RootState) => state.app.fsdIsConnected;
+export const invertNumpadSelector = (state: RootState) => state.app.invertNumpad;

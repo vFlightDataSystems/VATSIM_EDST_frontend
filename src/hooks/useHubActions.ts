@@ -1,7 +1,7 @@
 import type { ApiLocation } from "types/apiTypes/apiLocation";
 import type { HoldAnnotations } from "types/hold/holdAnnotations";
 import { useRootDispatch } from "~redux/hooks";
-import { setMcaAcceptMessage } from "~redux/slices/appSlice";
+import { setMcaAcceptMessage, setMcaRejectMessage, setMraMessage } from "~redux/slices/appSlice";
 import type { CreateOrAmendFlightplanDto } from "types/apiTypes/CreateOrAmendFlightplanDto";
 import type { AircraftId } from "types/aircraftId";
 import { useHubConnection } from "hooks/useHubConnection";
@@ -10,6 +10,7 @@ import type { HubConnection } from "@microsoft/signalr";
 import { HubConnectionState } from "@microsoft/signalr";
 import type { EramMessageProcessingResultDto } from "~/types/apiTypes/EramMessageProcessingResultDto";
 import { useHubConnector } from "./useHubConnector";
+import { openWindowThunk } from "~/redux/thunks/openWindowThunk";
 
 async function ensureConnected(hubConnection: HubConnection | null, connectHub: () => Promise<void>): Promise<HubConnection | null> {
   if (!hubConnection) {
@@ -48,8 +49,14 @@ export const useHubActions = () => {
   const hubConnection = useHubConnection();
   const { connectHub } = useHubConnector();
 
-  const generateFrd = async (location: ApiLocation) =>
-    invokeHub(hubConnection, connectHub, (connection) => connection.invoke<string>("generateFrd", location));
+  const generateFrd = async (location: ApiLocation): Promise<string> => {
+    const result = await invokeHub(hubConnection, connectHub, (connection) => connection.invoke<string>("GenerateFrd", location));
+    if (!result) {
+      dispatch(setMcaRejectMessage("REJECT\nUnable to generate FRD"));
+      throw new Error("Failed to generate FRD");
+    }
+    return result;
+  };
 
   const amendFlightplan = async (fp: CreateOrAmendFlightplanDto) =>
     invokeHub(hubConnection, connectHub, (connection) => connection.invoke<void>("amendFlightPlan", fp));
@@ -67,8 +74,24 @@ export const useHubActions = () => {
     invokeHub(hubConnection, connectHub, (connection) => connection.invoke<void>("sendPrivateMessage", aircraftId, message));
 
   const sendEramMessage = async (eramMessage: ProcessEramMessageDto) =>
-    invokeHub<EramMessageProcessingResultDto>(hubConnection, connectHub, (connection) =>
-      connection.invoke<EramMessageProcessingResultDto>("processEramMessage", eramMessage));
+    invokeHub<EramMessageProcessingResultDto>(hubConnection, connectHub, async (connection) => {
+      const result = await connection.invoke<EramMessageProcessingResultDto>("processEramMessage", eramMessage);
+      if (result) {
+        if (result.isSuccess) {
+          const feedbackMessage = result.feedback.length > 0 ? result.feedback.join("\n") : "Command accepted";
+          dispatch(setMcaAcceptMessage(feedbackMessage));
+
+          if (result.response) {
+            dispatch(setMraMessage(result.response));
+            dispatch(openWindowThunk("MESSAGE_RESPONSE_AREA"));
+          }
+        } else {
+          const rejectMessage = result.feedback.length > 0 ? `REJECT\n${result.feedback.join("\n")}` : "REJECT\nCommand failed";
+          dispatch(setMcaRejectMessage(rejectMessage));
+        }
+      }
+      return result;
+    });
 
   return {
     generateFrd,
