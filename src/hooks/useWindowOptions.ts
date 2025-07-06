@@ -22,15 +22,13 @@ export const useWindowOptions = <T extends keyof ModifiableWindowOptions>(edstWi
   const mouseDownHandler = useCallback(
     (event: React.MouseEvent<HTMLElement>, key: keyof ModifiableWindowOptions[T]) => {
       const delayInterval = (callback: () => void, _delay = 500) => {
-        let intervalId: number | null = null;
+        let intervalId: ReturnType<typeof setInterval>;
         const timeoutId = setTimeout(() => {
-          intervalId = window.setInterval(callback, 100) as unknown as number;
+          intervalId = setInterval(callback, 100);
         }, _delay);
         const mouseUpListener = () => {
           clearTimeout(timeoutId);
-          if (intervalId !== null) {
-            clearInterval(intervalId);
-          }
+          clearInterval(intervalId);
         };
         window.addEventListener("mouseup", mouseUpListener, { once: true });
       };
