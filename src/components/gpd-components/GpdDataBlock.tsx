@@ -160,7 +160,7 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
         </div>
         <div className={gpdStyles.dbRow}>
           {dbElement(destRef, entry.destination, "ROUTE_ACL_ROW_FIELD", "gpd-dest-asel", "ROUTE_MENU")}
-          {dbElement(null, track.groundSpeed, "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
+          {dbElement(null, track.groundSpeed ?? "", "SPD_ACL_ROW_FIELD", "gpd-spd-asel")}
         </div>
       </div>
     </>

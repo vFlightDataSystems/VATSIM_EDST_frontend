@@ -9,6 +9,7 @@ import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, logout
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 function redirectLogin() {
   window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -97,7 +98,7 @@ const Login = () => {
                   ))}
               </select>
               <button type="button" disabled={code !== null} onClick={redirectLogin}>
-                {code ? <FontAwesomeIcon icon={faGear} className="fa-spin" /> : "Login with VATSIM"}
+                {code ? <FontAwesomeIcon icon={faGear as IconProp} className="fa-spin" /> : "Login with VATSIM"}
               </button>
             </>
           )}

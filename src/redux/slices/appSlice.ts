@@ -119,7 +119,7 @@ export const defaultWindowPositions: Partial<Record<EdstWindow, WindowPosition>>
 const initialWindowState = Object.fromEntries(
   edstWindows.map((value) => {
     const screen = getScreenDimensions();
-    let dimension = { width: "auto", height: "auto" };
+    let dimension: WindowDimension = { width: "auto", height: "auto" };
 
     if (value === "DEP") {
       dimension = {
