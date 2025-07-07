@@ -34,13 +34,13 @@ jobs:
         run: npm ci
       - name: dist
         env:
-          VITE_VNAS_CONFIG_URL: https://configuration.virtualnas.net/
+          VITE_VNAS_CONFIG_URL: https://configuration.vnas.vatsim.net/
           VITE_VNAS_ENV_NAME: Test
           VITE_PROD_VATSIM_CLIENT_ID: ${{secrets.VATSIM_CLIENT_ID}}
           VITE_PROD_DOMAIN: https://edst.virtualnas.net
           VITE_SHARED_STATE_URL: https://tdls.oakartcc.org
           VITE_SHARED_STATE_AUTH_KEY: ${{secrets.SHARED_STATE_AUTH_KEY}}
-          VITE_BACKEND_BASEURL: https://tdls.oakartcc.org/api
+          VITE_BACKEND_BASEURL: https://edst-api.k0rg.org/api
           VITE_VERSION: ${{ steps.version-number.outputs.VERSION_NUMBER }}
         run: npm run build
       - name: Archive build artifact
