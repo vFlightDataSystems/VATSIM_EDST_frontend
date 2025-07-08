@@ -148,9 +148,7 @@ const Edst = () => {
 const EdstProvider = () => (
   <React.StrictMode>
     <SocketContextProvider>
-      <HubContextProvider>
-        <Edst />
-      </HubContextProvider>
+      <Edst />
     </SocketContextProvider>
   </React.StrictMode>
 );
