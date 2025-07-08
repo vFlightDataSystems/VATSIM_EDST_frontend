@@ -245,9 +245,9 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           console.log(primarySession);
 
           if (primarySession && eramConfig) {
-            console.log(`joined existing session ${primarySession.id}`);
             console.log(hubConnection);
             await handleSessionStart(primarySession, hubConnection);
+            console.log(`joined existing session ${primarySession.id}`);
           } else {
             console.log("No primary ERAM session found, waiting for HandleSessionStarted event");
           }
