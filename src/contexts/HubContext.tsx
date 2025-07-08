@@ -119,8 +119,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           });
           console.log(`Joined session ${sessionInfo.id}`);
 
-          await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId));
-          await hubConnection.invoke<void>("subscribe", new ApiTopic("EramTracks", sessionInfo.positions[0].facilityId));
+          const primaryFacilityId = sessionInfo.positions.find((p) => p.isPrimary)?.facilityId;
+          if (primaryFacilityId) {
+            await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", primaryFacilityId));
+            await hubConnection.invoke<void>("subscribe", new ApiTopic("EramTracks", primaryFacilityId));
+          }
           dispatch(setHubConnected(true));
         } else {
           throw new Error("Hub connection not in Connected state");
