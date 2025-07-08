@@ -5,9 +5,10 @@ import LoginProvider from "~/login/Login";
 import PrivateRoute from "~/routes/PrivateRoute";
 import { useRootDispatch } from "~redux/hooks";
 import { getVnasConfig } from "~redux/slices/authSlice";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { HubContextProvider } from "./contexts/HubContext";
 
 const App = () => {
   const dispatch = useRootDispatch();
@@ -18,13 +19,15 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <ToastContainer />
-      <Routes>
-        <Route path="/login" element={<LoginProvider />} />
-        <Route path="/" element={<PrivateRoute />}>
-          <Route path="/" element={<EdstProvider />} />
-        </Route>
-      </Routes>
+      <HubContextProvider>
+        <ToastContainer />
+        <Routes>
+          <Route path="/login" element={<LoginProvider />} />
+          <Route path="/" element={<PrivateRoute />}>
+            <Route path="/" element={<EdstProvider />} />
+          </Route>
+        </Routes>
+      </HubContextProvider>
     </BrowserRouter>
   );
 };

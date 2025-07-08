@@ -30,6 +30,7 @@ import { VERSION } from "~/utils/constants";
 import { OutageEntry } from "types/outageEntry";
 import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
 import { deleteTrackThunk, updateTrackThunk } from "~/redux/thunks/updateTrackThunk";
+import { toast } from "react-toastify";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -53,13 +54,37 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
   const hubConnected = useRootSelector(hubConnectedSelector);
 
   const disconnectHub = useCallback(async () => {
-    await ref.current?.stop();
-    dispatch(setHubConnected(false));
-    dispatch(setArtccId(""));
-    dispatch(setSectorId(""));
-    disconnectSocket();
-    logout();
-    navigate("/login", { replace: true });
+    try {
+      // Stop the hub connection first
+      await ref.current?.stop();
+
+      // Clear hub-related state
+      dispatch(setHubConnected(false));
+      dispatch(setArtccId(""));
+      dispatch(setSectorId(""));
+
+      // Disconnect socket safely
+      try {
+        disconnectSocket();
+      } catch (error) {
+        console.warn("Error disconnecting socket:", error);
+      }
+
+      // Clear session and logout
+      dispatch(clearSession());
+      dispatch(logout());
+
+      // Navigate after a brief delay to ensure state updates complete
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 100);
+    } catch (error) {
+      console.error("Error during hub disconnect:", error);
+      // Force navigation even if there were errors
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 100);
+    }
   }, [disconnectSocket, dispatch, navigate]);
 
   const handleSessionStart = useCallback(
@@ -87,6 +112,13 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
 
         // Check connection state before subscribing
         if (hubConnection.state === HubConnectionState.Connected) {
+          await hubConnection.invoke<void>("joinSession", {
+            sessionId: sessionInfo.id,
+            clientName: "vEDST",
+            clientVersion: VERSION,
+          });
+          console.log(`Joined session ${sessionInfo.id}`);
+
           await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", sessionInfo.positions[0].facilityId));
           await hubConnection.invoke<void>("subscribe", new ApiTopic("EramTracks", sessionInfo.positions[0].facilityId));
           dispatch(setHubConnected(true));
@@ -95,6 +127,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         console.error("Session start failed:", error);
+        toast.error(error.message);
         await disconnectHub();
       }
     },
@@ -188,17 +221,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
     });
 
     hubConnection.keepAliveIntervalInMilliseconds = 1000;
-
-    return () => {
-      // Clean up on component unmount
-      (async () => {
-        try {
-          await hubConnection.stop();
-        } catch (err) {
-          console.error("Error stopping connection:", err);
-        }
-      })();
-    };
   }, [dispatch, navigate, disconnectHub, handleSessionStart, env, vatsimToken]);
 
   const connectHub = useCallback(async () => {
@@ -228,11 +250,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           console.log(primarySession);
 
           if (primarySession && eramConfig) {
-            await hubConnection.invoke<void>("joinSession", {
-              sessionId: primarySession.id,
-              clientName: "vEDST",
-              clientVersion: VERSION,
-            });
             console.log(`joined existing session ${primarySession.id}`);
             console.log(hubConnection);
             await handleSessionStart(primarySession, hubConnection);

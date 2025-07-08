@@ -111,9 +111,7 @@ const Login = () => {
 const LoginProvider = () => (
   <React.StrictMode>
     <SocketContextProvider>
-      <HubContextProvider>
-        <Login />
-      </HubContextProvider>
+      <Login />
     </SocketContextProvider>
   </React.StrictMode>
 );
