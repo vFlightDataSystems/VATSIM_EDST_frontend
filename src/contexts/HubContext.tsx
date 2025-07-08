@@ -74,16 +74,11 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       dispatch(clearSession());
       dispatch(logout());
 
-      // Navigate after a brief delay to ensure state updates complete
-      setTimeout(() => {
-        navigate("/login", { replace: true });
-      }, 100);
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Error during hub disconnect:", error);
       // Force navigation even if there were errors
-      setTimeout(() => {
-        navigate("/login", { replace: true });
-      }, 100);
+      navigate("/login", { replace: true });
     }
   }, [disconnectSocket, dispatch, navigate]);
 
