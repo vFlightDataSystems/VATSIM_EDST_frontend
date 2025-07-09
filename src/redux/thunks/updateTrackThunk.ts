@@ -34,6 +34,10 @@ export function updateTrackThunk(target: EramTrackDto): RootThunkAction {
         localData.vciStatus = 0;
       }
 
+      // Set Heading/Speed Scratchpads
+      localData.scratchpadHeading = target.assignedHeading ?? null;
+      localData.scratchpadSpeed = target.assignedSpeed ?? null;
+
       // Set Ownership status if we own the track
       if (target.owner.sectorId === mySectorId) {
         localData.probe = true;
