@@ -15,6 +15,7 @@ import aircraftTrackReducer from "~redux/slices/trackSlice";
 import weatherReducer from "~redux/slices/weatherSlice";
 import windowOptionsReducer from "~redux/slices/windowOptionsSlice";
 import authReducer from "~redux/slices/authSlice";
+import positionReducer from "~redux/slices/positionSlice";
 
 const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ const store = configureStore({
     weather: weatherReducer,
     windowOptions: windowOptionsReducer,
     auth: authReducer,
+    position: positionReducer,
     [prefrouteApi.reducerPath]: prefrouteApi.reducer,
     [aircraftApi.reducerPath]: aircraftApi.reducer,
     [weatherApi.reducerPath]: weatherApi.reducer,
