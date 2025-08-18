@@ -1,9 +1,11 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import type { RootState } from "~redux/store";
 import type { Coordinate } from "types/gpd/coordinate";
+import { artccIdSelector } from "./sectorSlice";
+import { getCenterCoordinates } from "~/utils/getArtccCenter";
 
 export const WIND_GRID_MIN_ZOOM = 3000;
 export const WIND_GRID_MAX_ZOOM = 12000;
@@ -33,6 +35,15 @@ const initialState: WindGridState = {
   date: null,
   time: null,
 };
+
+export const initializeWindGridCenter = createAsyncThunk("windGrid/initializeCenter", async (_, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const artccId = artccIdSelector(state);
+  if (artccId) {
+    const centerCoord = [getCenterCoordinates(artccId)?.lon, getCenterCoordinates(artccId)?.lat] as Coordinate;
+    dispatch(setWindGridCenter(centerCoord));
+  }
+});
 
 const windGridSlice = createSlice({
   name: "windGrid",
