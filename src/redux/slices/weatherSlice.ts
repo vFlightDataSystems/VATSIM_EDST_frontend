@@ -15,11 +15,28 @@ type WeatherState = {
 };
 
 export type ApiAirSigmet = {
-  airsigmet_type: "AIRMET" | "SIGMET";
-  text: string;
-  area: Position[];
-  hazard: { severity: string; type: string };
-  altitude: { max_ft_msg: string; min_ft_msl: string };
+  airSigmetId: number;
+  icaoId: string;
+  alphaChar: string;
+  receiptTime: string;
+  creationTime: string;
+  validTimeFrom: number;
+  validTimeTo: number;
+  airSigmetType: "AIRMET" | "SIGMET";
+  hazard: string;
+  severity: number;
+  altitudeLow1: number | null;
+  altitudeLow2: number | null;
+  altitudeHi1: number | null;
+  altitudeHi2: number | null;
+  movementDir: number | null;
+  movementSpd: number | null;
+  rawAirSigmet: string;
+  postProcessFlag: number;
+  coords: Array<{
+    lat: number;
+    lon: number;
+  }>;
   sectorIntersects?: Record<string, boolean>;
 };
 

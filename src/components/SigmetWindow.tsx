@@ -46,7 +46,7 @@ const SigmetRow = ({ sigmetEntry, selected, handleMouseDown, onSuppress }: Sigme
         style={{ "--brightness": windowOptions.brightness / 100 }}
         onMouseDown={onMouseDown}
       >
-        {sigmetEntry.text}
+        {sigmetEntry.rawAirSigmet}
       </div>
       {selected && showOptions && rect && (
         <FloatingWindowOptionContainer

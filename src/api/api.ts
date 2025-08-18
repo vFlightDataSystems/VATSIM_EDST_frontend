@@ -3,8 +3,8 @@ import type { RouteFix } from "types/routeFix";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASEURL;
 
-export async function fetchSigmets(): Promise<ApiAirSigmet[]> {
-  return fetch(`${baseUrl}/weather/sigmets`).then((response) => response.json());
+export async function fetchSigmets(artcc: string): Promise<ApiAirSigmet[]> {
+  return fetch(`${baseUrl}/weather/sigmets?artcc=${artcc}`).then((response) => response.json());
 }
 
 export async function fetchRouteFixes(route: string, dep: string, dest: string): Promise<RouteFix[]> {
