@@ -5,9 +5,17 @@ import type { RootState, RootThunkAction } from "~redux/store";
 import { addGIEntries } from "~redux/slices/appSlice";
 import type { AirmetEntry, SigmetEntry } from "~redux/slices/weatherSlice";
 import { addAirmets, addSigmets } from "~redux/slices/weatherSlice";
+import { getCenterCoordinates } from "~/utils/getArtccCenter";
+import { artccIdSelector } from "../slices/sectorSlice";
+import { Coordinate } from "~/types/gpd/coordinate";
 
 export const refreshAirSigmets = createAsyncThunk<void, void, { state: RootState }>("refreshAirSigmets", async (_, thunkAPI) => {
-  const airSigmetEntries = await fetchSigmets();
+  const state = thunkAPI.getState();
+  const artccId = artccIdSelector(state);
+  const centerLat = getCenterCoordinates(artccId)?.lat;
+  const centerLon = getCenterCoordinates(artccId)?.lon;
+
+  const airSigmetEntries = await fetchSigmets(centerLat, centerLon);
   const newSigmetEntries = airSigmetEntries.reverse();
   const weather = thunkAPI.getState().weather;
   const newSigmets = newSigmetEntries.filter((s) => !Object.keys(weather.sigmetMap).includes(s.rawAirSigmet) && s.airSigmetType === "SIGMET");
