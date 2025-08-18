@@ -65,7 +65,8 @@
 .topRow {
   composes: row;
   margin-bottom: 2px;
-  height: 24px;
+  min-height: 24px;
+  flex-shrink: 0;
   border-bottom: 1px solid #adadad;
 }
 
