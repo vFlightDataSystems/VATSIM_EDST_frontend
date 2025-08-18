@@ -3,6 +3,7 @@ export type SharedUiEvent =
   | "openAclHoldMenu"
   | "openAclSortMenu"
   | "openAclToolsMenu"
+  | "openWindGridAltitudeMenu"
   | "openAclTemplateMenu"
   | "aclCleanup"
   | "aclToggleHideTypeCol"

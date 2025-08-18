@@ -5,6 +5,7 @@ import { LocalVEdstEntry } from "types/localVEdstEntry";
 import type { RootThunkAction } from "~redux/store";
 import { delEntry, setEntry, updateEntry } from "~redux/slices/entrySlice";
 import sharedSocket from "~socket";
+import { closeAllMenus, setAsel } from "../slices/appSlice";
 
 function createEntryFromFlightplan(fp: ApiFlightplan): EdstEntry {
   return _.assign(

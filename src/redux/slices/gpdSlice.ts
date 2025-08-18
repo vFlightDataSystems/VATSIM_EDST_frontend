@@ -1,15 +1,15 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
 import type { Coordinate } from "types/gpd/coordinate";
+import { getCenterCoordinates } from "~/utils/getArtccCenter";
+import { artccIdSelector } from "./sectorSlice";
 
 export const GPD_MIN_ZOOM = 3000;
 export const GPD_MAX_ZOOM = 12000;
-
-const BOSCenter = [-71.00638888888889, 42.362944444444445] as Coordinate;
 
 export enum SectorType {
   ultraLow = "UL",
@@ -81,11 +81,20 @@ const initialState: GpdState = {
     mspLabels: ["MSP/MEP Labels", false],
     routePreviewMinutes: ["Route Preview (minutes)", 0],
   },
-  center: BOSCenter,
+  center: [getCenterCoordinates("ZBW")?.lon, getCenterCoordinates("ZBW")?.lat] as Coordinate,
   zoomLevel: 4000,
   suppressed: false,
   planData: [],
 };
+
+export const initializeGpdCenter = createAsyncThunk("gpd/initializeCenter", async (_, { getState, dispatch }) => {
+  const state = getState() as RootState;
+  const artccId = artccIdSelector(state);
+  if (artccId) {
+    const centerCoord = [getCenterCoordinates(artccId)?.lon, getCenterCoordinates(artccId)?.lat] as Coordinate;
+    dispatch(setGpdCenter(centerCoord));
+  }
+});
 
 const gpdSlice = createSlice({
   name: "gpd",
