@@ -5,7 +5,7 @@
 .root {
   composes: root from "optionMenu.module.scss";
   @include global.noSelect;
-  --width: 25ch;
+  --width: 15ch;
 }
 
 .header {
@@ -16,6 +16,17 @@
   composes: body from "optionMenu.module.scss";
   --row-padding: 0 4px;
   @include borderStyles.border;
+}
+
+.sectorRow {
+  display: flex;
+  flex-grow: 1;
+  justify-content: left;
+  border: none;
+  overflow: hidden;
+  padding: 0 4px 4px 4px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #adadad;
 }
 
 .col {

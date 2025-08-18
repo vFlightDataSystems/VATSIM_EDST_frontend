@@ -49,10 +49,33 @@ export const weatherApi = createApi({
         return null;
       },
     }),
+    getWindsGrid: builder.query<
+      {
+        metadata: {
+          Cycle: string;
+          "Forecast Hour": string;
+          "Processed At": string;
+          String: string;
+        };
+        points: Array<{
+          latitude: number;
+          longitude: number;
+          temperature_c: number;
+          wind_direction_deg_true: number;
+          wind_speed_kt: number;
+        }>;
+      },
+      { toplat: number; toplong: number; bottomlat: number; bottomlong: number; fl: number }
+    >({
+      query: (params) => {
+        const qp = `toplat=${params.toplat}&toplong=${params.toplong}&bottomlat=${params.bottomlat}&bottomlong=${params.bottomlong}&fl=${params.fl}`;
+        return `winds?${qp}`;
+      },
+    }),
   }),
 });
 
-const { useGetMetarEntryQuery, useGetAltimeterEntryQuery } = weatherApi;
+const { useGetMetarEntryQuery, useGetAltimeterEntryQuery, useGetWindsGridQuery } = weatherApi;
 
 export const useAltimeter = (airport: string) => {
   return useGetAltimeterEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
@@ -60,4 +83,8 @@ export const useAltimeter = (airport: string) => {
 
 export const useMetar = (airport: string) => {
   return useGetMetarEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
+};
+
+export const useWindsGrid = (params: { toplat: number; toplong: number; bottomlat: number; bottomlong: number; fl: number }) => {
+  return useGetWindsGridQuery(params);
 };

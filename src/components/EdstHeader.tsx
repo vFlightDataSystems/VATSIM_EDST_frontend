@@ -73,7 +73,6 @@ export const EdstHeader = () => {
             <EdstHeaderButton
               window="WIND"
               content="WIND"
-              disabled
               // title={Tooltips.wind}
             />
             <EdstHeaderButton
@@ -178,7 +177,6 @@ export const EdstHeader = () => {
             <EdstHeaderButton
               window="WIND"
               content="WIND"
-              disabled
               // title={Tooltips.wind}
             />
             <EdstHeaderButton

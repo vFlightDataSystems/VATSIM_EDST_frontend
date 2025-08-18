@@ -128,6 +128,13 @@ const initialWindowState = Object.fromEntries(
       };
     }
 
+    if (value === "WIND") {
+      dimension = {
+        width: screen.width - 300,
+        height: screen.height - 300,
+      };
+    }
+
     return [
       value,
       {
