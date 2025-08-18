@@ -57,7 +57,7 @@ export const WindGridBody = () => {
   // Fetch the wind data from the api
   // get top left and bottom right coords
   const topLeft = projection.invert?.([0, 0]) ?? [0, 0];
-  const bottomRight = projection.invert?.([width, height]) ?? [0, 0];
+  const bottomRight = projection.invert?.([width ?? 0, height ?? 0]) ?? [0, 0];
   const { data: windGrid } = useWindsGrid({
     toplat: topLeft[1],
     toplong: topLeft[0],
@@ -68,7 +68,7 @@ export const WindGridBody = () => {
 
   // Update the date/time metadata from the API response
   useEffect(() => {
-    if (windGrid) {
+    if (windGrid?.metadata?.String && windGrid?.metadata?.["Forecast Hour"]) {
       dispatch(
         setWindGridDateTime({
           date: windGrid.metadata.String,
@@ -137,6 +137,7 @@ export const WindGridBody = () => {
               const labelYOffset = baseLabelOffset + extraDownOffset;
 
               return (
+                // eslint-disable-next-line react/no-array-index-key
                 <g key={idx}>
                   {/* Dot at wind grid point */}
                   <circle cx={x} cy={y} r={2} fill="white" />

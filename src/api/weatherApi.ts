@@ -51,6 +51,12 @@ export const weatherApi = createApi({
     }),
     getWindsGrid: builder.query<
       {
+        metadata: {
+          Cycle: string;
+          "Forecast Hour": string;
+          "Processed At": string;
+          String: string;
+        };
         points: Array<{
           latitude: number;
           longitude: number;
