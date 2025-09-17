@@ -106,8 +106,6 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         dispatch(setSession(sessionInfo));
         dispatch(setSessionIsActive(sessionInfo.isActive ?? false));
         dispatch(initThunk());
-        // Load ARTCC info including neighboring facility NAS IDs
-        console.log("Loading ARTCC info for:", artccId);
         dispatch(loadArtccInfoThunk(artccId));
 
         // Check connection state before subscribing
