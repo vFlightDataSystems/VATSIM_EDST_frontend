@@ -9,8 +9,8 @@ import type { ProcessEramMessageDto } from "~/types/apiTypes/ProcessEramMessageD
 import type { HubConnection } from "@microsoft/signalr";
 import { HubConnectionState } from "@microsoft/signalr";
 import type { EramMessageProcessingResultDto } from "~/types/apiTypes/EramMessageProcessingResultDto";
-import { useHubConnector } from "./useHubConnector";
 import { openWindowThunk } from "~/redux/thunks/openWindowThunk";
+import { useHubConnector } from "./useHubConnector";
 
 async function ensureConnected(hubConnection: HubConnection | null, connectHub: () => Promise<void>): Promise<HubConnection | null> {
   if (!hubConnection) {
