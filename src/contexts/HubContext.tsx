@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import type { HubConnection } from "@microsoft/signalr";
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import type { Nullable } from "types/utility-types";
+import { loadArtccInfoThunk } from "~redux/thunks/loadArtccInfoThunk";
 import {
   clearSession,
   envSelector,
@@ -20,7 +21,6 @@ import type { EramTrackDto } from "types/apiTypes/EramTrackDto";
 import { ApiTopic } from "types/apiTypes/apiTopic";
 import type { ApiFlightplan } from "types/apiTypes/apiFlightplan";
 import { deleteFlightplanThunk, updateFlightplanThunk } from "~redux/thunks/updateFlightplanThunk";
-import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import { addOutageMessage, delOutageMessage, setFsdIsConnected } from "~redux/slices/appSlice";
 import { setArtccId, setSectorId } from "~redux/slices/sectorSlice";
 import { initThunk } from "~redux/thunks/initThunk";
@@ -31,6 +31,8 @@ import { OutageEntry } from "types/outageEntry";
 import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
 import { deleteTrackThunk, updateTrackThunk } from "~/redux/thunks/updateTrackThunk";
 import { toast } from "react-toastify";
+import { setOpenPositions, removeOpenPositions } from "~redux/slices/positionSlice";
+import type { OpenPositionDto } from "~redux/slices/positionSlice";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;
@@ -104,6 +106,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
         dispatch(setSession(sessionInfo));
         dispatch(setSessionIsActive(sessionInfo.isActive ?? false));
         dispatch(initThunk());
+        dispatch(loadArtccInfoThunk(artccId));
 
         // Check connection state before subscribing
         if (hubConnection.state === HubConnectionState.Connected) {
@@ -118,6 +121,7 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
           if (primaryFacilityId) {
             await hubConnection.invoke<void>("subscribe", new ApiTopic("FlightPlans", primaryFacilityId));
             await hubConnection.invoke<void>("subscribe", new ApiTopic("EramTracks", primaryFacilityId));
+            await hubConnection.invoke<void>("subscribe", new ApiTopic("OpenPositions", primaryFacilityId));
           }
           dispatch(setHubConnected(true));
         } else {
@@ -203,6 +207,14 @@ export const HubContextProvider = ({ children }: { children: ReactNode }) => {
       targets.forEach((target) => {
         dispatch(deleteTrackThunk(target));
       });
+    });
+    hubConnection.on("ReceiveOpenPositions", async (topic: ApiTopic, positions: OpenPositionDto[]) => {
+      console.log("received open positions:", positions);
+      dispatch(setOpenPositions(positions));
+    });
+    hubConnection.on("DeleteOpenPositions", async (topic: ApiTopic, positionIds: string[]) => {
+      console.log("deleting open positions:", positionIds);
+      dispatch(removeOpenPositions(positionIds));
     });
     hubConnection.on("handleFsdConnectionStateChanged", (state: boolean) => {
       dispatch(setFsdIsConnected(state));
