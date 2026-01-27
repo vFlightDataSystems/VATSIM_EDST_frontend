@@ -49,10 +49,19 @@ import mcaStyles from "css/mca.module.scss";
 import clsx from "clsx";
 import { ConsoleLogger } from "@microsoft/signalr/src/Utils";
 import { EramMessageElement, EramPositionType, ProcessEramMessageDto } from "~/types/apiTypes/ProcessEramMessageDto";
+import { characterToEramCharMapping } from "~/types/apiTypes/apiEramChar";
 import { useMetar } from "~/api/weatherApi";
 
 function chunkString(str: string, length: number) {
   return str.match(new RegExp(`.{1,${length}}`, "g")) ?? [""];
+}
+
+function applyCharacterMapping(text: string): string {
+  let result = text;
+  for (const [char, eramCode] of Object.entries(characterToEramCharMapping)) {
+    result = result.replaceAll(char, String.fromCharCode(eramCode));
+  }
+  return result;
 }
 
 export const MessageComposeArea = () => {
@@ -203,8 +212,11 @@ export const MessageComposeArea = () => {
   };
 
   const handleEramMessage = async (command: string, args: string[]): Promise<void> => {
-    const elements: EramMessageElement[] = [{ token: command }];
-    args.forEach((arg) => {
+    const mappedCommand = applyCharacterMapping(command);
+    const mappedArgs = args.map(arg => applyCharacterMapping(arg));
+    
+    const elements: EramMessageElement[] = [{ token: mappedCommand }];
+    mappedArgs.forEach((arg) => {
       elements.push({ token: arg });
     });
 
