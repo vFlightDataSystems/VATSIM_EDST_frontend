@@ -4,12 +4,13 @@ import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import type { RootState } from "~redux/store";
 import sharedSocket from "~socket";
-import type { Coordinate } from "types/gpd/coordinate";
+import { Coordinate } from "types/gpd/coordinate";
 import { getCenterCoordinates } from "~/utils/getArtccCenter";
 import { artccIdSelector } from "./sectorSlice";
 
 export const GPD_MIN_ZOOM = 3000;
 export const GPD_MAX_ZOOM = 12000;
+export const USA_CENTER: Coordinate = [44.9672, -103.7715];
 
 export enum SectorType {
   ultraLow = "UL",
@@ -81,7 +82,7 @@ const initialState: GpdState = {
     mspLabels: ["MSP/MEP Labels", false],
     routePreviewMinutes: ["Route Preview (minutes)", 0],
   },
-  center: [getCenterCoordinates("ZBW")?.lon, getCenterCoordinates("ZBW")?.lat] as Coordinate,
+  center: USA_CENTER,
   zoomLevel: 4000,
   suppressed: false,
   planData: [],
