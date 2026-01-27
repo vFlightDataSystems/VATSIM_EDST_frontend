@@ -16,6 +16,7 @@ export const edstMenus = [
   "CANCEL_HOLD_MENU",
   "CHANGE_DEST_MENU",
   "HDG_ELIGIBILITY_MENU",
+  "SPD_ELIGIBILITY_MENU",
 ] as const;
 
 export const edstWindows = [

@@ -33,12 +33,6 @@ export class LocalVEdstEntry {
   // speed assigned in the local scratchpad
   localSpeed: Nullable<string> = null;
 
-  // heading assigned in the datablock
-  scratchpadHeading: Nullable<string> = null;
-
-  // speed assigned in the datablock
-  scratchpadSpeed: Nullable<string> = null;
-
   showFreeText = false;
 
   deleted = false;

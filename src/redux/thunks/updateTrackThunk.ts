@@ -35,8 +35,8 @@ export function updateTrackThunk(target: EramTrackDto): RootThunkAction {
       }
 
       // Set Heading/Speed Scratchpads
-      localData.scratchpadHeading = target.assignedHeading ?? null;
-      localData.scratchpadSpeed = target.assignedSpeed ?? null;
+      localData.assignedHeading = target.assignedHeading ?? null;
+      localData.assignedSpeed = target.assignedSpeed ?? null;
 
       // Set Ownership status if we own the track
       if (target.owner.sectorId === mySectorId) {
@@ -48,13 +48,16 @@ export function updateTrackThunk(target: EramTrackDto): RootThunkAction {
         localData.owned = false;
       }
 
-      // Update the entry with new local data
+      // Note: We explicitly exclude localHeading and localSpeed from the spread
+      // because they are locally-managed values that should never be overwritten by vNAS updates
+      const { localHeading, localSpeed, ...localDataWithoutLocals } = localData;
+      
       dispatch(
         updateEntry({
           aircraftId: target.aircraftId,
           data: {
             ...entries[target.aircraftId],
-            ...localData,
+            ...localDataWithoutLocals,
           },
         })
       );

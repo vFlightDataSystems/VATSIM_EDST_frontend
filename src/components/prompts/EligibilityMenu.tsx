@@ -6,22 +6,27 @@ import { closeWindow, setAsel } from "~redux/slices/appSlice";
 import { EdstPrompt } from "components/prompts/EdstPrompt";
 import optionStyles from "css/optionMenu.module.scss";
 
-export const EligibilityMenu = () => {
+type EligibilityMenuProps = {
+  type: "HDG" | "SPD";
+  windowId: "HDG_ELIGIBILITY_MENU" | "SPD_ELIGIBILITY_MENU";
+};
+
+export const EligibilityMenu = ({ type, windowId }: EligibilityMenuProps) => {
   const dispatch = useRootDispatch();
   const entry = useRootSelector(aselEntrySelector)!;
 
   const onSubmit = async () => {
-    dispatch(closeWindow("HDG_ELIGIBILITY_MENU"));
+    dispatch(closeWindow(windowId));
   };
 
   const onCancel = () => {
-    dispatch(closeWindow("HDG_ELIGIBILITY_MENU"));
+    dispatch(closeWindow(windowId));
   };
 
   return (
     <EdstPrompt
-      title={`${entry.aircraftId} HDG`}
-      windowId="HDG_ELIGIBILITY_MENU"
+      title={`${entry.aircraftId} ${type}`}
+      windowId={windowId}
       width="250px"
       submitText="/OK"
       onSubmit={onSubmit}

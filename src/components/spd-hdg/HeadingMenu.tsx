@@ -15,9 +15,10 @@ import { EdstButton, ExitButton } from "components/utils/EdstButton";
 import optionStyles from "css/optionMenu.module.scss";
 import headingStyles from "css/hdgSpdMenu.module.scss";
 import inputStyles from "css/input.module.scss";
-import { EramPositionType } from "~/types/apiTypes/ProcessEramMessageDto";
 import clsx from "clsx";
 import { openMenuThunk } from "~/redux/thunks/openMenuThunk";
+import { sendEramHeadingOrSpeedMessage } from "~/utils/eramMessageUtils";
+import { LEFT_CLICK, RIGHT_CLICK } from "~/utils/constants";
 
 export const HeadingMenu = () => {
   const asel = useRootSelector(aselSelector)!;
@@ -52,33 +53,33 @@ export const HeadingMenu = () => {
       valueStr = `${value}${direction}`;
     }
 
-    const LEFT_CLICK = 0;
-    const RIGHT_CLICK = 2;
-
-    if (event.button === LEFT_CLICK) {
-      if (amend) {
-        // Check if we don't own the track
-        if (!entry.owned) {
-          // Show eligibility menu for non-owned tracks
-          dispatch(openMenuThunk("HDG_ELIGIBILITY_MENU"));
-          return;
+    switch(event.button) {
+      case LEFT_CLICK:
+        if (amend) {
+          if (!entry.owned) {
+            // Show eligibility menu for non-owned tracks
+            dispatch(openMenuThunk("HDG_ELIGIBILITY_MENU"));
+            return;
+          }
+          await sendHeadingEramMessage(valueStr);
+        } else {
+          setHeadingInState(valueStr, true);
         }
-        await sendHeadingEramMessage(valueStr);
-      } else {
-        setHeadingInState(valueStr, true);
-      }
-    } else if (event.button === RIGHT_CLICK) {
-      if (amend) {
-        // Check if we don't own the track
-        if (!entry.owned) {
-          // Show eligibility menu for non-owned tracks
-          dispatch(openMenuThunk("HDG_ELIGIBILITY_MENU"));
-          return;
+        break;
+      case RIGHT_CLICK:
+        if (amend) {
+          if (!entry.owned) {
+            // Show eligibility menu for non-owned tracks
+            dispatch(openMenuThunk("HDG_ELIGIBILITY_MENU"));
+            return;
+          }
+          await sendHeadingEramMessage("*/");
+        } else {
+          setHeadingInState(null, true);
         }
-        await sendHeadingEramMessage("*/");
-      } else {
-        setHeadingInState(null, true);
-      }
+        break;
+      default:
+        break;
     }
     dispatch(closeWindow("HEADING_MENU"));
   };
@@ -87,20 +88,13 @@ export const HeadingMenu = () => {
     dispatch(
       updateEntry({
         aircraftId: entry.aircraftId,
-        data: local ? { localHeading: value, scratchpadHeading: null } : { scratchpadHeading: value, localHeading: null },
+        data: local ? { localHeading: value } : { assignedHeading: value },
       })
     );
   };
 
   const sendHeadingEramMessage = async (value: string, forceOk = false) => {
-    const message = {
-      source: EramPositionType.DSide,
-      elements: forceOk 
-        ? [{ token: "QS" }, { token: "/OK" }, { token: value }, { token: entry.cid }]
-        : [{ token: "QS" }, { token: value }, { token: entry.cid }],
-      invertNumericKeypad: invertNumpad,
-    };
-    await hubActions.sendEramMessage(message);
+    await sendEramHeadingOrSpeedMessage(value, entry.cid, invertNumpad, hubActions, forceOk);
   };
 
   return (

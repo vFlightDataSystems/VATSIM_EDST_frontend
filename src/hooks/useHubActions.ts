@@ -12,6 +12,15 @@ import type { EramMessageProcessingResultDto } from "~/types/apiTypes/EramMessag
 import { openWindowThunk } from "~/redux/thunks/openWindowThunk";
 import { useHubConnector } from "./useHubConnector";
 
+export type HubActions = {
+  generateFrd: (location: ApiLocation) => Promise<string>;
+  amendFlightplan: (fp: CreateOrAmendFlightplanDto) => Promise<void>;
+  setHoldAnnotations: (aircraftId: AircraftId, annotations: HoldAnnotations) => Promise<void>;
+  cancelHold: (aircraftId: AircraftId) => Promise<void>;
+  sendUplinkMessage: (aircraftId: AircraftId, message: string) => Promise<void>;
+  sendEramMessage: (eramMessage: ProcessEramMessageDto) => Promise<EramMessageProcessingResultDto | void>;
+};
+
 async function ensureConnected(hubConnection: HubConnection | null, connectHub: () => Promise<void>): Promise<HubConnection | null> {
   if (!hubConnection) {
     console.log("Hub connection is not available");
