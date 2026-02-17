@@ -47,10 +47,8 @@ export const EdstPrompt = ({ stopDragOn = "mouseup", ...props }: EdstPromptProps
       <div className={optionStyles.body}>
         {props.children}
         <div className={speedStyles.row}>
-          <div className={optionStyles.col}>
+          <div className={clsx(speedStyles.row, "center")} style={{ gap: "1ch", justifyContent: "center" }}>
             <EdstButton content={props.submitText} onMouseDown={props.onSubmit} />
-          </div>
-          <div className={clsx(optionStyles.col, "right")}>
             <EdstButton
               content={props.cancelText}
               onMouseDown={() => {

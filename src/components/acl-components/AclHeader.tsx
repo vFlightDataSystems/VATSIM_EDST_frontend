@@ -53,8 +53,6 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
     }))
     .sort((a, b) => a.nasId.localeCompare(b.nasId)); // Sort alphabetically by NAS ID
 
-  console.log(facilityDisplay);
-
   return (
     <div className={tableStyles.header}>
       <WindowTitleBar

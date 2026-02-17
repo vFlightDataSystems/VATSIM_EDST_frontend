@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import type { Nullable } from "types/utility-types";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, closeWindow } from "~redux/slices/appSlice";
+import { aselSelector, zStackSelector, pushZStack, windowPositionSelector, invertNumpadSelector, closeWindow } from "~redux/slices/appSlice";
+import { useHubActions } from "hooks/useHubActions";
 import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
@@ -15,17 +16,22 @@ import optionStyles from "css/optionMenu.module.scss";
 import headingStyles from "css/hdgSpdMenu.module.scss";
 import inputStyles from "css/input.module.scss";
 import clsx from "clsx";
+import { openMenuThunk } from "~/redux/thunks/openMenuThunk";
+import { sendEramHeadingOrSpeedMessage } from "~/utils/eramMessageUtils";
+import { LEFT_CLICK, RIGHT_CLICK } from "~/utils/constants";
 
 export const HeadingMenu = () => {
   const asel = useRootSelector(aselSelector)!;
   const entry = useRootSelector(aselEntrySelector)!;
   const pos = useRootSelector((state) => windowPositionSelector(state, "HEADING_MENU"));
   const zStack = useRootSelector(zStackSelector);
+  const invertNumpad = useRootSelector(invertNumpadSelector);
   const dispatch = useRootDispatch();
+  const hubActions = useHubActions();
 
   const [heading, setHeading] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
-  const [amend, setAmend] = useState(true);
+  const [amend, setAmend] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const focused = useFocused(ref);
   useCenterCursor(ref, [asel.aircraftId]);
@@ -37,45 +43,58 @@ export const HeadingMenu = () => {
     setAmend(true);
   }, [asel]);
 
-  const handleMouseDown = (event: React.MouseEvent, value: number, direction: Nullable<string> = null) => {
-    const valueStr = direction === null ? `${amend ? "H" : ""}${value}` : `${value}${direction}`;
+  const handleMouseDown = async (event: React.MouseEvent, value: number | string, direction: Nullable<string> = null) => {
+    let valueStr;
+    if (value === "PH") {
+      valueStr = "PH";
+    } else if (direction === null) {
+      valueStr = `${amend ? "H" : ""}${value}`;
+    } else {
+      valueStr = `${value}${direction}`;
+    }
 
-    switch (event.button) {
-      case 0:
+    switch(event.button) {
+      case LEFT_CLICK:
         if (amend) {
-          dispatch(
-            updateEntry({
-              aircraftId: entry.aircraftId,
-              data: { scratchpadHeading: null },
-            })
-          );
-          // set assigned heading
+          if (!entry.owned) {
+            // Show eligibility menu for non-owned tracks
+            dispatch(openMenuThunk("HDG_ELIGIBILITY_MENU"));
+            return;
+          }
+          await sendHeadingEramMessage(valueStr);
         } else {
-          dispatch(
-            updateEntry({
-              aircraftId: entry.aircraftId,
-              data: { scratchpadHeading: valueStr },
-            })
-          );
-          // delete assigned heading
+          setHeadingInState(valueStr, true);
         }
         break;
-      case 1:
+      case RIGHT_CLICK:
         if (amend) {
-          // set assigned heading
+          if (!entry.owned) {
+            // Show eligibility menu for non-owned tracks
+            dispatch(openMenuThunk("HDG_ELIGIBILITY_MENU"));
+            return;
+          }
+          await sendHeadingEramMessage("*/");
         } else {
-          dispatch(
-            updateEntry({
-              aircraftId: entry.aircraftId,
-              data: { scratchpadHeading: valueStr },
-            })
-          );
+          setHeadingInState(null, true);
         }
         break;
       default:
         break;
     }
     dispatch(closeWindow("HEADING_MENU"));
+  };
+
+  const setHeadingInState = (value: Nullable<string>, local: boolean) => {
+    dispatch(
+      updateEntry({
+        aircraftId: entry.aircraftId,
+        data: local ? { localHeading: value } : { assignedHeading: value },
+      })
+    );
+  };
+
+  const sendHeadingEramMessage = async (value: string, forceOk = false) => {
+    await sendEramHeadingOrSpeedMessage(value, entry.cid, invertNumpad, hubActions, forceOk);
   };
 
   return (
@@ -143,20 +162,7 @@ export const HeadingMenu = () => {
             );
           })}
           <div className={headingStyles.phRow}>
-            <EdstButton
-              content="Present Heading"
-              onMouseDown={(event) => {
-                switch (event.button) {
-                  case 0:
-                    break;
-                  case 1:
-                    break;
-                  default:
-                    break;
-                }
-                dispatch(closeWindow("HEADING_MENU"));
-              }}
-            />
+            <EdstButton content="Present Heading" onMouseDown={(e) => handleMouseDown(e, "PH")} />
           </div>
           <div className={optionStyles.row}>
             <div className={clsx(optionStyles.col, "right")}>
