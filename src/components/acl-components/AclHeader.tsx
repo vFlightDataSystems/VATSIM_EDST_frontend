@@ -10,6 +10,10 @@ import { AddFindInput } from "components/utils/InputComponents";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 import tableStyles from "css/table.module.scss";
+import { activeArtccPositionsSelector, neighboringNasIdsSelector } from "~redux/slices/positionSlice";
+import { PositionType } from "types/apiTypes/OpenPositionDto";
+import { artccIdSelector } from "~redux/slices/sectorSlice";
+import clsx from "clsx";
 
 /**
  * ACL title bar and header row with add/find input field
@@ -18,6 +22,9 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
   const asel = useRootSelector(aclAselSelector);
   const sortData = useRootSelector(aclSortDataSelector);
   const manualPosting = useRootSelector(aclManualPostingSelector);
+  const artccPositions = useRootSelector(activeArtccPositionsSelector);
+  const currentArtccId = useRootSelector(artccIdSelector);
+  const neighboringNasIds = useRootSelector(neighboringNasIdsSelector);
   const dispatch = useRootDispatch();
 
   const [searchStr, setSearchString] = useState("");
@@ -27,6 +34,24 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
       setSearchString("");
     }
   };
+
+  // Get active facility NAS IDs
+  const activeFacilityNasIds = new Set(
+    artccPositions
+      .filter((position) => position.type === PositionType.Artcc && position.isActive)
+      .filter((position) => position.facilityId !== currentArtccId)
+      .map((position) => neighboringNasIds[position.facilityId])
+      .filter(Boolean)
+  );
+
+  // Create display list with online/offline status
+  const facilityDisplay = Object.entries(neighboringNasIds)
+    .map(([facilityId, nasId]) => ({
+      facilityId,
+      nasId,
+      isOnline: activeFacilityNasIds.has(nasId),
+    }))
+    .sort((a, b) => a.nasId.localeCompare(b.nasId)); // Sort alphabetically by NAS ID
 
   return (
     <div className={tableStyles.header}>
@@ -65,7 +90,20 @@ export const AclHeader = ({ focused, toggleFullscreen, startDrag }: HeaderCompon
       <div className={tableStyles.bottomHeaderRow}>
         Add/Find
         <AddFindInput value={searchStr} onChange={(e) => setSearchString(e.target.value)} onKeyDown={handleKeyDown} />
-        Facilities:
+        Facilities:&nbsp;
+        {facilityDisplay.map(({ nasId, isOnline }, index) => (
+          <React.Fragment key={nasId}>
+            {index > 0 && <>&nbsp;</>}
+            <span
+              className={clsx({
+                [tableStyles.onlineFacility]: isOnline,
+                [tableStyles.offlineFacility]: !isOnline,
+              })}
+            >
+              {nasId}
+            </span>
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );

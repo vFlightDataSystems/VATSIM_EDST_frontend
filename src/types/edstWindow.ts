@@ -15,6 +15,8 @@ export const edstMenus = [
   "PREV_ROUTE_MENU",
   "CANCEL_HOLD_MENU",
   "CHANGE_DEST_MENU",
+  "HDG_ELIGIBILITY_MENU",
+  "SPD_ELIGIBILITY_MENU",
   "WIND_GRID_ALTITUDE_MENU",
 ] as const;
 

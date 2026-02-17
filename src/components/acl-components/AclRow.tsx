@@ -1,16 +1,35 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Nullable } from "types/utility-types";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { delEntry, entrySelector, toggleSpa, updateEntry } from "~redux/slices/entrySlice";
-import { aircraftIsAselSelector, invertNumpadSelector } from "~redux/slices/appSlice";
-import { aclHiddenColumnsSelector, aclManualPostingSelector, toolsOptionsSelector } from "~redux/slices/aclSlice";
+import {
+  delEntry,
+  entrySelector,
+  toggleSpa,
+  updateEntry,
+} from "~redux/slices/entrySlice";
+import {
+  aircraftIsAselSelector,
+  invertNumpadSelector,
+} from "~redux/slices/appSlice";
+import {
+  aclHiddenColumnsSelector,
+  aclManualPostingSelector,
+  toolsOptionsSelector,
+} from "~redux/slices/aclSlice";
 import type { EdstEntry } from "types/edstEntry";
 import { aclAircraftSelect } from "~redux/thunks/aircraftSelect";
 import type { EdstWindow } from "types/edstWindow";
 import type { AclRowField } from "types/acl/aclRowField";
 import { HoldDirectionValues } from "types/hold/holdDirectionValues";
 import { HoldTurnDirectionValues } from "types/hold/turnDirection";
-import { REMOVAL_TIMEOUT, SPA_INDICATOR, VCI_SYMBOL } from "~/utils/constants";
+import {
+  LEFT_CLICK,
+  MIDDLE_CLICK,
+  REMOVAL_TIMEOUT,
+  RIGHT_CLICK,
+  SPA_INDICATOR,
+  VCI_SYMBOL,
+} from "~/utils/constants";
 import { useAar } from "api/prefrouteApi";
 import { useRouteFixes } from "api/aircraftApi";
 import { formatRoute } from "~/utils/formatRoute";
@@ -256,25 +275,73 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
     }
   };
 
-  const handleHeadingClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
+  const handleClearHeadingOrSpeed = (
+    localValue: Nullable<string>,
+    assignedValue: Nullable<string>,
+    displayFlag: boolean,
+    localKey: "localHeading" | "localSpeed",
+    assignedKey: "assignedHeading" | "assignedSpeed",
+    sendEramOnClear = false,
+  ) => {
+    if (localValue && (displayFlag || assignedValue === null)) {
+      dispatch(updateEntry({ aircraftId, data: { [localKey]: null } }));
+    } else {
+      if (sendEramOnClear) {
+        const eramMessage = {
+          source: EramPositionType.DSide,
+          // Clear heading command (*/) or speed (/*)
+          elements: [
+            { token: "QS" },
+            { token: localKey === "localHeading" ? "*/" : "/*" },
+            { token: entry.cid },
+          ],
+          invertNumericKeypad: invertNumpad,
+        };
+        hubActions.sendEramMessage(eramMessage);
+      } else {
+      }
+      dispatch(updateEntry({ aircraftId, data: { [assignedKey]: null } }));
+    }
+  };
+
+  const handleHeadingClick: React.MouseEventHandler<HTMLDivElement> = (
+    event,
+  ) => {
     event.preventDefault();
     switch (event.button) {
-      case 0:
-        handleClick(event.currentTarget, "HDG_ACL_ROW_FIELD", "acl-hdg-asel", "HEADING_MENU");
+      case LEFT_CLICK:
+        console.log("LEFT_CLICK on heading");
+        handleClick(
+          event.currentTarget,
+          "HDG_ACL_ROW_FIELD",
+          "acl-hdg-asel",
+          "HEADING_MENU",
+        );
         break;
-      case 1:
-        if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
+      case MIDDLE_CLICK:
+        console.log("MIDDLE_CLICK on heading");
+        if (
+          entry.localHeading &&
+          (displayScratchHdg || entry.assignedHeading === null)
+        ) {
           // const promotedHdg = "LRH".includes(entry.scratchpadHeading.slice(-1)) ? entry.scratchpadHeading : `H${entry.scratchpadHeading}`;
         }
         break;
-      case 2:
-        if (entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null)) {
-          dispatch(updateEntry({ aircraftId, data: { scratchpadHeading: null } }));
-        } else if (entry.assignedHeading) {
-          dispatch(updateEntry({ aircraftId, data: { assignedHeading: null } }));
-        }
+      case RIGHT_CLICK:
+        console.log(
+          "RIGHT_CLICK on heading - calling handleClearHeadingOrSpeed",
+        );
+        handleClearHeadingOrSpeed(
+          entry.localHeading,
+          entry.assignedHeading,
+          displayScratchHdg,
+          "localHeading",
+          "assignedHeading",
+          true,
+        );
         break;
       default:
+        console.log("DEFAULT case, button:", event.button);
         break;
     }
   };
@@ -282,20 +349,31 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
   const handleSpeedClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     switch (event.button) {
-      case 0:
-        handleClick(event.currentTarget, "SPD_ACL_ROW_FIELD", "acl-spd-asel", "SPEED_MENU");
+      case LEFT_CLICK:
+        handleClick(
+          event.currentTarget,
+          "SPD_ACL_ROW_FIELD",
+          "acl-spd-asel",
+          "SPEED_MENU",
+        );
         break;
-      case 1:
-        if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
+      case MIDDLE_CLICK:
+        if (
+          entry.localSpeed &&
+          (displayScratchSpd || entry.assignedSpeed === null)
+        ) {
           // const promotedSpd = entry.scratchpadSpeed.slice(0, 1) === "M" ? entry.scratchpadSpeed : `S${entry.scratchpadSpeed}`;
         }
         break;
-      case 2:
-        if (entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null)) {
-          dispatch(updateEntry({ aircraftId, data: { scratchpadSpeed: null } }));
-        } else if (entry.assignedSpeed) {
-          dispatch(updateEntry({ aircraftId, data: { assignedSpeed: null } }));
-        }
+      case RIGHT_CLICK:
+        handleClearHeadingOrSpeed(
+          entry.localSpeed,
+          entry.assignedSpeed,
+          displayScratchSpd,
+          "localSpeed",
+          "assignedSpeed",
+          true,
+        );
         break;
       default:
         break;
@@ -366,47 +444,63 @@ export const AclRow = React.memo(({ aircraftId }: AclRowProps) => {
             {convertBeaconCodeToString(entry.assignedBeaconCode)}
           </div>
           <div
-            className={clsx(tableStyles.specialBox, { isDisabled: !(entry.assignedHeading && entry.scratchpadHeading) })}
+            className={clsx(tableStyles.specialBox, {
+              isDisabled: !(entry.assignedHeading && entry.localHeading),
+            })}
             onMouseDown={() => setDisplayScratchHdg(!displayScratchHdg)}
           >
-            {entry.assignedHeading && entry.scratchpadHeading && "*"}
+            {entry.assignedHeading && entry.localHeading && "*"}
           </div>
           <div
             className={clsx(tableStyles.hdgCol, {
               hover: true,
               selected: isSelected("HDG_ACL_ROW_FIELD"),
-              scratchpad: !!entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null),
+              scratchpad:
+                !!entry.localHeading &&
+                (displayScratchHdg || entry.assignedHeading === null),
               visibilityHidden: hiddenColumns.includes("HDG_ACL_ROW_FIELD"),
             })}
             ref={hdgRef}
             onMouseDown={handleHeadingClick}
           >
-            {entry.scratchpadHeading && (displayScratchHdg || entry.assignedHeading === null) ? entry.scratchpadHeading : entry.assignedHeading}
+            {entry.localHeading &&
+            (displayScratchHdg || entry.assignedHeading === null)
+              ? entry.localHeading
+              : entry.assignedHeading}
           </div>
           <div className={tableStyles.slashCol}>/</div>
           <div
             className={clsx(tableStyles.spdCol, {
               hover: true,
               selected: isSelected("SPD_ACL_ROW_FIELD"),
-              scratchpad: !!entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null),
+              scratchpad:
+                !!entry.localSpeed &&
+                (displayScratchSpd || entry.assignedSpeed === null),
               visibilityHidden: hiddenColumns.includes("SPD_ACL_ROW_FIELD"),
             })}
             ref={spdRef}
             onMouseDown={handleSpeedClick}
           >
-            {entry.scratchpadSpeed && (displayScratchSpd || entry.assignedSpeed === null) ? entry.scratchpadSpeed : entry.assignedSpeed}
+            {entry.localSpeed &&
+            (displayScratchSpd || entry.assignedSpeed === null)
+              ? entry.localSpeed
+              : entry.assignedSpeed}
           </div>
           <div
-            className={clsx(tableStyles.specialBox, { isDisabled: !(entry.assignedSpeed && entry.scratchpadSpeed) })}
+            className={clsx(tableStyles.specialBox, {
+              isDisabled: !(entry.assignedSpeed && entry.localSpeed),
+            })}
             onMouseDown={() => setDisplayScratchSpd(!displayScratchSpd)}
           >
-            {entry.assignedSpeed && entry.scratchpadSpeed && "*"}
+            {entry.assignedSpeed && entry.localSpeed && "*"}
           </div>
           <div className={clsx(tableStyles.specialBox, "isDisabled")} />
           {anyHolding && (
             <div
               ref={holdRef}
-              className={clsx(tableStyles.specialBox, tableStyles.cBrown, { selected: isSelected("HOLD_ACL_ROW_FIELD") })}
+              className={clsx(tableStyles.specialBox, tableStyles.cBrown, {
+                selected: isSelected("HOLD_ACL_ROW_FIELD"),
+              })}
               onMouseDown={handleHoldClick}
             >
               {entry.holdAnnotations ? "H" : ""}

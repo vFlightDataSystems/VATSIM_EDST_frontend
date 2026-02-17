@@ -5,6 +5,9 @@ export const DOWNLINK_SYMBOL = "\u00BB";
 export const OPLUS_SYMBOL = "\u2295";
 export const VCI_SYMBOL = "\u2719";
 export const CPDLC_VCI = "\u2720";
+export const LEFT_CLICK = 0;
+export const MIDDLE_CLICK = 1;
+export const RIGHT_CLICK = 2;
 
 const ALT_EXPR = /[0-5]?[1-9][05]/;
 export const ALTITUDE_VALIDATION_EXPRESSIONS = {

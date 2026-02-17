@@ -27,11 +27,11 @@ export class LocalVEdstEntry {
   // if not null, number represents timestamp when pendingRemoval status was activated
   pendingRemoval: Nullable<number> = null;
 
-  // heading assigned in the scratchpad
-  scratchpadHeading: Nullable<string> = null;
+  // heading assigned in the local scratchpad
+  localHeading: Nullable<string> = null;
 
-  // speed assigned in the scratchpad
-  scratchpadSpeed: Nullable<string> = null;
+  // speed assigned in the local scratchpad
+  localSpeed: Nullable<string> = null;
 
   showFreeText = false;
 

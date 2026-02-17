@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { aselSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "~redux/slices/appSlice";
+import { aselSelector, invertNumpadSelector, closeWindow, windowPositionSelector, zStackSelector, pushZStack } from "~redux/slices/appSlice";
+import { useHubActions } from "hooks/useHubActions";
 import { aselEntrySelector, updateEntry } from "~redux/slices/entrySlice";
 import { useDragging } from "hooks/useDragging";
 import { useCenterCursor } from "hooks/useCenterCursor";
@@ -13,6 +14,10 @@ import clsx from "clsx";
 import optionStyles from "css/optionMenu.module.scss";
 import speedStyles from "css/hdgSpdMenu.module.scss";
 import inputStyles from "css/input.module.scss";
+import { sendEramHeadingOrSpeedMessage } from "~/utils/eramMessageUtils";
+import { LEFT_CLICK, RIGHT_CLICK } from "~/utils/constants";
+import { openMenuThunk } from "~/redux/thunks/openMenuThunk";
+import { Nullable } from "~/types/utility-types";
 
 enum Sign {
   more = "+",
@@ -26,6 +31,8 @@ export const SpeedMenu = () => {
   const pos = useRootSelector((state) => windowPositionSelector(state, "SPEED_MENU"));
   const zStack = useRootSelector(zStackSelector);
   const dispatch = useRootDispatch();
+  const hubActions = useHubActions();
+  const invertNumpad = useRootSelector(invertNumpadSelector);
   const [speed, setSpeed] = useState(280);
   const [deltaY, setDeltaY] = useState(0);
   const [sign, setSign] = useState<Sign>(Sign.none);
@@ -47,44 +54,50 @@ export const SpeedMenu = () => {
     setDeltaY(newDeltaY);
   };
 
-  const handleMouseDown = (event: React.MouseEvent, value: number, mach = false) => {
+  const handleMouseDown = async (event: React.MouseEvent, value: number, mach = false) => {
     const valueStr = !mach ? `${amend && sign === Sign.none ? "S" : ""}${value}${sign}` : `M${Math.round(value * 100)}${sign}`;
     switch (event.button) {
-      case 0:
+      case LEFT_CLICK:
         if (amend) {
-          dispatch(
-            updateEntry({
-              aircraftId: entry.aircraftId,
-              data: { scratchpadSpeed: null },
-            })
-          );
-          // set assigned speed
+          if (!entry.owned) {
+            // Show eligibility menu for non-owned tracks
+            dispatch(openMenuThunk("SPD_ELIGIBILITY_MENU"));
+            return;
+          }
+          await sendSpeedEramMessage(`/${valueStr}`);
         } else {
-          dispatch(
-            updateEntry({
-              aircraftId: entry.aircraftId,
-              data: { scratchpadSpeed: valueStr },
-            })
-          );
-          // delete assigned speed
+          setSpeedInState(valueStr, true);
         }
         break;
-      case 1:
+      case RIGHT_CLICK:
         if (amend) {
-          // set assigned speed
+          if (!entry.owned) {
+            // Show eligibility menu for non-owned tracks
+            dispatch(openMenuThunk("SPD_ELIGIBILITY_MENU"));
+            return;
+          }
+          await sendSpeedEramMessage("/*");
         } else {
-          dispatch(
-            updateEntry({
-              aircraftId: entry.aircraftId,
-              data: { scratchpadSpeed: valueStr },
-            })
-          );
+          setSpeedInState(null, true);
         }
         break;
       default:
         break;
     }
     dispatch(closeWindow("SPEED_MENU"));
+  };
+
+  const setSpeedInState = (value: Nullable<string>, local: boolean) => {
+    dispatch(
+      updateEntry({
+        aircraftId: entry.aircraftId,
+        data: local ? { localSpeed: value } : { assignedSpeed: value },
+      })
+    );
+  };
+
+  const sendSpeedEramMessage = async (value: string, forceOk = false) => {
+    await sendEramHeadingOrSpeedMessage(value, entry.cid, invertNumpad, hubActions, forceOk);
   };
 
   return (

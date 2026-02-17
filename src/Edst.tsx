@@ -31,6 +31,7 @@ import { WindGridAltitudeMenu } from "components/wind-grid/WindGridAltitudeMenu"
 import { GpdMapOptions } from "components/gpd-components/GpdMapOptions";
 import type { EdstWindow } from "types/edstWindow";
 import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
+import { EligibilityMenu } from "components/prompts/EligibilityMenu";
 import { GIWindow } from "components/GeneralInforationWindow";
 import { AclSortMenu } from "components/acl-components/AclSortMenu";
 import { DepSortMenu } from "components/dep-components/DepSortMenu";
@@ -64,6 +65,8 @@ const edstComponentMap = {
   EQUIPMENT_TEMPLATE_MENU: EquipmentTemplateMenu,
   HOLD_MENU: HoldMenu,
   CANCEL_HOLD_MENU: CancelHoldMenu,
+  HDG_ELIGIBILITY_MENU: () => <EligibilityMenu type="HDG" windowId="HDG_ELIGIBILITY_MENU" />,
+  SPD_ELIGIBILITY_MENU: () => <EligibilityMenu type="SPD" windowId="SPD_ELIGIBILITY_MENU" />,
   SPEED_MENU: SpeedMenu,
   HEADING_MENU: HeadingMenu,
   ALTITUDE_MENU: AltMenu,

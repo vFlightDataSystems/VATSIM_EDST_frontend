@@ -1,5 +1,6 @@
 import type { ApiAirportInfo } from "types/apiTypes/apiAirportInfo";
 import type { ApiAircraft } from "types/apiTypes/apiAircraft";
+import type { ApiArtccInfo } from "types/apiTypes/apiArtccInfo";
 import { VATSIM_CLIENT_ID } from "~/utils/constants";
 import { resolve } from "path";
 
@@ -37,3 +38,12 @@ export async function fetchAirportInfo(apiBaseUrl: string, airport: string): Pro
   });
 }
 
+export async function fetchArtccInfo(apiBaseUrl: string, artccId: string): Promise<ApiArtccInfo | null> {
+  return fetch(`${apiBaseUrl}/artccs/${artccId}`).then(async (response) => {
+    if (response.status === 404) {
+      return null;
+    }
+    const json = await response.json();
+    return json;
+  });
+}
