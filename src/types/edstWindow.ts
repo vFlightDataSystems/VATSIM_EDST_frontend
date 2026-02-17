@@ -17,6 +17,7 @@ export const edstMenus = [
   "CHANGE_DEST_MENU",
   "HDG_ELIGIBILITY_MENU",
   "SPD_ELIGIBILITY_MENU",
+  "WIND_GRID_ALTITUDE_MENU",
 ] as const;
 
 export const edstWindows = [

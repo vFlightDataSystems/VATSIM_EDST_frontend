@@ -15,6 +15,7 @@ import aircraftTrackReducer from "~redux/slices/trackSlice";
 import weatherReducer from "~redux/slices/weatherSlice";
 import windowOptionsReducer from "~redux/slices/windowOptionsSlice";
 import authReducer from "~redux/slices/authSlice";
+import windGridReducer from "~redux/slices/windGridSlice";
 import positionReducer from "~redux/slices/positionSlice";
 
 const store = configureStore({
@@ -23,6 +24,7 @@ const store = configureStore({
     acl: aclReducer,
     dep: depReducer,
     gpd: gpdReducer,
+    windGrid: windGridReducer,
     plan: planReducer,
     sectorData: sectorReducer,
     entries: entryReducer,

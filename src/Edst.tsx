@@ -26,6 +26,8 @@ import { refreshWeatherThunk } from "~redux/thunks/weatherThunks";
 import { EquipmentTemplateMenu } from "components/template-components/EquipmentTemplateMenu";
 import { SigmetWindow } from "components/SigmetWindow";
 import { Gpd } from "components/Gpd";
+import { WindGrid } from "components/WindGrid";
+import { WindGridAltitudeMenu } from "components/wind-grid/WindGridAltitudeMenu";
 import { GpdMapOptions } from "components/gpd-components/GpdMapOptions";
 import type { EdstWindow } from "types/edstWindow";
 import { CancelHoldMenu } from "components/prompts/CancelHoldMenu";
@@ -43,6 +45,8 @@ import clsx from "clsx";
 import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
 import { useHubConnector } from "hooks/useHubConnector";
 import { useNavigate } from "react-router-dom";
+import { initializeGpdCenter } from "~/redux/slices/gpdSlice";
+import { initializeWindGridCenter } from "~/redux/slices/windGridSlice";
 
 const NOT_CONNECTED_MSG = "HOST PROCESS COMMUNICATION DOWN";
 
@@ -72,6 +76,8 @@ const edstComponentMap = {
   METAR: MetarWindow,
   SIGMETS: SigmetWindow,
   GI: GIWindow,
+  WIND: WindGrid,
+  WIND_GRID_ALTITUDE_MENU: WindGridAltitudeMenu,
   MESSAGE_RESPONSE_AREA: MessageResponseArea,
 } as const;
 
@@ -96,7 +102,7 @@ const Edst = () => {
   const { connectHub } = useHubConnector();
   const hubConnected = useRootSelector(hubConnectedSelector);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (!hubConnected) {
       connectHub().catch((e) => {
@@ -108,22 +114,27 @@ const Edst = () => {
   // This effect handles if the user initiates a page reload.
   useEffect(() => {
     const handleBeforeUnload = () => {
-      sessionStorage.setItem('pageReloaded', 'true');
+      sessionStorage.setItem("pageReloaded", "true");
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
     // Check if we're coming from a reload
-    if (sessionStorage.getItem('pageReloaded') === 'true') {
-      sessionStorage.removeItem('pageReloaded');
+    if (sessionStorage.getItem("pageReloaded") === "true") {
+      sessionStorage.removeItem("pageReloaded");
       if (!hubConnected) {
-        navigate('/login', { replace: true });
+        navigate("/login", { replace: true });
       }
     }
 
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [navigate, hubConnected]);
 
   useInterval(() => dispatch(refreshWeatherThunk), WEATHER_REFRESH_RATE);
+
+  useEffect(() => {
+    dispatch(initializeGpdCenter());
+    dispatch(initializeWindGridCenter());
+  }, [dispatch]);
 
   return (
     <div
@@ -132,7 +143,6 @@ const Edst = () => {
       onContextMenu={(event) => event.preventDefault()}
       tabIndex={document.activeElement?.localName !== "input" && document.activeElement?.localName !== "textarea" ? -1 : 0}
     >
-
       <EdstHeader />
       {!hubConnected && <div className={edstStyles.notConnected}>{NOT_CONNECTED_MSG}</div>}
       <div id="toPrint" />

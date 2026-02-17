@@ -2,19 +2,20 @@
    hooks corresponding to the defined endpoints */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Nullable } from "types/utility-types";
+import type {
+  AltimeterEntry,
+  WindGridParams,
+  WindGridResponse,
+  WeatherApiBuilder,
+} from "types/apiTypes/apiWeatherTypes";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
-
-type AltimeterEntry = {
-  time: string;
-  altimeter: string;
-};
 
 // Define a service using a base URL and expected endpoints
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/weather/` }),
-  endpoints: (builder) => ({
+  endpoints: (builder: WeatherApiBuilder) => ({
     getMetarEntry: builder.query<Nullable<string>, string>({
       query: (airport) => `metar/airport/${airport}`,
       transformResponse: (response: string[]) => {
@@ -49,10 +50,16 @@ export const weatherApi = createApi({
         return null;
       },
     }),
+    getWindGrid: builder.query<WindGridResponse, WindGridParams>({
+      query: (params: WindGridParams) => {
+        const qp = `toplat=${params.toplat}&toplong=${params.toplong}&bottomlat=${params.bottomlat}&bottomlong=${params.bottomlong}&fl=${params.fl}`;
+        return `winds?${qp}`;
+      },
+    }),
   }),
 });
 
-const { useGetMetarEntryQuery, useGetAltimeterEntryQuery } = weatherApi;
+const { useGetMetarEntryQuery, useGetAltimeterEntryQuery, useGetWindGridQuery } = weatherApi;
 
 export const useAltimeter = (airport: string) => {
   return useGetAltimeterEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
@@ -60,4 +67,8 @@ export const useAltimeter = (airport: string) => {
 
 export const useMetar = (airport: string) => {
   return useGetMetarEntryQuery(airport, { pollingInterval: 120000 }); // 2 minutes
+};
+
+export const useWindGrid = (params: WindGridParams) => {
+  return useGetWindGridQuery(params);
 };
