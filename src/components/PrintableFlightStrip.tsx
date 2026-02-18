@@ -70,11 +70,19 @@ export function printFlightStrip(entry: EdstEntry) {
     
     const printer = window.open("") as Window;
     const innerHTML = document.getElementById("toPrint")?.innerHTML;
-    if (innerHTML) {
+    if (innerHTML && printer) {
       try {
         printer.document.write(innerHTML);
-        printer.print();
-        printer.close();
+        printer.document.close();
+        printer.onload = () => {
+          printer.print();
+        };
+        // Fallback: close after a delay if print dialog isn't triggered
+        setTimeout(() => {
+          if (!printer.closed) {
+            printer.close();
+          }
+        }, 2000);
         // eslint-disable-next-line no-empty
       } catch (e) {}
     }
