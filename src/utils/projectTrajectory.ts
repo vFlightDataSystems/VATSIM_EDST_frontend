@@ -2,7 +2,7 @@ import type { RouteFix } from "types/routeFix";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";
 import { locationToPosition } from "~/utils/locationToPosition";
 import { getRouteLineString } from "~/utils/getRouteLineString";
-import type { Position } from "@turf/turf";
+import type { Position } from "geojson";
 import { along } from "@turf/turf";
 
 export function projectTrajectory(fixes: RouteFix[], track: ApiAircraftTrack) {

@@ -6,7 +6,6 @@ import type {
   AltimeterEntry,
   WindGridParams,
   WindGridResponse,
-  WeatherApiBuilder,
 } from "types/apiTypes/apiWeatherTypes";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
@@ -15,7 +14,7 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/weather/` }),
-  endpoints: (builder: WeatherApiBuilder) => ({
+  endpoints: (builder) => ({
     getMetarEntry: builder.query<Nullable<string>, string>({
       query: (airport) => `metar/airport/${airport}`,
       transformResponse: (response: string[]) => {

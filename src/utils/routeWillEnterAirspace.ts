@@ -1,4 +1,4 @@
-import type { Feature, Polygon, Position } from "@turf/turf";
+import type { Feature, Polygon, Position } from "geojson";
 import { lineString } from "@turf/turf";
 import booleanIntersects from "@turf/boolean-intersects";
 import type { Nullable } from "types/utility-types";

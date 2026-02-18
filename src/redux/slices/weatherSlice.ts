@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { Feature, MultiPolygon, Polygon, Position } from "@turf/turf";
+import type { Feature, MultiPolygon, Polygon} from "geojson";
 import type { RootState } from "~redux/store";
 import { fetchAirportInfo } from "api/vNasDataApi";
 import { assert } from "~/utility-functions";

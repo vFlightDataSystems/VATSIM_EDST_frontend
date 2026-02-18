@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
 import { useInterval } from "usehooks-ts";
-import { HubConnectionState } from "@microsoft/signalr";
 import { EdstHeader } from "components/EdstHeader";
 import { Acl } from "components/Acl";
 import { Dep } from "components/Dep";
@@ -39,7 +38,7 @@ import { useHubActions } from "hooks/useHubActions";
 import { unsafeEntries } from "~/utility-functions";
 import { SocketContextProvider } from "contexts/SocketContext";
 import { HubContextProvider } from "contexts/HubContext";
-import { WEATHER_REFRESH_RATE } from "~/utils/constants";
+import { WEATHER_REFRESH_RATE, WIND_GRID_DEFAULT_LEVEL } from "~/utils/constants";
 import edstStyles from "css/edst.module.scss";
 import clsx from "clsx";
 import { envSelector, hubConnectedSelector } from "~redux/slices/authSlice";
@@ -150,7 +149,7 @@ const Edst = () => {
         {unsafeEntries(edstComponentMap).map(
           ([edstWindow, Component]) =>
             windows[edstWindow].open &&
-            (windowRequiresAselNotNull.includes(edstWindow) ? !aselIsNull && <Component key={edstWindow} /> : <Component key={edstWindow} />)
+            (windowRequiresAselNotNull.includes(edstWindow) ? !aselIsNull && <Component key={edstWindow} currentLevel={WIND_GRID_DEFAULT_LEVEL} /> : <Component key={edstWindow} currentLevel={WIND_GRID_DEFAULT_LEVEL} />)
         )}
         <MessageComposeArea />
       </div>

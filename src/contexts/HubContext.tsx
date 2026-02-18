@@ -32,7 +32,7 @@ import { HubConnectionState } from "@microsoft/signalr/src/HubConnection";
 import { deleteTrackThunk, updateTrackThunk } from "~/redux/thunks/updateTrackThunk";
 import { toast } from "react-toastify";
 import { setOpenPositions, removeOpenPositions } from "~redux/slices/positionSlice";
-import type { OpenPositionDto } from "~redux/slices/positionSlice";
+import OpenPositionDto from "types/apiTypes/OpenPositionDto";
 
 type HubContextValue = {
   connectHub: () => Promise<void>;

@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import type { Ref } from "react";
 import React, { useCallback, useRef, useState } from "react";
 import { useEventListener } from "usehooks-ts";
 import type { Nullable } from "types/utility-types";
@@ -115,7 +115,7 @@ export const GpdDataBlock = React.memo(({ aircraftId, offset, setOffset, toggleS
   useEventListener("mouseup", stopDrag);
 
   const dbElement = (
-    elemRef: RefObject<HTMLDivElement> | null,
+    elemRef: Ref<HTMLDivElement> | null,
     content: string | number,
     fieldName: AclRowField,
     eventId: string,
