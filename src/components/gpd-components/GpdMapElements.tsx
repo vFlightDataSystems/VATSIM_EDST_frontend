@@ -11,8 +11,7 @@ import { colors } from "~/colors";
 import { GpdDataBlock } from "components/GpdDataBlock";
 import { useGpdContext } from "components/GpdBody";
 import * as d3 from "d3";
-import type { Feature } from "geojson";
-import type { LineString, Position } from "@turf/turf";
+import type { Feature, LineString, Position } from "geojson";
 import type { AircraftId } from "types/aircraftId";
 
 function createLineString<T extends { pos: Position }>(fixes: T[]): Feature<LineString> {

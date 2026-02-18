@@ -1,4 +1,4 @@
-import type { Feature, Polygon } from "@turf/turf";
+import type { Feature, Polygon } from "geojson";
 import { polygon } from "@turf/turf";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";

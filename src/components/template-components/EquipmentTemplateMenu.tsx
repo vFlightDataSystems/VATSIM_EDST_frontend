@@ -62,7 +62,7 @@ export const EquipmentTemplateMenu = () => {
   const focused = useFocused(ref);
   useCenterCursor(ref);
   const { startDrag, dragPreviewStyle, anyDragging } = useDragging(ref, "EQUIPMENT_TEMPLATE_MENU", "mouseup");
-  const resetRef = useRef<() => void>();
+  const resetRef = useRef<(() => void) | undefined>(undefined);
 
   const setReset = useCallback((callback: () => void) => {
     resetRef.current = callback;

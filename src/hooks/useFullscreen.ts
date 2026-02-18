@@ -5,7 +5,7 @@ import type { EdstWindow } from "types/edstWindow";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { setIsFullscreen, setWindowDimension, windowDimensionSelector, windowIsFullscreenSelector } from "~redux/slices/appSlice";
 
-export const useFullscreen = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
+export const useFullscreen = (ref: RefObject<HTMLElement | null>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
   const isFullscreen = useRootSelector((state) => windowIsFullscreenSelector(state, edstWindow));
   const dim = useRootSelector((state) => windowDimensionSelector(state, edstWindow));

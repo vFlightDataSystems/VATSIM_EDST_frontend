@@ -31,12 +31,3 @@ export type WindGridParams = {
   bottomlong: number;
   fl: number;
 };
-
-export type WeatherApiBuilder = {
-  query: <ResponseType, QueryArg>(
-    config: any
-  ) => {
-    query: (arg: QueryArg) => string;
-    transformResponse?: (response: any, meta: any, arg: QueryArg) => ResponseType;
-  };
-};

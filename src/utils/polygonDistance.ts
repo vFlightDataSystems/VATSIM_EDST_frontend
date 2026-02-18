@@ -1,10 +1,10 @@
-import type { Feature, Point, Polygon } from "@turf/turf";
-import { booleanPointInPolygon, pointToLineDistance, polygonToLineString } from "@turf/turf";
+import type { Feature, Point, Polygon } from "geojson";
+import { booleanPointInPolygon, pointToLineDistance, polygonToLine } from "@turf/turf";
 
 function signedDistancePointToPolygon(point: Point, polygon: Feature<Polygon>) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  let dist = pointToLineDistance(point, polygonToLineString(polygon), {
+  let dist = pointToLineDistance(point, polygonToLine(polygon), {
     units: "nauticalmiles",
   });
   if (booleanPointInPolygon(point, polygon)) {

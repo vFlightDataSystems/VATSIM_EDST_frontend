@@ -1,4 +1,4 @@
-import type { Position } from "@turf/turf";
+import type { Position } from "geojson";
 import { lineString } from "@turf/turf";
 import type { RouteFix } from "types/routeFix";
 import { getRemainingFixesFromPpos } from "~/utils/fixes";

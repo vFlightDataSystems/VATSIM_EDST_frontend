@@ -5,7 +5,7 @@ import { setWindowPosition, windowPositionSelector } from "~redux/slices/appSlic
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import type { EdstWindow } from "types/edstWindow";
 
-export const useFitWindowToScreen = (ref: RefObject<HTMLElement>, edstWindow: EdstWindow) => {
+export const useFitWindowToScreen = (ref: RefObject<HTMLElement | null>, edstWindow: EdstWindow) => {
   const dispatch = useRootDispatch();
   const pos = useRootSelector((state) => windowPositionSelector(state, edstWindow));
   const windowSize = useWindowSize();

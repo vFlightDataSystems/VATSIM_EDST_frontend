@@ -7,7 +7,7 @@ import { appWindow, LogicalPosition } from "@tauri-apps/api/window";
  * @param ref ref to a DOM element
  * @param deps
  */
-export const useCenterCursor = (ref: RefObject<HTMLElement>, deps: DependencyList = []) => {
+export const useCenterCursor = (ref: RefObject<HTMLElement | null>, deps: DependencyList = []) => {
   useEffect(() => {
     if (window.__TAURI__ && ref.current) {
       const rect = ref.current.getBoundingClientRect();
