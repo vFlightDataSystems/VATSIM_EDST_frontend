@@ -14,7 +14,8 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASEURL!;
 export const weatherApi = createApi({
   reducerPath: "weatherApi",
   baseQuery: fetchBaseQuery({ baseUrl: `${baseUrl}/weather/` }),
-  endpoints: (builder) => ({
+   //builder not typed b/c best practice is to allow Redux to infer the type
+   endpoints: (builder) => ({
     getMetarEntry: builder.query<Nullable<string>, string>({
       query: (airport) => `metar/airport/${airport}`,
       transformResponse: (response: string[]) => {
