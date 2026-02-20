@@ -64,7 +64,7 @@ Items in the toolbar that require a controller's attention are highlighted in ye
 - The SIGMETS (SIG) button is highlighted in yellow when there are unacknowledged entries in this view.
 - The STATUS button is highlighted in yellow when you are not activated on a primary vNAS client (see [CRC Docs](https://crc.virtualnas.net/docs/#/?id=activating-and-deactivating-a-session) for instructions on activating a session in CRC).
 
-## Views and Menus
+## Views
 
 ### Repositioning Views
 A view can be repositioned by left or middle-clicking its reposition pick area, as detailed in the individual view's documentation. When repositioning a view, an outline of the view is displayed and can be moved to the desired position using the mouse. Left or middle-clicking selects the new location. Pressing Esc cancels the reposition.
@@ -139,7 +139,7 @@ The RA can be suppressed via the [Toolbar](#toolbar) and can be repositioned by 
 <figure markdown="block" style="text-align: center;">
   <img src="./images/ra_menu.png" style="max-width: 40%;">
   <figcaption style="text-align: center; font-style: italic;">Fig. 9 - The Response Area Menu</figcaption>
-</figure
+</figure>
 
 The RA menu contains the following options:
 
@@ -178,7 +178,7 @@ Left-clicking a SIGMET entry marks the entry as "read" and allows the user to su
   <figcaption style="text-align: center; font-style: italic;">Fig. ?? - SIGMET Selected with Suppression Button</figcaption>
 </figure>
 
-##### SIGMETS View Menu
+#### SIGMETS View Menu
 
 <figure markdown="block" style="text-align: center;">
   <img src="./images/sigmets_menu.png" style="max-width: 40%;">
@@ -198,16 +198,26 @@ The SIGMETS view menu contains the following options:
 
 ### Status View
 
-## Displays
-### Graphic Plan Display
-### Plans Display
-### Wind Grid Display
+## Menus
+The following sections are menus that can be accessed through multiple views and displays.
 
 ### Hold Data Menu
+
 ### Route Menu
+
 ### Sort Menu
+
 ### Tools Menu
+
 ### Flight Plan Template Menu
+
+## Displays
+
+### Graphic Plan Display
+
+### Plans Display
+
+### Wind Grid Display
 
 ## Command Reference
 !!! note
@@ -215,14 +225,14 @@ The SIGMETS view menu contains the following options:
 
 The following commands are specific to EDST UI functionality and do not work in CRC ERAM. These commands are typed into the [MCA](#message-composition-area-view) and executed by pressing `Enter`
 
-| Command | Description | Supports `/OK`  | Supports multiple FLIDs |
-| ------- | ----------- | --------------- | ----------------------- |
-| `UU <enter>` | Displays/Raises the [ACL](#acl-view) |  |  |
-| `UU D <enter>` | Displays/Raises the [DL](#departure-list-view) |  |  |
-| `UU G <enter>` | Displays/Raises the [GPD](#graphic-plan-display) |  |  |
-| `UU P <enter>` | Displays/Raises the [ACL](#acl-view) and toggles Manual Posting |  |  |
-| `UU X <enter>` | All displayed and minimized views are hidden |  |  |
-| `UU <sort criteria> <enter>` | Displays/Raises the [ACL](#acl-view) and changes the sort criteria |  |  |
+| Command                      | Description                                                         |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `UU <enter>`                 | Displays/Raises the [ACL](#acl-view)                                |
+| `UU D <enter>`               | Displays/Raises the [DL](#departure-list-view)                      |
+| `UU G <enter>`               | Displays/Raises the [GPD](#graphic-plan-display)                    |
+| `UU P <enter>`               | Displays/Raises the [ACL](#acl-view) and toggles Manual Posting     |
+| `UU X <enter>`               | All displayed and minimized views are hidden                        |
+| `UU <sort criteria> <enter>` | Displays/Raises the [ACL](#acl-view) and changes the sort criteria  |
 
 The following are supported ACL sort criteria:
 

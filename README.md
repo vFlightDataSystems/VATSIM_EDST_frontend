@@ -3,10 +3,11 @@
 ## ABOUT
 
 This is project aims to simulate the Real World FAA ERAM EDST system as close as possible for the Virtual Air Traffic Control environment.  
-A development preview version is available at http://tdls.oakartcc.org/edst_testing/
 
-Project roadmap, credits, and other information may be found on the GitHub Wiki page here:
-https://github.com/CaptainTux/VATSIM_EDST_frontend/wiki
+## DOCUMENTATION
+Documentation for the vEDST can be viewed [here](https://docs.edst.vfds.dev/).
+
+The docs are markdown contained in the `docs/` directory of this repository. The documentation is built using [MkDocs](https://www.mkdocs.org/) and hosted on GitHub Pages. To build a local development version of the documentation, run `mkdocs serve` in the root directory of the repository.
 
 ## CONTRIBUTING:
 See the [contribution guide](CONTRIBUTING.md).
