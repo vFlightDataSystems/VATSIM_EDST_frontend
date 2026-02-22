@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>vEDST Documentation</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="css/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "vEDST User Manual";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> vEDST Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">vEDST User Manual</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#logging-in">Logging in</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#toolbar">Toolbar</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#views">Views</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#repositioning-views">Repositioning Views</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#suppressing-views">Suppressing Views</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#message-composition-area-view">Message Composition Area View</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#mca-view-menu">MCA View Menu</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#response-area-view">Response Area View</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#ra-view-menu">RA View Menu</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#acl-view">ACL View</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#header-bar">Header Bar</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#menu-bar">Menu Bar</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#posting-mode">Posting Mode</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#sort-criteria">Sort Criteria</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#neighboring-facilities">Neighboring Facilities</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#toolsoptions-menus">Tools/Options Menus</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#columns">Columns</a>
+        <ul>
+    <li class="toctree-l5"><a class="reference internal" href="#bookkeeping-column">Bookkeeping Column</a>
+    </li>
+    <li class="toctree-l5"><a class="reference internal" href="#alert-column">Alert Column</a>
+    </li>
+    <li class="toctree-l5"><a class="reference internal" href="#flight-id-column">Flight ID Column</a>
+    </li>
+    <li class="toctree-l5"><a class="reference internal" href="#hotbox">Hotbox</a>
+    </li>
+    <li class="toctree-l5"><a class="reference internal" href="#type-column">Type Column</a>
+    </li>
+    <li class="toctree-l5"><a class="reference internal" href="#altitude-column">Altitude Column</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#departure-list-view">Departure List View</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sigmets-view">SIGMETS View</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#notifications">Notifications</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#acknowledging-and-suppressing-sigmets">Acknowledging and Suppressing SIGMETs</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#sigmets-view-menu">SIGMETS View Menu</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#altimeter-settings-view">Altimeter Settings View</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#status-view">Status View</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#menus">Menus</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#hold-data-menu">Hold Data Menu</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#route-menu">Route Menu</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sort-menu">Sort Menu</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tools-menu">Tools Menu</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#flight-plan-template-menu">Flight Plan Template Menu</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#displays">Displays</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#graphic-plan-display">Graphic Plan Display</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plans-display">Plans Display</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#wind-grid-display">Wind Grid Display</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#command-reference">Command Reference</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#known-issues">Known Issues</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://edst.vfds.dev">vEDST Application</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">vEDST Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">vEDST User Manual</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="vedst-user-manual">vEDST User Manual<a class="headerlink" href="#vedst-user-manual" title="Permanent link"></a></h1>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link"></a></h2>
+<p>Virtual Enroute Decision Support Tool (vEDST) is a web application that simulates the Radar Assistant (D-Side) position interface used by real-world center controllers. vEDST is used in conjunction with other vNAS clients, such as CRC. This manual is intended to teach controllers how to utilize vEDST to supplement radar enroute control techniques while on the VATSIM network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>🔗 vEDST is accessed at <a href="https://edst.vfds.dev/">https://edst.vfds.dev/</a></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In order to interact with vEDST, your controlling session must be activated on your primary controlling client.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>vEDST is currently in active development and not feature complete. The features that are currently implemented are described in this manual, and additional features will be added in the future.</p>
+</div>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link"></a></h2>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link"></a></h3>
+<ul>
+<li>A modern web browser (Google Chrome, Mozilla Firefox, Microsoft Edge, etc.)</li>
+<li>A browser window at least 1280x720 in size for optimal display</li>
+<li>A mouse with a middle button for specific clickable actions</li>
+</ul>
+<h3 id="logging-in">Logging in<a class="headerlink" href="#logging-in" title="Permanent link"></a></h3>
+<p>Logging in to vEDST requires selecting an environment and authenticating through VATSIM Connect. Upon logging in to your VATSIM account and authorizing vNAS access, you are redirected back to the vEDST login page. vEDST then searches for your active position on a primary vNAS client, such as CRC.</p>
+<figure style="text-align: center;">
+<p><img src="./images/login.png" alt="vEDST Login Screen" style="max-width: 80%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig 1. vEDST Login Screen</figcaption>
+</figure>
+<p>If you are not logged in to a primary vNAS client, the message <code>Waiting for vNAS Connection...</code> is displayed:</p>
+<figure style="text-align: center;">
+<p><img src="./images/waiting.png" alt="vEDST Waiting for vNAS Connection" style="max-width: 35%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig 2. vEDST Waiting for vNAS Connection</figcaption>
+</figure>
+<p>Once you are logged in to a primary vNAS client, the application will enter into the main vEDST interface.</p>
+<figure style="text-align: center;">
+<p><img src="./images/sample.png" alt="vEDST Sample Interface" style="max-width: 80%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig 3. an EDST Display</figcaption>
+</figure>
+<h2 id="toolbar">Toolbar<a class="headerlink" href="#toolbar" title="Permanent link"></a></h2>
+<figure style="text-align: center;">
+<p><img src="./images/toolbar.png" alt="vEDST Toolbar" style="max-width: 100%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig 4. the EDST Toolbar</figcaption>
+</figure>
+<p>The EDST position toolbar enables the user to display and suppress views and displays. It also provides:
+- A current count of the number of flights in the Aircraft List and Departure List
+- The current time in UTC</p>
+<p>The toolbar can be raised/lowered between the top and bottom of the screen by clicking the raise/lower button</p>
+<figure style="text-align: center;">
+<p><img src="./images/raise_lower.png" alt="vEDST Toolbar" style="max-width: 35%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig 5. the EDST Toolbar Raise/Lower Button highlighted in the lower position</figcaption>
+</figure>
+<!-- TODO: add mention of NOTAMS and GI buttons when they are implemented -->
+<p>Items in the toolbar that require a controller's attention are highlighted in yellow or red. For example:
+- The SIGMETS (SIG) button is highlighted in yellow when there are unacknowledged entries in this view.
+- The STATUS button is highlighted in yellow when you are not activated on a primary vNAS client (see <a href="https://crc.virtualnas.net/docs/#/?id=activating-and-deactivating-a-session">CRC Docs</a> for instructions on activating a session in CRC).</p>
+<h2 id="views">Views<a class="headerlink" href="#views" title="Permanent link"></a></h2>
+<h3 id="repositioning-views">Repositioning Views<a class="headerlink" href="#repositioning-views" title="Permanent link"></a></h3>
+<p>A view can be repositioned by left or middle-clicking its reposition pick area, as detailed in the individual view's documentation. When repositioning a view, an outline of the view is displayed and can be moved to the desired position using the mouse. Left or middle-clicking selects the new location. Pressing Esc cancels the reposition.</p>
+<h3 id="suppressing-views">Suppressing Views<a class="headerlink" href="#suppressing-views" title="Permanent link"></a></h3>
+<p>Many views can be suppressed by left or middle-clicking the small square or x button on the view's title bar, as detailed in the individual view documentation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following information on the MCA and RA comes from the <a href="https://crc.virtualnas.net/docs/#/eram?id=message-composition-area">CRC Documentation</a></p>
+</div>
+<h3 id="message-composition-area-view">Message Composition Area View<a class="headerlink" href="#message-composition-area-view" title="Permanent link"></a></h3>
+<figure style="text-align: center;">
+<p><img src="./images/mca.png" style="max-width: 40%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 6 - The Message Composition Area</figcaption>
+</figure>
+<p>The Message Composition Area (MCA) contains two text areas: the upper Preview Area where commands are entered, and the lower Feedback Area where command processing success and error messages are displayed.</p>
+<p>Commands are typed directly into the MCA's Preview Area. Commands are executed by pressing <code>Enter</code>.</p>
+<p>Some commands allow for logic check overrides which bypass certain command requirements, such as track ownership or handoff status. In most cases this is done by entering <code>/OK</code> before command parameters. For example, to amend a flight that is owned by another sector direct to a fix, the command <code>QU /OK ROBUC JBU123</code> could be entered. Note that logic check overrides do not override all logic checks. For example, flights owned by external ARTCCs cannot be edited, even with a logic check override included in the command.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>⌨️ The left/right arrow keys move the cursor around the Preview Area.</p>
+</div>
+<!-- TODO: implement these !!! tip
+    ⌨️ `Ctrl` + `PgDn` and `Ctrl` + `PgUp` jumps the cursor to the end or the start of the Preview Area, respectively.
+
+!!! tip
+    ⌨️ `Ctrl` + `Enter` moves the cursor to the beginning of the next line in the Preview Area.
+
+!!! tip
+    ⌨️ `Ctrl + R` recalls the last command into the Preview Area. -->
+
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>⌨️ <code>Esc</code> clears the Preview and Feedback areas.</p>
+</div>
+<p>By default, the Preview Area is in overstrike mode (represented by an underscore cursor), meaning new characters overwrite the character at the cursor. The Preview Area can also be placed into insertion mode (represented by an underscore cursor with two additional vertical lines), meaning new characters are entered to the left of the cursor. Pressing <code>Insert</code> toggles between the two modes.</p>
+<p>The MCA cannot be suppressed, but can be <a href="#repositioning-views">repositioned</a> by left-clicking anywhere within its boundaries. Middle-clicking anywhere with the MCA's boundaries opens the MCA menu for configuring the MCA.</p>
+<h4 id="mca-view-menu">MCA View Menu<a class="headerlink" href="#mca-view-menu" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/mca_menu.png" style="max-width: 40%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 7 - The MCA Menu</figcaption>
+</figure>
+<p>The MCA menu contains the following options:</p>
+<ul>
+<li><strong>PA LINES</strong>: adjusts the maximum number of displayed Preview Area lines</li>
+<li><strong>WIDTH</strong>: adjusts the number of characters on each line in the MCA</li>
+<li><strong>FONT</strong>: adjusts the MCA's font size</li>
+<li><strong>BRIGHT</strong>: adjusts the MCA's brightness</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>🔗 For a full list of ERAM commands, please see the <a href="#command-reference">Command Reference</a> section of the documentation.</p>
+</div>
+<h3 id="response-area-view">Response Area View<a class="headerlink" href="#response-area-view" title="Permanent link"></a></h3>
+<figure style="text-align: center;">
+<p><img src="./images/responsearea.png" style="max-width: 40%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 8 - The Response Area</figcaption>
+</figure>
+<p>The Response Area (RA) displays text outputted by commands. For example, using the <a href="https://crc.virtualnas.net/docs/#/eram?id=qf-command"><code>QF</code></a> command outputs flight plan details in the RA (Figure 8).</p>
+<p>If a command is entered in the <a href="#message-composition-area-view">MCA</a> that outputs to the RA, but the RA is currently suppressed, the RA will be raised to the display.</p>
+<p>The RA can be suppressed via the <a href="#toolbar">Toolbar</a> and can be repositioned by left-clicking anywhere within its boundaries. Middle-clicking anywhere with the RA's boundaries opens the RA menu for configuring the RA.</p>
+<h4 id="ra-view-menu">RA View Menu<a class="headerlink" href="#ra-view-menu" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/ra_menu.png" style="max-width: 40%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 9 - The Response Area Menu</figcaption>
+</figure>
+<p>The RA menu contains the following options:</p>
+<ul>
+<li><strong>WIDTH</strong>: adjusts the number of characters on each line in the RA</li>
+<li><strong>FONT</strong>: adjusts the RA's font size</li>
+<li><strong>BRIGHT</strong>: adjusts the RA's brightness</li>
+<li><strong>CLEAR</strong>: clears the RA</li>
+</ul>
+<h3 id="acl-view">ACL View<a class="headerlink" href="#acl-view" title="Permanent link"></a></h3>
+<figure style="text-align: center;">
+<p><img src="./images/acl.png" style="max-width: 90%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 10 - The ACL View</figcaption>
+</figure>
+<p>The ACL or Aircraft List view provides the user with a list of all flights that are currently airborne and predicted to pass through the controller's sector. The view may be accessed through the ACL toolbar button. The view is also suppressed via the ACL toolbar button.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As airspace awareness is not yet implemented on the controller side, expect to see all flights within the ARTCC ADS-B AOI. This may include flights that are not actually predicted to pass through the controller's sector.</p>
+</div>
+<h4 id="header-bar">Header Bar<a class="headerlink" href="#header-bar" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/acl_topbar.png" style="max-width: 90%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 11 - The ACL Header Bar</figcaption>
+</figure>
+<p>The ACL view contains a header bar with the following information and buttons:
+- The view title "Aircraft List"
+- The primary sort criteria for the list (see <a href="#sort-criteria">ACL Sort Criteria</a>)
+- The posting mode</p>
+<p>The small square button on the right of the header bar suppresses the ACL view when clicked.</p>
+<p>The large square button on the right of the header bar toggles fullscreen/windowed mode. By default the ACL view is in fullscreen mode.</p>
+<h4 id="menu-bar">Menu Bar<a class="headerlink" href="#menu-bar" title="Permanent link"></a></h4>
+<p>The ACL menu bar contains a series of buttons for interacting with the ACL view and the flights contained within it. Not all buttons are available at all times, and this is indicated by the button being grayed out and unclickable. For example the <code>Plan Options</code> and <code>Hold</code> buttons are only clickable when a flight is selected in the ACL.</p>
+<p>The buttons are as follows:</p>
+<ul>
+<li><strong>Plan Options</strong>: opens the <a href="#plan-options">Plan Options</a> menu for the selected flight</li>
+<li><strong>Hold</strong>: opens the <a href="#hold-data-menu">Hold</a> menu for the selected flight</li>
+<li><strong>Show</strong>: displays or removes the selected flight from the <a href="#graphic-plan-display">Graphic Plan Display</a></li>
+<li><strong>Show All</strong>: displays or removes the selected flight and all alerts assigned to the flight from the <a href="#graphic-plan-display">Graphic Plan Display</a></li>
+<li><strong>Sort</strong>: opens the <a href="#sort-menu">Sort</a> menu to change the ACL sort criteria</li>
+<li><strong>Tools</strong>: opens the <a href="#tools-menu">Tools</a> menu for various ACL options</li>
+<li><strong>Posting Mode</strong>: toggles the ACL posting mode between Manual and Automatic.</li>
+<li><strong>Template</strong>: opens the <a href="#flight-plan-template-menu">Flight Plan Template</a> menu.</li>
+<li><strong>Clean Up</strong>: removes all flights coded gray for deletion</li>
+</ul>
+<h4 id="posting-mode">Posting Mode<a class="headerlink" href="#posting-mode" title="Permanent link"></a></h4>
+<p>Posting mode governs the order in which flights are displayed in the ACL. The posting mode options are <strong>Automatic</strong> and <strong>Manual</strong>.</p>
+<p>In Automatic mode, all flights are placed in the <em>normal</em> posting area of the ACL and are sorted according to the current sort criteria. </p>
+<p>In Manual mode, all flights are placed in the <em>manual</em> posting area of the ACL in the time in which they were added to the ACL. The manual posting area is indicated by a horizontal dividing line in the ACL.</p>
+<h4 id="sort-criteria">Sort Criteria<a class="headerlink" href="#sort-criteria" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/sort_menu.png" style="max-width: 30%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 12 - The Sort Criteria Menu</figcaption>
+</figure>
+<p>The ACL can be sorted by the following criteria:</p>
+<ol>
+<li>Aircraft ID: Alphabetic order based on the ACID.</li>
+<li>Boundary Time: Time estimated to cross the sector boundary, soonest at the top of the list.</li>
+<li>Conflict Status: Red, then Yellow, then Aispace Alerts. All non-alert status aircraft are sorted at the bottom of the list.</li>
+<li>Conflict Time: Sorted by alert time, the aircraft with the soonest alert at the top.</li>
+<li>Destination: Aircraft are sorted alphabetically according to filed destination.</li>
+<li>Sector-by-Sector: Sorted by aircraft under your ownership, then alphanumerically by sector ID.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The ACL sort criteria can also be changed by entering <code>UU &lt;sort criteria&gt;</code> in the <a href="#message-composition-area-view">MCA</a> and pressing <code>Enter</code>. For a full reference of supported MCA commands, please see the <a href="#command-reference">Command Reference</a> section of the documentation.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>Conflict Status</code>, <code>Conflict Time</code>, and <code>Sector-by-Sector</code> sort criteria are not yet fully implemented as the underlying alert and ownership data is not yet fully implemented.</p>
+</div>
+<h4 id="neighboring-facilities">Neighboring Facilities<a class="headerlink" href="#neighboring-facilities" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/facilities_acl.png" style="max-width: 10%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 13 - The Neighboring Facilities Display</figcaption>
+</figure>
+<p>Below the menu bar buttons are a list of the neighboring ARTCC facilities. These are represented by their single letter handoff codes. Faciltiies not online are grey, while facilities that are online are white. </p>
+<h4 id="toolsoptions-menus">Tools/Options Menus<a class="headerlink" href="#toolsoptions-menus" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/tools_menu_acl.png" style="max-width: 30%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 14 - The Tools Menu</figcaption>
+</figure>
+<figure style="text-align: center;">
+<p><img src="./images/options_menu_acl.png" style="max-width: 30%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 15 - The Options Menu</figcaption>
+</figure>
+<p>The only implemented option of the tools menu is to access the options menu.</p>
+<p>The options menu contains the following options:</p>
+<ul>
+<li>Display Coordination Column - displays or suppresses the coordination (P) column in the ACL</li>
+<li>Track Delete Option - specifies if tracks should be deleted immediately when a radar track is dropped, or wait until the entry has timed out</li>
+<li>IAFDOF Manual - disables automatic IAFDOF coloring for flights in the ACL, allowing the user to middle click on ACIDs to cycle through IAFDOF colors manually.</li>
+<li>Non–RVSM Indicator - Enables/Disables display of the non-rvsm indicator (coral box) to the right of the altitude when a flight is not equipped for RVSM flight.</li>
+</ul>
+<h4 id="columns">Columns<a class="headerlink" href="#columns" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/acl_columns.png" style="max-width: 100%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 16 - ACL Columns</figcaption>
+</figure>
+<h5 id="bookkeeping-column">Bookkeeping Column<a class="headerlink" href="#bookkeeping-column" title="Permanent link"></a></h5>
+<p>The bookkeeping column tracks wether aircraft in the ACL are on your frequency or not.</p>
+<p><strong>New Entries:</strong> are represented by a grey "N". In the normal posting area, left clicking removes the "N". Middle clicking moved the flight to the special attention area. In manual posting mode, left clicking the "N" both removes it and moved the flight to the normal posting area.</p>
+<p><strong>Blank Area:</strong> A blank area indicates that you have acknowledged or interacted with the flight.</p>
+<p><strong>Manual On-Frequency:</strong> is represented by the green corner with two arcs. This indicator can be toggled on using the <code>// &lt;ACID&gt;</code> command in the <a href="#message-composition-area-view">MCA</a>, or by left clicking the blank area in the bookkeeping column.</p>
+<p><strong>Shaded Grey Box:</strong> indicates that the flight has been kept by the user</p>
+<h5 id="alert-column">Alert Column<a class="headerlink" href="#alert-column" title="Permanent link"></a></h5>
+<p>Proper conflict processing is not yet implemented. At this time flights that are tracked by you will have white boxes, and flights not tracked by you will have a brown S indicating that a "stop probe" is in place for the flight.</p>
+<h5 id="flight-id-column">Flight ID Column<a class="headerlink" href="#flight-id-column" title="Permanent link"></a></h5>
+<figure style="text-align: center;">
+<p><img src="./images/acl_fid_highlight.png" style="max-width: 15%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. 17 - ACL Flight ID Highlight</figcaption>
+</figure>
+<p>The flight ID column contains both the aircraft callsign and CID. Selecting a flight by left-clicking anywhere on the flight ID highlights the flight ID. Interaction with menu buttons is now in reference to this specific flight.</p>
+<!-- ##### Pointouts Column -->
+
+<h5 id="hotbox">Hotbox<a class="headerlink" href="#hotbox" title="Permanent link"></a></h5>
+<p>Left clicking the hotbox opens and closes a free-form typing area.</p>
+<p>Right clicking the hotbox moves/removes the flight from the special posting area.</p>
+<h5 id="type-column">Type Column<a class="headerlink" href="#type-column" title="Permanent link"></a></h5>
+<p>The type column displays the aircraft type and FAA equipment code. Selecting this field results in the same behavior as selecting the flight ID.</p>
+<h5 id="altitude-column">Altitude Column<a class="headerlink" href="#altitude-column" title="Permanent link"></a></h5>
+<p>The altitude field includes the flight plan altitude, including:
+- Assigned Altitude
+- Block Altitude
+- Interm Altitude
+- Procedure Altitude
+- Non-RVSM Indicator
+- IAFDOF Indicator</p>
+<h3 id="departure-list-view">Departure List View<a class="headerlink" href="#departure-list-view" title="Permanent link"></a></h3>
+<h3 id="sigmets-view">SIGMETS View<a class="headerlink" href="#sigmets-view" title="Permanent link"></a></h3>
+<figure style="text-align: center;">
+<p><img src="./images/sigmets.png" style="max-width: 90%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. ?? - The SIGMETS View</figcaption>
+</figure>
+<p>The SIGMETS view provides the user with SIGMET messages. The view may be accessed through the SIGMETS (<code>SIG</code>) toolbar button. The
+view is also suppressed via the <code>SIG</code> toolbar button.</p>
+<h4 id="notifications">Notifications<a class="headerlink" href="#notifications" title="Permanent link"></a></h4>
+<p>When a new SIGMET entry is received, a notification is displayed in both the SIGMET view and the <code>SIG</code> toolbar button.</p>
+<figure style="text-align: center;">
+<p><img src="./images/sigmet_toolbar_button.png" style="max-width: 30%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. ?? - SIGMET Toolbar Button with unread SIGMETs</figcaption>
+</figure>
+<h4 id="acknowledging-and-suppressing-sigmets">Acknowledging and Suppressing SIGMETs<a class="headerlink" href="#acknowledging-and-suppressing-sigmets" title="Permanent link"></a></h4>
+<p>Left-clicking a SIGMET entry marks the entry as "read" and allows the user to suppress the entry by clicking the "suppress" popout button. This will remove display of the entry if the <code>HIDE SUPPRESS</code> option is enabled in the menu.</p>
+<figure style="text-align: center;">
+<p><img src="./images/sigmet_suppress.png" style="max-width: 55%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. ?? - SIGMET Selected with Suppression Button</figcaption>
+</figure>
+<h4 id="sigmets-view-menu">SIGMETS View Menu<a class="headerlink" href="#sigmets-view-menu" title="Permanent link"></a></h4>
+<figure style="text-align: center;">
+<p><img src="./images/sigmets_menu.png" style="max-width: 40%;">
+  </p>
+<figcaption style="text-align: center; font-style: italic;">Fig. ?? - The SIGMETS View Menu</figcaption>
+</figure>
+<p>The SIGMETS view menu contains the following options:</p>
+<ul>
+<li><strong>LINES</strong>: adjusts the maximum number of displayed SIGMET entries</li>
+<li><strong>FONT</strong>: adjusts the SIGMETS view font size</li>
+<li><strong>BRIGHT</strong>: adjusts the SIGMETS view brightness</li>
+<li><strong>VIEW SUPPRESS</strong>: shows all SIGMET entries regardless of whether they have been marked as "suppressed."</li>
+<li><strong>HIDE SUPPRESS</strong>: hides entries that have been marked as "suppressed."</li>
+<li><strong>PRINT ALL</strong>: <em>not impelmented</em></li>
+</ul>
+<h3 id="altimeter-settings-view">Altimeter Settings View<a class="headerlink" href="#altimeter-settings-view" title="Permanent link"></a></h3>
+<h3 id="status-view">Status View<a class="headerlink" href="#status-view" title="Permanent link"></a></h3>
+<h2 id="menus">Menus<a class="headerlink" href="#menus" title="Permanent link"></a></h2>
+<p>The following sections are menus that can be accessed through multiple views and displays.</p>
+<h3 id="hold-data-menu">Hold Data Menu<a class="headerlink" href="#hold-data-menu" title="Permanent link"></a></h3>
+<h3 id="route-menu">Route Menu<a class="headerlink" href="#route-menu" title="Permanent link"></a></h3>
+<h3 id="sort-menu">Sort Menu<a class="headerlink" href="#sort-menu" title="Permanent link"></a></h3>
+<h3 id="tools-menu">Tools Menu<a class="headerlink" href="#tools-menu" title="Permanent link"></a></h3>
+<h3 id="flight-plan-template-menu">Flight Plan Template Menu<a class="headerlink" href="#flight-plan-template-menu" title="Permanent link"></a></h3>
+<h2 id="displays">Displays<a class="headerlink" href="#displays" title="Permanent link"></a></h2>
+<h3 id="graphic-plan-display">Graphic Plan Display<a class="headerlink" href="#graphic-plan-display" title="Permanent link"></a></h3>
+<h3 id="plans-display">Plans Display<a class="headerlink" href="#plans-display" title="Permanent link"></a></h3>
+<h3 id="wind-grid-display">Wind Grid Display<a class="headerlink" href="#wind-grid-display" title="Permanent link"></a></h3>
+<h2 id="command-reference">Command Reference<a class="headerlink" href="#command-reference" title="Permanent link"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All ERAM commands that do <strong>not</strong> require clicking a position on the radar display are supported for entry on the EDST MCA. Please reference the <a href="https://crc.virtualnas.net/docs/#/eram?id=command-reference">CRC ERAM Command Reference</a> for common ERAM/EDST Commands.</p>
+</div>
+<p>The following commands are specific to EDST UI functionality and do not work in CRC ERAM. These commands are typed into the <a href="#message-composition-area-view">MCA</a> and executed by pressing <code>Enter</code></p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UU &lt;enter&gt;</code></td>
+<td>Displays/Raises the <a href="#acl-view">ACL</a></td>
+</tr>
+<tr>
+<td><code>UU D &lt;enter&gt;</code></td>
+<td>Displays/Raises the <a href="#departure-list-view">DL</a></td>
+</tr>
+<tr>
+<td><code>UU G &lt;enter&gt;</code></td>
+<td>Displays/Raises the <a href="#graphic-plan-display">GPD</a></td>
+</tr>
+<tr>
+<td><code>UU P &lt;enter&gt;</code></td>
+<td>Displays/Raises the <a href="#acl-view">ACL</a> and toggles Manual Posting</td>
+</tr>
+<tr>
+<td><code>UU X &lt;enter&gt;</code></td>
+<td>All displayed and minimized views are hidden</td>
+</tr>
+<tr>
+<td><code>UU &lt;sort criteria&gt; &lt;enter&gt;</code></td>
+<td>Displays/Raises the <a href="#acl-view">ACL</a> and changes the sort criteria</td>
+</tr>
+</tbody>
+</table>
+<p>The following are supported ACL sort criteria:</p>
+<table>
+<thead>
+<tr>
+<th>Typed Character</th>
+<th>Primary Criteria</th>
+<th>Secondary Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OA</code></td>
+<td>ACID</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OD</code></td>
+<td>Destination</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OSA</code></td>
+<td>Sector/Non-Sector</td>
+<td>ACID</td>
+</tr>
+<tr>
+<td><code>OSD</code></td>
+<td>Sector/Non-Sector</td>
+<td>Destination</td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-issues">Known Issues<a class="headerlink" href="#known-issues" title="Permanent link"></a></h2>
+<ul>
+<li>Many view and display preferences are not currently saved between sessions. Support for saving these preferences will be added in the future.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-02-22 16:10:54.639641+00:00
+-->
