@@ -61,19 +61,23 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
   const draggingHandler = useCallback(
     (event: MouseEvent) => {
       if (ref.current) {
-        if (repositionCursor) {
-          setDragPreviewStyle((prevStyle) => ({
-            ...prevStyle!,
-            left: event.clientX,
-            top: event.clientY,
-          }));
-        } else {
-          const { clientWidth: width, clientHeight: height } = ref.current;
-          setDragPreviewStyle((prevStyle) => ({
-            ...prevStyle!,
-            ...computePreviewPos(event.pageX + prevStyle!.relX, event.pageY + prevStyle!.relY, width, height),
-          }));
-        }
+        setDragPreviewStyle((prevStyle) => {
+          if (!prevStyle) return prevStyle;
+          
+          const newPos = repositionCursor
+            ? { left: event.clientX, top: event.clientY }
+            : computePreviewPos(event.pageX + prevStyle.relX, event.pageY + prevStyle.relY, 0, 0);
+          
+          // prevent dragging window off screen
+          const maxLeft = window.innerWidth - prevStyle.width;
+          const maxTop = window.innerHeight - prevStyle.height;
+          
+          return {
+            ...prevStyle,
+            left: Math.max(0, Math.min(newPos.left, maxLeft)),
+            top: Math.max(0, Math.min(newPos.top, maxTop)),
+          };
+        });
       }
     },
     [ref, repositionCursor]
@@ -131,8 +135,14 @@ export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstW
 
   const stopDrag = useCallback(() => {
     if (dragging && ref?.current && dragPreviewStyle) {
-      const { left, top } = dragPreviewStyle;
-      const newPos = { left: left + 1, top };
+      const { left, top, width, height } = dragPreviewStyle;
+      
+      // Clamp position to keep window within viewport bounds
+      const clampedLeft = Math.min(left + 1, window.innerWidth - width);
+      const clampedTop = Math.min(top, window.innerHeight - height);
+      
+      const newPos = { left: clampedLeft, top: clampedTop };
+      
       if (window.__TAURI__) {
         void appWindow.setCursorGrab(false);
       }
