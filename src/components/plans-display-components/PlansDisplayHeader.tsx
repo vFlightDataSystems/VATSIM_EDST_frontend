@@ -1,13 +1,14 @@
 import React from "react";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
 import { planCleanup, planQueueSelector, selectedPlanIndexSelector } from "~redux/slices/planSlice";
-import { closeWindow } from "~redux/slices/appSlice";
+import { closeWindow, invertNumpadSelector } from "~redux/slices/appSlice";
 import { useHubActions } from "hooks/useHubActions";
 import { EdstWindowHeaderButton, EdstWindowHeaderButtonWithSharedEvent } from "components/utils/EdstButton";
 import { WindowTitleBar } from "components/WindowTitleBar";
 import { DownlinkSymbol } from "components/utils/DownlinkSymbol";
 import type { HeaderComponentProps } from "components/utils/FullscreenWindow";
 import tableStyles from "css/table.module.scss";
+import { EramPositionType, EramMessageElement } from "~/types/apiTypes/ProcessEramMessageDto";
 
 /**
  * Plans Display title bar and header row with add/find input field
@@ -17,13 +18,24 @@ export const PlansDisplayHeader = ({ focused, toggleFullscreen, startDrag }: Hea
   const planQueue = useRootSelector(planQueueSelector);
   const selectedPlanIndex = useRootSelector(selectedPlanIndexSelector);
   const interimDisabled = true;
-  const { amendFlightplan } = useHubActions();
+  const { sendEramMessage } = useHubActions();
+  const invertNumpad = useRootSelector(invertNumpadSelector);
 
   const handleAmendClick = () => {
     if (selectedPlanIndex !== null) {
       const amendedFlightplan = planQueue[selectedPlanIndex]?.amendedFlightplan;
       if (amendedFlightplan) {
-        void amendFlightplan(amendedFlightplan);
+        const commandString = planQueue[selectedPlanIndex]?.commandString;
+        const tokens = commandString.split(/\s+/).filter(Boolean);
+        const elements: EramMessageElement[] = tokens.map((token) => ({
+          token,
+        }));
+        const message = {
+          source: EramPositionType.DSide,
+          elements,
+          invertNumericKeypad: invertNumpad,
+        };
+        void sendEramMessage(message);
       }
     }
   };
