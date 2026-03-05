@@ -29,7 +29,7 @@ export function useSharedUiListener<T = any>(
   }, [eventId, handler, arg]);
 }
 
-export function useSharedUiListenerWithElement(ref: RefObject<HTMLElement>, eventId?: SharedUiEvent, handler?: (element: HTMLElement) => void) {
+export function useSharedUiListenerWithElement(ref: RefObject<HTMLElement | null>, eventId?: SharedUiEvent, handler?: (element: HTMLElement) => void) {
   useEffect(() => {
     const eventHandler = (evId: SharedUiEvent) => {
       if (evId === eventId && ref.current && handler) {

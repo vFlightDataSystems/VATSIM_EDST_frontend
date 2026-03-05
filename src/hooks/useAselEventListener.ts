@@ -9,7 +9,7 @@ import type { AircraftId } from "types/aircraftId";
 type Handler<F> = (element: HTMLElement, field: F, eventId: Nullable<string>, opensWindow?: EdstWindow, triggerSharedState?: boolean) => void;
 
 export function useAselEventListener<F>(
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   aircraftId: AircraftId,
   eventId: string,
   field: F,

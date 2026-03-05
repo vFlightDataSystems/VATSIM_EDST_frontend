@@ -11,7 +11,7 @@ type FloatingWindowOptionRowProps = { option: FloatingWindowOption };
 const FloatingWindowOptionRow = ({ option }: FloatingWindowOptionRowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const prevOptionValueRef = useRef<string>(option.value);
-  const prevPosRef = useRef<WindowPosition>();
+  const prevPosRef = useRef<WindowPosition>(null);
 
   useEffect(() => {
     if (window.__TAURI__ && ref.current) {
@@ -66,7 +66,7 @@ export function FloatingWindowOptionContainer<T extends FloatingWindowOptions>({
     left: parentPos.left + props.parentWidth,
     top: parentPos.top,
   });
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null!);
   const headerRef = useRef<HTMLDivElement>(null);
   const xRef = useRef<HTMLDivElement>(null);
   const windowSize = useWindowSize();

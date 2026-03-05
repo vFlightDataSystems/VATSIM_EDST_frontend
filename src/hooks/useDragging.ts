@@ -39,7 +39,7 @@ type StopDragOn = "mousedown" | "mouseup";
  * @param stopDragOn whether to listen for stopDrag onMouseDown or onMouseUp
  * @returns
  */
-export const useDragging = (ref: React.RefObject<HTMLElement>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
+export const useDragging = (ref: React.RefObject<HTMLElement | null>, edstWindow: EdstWindow, stopDragOn: StopDragOn) => {
   const dispatch = useRootDispatch();
   // on middleClick I always want to stop drag onmouseup
   const [currentStopDragOn, setCurrentStopDragOn] = useState(stopDragOn);

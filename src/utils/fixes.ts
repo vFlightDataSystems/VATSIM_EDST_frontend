@@ -1,5 +1,5 @@
 import _ from "lodash";
-import type { Feature, Polygon, Position } from "@turf/turf";
+import type { Feature, Polygon, Position } from "geojson";
 import { booleanPointInPolygon, distance, lineString, point, pointToLineDistance } from "@turf/turf";
 import type { Nullable } from "types/utility-types";
 import type { RouteFix } from "types/routeFix";

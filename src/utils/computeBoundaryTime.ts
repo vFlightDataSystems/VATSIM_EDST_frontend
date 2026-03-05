@@ -1,4 +1,4 @@
-import type { Feature, Polygon } from "@turf/turf";
+import type { Feature, Polygon } from "geojson";
 import { point } from "@turf/turf";
 import type { EdstEntry } from "types/edstEntry";
 import type { ApiAircraftTrack } from "types/apiTypes/apiAircraftTrack";

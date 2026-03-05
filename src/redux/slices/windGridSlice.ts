@@ -6,6 +6,7 @@ import type { RootState } from "~redux/store";
 import type { Coordinate } from "types/gpd/coordinate";
 import { artccIdSelector } from "./sectorSlice";
 import { getCenterCoordinates } from "~/utils/getArtccCenter";
+import { WIND_GRID_DEFAULT_LEVEL } from "~/utils/constants";
 
 export const WIND_GRID_MIN_ZOOM = 3000;
 export const WIND_GRID_MAX_ZOOM = 12000;
@@ -31,9 +32,9 @@ const initialState: WindGridState = {
   center: BOSCenter,
   zoomLevel: 4000,
   temps: false,
-  level: 300,
-  date: null,
-  time: null,
+  level: WIND_GRID_DEFAULT_LEVEL,
+  date: "",
+  time: "",
 };
 
 export const initializeWindGridCenter = createAsyncThunk("windGrid/initializeCenter", async (_, { getState, dispatch }) => {

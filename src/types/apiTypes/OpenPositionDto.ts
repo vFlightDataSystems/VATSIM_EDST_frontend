@@ -5,7 +5,7 @@ export default interface OpenPositionDto {
   frequency?: number;
   isActive: boolean;
   isPrimary: boolean;
-  facilityId?: string;
+  facilityId: string;
   radarFacilityId?: string;
   caatsAccId?: string;
   facilityName?: string;

@@ -1,9 +1,11 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import type { EdstEntry } from "types/edstEntry";
 import { formatRoute } from "~/utils/formatRoute";
 import { convertBeaconCodeToString } from "~/utils/stringManipulation";
 import { formatUtcMinutes } from "~/utils/formatUtcMinutes";
+
+let printRoot: ReturnType<typeof createRoot> | null = null;
 
 function getRouteString(entry: EdstEntry, formattedRoute: string) {
   return (
@@ -18,54 +20,69 @@ export function printFlightStrip(entry: EdstEntry) {
     const formattedRoute = formatRoute(entry.route);
     const printDoc = document.getElementById("toPrint");
     if (printDoc) {
-      ReactDOM.unmountComponentAtNode(printDoc);
+      if (printRoot) {
+        printRoot.unmount();
+      }
     }
     // const pos = [Number(entry.flightplan.lon), Number(entry.flightplan.lat)] as Position;
     // const [nextFix, prevFix] = getNextFix(entry.route, computeCrossingTimes(entry), pos) as (RouteFix & { minutesAtFix: number })[];
     const [nextFix, prevFix]: [any, any] = [null, null];
-    ReactDOM.render(
-      <PrintableFlightStrip
-        fs={{
-          callsign: entry.aircraftId, // callsign
-          type: entry.equipment, // weight, type, equipment suffix
-          tas: "TXXX", // true airspeed
-          sect: "XX", // current sector
-          aircraftId: entry.aircraftId, // cid
-          estGs: `G${entry.speed}`, // filed ground speed
-          stripReqOrig: "XXX", // strip request origin
-          stripNum: "1", // strip number
-          prev: prevFix?.name ?? "", // previous fix
-          prevTime: "", // previous fix timestamp
-          prevTimeRev: "", // previous fix timestamp, revised
-          prevTimeAct: "", // previous fix timestamp, actual
-          postedFixTime: "", // posted fix timestamp
-          currTimeCentre: "", // current fix timestamp, from centre
-          directionArrow: "", // departure/arrival arrow
-          currTimePilot: "", // current fix timestamp, from pilot
-          currTimeAct: "", // current fix timestamp, actual
-          curr: "", // current fix / departure time
-          alt: entry.altitude, // assigned altitude
-          next: nextFix?.name ?? "", // next fix
-          nextTime: nextFix ? formatUtcMinutes(nextFix.minutesAtFix) : "", // next fix timestamp
-          dofArrow: "", // direction of flight arrow
-          reqAlt: "", // requested altitude
-          route: getRouteString(entry, formattedRoute).replace(/\.+/g, " "), // route
-          remarks: filterRemarks(entry.remarks), // remarks
-          squawk: convertBeaconCodeToString(entry.assignedBeaconCode), // squawk code
-          misc: "", // miscellaneous info
-          trans1: "", // transfer of control info
-          trans2: "", // transfer of control info
-        }}
-      />,
-      document.getElementById("toPrint")
-    );
+    
+    const container = document.getElementById("toPrint");
+    if (container) {
+      printRoot = createRoot(container);
+      printRoot.render(
+        <PrintableFlightStrip
+          fs={{
+            callsign: entry.aircraftId, // callsign
+            type: entry.equipment, // weight, type, equipment suffix
+            tas: "TXXX", // true airspeed
+            sect: "XX", // current sector
+            aircraftId: entry.aircraftId, // cid
+            estGs: `G${entry.speed}`, // filed ground speed
+            stripReqOrig: "XXX", // strip request origin
+            stripNum: "1", // strip number
+            prev: prevFix?.name ?? "", // previous fix
+            prevTime: "", // previous fix timestamp
+            prevTimeRev: "", // previous fix timestamp, revised
+            prevTimeAct: "", // previous fix timestamp, actual
+            postedFixTime: "", // posted fix timestamp
+            currTimeCentre: "", // current fix timestamp, from centre
+            directionArrow: "", // departure/arrival arrow
+            currTimePilot: "", // current fix timestamp, from pilot
+            currTimeAct: "", // current fix timestamp, actual
+            curr: "", // current fix / departure time
+            alt: entry.altitude, // assigned altitude
+            next: nextFix?.name ?? "", // next fix
+            nextTime: nextFix ? formatUtcMinutes(nextFix.minutesAtFix) : "", // next fix timestamp
+            dofArrow: "", // direction of flight arrow
+            reqAlt: "", // requested altitude
+            route: getRouteString(entry, formattedRoute).replace(/\.+/g, " "), // route
+            remarks: filterRemarks(entry.remarks), // remarks
+            squawk: convertBeaconCodeToString(entry.assignedBeaconCode), // squawk code
+            misc: "", // miscellaneous info
+            trans1: "", // transfer of control info
+            trans2: "", // transfer of control info
+          }}
+        />
+      );
+    }
+    
     const printer = window.open("") as Window;
     const innerHTML = document.getElementById("toPrint")?.innerHTML;
-    if (innerHTML) {
+    if (innerHTML && printer) {
       try {
         printer.document.write(innerHTML);
-        printer.print();
-        printer.close();
+        printer.document.close();
+        printer.onload = () => {
+          printer.print();
+        };
+        // Fallback: close after a delay if print dialog isn't triggered
+        setTimeout(() => {
+          if (!printer.closed) {
+            printer.close();
+          }
+        }, 2000);
         // eslint-disable-next-line no-empty
       } catch (e) {}
     }

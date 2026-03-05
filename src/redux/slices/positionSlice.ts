@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "~redux/store";
-import type { OpenPositionDto } from "~/types/apiTypes/OpenPositionDto";
+import OpenPositionDto from "~/types/apiTypes/OpenPositionDto";
 import { PositionType } from "~/types/apiTypes/OpenPositionDto";
 
 export type ArtccInfo = {

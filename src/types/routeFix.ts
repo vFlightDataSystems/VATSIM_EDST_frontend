@@ -1,4 +1,4 @@
-import type { Position } from "@turf/turf";
+import type { Position } from "geojson";
 
 export type RouteFix = {
   name: string;
