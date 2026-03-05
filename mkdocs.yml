@@ -1,0 +1,19 @@
+site_name: vEDST Documentation
+
+docs_dir: docs
+
+theme:
+  name: readthedocs
+  navigation_depth: 5
+
+markdown_extensions:
+  - admonition
+  - md_in_html
+  - toc:
+      permalink: 
+nav:
+  - 'index.md'
+  - 'vEDST Application': 'https://edst.vfds.dev'
+
+extra_css:
+  - css/extra.css
