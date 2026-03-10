@@ -16,7 +16,7 @@ Virtual Enroute Decision Support Tool (vEDST) is a web application that simulate
 ### Requirements
 - A modern web browser (Google Chrome, Mozilla Firefox, Microsoft Edge, etc.)
 - A browser window at least 1280x720 in size for optimal display
-- A mouse with a middle button for specific clickable actions
+- A three-button mouse for specific clickable actions
 
 ### Logging in
 
@@ -103,7 +103,7 @@ Some commands allow for logic check overrides which bypass certain command requi
 
 By default, the Preview Area is in overstrike mode (represented by an underscore cursor), meaning new characters overwrite the character at the cursor. The Preview Area can also be placed into insertion mode (represented by an underscore cursor with two additional vertical lines), meaning new characters are entered to the left of the cursor. Pressing `Insert` toggles between the two modes.
 
-The MCA cannot be suppressed, but can be [repositioned](#repositioning-views) by left-clicking anywhere within its boundaries. Middle-clicking anywhere with the MCA's boundaries opens the MCA menu for configuring the MCA.
+The MCA cannot be suppressed, but can be [repositioned](#repositioning-views) by left-clicking anywhere within its boundaries. Middle-clicking anywhere within the MCA's boundaries opens the MCA configuration menu.
 
 #### MCA View Menu
 
@@ -132,7 +132,7 @@ The Response Area (RA) displays text outputted by commands. For example, using t
 
 If a command is entered in the [MCA](#message-composition-area-view) that outputs to the RA, but the RA is currently suppressed, the RA will be raised to the display.
 
-The RA can be suppressed via the [Toolbar](#toolbar) and can be repositioned by left-clicking anywhere within its boundaries. Middle-clicking anywhere with the RA's boundaries opens the RA menu for configuring the RA.
+The RA can be suppressed via the [Toolbar](#toolbar) and can be repositioned by left-clicking anywhere within its boundaries. Middle-clicking anywhere within the RA's boundaries opens the RA configuration menu.
 
 #### RA View Menu
 
@@ -197,7 +197,7 @@ Posting mode governs the order in which flights are displayed in the ACL. The po
 
 In Automatic mode, all flights are placed in the *normal* posting area of the ACL and are sorted according to the current sort criteria. 
 
-In Manual mode, all flights are placed in the *manual* posting area of the ACL in the time in which they were added to the ACL. The manual posting area is indicated by a horizontal dividing line in the ACL.
+In Manual mode, all flights are placed in the *manual* posting area of the ACL ordered by the time at which they were added to the ACL. The manual posting area is indicated by a horizontal dividing line in the ACL.
 
 #### ACL Sort Criteria
 
@@ -259,7 +259,7 @@ Some columns can be contracted or expanded by clicking the column title. If a co
 ##### Bookkeeping Column
 The bookkeeping column tracks wether aircraft in the ACL are on your frequency or not.
 
-**New Entries:** are represented by a grey "N". In the normal posting area, left clicking removes the "N". Middle clicking moved the flight to the special attention area. In manual posting mode, left clicking the "N" both removes it and moved the flight to the normal posting area.
+**New Entries:** are represented by a grey "N". In the normal posting area, left clicking removes the "N". Middle clicking moves the flight to the special attention area. In manual posting mode, left clicking the "N" both removes it and moved the flight to the normal posting area.
 
 **Blank Area:** A blank area indicates that you have acknowledged or interacted with the flight.
 
@@ -355,7 +355,7 @@ The Departure List view contains a header bar with the following information and
 - The primary sort criteria for the list (see [Departure List Sort Criteria](#dl-sort-criteria))
 - The posting mode
 
-The small square button on the right of the header bar suppresses the DL view when clicked.
+The small square button on the right of the header bar suppresses the Departure List View when clicked.
 
 The large square button on the right of the header bar toggles fullscreen/windowed mode. By default the DL view is in fullscreen mode.
 
@@ -376,7 +376,7 @@ Posting mode governs the order in which flights are displayed in the DL. The pos
 
 In Automatic mode, all flights are placed in the *normal* posting area of the DL and are sorted according to the current sort criteria.
 
-In Manual mode, all flights are placed in the *manual* posting area of the DL in the time in which they were added to the DL. The manual posting area is indicated by a horizontal dividing line in the DL.
+In Manual mode, all flights are placed in the *manual* posting area of the DL ordered by the time at which they were added to the DL. The manual posting area is indicated by a horizontal dividing line in the DL.
 
 #### DL Sort Criteria
 
