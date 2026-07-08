@@ -33,7 +33,7 @@ const Login = () => {
       dispatch(
         login({
           code,
-          redirectUrl: encodeURIComponent(`${DOMAIN}/login`),
+          redirectUrl: `${DOMAIN}/login`,
         })
       );
     }
