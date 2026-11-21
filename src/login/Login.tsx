@@ -7,12 +7,12 @@ import { SocketContextProvider } from "../contexts/SocketContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { configSelector, envSelector, login, setEnv, vatsimTokenSelector, logout, sessionSelector, logoutThunk } from "~redux/slices/authSlice";
 import { useRootDispatch, useRootSelector } from "~redux/hooks";
-import { DOMAIN, VATSIM_CLIENT_ID } from "~/utils/constants";
+import { DOMAIN, VATSIM_AUTH_BASE_URL, VATSIM_CLIENT_ID } from "~/utils/constants";
 import loginStyles from "css/login.module.scss";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 function redirectLogin() {
-  window.location.href = `https://auth.vatsim.net/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+  window.location.href = `${VATSIM_AUTH_BASE_URL}/oauth/authorize?client_id=${VATSIM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     `${DOMAIN}/login`
   )}&response_type=code&scope=vatsim_details`;
 }

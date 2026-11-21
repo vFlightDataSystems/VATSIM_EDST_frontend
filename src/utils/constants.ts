@@ -1,3 +1,5 @@
+import { parseOriginList } from "../../api/_lib/loginHosts";
+
 export const WEATHER_REFRESH_RATE = 120000; // 2 minutes
 export const SPA_INDICATOR = "^";
 export const COMPLETED_CHECKMARK_SYMBOL = "\u2713";
@@ -26,8 +28,14 @@ export const DOMAIN = import.meta.env.PROD ? import.meta.env.VITE_PROD_DOMAIN : 
 export const VATSIM_CLIENT_ID = import.meta.env.PROD ? import.meta.env.VITE_PROD_VATSIM_CLIENT_ID : import.meta.env.VITE_VATSIM_CLIENT_ID;
 export const VERSION = import.meta.env.VITE_VERSION;
 
-// Base URL for the serverless OAuth exchange 
+// Base URL for the serverless OAuth exchange
 export const AUTH_API_BASEURL = import.meta.env.VITE_AUTH_API_BASEURL ?? "/api";
+
+// VATSIM Connect host for the authorize redirect. Development builds may point it at the sandbox (https://auth-dev.vatsim.net).
+export const VATSIM_AUTH_BASE_URL = (import.meta.env.DEV ? import.meta.env.VITE_VATSIM_AUTH_BASE_URL : undefined) ?? "https://auth.vatsim.net";
+
+// API origins, besides the vNAS hosts, whose environments use the serverless login exchange. Development builds only.
+export const SERVERLESS_LOGIN_DEV_ORIGINS = import.meta.env.DEV ? parseOriginList(import.meta.env.VITE_SERVERLESS_LOGIN_DEV_ORIGINS) : [];
 
 // FOR TESTING PROD LOCALLY
 // export const DOMAIN = import.meta.env.VITE_DOMAIN;
