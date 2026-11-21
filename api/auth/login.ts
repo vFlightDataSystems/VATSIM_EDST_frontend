@@ -1,23 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { isServerlessLoginApi, parseOriginList } from "../_lib/loginHosts";
 
 const VATSIM_AUTH_BASE_URL = process.env.VATSIM_AUTH_BASE_URL ?? "https://auth.vatsim.net";
 const CLIENT_ID = process.env.VATSIM_CLIENT_ID;
 const CLIENT_SECRET = process.env.VATSIM_CLIENT_SECRET;
 
 // Only proxy the token to trusted vNAS environment hosts to prevent this endpoint being used as an open proxy.
-const ALLOWED_API_HOST_SUFFIXES = ["vnas.vatsim.net", "virtualnas.net"];
-
-function isAllowedApiBaseUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return (
-      url.protocol === "https:" &&
-      ALLOWED_API_HOST_SUFFIXES.some((suffix) => url.hostname === suffix || url.hostname.endsWith(`.${suffix}`))
-    );
-  } catch {
-    return false;
-  }
-}
+// AUTH_DEV_API_ORIGINS adds exact origins for local development (a local yaat-server); leave it unset in deployments.
+const DEV_API_ORIGINS = parseOriginList(process.env.AUTH_DEV_API_ORIGINS);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -36,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "Missing required parameters: code, redirectUrl, apiBaseUrl" });
   }
 
-  if (!isAllowedApiBaseUrl(apiBaseUrl)) {
+  if (!isServerlessLoginApi(apiBaseUrl, DEV_API_ORIGINS)) {
     return res.status(400).json({ error: "Invalid apiBaseUrl" });
   }
 
